@@ -136,45 +136,6 @@ def test_re2_d14_a_read_body_and_an_item_code_flag_are_covered() -> None:
     assert "SEC-X-RESTATE" in flagged.covered and "4.02" in flagged.flags["SEC-X-RESTATE"].signal
 
 
-# --- RE2-D15: a footnoted segment cell is its figure ------------------------------------------
-def test_re2_d15_a_footnoted_cell_reads_its_figure() -> None:
-    from vinci.edgar.segments import _number
-    assert _number("$ 1,229 [1]") == 1229.0
-    assert _number("58,705 *") == 58705.0 and _number("$ 1,229 (1)") == 1229.0
-    # NEGATIVE PINS — a bracketed loss stays negative, with or without a mark; prose is no figure
-    assert _number("(1,229)") == -1229.0 and _number("$ (1,229) [2]") == -1229.0
-    assert _number("operating segments") is None
-
-
-def test_re2_d15_a_footnoted_cell_keeps_its_year_end_to_end() -> None:
-    """Alphabet's real R90 (10-K 0001652044-26-000018, frozen in tests/fixtures/segments) with one
-    mark added — Google Cloud's FY2025 revenue cell "58,705" becomes "58,705 [1]". Main dropped the
-    year; the row now keeps it, and the other years stay in their own columns."""
-    import pathlib
-    import re as _re
-
-    from vinci.edgar.segments import segment_rows
-    fix = pathlib.Path(__file__).resolve().parent / "fixtures" / "segments"
-    acc = "0001652044-26-000018"
-    real = (fix / f"GOOGL-{acc}-R90.htm").read_text()
-    row = _re.search(r"<tr[^>]*>(?:(?!</tr>).)*?Revenue from contract with customers"
-                     r"(?:(?!</tr>).)*?58,705(?:(?!</tr>).)*?</tr>", real, _re.S)
-    assert row, "the fixture no longer carries Google Cloud's 58,705 revenue row"
-    marked = real.replace(row.group(0), row.group(0).replace(">58,705<", ">58,705 [1]<", 1), 1)
-    assert marked != real
-
-    class _Marked:
-        def get_text(self, url: str, *, ttl_seconds: float | None = None,
-                     params: dict[str, object] | None = None) -> str:
-            name = url.rsplit("/", 1)[-1]
-            return marked if name == "R90.htm" else (fix / f"GOOGL-{acc}-{name}").read_text()
-
-    got = {r.period: r.value for r in segment_rows(_Marked(), "0001652044", acc)  # type: ignore[arg-type]
-           if r.segment == "Google Cloud" and r.metric == "Revenue from contract with customers"}
-    assert got.get("12 Months Ended Dec. 31, 2025") == 58705.0, got
-    assert got.get("12 Months Ended Dec. 31, 2024") == 43229.0, got
-
-
 def test_review_an_option_from_a_stated_date_keeps_that_date_current() -> None:
     """Review round 0: an option sentence that states the maturity in force ("may extend … from
     June 1, 2029 to June 1, 2031") lost BOTH dates; the one in force is current, the option's not

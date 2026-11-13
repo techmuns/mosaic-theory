@@ -30,7 +30,6 @@ from vinci.labels import resolve_label
 from vinci.monitor import read_assignments_file
 from vinci.progress import ProgressFn
 from vinci.rank import (
-    CauseClass,
     RankedCandidate,
     RankWeights,
     StructuralDisqualifier,
@@ -78,7 +77,6 @@ QUEUE_ADV_FLOOR = 3_000_000.0  # = the universe ADV floor; mirrors vinci.rank's 
 def rank_from_snapshots(
     cfg: Config,
     *,
-    annotations: dict[str, CauseClass] | None = None,
     structural_flags: dict[str, StructuralDisqualifier] | None = None,
     deep_work_adv_floor: float = QUEUE_ADV_FLOOR,
 ) -> list[RankedCandidate]:
@@ -104,7 +102,6 @@ def rank_from_snapshots(
     ranked = rank_candidates(
         cands,
         weights=RankWeights(),
-        annotations=annotations,
         market_caps=load_market_caps_from_snapshot(snaps / "universe_snapshot.jsonl"),
         structural_flags=structural_flags or None,
         deep_work_adv_floor=deep_work_adv_floor,
@@ -170,12 +167,12 @@ def rank_from_snapshots(
 
 def carry_forward_assessment(
     cfg: Config,
-) -> tuple[dict[str, StructuralDisqualifier], dict[str, CauseClass]]:
+) -> dict[str, StructuralDisqualifier]:
     """The last EXPLICIT operator assessment, recovered from the queue about to be replaced.
 
-    `vinci rank --structural` / `--cause-file` write `structural_flag` and `cause_class` into
+    `vinci rank --structural` writes `structural_flag` into
     `ranked_queue.jsonl` ONLY — nothing durable upstream holds them. A scheduled refresh that
-    supplied neither would therefore wipe them, and **a name capped at 0.05 by an 8-K disqualifier
+    did not scan would therefore wipe them, and **a name capped at 0.05 by an 8-K disqualifier
     would climb back to the top of the queue on Monday with no operator action** (review, #420).
 
     Carrying them is safe in the one direction that matters: the structural channel is DEMOTE-ONLY,
@@ -189,18 +186,15 @@ def carry_forward_assessment(
     """
     prior = cfg.snapshots_dir / "ranked_queue.jsonl"
     flags: dict[str, StructuralDisqualifier] = {}
-    causes: dict[str, CauseClass] = {}
     if not prior.exists():
-        return flags, causes
+        return flags
     for line in prior.read_text().splitlines():
         if not line.strip():
             continue
         r = RankedCandidate.model_validate_json(line)
         if r.structural_flag is not None:
             flags[r.ticker] = r.structural_flag
-        if r.cause_class != CauseClass.UNCLASSIFIED:
-            causes[r.ticker] = r.cause_class
-    return flags, causes
+    return flags
 
 
 def write_queue_snapshots(
@@ -247,7 +241,7 @@ def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:
     current filings, so a name that no longer fires must come back clean rather than have a stale
     flag resurrected underneath it. The carry-forward exists for the runs that DON'T scan.
     """
-    flags, causes = carry_forward_assessment(cfg)
+    flags = carry_forward_assessment(cfg)
     scanned = 0
     if structural:
         records = cfg.snapshots_dir / "candidate_records.jsonl"
@@ -270,7 +264,7 @@ def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:
             flags = {t: f for t, f in flags.items() if t not in covered_tickers}
             for iid, flag in scan.flags.items():
                 flags[by_id.get(iid, iid)] = flag
-    ranked = rank_from_snapshots(cfg, annotations=causes or None, structural_flags=flags or None)
+    ranked = rank_from_snapshots(cfg, structural_flags=flags or None)
     # WRITE EVEN WHEN EMPTY. The screen has completed by this point, so no candidates is an ANSWER —
     # the latest screen rejected everything — not a failure to produce one. Skipping the write left
     # the previous week's names served as current, and the staleness banner could not catch it
@@ -283,7 +277,7 @@ def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:
         write_queue_snapshots(cfg, ranked)
     return {"ranked": len(ranked), "structural_scanned": scanned,
             "structural_flagged": sum(1 for r in ranked if r.structurally_disqualified),
-            "carried_structural": len(flags), "carried_cause": len(causes)}
+            "carried_structural": len(flags)}
 
 
 def run_weekly(

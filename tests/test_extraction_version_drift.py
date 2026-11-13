@@ -97,7 +97,6 @@ NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/render.py": "renders a page's markdown from its JSON; re-rendered, never "
                                "re-extracted",
     "vinci/dossier/run_metrics.py": "the cost-and-outcome series beside a build, not the page",
-    "vinci/dossier/tagger.py": "propose-only: reads committed pages, writes nothing",
     "vinci/edgar/__init__.py": "re-exports the client",
     # OUTSIDE THE TWO PACKAGES (2026-11-11): every other module a page build reaches, and why it
     # cannot change a page value given the same source data
@@ -129,8 +128,6 @@ NOT_EXTRACTION: dict[str, str] = {
     "vinci/sec.py": "the shared SEC HTTP client configuration (transport)",
     "vinci/triggers.py": "re-underwrite triggers the monitor runs against a committed page",
     "vinci/rank/__init__.py": "re-exports the ranker",
-    "vinci/rank/cause.py": "a screen-time ranking channel; a page reads the committed candidate "
-                           "record",
     "vinci/rank/profile.py": "a screen-time ranking profile; a page reads the committed record",
     "vinci/rank/structural.py": "a screen-time ranking channel; a page reads the committed record",
     "vinci/resolver/__init__.py": "re-exports the resolver",

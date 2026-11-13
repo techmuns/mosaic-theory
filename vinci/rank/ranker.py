@@ -68,18 +68,19 @@ _UNKNOWN_AXIS_SCORE = 0.0
 # EOD gap-down detector (the only event source wired), so treating them as two independent axes
 # would be false precision. A discrete, recent drop is the overshoot signature (ranks higher); a
 # grind/bleed is "more often real deterioration" (ranks lower); many repeated gaps ease the score
-# off (accumulating bad news, messier — never reward "more violent" as "more promising"). The
-# Tier-3 LLM cause-flag COLOURS this axis (demote/boost), never sets it.
+# off (accumulating bad news, messier — never reward "more violent" as "more promising").
 # SPLIT THIS BACK into a price-geometry "shape" axis + a filing-text "cause" axis once 8-K/guidance
-# TEXT events and the LLM annotation populate cause INDEPENDENTLY of price geometry (see §4/§5).
+# TEXT events populate cause INDEPENDENTLY of price geometry (see §4/§5). The Tier-3 LLM cause
+# channel that once coloured this axis (`vinci/rank/cause.py`) was retired unfed on 2026-11-13
+# (docs/records/2026-11-13-three-uncalled-modules-retired.md); the label keeps its "· LLM: —"
+# suffix and the queue its `cause_class` field, written as constants, so the committed queue's
+# format does not move.
 _CHAR_BLEED = 0.30  # no discrete catalyst (slow grind/bleed) → ranks lower
 _CHAR_DISCRETE_BASE = 0.80  # an identifiable discrete de-rating event (gap-down) → ranks higher
 # Gentle sharpness easing by gap-down count: a single clean discrete drop is the archetype overshoot
 # and repeated gaps are messier. A multiplier on the (recency-bumped) discrete base.
 _SHARPNESS_BY_GAPS: dict[int, float] = {1: 1.0, 2: 0.97, 3: 0.94}
 _SHARPNESS_MANY_GAPS = 0.90  # 4+ gap-downs
-_CHAR_STRUCTURAL_BREAK = 0.05  # Tier-3 LLM: terminal-looking (lost customer / reg kill / fraud)
-_CHAR_MEAN_REVERT = 0.97  # Tier-3 LLM: confirmed mean-revert candidate
 _DECLINE_WINDOW_DAYS = 180  # the screen's gap-down detection window (for catalyst recency)
 
 # Tier-2 volume overlay (MINOR). The only bar readable from a screen-time record is current volume
@@ -217,9 +218,9 @@ def multiple_axis(funds: Fundamentals) -> AxisScore:
     )
 
 
-def character_axis(rec: DataRecord, cause_class: CauseClass) -> AxisScore:
+def character_axis(rec: DataRecord) -> AxisScore:
     """Drawdown character: sharp/discrete/recent fall (overshoot signature → higher) vs slow
-    grind/bleed (→ lower), eased off for many repeated gaps, COLOURED by the Tier-3 LLM cause-flag.
+    grind/bleed (→ lower), eased off for many repeated gaps.
 
     ONE axis today on purpose — shape (price geometry) and cause (catalyst) both rest on the same
     EOD gap-down detector, so splitting them now is false precision. Split back out when 8-K/
@@ -245,17 +246,8 @@ def character_axis(rec: DataRecord, cause_class: CauseClass) -> AxisScore:
         s = "" if n == 1 else "s"
         label = f"sharp discrete — {n} gap-down{s} (latest {recent.isoformat()}{age_txt})"
 
-    # Tier-3 LLM annotation COLOURS the character; it never sets the primary sort key.
-    if cause_class is CauseClass.STRUCTURAL_BREAK:
-        return AxisScore(
-            axis="character", score=_CHAR_STRUCTURAL_BREAK, coverage=AxisCoverage.PRESENT,
-            label=f"{label} · LLM: structural-break (demoted)", raw=base,
-        )
-    if cause_class is CauseClass.MEAN_REVERT:
-        return AxisScore(
-            axis="character", score=max(base, _CHAR_MEAN_REVERT), coverage=AxisCoverage.PRESENT,
-            label=f"{label} · LLM: mean-revert", raw=base,
-        )
+    # "· LLM: —" is the committed queue's format, kept as a constant since the cause channel left
+    # (see the comment above `_CHAR_BLEED`).
     return AxisScore(
         axis="character", score=base, coverage=AxisCoverage.PRESENT,
         label=f"{label} · LLM: —", raw=base,
@@ -296,7 +288,6 @@ def rank_candidate(
     cand: CandidateRecord,
     *,
     weights: RankWeights | None = None,
-    cause_class: CauseClass = CauseClass.UNCLASSIFIED,
     market_cap: float | None = None,
     structural_flag: StructuralDisqualifier | None = None,
     deep_work_adv_floor: float = _DEEP_WORK_ADV_FLOOR,
@@ -314,7 +305,7 @@ def rank_candidate(
     axes: dict[str, AxisScore] = {
         "idiosyncrasy": idiosyncrasy_axis(prices),
         "depth": depth_axis(prices),
-        "character": character_axis(rec, cause_class),
+        "character": character_axis(rec),
         "multiple": multiple_axis(rec.fundamentals),
     }
     weight = w.as_map()
@@ -368,7 +359,7 @@ def rank_candidate(
         volume_state=vol_state,
         volume_spike=vol_spike,
         volume_trend=vol_trend,
-        cause_class=cause_class,
+        cause_class=CauseClass.UNCLASSIFIED,  # the retired channel's slot: a constant, see above
         structurally_disqualified=structurally_disqualified,
         structural_flag=structural_flag,
         unknown_axes=unknown_axes,
@@ -382,7 +373,6 @@ def rank_candidates(
     cands: list[CandidateRecord],
     *,
     weights: RankWeights | None = None,
-    annotations: dict[str, CauseClass] | None = None,
     market_caps: dict[str, float] | None = None,
     structural_flags: dict[str, StructuralDisqualifier] | None = None,
     deep_work_adv_floor: float = _DEEP_WORK_ADV_FLOOR,
@@ -393,17 +383,15 @@ def rank_candidates(
     tradeable names first (the gate), then priority-score desc, then — for a stable, legible
     tie-break — deeper drawdown, then more-idiosyncratic, then ticker.
     """
-    ann = annotations or {}
     caps = market_caps or {}
     struct = structural_flags or {}
     ranked: list[RankedCandidate] = []
     for c in cands:
         iid = c.data_record.identity.internal_id
         tk = c.data_record.identity.ticker
-        cc = ann.get(iid) or ann.get(tk) or CauseClass.UNCLASSIFIED
         ranked.append(
             rank_candidate(
-                c, weights=weights, cause_class=cc, market_cap=caps.get(iid),
+                c, weights=weights, market_cap=caps.get(iid),
                 structural_flag=struct.get(iid) or struct.get(tk),
                 deep_work_adv_floor=deep_work_adv_floor,
             )
