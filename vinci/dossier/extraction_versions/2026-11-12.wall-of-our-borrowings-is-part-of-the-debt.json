@@ -1,0 +1,9 @@
+{
+  "id": "2026-11-12.wall-of-our-borrowings-is-part-of-the-debt",
+  "follows": [
+    "2026-11-12.nonop-window-anchored-at-latest-filed-quarter",
+    "2026-11-12.transcript-runs-cut-to-twelve-words",
+    "2026-11-12.wall-balance-sheet-total-and-of-our-borrowings"
+  ],
+  "names": "review round 1 of #1039: '$X of our borrowings were due within the next 12 months' is no longer read as the whole debt's ≤12-month figure — Microvast's Q3 $120.8M is the balance sheet's short-term bank borrowings alone, beside current notes and bonds payable, so it reads not_stated again, as before #1039; and the balance-sheet debt total covers an instrument only when the statement states the sheet's date, the clause's last figure is the instrument's principal and not a total (on the prose route too, where a total repeated elsewhere had matched it), and its ≤12-month principal equals the sheet's current portion, while any borrowing row the sheet lists under another label (singular, mortgage, financing obligation, securitization, floor plan, overdraft, credit agreement, or above a row named 'current liabilities'), or a current portion the debt note subtracts but the sheet does not list (its cell's '$' and a run-on label included), refuses the total, and a millions cell keeps its decimal (Werner's Q3 still reads located $0.0)"
+}

@@ -170,6 +170,6 @@ repo, because the request bodies carry licensed transcript text.
     agreement on unchanged inputs.
 - **The operator's Mac and B's machine still run 0.112.0** until each re-syncs its venv from the
   lock. Agents are told not to reinstall packages in the shared venv. Until then local builds send
-  0.112.0's headers, with bodies identical. STATE §5.0 row 61 holds it.
+  0.112.0's headers, with bodies identical. STATE §5.0 row 62 holds it.
 - **Two installs stay unpinned:** pip itself (`--upgrade pip`), and the build backend that `pip
   install -e .` fetches (hatchling). Neither reaches a request.

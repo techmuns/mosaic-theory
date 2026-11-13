@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-12.figure-trace-false-flags",
+  "follows": [
+    "2026-11-12.price-stale-note-counts-from-reference-date",
+    "2026-11-12.transcript-runs-cut-to-twelve-words"
+  ],
+  "names": "W05, the follow-up to #1023's figure trace: four classes of correct figure no longer flagged untraceable, each narrowed in review round 1 so the wrong figures beside them stay flagged — (a) a metric word binds the row it names ('revenues' Revenue, 'operating income' EBIT, 'capital expenditures' Capex, 'impairment' Asset Writedown), a list of metrics and as many figures is read in order, a period carries past a figure of another metric, and a word naming no row ('profit', 'sales') meets the cited fact in that period; (b) a figure within a coarse print's width traces only as the exact value the page states there (PARR's $21.54 against '21.5'; a margin cell is its table's own EBITDA ÷ revenue), and keeps the print's width where the page states none; (c) a year naming what it dates, not before every year the page dates, is no figure (VITL's 'its 2030 financial targets'); (e) a field name, an accession, a URL or a hash states no span, and a URL is cut out of a string, never the string. (d), a January or February year end's 'fiscal 2025' read as CIQ's FY26, is dropped: TJX and nCino name a year as CIQ does. On the 27 committed pages two flags clear (PARR, VITL) and none is added"
+}
