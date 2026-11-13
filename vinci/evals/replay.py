@@ -35,7 +35,7 @@ import anthropic
 from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, capture_calls, jsonable
-from vinci.graph.llm import AnthropicLlmClient, LlmError, cost_usd
+from vinci.graph.llm import AnthropicLlmClient, LlmError, cost_usd, sdk_version
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -507,7 +507,8 @@ class GuardedSdk:
             msg = self.inner.messages.create(**kwargs)
         except anthropic.APIError as exc:   # no response body to price: a failed draw, recorded
             self._write({"label": self.label, "draw": self.n, "usd": 0.0, "raw": None,
-                         "stop_reason": None, "error": f"{type(exc).__name__}: {exc}"[:400]})
+                         "stop_reason": None, "error": f"{type(exc).__name__}: {exc}"[:400],
+                         "sdk_version": sdk_version()})
             raise
         self.client._record_usage(msg)        # production's reader; `extract` repeats it
         recorded = self.client.last_usage
@@ -523,7 +524,9 @@ class GuardedSdk:
         served = str(getattr(msg, "model", ""))
         row = {"label": self.label, "draw": self.n, "usage": usage, "usd": round(usd, 6),
                "served_model": served, "stop_reason": getattr(msg, "stop_reason", None),
-               "seconds": round(time.monotonic() - t0, 1)}
+               "seconds": round(time.monotonic() - t0, 1),
+               # the SDK the draw went through (operator, 2026-11-13: "Check, then pin newest")
+               "sdk_version": sdk_version()}
         self.budget.record(row)
         raw = next((dict(b.input) for b in getattr(msg, "content", [])
                     if getattr(b, "type", None) == "tool_use"), None)
