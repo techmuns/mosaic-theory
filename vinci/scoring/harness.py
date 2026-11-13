@@ -33,6 +33,8 @@ from vinci.schemas.ledger import (
     correction_note,
     corrections_by_decision,
     origin_of,
+    reaffirmation_note,
+    reaffirmations,
     sleeve_of,
     void_note,
     voids_by_decision,
@@ -247,6 +249,22 @@ def score_ledger(
     # FROM ITS RULING DATE, as a close is from its exit (operator, 2026-11-11): a report cut before
     # the ruling scores the decision as it was live then.
     voids = voids_by_decision(ledger, as_of=as_of)
+    # ONE OBSERVATION PER NAME (2026-11-13, #1004 item 5): a decision entered inside an earlier
+    # same-call decision's window on the same name is a REAFFIRMATION, out of every count, spread
+    # and curve, and named once (`reaffirmations`). SMPL's second BUY is the one live case.
+    reaffirmed = reaffirmations(ledger, as_of=as_of)
+    # A CALL IS STILL HELD while a reaffirmation of it is open (pr-feedback round 1; operator,
+    # 2026-11-13: "Keep it, document it"): SMPL's 07-06 BUY was closed on 07-24, and the book
+    # holds SMPL through its open 08-05 reaffirmation. Bounded by `as_of` (round 2): a
+    # reaffirmation entered after the scoring date did not exist yet, so it holds nothing then.
+    entered = {e.entry_id: corrected(e, corrections.get(e.entry_id)).entry_price_as_of
+               for e in ledger if e.event is None}
+    held_through = {earlier.entry_id for eid, earlier in reaffirmed.items()
+                    if eid not in closed_ids and entered[eid] <= as_of}
+    # THE VOIDED ROWS' RESULTS, BESIDE THE CURVE (#1004 item 5) — their own line, no longer under
+    # the pending count, so a removed loser is read where the curve is read
+    void_notes: list[str] = []
+    reaffirmation_notes: list[str] = []
     scores: list[VerdictScore] = []
     pending = 0
     book_rets: list[float] = []
@@ -267,11 +285,14 @@ def score_ledger(
         if entry.event is not None:     # a close, a correction or a void is not a decision
             continue
         if (void := voids.get(entry.entry_id)) is not None:
-            notes.append(void_note(entry, void))
+            void_notes.append(void_note(entry, void))
             continue
         sealed = entry
         if (fix := corrections.get(entry.entry_id)) is not None:
             entry = corrected(entry, fix)
+        if (earlier := reaffirmed.get(entry.entry_id)) is not None:
+            reaffirmation_notes.append(reaffirmation_note(entry, earlier))
+            continue
         entry_date = entry.entry_price_as_of
         horizon_date = entry_date + timedelta(days=entry.horizon_days)
         # RESOLVED ON THE HORIZON SESSION'S CLOSE, never before it lands (see `bench_last`). A
@@ -492,7 +513,7 @@ def score_ledger(
             origin=origin_of(entry),
             sleeve=sleeve_of(entry),
             # Is the POSITION still held? Distinct from `resolved`, which is about the CALL's clock.
-            closed=entry.entry_id in closed_ids,
+            closed=entry.entry_id in closed_ids and entry.entry_id not in held_through,
             note=" ".join(notes[first_note:]) or None,
             benchmark=bench_sym,
         )
@@ -526,5 +547,7 @@ def score_ledger(
         bench_daily=bench_rets or None,
         basket_labels={k: b.label for k, b in (baskets or {}).items()},
         row_notes=tuple(notes),
+        void_notes=tuple(void_notes),
+        reaffirmation_notes=tuple(reaffirmation_notes),
     )
     return scores, report

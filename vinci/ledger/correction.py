@@ -34,6 +34,7 @@ from vinci.schemas.ledger import (
     EVENT_CLOSE,
     EVENT_CORRECTION,
     EVENT_VOID,
+    VOID_REASONS,
     LedgerEntry,
     VoidMark,
     corrected,
@@ -138,7 +139,7 @@ def correct_entry(store: Store, *, entry_id: str, entry_price: float, entry_pric
 
 
 def void_decision(store: Store, *, entry_id: str, reason: str, ruled_on: date, mark: VoidMark,
-                  voided_at: datetime) -> LedgerEntry:
+                  voided_at: datetime, reason_code: str) -> LedgerEntry:
     """Append the VOID row for decision ``entry_id`` (operator ruling 2026-11-11); returns it.
 
     WHY A VOID. The operator ruled GOOGL's BUY out of the record — "we want to remove the buy card/
@@ -152,10 +153,20 @@ def void_decision(store: Store, *, entry_id: str, reason: str, ruled_on: date, m
     last session it could read, taken by the caller, so the removal is seen and can never read as
     a hidden loser. It must describe the decision AS READ — its corrected entry when corrected.
 
-    Refused, with nothing written: an unknown or non-decision ``entry_id``; a decision already
+    ONLY ON A PRE-REGISTERED GROUND (2026-11-13, #1004 item 5): ``reason_code`` is one of
+    `VOID_REASONS` — a data error at entry, the wrong instrument, or the wrong identity. A change of
+    mind is a CLOSE (`close_position`), and a close stays scored to its horizon.
+
+    Refused, with nothing written: a ``reason_code`` outside the list; an unknown or non-decision
+    ``entry_id``; a decision already
     voided; a closed decision (its outcome is realized — a close is the record of it); a blank
     reason; a mark taken on another entry than the one the decision is read at. The row copies the
     decision's provenance, as a close does, tagged as the decision is read, and is re-validated."""
+    if reason_code not in VOID_REASONS:
+        raise LedgerError(
+            f"void reason {reason_code!r} is not pre-registered — a decision is voided only for "
+            f"{sorted(VOID_REASONS)}. A change of mind is a CLOSE (`close-position`), and it stays "
+            f"scored to its horizon.")
     rows = list(store.iter_ledger())
     decision = next((r for r in rows if r.entry_id == entry_id and r.event is None), None)
     if decision is None:
@@ -191,6 +202,7 @@ def void_decision(store: Store, *, entry_id: str, reason: str, ruled_on: date, m
         "voids_entry_id": decision.entry_id,
         "ruled_on": ruled_on,
         "void_mark": mark,
+        "void_reason_code": reason_code,
         "entry_price": read.entry_price,
         "entry_price_as_of": read.entry_price_as_of,
         "reason": reason,

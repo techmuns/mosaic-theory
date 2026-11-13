@@ -138,6 +138,20 @@ PR (CLAUDE.md: coin-time translation).
   build, and runs the downstream readers the change reaches — then stamps the result with the PR's
   own diff (`git patch-id`), so a re-sync that only merges main keeps it*. `vinci/impact/`,
   RUNBOOKS §o, `docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
+- **Reaffirmation** (2026-11-13, #1004 item 5). Plain words: *a later decision on the same name,
+  book and route, making the same call, entered inside the earlier call's scoring window — it is
+  not a new observation, so it is in no count, spread or curve (one observation per name)*.
+  `vinci.schemas.ledger.reaffirmations`; SMPL's second BUY is the live case.
+- **Reading floor** (2026-11-13, #1004 item 5). Plain words: *the minimum number of resolved
+  observations (20) a book holds before the scoring report prints its curve; below it the count
+  prints and nothing else. A display rule — the computed spread is unchanged*.
+  `READING_FLOOR` in `vinci/schemas/ledger.py`.
+- **Underwrite seal** (2026-11-13, #1004 item 5). Plain words: *the ledger row's record of WHICH
+  underwrite priced the call — the record's path, the commit it was read at, the sha256 of its
+  bytes, and its ratio recomputed at the frozen entry*. `vinci/ledger/underwrite.py`.
+- **Pre-registered void reason** (2026-11-13, #1004 item 5). Plain words: *the three grounds on
+  which a decision may be taken out of the record — a data error at entry, the wrong instrument,
+  the wrong identity; a change of mind is a close, and stays scored*. `VOID_REASONS`.
 - **Screen-basket baseline** (2026-11-13, #1004 item 2). Plain words: *does the screen select
   anything? Each committed screen run's admitted names, held equal-weight from the next close,
   against the names the same run rejected (the control) and against their cap-band benchmarks, at

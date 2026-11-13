@@ -13,8 +13,8 @@ from __future__ import annotations
 
 import enum
 from collections.abc import Iterable, Mapping
-from datetime import date, datetime
-from typing import Any
+from datetime import date, datetime, timedelta
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_serializer, model_validator
 
@@ -79,6 +79,68 @@ def follow_up_id(prefix: str, decision_entry_id: str) -> str:
 def void_entry_id(decision_entry_id: str) -> str:
     """The void row's id for decision ``decision_entry_id``."""
     return follow_up_id(VOID_ID_PREFIX, decision_entry_id)
+
+
+# THE PRE-REGISTERED VOID REASONS (operator, 2026-11-13, #1004 item 5: "yes need to do this
+# reliably"). A void takes a decision out of every curve, so it is allowed only where the row never
+# measured the call it records: its entry price was wrong when sealed, it names the wrong
+# instrument, or the wrong issuer. A CHANGE OF MIND IS A CLOSE, and a close stays scored to its
+# horizon (the 2026-08-12 ruling) — were it a void, every losing call could be ruled out of the
+# spread after the fact, and the spread would measure nothing. Registered here BEFORE any void is
+# written under it; X-GOOGL (2026-11-11) predates the list, carries no code, and stays as written.
+VOID_DATA_ERROR_AT_ENTRY = "data_error_at_entry"
+VOID_WRONG_INSTRUMENT = "wrong_instrument"
+VOID_WRONG_IDENTITY = "wrong_identity"
+VOID_REASONS = frozenset({VOID_DATA_ERROR_AT_ENTRY, VOID_WRONG_INSTRUMENT, VOID_WRONG_IDENTITY})
+
+# THE READING FLOOR (coined 2026-11-13, #1004 item 5): a book's curve is READ — its spread printed
+# in the report — only once that book holds this many resolved observations. Below it the report
+# prints the count and no reading. WHY 20: with a handful of names one outcome moves a mean by tens
+# of points, so an early curve reads as a result when it is one draw; at 20 each name carries a
+# twentieth of an equal-weight mean, the face-validity point at which no single outcome is the
+# reading. B's default under the delegation record, agreed by A on #1004. A DISPLAY RULE ONLY:
+# the computed spread (`ScoreReport` and its JSON) is unchanged, and the number was set by face
+# validity, never by any outcome — no resolved outcome existed when it was registered.
+READING_FLOOR = 20
+
+
+class OriginRef(BaseModel, frozen=True):
+    """WHERE a decision's name came from, named (2026-11-13, #1004 item 5). ``origin`` says only the
+    route (screen or followed); this names the run or the entry, so a row can be traced back to
+    the screen run that admitted it or the follow decision that covered it. Sealed at log time on
+    every new row; ``None`` on a row logged before it, which is every committed row.
+
+    ``screen_run`` names the candidate record (``id`` is its ``candidate_id``) and the run's own
+    timestamp and screens; ``follow_entry`` names the follow-list entry (``id`` is its ticker) and
+    its ``followed_since``. No route logs a theme-originated decision today (`vinci.themes` retired
+    2026-11-04; the `theme` book is not ledger-active), so a theme kind is added with the route that
+    writes one, not before."""
+
+    kind: Literal["screen_run", "follow_entry"]
+    id: str
+    screen_run_at: datetime | None = None   # screen_run only
+    screens_fired: tuple[str, ...] = ()     # screen_run only
+    followed_since: date | None = None      # follow_entry only
+
+    @model_validator(mode="after")
+    def _shape(self) -> OriginRef:
+        if not self.id.strip():
+            raise ValueError("an origin names its run or entry — a blank id names nothing")
+        if self.kind == "screen_run" and (self.screen_run_at is None
+                                          or self.followed_since is not None):
+            raise ValueError("a screen-run origin states the run's screen_run_at, and no "
+                             "followed_since")
+        if self.kind == "follow_entry" and (self.followed_since is None
+                                            or self.screen_run_at is not None
+                                            or self.screens_fired):
+            raise ValueError("a follow-entry origin states its followed_since, and no screen run")
+        return self
+
+
+#: The fields added 2026-11-13 (#1004 item 5). Each is WRITTEN ONLY WHEN SET, as `machine_tally`
+#: is, so a row logged before them re-serializes byte for byte.
+_OMIT_WHILE_UNSET = ("machine_tally", "origin_ref", "underwrite_commit", "underwrite_sha256",
+                     "ratio_at_entry_undefined", "no_underwrite_reason", "void_reason_code")
 
 
 class VoidMark(BaseModel, frozen=True):
@@ -226,6 +288,8 @@ class LedgerEntry(BaseModel, frozen=True):
     # :func:`origin_of` / :func:`sleeve_of` so a legacy row and a tagged row answer identically.
     origin: str | None = None
     sleeve: str | None = None
+    # The run or entry the route names (`OriginRef`); written only when set.
+    origin_ref: OriginRef | None = None
 
     verdict: Verdict
     twin_call: str  # how the twin was ruled out / why it is the twin (the central judgement)
@@ -240,6 +304,18 @@ class LedgerEntry(BaseModel, frozen=True):
     # Pointer to the underwrite record that justified this row (e.g. "scenarios/IT.json") — the
     # ledger says WHAT was decided; the record says how the numbers were built. None: no record.
     underwrite_ref: str | None = None
+    # --- THE UNDERWRITE SEAL (2026-11-13, #1004 item 5) -----------------------------------------
+    # Until now no code wrote the two fields above: the three committed rows that carry them were
+    # hand-authored, and IT's 6.69 was struck on a record since superseded. `log-verdict` now reads
+    # the LIVE `scenarios/<T>.json` and seals the path (``underwrite_ref``), the commit it was read
+    # at and the sha256 of its bytes (which must equal that commit's blob), and ``ratio_at_entry``
+    # recomputed by the record's own recipe at the frozen entry price. A record whose ratio is
+    # undefined at that price seals None with the recipe's reason. A decision with no live record
+    # states why in ``no_underwrite_reason``, or it is refused. All written only when set.
+    underwrite_commit: str | None = None
+    underwrite_sha256: str | None = None
+    ratio_at_entry_undefined: str | None = None
+    no_underwrite_reason: str | None = None
 
     thesis: str  # short written thesis (BUY) or rationale (AVOID)
     # (item 18a) The facts the thesis rests on, TYPED and source-stamped — ALONGSIDE the prose,
@@ -316,15 +392,30 @@ class LedgerEntry(BaseModel, frozen=True):
     voids_entry_id: str | None = None        # VOID only — the voided decision's entry_id
     ruled_on: date | None = None             # VOID only — the date of the ruling
     void_mark: VoidMark | None = None        # VOID only — the result to date at the void
+    # VOID only — the pre-registered ground (`VOID_REASONS`). Required of every void the writer
+    # appends; None on X-GOOGL, which predates the list and is never rewritten.
+    void_reason_code: str | None = None
 
     @model_serializer(mode="wrap")
     def _omit_unset_tally(self, handler: Any) -> dict[str, Any]:
-        """``machine_tally`` is written only when set, so a row logged before the vote rule
-        re-serializes byte for byte (the store re-validates every row it appends)."""
+        """``machine_tally`` and the fields of 2026-11-13 (`_OMIT_WHILE_UNSET`) are written only
+        when set, so a row logged before them re-serializes byte for byte (the store re-validates
+        every row it appends)."""
         data: dict[str, Any] = handler(self)
-        if data.get("machine_tally") is None:
-            data.pop("machine_tally", None)
+        for key in _OMIT_WHILE_UNSET:
+            if data.get(key) is None:
+                data.pop(key, None)
         return data
+
+    @field_validator("void_reason_code")
+    @classmethod
+    def _void_reason_known(cls, v: str | None) -> str | None:
+        """A code outside the pre-registered list is refused: the list IS the rule."""
+        if v is not None and v not in VOID_REASONS:
+            raise ValueError(
+                f"void reason {v!r} is not pre-registered — a void is allowed only for "
+                f"{sorted(VOID_REASONS)}. A change of mind is a CLOSE, and it stays scored.")
+        return v
 
     @field_validator("origin")
     @classmethod
@@ -409,7 +500,9 @@ class LedgerEntry(BaseModel, frozen=True):
         void that no reader treats as one."""
         stray = sorted(k for k, v in (("voids_entry_id", self.voids_entry_id),
                                        ("ruled_on", self.ruled_on),
-                                       ("void_mark", self.void_mark)) if v is not None)
+                                       ("void_mark", self.void_mark),
+                                       ("void_reason_code", self.void_reason_code))
+                       if v is not None)
         if stray:
             raise ValueError(f"{stray} set on a {kind} row {self.entry_id!r} — they belong to a "
                              f"void row (event={EVENT_VOID!r})")
@@ -557,6 +650,54 @@ def voids_by_decision(entries: Iterable[LedgerEntry], *, as_of: date | None = No
     if as_of is None:
         return out
     return {k: v for k, v in out.items() if v.ruled_on is not None and v.ruled_on <= as_of}
+
+
+def reaffirmations(entries: Iterable[LedgerEntry], *, as_of: date | None = None
+                   ) -> dict[str, LedgerEntry]:
+    """ONE OBSERVATION PER NAME (2026-11-13, #1004 item 5): each decision that REAFFIRMS an earlier
+    one, by its ``entry_id``, mapped to the decision it reaffirms.
+
+    A decision reaffirms when an earlier decision ON THE SAME NAME, in the same book and on the
+    same route, made the SAME call, and its own entry falls inside that earlier decision's scoring
+    window — from the earlier entry up to (not including) its horizon date. It is not a new
+    observation: the earlier call is already being scored over those sessions, and counting the
+    second would put one name's return into the spread twice. A close does not end the window (a
+    close stays scored to its horizon, the 2026-08-12 ruling); a void does, from its ruling date
+    (``as_of`` as `voids_by_decision` reads it). Entries are read at their corrections.
+
+    The one live case: SMPL. `V-SMPL-screen2-20260706` (BUY, entry 2026-07-20, closed 07-24, scored
+    to 2027-01-16) and `V-SMPL-screen2-20260729` (BUY, entry 2026-08-04) — the second reaffirms the
+    first. A later decision with the OPPOSITE call inside the window is not covered here: it is a
+    reversal, not a reaffirmation, and no ledger row is in that state."""
+    rows = list(entries)
+    voided = voids_by_decision(rows, as_of=as_of)
+    fixes = corrections_by_decision(rows)
+    decisions = sorted(
+        (corrected(e, fixes.get(e.entry_id)) for e in rows
+         if e.event is None and e.entry_id not in voided),
+        key=lambda e: (e.entry_price_as_of, e.decided_at, e.entry_id))
+    counted: list[LedgerEntry] = []
+    out: dict[str, LedgerEntry] = {}
+    for d in decisions:
+        key = (d.internal_id, origin_of(d), sleeve_of(d), d.verdict)
+        earlier = next((o for o in counted
+                        if (o.internal_id, origin_of(o), sleeve_of(o), o.verdict) == key
+                        and o.entry_price_as_of <= d.entry_price_as_of
+                        < o.entry_price_as_of + timedelta(days=o.horizon_days)), None)
+        if earlier is None:
+            counted.append(d)
+        else:
+            out[d.entry_id] = earlier
+    return out
+
+
+def reaffirmation_note(entry: LedgerEntry, earlier: LedgerEntry) -> str:
+    """The line every surface prints for a reaffirmation, once."""
+    end = earlier.entry_price_as_of + timedelta(days=earlier.horizon_days)
+    return (f"{entry.entry_id} ({entry.ticker} {entry.verdict.value}, entry "
+            f"{entry.entry_price_as_of}): a REAFFIRMATION of {earlier.entry_id}, whose window "
+            f"{earlier.entry_price_as_of} → {end} it entered — not a new observation, so it is in "
+            f"no count, spread or curve; one observation per name.")
 
 
 def void_note(entry: LedgerEntry, void: LedgerEntry) -> str:

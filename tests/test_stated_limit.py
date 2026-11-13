@@ -26,7 +26,7 @@ from typing import Any
 
 import pytest
 
-from vinci.ledger.workflow import LedgerError, log_verdict
+from vinci.ledger.workflow import LedgerError, follow_origin, log_verdict
 from vinci.scenarios import StatedLimit
 from vinci.schemas.envelope import DataField, SourceTier
 from vinci.schemas.ledger import Confidence, Verdict
@@ -81,7 +81,8 @@ def _log(price: float, limit: StatedLimit | None, verdict: Verdict = Verdict.BUY
         twin_call="t", thesis="th", kill_criteria="k", horizon_days=549,
         confidence=Confidence.LOW, decided_at=datetime(2026, 8, 7),
         reference_date=date(2026, 8, 7), staleness_days=7, benchmark="IWM",
-        stated_limit=limit)
+        stated_limit=limit, origin_ref=follow_origin("EPAM", date(2026, 8, 1)),
+        underwrite=None, no_underwrite_reason="fixture: no underwrite record")
 
 
 LIMIT = StatedLimit(price=89.50, stated_at=date(2026, 8, 7),
@@ -239,13 +240,20 @@ def test_an_unreadable_record_refuses_rather_than_silently_disabling_the_gate(
     only protection for real state is its own cleanup path is a hazard — it must not be able to
     touch committed artifacts at all.
     """
-    import vinci.cli as cli
+    import subprocess
+
+    from vinci.ledger.underwrite import read_underwrite
+    # SINCE 2026-11-13 (#1004 item 5) the limit is read WITH the record, by the underwrite reader
+    # `log-verdict` seals from; `_committed_limit` is gone and this pins its property there. The
+    # corrupt record is COMMITTED, so the refusal is the parse's, not the commit check's.
     (tmp_path / "scenarios").mkdir()
     (tmp_path / "scenarios" / "EPAM.json").write_text("{ not valid json")
-    monkeypatch.chdir(tmp_path)
+    for cmd in (["init", "-q"], ["add", "scenarios/EPAM.json"],
+                ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "corrupt"]):
+        subprocess.run(["git", "-C", str(tmp_path), *cmd], check=True)
 
-    with pytest.raises(Exception):             # noqa: B017 — any loud failure, never a silent None
-        cli._committed_limit("EPAM")
+    with pytest.raises(LedgerError, match="cannot be read as an underwrite record"):
+        read_underwrite("EPAM", root=tmp_path)
 
-    # …and a name with no record at all stays unenforced, which is true rather than reassuring
-    assert cli._committed_limit("NOSUCHTICKER") is None
+    # …and a name with no record at all is None, which is true rather than reassuring
+    assert read_underwrite("NOSUCHTICKER", root=tmp_path) is None

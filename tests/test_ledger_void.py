@@ -88,7 +88,8 @@ def _store(tmp_path: Path) -> Store:
 
 def _void(store: Store, **kw: Any) -> LedgerEntry:
     args: dict[str, Any] = {"entry_id": GOOGL, "reason": REASON, "ruled_on": RULING,
-                            "mark": _mark(), "voided_at": datetime(2026, 11, 11, 12)}
+                            "mark": _mark(), "voided_at": datetime(2026, 11, 11, 12),
+                            "reason_code": "data_error_at_entry"}
     return void_decision(store, **{**args, **kw})
 
 
@@ -316,8 +317,11 @@ def test_a_report_cut_before_the_ruling_scores_the_decision_as_it_was(tmp_path: 
     assert out["voided"][BEFORE_RULING] == out["plain"][BEFORE_RULING]
     scores, report = out["voided"][RULING]
     assert GOOGL not in {s.entry_id for s in scores}
-    assert sum("VOIDED by X-GOOGL" in n for n in report.row_notes) == 1
-    assert not any("VOIDED" in n for n in out["plain"][RULING][1].row_notes)
+    # BESIDE THE CURVE since 2026-11-13 (#1004 item 5): its own line, no longer a pending note
+    assert sum("VOIDED by X-GOOGL" in n for n in report.void_notes) == 1
+    assert not any("VOIDED" in n for n in report.row_notes)
+    plain = out["plain"][RULING][1]
+    assert not any("VOIDED" in n for n in (*plain.row_notes, *plain.void_notes))
 
 
 def test_a_ruling_dated_after_its_append_is_refused(tmp_path: Path) -> None:
@@ -354,7 +358,9 @@ def test_scoring_leaves_a_voided_decision_out_and_the_primary_spread_does_not_mo
     assert [s for s in before if s.entry_id != GOOGL] == after
     assert ra.buy_avoid_spread == rb.buy_avoid_spread
     assert (ra.n_resolved_buy, ra.n_resolved_avoid) == (rb.n_resolved_buy, rb.n_resolved_avoid)
-    assert sum("VOIDED by X-GOOGL" in n for n in ra.row_notes) == 1
+    assert sum("VOIDED by X-GOOGL" in n for n in ra.void_notes) == 1
+    assert "**Voided**" in ra.to_markdown() and "-16.35%" in ra.to_markdown(), (
+        "the voided row's result is not printed beside the curve")
 
 
 # --- the command ---------------------------------------------------------------------------------
@@ -377,7 +383,8 @@ def _run(tree: Config, monkeypatch: pytest.MonkeyPatch, *, dry: bool) -> int:
     monkeypatch.setattr(cli, "get_config", lambda: tree)
     monkeypatch.setattr(cli, "_void_mark", lambda _d: _mark())
     return cli._cmd_void_decision(argparse.Namespace(entry_id=GOOGL, reason=REASON,
-                                                     ruled_on=RULING.isoformat(), dry_run=dry))
+                                                     ruled_on=RULING.isoformat(), dry_run=dry,
+                                                     void_reason="data_error_at_entry"))
 
 
 def _lines(tree: Config) -> list[str]:
@@ -537,7 +544,15 @@ def test_a_log_on_an_open_decision_is_refused_before_the_confirmations_draws(
                         lambda *_a: (types.SimpleNamespace(ticker="GOOGL"), "quality"))
     monkeypatch.setattr(cli, "require_edge_basis", lambda *_a, **_k: "")
     monkeypatch.setattr(cli, "_committed_ev_gap", lambda *_a: None)
-    args = argparse.Namespace(candidate_id="GOOGL", ref=None, dry_run=True)
+    from vinci.ledger.workflow import follow_origin
+    monkeypatch.setattr(cli, "_follow_origin",
+                        lambda *_a: follow_origin("GOOGL", date(2026, 8, 17)))
+    # the underwrite read needs a git checkout (`read_underwrite`), which a sandboxed run of this
+    # file is not; the refusal pinned here comes before it, and the draw after it
+    import vinci.ledger.underwrite as uw
+    monkeypatch.setattr(uw, "read_underwrite", lambda *_a, **_k: None)
+    args = argparse.Namespace(candidate_id="GOOGL", ref=None, dry_run=True,
+                              no_underwrite_reason="fixture: no underwrite record")
     assert cli._cmd_log_verdict(args) == 1
     assert drawn == []
     with Store(cfg.db_path) as store:
