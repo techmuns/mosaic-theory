@@ -253,10 +253,14 @@ def score_ledger(
     # same-call decision's window on the same name is a REAFFIRMATION, out of every count, spread
     # and curve, and named once (`reaffirmations`). SMPL's second BUY is the one live case.
     reaffirmed = reaffirmations(ledger, as_of=as_of)
-    # A CALL IS STILL HELD while a reaffirmation of it is open (pr-feedback round 1): SMPL's 07-06
-    # BUY was closed on 07-24, and the book holds SMPL through its open 08-05 reaffirmation
+    # A CALL IS STILL HELD while a reaffirmation of it is open (pr-feedback round 1; operator,
+    # 2026-11-13: "Keep it, document it"): SMPL's 07-06 BUY was closed on 07-24, and the book
+    # holds SMPL through its open 08-05 reaffirmation. Bounded by `as_of` (round 2): a
+    # reaffirmation entered after the scoring date did not exist yet, so it holds nothing then.
+    entered = {e.entry_id: corrected(e, corrections.get(e.entry_id)).entry_price_as_of
+               for e in ledger if e.event is None}
     held_through = {earlier.entry_id for eid, earlier in reaffirmed.items()
-                    if eid not in closed_ids}
+                    if eid not in closed_ids and entered[eid] <= as_of}
     # THE VOIDED ROWS' RESULTS, BESIDE THE CURVE (#1004 item 5) — their own line, no longer under
     # the pending count, so a removed loser is read where the curve is read
     void_notes: list[str] = []

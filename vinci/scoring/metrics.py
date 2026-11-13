@@ -316,7 +316,9 @@ class ScoreReport:
             # primary BUY−AVOID line"); its count against the reading floor prints beside it, so a
             # reading below the floor is seen as one without the number being hidden
             f"- **BUY−AVOID spread (primary): {pct(self.buy_avoid_spread)}** "
-            f"({self.n_resolved_buy + self.n_resolved_avoid} of {self.reading_floor} resolved)",
+            + (f"({n_primary} of {self.reading_floor} resolved)"
+               if (n_primary := self.n_resolved_buy + self.n_resolved_avoid) < self.reading_floor
+               else f"({n_primary} resolved)"),
             "  _Screen-origin overshoot ONLY — the discriminator measured on the $300M–$10B "
             "hunting ground it claims to measure. Other books are below, never pooled in._",
             f"  _Return basis: {self.return_basis}._",

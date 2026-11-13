@@ -482,3 +482,59 @@ def test_a_call_held_through_its_open_reaffirmation_is_still_held(tmp_path: Path
         "V-IT-screen2-20260706": True, "V-SMPL-screen2-20260706": False,
         "V-VRRM-screen2-20260617": False}
     assert rep.n_closed == 1 and rep.n_open_buy == 1
+
+
+# ─── pr-feedback round 2 (the coordinator's independent review) ───────────────────────────────
+
+def test_a_reaffirmation_not_yet_entered_holds_nothing(tmp_path: Path) -> None:
+    """NO LOOK-AHEAD. On 2026-07-30 SMPL's 07-06 BUY was closed (exit 07-22) and its 08-04
+    re-entry did not exist yet: the call is not held on a cut that predates the re-entry."""
+    scores, _rep = _score_committed(tmp_path, date(2026, 7, 30))
+    assert {s.entry_id: s.closed for s in scores}["V-SMPL-screen2-20260706"] is True
+
+
+def test_a_closed_reaffirmation_holds_nothing(tmp_path: Path) -> None:
+    """A call is held through a reaffirmation only while that reaffirmation is itself OPEN: with
+    both closed, the book holds neither."""
+    from tests.test_scoring_closed_split import _close_of, _decision
+    from tests.test_scoring_closed_split import _score as _score_split
+    first = _decision("MEH", "SEC-MEH", Verdict.BUY)
+    again = first.model_copy(update={"entry_id": "V-MEH-2", "candidate_id": "MEH-c2"})
+    bad = _decision("BAD", "SEC-BAD", Verdict.AVOID_TERMINAL)
+    c1 = _close_of(first, on=date(2026, 2, 1))
+    c2 = _close_of(again, on=date(2026, 2, 2)).model_copy(update={"entry_id": "C-MEH-2"})
+    held, _r = _score_split(tmp_path / "held", [first, again, bad, c1])
+    gone, _r = _score_split(tmp_path / "gone", [first, again, bad, c1, c2])
+    assert {s.entry_id: s.closed for s in held}["V-MEH"] is False
+    assert {s.entry_id: s.closed for s in gone}["V-MEH"] is True
+
+
+def test_a_buy_above_the_records_own_limit_is_refused(tmp_path: Path) -> None:
+    """THE LIMIT TRAVELS WITH THE RECORD, as `log-verdict` wires it (`stated_limit=None`, the link
+    carrying the limit). EPAM's committed record states $89.50; a BUY at its 97.43 is refused."""
+    link = read_underwrite("EPAM", root=_repo_with(tmp_path, "EPAM"))
+    assert link is not None and link.limit is not None and link.limit.price == 89.50
+    with Store(tmp_path / "t.db") as store:
+        cid = _seed(store, _ident("EPAM", "SEC-EPAM", "0001352010"), close=97.43)
+        with pytest.raises(LedgerError, match="ABOVE the stated limit"):
+            log_verdict(store, candidate_id=cid, verdict=Verdict.BUY,
+                        decided_at=datetime(2026, 6, 15, 10, 0), underwrite=link,
+                        stated_limit=None, **KW)
+        assert list(store.iter_ledger()) == []
+
+
+def test_a_record_its_own_recipe_refuses_is_refused_at_read(tmp_path: Path) -> None:
+    """Refused when READ, before any decision or paid draw — not first at the entry price."""
+    repo = _repo_with(tmp_path, "SMPL")
+    p = repo / "scenarios" / "SMPL.json"
+    doc = json.loads(p.read_text())
+    doc["recipe_formula"] = ["a formula the engine does not run"]
+    p.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
+    _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "misstated")
+    with pytest.raises(LedgerError, match="its recipe cannot be re-run"):
+        read_underwrite("SMPL", root=repo)
+
+
+def test_past_the_floor_the_primary_prints_its_count_alone() -> None:
+    md = aggregate(_scores(20, 15), cost_bps=25.0, n_pending=0).to_markdown()
+    assert "**BUY−AVOID spread (primary): +15.0%** (35 resolved)" in md and "of 20" not in md
