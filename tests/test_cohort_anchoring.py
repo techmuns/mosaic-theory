@@ -24,11 +24,33 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "cohort_anchoring_falsifier.py"
 
 
-def _run() -> str:
-    r = subprocess.run([sys.executable, str(SCRIPT)], capture_output=True, text=True, cwd=ROOT,
-                       env={"PYTHONPATH": str(ROOT), "PATH": "/usr/bin:/bin"})
+def _run(script: pathlib.Path = SCRIPT) -> str:
+    root = script.parents[1]
+    r = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, cwd=root,
+                       env={"PYTHONPATH": str(root), "PATH": "/usr/bin:/bin"})
     assert r.returncode == 0, r.stderr[-400:]
     return r.stdout
+
+
+def _checkout_beside(tmp: pathlib.Path, names: list[str]) -> pathlib.Path:
+    """The falsifier in a checkout of the test's own: every entry of the real one linked in, the
+    script copied (it finds its inputs from its own resolved path, which a link would lead back
+    to), and a `data/dossiers/` whose committed names are linked and ``names`` added as empty
+    dossiers. Returns the copied script."""
+    tree = tmp / "checkout"
+    made = {ROOT: tree, ROOT / "data": tree / "data", ROOT / "scripts": tree / "scripts",
+            ROOT / "data" / "dossiers": tree / "data" / "dossiers"}
+    for real, own in made.items():
+        own.mkdir(parents=True)
+        for entry in real.iterdir():
+            if entry not in made and entry != SCRIPT:
+                (own / entry.name).symlink_to(entry)
+    shutil.copy2(SCRIPT, tree / "scripts" / SCRIPT.name)
+    for name in names:
+        d = tree / "data" / "dossiers" / name
+        d.mkdir()
+        (d / "dossier.json").write_text("{}")
+    return tree / "scripts" / SCRIPT.name
 
 
 def test_it_refuses_to_pass_on_a_band_with_almost_nothing_worked() -> None:
@@ -47,10 +69,15 @@ def test_it_refuses_to_pass_on_a_band_with_almost_nothing_worked() -> None:
                 f"a band was judged on {worked} worked name(s): {line.strip()}")
 
 
-def test_the_falsifier_can_actually_fire() -> None:
+def test_the_falsifier_can_actually_fire(tmp_path: pathlib.Path) -> None:
     """A FALSIFIER THAT CANNOT FAIL IS DECORATION. Simulated here rather than asserted: a human who
     works ONLY `own` names in one band must produce a FIRED verdict. If a future change to the
-    thresholds or the bands makes that impossible, this reddens."""
+    thresholds or the bands makes that impossible, this reddens.
+
+    The twelve worked names are added in a checkout of the test's own (`_checkout_beside`):
+    planting them in `data/dossiers/` itself showed twelve uncommitted dossiers, while they were
+    there, to every test reading the committed tree on another pytest-xdist worker (gate.yml,
+    2026-11-13)."""
     queue = ROOT / "data" / "snapshots" / "ranked_queue.jsonl"
     if not queue.is_file():
         pytest.skip("no committed queue")
@@ -59,22 +86,12 @@ def test_the_falsifier_can_actually_fire() -> None:
             and (r.get("cohort") or {}).get("call") == "own"]
     if len(band) < 12:
         pytest.skip("the live queue no longer has enough `own` names in the 101-200 band")
-    made = []
-    try:
-        for r in band[:12]:
-            d = ROOT / "data" / "dossiers" / r["ticker"]
-            if (d / "dossier.json").exists():
-                continue
-            d.mkdir(parents=True, exist_ok=True)
-            (d / "dossier.json").write_text("{}")
-            made.append(d)
-        out = _run()
-        assert "FIRED" in out and "FALSIFIED in" in out, (
-            "a human working only `own` names did NOT trip the falsifier — it cannot detect the "
-            "behaviour it exists to detect:\n" + out)
-    finally:
-        for d in made:
-            shutil.rmtree(d, ignore_errors=True)
+    names = [r["ticker"] for r in band[:12]
+             if not (ROOT / "data" / "dossiers" / r["ticker"] / "dossier.json").exists()]
+    out = _run(_checkout_beside(tmp_path, names))
+    assert "FIRED" in out and "FALSIFIED in" in out, (
+        "a human working only `own` names did NOT trip the falsifier — it cannot detect the "
+        "behaviour it exists to detect:\n" + out)
 
 
 def test_the_threshold_and_its_control_are_stated_where_they_are_set() -> None:
