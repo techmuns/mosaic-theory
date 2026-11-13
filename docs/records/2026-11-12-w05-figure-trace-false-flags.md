@@ -205,3 +205,23 @@ What would read the convention, and why it was not built here:
 
 **NOT DONE.** The next build of each page prints the new caveats. No committed page is rebuilt
 here.
+## Amendments
+
+- **2026-11-13 — the rejected round-1 design cleared FOUR true flags, not three** (W05 follow-up,
+  the independent re-review of `40ae6410`). HOW VERIFIED says that letting a claim trace to any
+  structured value inside a print, without holding it inside the print, "cleared three TRUE flags
+  (CNXC "2.6", MCK "2.25", VITL "1.5")". That count was measured on an earlier variant, which
+  compared signed values. The shipped code compares magnitudes. With the inside-the-print
+  condition removed from it, the 27 committed pages lose four true flags, 474 → 470 at main
+  `fd1c97f3` (measured 2026-11-13): those three and IT's "-1.5" in `decisive.against` ("Q1-26
+  -1.5% YoY"). The condition now has frozen pins (SMPL's "32%" against a "33%" print, VITL's
+  "16.8x" against "16.7x"; `test_a_claim_must_lie_inside_the_print_on_frozen_pages`), where only
+  the corpus invariant on IT's living page caught its removal before.
+- **2026-11-13 — (a)'s bare "sales" and "profit" are no longer a mention of no row** (the same
+  follow-up). WHAT shipped "A word naming no one row ("profit", "sales" alone …) is a mention of
+  none". Written bare, with no modifier before it and no noun after it, "sales" now names
+  Revenue, and "profit" the profit rows (EBITDA, EBIT, net income), any of which it may mean. A
+  qualified word or a compound ("sales leverage", "profit per share") still names none. TJX's
+  "while sales were $7,178M" (EBIT's figure) had passed on the carried period. `_shares_row`, the
+  comparison guard, is pinned as well, and now compares the rows themselves, each set less its
+  rate variants. The rest is in `docs/records/2026-11-13-w05-followup-bare-sales-and-profit.md`.
