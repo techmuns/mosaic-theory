@@ -135,14 +135,44 @@ superseded-by:
     files were.
   - Outside the checkout: the SEC pace file is already one per worker (`tests/conftest.py` puts it
     in the worker's own basetemp). `~/.cache/vinci` was not touched by any run.
-- **The gate on CI.** Pending: this PR's own gate runs, added before merge.
+- **The gate on CI, before and after.** The runners are noisy: on one day the same suite took
+  752 to 1,469 s on one process (coordinator B saw slow runs cluster when about six gate runs
+  overlapped). So one run proves nothing, and the comparison controls for the runner.
+  - **The control is the mypy step**, single-process CPU work on the same machine just before
+    pytest. Across the 59 one-process runs it tracks the pytest step at correlation 0.95, and
+    pytest takes 49.9 to 80.9 times mypy's time (median 61.8).
+
+  | | runs | pytest step | job | pytest ÷ mypy |
+  |---|---|---|---|---|
+  | before, one process | 59 | median 1,114 s (752–1,469) | median 1,163 s | median 61.8 |
+  | after, `-n auto` | 4 | median 584 s (508–658) | median 637 s (558–717) | 26.2–27.4 |
+
+  - **Matched on runner speed:**
+    - where mypy took 18–20 s, 8 runs before had a pytest median of 1,116 s, and 2 after took
+      508 and 511 s: **2.19×**;
+    - where mypy took 23–26 s, 10 runs before had a median of 1,338 s, and 2 after took 656 and
+      658 s: **2.04×**.
+
+    About 2.1×, then, against the 2.5× four workers gave locally. The hosted runner reports four
+    CPUs to `-n auto`, but it does not divide CPU-bound work four ways.
+  - **The counts.** Main's own gate at the base (run 43431894009, `81f97600`, one process) gave
+    11,383 passed, 671 skipped, 11 xfailed. All four runs here gave **11,385 passed, 671
+    skipped, 11 xfailed**: the two more are the two tests this change adds
+    (`test_only_the_worker_count_is_left_to_each_gate` and this record's hygiene case). The 298
+    skip lines are identical in the base run and the PR's.
+  - **The after-runs:** 43442158133 at `25399521`, then 43446418963 at `c5b11680`, run three
+    times one after another (attempts 1 to 3), each starting once the last had finished.
 - **The lock.** `tests/test_dependency_lock.py` passes, the uv regeneration pin included
   (`VINCI_UV` set, `--offline`): the lock regenerates byte for byte in place.
 
 **BOUNDARY.**
-- **CI before:** the ten successful `gate` runs listed by `gh run list --workflow gate.yml`
-  between 11:22 and 12:28 UTC on 2026-11-13 (jobs 131855811772 to 131885693149), every PR and push
-  head among them, at the step times GitHub reports for each job.
+- **CI before:** WHY's 758–1,416 s is the ten successful `gate` runs between 11:22 and 12:28 UTC
+  on 2026-11-13 (jobs 131855811772 to 131885693149). The before-and-after table uses every
+  successful `gate` run `gh run list --workflow gate.yml --status success --limit 60` returned
+  apart from this PR's: 59 runs, created 04:14 to 13:48 UTC on 2026-11-13, PR and push heads alike.
+  All times are the step times GitHub reports for each job.
+- **CI after:** the four runs named above, 14:23 to 15:21 UTC on 2026-11-13, the only gate runs
+  of this PR to complete (the one at `625f8ebb` was cancelled by the next push).
 - **Local timings:** one Mac, 8 cores (4 performance, 4 efficiency), shared with other sessions,
   wall time from `/usr/bin/time`. They place the time; CI measures the gain.
 - **Counts:** `pytest -m "not network"`, every file under `tests/`; 39 network tests deselected
