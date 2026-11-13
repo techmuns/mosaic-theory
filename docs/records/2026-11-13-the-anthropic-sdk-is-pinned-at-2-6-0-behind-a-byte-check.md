@@ -110,11 +110,12 @@ repo, because the request bodies carry licensed transcript text.
   | `validate_keys.py`'s ping | 1 | 1 |
   | **all** | **452** | **452** |
 
-  - The capture ran three times, each giving 452 of 452 identical:
+  - The capture ran four times, each giving 452 of 452 identical:
     - at `f2e31cea`'s code, with the scripts in draft;
     - at this branch's head (main `98707f29`, which changed `vinci/evals`, plus this change);
     - at that head with the scripts as committed after the pre-PR review. That review moved the
-      theme requests to production's `LLM_MAX_TOKENS` (21,333) from 16,384.
+      theme requests to production's `LLM_MAX_TOKENS` (21,333) from 16,384;
+    - after merging main `b73bd4ef`, which moved `vinci/dossier/synthesis.py`.
   - **Can it find a difference?** One byte appended to one body: the comparer reported exactly
     that request. Two captures through one SDK compare identical (the pin).
 - **Headers** are reported apart from the bodies. Every one of the 452 requests differs in the
