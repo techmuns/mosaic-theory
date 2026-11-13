@@ -52,9 +52,9 @@ corpus (28 → 27 pages; last held at `6fbbb4a2`), its 2026-07-22 WATCH record i
 corpus (27 → 26 pages; last held at `047f4c6b`), its 2026-07-22 WATCH record is archived intact as `scenarios/archive/MVST-2026-07-22.json`, still
 sealed, so it leaves the monitor's freshness set and the rebuild; it was never a followed name; nothing keeps it out of the screen (`docs/records/2026-11-13-mvst-retired.md`).
 
-**THE R1 SCREENING ANCHOR IS OFF THE PAGE HEADLINE (#1004 item 3c; operator, 2026-11-13: "Approve as shown (Recommended)"):** the block moves, unchanged, off the
-Brief to the end of Analysis → Valuation, after "Own-history range position", on all 26 pages, web and markdown; a page with no scenario record keeps a one-line
-pointer; anchor ÷ price stays unprinted ("Keep it off (Recommended)"). Render only, $0 (`docs/records/2026-11-13-the-r1-anchor-is-off-the-page-headline.md`).
+**THE R1 SCREENING ANCHOR IS OFF THE PAGE HEADLINE (#1004 item 3c; operator, 2026-11-13: "Approve as shown (Recommended)"):** the block moves, unchanged, off the Brief
+to the end of Analysis → Valuation, after "Own-history range position", on all 26 pages; a no-record page keeps a pointer naming no multiple ("Drop that clause"); the 4 operator
+recipe decisions stay on the Brief ("Keep your 4 decisions on Brief"); anchor ÷ price stays unprinted ("Keep it off"). Render only, $0 (`docs/records/2026-11-13-the-r1-anchor-is-off-the-page-headline.md`).
 
 - **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*

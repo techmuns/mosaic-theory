@@ -6,13 +6,21 @@ supersedes:
 superseded-by:
 ---
 
-# The R1 screening anchor is off the page headline (#1004 item 3c): the block moves, unchanged, off the Brief to the end of Analysis → Valuation, after "Own-history range position", on all 26 pages, web and markdown; a page with no scenario record keeps a one-line pointer; anchor ÷ price stays unprinted
+# The R1 screening anchor is off the page headline (#1004 item 3c): the block moves, unchanged, off the Brief to the end of Analysis → Valuation, after "Own-history range position", on all 26 pages, web and markdown; a page with no scenario record keeps a one-line pointer that names no multiple; the operator's 4 recipe decisions stay on the Brief; anchor ÷ price stays unprinted
 
 **THE RULINGS.** The operator, 2026-11-13, on the Phase-1 preview, relayed by the coordinator (A),
 verbatim:
 - placement: *"Approve as shown (Recommended)"*;
 - the ratio: *"Keep it off (Recommended)"*. Anchor ÷ price stays unprinted, and
   `test_screening_context_never_differences_the_anchor_against_spot` stays as it is.
+
+And on review round 0's two deferred findings (below), the same day, relayed by A, verbatim:
+- the pointer: *"Drop that clause (Recommended)"*. The Brief's pointer no longer says "beside the
+  own-history multiple it re-rates to"; it says only that the screening anchor is in Analysis →
+  Valuation, which is true on every page;
+- the page-1 notices: *"Keep your 4 decisions on Brief (Recommended)"*. The 4 operator recipe
+  decisions (AMZN, CNXC, GOOGL, UBER) stay on the Brief. The 7 mid-cycle strain notices and the 9
+  data-quality notes move with the anchor to Valuation, because they qualify it.
 
 The design is B's #1004 note (issuecomment-6847522000, "### 3. The recipes", item (c)). A's reply
 (issuecomment-6847633111) explains why 3c is render-only. The R1 anchor is computed after the
@@ -30,12 +38,20 @@ The block's content is unchanged, byte for byte:
 - every row;
 - `data_quality` and its detail;
 - the mid-cycle strain line;
-- the operator's decision and the machine's read;
+- the machine's read;
 - the INAPPLICABLE `reason`.
+
+The one exception is the operator's decision on a name's recipe (round 1). It used to sit inside
+the block, and now has its own renderer in both twins: `operatorDecisionInner()` and
+`_operator_decision_lines()`. It renders only in the Brief's Scenario analysis card, after the
+pointer (AMZN, CNXC, UBER) or the scenario record (GOOGL). Under Valuation, the block still labels
+the machine's own reason "The machine's read" on those pages.
 
 It stays main body, never inside a `<details>`. On a page with an anchor and no scenario record,
 the Brief card stays. It states the absence and adds one pointer sentence, hand-copied in both
-twins (`SCREEN_POINTER` / `_SCREEN_POINTER`, pinned equal). Main 12764514's two renderers had the
+twins (`SCREEN_POINTER` / `_SCREEN_POINTER`, pinned equal). Since round 1 it reads "This name
+has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis,
+under Valuation." Main 12764514's two renderers had the
 block nowhere else. Searched: the dossier index, the ranker and queue views, and `build.py` (none
 render it).
 
@@ -78,9 +94,11 @@ to Analysis.
   - 26 of 26 pages moved: 26 `dossier.md` files and their 26 `frontend/dossiers/*.md` mirrors.
   - Every `dossier.json` and JSON mirror is byte-identical (`git diff --quiet`).
   - The five previewed pages are byte-identical to the preview's renders.
-  - The full gate (`bin/commit`) is green: ruff, `mypy --strict vinci` (219 files), and pytest:
-    11,156 passed, 652 skipped, 11 xfailed, 0 failed (counted from the progress lines). The
-    frontend mirror is in sync.
+  - The full gate (`bin/commit`) is green: ruff, `mypy --strict vinci` (219 files), pytest
+    `-m "not network"` exiting 0 with no failure, and the frontend mirror in sync. (A per-outcome
+    count, first given here as 11,156 passed, was read off pytest's progress lines. Tests that
+    print break those lines, so it undercounted. At round 1's head, 11,876 tests are collected and
+    39 deselected; the gate prints no summary line under its doubled `-q`.)
   - Before the pass, the code-only tree (commit `4b420bcc`) failed exactly 3 tests, all
     stale-artifact pins: `test_parity_pins::test_screening_context_reaches_every_committed_dossier_e2e`,
     `test_dossier::test_analysis_tier_reads_in_decision_order_e2e`, and the `test_refresh_path`
@@ -125,7 +143,8 @@ Six findings:
    UBER, V and VITL.** The clause is "beside the own-history multiple it re-rates to". Those
    pages carry no screen value, and FUBO, ORKA, TECX and UBER carry no own-history multiple
    either. DEFERRED to the operator: the wording was approved as shown, VITL's pointer card
-   included. The proposed fix is to drop the clause, which keeps a sentence true on every page.
+   included. The proposed fix was to drop the clause. **FIXED in round 1** (operator: "Drop that
+   clause (Recommended)").
 2. **The screening table loses the `.uw-card` table styling under Valuation.** DISMISSED: the
    approved preview was drawn with this exact `dossier.js` (byte-identical to commit
    `4b420bcc`'s), so the shipped layout is the approved one.
@@ -133,6 +152,55 @@ Six findings:
    PARR, VITL, WLK), 9 `data_quality` notices, and 4 operator decisions (AMZN, CNXC, GOOGL, UBER).
    The Brief-scope PDF no longer carries any of them. DEFERRED to the operator: the ruling moved
    the block unchanged. Whether those notices should also stay on the Brief is a placement call.
+   **FIXED in round 1** (operator: "Keep your 4 decisions on Brief (Recommended)"): the 4
+   decisions stay on the Brief, and the strain and data-quality notices move with the anchor.
 4. **No record and no STATE.md change.** FIXED: this file and the section-2 claim.
 5. **A comment named the wrong file as the pointer's pin.** FIXED.
 6. **The `_valuation_section_lines` docstring omitted the block.** FIXED.
+
+## Review round 1 (the independent review of `315eed14`, and the operator's two rulings)
+
+**The review said MERGE.** It re-derived the markdown base against head on 26 of 26 pages, the
+web text in both states, and the artifact commit (52 `.md` files, 0 JSON). It found 9 of 9 tests
+red on main's renderers, caught 6 of 6 of its own mutants, confirmed the print path in headless
+Chrome, and found no anchor ÷ price printed. Its two LOWs, both closed here:
+1. The two deferred findings had no STATE §5.0 row. No row is owed: the operator has ruled on
+   both (above).
+2. A stale comment (`dossier.js`, `appendixTier`) still said the screening panel sits on the
+   Brief. FIXED.
+
+**Round 1's commits:**
+- `14a9c387`, code: the pointer without its clause; `operatorDecisionInner()` /
+  `_operator_decision_lines()` on the Brief; the comment fix; 6 new tests. Two tests in
+  `test_operator_decision.py` now read the decision in page order (decision first) instead of
+  from inside the block, with the same assertions.
+- `53ac12f4`, artifacts: 20 of 26 pages re-rendered, 40 `.md` files, 0 JSON.
+  - 19 no-record pages swap only the pointer line.
+  - AMZN, CNXC and UBER also move their decision lines, unchanged, to the Brief.
+  - GOOGL is a pure move of its decision.
+  - BRBR, EPAM, IT, NCNO, SMPL and WERN are unchanged.
+  - The re-render equals, byte for byte, the patch prepared before the review.
+
+**The new tests** (`tests/test_anchor_off_headline.py`, 6, from committed JSON):
+- the dropped clause is on no page's Brief, and neither pointer copy names a multiple;
+- each decision renders once, on the Brief, outside the screening block, in the tier the
+  Brief-scope PDF prints. Its head and the operator's words sit outside `<details>`; its source
+  sits inside one;
+- the strain and data-quality notices render under Valuation, not on the Brief.
+
+All 6 are red on main's renderers. On `315eed14`'s, the 4 pointer and decision tests are red and
+the 2 notice tests pass: round 0 had already moved the notices, and the ruling keeps them there.
+
+**Rendered check** (headless Chrome, the scratch frontends of `315eed14` and of round 1):
+- AMZN's Brief-scope PDF carries 0 decisions before and 1 after, and 0 strain notices either way.
+- The full PDF carries the decision once and the strain notice once.
+- The browser console showed no app errors.
+
+**Cross-setup validation, round 1** (`python -m vinci.impact run`; base `b207c8a9` = the merge base with `origin/main`; head `53ac12f4`; $0; vendor pulls refused; the section is in #1054's body):
+- **Synthesis requests:** 0 of 25 pages' requests differ, and the frozen panel is 0 of 6. The row-53 panel check is not owed.
+- **Pages:** 0 of 25 move a field. PARR is built at neither ref (its CIQ quarterly export is mislabelled).
+- **Rendered surface:** 26 of 26 committed pages re-render against base, all of them already committed. Head's code owes 0 re-renders.
+- **Fail-first:** 11 of the changed test files' nodes fail on base `vinci/` and pass on head; 0 fail at head.
+  - Three of the 11 are the adjusted decision tests, which fail at base only because the helper they now import does not exist there.
+  - The tool swaps only `vinci/`, so the web tests run head's `dossier.js` at both refs. With main's `dossier.js` swapped in by hand, every new web test fails.
+- `vinci.impact verify` says VALID.
