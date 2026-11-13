@@ -138,6 +138,11 @@ PR (CLAUDE.md: coin-time translation).
   build, and runs the downstream readers the change reaches — then stamps the result with the PR's
   own diff (`git patch-id`), so a re-sync that only merges main keeps it*. `vinci/impact/`,
   RUNBOOKS §o, `docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
+- **Screen-basket baseline** (2026-11-13, #1004 item 2). Plain words: *does the screen select
+  anything? Each committed screen run's admitted names, held equal-weight from the next close,
+  against the names the same run rejected (the control) and against their cap-band benchmarks, at
+  30/90/180 days, each run its own cohort, from cached prices at $0*. `vinci/scoring/screen_baseline.py`;
+  pre-registered in `docs/records/2026-11-13-screen-basket-baseline-preregistered.md`.
 - **Gap test / `disclosure_gaps` / our gap · does not apply · company's normal practice · change
   or deviation · type not determined** (2026-11-07, fix 4a, operator ruling "Yes, use the test").
   Plain words: *before the synthesis may treat a missing fact as a risk, the code sorts WHY it is
