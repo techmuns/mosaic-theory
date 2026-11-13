@@ -2,15 +2,11 @@
 
 Orders, never decides; a transparent weighted composite of the Tier-1 structural axes (drawdown
 depth+shape, idiosyncrasy, multiple-vs-own-history, de-rating cause, tradeability), sharpened by a
-minor Tier-2 volume overlay and coloured by a Tier-3 LLM cause-annotation. Tuned by face-validity,
-NEVER by forward returns. Replaces the bare A/B/C band with a legible per-name structural profile.
+minor Tier-2 volume overlay. Tuned by face-validity, NEVER by forward returns. Replaces the bare
+A/B/C band with a legible per-name structural profile. (The Tier-3 LLM cause-annotation channel,
+`vinci/rank/cause.py`, was retired unfed on 2026-11-13.)
 """
 
-from vinci.rank.cause import (
-    classify_cause,
-    load_cause_annotations,
-    parse_cause_reply,
-)
 from vinci.rank.profile import (
     AxisCoverage,
     AxisScore,
@@ -50,16 +46,13 @@ __all__ = [
     "RankedCandidate",
     "StructuralDisqualifier",
     "character_axis",
-    "classify_cause",
     "classify_structural_disqualifier",
     "depth_axis",
     "idiosyncrasy_axis",
     "liquidity_tier",
     "load_candidates_from_snapshot",
-    "load_cause_annotations",
     "load_market_caps_from_snapshot",
     "multiple_axis",
-    "parse_cause_reply",
     "rank_candidate",
     "rank_candidates",
     "render_profile_block",
