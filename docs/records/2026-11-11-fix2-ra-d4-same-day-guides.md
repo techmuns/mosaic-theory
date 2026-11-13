@@ -59,3 +59,8 @@ predates A-D8's block discovery, so no code rebuilds it: the transform leaves it
   read names the first in time and carries no `same_day`, so the other unread period is not
   labelled. RA-D3's census (36 sheets, 2026-11-10) found 0 such columns, so no page moves today.
 - **Extraction version** `2026-11-11.same-day-guides`; the drift pins are re-pinned.
+## Amendments
+
+- **2026-11-13 — what this PR's next build changes, from the impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. The sweep ran this PR with `vinci.impact` (base `6d9907d7`, head `85306351`, measured 2026-11-12, $0): base code against head code on the same inputs, which shows what each page's NEXT build would change. Its record, with all 49 rows, is `docs/records/2026-11-13-fix2-impact-sweep.md`.
+  - **#983: BURL's next build moves, and BURL is a panel page.** It gains 9 same-day guide rows (Effective Tax Rate for FY 2027, and Same Store Sales Growth, Revenue, EBIT and EPS Normalized for FQ4 2027 and FY 2027, all dated 2026-08-27) and its guidance bridge names them; its synthesis request moves in `facts` (82 lines added). The body says "BURL's committed guidance predates A-D8's block discovery, so no code rebuilds it: the transform leaves it as committed". That holds for the transform the panel check drew on (#994), not for a build: a re-assembly of BURL carries this change, and no panel check has measured it.
+  - CNXC's, ROST's and SMPL's requests move too; they are the three panel pages #994's transform moved. 16 of 27 pages move in all (73 fields), and 12 off-panel requests move with them.

@@ -104,3 +104,8 @@ superseded-by:
   `filing_sections.py:496-505`). The digest's "none stated (checked, absent)" state is unreachable:
   `_going_concern` returns a statement or None. Recorded, not changed: that line is the synthesis
   digest's.
+## Amendments
+
+- **2026-11-13 — what this PR's next build changes, from the impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. The sweep ran this PR with `vinci.impact` (base `bfedbac9`, head `7adfdae4`, measured 2026-11-11, $0): base code against head code on the same inputs, which shows what each page's NEXT build would change. Its record, with all 49 rows, is `docs/records/2026-11-13-fix2-impact-sweep.md`.
+  - **#966: MVST's going-concern quote moves**: `primary_source.filing.going_concern.plans` (empty → the 10-Q's "plans to alleviate the substantial doubt cannot be deemed probable" sentence) and `.verbatim` (2 fields). **MVST's synthesis request moves** in its `primary_source` section. MVST is off the panel. The body says "the cited 10-Q's going-concern field moves on none. MVST still states doubt." The doubt itself does not move; the quote does.
+  - MVST's retirement from coverage (#1044, open on 2026-11-13) deletes its page; once that merges, there is no next build for this move to reach.
