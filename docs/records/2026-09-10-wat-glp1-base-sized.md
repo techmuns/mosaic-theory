@@ -180,16 +180,17 @@ CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecut
 words, and this repo is public. This record was written before the rule, and 3 of its quotations
 shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
 keeping the words that carry the figure or the claim this record relies on; nothing else in it
-moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
-length and the words kept, the call it shares them with and where it starts in that call, and the
-sha256 of its words: never by the words. A word is counted as the guard counts it
+moved, and nothing was reworded. Each run is named below by the line it starts on and the line(s)
+its cut spans sit on, in the record as merged; by its length and the words kept; by the call it
+shares them with and where it starts in that call; and by the sha256 of its words: never by the
+words. A word is counted as the guard counts it
 (`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
 slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
 single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
 history is rewritten.
 
-| line | words → kept | call | starts at word | run sha256 |
-|---|---|---|---|---|
-| 27 | 40 → 11 | `Waters Corporation, Q2 2026 Earnings Call, Aug 04, 2026` | 7,643 | `f148002053124b59` |
-| 90 | 19 → 12 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 763 | `e71753e1fe3ee1be` |
-| 100 | 18 → 11 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 1,422 | `5b51dfa39e322139` |
+| run starts on line | cut on line(s) | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|---|
+| 27 | 27–29 | 40 → 11 | `Waters Corporation, Q2 2026 Earnings Call, Aug 04, 2026` | 7,643 | `f148002053124b59` |
+| 90 | 90–91 | 19 → 12 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 763 | `e71753e1fe3ee1be` |
+| 100 | 100 | 18 → 11 | `West Pharmaceutical Services, Inc., Q1 2026 Earnings Call, Apr 23, 2026` | 1,422 | `5b51dfa39e322139` |

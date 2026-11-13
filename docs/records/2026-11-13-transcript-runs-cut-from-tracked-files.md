@@ -7,9 +7,9 @@ supersedes:
 superseded-by:
 ---
 
-# The 25 transcript runs in tracked files are cut: the audit's 21 and the 4 the new guard found, from six records, four tests and a comment. Every tracked file is now read against the calls on this disk: a local guard fails on any 13-word window a file shares with a call unless it finds that window, computed, in a cached SEC document or a Key Developments export
+# The 27 transcript runs in tracked files are cut: the audit's 21, the 4 the new guard found, and the 2 its review found split across string literals; from six records, four tests and a comment. Every tracked file is now read against the calls on this disk: a local guard fails on any 13-word window a file shares with a call unless it finds that window, computed, in a cached SEC document or a Key Developments export
 
-**WHAT.** Two operator rulings.
+**WHAT.** Three operator rulings.
 - 2026-11-12, verbatim "Cut all 21 + guard (Recommended)". The option read: "One $0 PR. Each run
   is cut to 12 words or fewer. Each record gets a dated redaction amendment naming count, position
   and hash only, as #1036 did. A local-only test scans every tracked file against the transcripts
@@ -19,6 +19,10 @@ superseded-by:
   shorter docstring. One PR, landing before #953's paid run registers." The operator reconsidered
   whether transcript text needs cutting at all, given the CIQ licence, and kept the 12-word cap
   (#1043).
+- 2026-11-13, verbatim "Cut 27 + widen guard (Recommended)", after the independent review of #1046
+  at `4af35acb`. The option read: "Cut both with made-up sentences of the same shape, and add the
+  joined-string view to the guard. It also fixes two minors: the redaction entry's line number,
+  and the count check over every entry. Then I merge once it is re-reviewed."
 
 CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and this repo is public.
 
@@ -33,11 +37,20 @@ CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and
    - WLK Q1 2026 call, 1 run: `tests/test_driver_facts.py:219`.
    Neither a cached filing nor a KD export holds any of them. WLK's own Q1 release and 10-Q are in
    the cache and were read.
+2b. **The 2 the review found** (round 1). Both are in `tests/test_following_context.py`, each split
+   over two string literals that the code joins at run time, so every view read each as two
+   runs under 13:
+   - :54–55: VRRM's Q1 2026 call, 20 words at word 1,011, run sha256 `1b84fa4e096f56bd`;
+   - :86–87: SMPL's Q3 2026 call, 13 words at word 684, sha `4a2bbaf5b9a0a026`.
+   The guard now reads a `.py` file's literals joined. Over all 753 tracked `.py` files at
+   `4af35acb`, that view finds exactly these 2 runs that no other view found, and nothing excuses
+   either.
 3. **How each is cut.**
    - **Six records**, cut in place: 21 runs, 38 spans cut to "…". Each record gets a dated
-     `## Amendments` REDACTION entry naming the ruling. Each run is named by its line as merged,
-     its length and the words kept, its call, its word offset in that call and the sha256 of its
-     words; no entry names a word.
+     `## Amendments` REDACTION entry naming the ruling. Each run is named by the line it starts
+     on and the line(s) its cut spans sit on, as merged (review round 1: a run's first line is not
+     always the line cut); by its length and the words kept; by its call and its word offset in
+     that call; and by the sha256 of its words. No entry names a word.
      - `2026-09-03-glp1-shortlist-step-8.md`: lines 128 and 131, both inside its second amendments
        section.
      - `2026-09-03-glp1-step10-references-and-bdx-gate.md`: 76, 78 and 99.
@@ -60,7 +73,11 @@ CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and
      - `tests/test_driver_facts.py:219` (WLK): a figure, "decreased by", a second figure;
      - `tests/test_following_context.py` (BRBR): a quoted figure, then in the same paragraph a
        sentence opening "This is" that reverses its reading, then a blank line and the next
-       section. The module docstring describes the passage by its shape.
+       section. The module docstring describes the passage by its shape;
+     - `tests/test_following_context.py:54–55` (VRRM): a figure, then an amplifying sentence
+       opening "This is a";
+     - `tests/test_following_context.py:86–87` (SMPL): a figure ending its paragraph, a blank
+       line, then another speaker's figure.
    - **One comment**, `vinci/dossier/schemas.py` (`OperatingDriver.following_context`'s `#:` lines),
      is shortened to say the same thing without the call's words. The extraction pin hashes tokens
      without comments, so it does not move.
@@ -70,9 +87,9 @@ CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and
    `<n>` matches. The record must otherwise be its merged self: front matter included, existing
    amendments may be cut but not reworded, and nothing may be added before the entry.
 5. **The guard** (`tests/test_tracked_files_hold_no_transcript_run.py`, local only).
-   - It reads every tracked text file (raw, JSON-unescaped, HTML-unescaped) against every call in
-     the store, its `ciq-archive/` and `VINCI_TRANSCRIPT_ROOTS`, read by production's
-     `ciq.read_text`.
+   - It reads every tracked text file (raw, JSON-unescaped, HTML-unescaped and, for a `.py` file,
+     its string literals joined as the code joins them: `py_strings`) against every call in the
+     store, its `ciq-archive/` and `VINCI_TRANSCRIPT_ROOTS`, read by production's `ciq.read_text`.
    - It fails on any 13-word window a file shares with a call, unless it COMPUTES that the window
      is also in a cached SEC document or a Key Developments export. KD excuses are counted apart:
      KD's publication is unruled (STATE row 60, item 3b).
@@ -83,7 +100,7 @@ CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and
 
 **WHY.** #1036's build guard reads a synthesis at build, and `test_public_transcript_text.py` reads
 the fields code knows are transcript text. Nothing read a record, a test, a fixture or a comment
-against the calls themselves, so 25 runs of 14 to 40 of a call's words sat in public files.
+against the calls themselves, so 27 runs of 13 to 40 of a call's words sat in public files.
 - Records written before the rule held 21 of them.
 - Tests held the rest. One of their docstrings called its sentence "the REAL Q3 transcript
   sentence".
@@ -114,8 +131,8 @@ from the Drive mirror.
     narrow edge set, KD not ceding to SEC, and no scan.
   - CORPUS BEFORE SYNTHETIC: on #1036's parent `68bd4b33` it finds the LLY, VITL and WERN runs
     #1036 cut, and at head nothing in those files.
-- **The guard on this Mac, at `17f4e3be`** (main `98707f29` plus this branch; its own boundary
-  print):
+- **The guard on this Mac, at `95b3aff9`** (main `98707f29` plus this branch after review round 1,
+  with the joined view; its own boundary print, the same at `17f4e3be` before it):
   - calls: 91 read, 19 duplicate files by sha256, 0 unreadable;
   - tracked files (and untracked, not ignored): 3,095 scanned; skipped: 680 binary (a NUL byte),
     1 not UTF-8;
@@ -149,15 +166,32 @@ from the Drive mirror.
   - the six-record count.
   Each new pin fails on the code before its fix. The redaction rule's "any span" is recorded below
   as accepted risk.
+- **Review round 1** (the coordinator's independent review of `4af35acb`): FIX FIRST, ruled "Cut 27
+  + widen guard (Recommended)".
+  - The two joined-literal runs are cut, and the joined view `py_strings` is added. Its pins:
+    - a CI-runnable pin on the view itself: names, prefixes, quotes, fields, format specs and
+      comments blanked; lines kept; an untokenizable file yields no view;
+    - the review's two planted shapes (two assignments, and an implicit concatenation with an
+      f-string), each caught as Python and missed as any other file, with a 12-word negative;
+    - a corpus pin: on main `98707f29` the view finds both runs in the file, and at head none.
+    Each new sentence's mutation (a continuation kept only when it opens contrastively; the
+    context reaching past a blank line) turns both the old test and the new one red. With the
+    view switched off, all three new pins fail.
+  - Minor: each REDACTION table names the line(s) its cut spans sit on beside the line the run
+    starts on.
+  - Minor: `_redaction_violations` counts EVERY appended entry, not only the last. A new pin
+    fails on the old function.
 - **Gate.**
   - `ruff check vinci tests` and `mypy --strict vinci` (218 files): clean.
   - The full `nice pytest -m "not network"`, CI-like (a worktree with no CIQ folder and no cache, as
-    CI has): exit 0 at `17f4e3be`, no failure and no error, 1,198 s. The guard and its three call-reading pins skip, saying so.
+    CI has): exit 0 at `17f4e3be`, no failure and no error, 1,198 s; and exit 0 at `95b3aff9`
+    after round 1, no failure and no error, 1,514 s. The guard and its call-reading pins skip,
+    saying so; the pins that need no call run.
   - Linked mode: `tests/test_driver_facts.py` fails the same two tests on main `407dc809` and on
     this branch. Both read the operator's local PARR quarterly Financials, which CIQ mislabelled.
-- **Cross-setup validation** (`python -m vinci.impact run`, base `98707f29`, head `17f4e3be`, $0,
-  vendor pulls refused):
-  - 0 of 438 tests fail on base code and pass on head; 0 fail at head;
+- **Cross-setup validation** (`python -m vinci.impact run`, base `98707f29`, head `95b3aff9` after
+  round 1, $0, vendor pulls refused; the same at `17f4e3be` before it, over 438 tests):
+  - 0 of 442 tests fail on base code and pass on head; 0 fail at head;
   - pages built 26 of 27 (PARR refused at both refs by that mislabelled export), 0 move;
   - 0 of 26 synthesis requests differ, and 0 of 6 frozen panel pages, so the row-53 panel check is
     not owed;
@@ -174,7 +208,7 @@ from the Drive mirror.
 - **Calls:** the store `data/manual/ciq` and its `ciq-archive/`, on this Mac, 2026-11-13. That is
   110 call files, 91 distinct; one WERN Q1 2026 call left the Drive folder during the session.
 - **Tracked files:** `git ls-files --cached --others --exclude-standard` at this branch's head:
-  3,776 files, of which 3,095 are text (at `17f4e3be`).
+  3,776 files, of which 3,095 are text (at `17f4e3be` and at `95b3aff9`).
 - **SEC cache:** `data/cache/sec`, 18,757 files, all local.
 - **KD:** 63 exports in the store and archive. One GOOGL `.xls` is read by its cells.
 - **The audit:** main `407dc809`, 3,080 text files, and the 361 call files it read from across the

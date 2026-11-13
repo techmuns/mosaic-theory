@@ -129,19 +129,20 @@ CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecut
 words, and this repo is public. This record was written before the rule, and 6 of its quotations
 shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
 keeping the words that carry the figure or the claim this record relies on; nothing else in it
-moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
-length and the words kept, the call it shares them with and where it starts in that call, and the
-sha256 of its words: never by the words. A word is counted as the guard counts it
+moved, and nothing was reworded. Each run is named below by the line it starts on and the line(s)
+its cut spans sit on, in the record as merged; by its length and the words kept; by the call it
+shares them with and where it starts in that call; and by the sha256 of its words: never by the
+words. A word is counted as the guard counts it
 (`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
 slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
 single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
 history is rewritten.
 
-| line | words → kept | call | starts at word | run sha256 |
-|---|---|---|---|---|
-| 21 | 26 → 12 | `McKesson Corporation, Q4 2026 Earnings Call, May 07, 2026` | 3,105 | `a1a111ccaf919173` |
-| 29 | 27 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,156 | `948f5eb4141526d2` |
-| 38 | 40 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,041 | `9c6c385ee53f1c28` |
-| 72 | 16 → 11 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 1,977 | `66ae5b4b482af204` |
-| 72 | 16 → 12 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 1,999 | `8998e5cb6d798e99` |
-| 74 | 17 → 10 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 4,924 | `cc04553ccaf7ccfe` |
+| run starts on line | cut on line(s) | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|---|
+| 21 | 23 | 26 → 12 | `McKesson Corporation, Q4 2026 Earnings Call, May 07, 2026` | 3,105 | `a1a111ccaf919173` |
+| 29 | 29–31 | 27 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,156 | `948f5eb4141526d2` |
+| 38 | 38–40 | 40 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,041 | `9c6c385ee53f1c28` |
+| 72 | 72 | 16 → 11 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 1,977 | `66ae5b4b482af204` |
+| 72 | 72–73 | 16 → 12 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 1,999 | `8998e5cb6d798e99` |
+| 74 | 74 | 17 → 10 | `West Pharmaceutical Services, Inc., Q2 2026 Earnings Call, Jul 23, 2026` | 4,924 | `cc04553ccaf7ccfe` |

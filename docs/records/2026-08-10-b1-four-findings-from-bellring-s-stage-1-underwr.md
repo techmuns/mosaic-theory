@@ -129,15 +129,16 @@ CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecut
 words, and this repo is public. This record was written before the rule, and 2 of its quotations
 shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
 keeping the words that carry the figure or the claim this record relies on; nothing else in it
-moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
-length and the words kept, the call it shares them with and where it starts in that call, and the
-sha256 of its words: never by the words. A word is counted as the guard counts it
+moved, and nothing was reworded. Each run is named below by the line it starts on and the line(s)
+its cut spans sit on, in the record as merged; by its length and the words kept; by the call it
+shares them with and where it starts in that call; and by the sha256 of its words: never by the
+words. A word is counted as the guard counts it
 (`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
 slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
 single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
 history is rewritten.
 
-| line | words → kept | call | starts at word | run sha256 |
-|---|---|---|---|---|
-| 35 | 15 → 11 | `BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026` | 1,656 | `f06f7c45aae1273f` |
-| 40 | 31 → 11 | `BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026` | 1,671 | `18aef2400926d066` |
+| run starts on line | cut on line(s) | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|---|
+| 35 | 35–36 | 15 → 11 | `BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026` | 1,656 | `f06f7c45aae1273f` |
+| 40 | 40–41 | 31 → 11 | `BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026` | 1,671 | `18aef2400926d066` |

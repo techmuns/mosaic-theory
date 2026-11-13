@@ -51,8 +51,10 @@ def test_a_benign_continuation_is_carried_too_because_nothing_classifies() -> No
     """THE DESIGN PIN. VRRM's shape: the next sentence opens with the SAME connective as BRBR's
     reversal and merely amplifies. It must still be carried — a rule that kept only the reversing
     ones is the criterion we refuse to invent, and it would drop BRBR's."""
-    q = "Traffic fatalities decreased significantly in 2025 by more than 6%."
-    tail = "This is a great indication that safety measures are working."
+    # VRRM's shape, constructed (operator ruling 2026-11-13, "Cut 27 + widen guard (Recommended)"):
+    # joined at run time, its call's two sentences were 20 consecutive words of it
+    q = "Road deaths fell sharply across 2025 by more than 6%."
+    tail = "This is a strong sign that the new street rules are paying off."
     assert _following_paragraph(q, f"{q} {tail}") == tail
 
 
@@ -83,8 +85,10 @@ def test_a_header_with_no_blank_line_before_it_is_still_clamped() -> None:
 def test_a_quote_that_ends_its_paragraph_yields_nothing_rather_than_the_next_one() -> None:
     """`None` and a wrong paragraph are very different. Reaching forward past a blank line would
     attach an unrelated speaker's words as though they qualified this fact."""
-    q = "Net sales declined 6.3% to $357 million."
-    assert _following_paragraph(q, f"{q}\n\nGross margin declined 390 basis points.") is None
+    # SMPL's shape, constructed (the same ruling): joined across the blank line, its call's words
+    # ran to 13
+    q = "Net revenue fell 5.1% to $412 million."
+    assert _following_paragraph(q, f"{q}\n\nOperating margin fell 280 basis points.") is None
 
 
 def test_an_unlocatable_quote_fails_soft_and_costs_no_row() -> None:

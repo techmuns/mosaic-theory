@@ -142,18 +142,19 @@ CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecut
 words, and this repo is public. This record was written before the rule, and 5 of its quotations
 shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
 keeping the words that carry the figure or the claim this record relies on; nothing else in it
-moved, and nothing was reworded. Each run is named below by its line in the record as merged, its
-length and the words kept, the call it shares them with and where it starts in that call, and the
-sha256 of its words: never by the words. A word is counted as the guard counts it
+moved, and nothing was reworded. Each run is named below by the line it starts on and the line(s)
+its cut spans sit on, in the record as merged; by its length and the words kept; by the call it
+shares them with and where it starts in that call; and by the sha256 of its words: never by the
+words. A word is counted as the guard counts it
 (`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
 slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
 single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
 history is rewritten.
 
-| line | words → kept | call | starts at word | run sha256 |
-|---|---|---|---|---|
-| 25 | 15 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,631 | `e9b0ecb23886c232` |
-| 26 | 38 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,647 | `0e82ee0706e3af3b` |
-| 32 | 16 → 12 | `McKesson Corporation, Q4 2026 Earnings Call, May 07, 2026` | 3,115 | `61edb1e3095e8145` |
-| 34 | 19 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,164 | `9331f16fed7f42a0` |
-| 56 | 23 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,709 | `c8918b624a4ada6d` |
+| run starts on line | cut on line(s) | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|---|
+| 25 | 25 | 15 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,631 | `e9b0ecb23886c232` |
+| 26 | 26–28 | 38 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,647 | `0e82ee0706e3af3b` |
+| 32 | 32 | 16 → 12 | `McKesson Corporation, Q4 2026 Earnings Call, May 07, 2026` | 3,115 | `61edb1e3095e8145` |
+| 34 | 35 | 19 → 12 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 3,164 | `9331f16fed7f42a0` |
+| 56 | 56–57 | 23 → 11 | `McKesson Corporation, Q1 2027 Earnings Call, Aug 05, 2026` | 6,709 | `c8918b624a4ada6d` |

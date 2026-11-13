@@ -51,12 +51,14 @@ from __future__ import annotations
 import hashlib
 import html
 import inspect
+import io
 import json
 import os
 import re
 import string
 import subprocess
 import sys
+import tokenize
 from array import array
 from base64 import b64decode, b64encode
 from collections import defaultdict
@@ -108,9 +110,10 @@ def _unescape(m: re.Match[str]) -> str:
     return m.group(5)
 
 
-def views(text: str) -> list[str]:
+def views(text: str, py: bool = False) -> list[str]:
     """``text`` raw, JSON/JS-unescaped where it holds a backslash, and HTML-unescaped with tags
-    dropped where it holds markup. Newlines are kept in each, so a line is the file's own."""
+    dropped where it holds markup. A Python file is also read as the string literals the code JOINS
+    at run time (`py_strings`). Newlines are kept in each, so a line is the file's own."""
     out, base = [text], text
     if "\\" in text:
         unescaped = _ESC.sub(_unescape, text)
@@ -121,7 +124,68 @@ def views(text: str) -> list[str]:
         stripped = _TAG.sub(" ", html.unescape(base).replace("\r", ""))
         if stripped != base:
             out.append(stripped)
+    if py and (joined := py_strings(text)) is not None:
+        out.append(joined)
     return out
+
+
+#: a string token's prefix (`f`, `r`, `b`, `rb`, …) and its opening quote
+_STR_OPEN = re.compile(r"^([A-Za-z]*)(\"\"\"|\'\'\'|\"|\')")
+#: a replacement field of an f-string read as ONE token (Python < 3.12): `{q}`, `{x!r:>10}`
+_FIELD = re.compile(r"(?<!\{)\{[^{}]*\}(?!\})")
+#: Python 3.12+ reads an f-string as start, text parts, fields and end (`FSTRING_*`; 3.14 adds
+#: t-strings, `TSTRING_*`); older Pythons read it as one STRING token
+_FSTRING_PARTS, _FSTRING_START, _FSTRING_END = (
+    {getattr(tokenize, f"{k}_{part}") for k in ("FSTRING", "TSTRING")
+     if hasattr(tokenize, f"{k}_{part}")} for part in ("MIDDLE", "START", "END"))
+
+
+def py_strings(text: str) -> str | None:
+    """A Python file's string literals as the code JOINS them, or None when it does not tokenize.
+
+    REVIEW ROUND 1 of #1046 (operator ruling 2026-11-13, "Cut 27 + widen guard (Recommended)").
+    Two runs of 20 and 13 call words sat in `tests/test_following_context.py` as two literals each
+    (`q = "…"` then `tail = "…"`, and `q` inside an f-string after a blank line), and every other
+    view read them as two short runs: an identifier between the strings, or an `f"` glued onto the
+    first word, broke each. Here everything that is not a literal's own text is blanked (names,
+    operators, comments, the `f`/`r`/`b` prefixes, the quotes, an f-string's `{…}` fields) and its
+    newlines kept, so the joined words read as one run on the line each starts on. Escapes are read
+    as the JSON view reads them."""
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(text).readline))
+    except (tokenize.TokenError, SyntaxError):
+        return None
+    if any(t.type == tokenize.ERRORTOKEN and t.string.strip() for t in toks):
+        return None  # an older tokenizer's way of saying the same
+    starts = [0]
+    for line in text.splitlines(keepends=True):
+        starts.append(starts[-1] + len(line))
+    chars = [c if c == "\n" else " " for c in text]
+
+    def keep(a: int, b: int, piece: str) -> None:
+        chars[a:b] = list(piece)
+
+    depth: list[int] = []  # per open f-string: how deep in `{…}` fields its tokens sit
+    for t in toks:
+        a = starts[t.start[0] - 1] + t.start[1]
+        b = starts[t.end[0] - 1] + t.end[1]
+        if t.type in _FSTRING_START:
+            depth.append(0)
+        elif t.type in _FSTRING_END and depth:
+            depth.pop()
+        elif depth and t.type == tokenize.OP and t.string in "{}":
+            depth[-1] += 1 if t.string == "{" else -1
+        elif t.type in _FSTRING_PARTS:
+            if depth and depth[-1] == 0:  # its text; inside a field it is a format spec
+                keep(a, b, text[a:b])
+        elif t.type == tokenize.STRING and (m := _STR_OPEN.match(t.string)):
+            body_a, body_b = a + m.end(), b - len(m.group(2))
+            body = text[body_a:body_b]
+            if "f" in m.group(1).lower():
+                body = _FIELD.sub(lambda f: " " * len(f.group()), body)
+            keep(body_a, body_b, body)
+    joined = "".join(chars)
+    return _ESC.sub(_unescape, joined) if "\\" in joined else joined
 
 
 def words(text: str) -> tuple[list[str], list[int]]:
@@ -169,9 +233,10 @@ def _source_sha() -> str:
     reader's source and the Python version (a window key is a tuple hash). A change to any of them
     reads afresh; an edit elsewhere in this file does not."""
     h = hashlib.sha256()
-    for f in (_unescape, views, words, key, window_keys, scan_text):
+    for f in (_unescape, views, py_strings, words, key, window_keys, scan_text):
         h.update(inspect.getsource(f).encode())
-    h.update(f"{N}|{_EDGE}|{_SPLIT.pattern}|{_APOS}|{_ESC.pattern}|{_TAG.pattern}".encode())
+    h.update(f"{N}|{_EDGE}|{_SPLIT.pattern}|{_APOS}|{_ESC.pattern}|{_TAG.pattern}|"
+             f"{_STR_OPEN.pattern}|{_FIELD.pattern}".encode())
     h.update((ROOT / "vinci/dossier/ciq.py").read_bytes())
     h.update(f"{sys.version_info[0]}.{sys.version_info[1]}".encode())
     return h.hexdigest()[:20]
@@ -268,10 +333,11 @@ class Hit:
     window: int
 
 
-def scan_text(text: str, calls: Calls) -> list[Hit]:
-    """Every window of 13 words that ``text`` (each of its views) shares with a call."""
+def scan_text(text: str, calls: Calls, py: bool = False) -> list[Hit]:
+    """Every window of 13 words that ``text`` (each of its views; ``py``: a Python file's joined
+    literals too) shares with a call."""
     out: list[Hit] = []
-    for vi, v in enumerate(views(text)):
+    for vi, v in enumerate(views(text, py)):
         toks, lines = words(v)
         ks = [key(t) for t in toks]
         known = [k in calls.vocab for k in ks]
@@ -380,11 +446,12 @@ def scan_tracked(calls: Calls, cache: Any, files: list[str] | None = None) -> Sc
         if ck in known:
             raw = known[ck]
         else:
-            raw = [[h.view, h.line, h.pos, h.window] for h in scan_text(text, calls)]
+            raw = [[h.view, h.line, h.pos, h.window]
+                   for h in scan_text(text, calls, f.endswith(".py"))]
         fresh[ck] = raw
         if raw:
             got = group_runs(f, [Hit(*h) for h in raw])
-            vs = views(text)
+            vs = views(text, f.endswith(".py"))
             for r in got:
                 r.words = words(vs[r.view])[0][r.pos:r.pos + r.length]
             runs += got
@@ -789,3 +856,75 @@ def test_a_file_written_and_not_yet_staged_is_read(tmp_path: Path,
     subprocess.run(["git", "-C", str(tmp_path), "add", "staged.md", ".gitignore"], check=True)
     monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
     assert tracked_files() == [".gitignore", "staged.md", "unstaged.md"]
+
+
+# --- review round 1: the literals a Python file joins at run time ---------------------------------
+
+def test_a_python_files_literals_are_read_as_the_code_joins_them() -> None:
+    """REVIEW ROUND 1 (operator ruling 2026-11-13, "Cut 27 + widen guard (Recommended)"), no call
+    needed. Everything between literals is blanked (a name, an `=`, an f-string's `{field}`, the
+    `f`/`r`/`b` prefixes, the quotes), each literal's words stay on their own line, and a file that
+    does not tokenize yields no view rather than a guess."""
+    src = ('q = "alpha beta"\n'
+           'tail = f"{q} gamma" + rb"delta"\n'
+           'x = ("epsilon "\n     f"zeta {q!r:>4}")  # a comment is not a literal\n'
+           'doc = """eta\ntheta"""\n')
+    joined = py_strings(src)
+    assert joined is not None
+    assert words(joined) == (["alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta"],
+                             [1, 1, 2, 2, 3, 4, 5, 6])
+    assert py_strings('x = "unterminated\n') is None
+
+
+def _joined_bites(local_calls: Calls, at: int) -> dict[str, bool]:
+    """The review's two planted shapes and a 12-word negative, each as a .py file and as any other
+    file, on 13 words of a real call read at run time (held in this frame only)."""
+    ws = _call_words(call_roots())[at:at + _RULE_PLUS_ONE]
+
+    def caught(text: str, py: bool) -> bool:
+        return bool(scan_text(text, local_calls, py))
+
+    split = f'q = "{" ".join(ws[:7])}"\ntail = "{" ".join(ws[7:])}"\n'
+    fcont = f'x = ("{" ".join(ws[:6])} "\n     f"{{y}} {" ".join(ws[6:])}")\n'
+    twelve = f'q = "{" ".join(ws[:6])}"\ntail = "{" ".join(ws[6:12])}"\n'
+    return {
+        "13 words as two assignments, read as Python": caught(split, True),
+        "13 words, an implicit concatenation with an f-string, read as Python": caught(fcont, True),
+        "13 words as two assignments, read as any other file": caught(split, False),
+        "12 words as two assignments, read as Python": caught(twelve, True),
+    }
+
+
+def test_thirteen_words_split_across_python_literals_are_caught(local_calls: Calls) -> None:
+    """THE BLIND SPOT REVIEW ROUND 1 FOUND. Thirteen call words split over two string literals —
+    two assignments the code joins, or an implicit concatenation whose second part is an f-string —
+    were read by every other view as two runs of under 13. The joined view reads each as one, and
+    12 words split the same way are still not a run."""
+    assert _joined_bites(local_calls, 500) == {
+        "13 words as two assignments, read as Python": True,
+        "13 words, an implicit concatenation with an f-string, read as Python": True,
+        "13 words as two assignments, read as any other file": False,
+        "12 words as two assignments, read as Python": False,
+    }
+
+
+#: main before this PR, still holding the two joined runs round 1 cut (VRRM's and SMPL's)
+_MAIN_BEFORE_ROUND_1 = "98707f297a16982f1281c76ec2477ce1c5ab76dc"
+
+
+def test_the_guard_finds_the_two_joined_runs_round_1_cut(local_calls: Calls) -> None:
+    """CORPUS BEFORE SYNTHETIC. On main before this PR, `tests/test_following_context.py` held a
+    20-word run of VRRM's Q1 2026 call and a 13-word run of SMPL's Q3 2026 call, each split over
+    two literals. The joined view must find both there, and nothing in that file at head."""
+    names = {c.name for c in local_calls.calls}
+    want = ("Verra Mobility Corporation, Q1 2026", "The Simply Good Foods Company, Q3 2026")
+    if not all(any(n.startswith(w) for n in names) for w in want):
+        pytest.skip("VRRM's Q1 2026 and SMPL's Q3 2026 calls are not both on this disk")
+    f = "tests/test_following_context.py"
+    then = subprocess.run(["git", "show", f"{_MAIN_BEFORE_ROUND_1}:{f}"], cwd=ROOT,
+                          capture_output=True, text=True, check=True).stdout
+    found = {origin(local_calls, {r.windows[0]})[r.windows[0]][0]
+             for r in group_runs(f, scan_text(then, local_calls, True))}
+    assert all(any(n.startswith(w) for n in found) for w in want), (
+        f"found runs against {sorted(found)} only")
+    assert scan_tracked(local_calls, None, files=[f]).runs == []
