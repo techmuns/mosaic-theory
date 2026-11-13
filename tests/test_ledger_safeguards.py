@@ -471,3 +471,14 @@ def test_a_ratio_with_no_reason_is_sealed_with_one(tmp_path: Path,
         update={"ratio": None, "ratio_undefined": None})})
     monkeypatch.setattr(sc, "run_recipe", lambda _r: blank)
     assert link.ratio_at(12.0) == (None, "the recipe returned no ratio and no reason")
+
+
+def test_a_call_held_through_its_open_reaffirmation_is_still_held(tmp_path: Path) -> None:
+    """PR-FEEDBACK ROUND 1. The still-held split asks which calls the book still HOLDS. SMPL's
+    07-06 BUY was closed on 07-24, but the book holds SMPL through its 08-05 reaffirmation, which
+    is open — so at the first resolved read only IT counts as closed, not IT and SMPL."""
+    scores, rep = _score_committed(tmp_path, date(2027, 1, 20))
+    assert {s.entry_id: s.closed for s in scores} == {
+        "V-IT-screen2-20260706": True, "V-SMPL-screen2-20260706": False,
+        "V-VRRM-screen2-20260617": False}
+    assert rep.n_closed == 1 and rep.n_open_buy == 1

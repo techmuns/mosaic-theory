@@ -40,7 +40,9 @@ fields are optional and written only when set; no committed row is rewritten.
 4. **One observation per name** (`reaffirmations`). A decision on the same security, book and
    route, making the same call, entered before the earlier call's horizon date, is a
    **reaffirmation** — in no count, spread or curve, and named once. A close does not end the
-   window (the 2026-08-12 ruling); a void does, from its ruling date. The one live case is SMPL:
+   window (the 2026-08-12 ruling); a void does, from its ruling date. A call stays HELD in the
+   still-held split while a reaffirmation of it is open (pr-feedback round 1): SMPL's 07-06 BUY
+   was closed, and the book holds SMPL through its open 08-05 reaffirmation. The one live case is SMPL:
    `V-SMPL-screen2-20260706` (BUY 2026-07-21, entry 2026-07-20, closed 07-24 and still scored to
    2027-01-16) and `V-SMPL-screen2-20260729` (BUY 2026-08-05, entry 2026-08-04). A later decision
    with the opposite call inside the window is a reversal, not covered: no row is in that state.
