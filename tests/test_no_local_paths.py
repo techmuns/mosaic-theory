@@ -20,7 +20,11 @@ price-store stamp, and on the cleaned tree they hold none. Widened again on 2026
 49) to the agent config and the local gate, `.claude/` and `bin/`, once their one per-machine file
 was git-ignored: at main 407dc809 the widened scan found 18 hits in 1,441 files, all in the then
 tracked `.claude/launch.json`, and none once it was ignored. The records' prose (`docs/records/`)
-stays outside it, as written, by the same default.
+stays outside it, as written, by the same default. Widened a third time on 2026-11-13 (the
+operator: "Guard them too (Recommended)") to the theme desk's committed logs
+(`docs/theme_intelligence/`) and STATE.md: over main f2e31cea's blobs the two held 9 hits in 2 of
+597 files, a session scratchpad in one run log (2) and row 38's machine folders (7), and none once
+scrubbed.
 
     python -m tests.test_no_local_paths     # print every hit, file:line, with the count
 
@@ -61,8 +65,12 @@ ROOT = Path(__file__).resolve().parents[1]
 #: default 6 — not an operator ruling) the agent config and the local gate: not artifacts, but
 #: where a survey of every other tracked file at main c4c9f432 found per-machine paths outside the
 #: records' prose — `.claude/launch.json` 18 (now git-ignored, so not read) and `bin/commit` 1
-#: (removed by #996, RH-D3).
-SCANNED = ("data", "frontend", "scenarios", "tests/fixtures", ".claude", "bin")
+#: (removed by #996, RH-D3). And since 2026-11-13 (the operator: "Guard them too (Recommended)")
+#: the theme desk's committed run logs and STATE.md, the two places that survey left: at main
+#: f2e31cea, `docs/theme_intelligence/` 2 (a session scratchpad in one run log) and STATE.md 7
+#: (row 38's two machines' user folders). `docs/records/` stays outside: records stay as written.
+SCANNED = ("data", "frontend", "scenarios", "tests/fixtures", ".claude", "bin",
+           "docs/theme_intelligence", "STATE.md")
 
 #: An absolute POSIX path under a home, temp or mount root, where it begins. The lookbehind keeps a
 #: URL out: a URL's path follows a host character (`sec.gov/…`, `:8080/…`), a local path follows a
@@ -297,6 +305,33 @@ def test_the_agent_config_and_the_local_gate_are_read_and_the_preview_config_is_
                      "bin/commit:1"], hits
 
 
+def test_the_theme_desk_logs_and_state_are_read_and_the_records_are_not(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The operator, 2026-11-13: "Guard them too (Recommended)". (+) A local path in a committed
+    theme-desk run log, or in STATE.md, is a hit: at main f2e31cea the guard did not read either,
+    and `docs/theme_intelligence/state-pull-ledger-2026-10-11/run-log.txt` held 2 (one session
+    scratchpad, matched by the root and its dashed form) and STATE.md row 38 held 7 (the two
+    machines' user folders). (−) A record is not read: records stay as written, and a record's
+    body is immutable once merged."""
+    _repo(tmp_path, monkeypatch, {
+        "STATE.md": "| 38 | score on `/Users/x`'s store |\n",
+        # the shape line 16 held at main f2e31cea, its user replaced by `u`: the root and the
+        # dashed project folder inside it, two hits on one line
+        "docs/theme_intelligence/a-2026-10-11/run-log.txt":
+            "$ ingest-file --path /private/tmp/claude-501/-Users-u-Documents-GitHub-m/s/"
+            "scratchpad/input/a.md\n",
+        "docs/records/2026-11-05-r.md": "a record quoting /Users/x/Documents/a\n",
+        "docs/README.md": "/Users/x/elsewhere in docs\n",
+    })
+    files, hits = scan()
+    assert {str(f.relative_to(ROOT)) for f in files} == {
+        "STATE.md", "docs/theme_intelligence/a-2026-10-11/run-log.txt"}, files
+    where = sorted(h.split(": ", 1)[0] for h in hits)
+    assert where == ["STATE.md:1", "docs/theme_intelligence/a-2026-10-11/run-log.txt:1",
+                     "docs/theme_intelligence/a-2026-10-11/run-log.txt:1"], hits
+
+
 def test_a_printed_hit_stops_at_its_line() -> None:
     assert local_paths('"/Users/x/y"\nnext line') == ['/Users/x/y"']
 
@@ -340,8 +375,9 @@ def test_no_committed_page_mirror_or_fixture_carries_an_absolute_local_path() ->
     lines of 59 files — every line a price-store stamp, 26 of them carrying both `/private/` and
     the dashed `-Users-` session folder; on the cleaned tree it lists none. Over the six folders
     at main 407dc809 (1,441 files) it listed 18, every one in the then-tracked
-    `.claude/launch.json`; with that file git-ignored it lists none. The count is printed beside
-    the full list, never a cut."""
+    `.claude/launch.json`; with that file git-ignored it lists none. Over all eight scopes on the
+    scrubbed tree of 2026-11-13 (2,037 files) it lists none. The count is printed beside the full
+    list, never a cut."""
     files, hits = scan()
     pages = set((ROOT / "data" / "dossiers").glob("*/dossier.json"))
     assert pages and pages <= set(files), (
@@ -350,7 +386,8 @@ def test_no_committed_page_mirror_or_fixture_carries_an_absolute_local_path() ->
     assert not hits, (
         f"{len(hits)} absolute local path(s) in the corpus ({len(files)} files scanned); this "
         "repository is public. A price-store stamp is fixed by scripts/rewrite_store_stamps.py; "
-        "anything else is a new leak, removed at its writer:\n" + "\n".join(hits))
+        "a machine's folder in STATE.md is named by its role instead; anything else is a new "
+        "leak, removed at its writer:\n" + "\n".join(hits))
 
 
 def test_every_committed_page_prints_the_price_store_line_its_stamp_renders() -> None:
