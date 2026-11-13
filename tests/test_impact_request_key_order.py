@@ -150,3 +150,125 @@ def test_the_report_names_a_key_order_only_request_and_no_other(
     row = {ln.split("**")[1]: ln for ln in lines if ln.startswith("- **")}
     assert "KEY ORDER ONLY" in row["ORDER"] and "tool schema DIFFERS" in row["ORDER"]
     assert "KEY ORDER ONLY" not in row["VALUE"]
+
+
+# ------------------------------------------------------------------ review round 1 (#1059)
+
+def _page_side(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, side: str,
+               capture: Any) -> pathlib.Path:
+    """`child.page` itself, the call site that writes ``request.json``, on the frozen TECX page:
+    only the $0 build and the CIQ reads are stubbed (to that page, and to no transcript)."""
+    from vinci.dossier import ciq, ciq_sheets, prespend
+    from vinci.dossier.schemas import Dossier
+
+    frozen = Dossier.model_validate_json(PAGE.read_text(encoding="utf-8"))
+    monkeypatch.setattr(prespend, "mechanical_build", lambda ticker, cfg: frozen)
+    monkeypatch.setattr(ciq.CiqBundle, "from_files", classmethod(lambda cls, t, files: None))
+    monkeypatch.setattr(ciq_sheets, "transcript_for_synthesis", lambda bundle: None)
+    out = tmp_path / "pages" / side / "TECX"
+    child.page("TECX", out, capture=capture, requests=True, committed=False)
+    assert not (out / "request.error.json").exists(), (out / "request.error.json").read_text()
+    return out
+
+
+class _AlphabetisedCapture:
+    """Production's capture, with PR 2's defect planted in what it returns."""
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(cap, name)
+
+    def capture_calls(self, *a: Any, **k: Any) -> list[dict[str, Any]]:
+        return [_alphabetised_tool(cap.jsonable(c)) for c in cap.capture_calls(*a, **k)]
+
+
+def test_the_page_writes_its_request_in_the_captured_order_and_a_reorder_reaches_the_compare(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+        real_request: dict[str, Any]) -> None:
+    """THE CALL SITE (review round 1, finding 1): every earlier pin called `write_request`
+    directly, so putting the old line back in `child.page` (``_side_file(out / "request.json",
+    …)``, the reviewer's mutant M4) left the suite green and the blind spot open."""
+    base = _page_side(tmp_path, monkeypatch, "base", cap)
+    head = _page_side(tmp_path, monkeypatch, "head", _AlphabetisedCapture())
+    written = json.loads((base / "request.json").read_text(encoding="utf-8"))["calls"]
+    assert len(written) > 1
+    # the top level in the captured order (the page's five draws add `cache_control` at the end)
+    assert [k for k in written[0] if k in real_request] == list(real_request)
+    assert list(written[0]) != sorted(written[0])
+    assert list(written[0]["tools"][0]["input_schema"]["properties"]) == list(
+        real_request["tools"][0]["input_schema"]["properties"])
+    assert (head / "request.json").exists()
+    s = rn.Settings(repo=ROOT, base="b", head="h", out=tmp_path, ciq_root=tmp_path,
+                    cache_root=tmp_path, store=tmp_path, env_file=None)
+    got = rn.compare_page(s, "TECX")["request"]
+    assert got["identical"] is False and got["key_order_only"] is True
+
+
+class _ReachedError(Exception):
+    """Raised by the first step after the run folder's identity check."""
+
+
+def _resume(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+            marker: dict[str, str] | None) -> None:
+    out = tmp_path / "out"
+    out.mkdir()
+    (out / "pages").mkdir()
+    s = rn.Settings(repo=ROOT, base="b", head="h", out=out, ciq_root=tmp_path,
+                    cache_root=tmp_path, store=tmp_path / "vinci.db", env_file=None, resume=True)
+    # no git here (the fail-first run holds the tree without .git): the refs resolve to one sha,
+    # and the out-inside-the-repo guard is not what this pins
+    sha = "a" * 40
+    monkeypatch.setattr(rn.st, "sha", lambda repo, ref: sha)
+    monkeypatch.setattr(rn.st, "merge_base", lambda repo, a, b: sha)
+    monkeypatch.setattr(rn, "_inside", lambda path, repo: False)
+    run_id = {"base": sha, "head": sha, "store": str(s.store)}
+    if marker is not None:
+        run_id = {**run_id, **marker}
+    (out / "run.json").write_text(json.dumps(run_id), encoding="utf-8")
+
+    def reached(*a: Any, **k: Any) -> Any:
+        raise _ReachedError
+
+    monkeypatch.setattr(rn.st, "diff_identity", reached)
+    rn.run(s)
+
+
+def test_resume_refuses_a_run_folder_written_by_other_check_code(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review round 1, finding 2: a folder started before this change holds sorted request sides;
+    resumed, its rebuilt sides are written in captured order, and every such page would read KEY
+    ORDER ONLY with no code change behind it. The folder names the check's own child and capture
+    code, so a folder from other code is refused as "one run, one folder"."""
+    with pytest.raises(rn.ImpactError, match="one run, one folder"):
+        _resume(tmp_path, monkeypatch, None)    # a marker written before the change
+
+
+def test_resume_continues_a_run_folder_written_by_the_same_check_code(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from vinci.impact.run import CAPTURE_CHILD, CHILD, file_sha256
+
+    with pytest.raises(_ReachedError):
+        _resume(tmp_path, monkeypatch, {"child": file_sha256(CHILD),
+                                        "capture": file_sha256(CAPTURE_CHILD)})
+
+
+def test_a_key_order_move_names_the_arguments_it_moved_in(
+        tmp_path: pathlib.Path, real_request: dict[str, Any]) -> None:
+    """Review round 1, finding 3: a reorder inside ``messages`` printed "system same; tool schema
+    same; USER −0 +0", naming nothing. The diff names each argument whose order moved, and the
+    order of the arguments themselves."""
+    from vinci.impact import report
+
+    inner = copy.deepcopy(real_request)
+    inner["messages"][0] = dict(reversed(list(inner["messages"][0].items())))
+    got = _compare(tmp_path / "m", real_request, inner, child.write_request)
+    assert got["key_order_only"] is True and got["order_moved"] == ["messages"]
+    tools = _compare(tmp_path / "t", real_request, _alphabetised_tool(real_request),
+                     child.write_request)
+    assert tools["order_moved"] == ["tools"]
+    top = _compare(tmp_path / "a", real_request, _tools_before_system(real_request),
+                   child.write_request)
+    assert top["order_moved"] == ["(the arguments' own order)"]
+    lines = report.requests_lines({"pages": {"results": [
+        {"ticker": "TECX", "status": "same", "request": got}]}})
+    row = next(ln for ln in lines if ln.startswith("- **TECX**"))
+    assert "KEY ORDER ONLY" in row and "messages" in row

@@ -228,11 +228,11 @@ def requests_lines(r: dict[str, Any]) -> list[str]:
                      f"system {'same' if q.get('system_equal') else 'DIFFERS'}; tool schema "
                      f"{'same' if q.get('tools_equal') else 'DIFFERS'}; USER −{u.get('removed')} "
                      f"+{u.get('added')} line(s)"
-                     + ("; **KEY ORDER ONLY** — every value is equal and some keys' order "
-                        "differs (the tool schema's fields, the top-level arguments or another "
-                        "object's): inside a kwarg production sends each side in its own "
-                        "order; a reorder of the top-level arguments alone the SDK may send "
-                        "alike (`replay.wire` fails safe there)"
+                     + (f"; **KEY ORDER ONLY**, in {', '.join(q.get('order_moved') or ['?'])} "
+                        "— every value is equal and some keys' order differs: inside a kwarg "
+                        "production sends each side in its own order; a reorder of the "
+                        "top-level arguments alone the SDK may send alike (`replay.wire` fails "
+                        "safe there)"
                         if q.get("key_order_only") else ""))
     moved = {p["ticker"] for p in res if p["status"] == "moves"}
     unreached = sorted(t for t, q in compared if t in moved and q["identical"])
