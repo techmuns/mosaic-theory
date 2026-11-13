@@ -547,7 +547,12 @@ def test_a_log_on_an_open_decision_is_refused_before_the_confirmations_draws(
     from vinci.ledger.workflow import follow_origin
     monkeypatch.setattr(cli, "_follow_origin",
                         lambda *_a: follow_origin("GOOGL", date(2026, 8, 17)))
-    args = argparse.Namespace(candidate_id="GOOGL", ref=None, dry_run=True)
+    # the underwrite read needs a git checkout (`read_underwrite`), which a sandboxed run of this
+    # file is not; the refusal pinned here comes before it, and the draw after it
+    import vinci.ledger.underwrite as uw
+    monkeypatch.setattr(uw, "read_underwrite", lambda *_a, **_k: None)
+    args = argparse.Namespace(candidate_id="GOOGL", ref=None, dry_run=True,
+                              no_underwrite_reason="fixture: no underwrite record")
     assert cli._cmd_log_verdict(args) == 1
     assert drawn == []
     with Store(cfg.db_path) as store:
