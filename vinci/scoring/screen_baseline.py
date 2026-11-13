@@ -163,7 +163,10 @@ class Closes:
     through: date
 
     def close(self, ticker: str, day: date) -> float | None:
-        return self.by_day.get(day, {}).get(ticker)
+        """The close, or None — a non-positive one included: it is no traded price, and a ratio
+        over it would divide by zero or invert a return."""
+        c = self.by_day.get(day, {}).get(ticker)
+        return c if c is not None and c > 0 else None
 
 
 def cached_closes(cache_root: Path, start: date, end: date, *, min_results: int = 3000) -> Closes:

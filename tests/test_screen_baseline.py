@@ -259,3 +259,9 @@ def test_the_intervals_are_the_registered_ones() -> None:
     d, lo, hi = sb.difference_interval([0.1, 0.3], [0.0, 0.2])  # type: ignore[misc]
     assert d == pytest.approx(0.1) and hi - d == pytest.approx(1.96 * (0.02 / 2 + 0.02 / 2) ** 0.5)
     assert sb.mean_interval([0.1]) is None
+
+
+def test_a_non_positive_close_is_no_price() -> None:
+    """A zero close in a cached response is no traded price: read as absent, never divided by."""
+    c = sb.Closes((ENTRY,), {ENTRY: {"Z": 0.0, "P": 5.0}}, ENTRY)
+    assert (c.close("Z", ENTRY), c.close("P", ENTRY)) == (None, 5.0)

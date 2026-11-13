@@ -68,5 +68,6 @@ grouped-daily responses (`adjusted=true`) for weekdays from 2026-07-29, contiguo
 **WHAT IT COSTS / WHAT IS ACCEPTED.** Price return understates total return on both legs alike.
 The 2026-07-29 cohort has no benchmark reading because its run recorded no deciding cap — never
 inferred. A renamed ticker is read as a stopped one (its last bar under the old symbol) and is named
-in that list. A split straddling two cache fetches is set apart, so a genuine ≥1.9x day is lost with
+in that list. Bars are keyed by symbol, so a symbol reissued to another listing inside a window
+would splice two companies' prices; the ≥1.9x step catches a large splice, not a small one. A split straddling two cache fetches is set apart, so a genuine ≥1.9x day is lost with
 it. The 90- and 180-day readings need a cache that reaches further; no vendor pull was made.
