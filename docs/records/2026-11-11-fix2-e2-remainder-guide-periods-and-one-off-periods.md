@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# Every guide filed under the next-fy default now reads the period its release states, a one-off item carries its period, a component inside a figure is not its lead, and a filing read with no going-concern doubt is CHECKED-ABSENT (TeamNostra fix request 2: RE2-D20's remainder, RE2-D17, and the residuals of RE2-D6 and RE2-D10) — built 27 of 27 at $0 on 2026-11-11 and 25 of 25 on 2026-11-13 (MVST retired; PARR's CIQ export refused); every built page's request moves at re-assembly, so a panel check is owed
+# Every guide filed under the next-fy default now reads the period its release states, a one-off item carries its period, a component inside a figure is not its lead, and a filing read with no going-concern doubt is CHECKED-ABSENT (TeamNostra fix request 2: RE2-D20's remainder, RE2-D17, and the residuals of RE2-D6 and RE2-D10) — built 27 of 27 at $0 on 2026-11-11 and 25 of 25 on 2026-11-13 (MVST retired; PARR's CIQ export refused); every built page's request moves at re-assembly, so a panel check was owed; drawn once on 2026-11-13, no class metric worsens ($29.17 of $35.28)
 
 **WHAT.**
 - **RE2-D20, the rest** (`vinci/edgar/release_parse`). #976 flagged each guide filed under the
@@ -256,6 +256,39 @@ on the chosen draw after the model calls.
 - **The cost:** the requests are unchanged, so it is unchanged: $29.40 expected, $35.28 with 20%.
   The cap is $35.28 under the operator's ruling, "Estimate +20%, max $40 (Recommended)".
 
+**THE PANEL CHECK, DRAWN ONCE AND SCORED (2026-11-13).** The run's own record is
+`docs/records/2026-11-13-e2-remainder-measured-on-the-panel.md`, committed with its `drawn` row in
+#1062.
+- **The approval:** the operator's "Post, then register and draw (Recommended)". The registration
+  is `e3a37305…`, and its row reached main in #1055 (`3d195fcd`).
+- **The verdict:** no class metric worsens at p_upper ≤ 0.05, so the registered rule's decision is
+  "ships".
+
+  | Metric | BASE | CAND | p_upper |
+  |---|---|---|---|
+  | M-ABSENT | 77 | 99 | 0.0762 |
+  | M-ECHO | 55 | 63 | 0.211 |
+  | M-LABEL | 24 | 24 | 0.617 |
+  | M-PATH | 1 | 2 | 0.500 |
+  | M-SIGN | 0 | 0 | 1 |
+
+  - **M-ABSENT rose 77 → 99, at p_upper 0.076.** It is the metric closest to the line.
+    - By the pre-registered rule (p_upper ≤ 0.05) it is not a worsening.
+    - Nothing was tuned on it: no code, threshold or prompt changed after the score was read.
+    - Per page it reads BURL 19 → 29, CNXC 17 → 20, LLY 0 → 2, MCK 23 → 27, ROST 9 → 12 and
+      SMPL 9 → 9. The run's record splits it by kind of hit.
+- **Per page:** no modal lean moves, and no proposal moves. LLY stays BUY → BUY, and the other five
+  stay none → none. The committed-lean draws are 11 in each arm.
+- **The spend:** $29.1654 of the $35.28 cap, over 60 draws, every one ending on `tool_use` and
+  served by `claude-opus-4-8`.
+- **The SDK:** all 60 draw rows state `anthropic` 0.112.0.
+- **Where it ran:** the draw and the score both ran from a clean checkout at `96d0cfea`, the
+  registration's `scorer_ref`.
+  - A first attempt from main `3d195fcd` refused at $0, because #1046 (`01ab6923`) had reworded a
+    comment in `vinci/dossier/schemas.py`, a scorer file, after registration.
+  - That change is byte-level only, with no behaviour change: the module's AST is identical at the
+    two commits.
+
 **BOUNDARY.**
 - **Pages:** the 27 committed pages at `7edbfa36`.
 - **Exhibits:** their 122 cited EX-99.1s and 27 cited 10-Qs (the replay); each page's own $0-build
@@ -270,7 +303,8 @@ on the chosen draw after the model calls.
 - **The synthesis request moves then on every page built,** all six panel pages included: 27 of 27
   on 2026-11-11 and 25 of 25 on 2026-11-13. Every page without a stated doubt gains the
   checked-absent going-concern line (26 then, 25 now), and the rest of the moved lines differ only by
-  a period label. **A six-page panel check is owed before merge,** and is not drawn.
+  a period label. **The six-page panel check owed before merge was drawn and scored on 2026-11-13**
+  (above): no class metric worsens.
 - **The Brief gains "Going concern: not flagged" at re-assembly** on those pages, 25 on 2026-11-13.
   That is a state the renderer and `dossier.js` already print.
 - **`compare` replays the committed layer**, so it cannot see this change. The paid check registers
