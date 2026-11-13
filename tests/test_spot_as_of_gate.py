@@ -133,7 +133,7 @@ def test_a_spot_dated_after_its_own_underwrite_is_refused_at_any_schema(tmp_path
     assert "AFTER the underwrite date" in str(exc.value), str(exc.value)
 
 
-def test_the_six_stamped_records_all_precede_their_underwrite() -> None:
+def test_the_live_stamped_records_all_precede_their_underwrite() -> None:
     """The measurement the rule above rests on, pinned so a later record cannot quietly invert it
     and be excused as 'how it has always been'."""
     checked = 0
@@ -146,7 +146,8 @@ def test_the_six_stamped_records_all_precede_their_underwrite() -> None:
         checked += 1
         assert str(doc["spot_as_of"]) <= str(doc["underwrite_date"])[:10], (
             f"{p.stem}: spot dated {doc['spot_as_of']} against underwrite {doc['underwrite_date']}")
-    assert checked >= 6, f"only {checked} records carry a spot date — expected the six stamped"
+    # six stamped until MVST's record was archived (2026-11-12); five live ones remain
+    assert checked >= 5, f"only {checked} records carry a spot date — expected the five stamped"
 
 
 # ─── the template that has to satisfy it ──────────────────────────────────────────────────────

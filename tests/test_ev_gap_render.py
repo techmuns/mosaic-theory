@@ -26,10 +26,14 @@ FROZEN_EPAM = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "EPA
 #: AORT's page as committed on 2026-10-26, frozen when the name was retired from coverage
 #: (operator, 2026-11-09). It has no living page, so every AORT pin below reads this one.
 FROZEN_AORT = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT"
+#: MVST's page as committed on 2026-09-17, frozen when it was retired the same way (operator,
+#: 2026-11-12). It has no living page, so every MVST pin below reads this one.
+FROZEN_MVST = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "MVST"
 
 
 def _folder(ticker: str) -> Path:
-    return FROZEN_AORT if ticker == "AORT" else ROOT / "data" / "dossiers" / ticker
+    frozen = {"AORT": FROZEN_AORT, "MVST": FROZEN_MVST}
+    return frozen.get(ticker, ROOT / "data" / "dossiers" / ticker)
 
 
 def block(folder: Path) -> str:
