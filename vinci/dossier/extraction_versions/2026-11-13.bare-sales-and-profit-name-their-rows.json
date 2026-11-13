@@ -4,5 +4,5 @@
     "2026-11-12.figure-trace-false-flags",
     "2026-11-12.wall-of-our-borrowings-is-part-of-the-debt"
   ],
-  "names": "W05 follow-up: in the synthesis figure trace, a bare 'sales' (no modifier before it) names the Revenue row and a bare 'profit' the profit rows (EBITDA, EBIT, net income) less any the claim names itself, so 'while sales were $7,178M' (EBIT's figure) and 'profit was $60,372M' (revenue's) are refused; a qualified word ('comparable sales', 'open-market sales', 'segment profit') still names no row. On the 27 committed pages no flag moves"
+  "names": "W05 follow-up: in the synthesis figure trace, a bare 'sales' (no modifier before it and no noun after it) names the Revenue row and a bare 'profit' the profit rows (EBITDA, EBIT, net income), any of which it may mean, so 'while sales were $7,178M' (EBIT's figure) and 'profit was $60,372M' (revenue's) are refused; a qualified word or a compound ('comparable sales', 'open-market sales', 'sales leverage', 'profit per share', 'segment profit') still names no row; the comparison guard compares a figure's rows less their rate variants. On the 27 committed pages no flag moves"
 }

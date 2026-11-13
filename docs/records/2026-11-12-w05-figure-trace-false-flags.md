@@ -219,8 +219,9 @@ here.
   the corpus invariant on IT's living page caught its removal before.
 - **2026-11-13 — (a)'s bare "sales" and "profit" are no longer a mention of no row** (the same
   follow-up). WHAT shipped "A word naming no one row ("profit", "sales" alone …) is a mention of
-  none". Written bare, with no modifier before it, "sales" now names Revenue, and "profit" the
-  profit rows (EBITDA, EBIT, net income) less any the claim names itself. A qualified word still
-  names none. TJX's "while sales were $7,178M" (EBIT's figure) had passed on the carried period.
-  `_shares_row`, the comparison guard, is pinned as well, and now compares the rows themselves.
-  The rest is in `docs/records/2026-11-13-w05-followup-bare-sales-and-profit.md`.
+  none". Written bare, with no modifier before it and no noun after it, "sales" now names
+  Revenue, and "profit" the profit rows (EBITDA, EBIT, net income), any of which it may mean. A
+  qualified word or a compound ("sales leverage", "profit per share") still names none. TJX's
+  "while sales were $7,178M" (EBIT's figure) had passed on the carried period. `_shares_row`, the
+  comparison guard, is pinned as well, and now compares the rows themselves, each set less its
+  rate variants. The rest is in `docs/records/2026-11-13-w05-followup-bare-sales-and-profit.md`.
