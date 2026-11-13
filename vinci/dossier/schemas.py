@@ -2469,12 +2469,11 @@ class OperatingDriver(BaseModel):
     verbatim: str | None = None
     #: THE REST OF THE SPEAKER'S PARAGRAPH after `verbatim`, unclassified (STATE §B1a).
     #:
-    #: WHY THE QUOTE ALONE IS NOT ENOUGH. BRBR's row quoted *"In the third quarter, 70% of RTD
-    #: shake category volumes were sold on price promotion"* — exact, correctly cited, digits
-    #: traceable, passing every guard we have, because every guard takes the QUOTED TEXT as the
-    #: check. The sentence the extraction did not take says the figure is *"in line with historical
-    #: norms … while DOWN sequentially from the heavier promoted second quarter"*. The synthesis
-    #: then argued an escalating sequence its own source contradicts.
+    #: WHY THE QUOTE ALONE IS NOT ENOUGH. BRBR's row quoted its Q3 2026 call's sentence putting 70%
+    #: of a category's volume on promotion — exact, correctly cited, digits traceable, passing every
+    #: guard we have, because every guard takes the QUOTED TEXT as the check. The sentence the
+    #: extraction did not take says the figure is seasonally normal and DOWN sequentially. The
+    #: synthesis then argued an escalating sequence its own source contradicts.
     #:
     #: UNCONDITIONAL, AND THAT IS THE DESIGN. No opener list, no contrastive classifier, no rule
     #: deciding which rows deserve context — the moment one exists, the criterion is back. It was
