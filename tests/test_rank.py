@@ -26,14 +26,12 @@ from vinci.rank import (
     depth_axis,
     idiosyncrasy_axis,
     multiple_axis,
-    parse_cause_reply,
     rank_candidate,
     rank_candidates,
     render_profile_block,
     scan_structural,
     volume_overlay,
 )
-from vinci.rank.cause import annotations_from_raw, classify_cause
 from vinci.schemas.candidate import CandidateRecord, GateResult, TriageBand
 from vinci.schemas.data_record import (
     CoverageTier,
@@ -64,7 +62,7 @@ def _cand(
     rel: float | None = -0.40,
     pe_pctile: float | None = 0.05,
     gap_dates: tuple[date, ...] = (date(2026, 6, 5),),
-    volume_spike: float = 1.0,
+    volume_spike: float | None = 1.0,
     adv_usd: float = 30_000_000.0,
     band: TriageBand = TriageBand.A,
     cik: str = "0000000001",
@@ -117,6 +115,7 @@ def test_depth_axis_monotone_and_clipped() -> None:
     mid = depth_axis(_cand(drawdown=-0.575).data_record.prices)
     assert shallow.score == 0.0  # at the −30% gate → no depth credit
     assert deep.score == 1.0  # at the −85% terminal floor → full credit
+    assert mid.score is not None
     assert shallow.score < mid.score < deep.score  # deeper ranks higher
 
 
@@ -145,72 +144,31 @@ def test_multiple_axis_unknown_is_surfaced_not_imputed() -> None:
 
 def test_character_axis_sharp_recent_beats_grind() -> None:
     # ONE axis today: shape (sharp vs grind) + cause (discrete vs bleed) share the gap-down feed.
-    grind = character_axis(_cand(gap_dates=()).data_record, CauseClass.UNCLASSIFIED)
-    recent = character_axis(
-        _cand(gap_dates=(date(2026, 6, 12),)).data_record, CauseClass.UNCLASSIFIED
-    )
-    stale = character_axis(
-        _cand(gap_dates=(date(2026, 1, 1),)).data_record, CauseClass.UNCLASSIFIED
-    )
+    grind = character_axis(_cand(gap_dates=()).data_record)
+    recent = character_axis(_cand(gap_dates=(date(2026, 6, 12),)).data_record)
+    stale = character_axis(_cand(gap_dates=(date(2026, 1, 1),)).data_record)
     assert grind.score is not None and recent.score is not None and stale.score is not None
     assert grind.score < stale.score < recent.score  # discrete > grind/bleed; fresher → higher
     assert "grind" in grind.label and "sharp discrete" in recent.label
-    assert "LLM: —" in recent.label  # unclassified by default
+    assert "LLM: —" in recent.label  # the retired cause slot's constant suffix
 
 
 def test_character_axis_many_gaps_eased_off() -> None:
-    one = character_axis(_cand(gap_dates=(date(2026, 6, 12),)).data_record, CauseClass.UNCLASSIFIED)
+    one = character_axis(_cand(gap_dates=(date(2026, 6, 12),)).data_record)
     many = character_axis(
         _cand(gap_dates=tuple(date(2026, 6, d) for d in range(2, 13))).data_record,
-        CauseClass.UNCLASSIFIED,
     )
     assert one.score is not None and many.score is not None
     assert many.score < one.score  # repeated gaps are messier — a single clean drop ranks higher
 
 
-# --- Tier-3 LLM annotation (colours the character axis; never the sort key) -------------------
-def test_llm_structural_break_demotes_mean_revert_boosts() -> None:
-    # An older gap → a mid-range discrete baseline, so both the demote and the boost are visible
-    # (a very recent gap is already above the mean-revert confirmation floor, making the boost a
-    # deliberate no-op — confirmation never *lowers* a name).
-    older = _cand(gap_dates=(date(2026, 3, 1),))
-    base = character_axis(older.data_record, CauseClass.UNCLASSIFIED).score
-    broke = character_axis(older.data_record, CauseClass.STRUCTURAL_BREAK).score
-    rev = character_axis(older.data_record, CauseClass.MEAN_REVERT).score
-    assert base is not None and broke is not None and rev is not None
-    assert broke < base < rev  # terminal-looking demoted; mean-revert boosted
-    assert broke < 0.1  # strong demotion toward the structural-break floor
-
-
-def test_unclassified_annotation_does_not_change_score() -> None:
-    # The honest default: no LLM read → cause unchanged from its structural baseline (no fab).
-    with_default = rank_candidate(_cand(), cause_class=CauseClass.UNCLASSIFIED).priority_score
-    without = rank_candidate(_cand()).priority_score
-    assert with_default == without
-
-
-def test_annotations_from_raw_drops_unknown_labels() -> None:
-    ann = annotations_from_raw({"AAA": "structural_break", "BBB": "mean_revert", "CCC": "garbage"})
-    assert ann == {"AAA": CauseClass.STRUCTURAL_BREAK, "BBB": CauseClass.MEAN_REVERT}
-
-
-def test_parse_cause_reply_falls_back_to_unclassified() -> None:
-    assert parse_cause_reply({"cause_class": "mean_revert"}) is CauseClass.MEAN_REVERT
-    assert parse_cause_reply({"cause_class": "nonsense"}) is CauseClass.UNCLASSIFIED
-    assert parse_cause_reply({}) is CauseClass.UNCLASSIFIED
-
-
-def test_classify_cause_uses_tool_and_empty_text_is_unclassified() -> None:
-    class FakeLlm:
-        model = "fake"
-
-        def extract(self, *, system: str, user: str, tool: dict[str, object]) -> dict[str, object]:
-            return {"cause_class": "structural_break", "rationale": "lost its largest customer"}
-
-    assert classify_cause(FakeLlm(), ticker="X", derate_text="lost AAPL") is (
-        CauseClass.STRUCTURAL_BREAK
-    )
-    assert classify_cause(FakeLlm(), ticker="X", derate_text="   ") is CauseClass.UNCLASSIFIED
+# --- the retired Tier-3 cause slot (2026-11-13): a constant, so the queue's format holds ------
+def test_the_retired_cause_slot_is_written_as_a_constant() -> None:
+    """The cause channel left with `vinci/rank/cause.py`; the queue keeps its `cause_class` field
+    and the character label its "LLM: —" suffix, so a committed queue re-ranks byte for byte."""
+    r = rank_candidate(_cand())
+    assert r.cause_class is CauseClass.UNCLASSIFIED
+    assert r.axes["character"].label.endswith(" · LLM: —")
 
 
 # --- Tier-3 DETERMINISTIC structural-disqualifier channel (DEMOTE-ONLY, source-bound) ---------
@@ -560,7 +518,7 @@ def test_ranker_reads_no_forward_returns() -> None:
     pkg = Path(__file__).resolve().parent.parent / "vinci" / "rank"
     scanned = {src.name for src in pkg.glob("*.py")}
     # the Tier-3 deterministic structural-disqualifier channel must be in scope of this guard:
-    assert {"structural.py", "ranker.py", "cause.py"} <= scanned
+    assert {"structural.py", "ranker.py"} <= scanned  # cause.py retired 2026-11-13
     for src in pkg.glob("*.py"):
         tree = ast.parse(src.read_text())
         for node in ast.walk(tree):

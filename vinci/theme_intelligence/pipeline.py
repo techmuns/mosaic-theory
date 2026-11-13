@@ -30,7 +30,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from vinci.graph.llm import LlmError
+from vinci.graph.llm import LlmError, sdk_version
 from vinci.theme_intelligence.budget import BudgetExceeded, GuardedClient, SpendGuard
 from vinci.theme_intelligence.cachefile import take_set_aside
 from vinci.theme_intelligence.completeness import (
@@ -311,6 +311,9 @@ class Pipeline:
             {"purpose": purpose, "ref": ref, "model": model, "prompt_version": prompt_version,
              "cached": res_cached,
              "usage": usage, "cost_usd": cost, "seconds": round(seconds, 2),
+             # the SDK the call went through (operator, 2026-11-13: "Check, then pin newest");
+             # none for a cached answer, which no SDK carried in this run
+             "sdk_version": None if res_cached else sdk_version(),
              "at": datetime.now(tz=UTC).isoformat(), **({"note": note} if note else {})})
 
     # -- review hook ------------------------------------------------------------------------------

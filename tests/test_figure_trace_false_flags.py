@@ -434,3 +434,195 @@ def test_a_url_is_cut_from_a_ref_never_the_ref() -> None:
     quarters = min(junk) / (365.25 / 4)
     assert _page_caveated("BRBR", f"Guidance has held for {quarters:g} quarters.", ref) == [
         f"{quarters:g}"]
+
+
+# --- W05 follow-up (2026-11-13): the independent re-review of round 1's three LOW items --------
+
+def test_a_bare_word_names_its_rows_on_tjx() -> None:
+    """FAILED at fd1c97f3: "sales" or "profit" written alone named no row, so its figure met every
+    row of the period carried to it — "while sales were $7,178M" (EBIT's figure) and "profit was
+    $60,372M" (revenue's) passed. Bare "sales" now names Revenue, and bare "profit" the profit
+    rows (EBITDA, EBIT, net income), any of which it may mean. (−) A qualified word still names
+    none: the committed pages write "open-market sales" for an insider's share sales, so that
+    figure is never held to revenue."""
+    _, mech = _page("TJX")
+    ref, _ = _annual(mech)
+    rev, ebitda, ebit, ni = (_value(mech, lbl, "FY26") for lbl in (
+        "Revenue ($M)", "EBITDA ($M)", "EBIT ($M)", "Net income ($M)"))
+    ni25 = _value(mech, "Net income ($M)", "FY25")
+    for claim, flagged in [
+        (f"FY26 EBITDA was {_m(ebitda)} while sales were {_m(ebit)}.", [_shown(ebit)]),
+        (f"FY26 EBITDA was {_m(ebitda)} and profit was {_m(rev)}.", [_shown(rev)]),
+        (f"FY26 EBITDA was {_m(ebitda)} while sales were {_m(rev)}.", []),
+        (f"FY26 EBITDA was {_m(ebitda)} on total sales of {_m(rev)}.", []),
+        (f"FY26 EBITDA was {_m(ebitda)} and profit was {_m(ni)}.", []),
+        (f"FY26 EBITDA was {_m(ebitda)} while open-market sales were {_m(ni)}.", []),
+        # (/code-review, round 0 of the follow-up) a profit row the claim names for ANOTHER period
+        # is no reason the bare word is not it: FY25's own net income traces
+        (f"FY26 net income was {_m(ni)}, up from a FY25 profit of {_m(ni25)}.", []),
+    ]:
+        assert _page_caveated("TJX", claim, ref) == flagged, claim
+
+
+def test_the_comparison_guard_keeps_a_shared_rows_every_column_on_tjx() -> None:
+    """(−) `_shares_row`, the guard that stops a period carrying onto a figure whose row another
+    figure of the claim shares, had no pin: with it off, every test passed and TJX's correct
+    "FY26 revenue was $60,372M, up 7% on $56,360M" refused FY25's $56,360M as FY26's."""
+    _, mech = _page("TJX")
+    ref, _ = _annual(mech)
+    rev26, rev25 = _value(mech, "Revenue ($M)", "FY26"), _value(mech, "Revenue ($M)", "FY25")
+    up = round((rev26 / rev25 - 1) * 100)
+    assert _page_caveated("TJX", f"FY26 revenue was {_m(rev26)}, up {up}% on {_m(rev25)}.",
+                          ref) == []
+
+
+def test_a_claim_must_lie_inside_the_print_on_frozen_pages() -> None:
+    """(−) The inside-the-print guard had no frozen pin: only the corpus invariant on IT's living
+    page caught its removal. Without it a claim reached an unrelated structured value at the edge
+    of a print plus its own width — on the 27 committed pages that cleared four TRUE flags (CNXC
+    "2.6", IT "-1.5", MCK "2.25", VITL "1.5"). Here: SMPL's margin trend prints the LTM gross
+    margin "33%", and an unrelated $32.5M sits at that print's edge, so "32%" is refused; VITL's
+    cross-section prints the peer median P/E "16.7x" beside an unrelated 16.75, so "16.8x" is."""
+    smpl = _frozen()
+    trend = smpl.quality.margin_trend
+    assert "(LTM) 33%" in str(trend.value)
+    assert _caveated(smpl, "SMPL's LTM gross margin was 33%.", str(trend.source_ref)) == []
+    assert _caveated(smpl, "SMPL's LTM gross margin was 32%.", str(trend.source_ref)) == ["32"]
+    raw = json.loads((ROOT / "tests/fixtures/frozen_pages/2026-08-18/VITL/dossier.json")
+                     .read_text())
+    vitl = ds.MechanicalLayer.model_validate(raw["mechanical"])
+    cross = vitl.valuation.cross_sectional
+    assert "peer median 16.7x" in str(cross.value)
+    point = ds.SourcedPoint.model_validate({"claim": "Peers trade at a median P/E of 16.8x.",
+                                            "source_ref": str(cross.source_ref), "figures": []})
+    flags = syn._validate(_synth([point]), vitl, ticker="VITL", name=raw.get("name", ""))[1]
+    assert any(f.startswith("UNTRACEABLE figure '16.8'") for f in flags)
+
+
+def test_a_bare_word_reads_its_own_clause_and_compound_on_tjx() -> None:
+    """(/code-review high, round 0 of the follow-up) FAILED before the fix, both ways. (+) The word
+    before a bare word was read across punctuation, so after a figure — "$8,425M; sales were" —
+    it was the figure's "425m", no modifier the rule admits, and EBIT's figure under "sales" passed.
+    (−) "of" and "from" were admitted before it, and nothing after it was read, so "cost of sales",
+    "proceeds from sales" and "sales and marketing" each named Revenue, and the figure under it
+    was refused where, a mention of no row, it meets the cited fact. The figure is EBIT's, a
+    stand-in for a cost the table does not hold, so these four claims are wrong as written and
+    pass: RESIDUAL, as in `test_residual_three_wrong_claims_under_a_compound_pass_on_tjx`."""
+    _, mech = _page("TJX")
+    ref, _ = _annual(mech)
+    ebitda, ebit = (_value(mech, lbl, "FY26") for lbl in ("EBITDA ($M)", "EBIT ($M)"))
+    for claim, flagged in [
+        (f"FY26 EBITDA was {_m(ebitda)}; sales were {_m(ebit)}.", [_shown(ebit)]),
+        (f"FY26 EBITDA was {_m(ebitda)}, sales were {_m(ebit)}.", [_shown(ebit)]),
+        (f"FY26 EBITDA was {_m(ebitda)}. Sales were {_m(ebit)}.", [_shown(ebit)]),
+        (f"FY26 EBITDA was {_m(ebitda)} while cost of sales was {_m(ebit)}.", []),
+        (f"FY26 EBITDA was {_m(ebitda)} while proceeds from sales were {_m(ebit)}.", []),
+        (f"FY26 EBITDA was {_m(ebitda)} while the sales and marketing expense was {_m(ebit)}.",
+         []),
+        (f"FY26 EBITDA was {_m(ebitda)} while sales & marketing cost {_m(ebit)}.", []),
+    ]:
+        assert _page_caveated("TJX", claim, ref) == flagged, claim
+
+
+# --- review round 1 of the W05 follow-up (#1050): an independent review at c06061d6 ------------
+
+def test_a_bare_word_is_no_compound_on_tjx_tgt_and_ncno() -> None:
+    """REVIEW ROUND 1. FAILED at c06061d6: "bare" read only the word before, so a noun after made
+    a compound that still named rows — "sales leverage", "the sales mix" and "profit per share"
+    each held a correct figure to Revenue or a profit row and refused it. What follows must be a
+    verb, a preposition (never "per"), a conjunction or the clause's end. (−) The refusals stay:
+    "FY26 sales were …" with EBITDA's figure, TGT's "profit was" revenue's, NCNO's "on sales of"
+    EBIT's. (Two more compounds the review listed here as correct are not: they are RESIDUAL,
+    `test_residual_three_wrong_claims_under_a_compound_pass_on_tjx`.)"""
+    _, tjx = _page("TJX")
+    ref, _ = _annual(tjx)
+    ebitda, eps = (_value(tjx, lbl, "FY26") for lbl in ("EBITDA ($M)", "EPS (GAAP, dil.)"))
+    margin = ebitda / _value(tjx, "Revenue ($M)", "FY26") * 100
+    for claim in (f"FY26 EBITDA was {_m(ebitda)}, as sales leverage lifted the margin to "
+                  f"{margin:.1f}%.",
+                  f"FY26 EBITDA was {_m(ebitda)} as the sales mix lifted the margin to "
+                  f"{margin:.1f}%.",
+                  f"FY26 profit per share was ${eps:.2f}."):
+        assert _page_caveated("TJX", claim, ref) == [], claim
+    assert _page_caveated("TJX", f"FY26 sales were {_m(ebitda)}.", ref) == [_shown(ebitda)]
+    _, tgt = _page("TGT")
+    tref, _ = _annual(tgt)
+    t_ebitda, t_rev = _value(tgt, "EBITDA ($M)", "FY26"), _value(tgt, "Revenue ($M)", "FY26")
+    assert _page_caveated("TGT", f"FY26 EBITDA was {_m(t_ebitda)}; profit was {_m(t_rev)}.",
+                          tref) == [_shown(t_rev)]
+    _, ncno = _page("NCNO")
+    nref, _ = _annual(ncno)
+    n_ebitda, n_ebit = _value(ncno, "EBITDA ($M)", "FY26"), _value(ncno, "EBIT ($M)", "FY26")
+    assert _page_caveated(
+        "NCNO", f"FY26 EBITDA was ${n_ebitda:.1f}M on sales of ${n_ebit:.1f}M.",
+        nref) == [f"{round(n_ebit, 1):g}"]
+
+
+def test_residual_three_wrong_claims_under_a_compound_pass_on_tjx() -> None:
+    """RESIDUAL (review round 2) — three WRONG claims the trace does not catch, pinned as what it
+    does, never as correct. TJX's table holds no SG&A row and no volume, and its FY26 net income
+    grew 13%: the SG&A figure here is D&A's, and each 7% is revenue growth. A compound names no
+    row, so its figure meets the cited fact's period, where another row holds it, as on main.
+    At c06061d6 the first two were refused, by reading the compound as a bare word: the right
+    outcome for the wrong reason. The pin still holds two rules: with "sales, general and
+    administrative" read as "sales", or "profit growth" as "profit", a figure here is refused."""
+    _, tjx = _page("TJX")
+    ref, table = _annual(tjx)
+    assert not [r.label for r in table.rows if re.search(r"SG&A|general|volume", r.label, re.I)]
+    rev26, rev25 = _value(tjx, "Revenue ($M)", "FY26"), _value(tjx, "Revenue ($M)", "FY25")
+    ni26, ni25 = _value(tjx, "Net income ($M)", "FY26"), _value(tjx, "Net income ($M)", "FY25")
+    assert (round((rev26 / rev25 - 1) * 100), round((ni26 / ni25 - 1) * 100)) == (7, 13)
+    ebitda, dna = _value(tjx, "EBITDA ($M)", "FY26"), _value(tjx, "D&A ($M)", "FY26")
+    margin = ebitda / rev26 * 100
+    for claim in (f"FY26 EBITDA was {_m(ebitda)} while sales, general and administrative costs "
+                  f"were {_m(dna)}.",
+                  f"FY26 EBITDA margin was {margin:.1f}% and profit growth was 7%.",
+                  f"FY26 EBITDA was {_m(ebitda)} while sales volume rose 7%."):
+        assert _page_caveated("TJX", claim, ref) == [], claim
+
+
+def test_a_rate_row_and_its_amount_row_are_one_comparison_on_tjx() -> None:
+    """REVIEW ROUND 1. FAILED at c06061d6: the comparison guard compared rows by equality, and
+    "revenue growth" names Revenue Growth and Revenue while "a revenue base of $56,360M" names
+    Revenue, so FY26 was carried onto FY25's base and refused it. Each set is now read less its
+    rate variants. (−) #1040's "profit was $5,947M" (FY27E net income under FY26) stays refused,
+    and "up 7% on sales of $56,360M", refused on main, still traces."""
+    _, mech = _page("TJX")
+    ref, _ = _annual(mech)
+    rev26, rev25 = _value(mech, "Revenue ($M)", "FY26"), _value(mech, "Revenue ($M)", "FY25")
+    up = round((rev26 / rev25 - 1) * 100)
+    for claim in (f"FY26 revenue growth was {up}% on a revenue base of {_m(rev25)}.",
+                  f"FY26 revenue growth of {up}% came off a {_m(rev25)} revenue base.",
+                  f"FY26 revenue was {_m(rev26)}, up {up}% on sales of {_m(rev25)}."):
+        assert _page_caveated("TJX", claim, ref) == [], claim
+    ebitda, ni27 = _value(mech, "EBITDA ($M)", "FY26"), _value(mech, "Net income ($M)", "FY27E")
+    assert _page_caveated("TJX", f"FY26 EBITDA was {_m(ebitda)} and profit was {_m(ni27)}.",
+                          ref) == [_shown(ni27)]
+
+
+def test_a_bare_word_after_a_period_or_a_year_on_tjx() -> None:
+    """(−) REVIEW ROUND 1: the period and year lead had no pin — with both dropped from what may
+    stand before a bare word, every test passed, though "FY26 sales were $8,425M" is refused only
+    because "FY26" lets "sales" be bare."""
+    _, mech = _page("TJX")
+    ref, _ = _annual(mech)
+    ebitda = _value(mech, "EBITDA ($M)", "FY26")
+    for claim in (f"FY26 sales were {_m(ebitda)}.", f"In 2026 sales were {_m(ebitda)}."):
+        assert _page_caveated("TJX", claim, ref) == [_shown(ebitda)], claim
+
+
+def test_a_bare_word_after_a_possessive_a_parenthesis_or_a_dash_on_tjx() -> None:
+    """REVIEW ROUND 1. FAILED at c06061d6 (and on main): a possessive read as the word "s", and
+    "(" and a spaced " - " were no clause break, so EBIT's figure under "sales" passed in "TJX's
+    sales were …", "(sales were …)" and "… - sales were …". (−) The figure before the parenthesis
+    keeps its own metric — a bare word opening its clause is never its — and "U.S. sales" is no
+    possessive."""
+    _, mech = _page("TJX")
+    ref, _ = _annual(mech)
+    ebitda, ebit = _value(mech, "EBITDA ($M)", "FY26"), _value(mech, "EBIT ($M)", "FY26")
+    for claim in (f"TJX's FY26 EBITDA was {_m(ebitda)} and TJX's sales were {_m(ebit)}.",
+                  f"FY26 EBITDA was {_m(ebitda)} (sales were {_m(ebit)}).",
+                  f"FY26 EBITDA was {_m(ebitda)} - sales were {_m(ebit)}."):
+        assert _page_caveated("TJX", claim, ref) == [_shown(ebit)], claim
+    assert _page_caveated(
+        "TJX", f"FY26 EBITDA was {_m(ebitda)} while U.S. sales were {_m(ebit)}.", ref) == []

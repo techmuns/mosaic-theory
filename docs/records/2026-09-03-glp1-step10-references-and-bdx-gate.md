@@ -73,9 +73,8 @@ which is the prong it was never tested on.
 
 **Its own transcripts give agreement COUNTS, never a figure:**
 
-> Q3 2026: *"We're achieving high win rates across the biologics market, including GLP-1s, and we now
-> have approximately 100 agreements signed across novel and biosimilar GLP-1 programs."*
-> Q2 2026: *"we secured several significant long-term customer wins, including two next-generation
+> Q3 2026: *"…have approximately 100 agreements signed across novel and biosimilar GLP-1 programs."*
+> Q2 2026: *"…significant long-term customer wins, including two next-generation
 > GLP-1 programs"*
 
 And the segment carrying it is barely moving: **"BioPharma Systems declined 1[%]"** (Q2), **"grew
@@ -96,7 +95,7 @@ never arrived.
 Confirmed in `Waters Corporation, Q2 2026 Earnings Call, Aug 04, 2026`:
 
 > *"GLP-1 testing part of the business grew over 40% this quarter."*
-> *"In fact, moving ahead of what we had promised on the GLP-1 testing contribution."*
+> *"…ahead of what we had promised on the GLP-1 testing contribution."*
 
 The `source_ref` must cite that transcript. The 10-Q reports the line blended, so a filings-anchored
 reader does not find it.
@@ -115,3 +114,30 @@ The squash title of **#586** reads *"the peer spread widens against instruments,
 broad-based, and the CRO subset flips sign on whether Illumina is included. The title cannot be
 amended without a force push over merged history. **The record body is authoritative; the commit
 title is known-wrong.**
+
+## Amendments
+
+**2026-11-13 — REDACTION: 3 spans cut to “…”**, under the operator's ruling of 2026-11-12, verbatim
+"Cut all 21 + guard (Recommended)", whose option read: "One $0 PR. Each run is cut to 12 words or
+fewer. Each record gets a dated redaction amendment naming count, position and hash only, as #1036
+did. A local-only test scans every tracked file against the transcripts on disk, and skips in CI
+where they are absent."
+
+CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecutive transcript
+words, and this repo is public. This record was written before the rule, and 3 of its quotations
+shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
+keeping the words that carry the figure or the claim this record relies on; nothing else in it
+moved, and nothing was reworded. Each run is named below by the line it starts on and the line(s)
+its cut spans sit on, in the record as merged; by its length and the words kept; by the call it
+shares them with and where it starts in that call; and by the sha256 of its words: never by the
+words. A word is counted as the guard counts it
+(`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
+slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
+single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
+history is rewritten.
+
+| run starts on line | cut on line(s) | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|---|
+| 76 | 76–77 | 27 → 12 | `Becton, Dickinson and Company, Q3 2026 Earnings Call, Aug 06, 2026` | 999 | `51078d610a51c6fb` |
+| 78 | 78 | 15 → 12 | `Becton, Dickinson and Company, Q2 2026 Earnings Call, May 07, 2026` | 1,229 | `9d91f6bcfc79b9d5` |
+| 99 | 99 | 15 → 12 | `Waters Corporation, Q2 2026 Earnings Call, Aug 04, 2026` | 7,622 | `2001aa1fe7eaaef8` |

@@ -315,3 +315,67 @@ def test_score_run_exits_1_on_a_run_that_is_not_testable(
     rc = cli.main(["score-run", "--registration", str(tmp_path / "registration.json"),
                    "--budget-ledger", str(tmp_path / "ledger.jsonl"), "--draws-out", str(out)])
     assert "STOP: NOT TESTABLE" in capsys.readouterr().out and rc == 1
+
+
+# --------------------------------------------------------------- 4. one SDK per registration
+
+def _restamp(out: Path, version: Any) -> None:
+    """Rewrite every draw row's `sdk_version`: a value, or `DROP` for a row written before rows
+    carried one (2026-11-13)."""
+    import json
+
+    rows = [json.loads(x) for x in out.read_text().splitlines() if x.strip()]
+    for r in rows:
+        r.pop("sdk_version", None)
+        if version is not DROP:
+            r["sdk_version"] = version
+    out.write_text("".join(json.dumps(r) + "\n" for r in rows))
+
+
+DROP = object()
+
+
+def test_a_registration_drawn_across_a_re_sync_is_refused_naming_both_sdks(
+        tmp_path: Path, inputs: None, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) The operator re-syncs the venv between build 2 and build 3 (review of #1049, round 1):
+    the API version moves with the SDK, and the between-build X² would absorb it as dispersion.
+    The score is refused, never computed."""
+    from vinci.evals import builds as bd
+    from vinci.evals import independence as ind
+    reg = bd.register_run(code_ref="HEAD", pages=("NFLX",), transforms=(), draws=10, builds=4,
+                          min_gap_s=300.0, ciq_root=tmp_path / "ciq")
+    budget = rp.Budget.open(tmp_path / "ledger.jsonl", cap_usd=50.0, approval="operator: test")
+    t = [1_000.0]
+    for k in range(1, 5):
+        monkeypatch.setattr(rp, "sdk_version", lambda k=k: "0.112.0" if k <= 2 else "2.6.0")
+        bd.run_build(reg, "NFLX", k, budget=budget, draws_out=tmp_path / "d.jsonl",
+                     ciq_root=tmp_path / "ciq", sdk=_ScriptedSdk(_build(7)), clock=lambda: t[0])
+        t[0] += 400.0
+    with pytest.raises(rp.ReplayError, match=r"2 SDKs \(0\.112\.0, 2\.6\.0\)"):
+        ind.score(reg, budget, tmp_path / "d.jsonl")
+
+
+def test_a_registration_mixing_rows_with_and_without_an_sdk_is_refused(
+        tmp_path: Path, inputs: None) -> None:
+    """(−) Rows from before the pin carry no `sdk_version`; a run that has both is drawn across
+    it, and which SDK the older rows used is unknown."""
+    import json
+
+    from vinci.evals import independence as ind
+    reg, budget, out = _drawn(tmp_path, [_build(7)] * 4)
+    rows = [json.loads(x) for x in out.read_text().splitlines() if x.strip()]
+    rows[0].pop("sdk_version")
+    out.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    with pytest.raises(rp.ReplayError, match="1 of 40 draw rows state no SDK"):
+        ind.score(reg, budget, out)
+
+
+@pytest.mark.parametrize("version", ["2.6.0", DROP], ids=["one-sdk", "no-row-states-one"])
+def test_a_registration_on_one_sdk_or_from_before_the_field_scores_as_before(
+        tmp_path: Path, inputs: None, version: Any) -> None:
+    """(+) Every row on one SDK, or every row from before rows stated one: the score is today's."""
+    from vinci.evals import independence as ind
+    reg, budget, out = _drawn(tmp_path, [_build(7), _build(6), _build(7), _build(8)])
+    _restamp(out, version)
+    s = ind.score(reg, budget, out)
+    assert s.df == 3 and s.x2 == pytest.approx(2.0 / 2.1) and not s.falsified

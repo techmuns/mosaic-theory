@@ -32,13 +32,11 @@ closed.** Worst-case digest payload AORT 9.0KB — no name crowds the prompt. Pi
 never runs into the next call · headerless clamp · end-of-paragraph yields nothing · fail-soft ·
 re-wrapped quote stops at its own paragraph). Original entry:**
 THE SEVERED VERBATIM: a quote can be faithful, auditable, and still argue the opposite of
-its source.** `operating_drivers.rows[23]` on BRBR quotes *"In
-the third quarter, 70% of RTD shake category volumes were sold on price promotion."* The quote is
+its source.** `operating_drivers.rows[23]` on BRBR quotes *"…70% of RTD shake category volumes were sold on price promotion."* The quote is
 **exact**, the source_ref is **correct**, the digits **trace**. Every guard we have — quote-in-
 transcript, digit-trace, 19c's citation requirement — takes the QUOTED TEXT as the check, and this
 row passes all of them. The sentence the extraction did not take is the one that reverses it:
-*"This is relatively in line with historical norms for this period after adjusting for the shift of
-a major e-commerce promotion, while down sequentially from the heavier promoted second quarter."*
+*"This is relatively in line with historical norms… while down sequentially…"*
 The synthesis then built a bear point — *"jumped to 27% in Q2 then to 70% in Q3 … escalating
 structurally"* — on a sequence the source explicitly contradicts.
 
@@ -117,3 +115,30 @@ and neither of the two that do — nothing is mislabelled, but the number on the
 the question a covenant exists to answer. **And the 4.29× own-history low is not a clean floor**:
 it occurred under the pre-2022 Up-C / Post-controlled arrangement, a different capital structure
 (operator correction — it was offered as a floor in the underwrite brief and withdrawn).
+
+## Amendments
+
+**2026-11-13 — REDACTION: 3 spans cut to “…”**, under the operator's ruling of 2026-11-13, verbatim
+"Cut all 25, one PR (Recommended)", whose option read: "Cut the 4 extra runs the same way as the 21:
+a dated redaction on the record, made-up sentences in the tests, a shorter docstring. One PR,
+landing before #953's paid run registers." The 4 were found by the guard built under the ruling of
+2026-11-12 ("Cut all 21 + guard (Recommended)"); the audit that ruling answered could not read their
+call.
+
+CLAUDE.md's rule, since 2026-11-10: no public field quotes more than 12 consecutive transcript
+words, and this repo is public. This record was written before the rule, and 2 of its quotations
+shared more consecutive words with the call they cite. Each is cut in place to 12 words or fewer,
+keeping the words that carry the figure or the claim this record relies on; nothing else in it
+moved, and nothing was reworded. Each run is named below by the line it starts on and the line(s)
+its cut spans sit on, in the record as merged; by its length and the words kept; by the call it
+shares them with and where it starts in that call; and by the sha256 of its words: never by the
+words. A word is counted as the guard counts it
+(`tests/test_tracked_files_hold_no_transcript_run.py`): split at whitespace, every dash form and a
+slash, lower-cased, edge punctuation off, apostrophes folded. The hash is of those words joined by
+single spaces, its first 16 hex digits. Git history keeps the old text, as the operator accepted; no
+history is rewritten.
+
+| run starts on line | cut on line(s) | words → kept | call | starts at word | run sha256 |
+|---|---|---|---|---|---|
+| 35 | 35–36 | 15 → 11 | `BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026` | 1,656 | `f06f7c45aae1273f` |
+| 40 | 40–41 | 31 → 11 | `BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026` | 1,671 | `18aef2400926d066` |

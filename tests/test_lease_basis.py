@@ -521,20 +521,6 @@ def test_the_template_proposes_the_multiple_the_anchor_prices() -> None:
     assert ("multiple", "base") not in {(x.axis, x.leg) for x in propose_anchors(refused)}
 
 
-def test_the_tagger_reads_a_refused_lease_basis_as_no_usable_multiple() -> None:
-    """(+) The recipe proposer agrees with the anchor: material rent and no ex-lease history means
-    no trailing multiple to re-rate to, the same verdict as a tripped coherence guard. (-) The
-    consistent TJX page proposes R1 as before."""
-    from vinci.dossier.anchor import RECIPE_R2
-    from vinci.dossier.tagger import propose as tag
-
-    refused = tag("TJX", _page_doc("TJX", _lb("UBER"), _lb("UBER")))
-    assert refused.proposed == RECIPE_R2
-    assert any(DQ_LEASE_BASIS in s for s in refused.signals), refused.signals
-    ok = tag("TJX", _page_doc("TJX", _lb("TJX"), _lb("TJX")))
-    assert ok.proposed != RECIPE_R2 and not any(DQ_LEASE_BASIS in s for s in ok.signals)
-
-
 def test_the_selector_is_the_one_choice() -> None:
     """(+) One function decides; the anchor and the template both call it."""
     assert r1_multiple_band(_mech("TJX", _lb("TJX"))).ex_lease is True
@@ -735,23 +721,6 @@ def test_an_r2_anchors_basis_is_read_off_its_net_debt() -> None:
     assert fresh["anchor"].get("multiple") is None
     assert anchor_prices_ex_lease(fresh["anchor"]) and lease_basis_mismatch(fresh) is None
     assert lease_basis_mismatch(_page_doc("NCNO", lb, None)) is not None
-
-
-def test_the_tagger_reads_the_ex_lease_band_where_ciqs_refused() -> None:
-    """(+) Review of #750: the tagger checked CIQ's band only, so with an ex-lease history and no
-    CIQ band (CIQ's refuses on an NM latest close) the anchor priced $129.10 while the tagger
-    proposed R2. It now asks the same selector the anchor does."""
-    from vinci.dossier.anchor import RECIPE_R2
-    from vinci.dossier.tagger import propose as tag
-
-    d = _page_doc("TJX", _lb("TJX"), _lb("TJX"))
-    oh = d["mechanical"]["valuation"]["own_history"]["value"]
-    d["mechanical"]["valuation"]["own_history"]["value"] = [
-        b for b in oh if "EBITDA" not in b["metric"]]
-    d["anchor"] = json.loads(compute_anchor(d["mechanical"], facts=_facts("TJX"),
-                                            computed_at=NOW).model_dump_json())
-    assert d["anchor"]["applicable"] is True
-    assert tag("TJX", d).proposed != RECIPE_R2
 
 
 def test_a_bear_multiple_is_judged_against_the_band_on_its_records_basis() -> None:

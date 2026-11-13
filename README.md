@@ -141,8 +141,13 @@ explicit **UNKNOWN → defer**, never a silent zero. Source-reliability tiers: E
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -m pip install --require-hashes -r requirements.lock   # every package, pinned
+.venv/bin/python -m pip install --no-deps -e .                          # then vinci, adding nothing
 ```
+
+`requirements.lock` pins every package with its hashes, as CI installs it. A bare
+`pip install -e ".[dev]"` would pin only what `pyproject.toml` pins exactly (the `anthropic` SDK
+and `pyarrow`) and take the newest of everything else.
 
 Credentials (environment variables; also set as GitHub Actions secrets for automation):
 
