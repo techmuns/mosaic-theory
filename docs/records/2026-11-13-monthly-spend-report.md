@@ -35,7 +35,8 @@ prints every root it searched and every ledger it read, so it never claims a wid
 - Months are UTC calendar months.
 - Every figure is the list price the writer recorded.
 - A missing figure is `None`, never zero:
-  - an unpriced row is counted apart;
+  - an unpriced row is counted apart, and its bucket's figure and the total then print as a
+    floor ("≥", "at least") naming the rows not in them;
   - a bucket with no record, or one not read, is named in the total as "NOT included".
 - Each bucket prints what its `rows` column counts, since the units differ.
 - A malformed record raises. Skipping it would print a total smaller than the spend.
@@ -120,7 +121,7 @@ October reads $136.49 over three buckets: pages, evals ($0.00, since no ledger r
 October row) and the theme desk. Its graph judge is NOT READ, because the 2026-11-09 re-judge
 overwrote any earlier one.
 
-**The tests** (`tests/test_spend_report.py`, 25 cases) are built from real records:
+**The tests** (`tests/test_spend_report.py`, 26 cases) are built from real records:
 - committed assembly lines;
 - ledgers written by the real `Budget`;
 - the theme branch's row shape;
@@ -148,6 +149,9 @@ What they pin:
     default;
   - draws are counted apart from zero-cost rows;
   - each bucket says what its rows count, and the total says it is not a floor.
+- **Round 2, Codex P1 on `40c33550`:** a bucket with unpriced rows never yields a definite total.
+  Its figure prints "≥" and the total "at least", naming the unpriced rows. The pin fails on
+  `bff7ef27`.
 
 All of them fail at base, where the module is absent. Six of the seven round-1 pins also fail on
 this PR's first head, `09913271`. The seventh, the all-six-buckets pin, reds when `theme_desk` is

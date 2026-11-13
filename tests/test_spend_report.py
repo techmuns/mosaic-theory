@@ -326,3 +326,18 @@ def test_each_bucket_says_what_its_rows_count_and_the_total_is_not_a_floor() -> 
                                                data_dir=ROOT / "data", ledgers=[]))
     assert out.count("rows: ") == len(spend.BUCKETS)
     assert "neither a floor nor exact for one month" in out
+
+
+def test_a_bucket_with_unpriced_rows_never_yields_a_definite_total() -> None:
+    """(-) Codex P1 on 40c33550: a bucket holding unpriced rows put its priced part into a total
+    printed as definite, so the month read lower than it was with nothing on the total line to
+    say so. Its figure and the total now read as a floor ("≥", "at least") and name the rows that
+    are not in it. (+) With every row priced, the total stays a plain figure."""
+    partial = [spend.Bucket("pages", 3.0, 2, "s", "x", unpriced=1),
+               spend.Bucket("evals", 2.0, 1, "s", "x")]
+    out = spend.render("2026-11", partial)
+    assert "≥$3.00" in out
+    assert ("total of the 2 bucket(s) read: at least $5.00 — 1 unpriced row(s) in pages are "
+            "not in it") in out
+    whole = spend.render("2026-11", [spend.Bucket("pages", 3.0, 2, "s", "x")])
+    assert "total of the 1 bucket(s) read: $3.00" in whole and "at least" not in whole

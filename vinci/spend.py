@@ -351,7 +351,8 @@ def render(month: str, buckets: Sequence[Bucket]) -> str:
     lines = [f"spend report, {month} (UTC calendar month, list price) — reports, refuses nothing",
              "", f"{'bucket':<14} {'usd':>10} {'rows':>6}  source"]
     for b in buckets:
-        usd = "—" if b.usd is None else f"${b.usd:,.2f}"
+        # a bucket with unpriced rows knows only a floor of its spend: "≥", never a plain figure
+        usd = ("—" if b.usd is None else f"≥${b.usd:,.2f}" if b.unpriced else f"${b.usd:,.2f}")
         lines.append(f"{b.name:<14} {usd:>10} {b.rows:>6}  {b.source}")
         extra = [b.note] if b.note else []
         if b.unpriced:
@@ -364,7 +365,10 @@ def render(month: str, buckets: Sequence[Bucket]) -> str:
     seen = [b for b in buckets if b.usd is not None]
     blind = [b.name for b in buckets if b.usd is None]
     total = sum(b.usd for b in seen if b.usd is not None)
-    lines += ["", f"total of the {len(seen)} bucket(s) read: ${total:,.2f}"
+    partial = [f"{b.unpriced} unpriced row(s) in {b.name}" for b in seen if b.unpriced]
+    figure = (f"at least ${total:,.2f} — {', '.join(partial)} are not in it" if partial
+              else f"${total:,.2f}")
+    lines += ["", f"total of the {len(seen)} bucket(s) read: {figure}"
               + (f" — NOT included: {', '.join(blind)}" if blind else ""),
               "neither a floor nor exact for one month: it leaves out what each bucket cannot "
               "see, and an evals draw made in a later month can be dated to an earlier one"]
