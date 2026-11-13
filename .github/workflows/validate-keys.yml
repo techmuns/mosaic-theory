@@ -23,8 +23,12 @@ jobs:
           python-version: "3.12"
       # R2's HeadBucket is signed by vinci/facts/sigv4.py, loaded by path: standard library only,
       # so the S3 check needs nothing beyond httpx (no boto3).
-      - name: Install minimal deps
-        run: python -m pip install --upgrade pip anthropic httpx
+      # The lock's packages, never `vinci` itself (the script cannot import it), so the key is
+      # pinged by the SDK the pipelines pin, not the newest one (operator, 2026-11-13).
+      - name: Install the locked packages
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --require-hashes -r requirements.lock
       - name: Validate keys (values never printed)
         env:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}

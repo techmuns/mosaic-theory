@@ -152,3 +152,28 @@ def test_a_subset_calibration_names_its_pages(gold: list[gd.GoldClaim]) -> None:
                for g in gold}
     text = jg.calibration_text(jg.calibrate(perfect, gold, "dev", tickers=["AMZN", "BRBR"]))
     assert "2 of 14 pages: AMZN, BRBR" in text.splitlines()[0]
+
+
+def test_a_judge_resume_on_another_sdk_is_refused_before_it_pays(
+        tmp_path: Path, gold: list[gd.GoldClaim], monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) Review of #1049, round 2: a calibration resumes from `judged.jsonl` and `calls.jsonl`
+    across processes, so a venv re-sync between two sessions would pool two SDKs, and two API
+    versions, into one calibration. A resume whose calls so far went through another SDK is
+    refused before its first call. (+) A resume on the same SDK judges the rest."""
+    _history()
+    first = [g for g in gold if g.half == "dev" and g.page == "AMZN"]
+    both = [g for g in gold if g.half == "dev" and g.page in ("AMZN", "BRBR")]
+    ledger = tmp_path / "ledger.jsonl"
+    rp.Budget.open(ledger, cap_usd=5.0, approval="operator: test")
+    out = tmp_path / "judge"
+    monkeypatch.setattr(rp, "sdk_version", lambda: "0.112.0")
+    jg.run_half("dev", budget=rp.Budget.load(ledger), out_dir=out,
+                sdk=_FakeJudge([g.id for g in first]), gold=first)
+    monkeypatch.setattr(rp, "sdk_version", lambda: "2.6.0")
+    later = _FakeJudge([g.id for g in both if g.page == "BRBR"])
+    with pytest.raises(rp.ReplayError, match=r"0\.112\.0.*2\.6\.0"):
+        jg.run_half("dev", budget=rp.Budget.load(ledger), out_dir=out, sdk=later, gold=both)
+    assert later.calls == 0, "the refused resume paid for a call"
+    monkeypatch.setattr(rp, "sdk_version", lambda: "0.112.0")
+    judged = jg.run_half("dev", budget=rp.Budget.load(ledger), out_dir=out, sdk=later, gold=both)
+    assert later.calls == 1 and len(judged) == len(both)

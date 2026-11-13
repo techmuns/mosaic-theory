@@ -52,7 +52,7 @@ def test_the_sec_check_applies_the_pipelines_rule_and_sends_nothing(
 
 
 def test_the_sec_rule_is_vincis_own(vk: Any) -> None:
-    """The script cannot import vinci (its workflow installs only anthropic and httpx), so its copy
+    """The script cannot import vinci (its workflow never installs `vinci`), so its copy
     of the rule is pinned to the one every SEC request is checked against."""
     assert vk.SEC_UA_PLACEHOLDER_EMAIL == config._SEC_UA_PLACEHOLDER_EMAIL
     assert vk.SEC_UA_EMAIL.pattern == config._EMAIL.pattern
