@@ -1,0 +1,129 @@
+---
+status: shipped
+date: 2026-11-13
+prs: [1065]
+supersedes:
+superseded-by:
+---
+
+# The gate runs the offline suite across the runner's cores (`-n auto`, pytest-xdist 3.8.0 from the lock), every test's outcome the same as on one process, after four tests stopped writing into the committed tree while they ran
+
+**WHAT.**
+- **The authority.** The operator asked coordinator B why every PR waits about 15 minutes for
+  `gate`. B's brief to this session: make the gate faster without weakening it; every test that
+  runs today must still run.
+- **The plugin.** `pytest-xdist>=3.8` joins `.[dev]` in `pyproject.toml`. `requirements.lock` is
+  regenerated in place by the command in its header (uv 0.13.8), the #1049 rule. It gains
+  `pytest-xdist==3.8.0` and its one dependency `execnet==2.1.2`, with hashes, and no other pin
+  moves (+10 lines). It still regenerates byte for byte, offline.
+- **The gate.** `gate.yml`'s pytest step adds `-n auto`: one worker per core of the runner,
+  so 4 on `ubuntu-latest`. Every other flag is unchanged.
+- **The other gates stay on one process.** `bin/commit` runs in the shared venv. Agents may not
+  reinstall it (STATE row 62), and it has no pytest-xdist until it is re-synced from the lock. The
+  scheduled workflows' own gates (`weekly-screen`, `monthly-score`, `theme-intelligence-weekly`)
+  are left as they were, since the brief named `gate.yml`.
+  - `tests/test_one_gate.py` required every gate to carry each of gate.yml's flags. `-n` is now a
+    scheduling flag that gate.yml carries and the others may leave out (`_SCHEDULING`). A new pin
+    shows that a gate dropping `-rs`, `-p no:warnings` or `-m "not network"` is still caught.
+    Main's version of the test fails against the new gate.yml, naming the three workflows and
+    `bin/commit` as lacking `-n auto`.
+- **Four tests stopped writing into the checkout.** Each wrote into the committed tree while it
+  ran and restored it after, so git stayed clean and one process never noticed. On several
+  workers, a test reading the same files at the same moment on another worker could catch them
+  missing, empty, or carrying something uncommitted:
+
+  | test | what it wrote | now |
+  |---|---|---|
+  | `test_scenarios.py::test_emit_scenarios_is_deterministic` | removed `frontend/scenarios/` and wrote its 14 files again | emits into its own folder (`OUT_SCEN` patched) and compares that with the committed mirror byte for byte |
+  | `test_quantity_kind_guard.py::test_the_stamps_round_trip_and_an_unstamped_fact_emits_no_key` | rewrote `scenarios/SMPL.json`, which dozens of tests read | `write_record(root=tmp_path)`, same byte comparison |
+  | `test_known_wrong_marker.py`: the two tests that drop a marker | put `known_wrong.json` beside AMZN's committed dossier, sealing it for as long as the test took | the marker is in a dossiers root of the test's own, passed as `dossiers_root=`, as every production render passes it |
+  | `test_cohort_anchoring.py::test_the_falsifier_can_actually_fire` | planted 12 empty `data/dossiers/<T>/dossier.json` | runs a copy of the script in a checkout of its own: every entry linked in, the 12 added there |
+
+  Each still fails where it should. Run against a checkout with no names added, the falsifier test
+  fails on its own assertion ("did NOT trip the falsifier"). Rendered without its root, the marker
+  test fails "the marker did not reach the rendered page".
+
+**WHY.**
+- **Where the gate's time went.** The pytest step took 758 to 1,416 s on ten successful gate runs
+  of 2026-11-13, a median of 1,081 s. Install took 15 to 21 s, mypy 12 to 27 s, ruff about 0 s.
+- **Where pytest's time goes.** Measured on one process locally (Apple M-series), at main
+  `6a5a28f5`, in a venv installed from the lock. 11,952 tests summed 736 s, inside 760 s of wall
+  time.
+  - **Most of it is CPU in this process.** user 586 s plus sys 100 s of 766 s wall. The run is
+    compute-bound, not waiting, so it divides across cores.
+  - **No few tests to fix.** The slowest is 28.7 s
+    (`test_footnote_every_figure.py::test_the_gd6_draw_is_caught_the_same_with_each_figure_footnoted`).
+    The slowest 40 tests sum 234 s (31.5%), and the 128 tests over 1 s sum 363 s (49%).
+    The slowest file, `test_footnote_every_figure.py`, takes 77 s (10.4%).
+  - **Child processes: 225 s (30.6%), in 691 tests**, timed per test by a measuring plugin over
+    `subprocess.Popen`.
+    - `python` children: 99.7 s, 243 of them, in 86 tests;
+    - `git`: 93.3 s, 5,077 calls, in 521 tests;
+    - `node`: 11.4 s, 165 calls, in 134 tests;
+    - LibreOffice 9.4 s and Brave 4.1 s, local only: CI has neither, and those tests skip there.
+  - **Committed artifacts: 3,174 tests (255 s, 34.7%) open a file under `data/`, `frontend/`,
+    `scenarios/`, `docs/` or another committed area** (the same plugin over `open`).
+    `data/dossiers/` alone is read by 1,426 tests summing 158.5 s. These tests overlap the
+    child-process ones, so the two shares do not add.
+- **So the gain is in spreading the suite, not trimming it.** Two thirds of the time is a long
+  tail of ordinary tests; no handful of slow ones accounts for it.
+
+**HOW VERIFIED.**
+- **Serial against parallel, test by test.** Each run wrote a junit file, compared by test id and
+  outcome (passed, skipped, xfailed, failed).
+  - At this branch's head (main `81f97600` plus this change), one process:
+    **11,388 passed, 667 skipped, 11 xfailed** in 740 s.
+  - Four parallel runs at the same head, every one **11,388 passed, 667 skipped, 11 xfailed**,
+    the same test ids with the same outcomes as the serial run and as each other:
+
+    | run | wall |
+    |---|---|
+    | `-n 4` | 296 s |
+    | `-n 4 --dist worksteal` | 366 s |
+    | `-n auto` (8 here) | 491 s |
+    | `-n auto` again | 291 s |
+
+    The Mac was shared with other sessions' runs (load average 16 to 23 on 4 performance and 4
+    efficiency cores), which is why the walls spread and why CI chose the worker count.
+    Work-stealing was no faster, so the default distribution stays.
+  - At main `6a5a28f5`, before these fixes: two runs on one process, in the shared venv
+    (anthropic 0.112.0) and in the lock venv (2.6.0), and one at `-n 8`. All three gave
+    11,274 passed, 667 skipped, 11 xfailed, every test the same.
+- **What the four tests wrote, and that nothing writes now.** A finding plugin logged every write
+  a test made inside the checkout: `open` in a write mode, `os.replace`/`rename`/`unlink`/`mkdir`
+  and `shutil` copies and removals. Its run at `-n 8`, on `6a5a28f5`, found the four above. Two
+  findings were noise: `shutil.rmtree`'s directory-relative unlinks of temporary folders, and an
+  unlink of a symlink in `test_snapshot_vintage.py`'s own staged copy, read through to its target.
+  - A file-time check finds what a child process writes, which the plugin cannot see. After every
+    run (serial or parallel, at this head) no file in the checkout outside the caches is newer
+    than the run's start. Before the fixes, `scenarios/SMPL.json` and the 14 `frontend/scenarios/`
+    files were.
+  - Outside the checkout: the SEC pace file is already one per worker (`tests/conftest.py` puts it
+    in the worker's own basetemp). `~/.cache/vinci` was not touched by any run.
+- **The gate on CI.** Pending: this PR's own gate runs, added before merge.
+- **The lock.** `tests/test_dependency_lock.py` passes, the uv regeneration pin included
+  (`VINCI_UV` set, `--offline`): the lock regenerates byte for byte in place.
+
+**BOUNDARY.**
+- **CI before:** the ten successful `gate` runs listed by `gh run list --workflow gate.yml`
+  between 11:22 and 12:28 UTC on 2026-11-13 (jobs 131855811772 to 131885693149), every PR and push
+  head among them, at the step times GitHub reports for each job.
+- **Local timings:** one Mac, 8 cores (4 performance, 4 efficiency), shared with other sessions,
+  wall time from `/usr/bin/time`. They place the time; CI measures the gain.
+- **Counts:** `pytest -m "not network"`, every file under `tests/`; 39 network tests deselected
+  in each run. At `6a5a28f5` 11,952 outcomes; at `81f97600` plus this change 12,066.
+- **The breakdown's shares** are of summed per-test time (setup, call and teardown) at
+  `6a5a28f5`, from one serial run.
+
+**WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **ACCEPTED RISK: a new test that writes into the committed tree.** The next test of that shape
+  passes on one process and may fail at random on four. Nothing refuses it at write time: a
+  whole-suite check comparing file times would also fire on any file a person edits during the
+  run. The finding plugin above is how the four were found, and it can be run again.
+  - **The falsifier:** a gate failure, on a single run, in a test that reads a committed path,
+    that a re-run passes.
+- **`bin/commit` stays on one process** (about 13 minutes locally) until the shared venv carries
+  pytest-xdist. After the row 62 re-sync, adding `-n auto` to `bin/commit` is its own change.
+- **A failure's log names its worker** (`[gw2]`): a test that fails on CI and passes locally may
+  have shared a worker with a test that left state behind, which the per-test comparison above
+  rules out for today's suite only.
