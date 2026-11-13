@@ -178,6 +178,35 @@ def test_a_build_end_bounds_the_draws_before_it(tmp_path: Path) -> None:
     assert (b.usd, b.rows, b.unknown) == (2.0, 3, [])
 
 
+def test_a_build_start_is_no_upper_bound_for_the_draws_above_it(tmp_path: Path) -> None:
+    """(-) Review of #1064: a `build_start`'s time is taken BEFORE its request is captured, under a
+    lock a concurrent build's draws do not take, so a draw appended above it can be later than its
+    stamp. A draw above a 31 Oct 23:59Z `build_start`, in a ledger last written 1 Nov, may be
+    November's: it is not placed in October. (+) The draw after the `build_start` is November's
+    only if bounded there — here it spans too, so October holds nothing for sure."""
+    led = _ledger(tmp_path / "l.jsonl", [
+        _draw(1.0), {"build_start": {"started_at": "2026-10-31T23:59:00Z"}, "usd": 0.0},
+        _draw(2.0)], opened_at="2026-10-31T23:00:00Z", last_write="2026-11-01T00:05:00Z")
+    oct_ = spend.evals([led], "2026-10")
+    assert (oct_.usd, oct_.rows) == (0.0, 1)           # the build_start row alone, at its stamp
+    assert oct_.unknown == ["2 undated row(s) in evals ($3.00) that ran across a month boundary "
+                            "and may belong to this month"]
+
+
+def test_a_byte_identical_copy_bounds_by_the_earliest_last_write(tmp_path: Path) -> None:
+    """(+) Review of #1064: two byte-identical copies are one ledger, and each was complete by its
+    own file time, so the earliest bounds its draws — not whichever path sorts first. A copy made
+    in November that sorts first must not push an October draw across the boundary."""
+    orig = _ledger(tmp_path / "b" / "ledger.jsonl", [_draw(2.0)],
+                   opened_at="2026-10-20T10:00:00Z", last_write="2026-10-20T11:00:00Z")
+    copy = tmp_path / "a" / "ledger.jsonl"
+    copy.parent.mkdir()
+    copy.write_bytes(orig.read_bytes())
+    _last_write(copy, "2026-11-05T10:00:00Z")
+    b = spend.evals([orig, copy], "2026-10")
+    assert (b.usd, b.rows, b.unknown) == (2.0, 1, [])
+
+
 def test_a_ledger_opened_on_the_first_in_india_is_the_previous_utc_month(tmp_path: Path) -> None:
     led = _ledger(tmp_path / "l.jsonl", [_draw(1.5)], opened_at="2026-12-01T03:00:00+0530")
     assert spend.evals([led], "2026-11").usd == 1.5

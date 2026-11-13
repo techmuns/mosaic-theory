@@ -17,10 +17,15 @@ zero". #1061 had used its two bounded rounds, so both were deferred to this PR.
    - The old rule: a draw row carries no time, so it took the latest stamp above it. A
      `run-compare` ledger opened on 28 Oct and resumed on 3 Nov therefore put November's draws in
      October, as a definite figure.
-   - The new rule: a draw lies between the stamp above it and the stamp below it. The stamps are
-     the approval's `opened_at`, a `build_start`'s `started_at`, and a `build_end`'s `t` (epoch
-     seconds, `time.time`). With no stamp below, the upper bound is the ledger file's last write,
-     the latest time any row in it can have been appended.
+   - The new rule: a draw lies after the stamp above it and before the `build_end` below it.
+     - The lower bound is any stamp: the approval's `opened_at`, a `build_start`'s `started_at`,
+       or a `build_end`'s `t` (epoch seconds, `time.time`).
+     - The upper bound is a `build_end` only. A `build_start`'s time is taken before its request is
+       captured, under a lock that a concurrent build's draws do not take. A draw appended above it
+       can therefore be later than its stamp (review round 0).
+     - With no `build_end` below, the upper bound is the ledger file's last write, the latest time
+       any row can have been appended. For byte-identical copies, it is the earliest of their file
+       times.
    - Bounds within one month place the draw in that month.
    - Bounds spanning months place it in **no** month. Each month it might belong to prints its
      figure as a floor ("≥") and names the draws: "N undated row(s) in evals ($X) that ran across
@@ -51,14 +56,19 @@ spent (the pr-feedback skill).
   - `test_the_graph_judge_reads_the_committed_rejudge`, whose recorded month is now a floor.
   - `test_a_build_end_bounds_the_draws_before_it`. This is a supporting positive pin. It fails at
     base only because the `unknown` field is new; base's dating gives the same October figure.
+- **Review round 0** (`/code-review high --fix`) added two more pins, both red on the round's
+  input:
+  - `test_a_build_start_is_no_upper_bound_for_the_draws_above_it`, the concurrent-build case;
+  - `test_a_byte_identical_copy_bounds_by_the_earliest_last_write`.
 - **The test ledgers' file times are set,** never the day the suite runs, because the last write
   is now an input.
-- **The real run,** as of 2026-11-13 13:17:21Z, over the two ledger roots (the coordinator's notes
-  folder and the panel exports folder), with `origin/theme-intelligence-state` at `ea8fb4a6`:
-  - **November:** pages $66.98, evals $273.68, theme desk $23.73, graph judge ≥$2.61. The total
-    reads "at least $367.00", naming the graph judge's blind spot. Confirmations and validate-keys
+- **The real run,** re-made after review round 0, as of 2026-11-13 13:34:22Z, over the two ledger
+  roots (the coordinator's notes folder and the panel exports folder), with
+  `origin/theme-intelligence-state` at `ea8fb4a6`:
+  - **November:** pages $66.98, evals $278.93, theme desk $23.73, graph judge ≥$2.61. The total
+    reads "at least $372.25", naming the graph judge's blind spot. Confirmations and validate-keys
     are not included.
-    - Evals covers 8 ledgers and 601 draws. That includes #953's run folder, which now exists, and
+    - Evals covers 8 ledgers and 612 draws. That includes #953's run folder, which now exists, and
       E2's ledger, still growing.
     - No ledger has a draw whose bounds span months.
   - **October:** $136.49, unchanged, with the graph judge NOT READ.

@@ -21,10 +21,12 @@ WHERE EACH BUCKET IS READ FROM, AND WHAT IT CANNOT SEE (each bucket prints both)
   design, so only the ledgers this run is given are read (`--evals-ledger`, or every ledger under
   `--evals-root`, by default the folders in ``VINCI_LEDGER_ROOTS``). The report PRINTS every root
   it searched and every ledger it read, never a wider claim. A draw row carries no time, so it
-  is BOUNDED, never guessed: it lies between the stamp above it (the approval's `opened_at`, a
-  `build_start`'s `started_at`, a `build_end`'s `t`) and the stamp below it, or the ledger file's
-  last write. Bounds in one month place it there; bounds spanning months (a `run-compare` resumed
-  in a later month) do not place it, and the month's figure becomes a floor naming it. A ledger on
+  is BOUNDED, never guessed: it lies after the stamp above it (the approval's `opened_at`, a
+  `build_start`'s `started_at`, a `build_end`'s `t`) and before the `build_end` below it, or the
+  ledger file's last write. (A `build_start` bounds only what follows it: its time is taken before
+  its request is captured, so a concurrent build's draw can be appended above it later.) Bounds
+  in one month place it there; bounds spanning months (a `run-compare` resumed in a later month)
+  do not place it, and the month's figure becomes a floor naming it. A ledger on
   another machine, or not passed, is not seen; with none passed the bucket is NOT READ, never $0.
   A ledger that is another's bytes, or an earlier prefix of them (a copy taken before more draws),
   counts once.
@@ -39,11 +41,10 @@ WHERE EACH BUCKET IS READ FROM, AND WHAT IT CANNOT SEE (each bucket prints both)
 - **validate-keys** — a one-token billable ping per CI run, recorded nowhere: NOT RECORDED.
 
 Each bucket prints what its `rows` column counts, since the units differ. The total is neither a
-floor nor exact for one month: it leaves out what each bucket cannot see, and an evals draw made
-in a later month can be dated to an earlier one. Months are UTC calendar months. Every figure is
-list price (`vinci.config.LLM_PRICE_PER_MTOK`), as
-each writer priced it. A malformed record raises — a report that skipped what it could not read
-would print a total smaller than the spend.
+floor nor exact for one month: it leaves out what each bucket cannot see, and a page build is
+dated by its start. Months are UTC calendar months. Every figure is list price
+(`vinci.config.LLM_PRICE_PER_MTOK`), as each writer priced it. A malformed record raises — a
+report that skipped what it could not read would print a total smaller than the spend.
 """
 from __future__ import annotations
 
@@ -195,7 +196,7 @@ _EVALS_CANNOT = ("a ledger not passed here, or kept on another machine; and the 
 
 
 def evals(ledgers: Iterable[Path], month: str, *, roots: Sequence[str] = ()) -> Bucket:
-    """The evals harness's budget ledgers, each draw dated by the latest timestamp above it.
+    """The evals harness's budget ledgers, each undated draw bounded by the stamps around it.
 
     No ledger at all is NOT READ (``usd`` None), never $0. A ledger whose text is another's, or
     an earlier prefix of it (a copy taken before the budget drew more), is that ledger and counts
@@ -216,6 +217,11 @@ def evals(ledgers: Iterable[Path], month: str, *, roots: Sequence[str] = ()) -> 
                for o, other in texts.items() if o != path):
             continue
         kept[path] = text
+    # THE TIGHTEST LAST WRITE OF A LEDGER'S BYTES: a byte-identical copy was complete by its own
+    # file time too, so the earliest of them bounds the draws, whichever path sorts first
+    mtimes: dict[str, float] = {}
+    for p, t in texts.items():
+        mtimes[t] = min(mtimes.get(t, float("inf")), p.stat().st_mtime)
     duplicates = len(texts) - len(kept)
     detail = searched + [f"copy of another ledger, not counted again: {p}"
                          for p in texts if p not in kept]
@@ -230,13 +236,27 @@ def evals(ledgers: Iterable[Path], month: str, *, roots: Sequence[str] = ()) -> 
                 raise SpendRecordError(f"{path.name}:{i}: a ledger row without usd")
         # EVERY ROW'S TIME IS BOUNDED, NEVER GUESSED (Codex P1 on #1061): a stamped row (the
         # approval, a `build_start`, a `build_end`) is dated by its own stamp; a draw carries none,
-        # so it lies between the stamp above it and the stamp below it — or the file's last write,
-        # the latest any row in it can have been appended. Within one month it is that month's; a
-        # span across months is NOT placed: a resumed `run-compare` must not land in the month
-        # its ledger was opened.
+        # so it lies after the stamp above it and before the `build_end` below it — or the file's
+        # last write, the latest any row in it can have been appended. A `build_start` is no UPPER
+        # bound: its time is taken before its request is captured, under a lock a concurrent
+        # build's draws do not take, so a draw appended above it can be later than its stamp.
+        # Within one month a row is that month's; a span across months is NOT placed: a resumed
+        # `run-compare` must not land in the month its ledger was opened.
         stamps = [_row_stamp(r, f"{path.name}:{i}") for i, r in enumerate(rows_, 2)]
-        last_write = datetime.fromtimestamp(path.stat().st_mtime, UTC)
         opened = _instant(str(body[0]["approval"].get("opened_at")), f"{path.name}:1")
+        lower: list[datetime] = []          # the latest stamp at or above each row
+        below = opened
+        for own_ in stamps:
+            below = below if own_ is None else own_
+            lower.append(below)
+        upper: list[datetime] = []          # the first `build_end` below each row, or last write
+        above = datetime.fromtimestamp(mtimes[text], UTC)
+        for k in reversed(range(len(rows_))):
+            upper.append(above)
+            end = stamps[k]
+            if "build_end" in rows_[k] and end is not None:
+                above = end
+        upper.reverse()
         in_month = False
         led_usd, led_draws, led_unplaced = 0.0, 0, 0
         for k, r in enumerate(rows_):
@@ -244,8 +264,7 @@ def evals(ledgers: Iterable[Path], month: str, *, roots: Sequence[str] = ()) -> 
             cost = _usd(r["usd"], where)
             assert cost is not None
             own = stamps[k]
-            lo = own or next((t for t in reversed(stamps[:k]) if t is not None), opened)
-            hi = own or next((t for t in stamps[k + 1:] if t is not None), last_write)
+            lo, hi = (own, own) if own is not None else (lower[k], upper[k])
             first, last = sorted((f"{lo:%Y-%m}", f"{hi:%Y-%m}"))
             if first == last == month:
                 in_month = True
@@ -340,9 +359,10 @@ def theme_calls(text: str, month: str, *, source: str) -> Bucket:
 
 
 def graph_judge(data_dir: Path, month: str) -> Bucket:
-    """The graph re-judge's one recorded run, from the committed coverage map. Only a month the
-    recorded re-judge is in, or one after it, is read; a map with no ``judged_by`` (a
-    `graph-coverage --json` run rewrites the map without one) is NOT READ, never $0."""
+    """The graph re-judge's one recorded run, from the committed coverage map. Only the month the
+    recorded re-judge is in is read, and as a floor; every other month, and a map with no
+    ``judged_by`` (a `graph-coverage --json` run rewrites the map without one), is NOT READ,
+    never $0."""
     path = data_dir / "graph_coverage.json"
     cannot = ("an earlier re-judge (each run overwrites the last), a re-judge STOPPED before it "
               "wrote (over budget, or a judge error), and any `graph-coverage` run")
@@ -421,7 +441,8 @@ def render(month: str, buckets: Sequence[Bucket]) -> str:
     lines += ["", f"total of the {len(seen)} bucket(s) read: {figure}"
               + (f" — NOT included: {', '.join(blind)}" if blind else ""),
               "neither a floor nor exact for one month: it leaves out what each bucket cannot "
-              "see, and an evals draw made in a later month can be dated to an earlier one"]
+              "see, and a page build is dated by its start, so one running past midnight on the "
+              "month's last day is the earlier month's"]
     return "\n".join(lines)
 
 
