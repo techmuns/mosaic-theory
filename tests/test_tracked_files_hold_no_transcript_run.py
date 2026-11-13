@@ -64,7 +64,7 @@ import tokenize
 from array import array
 from base64 import b64decode, b64encode
 from collections import defaultdict
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -162,14 +162,19 @@ def py_strings(text: str) -> str | None:
     operators, comments, the `f`/`r`/`b` prefixes, the quotes, an f-string's `{…}` fields) and its
     newlines kept, so the joined words read as one run on the line each starts on. Escapes are read
     as the JSON view reads them."""
+    # each line's offset is taken from the very lines the tokenizer is handed (split at "\n" only):
+    # `str.splitlines` also splits at U+2028, U+2029 and other separators, which the tokenizer
+    # keeps inside a line, and every offset after one drifted (re-review of #1046:
+    # `vinci/graph/filings.py` from about line 32)
+    lines = io.StringIO(text).readlines()
     try:
-        toks = list(tokenize.generate_tokens(io.StringIO(text).readline))
+        toks = list(tokenize.generate_tokens(iter(lines).__next__))
     except (tokenize.TokenError, SyntaxError):
         return None
     if any(t.type == tokenize.ERRORTOKEN and t.string.strip() for t in toks):
         return None  # an older tokenizer's way of saying the same
     starts = [0]
-    for line in text.splitlines(keepends=True):
+    for line in lines:
         starts.append(starts[-1] + len(line))
     chars = [c if c == "\n" else " " for c in text]
 
@@ -956,6 +961,20 @@ def _stub_request() -> Any:
         cache=None, pluginmanager=SimpleNamespace(get_plugin=lambda name: None)))
 
 
+def _outcome(run: Callable[[], None]) -> str:
+    """How ``run`` ended: "passed", "failed: <message>" or "skipped: <reason>". A skip is an outcome
+    here, never an escape: it cannot leave the test that asks, the way it leaves `pytest.raises`."""
+    try:
+        run()
+    except AssertionError as exc:
+        return f"failed: {exc}"
+    except pytest.fail.Exception as exc:  # a `pytest.fail` is a failure too, never an escape
+        return f"failed: {exc}"
+    except pytest.skip.Exception as exc:
+        return f"skipped: {exc}"
+    return "passed"
+
+
 def test_a_call_on_disk_that_does_not_read_fails_the_guard(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """CODEX ON #1046, P1 — FAIL LOUD. A call that is on disk and does not read was dropped from
@@ -972,14 +991,21 @@ def test_a_call_on_disk_that_does_not_read_fails_the_guard(
     bad.write_bytes(b"\x00\x01 neither RTF nor any export")
     monkeypatch.setattr(me, "call_roots", lambda: [store])
     monkeypatch.setattr(me, "tracked_files", lambda: ["README.md"])
-    with pytest.raises(AssertionError, match="Q2 2026 Earnings Call"):
+
+    def guard() -> None:
         test_no_tracked_file_shares_13_consecutive_words_with_a_call(_stub_request())
+
+    # each OUTCOME is asserted, a skip among them (re-review of #1046): a `pytest.raises` around a
+    # call that skips lets the skip escape it, and this pin SKIPPED, green, with the fail-loud half
+    # reverted
+    one_bad = _outcome(guard)
+    assert one_bad.startswith("failed") and "Q2 2026 Earnings Call" in one_bad, one_bad
     good.unlink()
-    with pytest.raises(AssertionError, match="do not read"):
-        test_no_tracked_file_shares_13_consecutive_words_with_a_call(_stub_request())
+    only_bad = _outcome(guard)
+    assert only_bad.startswith("failed") and "do not read" in only_bad, only_bad
     monkeypatch.setattr(me, "call_roots", lambda: [])
-    with pytest.raises(pytest.skip.Exception, match="CI holds none"):
-        test_no_tracked_file_shares_13_consecutive_words_with_a_call(_stub_request())
+    no_store = _outcome(guard)
+    assert no_store.startswith("skipped") and "CI holds none" in no_store, no_store
 
 
 def test_a_markdown_link_reads_as_its_text() -> None:
@@ -1018,3 +1044,45 @@ def test_thirteen_words_with_one_inside_a_markdown_link_are_caught(local_calls: 
         "13 words, one as an image's alt text": True,
         "12 words, one inside a Markdown link": False,
     }
+
+
+# --- the re-review of #1046's three deferred findings -------------------------------------------
+
+def test_the_real_scan_reads_a_python_file_as_its_joined_literals(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """RE-REVIEW OF #1046, DEFERRED. The joined view was pinned on `scan_text`, never through the
+    scan that runs: `scan_tracked` handing `False` for a `.py` file left every test green. Here a
+    planted file splits 13 words of a call over two literals, as a `.py` file and as a `.md` one,
+    and the scan itself must read the `.py` file as one run and the other as none. The call is
+    built of words no real call holds, so this runs in CI."""
+    me = sys.modules[__name__]
+    ws = [f"qzv{i}" for i in range(13)]
+    ks = [key(w) for w in ws]
+    wins = window_keys(ks)
+    calls = Calls([Call("Acme, Inc., Q1 2026 Earnings Call, Jan 02, 2026.rtf", "0" * 64,
+                        array("q", wins))], set(ks), set(wins), [], 0)
+    split = f'q = "{" ".join(ws[:7])}"\ntail = "{" ".join(ws[7:])}"\n'
+    (tmp_path / "planted.py").write_text(split)
+    (tmp_path / "planted.md").write_text(split)
+    monkeypatch.setattr(me, "ROOT", tmp_path)
+    monkeypatch.setattr(me, "_source_sha", lambda: "planted")
+    runs = scan_tracked(calls, None, files=["planted.py", "planted.md"]).runs
+    assert [(r.path, r.length) for r in runs] == [("planted.py", 13)]
+
+
+def test_a_line_separator_inside_a_literal_moves_no_offset() -> None:
+    """RE-REVIEW OF #1046, DEFERRED. `py_strings` took each line's offset from `str.splitlines`,
+    which also splits at U+2028 and U+2029, while the tokenizer splits at "\\n" only. So every
+    offset after such a character pointed at the wrong text, and the view kept code where its
+    literals were. `vinci/graph/filings.py` holds both inside a literal on line 29, and its view
+    drifted from line 32. Pinned on that real file, which runs in CI: replacing the two characters
+    with spaces must leave the view's words where they were."""
+    text = (ROOT / "vinci/graph/filings.py").read_text()
+    assert "\u2028" in text and "\u2029" in text, "the file no longer holds what this pins"
+    plain = text.replace("\u2028", " ").replace("\u2029", " ")
+    joined, joined_plain = py_strings(text), py_strings(plain)
+    # a None on both sides would compare equal and pass with no view read at all
+    assert joined is not None and joined_plain is not None
+    assert words(joined) == words(joined_plain)
+    assert words(py_strings('a = "x\u2028y"\nb = "zeta"\n') or "") == (["x", "y", "zeta"],
+                                                                         [1, 1, 2])
