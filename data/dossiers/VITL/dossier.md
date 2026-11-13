@@ -30,25 +30,7 @@ _6 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | NOT applicable |
-| Mid-cycle margin | 6.0% | 8y history · firm |
-| Median multiple, own history | 3.9x | 25 closes · weak · EV/EBITDA |
-| Overall confidence | weak |  |
-
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
-
-**data_quality: band_incoherent+lease_basis_unresolved**
-- own_history multiple: band_incoherent (periodicity quarterly)
-- lease basis: rent 279.5% of EBITDA (FY ending 2025-12-28: $288M of $103M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $293M
-- Multiples sheet implies D&A of 313.9 against 10.4 recorded (30.2x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure
-
-_rent is material and the ex-lease EV/EBITDA history is not usable — the latest quarter (2026-09-27) has no positive LTM EBITDA, so the history has no current — an older quarter is not one. CIQ's TEV/LTM EBITDA history puts operating leases in TEV and rent back in EBITDA since ASC 842 and did neither before, so its median cannot price reported EBITDA; multiple UNUSABLE until the ex-lease history is built_
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -266,6 +248,26 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 1.4x as-of 2026-11-06 — trailing range 1.3–172.5x (median 3.9x) over 25 closes → 8%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [26]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | NOT applicable |
+| Mid-cycle margin | 6.0% | 8y history · firm |
+| Median multiple, own history | 3.9x | 25 closes · weak · EV/EBITDA |
+| Overall confidence | weak |  |
+
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
+
+**data_quality: band_incoherent+lease_basis_unresolved**
+- own_history multiple: band_incoherent (periodicity quarterly)
+- lease basis: rent 279.5% of EBITDA (FY ending 2025-12-28: $288M of $103M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $293M
+- Multiples sheet implies D&A of 313.9 against 10.4 recorded (30.2x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure
+
+_rent is material and the ex-lease EV/EBITDA history is not usable — the latest quarter (2026-09-27) has no positive LTM EBITDA, so the history has no current — an older quarter is not one. CIQ's TEV/LTM EBITDA history puts operating leases in TEV and rent back in EBITDA since ASC 842 and did neither before, so its median cannot price reported EBITDA; multiple UNUSABLE until the ex-lease history is built_
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [45]  <!-- ds-table -->

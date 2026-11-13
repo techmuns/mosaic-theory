@@ -30,26 +30,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 20.9% | 8y history · weak |
-| Median multiple, own history | 13.9x | 32 closes · firm · EV/EBITDA |
-| Screen value / share | $23.23 | spot-independent · EV/EBIT 21.3x · on 152,009,343 shares outstanding |
-| Dilution test / share | $23.21 | + 124,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
-| Overall confidence | weak |  |
-
-**data_quality: revenue_tag_conflict**
-- FY2020: RevenueFromContractWithCustomerExcludingAssessedTax 394M vs Revenues 13M (97% apart)
-- FY2021: RevenueFromContractWithCustomerExcludingAssessedTax 551M vs Revenues 40M (93% apart)
-- FY2022: RevenueFromContractWithCustomerExcludingAssessedTax 742M vs Revenues 94M (87% apart)
-- FY2023: RevenueFromContractWithCustomerExcludingAssessedTax 817M vs Revenues 104M (87% apart)
-- FY2024: RevenueFromContractWithCustomerExcludingAssessedTax 879M vs Revenues 116M (87% apart)
-- FY2025: RevenueFromContractWithCustomerExcludingAssessedTax 979M vs Revenues 133M (86% apart)
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -280,6 +261,27 @@ _No gap is struck for this name: no scenario record for this name — the route 
 - **EV/EBITDA (adjusted, forward):** ~3.2x (fwd, at current $2.19; EV $1,224M / FY26 adj-EBITDA $380–$385M) [14]
 - **Adjusted EPS (earnings power):** FY26 guide $1.19–$1.25; adj P/E ~1.8x at $2.19 — earnings power above the GAAP basis [13]
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 3.6x as-of 2026-11-06 — trailing range 4.1–23.2x (median 13.9x) over 32 closes → 0%ile → near-floor; P/LTM EPS 9.1x [28]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 20.9% | 8y history · weak |
+| Median multiple, own history | 13.9x | 32 closes · firm · EV/EBITDA |
+| Screen value / share | $23.23 | spot-independent · EV/EBIT 21.3x · on 152,009,343 shares outstanding |
+| Dilution test / share | $23.21 | + 124,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Overall confidence | weak |  |
+
+**data_quality: revenue_tag_conflict**
+- FY2020: RevenueFromContractWithCustomerExcludingAssessedTax 394M vs Revenues 13M (97% apart)
+- FY2021: RevenueFromContractWithCustomerExcludingAssessedTax 551M vs Revenues 40M (93% apart)
+- FY2022: RevenueFromContractWithCustomerExcludingAssessedTax 742M vs Revenues 94M (87% apart)
+- FY2023: RevenueFromContractWithCustomerExcludingAssessedTax 817M vs Revenues 104M (87% apart)
+- FY2024: RevenueFromContractWithCustomerExcludingAssessedTax 879M vs Revenues 116M (87% apart)
+- FY2025: RevenueFromContractWithCustomerExcludingAssessedTax 979M vs Revenues 133M (86% apart)
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [50]  <!-- ds-table -->

@@ -29,20 +29,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _no scenario record for this name_
 
-### Screening context — how this name surfaced — _not a verdict_
-
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
-
-| input | value | basis |
-| --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
-| Mid-cycle margin | 11.5% | 19y history · firm |
-| Median multiple, own history | 37.7x | 35 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $54.44 | spot-independent · EV/EBIT 40.3x · on 4,106,325,903 shares outstanding |
-| Dilution test / share | $53.64 | + 60,664,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
-| Overall confidence | firm |  |
-
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 31.3% (CIQ EBIT) sits 19.8 points ABOVE the 19-year median of 11.5% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
+_This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -258,6 +245,21 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 - **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Guidance at the drawdown (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 15.9x as-of 2026-10-27 — trailing range 12.7–157.7x (median 42.0x) over 39 closes → 3%ile → near-floor; P/LTM EPS 18.1x [15]
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 11.5% | 19y history · firm |
+| Median multiple, own history | 37.7x | 35 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
+| Screen value / share | $54.44 | spot-independent · EV/EBIT 40.3x · on 4,106,325,903 shares outstanding |
+| Dilution test / share | $53.64 | + 60,664,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Overall confidence | firm |  |
+
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 31.3% (CIQ EBIT) sits 19.8 points ABOVE the 19-year median of 11.5% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [49]  <!-- ds-table -->
