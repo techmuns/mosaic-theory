@@ -36,14 +36,16 @@ def _checkout_beside(tmp: pathlib.Path, names: list[str]) -> pathlib.Path:
     """The falsifier in a checkout of the test's own: every entry of the real one linked in, the
     script copied (it finds its inputs from its own resolved path, which a link would lead back
     to), and a `data/dossiers/` whose committed names are linked and ``names`` added as empty
-    dossiers. Returns the copied script."""
+    dossiers, in their own folders even where a committed folder of that name holds no
+    `dossier.json`. Returns the copied script."""
     tree = tmp / "checkout"
     made = {ROOT: tree, ROOT / "data": tree / "data", ROOT / "scripts": tree / "scripts",
             ROOT / "data" / "dossiers": tree / "data" / "dossiers"}
     for real, own in made.items():
         own.mkdir(parents=True)
         for entry in real.iterdir():
-            if entry not in made and entry != SCRIPT:
+            if entry not in made and entry != SCRIPT and not (
+                    real == ROOT / "data" / "dossiers" and entry.name in names):
                 (own / entry.name).symlink_to(entry)
     shutil.copy2(SCRIPT, tree / "scripts" / SCRIPT.name)
     for name in names:

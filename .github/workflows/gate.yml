@@ -75,8 +75,9 @@ jobs:
       # `-rs` prints every skip's reason in the log: the CIQ-bound tests skip here by design, and a
       # skip count with no reasons cannot say which half of the suite this runner actually checked.
       # `-n auto` (pytest-xdist, from the lock) spreads the same tests over the runner's cores: one
-      # process spent 758-1416 s here, 95% of the job. It is the one flag `bin/commit` leaves out,
-      # because the shared venv it runs in has no pytest-xdist until re-synced from the lock.
+      # process spent 758-1416 s here, 95% of the job. It is the one flag the other gates may leave
+      # out (`tests/test_one_gate.py`): `bin/commit` does, because the shared venv it runs in has
+      # no pytest-xdist until re-synced from the lock, and the scheduled workflows' gates do.
       # Every test runs on both: docs/records/2026-11-13-the-gate-runs-the-suite-across-workers.md
       - name: pytest (offline)
         run: python -m pytest -m "not network" -p no:warnings --tb=short -rs -n auto
