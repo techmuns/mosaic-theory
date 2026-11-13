@@ -144,7 +144,8 @@ superseded-by:
   ("full set, with the Q3 2026 call") is no longer owed.
 - **The cost, by this record's own rule** (last cost × 1.255, then +20%):
   - MVST had no recorded build and was priced at the $4.44 median. That median is of the 7 builds
-    since 2026-11-09, none of them MVST's, so it is unchanged for FUBO, IT, NCNO and WERN.
+    since 2026-11-09, none of them MVST's, so it is unchanged for FUBO, IT, NCNO and WERN. So
+    four of the 26 are priced at the median, where the body above says five of the 27.
   - Group 3 at last cost is $4.44 (IT) + $1.25 (ORKA) + $2.71 (PARR) + $4.44 (WERN) = $12.84.
 
   | Batch | Pages | At last cost | Expected (× 1.255) | Cap (+20%) |

@@ -97,14 +97,6 @@ def test_wern_revenues_of_releases_carry_their_headline_revenue() -> None:
     assert not missing, f"WERN: no headline revenue row: {missing}"
 
 
-@pytest.mark.skip(reason=(
-    "MVST retired 2026-11-12 (docs/records/2026-11-13-mvst-retired.md): its page will never be "
-    "rebuilt, so this pin could never pass. Kept, skipped, only because fix-log row E2-D11 names "
-    "this node and a fix PR does not edit the log; delete it with the coordinator's bookkeeping"))
-def test_mvst_revenues_of_releases_carry_their_headline_revenue() -> None:
-    """MVST's E2-D11 half, retired with the name. It asserts nothing: the page it read is gone."""
-
-
 def test_nflx_stated_twelve_month_wall_is_located() -> None:
     """Audit E2-D15, NFLX's half — landed with its 2026-10-29 assembly (#867), kept 2026-11-05."""
     nflx = _filing("NFLX", "0001065280-26-000291")["maturity_wall"]

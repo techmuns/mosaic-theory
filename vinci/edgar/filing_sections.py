@@ -97,6 +97,12 @@ _NOT_STATED_NOTE = "no near-term wall stated in filing — composition table pre
 _DUE_12M = re.compile(
     r"\$\s*([\d,.]+)\s*(million|billion)\s+(?:(?:is|are|will\s+be)\s+)?due\s+"
     r"(?:(?:within|in)\s+(?:the\s+next\s+)?(?:12|twelve)\s+months|within\s+one\s+year)\b", re.I)
+#: NOT A FORM: "$X of our borrowings were due within the next 12 months" (review round 1 of #1039,
+#: 2026-11-12). Microvast's Q3 10-Q (0001628280-26-072316) says "our bank borrowings were $135.3
+#: million, our bonds payable were $41.7 million and $120.8 million of our borrowings were due
+#: within the next 12 months" — and its $120.8M is the balance sheet's "Short-term bank borrowings
+#: 120,794" alone, beside current notes payable (33,470) and bonds payable (41,693) the filing
+#: totals at "$ 196.0 million". "Of our borrowings" names no whole, so it is read by no form.
 #: A stated ZERO — a KNOWN $0 wall, not an unstated one.
 _NO_PRINCIPAL_12M = re.compile(
     r"\bno\s+principal\s+(?:amounts?\s+|payments?\s+)?(?:(?:is|are)\s+)?"
@@ -172,19 +178,29 @@ def _clause_start(text: str, pos: int, *, cap: int = 400) -> int:
     return ends[-1].end() if ends else lo
 
 
-def _whole_debt(text: str, lo: int, hi: int) -> bool:
+def _whole_debt(text: str, lo: int, hi: int, *, stated: float | None, basis: str) -> bool:
     """Is a ≤12m figure whose sentence opens with ``text[lo:hi]`` the COMPANY's, not one
     instrument's?
 
     With no instrument named, the clause must name the debt in aggregate. With one named, its own
     principal (the clause's last figure) must be the total debt the filing states unqualified
     ELSEWHERE — a total inside the clause itself ("total debt was $500.0 million, and of the term
-    loan, …") is its last figure only because the instrument's own principal is unstated."""
+    loan, …") is its last figure only because the instrument's own principal is unstated.
+    ``stated`` and ``basis`` are the ≤12m figure's own, which the balance-sheet route checks."""
     clause = text[lo:hi]
     if not _INSTRUMENT.search(clause):
         return bool(_AGGREGATE.search(clause))
-    own = [_in_millions(m[1], m[2]) for m in _FIGURE_M.finditer(clause)]
+    figs = list(_FIGURE_M.finditer(clause))
+    own = [_in_millions(m[1], m[2]) for m in figs]
     if not own or own[-1] is None:
+        return False
+    # The clause's last figure is the instrument's principal, never a total stated inside the
+    # clause ("our total debt was $500.0 million, and of the term loan, $45.0 million …"): checked
+    # BEFORE either route, since a filing that repeats its total elsewhere would otherwise let the
+    # prose route match the in-clause total to it (review of round 1).
+    totals = list(_TOTAL_DEBT.finditer(text))
+    last = lo + figs[-1].start(1)
+    if any(t.start(1) == last for t in totals if lo <= t.start() < hi):
         return False
     # AT ONE DATE (Codex P1, round 1): a total stated for an earlier balance date — "total debt was
     # $300.0 million at December 31, 2025" beside a June 2026 revolver of $300.0M — covers nothing.
@@ -195,8 +211,115 @@ def _whole_debt(text: str, lo: int, hi: int) -> bool:
         dated = _dates_stated(_sentence(text, at))
         return bool(dated & when) if (dated or when) else True
 
-    return any(_in_millions(t[1], t[2]) == own[-1] and same_date(t.start())
-               for t in _TOTAL_DEBT.finditer(text) if not lo <= t.start() < hi)
+    if any(_in_millions(t[1], t[2]) == own[-1] and same_date(t.start())
+           for t in totals if not lo <= t.start() < hi):
+        return True
+    # ...OR THE BALANCE SHEET'S debt total at the same date (2026-11-12, #956's regression on
+    # Werner's Q3, 0000793074-26-000172): its prose total is qualified ("increasing our outstanding
+    # debt under our Credit Facilities to $803.0 million"), but its balance sheet carries no debt
+    # but "Long-term debt, net of current portion 803,000", so the Credit Facilities are the whole.
+    # Review round 1 (A, on #1039): the route holds what the prose route holds, and what a whole
+    # debt implies — each a constructed shape round 0 read as a located wall:
+    #  * the clause's last figure is the instrument's principal, never a total stated inside the
+    #    clause ("our total debt was $500.0 million, and of the term loan, $45.0 million …" beside a
+    #    $500.0M balance sheet read located $45.0) — checked above, before both routes;
+    #  * the statement states the sheet's date — an undated one covers nothing, as an undated
+    #    statement is covered by no dated prose total;
+    #  * the figure IS the sheet's current portion, principal to principal: a whole debt's ≤12m
+    #    principal is its current portion ("no principal amounts are due" of an undrawn $500.0M
+    #    revolver, beside a sheet whose $500.0M is all current, read located $0.0).
+    if basis != BASIS_PRINCIPAL or stated is None:
+        return False
+    bs = _balance_sheet_debt(text)
+    return (bs is not None and bs.date in when and abs(bs.total - own[-1]) < 0.05
+            and abs(bs.current - stated) < 0.05)
+
+
+#: The condensed balance sheet: its heading, its unit, and its first column's date.
+_BS_HEAD = re.compile(r"\bBALANCE\s+SHEETS?\b[^.]{0,80}?\(\s*in\s+(thousands|millions)", re.I)
+#: Where its liabilities start — the body read is the liabilities only, so an asset row ("Notes
+#: receivable") is never taken for a borrowing. The section's HEADING is its first "liabilities"
+#: ("LIABILITIES AND STOCKHOLDERS’ EQUITY", "Liabilities, redeemable non-controlling interests and
+#: equity", Microvast's bare "Liabilities"), never a row's: Uber's first "current liabilities" is
+#: the row "Accrued and other current liabilities", below its other current rows (round 1).
+_BS_LIABILITIES = re.compile(r"\bliabilities\b", re.I)
+#: The rows of its debt: long-term debt net of (or before) its current portion, and that portion.
+#: The long-term row is never read inside the current-portion row ("Current portion OF long-term
+#: debt 10,000"), which a balance sheet lists first (review round 0: it was read as both).
+#: A cell keeps its decimal: "802.6" in a millions table is 802.6, never 802 (round 1).
+_BS_LONG_TERM = re.compile(r"(?<![Oo]f\s)\bLong-term\s+debt(?:,?\s+(?:net|less|excluding)"
+                           r"[^0-9$—]{0,40})?\s+\$?\s*([\d,]+(?:\.\d+)?|—)", re.I)
+_BS_CURRENT = re.compile(r"\bCurrent\s+(?:portion|maturities)\s+of\s+long-term\s+debt\s+"
+                         r"\$?\s*([\d,]+(?:\.\d+)?|—)", re.I)
+#: Every word a borrowing row can carry. Each must sit in one of the two rows above, or the two
+#: are not the whole debt and no total is read — whatever the row's label, and however it runs
+#: on before its figure ("Revolving credit facility 50,000", "Notes payable, current", a current
+#: row combining debt and leases: review round 0), singular or not, under the common labels
+#: round 0 lacked ("Note payable, current", "Bond payable", "Mortgage payable", "Financing
+#: obligations", "Receivables securitization facility", "Floor plan payable", "Current maturities
+#: of long-term obligations", "Bank overdraft", "Credit agreement": round 1). A lease row carries
+#: none of them (#956), and a "(Note 4)" cross-reference is no note payable.
+_BS_DEBT_WORD = re.compile(
+    r"\b(?:debt|borrowings?|(?<!\()notes?|bonds?|debentures?|commercial\s+paper|"
+    r"lines?\s+of\s+credit|revolv\w*|credit\s+(?:facilit\w*|agreements?|lines?)|"
+    r"facilit(?:y|ies)|loans?|mortgages?|securitization|floor\s*plan|overdrafts?|"
+    r"financ\w*\s+(?:obligations?|liabilit\w*)|long-term\s+obligations?)\b", re.I)
+#: A current portion the filing SUBTRACTS in its debt note — "Less: current portion of long-term
+#: debt ( 2,748 )" (Amazon's Q3 10-Q), "Less: current portion of long-term notes (3) ( 1,996 )"
+#: (Alphabet's Q2, whose note puts it "within accrued expenses and other current liabilities").
+#: With no current-portion row on the sheet, that portion sits in a row with no debt word, and the
+#: long-term row is part of the debt (round 1). The label may run on ("… of long-term debt and
+#: finance leases") and the cell may carry its "$" ("$ ( 10,000 )"), never past a figure or a dash.
+#: A footnote marker is never the cell: Alphabet's Q3 "… notes (4) ( 1,996 )" read as a $4 portion.
+_NOTE_CURRENT = re.compile(
+    r"\bLess:?\s+(?:the\s+)?current\s+(?:portion|maturities)\s+of\s+(?:long-term\s+)?"
+    r"(?:debt|notes|borrowings)\b[^()$\d—;.]{0,60}?(?:\s*\(\d\))?\s*\$?\s*"
+    r"\((?!\d\))\s*([\d,.]+)\s*\)", re.I)
+
+
+class _BalanceSheetDebt(NamedTuple):
+    date: tuple[str, str, str]  # the first column's balance date
+    total: float                # long-term debt plus its current portion, $M
+    current: float              # the current portion, $M (0.0 when the sheet lists none)
+
+
+def _balance_sheet_debt(text: str) -> _BalanceSheetDebt | None:
+    """The balance sheet's own date, its debt total and its current portion in $M — long-term debt
+    plus any current portion, as its first column states them — or None. None when the balance
+    sheet carries any other borrowing row its words name, states no long-term debt row, names no
+    unit or date, or lists no current portion the filing's debt note subtracts. What it cannot see
+    is debt in a row with no debt word that no "Less: current portion …" line names: the read
+    covers the borrowing rows its vocabulary names, never more (the record says which half)."""
+    h = _BS_HEAD.search(text)
+    if h is None:
+        return None
+    first = _DATE.search(text, h.end(), h.end() + 400)  # the first column's date, by its heading
+    liab = _BS_LIABILITIES.search(text, h.end(), h.end() + 6000)
+    if first is None or liab is None:
+        return None
+    end = text.find("Total liabilities", liab.start())
+    body = text[liab.start():end if end != -1 else liab.start() + 6000]
+    lt, cur = _BS_LONG_TERM.search(body), _BS_CURRENT.search(body)
+    if lt is None:
+        return None
+    rows = [m.span() for m in (lt, cur) if m is not None]
+    if any(not any(a <= w.start() < b for a, b in rows) for w in _BS_DEBT_WORD.finditer(body)):
+        return None  # a debt word outside the two rows: another borrowing, so not the whole
+    if cur is None and any((v := _money(m[1])) is not None and v > 0
+                           for m in _NOTE_CURRENT.finditer(text)):
+        return None  # a current portion folded into another row: the long-term row is part
+    scale = 0.001 if h[1].lower() == "thousands" else 1.0
+
+    def cell(m: re.Match[str] | None) -> float | None:
+        if m is None or m[1] == "—":
+            return 0.0
+        v = _money(m[1])
+        return None if v is None else v * scale
+
+    a, b = cell(lt), cell(cur)
+    if a is None or b is None:
+        return None
+    return _BalanceSheetDebt((first[1], first[2], first[3]), a + b, b)
 
 
 #: A balance date as a 10-Q states one: "June 30, 2026", "September 30 , 2026".
@@ -239,7 +362,7 @@ def _stated_12m(text: str, statements: list[_Stated12m] | None = None,
                 ) -> tuple[int, float | None, str] | None:
     """(anchor, $M due within 12 months, basis) from the first statement for the WHOLE debt."""
     for st in _statements_12m(text) if statements is None else statements:
-        if _whole_debt(text, st.clause_lo, st.clause_hi):
+        if _whole_debt(text, st.clause_lo, st.clause_hi, stated=st.total, basis=st.basis):
             return st.anchor, st.total, st.basis
     return None
 

@@ -21,6 +21,16 @@ from tests.stripped_pages import replayable_text
 from vinci.evals import compare as cm
 from vinci.evals import replay as rp
 
+
+@pytest.fixture(autouse=True)
+def _production_files_are_bases(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests pin registration's OTHER rules on old commits (`dc5b8787` → `b109e26c`). Since
+    order 8, `cm.register` refuses a checkout whose production files are not BASE's (RG-D12, B's
+    check, gap 1), which today's checkout never is for an old BASE; that rule has its own pins
+    (`tests/test_evals_order8_gaps.py`), so here it is stubbed to this checkout's fingerprint."""
+    monkeypatch.setattr(cm, "refuse_unless_scored_by_base",
+                        lambda base_ref, **k: cm.scorer_fingerprint())
+
 ROOT = Path(__file__).resolve().parents[1]
 QUOTE = "Management said 'we will double the dividend next spring'."
 
@@ -399,3 +409,14 @@ def test_holm_separates_two_targets_from_a_raw_cut(tmp_path: Path, nflx: dict[st
     assert s.metrics["M-LABEL"].p_lower == pytest.approx(p)
     assert s.metrics["M-ABSENT"].p_lower == pytest.approx(p)
     assert s.decision == decision, s.reasons
+
+
+@pytest.fixture(autouse=True)
+def _scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests pin the harness's other rules under placeholder refs or old commits. Since
+    #1030's review round 1 the library runs RG-D12 whole (BASE's production files, the harness
+    at `scorer_ref`), which no such ref holds; it is stood in by the fingerprint comparison
+    these tests were written against (`tests/evals_scorer_stub.py`). RG-D12's own pins are in
+    `tests/test_evals_order8.py` and `tests/test_evals_order8_round1.py`."""
+    from tests.evals_scorer_stub import fingerprint_only
+    monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)

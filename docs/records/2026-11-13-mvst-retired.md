@@ -112,12 +112,13 @@ gone from `data/manual/ciq` before this PR. The precedent is AORT's retirement
      page it could never pass — the shape the module's own docstring refuses ("instead of leaving
      one that can never pass"). E2-D11's EPAM half stays an ordinary end-to-end pin and WERN's
      stays strict-xfail. **This departs from the build brief**, which asked for every pin to be
-     re-pointed; it is stated, not hidden. **Its name stays, as an unconditional skip that
-     asserts nothing.** Fix-log row E2-D11 names its node id, `tests/test_fix_log.py` resolves
-     each named node by `ast`, and a fix PR edits neither the log nor STATE row 60 (the log's rule
-     1). Deleting the function turned `test_fix_log` red (7 failures, every one that row's
-     unresolved node). The stub goes when the coordinator's bookkeeping drops the node from the
-     row.
+     re-pointed; it is stated, not hidden. **The function is deleted outright.** Fix-log row
+     E2-D11 named its node id, and `tests/test_fix_log.py` resolves each named node by `ast`, so
+     deleting it first turned `test_fix_log` red (7 failures, every one that row's unresolved
+     node). A fix PR edits neither the log nor STATE row 60 (the log's rule 1), so this PR kept a
+     skipped stub until the coordinator's bookkeeping batch 7 (#1047, `dad8f441`) dropped the
+     node and marked E2-D11's MVST half "not fixing: name retired"; the merge of main then let
+     the stub go.
    - **One guard extended and one pin added** in `test_record_legibility` (items 2 and 3).
 
    **Each moved pin was shown red under one mutation of the frozen value it reads, then restored
@@ -139,9 +140,12 @@ gone from `data/manual/ciq` before this PR. The precedent is AORT's retirement
    the page gone too it now always skips. It is outside the offline suite, so it is not re-pointed
    here; it is reported for retirement.
 6. **STATE.md.** §2 gains a 3-line claim beside AORT's. In §5.0, row 28's re-export list drops
-   MVST and its 2026-11-12 update gains the rebuild's new group 3. Rows 27, 30, 41 (twice), 51,
-   54 and 60, each left pointing at MVST's page, gain a short note that MVST is retired; each
-   dated measurement that names MVST stays as measured. §5 below §5.0 is untouched.
+   MVST and its 2026-11-12 update gains the rebuild's new group 3, and its still-open item
+   "`test_primary_source_assembly_mvst_live` broken on main" is struck (it now always skips).
+   Rows 27, 30, 41 (three notes), 51 and 54, each left pointing at MVST's page, gain a short note
+   that MVST is retired; each dated measurement that names MVST stays as measured. Row 60's
+   clause ("MVST retired 2026-11-12: it has no next build") was carried by batch 7 (#1047), since
+   fix-log rule 1 keeps row 60 out of fix PRs. §5 below §5.0 is untouched.
 
 ## Where the followed names live, and MVST was never one
 
@@ -199,11 +203,9 @@ Each surface below names MVST and is unchanged.
   captures), `docs/`, `planning/` and the records.
 - **The fix log** (the coordinator's alone). Two rows name MVST's page: E2-D11 ("WERN's and MVST's
   halves wait for their re-exports (strict xfail)") and RBC-D1 (MVST among the pages whose count
-  was written at $0). Listed for the coordinator, not edited here. **Bookkeeping for the
-  coordinator:** E2-D11's test cell drops
-  `tests/test_pages_await_parser_rebuild.py::test_mvst_revenues_of_releases_carry_their_headline_revenue`
-  and its ref cell reads "WERN's half waits for its re-export (strict xfail); MVST retired
-  2026-11-12"; then the skipped stub of that test is deleted.
+  was written at $0). Not edited here. The coordinator's batch 7 (#1047) dropped E2-D11's MVST
+  node and marked its MVST half "not fixing: name retired"; RBC-D1 still lists MVST among the
+  "$0 count" pages, the coordinator's to annotate as AORT's was.
 
 ## Counts that move
 
@@ -213,9 +215,8 @@ Each surface below names MVST and is unchanged.
 - **The freshness watch set**: 7 → 6 names.
 - **The rebuild**: 27 → 26 pages; group 3, 5 → 4 pages, $17.28 → $12.84 at last cost.
 - **Tests**: 23 failures and 7 new skips resolved; 18 pins re-pointed at the frozen page, 1 at
-  the archive, 8 counts moved, 1 path re-pointed, 1 decorator removed, 1 strict xfail retired
-  to a skipped stub (the final tree's one new skip, until the fix log drops its node), 1 guard
-  entry and 1 pin added.
+  the archive, 8 counts moved, 1 path re-pointed, 1 decorator removed, 1 strict xfail deleted,
+  1 guard entry and 1 pin added.
   `vinci/` had 0 lines changed.
 
 **HOW VERIFIED.** Every result below is a real run on this change.
