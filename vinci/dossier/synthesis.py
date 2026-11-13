@@ -1052,9 +1052,9 @@ _ROW_SYNONYMS = {"fcf": ("free cash flow",), "cfo": ("operating cash flow", "cas
                  "net income": ("net loss", "net earnings", "net profit"),
                  # (W05, a, review round 1) the words a claim writes for a row labelled otherwise:
                  # read as no row at all, "revenues were $7,178M" met TJX's EBIT, and "a $250M
-                 # impairment" TGT's restructuring charge. "sales" alone is no revenue
-                 # ("comparable sales"), nor "profit" any one row: each stays a mention of none
-                 # (`_OTHER_METRICS`)
+                 # impairment" TGT's restructuring charge. "sales" and "profit" are no synonym:
+                 # QUALIFIED ("comparable sales") each stays a mention of none (`_OTHER_METRICS`),
+                 # and only BARE does each name its rows (`_BARE_ROWS`, the W05 follow-up)
                  "revenue": ("revenues", "net sales"),
                  "ebit": ("operating income", "operating profit"),
                  "asset writedown": ("impairment", "impairments", "writedown", "writedowns",
@@ -1085,13 +1085,39 @@ def _names_metric(tokens: list[str], phrase: str) -> bool:
                for i, tok in enumerate(tokens) if tok == want[0] or tok in want)
 
 
-#: (W05, a) a metric named in words no row of THIS table carries — "profit", "sales", or a
-#: synonym above whose row the table lacks ("impairment" where no "Asset Writedown" row is). Read
-#: as a mention of NO row: a figure whose own metric is one of these meets the cited fact, never
-#: another metric the claim names. Where the table has the row, the synonym names it
+#: (W05, a) a metric named in words no row of THIS table carries — a qualified "profit" or
+#: "sales" (bare, each names its rows: `_BARE_ROWS`), or a synonym above whose row the table lacks
+#: ("impairment" where no "Asset Writedown" row is). Read as a mention of NO row: a figure whose
+#: own metric is one of these meets the cited fact, never another metric the claim names. Where
+#: the table has the row, the synonym names it
 _OTHER_METRICS = ("revenues", "net sales", "sales", "operating income", "operating profit",
                   "capital expenditures", "profit", "profits", "impairment", "impairments",
                   "writedown", "write down")
+
+#: (W05 follow-up) a word written BARE names rows: "while sales were $7,178M" is TJX's revenue, so
+#: EBIT's figure under it is refused, and bare "profit" is one of the profit rows (EBITDA, EBIT,
+#: net income) — which one, the word does not say, so its figure meets any of them and no other
+#: ("profit was $60,372M" is revenue's figure). Beside "EBITDA was $8,425M", a bare "profit" is
+#: still another metric's figure: its rows are not EBITDA's (`_bound_cells`' comparison guard
+#: compares the rows themselves). QUALIFIED, the word names no one row and stays a mention of
+#: none: "comparable", "same-store", "open-market" (an insider's share sales), "European" or
+#: "hip" (a segment's), "segment profit" — the modifiers the committed syntheses write before
+#: them, so the rule admits the words that are no modifier rather than refusing a list
+_PROFIT_ROWS = ("ebitda", "ebit", "net income")
+_BARE_ROWS: dict[str, tuple[str, ...]] = {
+    "sales": ("revenue",), "profit": _PROFIT_ROWS, "profits": _PROFIT_ROWS}
+#: what may stand before a bare word: a function word, a verb of being, "total", a period, a year,
+#: or a clause boundary (a comma, colon, semicolon, dash, or a full stop ending a sentence) — never
+#: "of" or "from", which make it the object of another metric ("cost of sales", "proceeds from
+#: sales") (/code-review high, round 0 of the follow-up)
+_BARE_BEFORE = frozenset({
+    "a", "an", "the", "its", "their", "his", "her", "our", "this", "that", "these", "those",
+    "and", "or", "but", "while", "whereas", "both", "as", "on", "in", "at", "to",
+    "by", "for", "with", "than", "vs", "versus", "was", "were", "is", "are", "be", "been",
+    "total", "where", "when", "whose"})
+_CLAUSE_BREAK = re.compile(r"[,;:—–]|\.\s+[A-Z]")
+#: what may not follow a bare word: "sales and marketing" / "sales & marketing" is an expense
+_BARE_NOT_AFTER = (("and", "marketing"), ("&", "marketing"))
 
 #: what may stand between a figure and the metric written after it, for that metric to be its own
 _BESIDE = frozenset({"of", "in", "the", "a", "an", "its", "for"})
@@ -1115,7 +1141,8 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
     - else the nearest after it.
     (W05, a) A metric written in words no row carries (`_OTHER_METRICS`) is a mention too: where
     it is the figure's own, the figure binds NO row and meets the cited fact — "FY25 EBITDA was
-    $262M while profit was $104M" does not hold $104M to EBITDA."""
+    $262M while segment profit was $104M" does not hold $104M to EBITDA. Written BARE, "sales" and
+    "profit" name their rows instead (`_BARE_ROWS`, the W05 follow-up)."""
     if fig is None or fig.start < 0:
         tokens = _words(text)
         return {r for r in metrics
@@ -1145,6 +1172,18 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
     # (review round 1 of W05)
     mentions += [(spans[i][0], r) for i, r, own, by_syn in found
                  if not (by_syn and any(r2 != r and own < own2 for _, r2, own2, _ in found))]
+    for i, tok in enumerate(tokens):
+        bare = [r for r in _BARE_ROWS.get(tok, ()) if r in metrics]
+        lead = tokens[i - 1] if i else ""
+        if lead and _CLAUSE_BREAK.search(text[spans[i - 1][0] + len(lead):spans[i][0] + 1]):
+            lead = ""   # the word opens its clause: "$8,425M; sales were …"
+        if tuple(tokens[i + 1:i + 3]) in _BARE_NOT_AFTER:
+            bare = []
+        if bare and i not in covered and (not lead or lead in _BARE_BEFORE
+                                          or _period_key(lead) is not None
+                                          or re.fullmatch(r"(?:19|20)\d\d", lead)):
+            mentions += [(spans[i][0], r) for r in bare]
+            covered.add(i)
     for phrase in _OTHER_METRICS:
         want = phrase.split()
         mentions += [(spans[i][0], None) for i in range(len(tokens) - len(want) + 1)
@@ -1220,9 +1259,10 @@ def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None
         others = [g for g in _claim_figures_as_written(claim) if g.start != fig.start]
 
         def _shares_row(g: _ClaimFigure) -> bool:
-            # the same row, or both bound to none: a comparison, which keeps every column
-            o = _claim_rows(claim, metrics, g)
-            return bool(o & rows) or not (o or rows)
+            # the same rows, or both bound to none: a comparison, which keeps every column. The
+            # rows THEMSELVES, never an overlap: a bare "profit" (EBITDA, EBIT or net income)
+            # beside "EBITDA was $8,425M" is another metric's figure (the W05 follow-up)
+            return _claim_rows(claim, metrics, g) == rows
 
         if before and before[-1] in columns and not any(_shares_row(g) for g in others):
             periods = {before[-1]}
