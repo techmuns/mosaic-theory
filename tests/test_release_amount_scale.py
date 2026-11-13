@@ -288,24 +288,48 @@ def test_a_forward_verb_is_not_called_a_sub_line() -> None:
     assert not any("sub-line" in f for f in _refusals(text))
 
 
-def test_a_moved_impairment_rebuilds_the_lines(monkeypatch: pytest.MonkeyPatch) -> None:
-    """(6) The triangulation reads the FY impairment from the one-offs this transform re-reads. On a
-    page whose ONLY moved input is a billion-scale impairment (1.2 → 1,200) — no reconciliation row,
-    so nothing else the lines read moves — the proven rebuild must still run."""
+def _moved_impairment(monkeypatch: pytest.MonkeyPatch, period: str | None,
+                      text: str) -> tuple[dict[str, Any], list[str]]:
+    """VRRM's page with ONE release whose only row is a billion-scale impairment (1.2 → 1,200 on
+    re-read): no reconciliation row, so nothing else the lines read moves."""
     mech = json.loads(Path("data/dossiers/VRRM/dossier.json").read_text())["mechanical"]
     acc = "0001193125-26-209031"
     src = f"8-K {acc} EX-99.1"
+    held: dict[str, Any] = {"amount": 1.2, "description": "goodwill impairment charge",
+                            "verbatim": "v", "source_ref": src}
+    if period is not None:
+        held["period"] = period
     mech["primary_source"]["releases"] = [{
         "source_ref": src, "reconciliation": [], "event_impacts": [], "qa_flags": [],
-        "one_offs": [{"amount": 1.2, "description": "goodwill impairment charge",
-                      "verbatim": "v", "source_ref": src}]}]
-    _offline(monkeypatch,
-             {acc: ["The quarter included a $1.2 billion goodwill impairment charge."]})
+        "one_offs": [held]}]
+    _offline(monkeypatch, {acc: [text]})
     calls: list[str] = []
     monkeypatch.setattr(rf, "_rebuild_release_lines", lambda t, *a, **k: calls.append(t))
-    out = rf.release_figures_transform("VRRM", "x")(mech)
+    return rf.release_figures_transform("VRRM", "x")(mech), calls
+
+
+def test_a_moved_impairment_rebuilds_the_lines(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(6) The triangulation reads the FY impairment from the one-offs this transform re-reads. On a
+    page whose ONLY moved input is a billion-scale impairment (1.2 → 1,200) — no reconciliation row,
+    so nothing else the lines read moves — the proven rebuild must still run. The impairment is the
+    YEAR'S, read as 2025 on both sides, because since RE2-D17 (#1027) that is the only kind the line
+    reads; a page built at that code carries the period."""
+    out, calls = _moved_impairment(
+        monkeypatch, "2025", "Results included a $1.2 billion goodwill impairment charge in 2025.")
     assert out["primary_source"]["releases"][0]["one_offs"][0]["amount"] == 1200.0
+    assert out["primary_source"]["releases"][0]["one_offs"][0]["period"] == "2025"
     assert calls == ["VRRM"]
+
+
+def test_neg_a_moved_unread_impairment_rebuilds_nothing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(6, -) The same rescale on an impairment whose period is not read — the shape (6) pinned
+    before #1027 — moves no input the lines read: `_fy_impairment` passes over an unread item on
+    both sides (RE2-D17, MVST's Q3 2026 release), so nothing is rebuilt. The row itself is still
+    re-read to 1,200."""
+    out, calls = _moved_impairment(
+        monkeypatch, None, "The quarter included a $1.2 billion goodwill impairment charge.")
+    assert out["primary_source"]["releases"][0]["one_offs"][0]["amount"] == 1200.0
+    assert calls == []
 
 
 def test_a_per_share_impact_cited_in_prose_refuses() -> None:

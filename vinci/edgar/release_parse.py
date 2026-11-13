@@ -2932,8 +2932,8 @@ def _one_off_period(text: str, start: int, amt_end: int, frame: _ReleaseFrame) -
             return None    # a forward item's span or year is no period: `_figure_period`'s guard
         if g["ytd"]:
             # the span's own words even when no end date follows ("first nine months", "first
-            # half"): None would read as unstated, and `_fy_impairment` takes an unstated item as
-            # the year's (code review)
+            # half"): None would read as unread, which says less than the release does (code
+            # review); `_fy_impairment` passes over both, a span and an unread item
             span = _YTD_ENDED.match(text, p.start())
             return " ".join((span or p).group(0).split())
         if g["bare"] and g["bareyear"]:

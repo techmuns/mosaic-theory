@@ -38,7 +38,9 @@ superseded-by:
   - **The synthesis digest states it:** "one-off charge (Q2 2026): …", or "(period not read)".
   - **The gap-driver line states it:** "$11.3M inventory-related charge (Q2 2026)".
   - **The full-year impairment numerator** (`_fy_impairment`) passes over a quarter's or a
-    year-to-date item.
+    year-to-date item, and (since 2026-11-13) one whose period was not read: it never falls
+    through to an unread item. MVST's real Q3 2026 release showed why (THE 2026-11-13 RE-RUN,
+    below).
 
 - **RE2-D6's residual** (`release_parse._lead`). An amount introduced as a component ("including
   an SRE impact of $195.9 million") is not the clause's lead when a figure precedes it. So Par
@@ -100,7 +102,8 @@ superseded-by:
   - **Actuals:** 1 added, PARR's Q3 2024 -5.5. PARR's $0 build today reads a newer release set, so
     that row reaches no page now.
   - **`_fy_impairment`:** moves on LLY (35.0 → None) and VRRM (64.0 → None). Neither page prints
-    the margin line it feeds.
+    the margin line it feeds. The full build's own release set moved a third, MVST's, which does
+    print it; this list missed it (THE 2026-11-13 RE-RUN, below).
 
 - **The third review's two fixes, after the full build:**
   - a lowercase quarter header ("Fourth quarter 2026 Outlook:") keeps its quarter, because a clean
@@ -111,6 +114,43 @@ superseded-by:
   Each is pinned and fails first on the code before it. **They move 0 fields** on the 122 cited
   exhibits, and 0 on the full build's own release set (122 exhibits, 0 misses, pre-fix vs fixed).
   So the full build's numbers above hold for the final code.
+
+**THE 2026-11-13 RE-RUN AND THE UNREAD-IMPAIRMENT FIX.**
+- **What the cross-setup check found** (`vinci.impact run`, base main `dad8f441`, head `bf1cfeb8`,
+  26 of 27 pages built, PARR refused at both refs by its mislabelled CIQ export): every move
+  matched this record except MVST's margin line in `basis_triangulation`, "impairment-excluded
+  32.4% (… 16.3/427.5)" at base and "37.0% (… 35.8/427.5)" at head.
+  - `_fy_impairment` passed over the Q3 2026 release's $16.3M impairment, read as Q3 2026. It
+    then took the next impairment in the same release (8-K `0001628280-26-072310`): a $35.8M one
+    that the release states in its year-to-date paragraph and that the reader left unplaced.
+  - "Taken as before", that nine-month figure stood as the full year's. The 2025 release's $32.5M,
+    read as 2025, was never reached.
+  - The 2026-11-11 full build had moved the same field; its readers list above named only LLY and
+    VRRM.
+- **The fix** (coordinator, 2026-11-13: fix it here, never accept it while the cheap fix exists):
+  `_fy_impairment` passes over an impairment whose period was not read, as it passes over one read
+  as a quarter. Then MVST reads its 2025 item, $32.5M.
+- **Pinned on the real text:** `tests/fixtures/fy_impairment/mvst_releases.json` holds both EX-99.1s,
+  decoded as `mechanical` decodes an exhibit (`normalize_text(html_to_text(…))`) and cut to the
+  headline and the impairment sentences. Each cut emits exactly its full filing's impairment items
+  (Q3 2026: 16.3 as Q3 2026 and 35.8 unread; FY2025: 32.5 as 2025).
+  - `test_re2_d17_an_unread_impairment_is_never_the_full_years_mvst` fails first on `53385f9f`'s
+    `mechanical.py`.
+  - `test_re2_d17_neg_an_impairment_read_as_the_year_is_still_used_mvst` passes on both.
+  - The constructed pin `test_re2_d17_the_full_year_impairment_is_never_a_quarters` moves on
+    purpose: an unread item now gives None, not 32.5.
+- **Reach on the corpus:** MVST was the only page with an unread impairment: 22 of 23 one-offs carried a
+  period on the 26 pages built at `bf1cfeb8`, and the 23rd was MVST's $35.8M. MVST is retired
+  (#1044, `12764514`), so its page is gone from the corpus. No committed page prints the margin
+  line, which prints only with the year's gross margin, the impairment and the revenue together
+  (`primary_source.basis_triangulation`).
+  - A refresh compares `_fy_impairment` on the committed rows with the re-read ones, and rebuilds the
+    release lines where they differ, after proving the old lines reproduce from the old rows.
+  - The committed rows carry no period, so the fixed code reads None on all four pages holding an
+    impairment: IT, LLY, SMPL and VRRM. Which of them a refresh rebuilds therefore changes.
+  - None of the four pages' committed rows carries the year's gross margin or revenue, so the
+    margin line cannot print on either side, and that proof is unaffected (measured on the 26
+    committed pages at `14a57fc5`).
 
 **BOUNDARY.**
 - **Pages:** the 27 committed pages at `7edbfa36`.
@@ -128,8 +168,9 @@ superseded-by:
   **A six-page panel check is owed before merge,** and is proposed, not run.
 - **The Brief gains "Going concern: not flagged" on 26 pages at re-assembly.** That is a state the
   renderer and `dossier.js` already print.
-- **`compare` replays the committed layer**, so it cannot see this change. The paid check needs a
-  release re-read transform in `vinci/evals/variants.py`.
+- **`compare` replays the committed layer**, so it cannot see this change. The paid check registers
+  from an impact export of fresh builds instead (`register --from-impact`, fix request 2 order 8,
+  #1030), which needs no transform.
 - **The year-to-date one-off label is the release's words, not a code.** No consumer parses it,
   and `_fy_impairment` treats any non-annual label as not the year.
 - *Falsifier:* a release whose header the new readings label with a period its text does not

@@ -5854,13 +5854,17 @@ def _fy_impairment(releases: list[ReleaseExtract]) -> float | None:
 
     A YEAR'S, NEVER A QUARTER'S (RE2-D17): an impairment the release places in a quarter or a
     year-to-date span is not the full year's numerator, so it is passed over — including one a
-    quarterly release's frame places in its quarter. One with no period (read before the field
-    existed, or one no reader could place) is taken as before."""
+    quarterly release's frame places in its quarter. NEVER AN UNREAD ONE EITHER: an impairment
+    whose period no reader placed (or one read before the field existed) is passed over too, so
+    the search never falls through to it. Microvast's Q3 2026 release states a $35.8M impairment
+    in its year-to-date paragraph, which the reader leaves unplaced; taken "as before", it stood
+    in Microvast's full-year margin line for a nine-month figure, where its 2025 release's $32.5M,
+    read as 2025, is the year's."""
     for r in releases:
         for oo in r.one_offs:
             if "impair" not in oo.description.lower():
                 continue
-            if oo.period and primary_source.period_scope(oo.period) != "annual":
+            if not oo.period or primary_source.period_scope(oo.period) != "annual":
                 continue
             return oo.amount
     return None

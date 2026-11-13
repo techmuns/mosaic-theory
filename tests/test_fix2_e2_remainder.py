@@ -260,14 +260,52 @@ def test_re2_d17_the_gap_driver_line_states_the_period() -> None:
 
 def test_re2_d17_the_full_year_impairment_is_never_a_quarters() -> None:
     """(+/-) The margin cross-check divides by the YEAR: a quarter's or a six-month impairment is
-    passed over, a year's is taken, and one whose period is not stated is taken as before."""
+    passed over, a year's is taken, and one whose period was not read is passed over too (it was
+    taken "as before" until MVST's real Q3 release showed what that admits: the pins below)."""
     q = _item(35.0, "intangible asset impairments", "Q1 2025")
     ytd = _item(64.0, "impairment to goodwill", "six months ended June 30, 2026")
     fy = _item(150.0, "goodwill impairment", "2025")
     unread = _item(32.5, "inventory impairment charge", None)
     assert _fy_impairment([_release(q, ytd)]) is None
     assert _fy_impairment([_release(q, fy)]) == 150.0
-    assert _fy_impairment([_release(unread)]) == 32.5
+    assert _fy_impairment([_release(unread)]) is None
+    assert _fy_impairment([_release(unread, fy)]) == 150.0
+
+
+#: Microvast's Q3 2026 and FY2025 EX-99.1s (8-K 0001628280-26-072310 and 0001628280-26-018235),
+#: decoded as `mechanical` decodes an exhibit and cut at sentence boundaries; at generation each cut
+#: emitted exactly its full filing's impairment one-offs (amount and period). EDGAR filings are
+#: public domain.
+_MVST = json.loads((pathlib.Path(__file__).parent / "fixtures" / "fy_impairment"
+                    / "mvst_releases.json").read_text(encoding="utf-8"))
+
+
+def _mvst(name: str) -> ReleaseExtract:
+    c = _MVST[name]
+    return parse_release(c["text"], source_ref=c["source_ref"])
+
+
+def test_re2_d17_an_unread_impairment_is_never_the_full_years_mvst() -> None:
+    """(+) THE RED, on `53385f9f`, from the 2026-11-13 cross-setup check. The Q3 2026 release
+    places its $16.3M impairment in the quarter, which was passed over, and states a $35.8M one in
+    its year-to-date paragraph, which the reader leaves unplaced. Taken "as before", that nine-month
+    figure was Microvast's full-year margin numerator (impairment-excluded 32.4% → 37.0%). Passed
+    over, the search reaches the 2025 release's $32.5M, read as 2025 — releases newest first, as
+    the build lists them."""
+    q3, fy = _mvst("mvst_q3_2026"), _mvst("mvst_q4_fy2025")
+    got = {o.amount: o.period for o in q3.one_offs if "impair" in o.description.lower()}
+    assert got == {16.3: "Q3 2026", 35.8: None}, got    # the reads this pin rests on
+    assert _fy_impairment([q3]) is None
+    assert _fy_impairment([q3, fy]) == 32.5
+
+
+def test_re2_d17_neg_an_impairment_read_as_the_year_is_still_used_mvst() -> None:
+    """(-) Green on both: an impairment whose period IS read as the year is the numerator —
+    Microvast's FY2025 release, its $32.5M inventory impairment read as 2025."""
+    fy = _mvst("mvst_q4_fy2025")
+    got = [(o.amount, o.period) for o in fy.one_offs if "impair" in o.description.lower()]
+    assert got == [(32.5, "2025")], got
+    assert _fy_impairment([fy]) == 32.5
 
 
 def test_re2_d17_neg_every_committed_one_off_round_trips_byte_identically() -> None:
