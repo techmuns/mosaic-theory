@@ -2,12 +2,12 @@
 id:
 status: shipped
 date: 2026-11-13
-prs: [1039, 1040, 1043, 1044, 1045, 1048, 1050]
+prs: [1028, 1039, 1040, 1043, 1044, 1045, 1048, 1050]
 supersedes:
 superseded-by:
 ---
 
-# Fix request 2 bookkeeping, batch 8 (A, the coordinator): #1039's, #1040's and #1050's residual fixes booked into E2-D15, V2-N1 and RG-D3 to RG-D5 (fix (d) OPEN), RBC-D1's MVST part not fixing, four PRs that move no ID recorded, the operator's four rulings of 2026-11-13 recorded and carried into §5.0 rows 28, 30, 34, 35, 41, 51, 52, 54 and 59, two record amendments, and row 60 recounted (of 148 asked: 139 fixed, 1 open, 7 in progress, 1 disagreed; no status moves)
+# Fix request 2 bookkeeping, batch 8 (A, the coordinator): #1039's, #1040's and #1050's residual fixes booked into E2-D15, V2-N1 and RG-D3 to RG-D5 (fix (d) OPEN), RBC-D1's MVST part not fixing, #1028's impact-sweep corrections folded into 14 Pages cells and row 60, four PRs that move no ID recorded, the operator's four rulings of 2026-11-13 recorded and carried into §5.0 rows 28, 30, 34, 35, 41, 51, 52, 54 and 59, two record amendments, and row 60 recounted (of 148 asked: 139 fixed, 1 open, 7 in progress, 1 disagreed; no status moves)
 
 **WHAT.**
 - **The fix log**, `docs/fix-log-teamnostra-2.md`. Every row it touches was already `fixed`, so no status moves; each gains the merged PR, its tests, and the residual its record states.
@@ -25,6 +25,18 @@ superseded-by:
   - **RBC-D1's MVST part** reads "not fixing: name retired (operator 2026-11-12)", its page off the corpus with #1044 (`12764514`), as AORT's part reads. MVST leaves the "count written at $0" list.
   - **No other row naming MVST is open.** Only E2-D11 (batch 7) and RBC-D1 name it, and both are `fixed`.
   - **RBC-D1's page lists were stale** (review round 0, checked against the committed pages at `b207c8a9`). EPAM, UBER, V and WLK carry a `customers_listed` count from their 2026-11-09 builds, though the cell listed them as having none. NCNO, TECX and BURL carry none, and BURL was in neither list. The cell now says so.
+- **#1028's section, folded in** (#1028, `9fcd4a74`, the fix-request-2 impact sweep, merged 2026-11-13 09:24Z; the coordinator's addition to this batch). Its headline: **12 of 71 PRs moved something their own body did not state**, 7 MISS (#936, #944, #948, #953, #956, #966, #983), 3 a wider count (#960, #962, #965), 1 coverage (#981) and 1 correction (#976) (`docs/records/2026-11-13-fix2-impact-sweep.md`). No status moves; each Pages cell gains what the next build moves:
+  - **RA-D1 (#936):** PARR's synthesis request also moves, in `facts`;
+  - **RE1-D8 (#944):** "0 of 28 move" holds at each page's price date, and at PARR's next build its cadence goes from 37 to 38 results 8-Ks and its request moves in `facts`;
+  - **RE1-D11 (#948):** WERN's synthesis request also moves, in `facts`;
+  - **A-D2 (#960):** all 27 are named in #1028's record, 26 living since MVST retired. The cell's "no merged record names the other 14" is replaced;
+  - **RE2-D2, RE2-D5 (actuals half), RE2-D8 (#962):** 29 notes on 9 pages, not 28 on 10: BRBR 2, BURL 2, EPAM 3, FUBO 1, MVST 8, SMPL 8, TGT 2, TJX 1, VITL 2, WERN 0, so 21 on 8 living pages. **RE2-D6 and E2-D11** cite the same #962 count, and are corrected with them, though #1028's section did not list them;
+  - **RA-D16 (#965):** the 18 pages are named in #1028's record, 17 living; the cell's "no merged record names the rest" is replaced;
+  - **RE2-D9 and RE2-D10 (#966):** at MVST's next build its going-concern quote would move (2 fields) and its request in `primary_source`; MVST is retired, so there is no next build;
+  - **RA-D4 (#983):** #994 did not cover BURL, whose next build adds 9 same-day guide rows and moves its request in `facts`. FACTS-only, so no panel is owed by default (batch 3 item 2); it is an operator question after #953's retrospective run;
+  - **RE2-D7 (#976):** NFLX +3 and VITL +2 refusal notes, as #976 stated, and WERN +2, which it did not; no request moves.
+  - **Row 60:** the #966 and #983 clauses #1028's section gives, verbatim; the #962 and #976 clauses gain the same counts; #953's retrospective is confirmed owed; and #956's number is #1039, which this batch already carried.
+  - **Outside #1028's population by definition:** #932 and #934, which merged before #936, the sweep's lower cut; and #997, the operator's P/E split rule, which merged in the window but names no fix request 2, is cited by no log row, and carries a tool-written section. Batch 5 booked #997 as naming no fix-log ID.
 - **No ID and no row**, each by its own body:
   - **#1043** (`c0b6a519`): the transcripts design, STATE row 61. Its body: "None: no fix-log ID moves".
   - **#1045** (`b73bd4ef`): the local-path guard reads the theme desk's committed logs and STATE.md.
@@ -78,6 +90,7 @@ The rest of issuecomment-6847522000 quotes further operator answers: no feature 
   - The 7 named nodes that are not (d) pins all fail on behaviour. One of them, `test_a_metric_no_row_carries_falls_back_to_the_cited_fact`, has 10 cases: 7 fail and 3, its negative pins, pass. The (d) pins XFAIL at the parent and at main, as strict xfails should.
 - **#1050 fails first at its parent `b207c8a9`,** with #1050's test file over the parent's tree. Both bare-word nodes fail on behaviour: TJX's "FY26 EBITDA was $8,425M while sales were $7,178M." passes there, and should not. The inside-the-print pin passes at the parent; it is a guard pin, which its record shows failing with the guard removed.
 - **At main `b207c8a9`** (this branch before #1050 merged in), the named #1039 and #1040 nodes give 18 passed and 4 xfailed: the three (d) pins and WERN's page pin. At `0d8a2a43`, #1050's three pass.
+- **#1028's items** were each checked against its record's 71-row table (`docs/records/2026-11-13-fix2-impact-sweep.md`): the #944, #962, #965, #966 and #976 rows and the headline's four counts read as the section states. #997 is not named in the record; its exclusion was checked against #997's own body.
 - **The count** is the same script over `tests/test_fix_log.py`'s `parse_log` that batch 7 used.
 - **MVST** is named in exactly 2 log lines, E2-D11 and RBC-D1, both `fixed`.
 - **The cost:** groups of $16.18 + $10.11 + $8.88 + $1.79 = $36.96, from #1041's per-page last costs, with the $4.44 median for NCNO, IT and WERN.
@@ -85,8 +98,8 @@ The rest of issuecomment-6847522000 quotes further operator answers: no feature 
 
 **BOUNDARY.**
 - **The PRs:** every first-parent commit on `origin/main` from batch 7's base `98707f29` through `0d8a2a43`, less batch 7 itself (#1047, `dad8f441`). These are #1043, #1039, #1040, #1045, #1044 and #1048, and #1050, which merged after this branch was cut from `b207c8a9` and was merged in. They were read on 2026-11-13.
-- **Not booked here: #1028** (`9fcd4a74`, the fix-request-2 impact sweep), merged 2026-11-13 09:24Z, after this batch was counted, and merged in with no conflict. Its bookkeeping section asks for about ten Pages-cell corrections (RA-D1, RE1-D8, RE1-D11, A-D2, RE2-D2, RE2-D5, RE2-D8, RA-D16, RE2-D9, RE2-D10, RA-D4) and two row-60 clauses (#966, #983). That is batch 9's. Its correction that #956's fix is #1039 agrees with this batch's amendment on #956's record.
-- **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `0d8a2a43`, on 2026-11-13.
+- **#1028** (`9fcd4a74`), merged 2026-11-13 09:24Z after this batch was first counted, is merged in with no conflict and booked (above), at the coordinator's request. Its correction that #956's fix is #1039 agrees with this batch's amendment on #956's record.
+- **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `9fcd4a74`, on 2026-11-13.
 - **The fail-first runs:** #1039's 4 nodes at `c0b6a519`, #1040's 34-node file at `f676616f` and #1050's 3 nodes at `b207c8a9`, on 2026-11-13.
 - **The page checks:** `mechanical.concentration.customers_listed` and the `next-fy` count, read from the 26 committed `data/dossiers/*/dossier.json` at `b207c8a9`.
 - **The coverage set:** B's table at main `12764514`, as the note states. Last costs are from #1041's record.
@@ -111,3 +124,6 @@ The rest of issuecomment-6847522000 quotes further operator answers: no feature 
 - **#1039's behaviour fail is shown only with its import made tolerant.** As committed, its test file cannot import at the parent. The named nodes assert on `_maturity_wall` before they read the new helper, so the measurement reads the parent's behaviour.
 - **Watch pages keep known errors.** B's note names six with known errors; batch 8 re-measured none of the six, and found UBER's row-30 part not reproducible (its page holds no `next-fy` guide). The other nine keep whatever their committed pages hold, and §5.0 rows 10, 11, 27 and 57 still name watch pages whose moves land "at the next re-assembly", which stays true as a condition. The falsifier: a watch page made active and rebuilt with no row noting what changed. Each row names its pages, so the rebuild's PR can check them.
 - **Item (d) stays open with no owner.** #1040's body asks for a §5.0 row or a log line if it needs one. RG-D3's cell now names it, which is the log line. No §5.0 row is opened here: §5.0 is capped at 60 lines, and the coordinator did not ask for one.
+
+**FOUND, NOT FIXED.**
+- **PARR's quarterly Financials export on the Drive** (re-exported 2026-11-12) is a byte copy of its annual one, sha256 `29debc32…` for both (#1028). Every PARR build refuses it. PARR is on watch, so no re-export is owed until it goes active.
