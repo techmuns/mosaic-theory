@@ -35,7 +35,8 @@ import anthropic
 from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, capture_calls, jsonable
-from vinci.graph.llm import AnthropicLlmClient, LlmError, cost_usd, sdk_version
+from vinci.graph.llm import AnthropicLlmClient, LlmError, cost_usd
+from vinci.graph.llm import sdk_version as sdk_version  # re-exported: the SDK `GuardedSdk` stamps
 
 ROOT = Path(__file__).resolve().parents[2]
 

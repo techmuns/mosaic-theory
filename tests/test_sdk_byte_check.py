@@ -151,24 +151,53 @@ def test_the_impact_child_reads_only_names_the_inputs_module_serves() -> None:
     assert [n for n in sorted(read) if not hasattr(module, n)] == []
 
 
-def test_a_changed_url_or_an_unaccepted_header_fails_and_the_accepted_seven_do_not(
-        tmp_path: Path) -> None:
-    """Review of #1049, round 1: a planted `/v1/messages?beta=true` printed "method/URL
-    differing: 1" and exited 0. Now a method or URL difference fails, and so does a header outside
-    the ones the 2026-11-13 record accepted as moving with the SDK: an added beta header would
-    otherwise pass the upgrade rule with every body identical."""
+V1 = "https://api.anthropic.com/v1/messages"
+#: The headers 0.112.0 and 2.6.0 sent, as captured on 2026-11-13 (the key's value replaced).
+OLD = [("accept-encoding", "gzip, deflate"), ("user-agent", "Anthropic/Python 0.112.0"),
+       ("x-stainless-package-version", "0.112.0"), ("x-api-key", "sk-ant-k"),
+       ("anthropic-version", "2023-06-01")]
+NEW = [("accept-encoding", "gzip, deflate, zstd"), ("user-agent", "Anthropic/Python 2.6.0"),
+       ("x-stainless-package-version", "2.6.0"), ("authorization", "Bearer sk-ant-k"),
+       ("anthropic-version", "2026-10-21")]
+
+
+def _headers_run(d: Path, version: str, headers: list[tuple[str, str]], url: str = V1) -> Path:
+    d.mkdir(parents=True)
+    (d / "x.body").write_bytes(b'{"a":1}')
+    (d / "index.json").write_text(json.dumps([{
+        "path": "p", "label": "x", "n": 1, "method": "POST", "url": url,
+        "headers": [list(h) for h in headers], "body_file": "x.body"}]))
+    (d / "summary.json").write_text(json.dumps({"anthropic": version, "http_lib": "httpx"}))
+    return d
+
+
+def _with(headers: list[tuple[str, str]], name: str, value: str) -> list[tuple[str, str]]:
+    return [*[h for h in headers if h[0] != name], (name, value)]
+
+
+def test_the_record_s_header_changes_pass_and_any_other_change_fails(tmp_path: Path) -> None:
+    """Review of #1049. Round 1: a planted `/v1/messages?beta=true` exited 0, and so did an added
+    header. Round 2: headers were accepted by NAME, so `anthropic-version: 2027-03-01` (the one
+    header that changes what the server does) and `accept-encoding: gzip` exited 0. Now only the
+    record's exact changes pass (`compare.ACCEPTED`), plus the SDK's version stamps moving by its
+    version, which is all the next bump should show."""
     cmp = _load("compare")
-    v1 = "https://api.anthropic.com/v1/messages"
-    accepted = (("anthropic-version", "2026-10-21"), ("accept-encoding", "gzip, deflate, zstd"),
-                ("x-stainless-package-version", "2"))
-    _fake_run(tmp_path / "a", {"x": b'{"a":1}'}, "1", url=v1)
-    _fake_run(tmp_path / "ok", {"x": b'{"a":1}'}, "2", url=v1, extra=accepted)
-    _fake_run(tmp_path / "url", {"x": b'{"a":1}'}, "1", url=v1 + "?beta=true")
-    _fake_run(tmp_path / "beta", {"x": b'{"a":1}'}, "1", url=v1,
-              extra=(("anthropic-beta", "files-api-2025-04-14"),))
-    code, lines = cmp.compare(tmp_path / "a", tmp_path / "ok")
+    a = _headers_run(tmp_path / "a", "0.112.0", OLD)
+    code, lines = cmp.compare(a, _headers_run(tmp_path / "b", "2.6.0", NEW))
+    assert code == 0 and not any("NOT ACCEPTED" in x for x in lines), lines
+    # the next bump: same API version and key header, only the version stamps move
+    nxt = [(n, v.replace("2.6.0", "2.7.0")) for n, v in NEW]
+    code, lines = cmp.compare(_headers_run(tmp_path / "n26", "2.6.0", NEW),
+                              _headers_run(tmp_path / "n27", "2.7.0", nxt))
     assert code == 0, lines
-    code, lines = cmp.compare(tmp_path / "a", tmp_path / "url")
-    assert code == 1 and "method/URL differing: 1" in lines, lines
-    code, lines = cmp.compare(tmp_path / "a", tmp_path / "beta")
-    assert code == 1 and any("anthropic-beta" in x and "NOT ACCEPTED" in x for x in lines), lines
+    failing = {
+        "url": (NEW, V1 + "?beta=true", "method/URL differing: 1"),
+        "beta": ([*NEW, ("anthropic-beta", "files-api-2025-04-14")], V1, "anthropic-beta"),
+        "api-version": (_with(NEW, "anthropic-version", "2027-03-01"), V1, "anthropic-version"),
+        "encoding": (_with(NEW, "accept-encoding", "gzip"), V1, "accept-encoding"),
+        "stamp": (_with(NEW, "user-agent", "Anthropic/Python 2.6.0 (patched)"), V1, "user-agent"),
+    }
+    for case, (headers, url, named) in failing.items():
+        code, lines = cmp.compare(a, _headers_run(tmp_path / case, "2.6.0", headers, url))
+        assert code == 1, (case, lines)
+        assert any(named in x and ("NOT ACCEPTED" in x or case == "url") for x in lines), lines
