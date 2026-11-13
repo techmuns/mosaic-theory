@@ -23,8 +23,10 @@ not read is counted unreadable and named, never skipped quietly.
 A WORD, as #1036's build guard counts it, read for files rather than for a synthesis: split at
 whitespace, at every dash form and at a slash; lower-cased; apostrophes and primes folded; edge
 punctuation read off, the markdown and code marks among it (`*`, `` ` ``, `$`, `%`). Each tracked
-file is read raw, JSON/JS-unescaped where it holds a backslash, and HTML-unescaped with its tags
-dropped where it holds `<` or `&`, so a run escaped or marked up in one view is found in another.
+file is read raw, JSON/JS-unescaped where it holds a backslash, HTML-unescaped with its tags
+dropped where it holds `<` or `&`, with each Markdown link read as its text, and, for a `.py` file,
+as its string literals joined, so a run escaped, marked up, linked or split in one view is found in
+another. A call on disk that does not read FAILS the test: only a disk with no call skips.
 
 THE EXCUSE. Management reads its release on the call, so a filing's sentence is often a call's too.
 A window is excused ONLY when this COMPUTES that it also appears in a source on this disk that is
@@ -111,9 +113,10 @@ def _unescape(m: re.Match[str]) -> str:
 
 
 def views(text: str, py: bool = False) -> list[str]:
-    """``text`` raw, JSON/JS-unescaped where it holds a backslash, and HTML-unescaped with tags
-    dropped where it holds markup. A Python file is also read as the string literals the code JOINS
-    at run time (`py_strings`). Newlines are kept in each, so a line is the file's own."""
+    """``text`` raw, JSON/JS-unescaped where it holds a backslash, HTML-unescaped with tags dropped
+    where it holds markup, and with each Markdown link read as its text where it holds one. A
+    Python file is also read as the string literals the code JOINS at run time (`py_strings`).
+    Newlines are kept in each, so a line is the file's own."""
     out, base = [text], text
     if "\\" in text:
         unescaped = _ESC.sub(_unescape, text)
@@ -124,11 +127,19 @@ def views(text: str, py: bool = False) -> list[str]:
         stripped = _TAG.sub(" ", html.unescape(base).replace("\r", ""))
         if stripped != base:
             out.append(stripped)
+    if "](" in base:
+        # A MARKDOWN LINK reads as its text (Codex on #1046, P2): one word written `[word](url)`
+        # was read as "word](https:" and broke the run around it
+        linked = _MD_LINK.sub(lambda m: m.group(1), base)
+        if linked != base:
+            out.append(linked)
     if py and (joined := py_strings(text)) is not None:
         out.append(joined)
     return out
 
 
+#: a Markdown link or image, `[text](url)` / `![alt](url "title")`: read as its text
+_MD_LINK = re.compile(r"!?\[([^\]\n]*)\]\([^()\s]*(?:\s+\"[^\"\n]*\")?\)")
 #: a string token's prefix (`f`, `r`, `b`, `rb`, …) and its opening quote
 _STR_OPEN = re.compile(r"^([A-Za-z]*)(\"\"\"|\'\'\'|\"|\')")
 #: a replacement field of an f-string read as ONE token (Python < 3.12): `{q}`, `{x!r:>10}`
@@ -236,7 +247,7 @@ def _source_sha() -> str:
     for f in (_unescape, views, py_strings, words, key, window_keys, scan_text):
         h.update(inspect.getsource(f).encode())
     h.update(f"{N}|{_EDGE}|{_SPLIT.pattern}|{_APOS}|{_ESC.pattern}|{_TAG.pattern}|"
-             f"{_STR_OPEN.pattern}|{_FIELD.pattern}".encode())
+             f"{_STR_OPEN.pattern}|{_FIELD.pattern}|{_MD_LINK.pattern}".encode())
     h.update((ROOT / "vinci/dossier/ciq.py").read_bytes())
     h.update(f"{sys.version_info[0]}.{sys.version_info[1]}".encode())
     return h.hexdigest()[:20]
@@ -642,7 +653,7 @@ def test_no_tracked_file_shares_13_consecutive_words_with_a_call(
     roots = call_roots()
     cache = _cache(request)
     calls = read_calls(roots, cache)
-    if not calls.calls:
+    if not calls.calls and not calls.unreadable:
         pytest.skip(f"no transcript on this disk under {[str(r) for r in roots] or 'no root'} "
                     "(CI holds none): the 12-word rule on tracked files is checked only where the "
                     "licensed calls are")
@@ -681,6 +692,12 @@ def test_no_tracked_file_shares_13_consecutive_words_with_a_call(
         + f"\n  unexcused: {len(bad)} run(s)")
     _say(request, boundary, *(f"    KD-excused: {r.path}:{r.line} ({r.length} words, run sha256 "
                               f"{run_hash(r.words)})" for r in kd_runs))
+    # FAIL LOUD (Codex on #1046, P1): a call that is on disk and does not read was never looked
+    # for, so a run of its words would pass unseen. Only a disk with NO call skips (CI).
+    assert not calls.unreadable, (
+        f"{len(calls.unreadable)} call(s) on this disk do not read, so no tracked file was read "
+        "against them, and a call left out of the scan is never a pass:\n"
+        + _shown([f"{n} — {why}" for n, why in calls.unreadable]) + "\n" + boundary)
     assert not bad, (f"{len(bad)} run(s) of more than {MAX_TRANSCRIPT_RUN} consecutive words of a "
                      "call sit in tracked files, and no non-transcript source on this disk holds "
                      "them (CLAUDE.md's 12-word rule):\n" + _shown(bad) + "\n" + boundary)
@@ -928,3 +945,76 @@ def test_the_guard_finds_the_two_joined_runs_round_1_cut(local_calls: Calls) -> 
     assert all(any(n.startswith(w) for n in found) for w in want), (
         f"found runs against {sorted(found)} only")
     assert scan_tracked(local_calls, None, files=[f]).runs == []
+
+
+# --- Codex on #1046: a call that does not read, and a word inside a Markdown link ---------------
+
+def _stub_request() -> Any:
+    """What the corpus test reads off pytest's request: no cache, no terminal reporter."""
+    from types import SimpleNamespace
+    return SimpleNamespace(config=SimpleNamespace(
+        cache=None, pluginmanager=SimpleNamespace(get_plugin=lambda name: None)))
+
+
+def test_a_call_on_disk_that_does_not_read_fails_the_guard(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """CODEX ON #1046, P1 — FAIL LOUD. A call that is on disk and does not read was dropped from
+    the scan, and the guard passed on the calls that did: a run of the dropped call's words would
+    have passed unseen. Now it fails, naming the file and its error. A store holding only calls
+    that do not read fails too, and only a disk with NO call skips (CI). No call is needed: the
+    store here is built in the test, of words no call holds."""
+    me = sys.modules[__name__]
+    store = tmp_path / "ciq"
+    (store / "ACME").mkdir(parents=True)
+    good = store / "ACME" / "Acme, Inc., Q1 2026 Earnings Call, Jan 02, 2026.rtf"
+    bad = store / "ACME" / "Acme, Inc., Q2 2026 Earnings Call, Apr 02, 2026.rtf"
+    good.write_text("{\\rtf1\\ansi " + " ".join(f"zqxw{i}" for i in range(40)) + "}")
+    bad.write_bytes(b"\x00\x01 neither RTF nor any export")
+    monkeypatch.setattr(me, "call_roots", lambda: [store])
+    monkeypatch.setattr(me, "tracked_files", lambda: ["README.md"])
+    with pytest.raises(AssertionError, match="Q2 2026 Earnings Call"):
+        test_no_tracked_file_shares_13_consecutive_words_with_a_call(_stub_request())
+    good.unlink()
+    with pytest.raises(AssertionError, match="do not read"):
+        test_no_tracked_file_shares_13_consecutive_words_with_a_call(_stub_request())
+    monkeypatch.setattr(me, "call_roots", lambda: [])
+    with pytest.raises(pytest.skip.Exception, match="CI holds none"):
+        test_no_tracked_file_shares_13_consecutive_words_with_a_call(_stub_request())
+
+
+def test_a_markdown_link_reads_as_its_text() -> None:
+    """CODEX ON #1046, P2, no call needed: `[text](url)` and `![alt](url "title")` read as their
+    text, the words around them kept; brackets and parentheses that are not a link stay."""
+    text = ('one [two three](https://example.com/a/b) four ![five](img/x.png "t") six (seven) '
+            '[eight]')
+    assert words(views(text)[-1])[0] == ["one", "two", "three", "four", "five", "six", "seven",
+                                         "eight"]
+
+
+def _link_bites(local_calls: Calls, at: int) -> dict[str, bool]:
+    """13 words of a real call (held in this frame only) with one inside a Markdown link, as a
+    link and as an image, and 12 words the same way."""
+    ws = _call_words(call_roots())[at:at + _RULE_PLUS_ONE]
+
+    def caught(text: str) -> bool:
+        return bool(scan_text(text, local_calls))
+
+    head, tail = " ".join(ws[:6]), " ".join(ws[7:])
+    return {
+        "13 words, one inside a Markdown link":
+            caught(f"{head} [{ws[6]}](https://example.com/a/b) {tail}"),
+        "13 words, one as an image's alt text": caught(f"{head} ![{ws[6]}](img/x.png) {tail}"),
+        "12 words, one inside a Markdown link":
+            caught(f"{head} [{ws[6]}](https://example.com/a/b) {' '.join(ws[7:12])}"),
+    }
+
+
+def test_thirteen_words_with_one_inside_a_markdown_link_are_caught(local_calls: Calls) -> None:
+    """CODEX ON #1046, P2. One word written as a Markdown link (`[word](url)`) read as
+    "word](https:" and broke a 13-word run into two short ones, though the rendered page shows the
+    words consecutively. The link view reads it as one run; 12 words the same way are not one."""
+    assert _link_bites(local_calls, 600) == {
+        "13 words, one inside a Markdown link": True,
+        "13 words, one as an image's alt text": True,
+        "12 words, one inside a Markdown link": False,
+    }

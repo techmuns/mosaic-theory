@@ -88,8 +88,11 @@ CLAUDE.md: NO PUBLIC FIELD QUOTES MORE THAN 12 CONSECUTIVE TRANSCRIPT WORDS, and
    amendments may be cut but not reworded, and nothing may be added before the entry.
 5. **The guard** (`tests/test_tracked_files_hold_no_transcript_run.py`, local only).
    - It reads every tracked text file (raw, JSON-unescaped, HTML-unescaped and, for a `.py` file,
-     its string literals joined as the code joins them: `py_strings`) against every call in the
-     store, its `ciq-archive/` and `VINCI_TRANSCRIPT_ROOTS`, read by production's `ciq.read_text`.
+     its string literals joined as the code joins them: `py_strings`; and with each Markdown link
+     read as its text) against every call in the store, its `ciq-archive/` and
+     `VINCI_TRANSCRIPT_ROOTS`, read by production's `ciq.read_text`.
+   - A call on disk that does not read FAILS the test, naming the file and its error: a call left
+     out of the scan is never a pass. Only a disk with no call skips (CI).
    - It fails on any 13-word window a file shares with a call, unless it COMPUTES that the window
      is also in a cached SEC document or a Key Developments export. KD excuses are counted apart:
      KD's publication is unruled (STATE row 60, item 3b).
@@ -131,8 +134,9 @@ from the Drive mirror.
     narrow edge set, KD not ceding to SEC, and no scan.
   - CORPUS BEFORE SYNTHETIC: on #1036's parent `68bd4b33` it finds the LLY, VITL and WERN runs
     #1036 cut, and at head nothing in those files.
-- **The guard on this Mac, at `95b3aff9`** (main `98707f29` plus this branch after review round 1,
-  with the joined view; its own boundary print, the same at `17f4e3be` before it):
+- **The guard on this Mac, at `06019c70`** (main `98707f29` plus this branch after review rounds 1
+  and 2, with the joined and Markdown-link views and the fail-loud read; its own boundary print,
+  the same at `17f4e3be` before them):
   - calls: 91 read, 19 duplicate files by sha256, 0 unreadable;
   - tracked files (and untracked, not ignored): 3,095 scanned; skipped: 680 binary (a NUL byte),
     1 not UTF-8;
@@ -181,17 +185,33 @@ from the Drive mirror.
     starts on.
   - Minor: `_redaction_violations` counts EVERY appended entry, not only the last. A new pin
     fails on the old function.
+- **Review round 2** (Codex's first review, of `4af35acb`; its second, of `ad53d5c8`, found nothing
+  major; the coordinator's go-ahead): one fix commit.
+  - P1, fail loud: a call on disk that does not read was dropped, and the guard passed on the calls
+    that did. Now the test fails, naming each such file and its error; a store holding only such
+    calls fails too, and only a disk with no call skips.
+    Pin: `test_a_call_on_disk_that_does_not_read_fails_the_guard`, which builds its own store and
+    so runs in CI.
+  - P2: one word written as a Markdown link (`[word](url)`) broke a 13-word run, since the word
+    read as "word](https:". A view now reads `[text](url)` as `text` and `![alt](url)` as `alt`.
+    Pins: `test_a_markdown_link_reads_as_its_text` (CI-runnable), and
+    `test_thirteen_words_with_one_inside_a_markdown_link_are_caught`, which plants 13 call words
+    with one in a link, then in an image's alt text, plus a 12-word negative.
+  - All three pins fail on the guard at `ad53d5c8` and pass at head.
+  - On the corpus the link view finds no new run: 162 tracked text files hold a Markdown link, and
+    none holds a window only that view sees.
 - **Gate.**
   - `ruff check vinci tests` and `mypy --strict vinci` (218 files): clean.
   - The full `nice pytest -m "not network"`, CI-like (a worktree with no CIQ folder and no cache, as
-    CI has): exit 0 at `17f4e3be`, no failure and no error, 1,198 s; and exit 0 at `95b3aff9`
-    after round 1, no failure and no error, 1,514 s. The guard and its call-reading pins skip,
+    CI has): exit 0 at `17f4e3be`, no failure and no error, 1,198 s; exit 0 at `95b3aff9` after
+    round 1, 1,514 s; and exit 0 at `06019c70` after round 2, no failure and no error, 1,434 s. The guard and its call-reading pins skip,
     saying so; the pins that need no call run.
   - Linked mode: `tests/test_driver_facts.py` fails the same two tests on main `407dc809` and on
     this branch. Both read the operator's local PARR quarterly Financials, which CIQ mislabelled.
-- **Cross-setup validation** (`python -m vinci.impact run`, base `98707f29`, head `95b3aff9` after
-  round 1, $0, vendor pulls refused; the same at `17f4e3be` before it, over 438 tests):
-  - 0 of 442 tests fail on base code and pass on head; 0 fail at head;
+- **Cross-setup validation** (`python -m vinci.impact run`, base `98707f29`, head `06019c70` after
+  round 2, $0, vendor pulls refused; the same at `17f4e3be` and at round 1's head, over 438 and
+  442 tests):
+  - 0 of 445 tests fail on base code and pass on head; 0 fail at head;
   - pages built 26 of 27 (PARR refused at both refs by that mislabelled export), 0 move;
   - 0 of 26 synthesis requests differ, and 0 of 6 frozen panel pages, so the row-53 panel check is
     not owed;
