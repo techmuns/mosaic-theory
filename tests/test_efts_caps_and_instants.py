@@ -112,9 +112,10 @@ def test_a_one_page_search_is_one_request_on_the_url_it_always_had() -> None:
 # ─── the covenant-pointer table states its own caps ──────────────────────────────────────────
 
 def _instruments(ticker: str) -> list[CapitalInstrument]:
-    # AORT was retired 2026-11-09: its page as committed on 2026-10-26, frozen
-    path = (_ROOT / "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json" if ticker == "AORT"
-            else _ROOT / f"data/dossiers/{ticker}/dossier.json")
+    # AORT was retired 2026-11-09 and MVST 2026-11-12: each page as last committed, frozen
+    frozen = {"AORT": "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json",
+              "MVST": "tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json"}
+    path = _ROOT / frozen.get(ticker, f"data/dossiers/{ticker}/dossier.json")
     page = json.loads(path.read_text())
     return [CapitalInstrument.model_validate(i)
             for i in page["mechanical"]["capital_structure"]["instruments"]["value"]]

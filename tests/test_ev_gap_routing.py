@@ -33,10 +33,14 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: counterexample below is ITS FY2026 EBITDA consensus (dispersion 263.7%); the 2026-11-09
 #: re-assembly (fix request 2, order 1) reads a later consensus that routes three-ratio.
 FROZEN_VITL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "VITL"
+#: MVST's page as committed on 2026-09-17, frozen when the operator retired MVST from coverage
+#: (2026-11-12). It has no living page, and it is the one real page that routes price-implied-only.
+FROZEN_MVST = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "MVST"
 
 
 def _cell(ticker: str, metric: str, fy: str | None = None) -> dict[str, object]:
-    folder = FROZEN_VITL if ticker == "VITL" else ROOT / "data" / "dossiers" / ticker
+    frozen = {"VITL": FROZEN_VITL, "MVST": FROZEN_MVST}
+    folder = frozen.get(ticker, ROOT / "data" / "dossiers" / ticker)
     d = json.loads((folder / "dossier.json").read_text())
     cells = d["mechanical"]["consensus_context"]["consensus_levels"][metric]
     return cells[0] if fy is None else next(c for c in cells if str(c["fy"]) == fy)
@@ -147,7 +151,9 @@ def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
     coverage — while an arriving name that routes normally is silent.
     """
     got, unrouted = {}, set()
-    for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+    # the committed fleet, plus MVST's frozen page: no living page routes price-implied-only
+    pages = sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
+    for f in [*pages, FROZEN_MVST / "dossier.json"]:
         lv = (json.loads(f.read_text())["mechanical"]["consensus_context"] or {}).get(
             "consensus_levels")
         if not lv or "EBITDA" not in lv:

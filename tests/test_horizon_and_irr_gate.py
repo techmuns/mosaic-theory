@@ -296,8 +296,8 @@ def test_every_committed_record_would_survive_the_new_supersede_check() -> None:
         again = sc.run_recipe(rec.model_copy(deep=True)).result
         assert _result_mismatch(rec.result, again) is None, f.name
         seen += 1
-    # 9 until AORT was archived (2026-11-09)
-    assert seen >= 8, f"corpus check walked {seen} records — it is not exercising anything"
+    # 9 until AORT was archived (2026-11-09), 8 until MVST was (2026-11-12)
+    assert seen >= 7, f"corpus check walked {seen} records — it is not exercising anything"
 
 
 def test_supersede_derives_an_unstated_result_instead_of_refusing_it() -> None:

@@ -60,7 +60,10 @@ def test_real_committed_dossiers_all_resolve() -> None:
         pytest.skip("no committed dossiers")
     idx = committed_gics_index(root)
     assert len(idx) >= 10
-    assert idx["MVST"]["industry"] == "Construction Machinery and Heavy Transportation Equipment"
+    # MVST was retired 2026-11-12: the value pin reads its page as committed on 2026-09-17, frozen
+    frozen = committed_gics_index(Path(__file__).resolve().parent / "fixtures" / "frozen_pages"
+                                  / "2026-09-17")
+    assert frozen["MVST"]["industry"] == "Construction Machinery and Heavy Transportation Equipment"
 
 
 if __name__ == "__main__":

@@ -2110,8 +2110,10 @@ def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
     import pathlib
     import shutil
     import subprocess
-    tickers = [t for t in ("MVST", "VRRM")
-               if pathlib.Path(f"data/dossiers/{t}/dossier.json").exists()]
+    # MVST is retired (2026-11-12): its page is the frozen copy, VRRM's the living one
+    pages = {"MVST": "tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json",
+             "VRRM": "data/dossiers/VRRM/dossier.json"}
+    tickers = [t for t in ("MVST", "VRRM") if pathlib.Path(pages[t]).exists()]
     if not tickers:
         pytest.skip("no committed dossier.json")
     js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
@@ -2131,8 +2133,7 @@ def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
 
     recon_cited: list[tuple[str, str]] = []
     for t in tickers:
-        doss = ds.Dossier.model_validate_json(
-            pathlib.Path(f"data/dossiers/{t}/dossier.json").read_text())
+        doss = ds.Dossier.model_validate_json(pathlib.Path(pages[t]).read_text())
         if doss.synthesis is None:
             continue
         s = doss.synthesis
@@ -2181,7 +2182,7 @@ def test_brief_financial_snapshot_right_aligns_all_period_columns() -> None:
     left-aligned. e2e on the committed MVST artifact, phrasing-independent (alignment structure,
     no value pinned). Pre-fix: cells[1] == '---' → this fails."""
     import pathlib
-    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json")
     if not p.exists():
         pytest.skip("no committed MVST dossier.json")
     md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
@@ -3386,7 +3387,7 @@ def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
     render (all affected fields named); graph-cohort likewise. Pin: unknown-reason occurrences == 1
     (NOT a grep of '99.1' — the drawdown 8-K's own 'Exhibit 99.1' filing text is legitimate)."""
     import pathlib
-    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json")
     if not p.exists():
         pytest.skip("no committed MVST dossier.json")
     md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
@@ -4032,7 +4033,7 @@ def test_return_ratios_render_replaces_key_ratios_fact() -> None:
     and DROPS the latest-only 'Key ratios (latest)' fact (the web adds the line panels above it). A
     name WITHOUT the series keeps the latest-period fallback — never a blank."""
     import pathlib
-    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json")
     if not p.exists():
         pytest.skip("no committed MVST dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
@@ -5570,7 +5571,7 @@ def test_frontend_modules_load_as_esm_and_render_smoke() -> None:
     import urllib.parse
     if not shutil.which("node"):
         pytest.skip("node unavailable")
-    if not pathlib.Path("data/dossiers/MVST/dossier.json").exists():
+    if not pathlib.Path("tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json").exists():
         pytest.skip("no committed MVST dossier.json")
     driver = r"""
 import { readFileSync, readdirSync, statSync } from "node:fs";
@@ -5588,7 +5589,8 @@ for (const m of mods) { try { await import(pathToFileURL(path.resolve(m)).href);
   catch (e) { failed.push([m, e.name + ": " + e.message.slice(0, 80)]); } }
 const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
 const { renderDossier } = await import(dj);
-const html = renderDossier(JSON.parse(readFileSync("data/dossiers/MVST/dossier.json")), null);
+const page = "tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json";
+const html = renderDossier(JSON.parse(readFileSync(page)), null);
 console.log(JSON.stringify({nmods: mods.length, failed,
   render_ok: typeof html === "string" && html.length > 0,
   has_lpr: html.includes("LPR + 115 bps")}));
@@ -5618,7 +5620,7 @@ def test_t2_covenant_table_footer_source_and_value_lead_mvst() -> None:
     — the deterministic covenant COMPONENTS present, order/phrasing-free — NOT the LLM's exact
     composite (which reworders on every re-assembly; CLAUDE.md TEST-LAYER rule)."""
     import pathlib
-    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json")
     if not p.exists():
         pytest.skip("no committed MVST dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
@@ -5682,7 +5684,7 @@ def test_t3_revision_log_compression_pin_mvst() -> None:
     """(T3, pin) MVST renders EXACTLY 3 compressed broker-day lines with the EBITDA-preferred
     headline EBITDA FY26 146.5→62.1 on 2026-05-15."""
     import pathlib
-    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json")
     if not p.exists():
         pytest.skip("no committed MVST dossier.json")
     md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
@@ -5714,7 +5716,7 @@ def test_t1_provenance_on_demand_marker_print_exclusion_and_nothing_deleted() ->
     nothing-deleted — the full covenant verbatims + accessions stay in the md (and JSON)."""
     import pathlib
     md = dr.render_markdown(ds.Dossier.model_validate_json(
-        pathlib.Path("data/dossiers/MVST/dossier.json").read_text()))
+        pathlib.Path("tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json").read_text()))
     assert "Capital structure & debt terms — instruments · pointers · covenants" in md
     # anchor-style (audit #2): the verbatim covenant AMOUNT + accession are kept — assert the digits
     # + accession, not the LLM's exact 'RMB …' formatting of the amount (TEST-LAYER rule)

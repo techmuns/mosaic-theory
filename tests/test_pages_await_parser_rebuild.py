@@ -97,12 +97,6 @@ def test_wern_revenues_of_releases_carry_their_headline_revenue() -> None:
     assert not missing, f"WERN: no headline revenue row: {missing}"
 
 
-@_awaits("audit E2-D11: 'Revenues of' was not read — MVST carries no headline revenue")
-def test_mvst_revenues_of_releases_carry_their_headline_revenue() -> None:
-    missing = _no_headline_revenue("MVST", {"0001628280-26-055471": ("Q2 2026", 87.3)})
-    assert not missing, f"MVST: no headline revenue row: {missing}"
-
-
 def test_nflx_stated_twelve_month_wall_is_located() -> None:
     """Audit E2-D15, NFLX's half — landed with its 2026-10-29 assembly (#867), kept 2026-11-05."""
     nflx = _filing("NFLX", "0001065280-26-000291")["maturity_wall"]

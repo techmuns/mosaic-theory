@@ -50,6 +50,17 @@ from vinci.evals.units import draw_units
 
 CONDITIONS = ("BASE", "CAND")
 ALPHA = 0.05
+#: THE REPLICATION RULE IS THE DEFAULT for a new registration with a target (coordinator default
+#: 3, 2026-11-12, under the operator's delegation, not an operator ruling;
+#: `docs/records/2026-11-12-operator-delegation-and-defaults.md`): `register` registers it at this
+#: ship alpha unless it is given another or `single_run`. The value is the one every target
+#: registration under the rule used — fix 3a's `cceba9d9` and fix 4a's `06ed949b`, ship alpha 0.01
+#: against alpha 0.05 — as the coordinator ruled the rule on 2026-11-07 from PR 2's A/A reading
+#: (`docs/records/2026-11-06-synthesis-eval-pr2-baseline-921-judge.md` §5). It was set before any
+#: draw it decided, and nothing reads an outcome to set it (Miller, arXiv 2411.00640: the rule is
+#: stated before the draw). A registration written before the default has no `ship_alpha` and is
+#: read as it was written: the default is `register`'s, never the field's.
+SHIP_ALPHA = 0.01
 REPLICATION_REQUIRED = "replication required"
 DOES_NOT_SHIP = "does not ship"
 
@@ -346,13 +357,16 @@ def refuse_unless_registered_scorer(reg: Registration, *, root: Path = rp.ROOT,
 #: registration written before them keeps the sha256 its ledger records.
 _LATER_FIELDS: dict[str, Any] = {"no_worsening": False, "requests": {}, "ship_alpha": None,
                                  "replicates": None, "inputs": {}, "note": None,
-                                 "no_worsening_families": {}, "scorer_ref": None}
+                                 "no_worsening_families": {}, "scorer_ref": None,
+                                 "single_run": False}
 
 #: The fields that make two registrations THE SAME COMPARISON: what is drawn, how often, what must
 #: improve and by what rule and scorer. Everything else — the words (`note`), the record of what
 #: was read (`inputs`, a path's spelling included), the derived `held_out` and the replication link
 #: (`replicates`) — can differ between two registrations of one design (#926 review: two shas over
-#: one design were each drawable once).
+#: one design were each drawable once). `single_run` is a statement, not a design: a single run is
+#: decided exactly as a target registered before the default was (no `ship_alpha`, the plain rule),
+#: so the two are one design, drawn once, and every design key written before it is unchanged.
 DESIGN_FIELDS = ("base_ref", "cand_ref", "transforms", "pages", "draws", "targets", "alpha",
                  "ship_alpha", "scorer", "requests", "no_worsening", "rule",
                  "no_worsening_families")
@@ -470,10 +484,17 @@ class Registration:
     #: `vinci/evals`, `docs/evals` and the gold — never from a plain checkout of main, which is
     #: refused (#1030 review round 1, item 5).
     scorer_ref: str | None = None
+    #: A target registered OUT of the replication rule, the default (`SHIP_ALPHA`): one run,
+    #: decided at alpha (`register --single-run`). Stated here, in the sha, because the rule is the
+    #: default; False on every registration written before it, which states nothing.
+    single_run: bool = False
 
     def __post_init__(self) -> None:
         if self.ship_alpha is not None and not 0 < self.ship_alpha < self.alpha:
             raise ValueError(f"ship_alpha {self.ship_alpha} must lie in (0, alpha {self.alpha})")
+        if self.single_run and (self.ship_alpha is not None or self.no_worsening):
+            raise ValueError("single_run is a TARGET decided by one run at alpha: it has no "
+                             "ship_alpha, and a no-worsening-only registration has no target")
         if self.ship_alpha is not None and self.no_worsening:
             raise ValueError("the replication rule decides a target; a no-worsening-only "
                              "registration has none")
@@ -572,7 +593,7 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
              transforms: Sequence[str] = (), panel: dict[str, Any] | None = None,
              pages: Sequence[str] | None = None, captured: Captured | None = None,
              no_worsening: bool = False, ship_alpha: float | None = None,
-             replicates: Registration | None = None,
+             single_run: bool = False, replicates: Registration | None = None,
              ledger: Path | None = None, note: str | None = None,
              no_worsening_families: dict[str, list[str]] | None = None) -> Registration:
     """The registration for a comparison of the frozen panel, or of target pages outside it
@@ -581,12 +602,23 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
     pins. HELD OUT is per change: the pages the change's own commits and records do not name
     (the corpus holds no page that no fix ever named — record R8).
 
-    ``ship_alpha`` registers the replication rule. ``replicates`` registers a REPLICATION of a
-    registration under it: the same design in every field — refs, transforms, pages, draws,
-    targets, both alphas, scorer and the request bytes (`DESIGN_FIELDS`) — and only for a first
-    run the approval's ``ledger`` records, complete, whose own ledger-backed score decided
-    "replication required" (`first_run_verdict`); a replication of any other outcome is
-    result-shopping and is refused."""
+    THE REPLICATION RULE IS THE DEFAULT for a registration with a target: it is registered at
+    `SHIP_ALPHA` unless ``ship_alpha`` gives another, or ``single_run`` opts out — one run decided
+    at alpha, stated in the registration. A no-worsening-only registration has no target, so
+    neither applies to it. ``replicates`` registers a REPLICATION of a registration under the
+    rule: the same design in every field — refs, transforms, pages, draws, targets, both alphas,
+    scorer and the request bytes (`DESIGN_FIELDS`) — and only for a first run the approval's
+    ``ledger`` records, complete, whose own ledger-backed score decided "replication required"
+    (`first_run_verdict`); a replication of any other outcome is result-shopping and is
+    refused."""
+    if single_run and ship_alpha is not None:
+        raise rp.ReplayError(f"ship alpha {ship_alpha} with a single run: a single run opts out "
+                             "of the replication rule, and a ship alpha is that rule's")
+    if single_run and (no_worsening or not targets):
+        raise rp.ReplayError("--single-run decides a TARGET by one run at alpha: a "
+                             "no-worsening-only registration has no target to run once")
+    if ship_alpha is None and targets and not (no_worsening or single_run):
+        ship_alpha = SHIP_ALPHA   # the default (coordinator default 3, 2026-11-12)
     if barred := [t for t in targets if t in BARRED_TARGETS]:
         raise rp.ReplayError(f"{barred} cannot be a target — {BARRED_TARGETS[barred[0]]}; it is "
                              "still scored and reported beside the targets")
@@ -623,7 +655,7 @@ def register(base_ref: str, cand_ref: str, *, targets: Sequence[str] = (), draws
                        held_out=tuple(t for t in chosen if t not in named),
                        scorer=scorer, no_worsening=no_worsening,
                        requests=pins, rule=rule, ship_alpha=ship_alpha, inputs=inputs,
-                       note=note, no_worsening_families=nwf)
+                       note=note, no_worsening_families=nwf, single_run=single_run)
     if replicates is None:
         return reg
     if replicates.replicates is not None:

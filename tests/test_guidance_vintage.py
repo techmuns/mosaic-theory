@@ -111,7 +111,6 @@ def test_exactly_one_current_marker_per_name_and_the_rest_superseded() -> None:
             f"{t}: current marks carry {sorted(stamps)}, newest filing is {max(dated)}")
 
 
-@pytest.mark.skipif(not (DOSS / "MVST").is_dir(), reason="no committed MVST")
 def test_an_undated_release_is_labelled_not_guessed() -> None:
     """FAIL LOUD ON THE UNORDERABLE. A guidance-bearing release with no `filed` date cannot be
     ranked, so it is labelled UNDATED rather than assumed current or assumed stale — a guess either

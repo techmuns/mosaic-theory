@@ -765,7 +765,13 @@ first"** — no prompt change or paid rebuild ships unmeasured.
      it is scored and printed, and no decision reads it.
    - **Six pages are held out** (`vinci/evals/held_out_pages.json`, by a fixed rule): they are
      never used to build or tune a metric.
-   **The replication rule** (coordinator, 2026-11-07): `register --ship-alpha 0.01` — a first run
+   **The replication rule** (coordinator, 2026-11-07), **THE DEFAULT for a registration with a
+   target** since 2026-11-13 (coordinator default 3, 2026-11-12, under the operator's delegation):
+   `register --target …` registers it at ship alpha 0.01 (`compare.SHIP_ALPHA`, the value fix 3a
+   and fix 4a registered; `--ship-alpha` sets another), and prints it. `--single-run` opts a
+   target out — one run decided at p_lower ≤ 0.05 — stated in the registration (`single_run`)
+   and printed. A no-worsening-only registration has no target, so neither applies; a
+   registration written before the default has no `ship_alpha` and is read as written. A first run
    ships at p_lower ≤ 0.01; in (0.01, 0.05] its score decides "replication required", and it
    counts only if `register --replicates <first> --budget-ledger <the same ledger>` (the same
    design in every field; refused unless the ledger records that first run, complete, with a
