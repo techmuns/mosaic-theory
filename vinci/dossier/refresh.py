@@ -1654,11 +1654,11 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
     header; a column label names only a year). Its figures are PROVED the page's own first —
     every Revenue and CFO figure the export gives must equal the page's stored value in the same
     column, and none may be missing (`statement_recon.table_figures`) — so the block is built on the
-    page's numbers, never a later pull's. EDGAR's facts are read AS ASSEMBLY READS THEM: cut at the
-    page's price date (`AsOfEdgar`; ruling C4 — they were read as filed by the assembly date, after
-    the price), with the block's ``as_filed_by`` the assembly date, as assembly states it. A page
-    that does not reproduce, has no export, or already holds a different block is left as it is
-    and named in ``refused``."""
+    page's numbers, never a later pull's. EDGAR's facts are read AS ASSEMBLY READS THEM: as filed by
+    the page's price date (`AsOfEdgar`; ruling C4 — they were read as filed by the assembly date,
+    after the price), and the block is dated by the filings its rows read, as assembly dates it
+    (ruling 2, 2026-11-12 — it stated the assembly date). A page that does not reproduce, has no
+    export, or already holds a different block is left as it is and named in ``refused``."""
     from vinci.dossier import mechanical as dm
     from vinci.dossier import statement_recon as sr
     from vinci.dossier.ciq import CiqAmbiguousError, CiqParseError, CiqUnavailableError
@@ -1667,10 +1667,6 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
 
     ticker = str(doc.get("ticker"))
     cik = doc.get("cik")
-    if not doc.get("assembled_at"):
-        raise RefreshRefusedError(f"{ticker}: no assembled_at — the facts cannot be read as "
-                                  "assembly read them")
-    assembled = date.fromisoformat(str(doc["assembled_at"])[:10])
     price, ref = price_as_of(doc.get("mechanical") or {}), doc.get("reference_date")
     if ref:
         cut = page_price_date(price, date.fromisoformat(str(ref)[:10]))
@@ -1701,7 +1697,7 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
             return out
         facts = dm._companyfacts_or_none(edgar, cik)
         rec = sr.reconcile(figures, facts_as_of(facts, cut) if facts is not None else None,
-                           filed_by=assembled)
+                           filed_by=cut)
         if rec is None:
             refused.append(f"{ticker}: no EDGAR facts, or no CIQ figure — nothing to set side by "
                            "side")

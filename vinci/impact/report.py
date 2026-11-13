@@ -143,8 +143,8 @@ def pages_lines(r: dict[str, Any], k: int) -> list[str]:
     days = [p for p in res if p.get("realigned")]
     if days:
         still = [p["ticker"] for p in days if p["realigned"]["still"]]
-        lines += ["", f"Re-built so both sides were built within one UTC day — a build stamps "
-                      f"today's date on the page (`as_filed_by`) and in its synthesis request: "
+        lines += ["", f"Re-built so both sides were built within one UTC day — a build can "
+                      f"stamp its day on the page and in its synthesis request: "
                       f"{_names([p['ticker'] for p in days])}; still on two days, so set apart "
                       f"as run noise and not counted: {_names(still)}"]
     refused = [p for p in res if p["status"] == "not compared"]

@@ -1,6 +1,6 @@
 # Dossier — Vital Farms, Inc. (Nasdaq: VITL)
 
-_November 9, 2026 · extraction 2026-11-09.asof-cut · layers refreshed to 2026-11-10.driver-text-filed_
+_November 9, 2026 · extraction 2026-11-09.asof-cut · layers refreshed to 2026-11-12.transcript-runs-cut-to-twelve-words_
 
 # Brief — first cut
 
@@ -55,7 +55,7 @@ _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
 - The Q2 2026 EBITDA trough has already reversed: adjusted EBITDA swung from a $-26.6M[10] loss in Q2 to $1.5M[10] positive in Q3 2026 as the single biggest driver — breaker/wholesale volume — fell 59%[10] quarter-over-quarter. [10]
-- Distribution gains are on the shelf and delivering record share: average selling TDPs are now above 175[10] and the name posted a record 7.2%[10] dollar share and 2.3%[10] volume share of shell eggs in Circana MULO+ at the end of Q3. [10]
+- Distribution gains are on the shelf and delivering record share: average selling TDPs are now above 175[10] and the name posted a record 7.2%[10] dollar share and 2.3%[10] volume share of shell eggs in Circana MULO+ at the end… Q3. [10]
 - Management frames 2026 as a transitory shock, not a structural one: measured against the last normal-supply quarter (Q3 2023), net revenue is up about 65%[10] ($110M to $182M) with 19%[10] more households and dollar share up from 4.7%[10] to 7.2%[10] at the same price premium. [10]
 _Bear case — the decline is real:_
 - Cash generation has turned sharply negative: LTM levered FCF is $-77M[11] and LTM CFO is $-49M[12], so the business is burning cash while still funding heavy capex, with interest coverage of -3.7x[13] on negative EBITDA. [11]
@@ -173,7 +173,7 @@ _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 ### Bull case — the decline is overdone
 - The Q2 2026 EBITDA trough has already reversed: adjusted EBITDA swung from a $-26.6M[10] loss in Q2 to $1.5M[10] positive in Q3 2026 as the single biggest driver — breaker/wholesale volume — fell 59%[10] quarter-over-quarter. [10]
   - How each figure is sourced: $-26.6M [10] · $1.5M [10] · 59% [10]
-- Distribution gains are on the shelf and delivering record share: average selling TDPs are now above 175[10] and the name posted a record 7.2%[10] dollar share and 2.3%[10] volume share of shell eggs in Circana MULO+ at the end of Q3. [10]
+- Distribution gains are on the shelf and delivering record share: average selling TDPs are now above 175[10] and the name posted a record 7.2%[10] dollar share and 2.3%[10] volume share of shell eggs in Circana MULO+ at the end… Q3. [10]
   - How each figure is sourced: 175 [10] · 7.2% [10] · 2.3% [10]
 - Management frames 2026 as a transitory shock, not a structural one: measured against the last normal-supply quarter (Q3 2023), net revenue is up about 65%[10] ($110M to $182M) with 19%[10] more households and dollar share up from 4.7%[10] to 7.2%[10] at the same price premium. [10]
   - How each figure is sourced: 65% [10] · $110 million [10] · $182 million [10] · 19% [10] · 4.7% [10] · 7.2% [10]
@@ -560,6 +560,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
+  - 2026-11-12 · synthesis — transcript-run-cut at 2026-11-12.transcript-runs-cut-to-twelve-words
 - **Price store:** `artifacts-order1-rebuilds-6a7a7b` · reaching 2026-11-06
 - **Panel age:** oldest panel 3d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-09 build
 - **Consensus age:** consensus 5d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

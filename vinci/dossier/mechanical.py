@@ -14,6 +14,7 @@ import html as htmllib
 import math
 import re
 import statistics
+import sys
 import threading
 import time
 import unicodedata
@@ -21,7 +22,7 @@ import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, replace
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, timedelta
 from typing import Any, NamedTuple, TypeVar, cast
 
 from vinci.config import get_config
@@ -1432,6 +1433,9 @@ def _quarterly_map(facts: dict[str, Any], concept: str) -> dict[date, float]:
     return out
 
 
+#: The average quarter, in days — what the stale flag counts the window's lag in.
+_QUARTER_DAYS = 365.25 / 4
+
 #: The three totals the non-operating block is derived from: (the name the page gives it, concept).
 _NONOP_TOTALS = (("operating income", "operating_income"), ("pre-tax income", "pretax_income"),
                  ("revenue", "revenue"))
@@ -1456,10 +1460,37 @@ class _NonopWindow:
     derived: dict[date, list[str]]
     missing: list[tuple[date, list[str]]]
     uncalendared: int
+    #: the filer's latest quarter, as filed by the page's price date (the facts are cut there), how
+    #: many quarters the window's end sits before it (0 when the window ends on it), and the totals
+    #: that quarter lacks (empty when it is read)
+    latest: date
+    behind: int
+    latest_lacks: tuple[str, ...]
 
     @property
     def end(self) -> date:
         return self.quarters[-1]
+
+    @property
+    def through(self) -> date:
+        """The quarter THE FOUR end at — the window's end, or a later quarter of the four that
+        cannot be read (anchored at the latest filed quarter, the four can end past the newest
+        quarter read: MVST's four run to 2026-06-30 and are read to 2025-12-31)."""
+        return max([self.end, *(d for d, _ in self.missing)])
+
+    @property
+    def stale(self) -> bool:
+        """The window ends MORE than one quarter before the filer's latest filed quarter (row 51
+        (2)): a FLAG, never a refusal — the window is still read and still shown."""
+        return self.behind > 1
+
+    def stale_note(self) -> str:
+        """The flag's words — "" when the window is not stale."""
+        if not self.stale:
+            return ""
+        return (f"STALE: the window ends {self.end}, {self.behind} quarters before the filer's "
+                f"latest filed quarter {self.latest}, which has no "
+                f"{' or '.join(self.latest_lacks)} filed or derivable")
 
     @property
     def short(self) -> bool:
@@ -1485,8 +1516,10 @@ class _NonopWindow:
                         "period less the shorter on one tag, unless marked stated")
             ref += f"; the quarter to {d} {how}: {' · '.join(parts)}"
         if self.short:
-            ref += (f"; {len(self.quarters)} of the trailing four quarters to {self.end} are read "
-                    f"— {self.shortfall()}")
+            ref += (f"; {len(self.quarters)} of the trailing four quarters to {self.through} are "
+                    f"read — {self.shortfall()}")
+        if self.stale:
+            ref += f"; {self.stale_note()}"
         return ref
 
 
@@ -1540,12 +1573,15 @@ def _nonop_window(facts: dict[str, Any], reference_date: date) -> _NonopWindow |
     states is DERIVED from the filings that state its parts (:func:`_derived_quarter`) and cited
     with them.
 
-    THE END is the newest quarter for which all three totals are filed or derivable — ONE PERIOD
-    BY CONSTRUCTION, as before: the subtraction is within one period because there was never
-    another option. THE FOUR are the calendar's quarters ending there, within the span four
-    quarter-ends cover (`lease_basis._LTM_SPAN_DAYS`). A quarter among them that cannot be read
-    leaves the window SHORT — said in the count and the prose — and no older quarter is read in its
-    place: "3 of 3 available" is a finding, a fourth quarter from a year back is not."""
+    THE FOUR END AT THE FILER'S LATEST FILED QUARTER (row 51 (2), 2026-11-12): the calendar's
+    quarters ending at the newest quarter a filing states as its own, as filed by the page's price
+    date, within the span four quarter-ends cover (`lease_basis._LTM_SPAN_DAYS`). Each is read for
+    all three totals, filed or derived — ONE PERIOD BY CONSTRUCTION per quarter. A quarter among
+    them that cannot be read leaves the window SHORT — said in the count and the prose — and no
+    older quarter is read in its place: "3 of 3 available" is a finding, a fourth quarter from a
+    year back is not. Only when NONE of the four can be read does the window fall back to the
+    newest quarter that can be, and its own four. A window ending more than one quarter before
+    the latest filed quarter is FLAGGED (`_NonopWindow.stale`), never refused."""
     maps = {concept: _quarterly_map(facts, concept) for _, concept in _NONOP_TOTALS}
     missing = " + ".join(name for name, concept in _NONOP_TOTALS if not maps[concept])
     if missing:
@@ -1584,23 +1620,50 @@ def _nonop_window(facts: dict[str, Any], reference_date: date) -> _NonopWindow |
                               for name, _, is_derived, pts in got.values()]
         return absent
 
-    end = next((d for d in reversed(ends) if not read(d)), None)
-    if end is None:
-        return ("operating income, pre-tax income and revenue never share a quarter in EDGAR "
-                "XBRL, filed or derived — subtracting across periods would not be a non-operating "
-                "figure")
-    four = [d for d in ends if 0 <= (end - d).days <= lease_basis._LTM_SPAN_DAYS[1]][-4:]
-    quarters, lacking = [], []
-    for d in four:
-        absent = read(d) if d != end else []
-        if absent:
-            lacking.append((d, absent))
-        else:
-            quarters.append(d)
+    never = ("operating income, pre-tax income and revenue never share a quarter in EDGAR "
+             "XBRL, filed or derived — subtracting across periods would not be a non-operating "
+             "figure")
+    if not ends:
+        return never
+    span = lease_basis._LTM_SPAN_DAYS[1]
+
+    def anchored(at: date) -> tuple[list[date], list[date], list[tuple[date, list[str]]]]:
+        """(the four, the quarters of them read, the ones that cannot be read) ending ``at``."""
+        four = [d for d in ends if 0 <= (at - d).days <= span][-4:]
+        read_, lacking_ = [], []
+        for d in four:
+            absent = read(d)
+            if absent:
+                lacking_.append((d, absent))
+            else:
+                read_.append(d)
+        return four, read_, lacking_
+
+    # ANCHORED AT THE FILER'S LATEST FILED QUARTER (row 51 (2), 2026-11-12: a coordinator default
+    # under the operator's delegation). The window ended at the newest quarter all three totals
+    # share, which goes stale without a word when a filer stops tagging one of them: TJX's page
+    # read to 2019-02-02, ORKA's to 2021-12-31. The four now end at the newest quarter a filing
+    # states as its own (`concepts.fiscal_calendar`), as filed by the page's price date (the facts
+    # are cut there); one of them that cannot be read leaves the window short, as before.
+    filed = [d for d in ends if d in calendar]
+    latest = filed[-1] if filed else ends[-1]
+    four, quarters, lacking = anchored(latest)
+    latest_lacks = tuple(dict(lacking).get(latest, ()))
+    if not quarters:
+        # NEVER A REFUSAL: none of the four can be read, so the window is the newest quarter that
+        # can be, and its own four — as it was — and it is FLAGGED as stale (`stale_note`)
+        end = next((d for d in reversed(ends) if d < four[0] and not read(d)), None)
+        if end is None:
+            return never
+        four, quarters, lacking = anchored(end)
+    # COUNTED IN ELAPSED QUARTERS, never in the quarter ends some filing names between them: a run
+    # of missing filings names none, and a window three quarters behind read as one (review)
+    behind = round((latest - quarters[-1]).days / _QUARTER_DAYS)
     return _NonopWindow(
         quarters=quarters, op=maps["operating_income"], pre=maps["pretax_income"],
         rev=maps["revenue"], derived={d: derived[d] for d in quarters if d in derived},
-        missing=lacking, uncalendared=4 - len(four))
+        missing=lacking, uncalendared=4 - len(four), latest=latest, behind=behind,
+        latest_lacks=latest_lacks)
 
 
 def _nonop_share_txt(share: float, *, compact: bool = False) -> str:
@@ -1659,6 +1722,8 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
     span = ("the four quarters" if not w.short
             else f"the {n} available quarters of the trailing four")
     short = f" The window is short: {w.shortfall()}." if w.short else ""
+    if w.stale:
+        short += f" {w.stale_note()}."
 
     def _arms(d: date) -> tuple[float, float | None, float | None]:
         return _nonop_arms(d, op, pre, rev)
@@ -1667,8 +1732,9 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
     if not material:
         end = window[-1]
         gap = _arms(end)[0]
+        latest = "the latest," if w.through == end else f"the latest read, {end},"
         return Sourced.present(
-            f"no material non-operating item in {span} to {end} — in the latest, "
+            f"no material non-operating item in {span} to {w.through} — in {latest} "
             f"${gap / 1e6:,.0f}M against ${pre[end] / 1e6:,.0f}M pre-tax"
             f"{'.' + short if short else ''}", source_ref=src)
     # EVERY MATERIAL QUARTER, NOT THE LARGEST ONE (2026-08-12). Naming only the biggest was chosen
@@ -1691,7 +1757,7 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
             f"{d} {signed(g)} ({_nonop_share_txt(s, compact=True)} · {r:.0%} of revenue)"
             for d, g, s, r in material)  # chronological — `material` is built in window order
         of = ("of the trailing four quarters" if not w.short
-              else f"of the {n} available quarters of the trailing four to {window[-1]}")
+              else f"of the {n} available quarters of the trailing four to {w.through}")
         return Sourced.present(
             f"{len(material)} {of} carry a material block from BELOW the "
             f"operating line — {items} — netting {signed(net)} across the "
@@ -1702,7 +1768,8 @@ def _nonoperating_earnings(edgar: EdgarClient, cik: str, reference_date: date) -
     end, gap, share, rev_share = material[0]
     assert share is not None and rev_share is not None
     share_txt = _nonop_share_txt(share)
-    where = ("the latest quarter" if end == window[-1]
+    where = ("the latest quarter" if end == w.through
+             else "the latest quarter read" if end == window[-1]
              else "an earlier quarter still inside the trailing four")
     return Sourced.present(
         f"${gap / 1e6:,.0f}M of the quarter ended {end} came from BELOW the operating line — "
@@ -6241,24 +6308,47 @@ def _wall_read(filing: FilingSectionExtract | None, panel: list[primary_source.P
 _ASSEMBLY_PRICE_STALE_DAYS = 7  # one weekly refresh cadence + a weekend; older ⇒ refresh was missed
 
 
-def _price_stale_note(last_close: date | None, today: date) -> str | None:
-    """Fail-loud staleness at ASSEMBLY time (vs today, not the reference date): an as-of document
-    may legitimately trail the screen date, but a CMP printed from a close older than one refresh
-    cadence silently misleads. Returns the caveat text, or None when fresh/unknowable."""
+def _price_stale_note(last_close: date | None, reference_date: date) -> str | None:
+    """The page's OWN staleness: a CMP printed from a close older than one refresh cadence before
+    the date the page is as of silently misleads. Returns the caveat text, or None when
+    fresh/unknowable.
+
+    COUNTED FROM THE PAGE'S REFERENCE DATE, NEVER FROM TODAY (operator, 2026-11-12: "Yes, fix it").
+    It was counted to `date.today()` and lands on `stock_info.price.note`, which the synthesis is
+    sent, so the same inputs sent a different request every day — one day more each day (the
+    coordinator's reading of #1031's impact run, 2026-11-12: every head request carried it). The
+    assembly-time check against today keeps its purpose — a build on a store `vinci refresh` has
+    not brought up — as a loud stderr line only (`_warn_stale_at_assembly`), never on the page or
+    in the request."""
     if last_close is None:
         return None
-    gap = (today - last_close).days
+    gap = (reference_date - last_close).days
     if gap <= _ASSEMBLY_PRICE_STALE_DAYS:
         return None
     return (
-        f"PRICE STALE AT ASSEMBLY: last stored close {last_close} is {gap} calendar days before "
-        f"assembly — run `vinci refresh` before assembling"
+        f"PRICE STALE AT THE REFERENCE DATE: last stored close {last_close} is {gap} calendar "
+        f"days before the page's reference date {reference_date} — run `vinci refresh` and "
+        f"re-assemble"
     )
+
+
+def _warn_stale_at_assembly(ticker: str, last_close: date | None, today: date) -> None:
+    """Fail-loud staleness at ASSEMBLY time, against today: the build is reading a store `vinci
+    refresh` has not brought up to date. Printed to stderr when the build runs — never written to
+    `dossier.json`, its frontend mirror or the synthesis request, which `_price_stale_note`
+    counts from the page's own date."""
+    if last_close is None:
+        return
+    gap = (today - last_close).days
+    if gap > _ASSEMBLY_PRICE_STALE_DAYS:
+        print(f"WARNING {ticker}: PRICE STALE AT ASSEMBLY: last stored close {last_close} is {gap} "
+              f"calendar days before today ({today}) — run `vinci refresh` before assembling",
+              file=sys.stderr)
 
 
 def _stock_info(
     record: DataRecord, store: Store, edgar: EdgarClient, bundle: CiqBundle,
-    reference_date: date, market_cap: Sourced[float], *, today: date | None = None,
+    reference_date: date, market_cap: Sourced[float], *,
     http: CachedHttp | None = None, cut: date | None = None,
 ) -> StockInfo:
     """(Phase-2) The market-data 'stock info' box: CMP + 52-week range (EOD price features), shares
@@ -6295,7 +6385,7 @@ def _stock_info(
             shares = bridged.value
             shares_src = bridged.source_ref or "CIQ Comparable Analysis→Financial Data"
     price = _sourced(feats.last, source_ref=f"EOD {sym} last close")
-    stale = _price_stale_note(feats.last.as_of, today or date.today())
+    stale = _price_stale_note(feats.last.as_of, reference_date)
     if stale and price.status is SourceStatus.PRESENT:
         price = price.model_copy(update={"note": stale})
     return StockInfo(
@@ -6607,7 +6697,7 @@ def assemble_mechanical(
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)
         stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
-            record, store, edgar, bundle, reference_date, implied_val.market_cap, today=today,
+            record, store, edgar, bundle, reference_date, implied_val.market_cap,
             http=http, cut=cut),
         # (Brief) 52-week rebased price path — name vs the cap-band benchmark (the idio closes).
         # ...on the window the price box's range reads: the 365 days ending on the price date
@@ -6643,11 +6733,9 @@ def assemble_mechanical(
     mech = with_valuation_bases(
         mech, facts, bundle, text_for=release_text_fn(http, record.identity.cik))
     # (2026-10-26) the annual table's revenue and operating cash flow against the filings, per
-    # column, from the same export — what the data-quality scorecard's two checks read. Dated on
-    # UTC, the calendar `assembled_at` is stamped on (`assemble.built_at`), so the back-fill —
-    # which reads `assembled_at` — cuts the facts on the same day; local `today` runs a day ahead
-    # of it before 05:30 IST
-    mech = statement_recon.attach(mech, bundle, facts, filed_by=datetime.now(UTC).date())
+    # column, from the same export — what the data-quality scorecard's two checks read. As filed
+    # by the cut, never the build's day: that day reached the synthesis request (ruling 2)
+    mech = statement_recon.attach(mech, bundle, facts, filed_by=cut)
     # (catalyst calendar) dated events + what each tests — needs drawdown_cause (the guide) and
     # capital_structure (maturities), both on mech by now; its misses ride the QA channel.
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)
@@ -6661,8 +6749,15 @@ def assemble_mechanical(
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
     flags += calendar.qa_flags  # (catalyst calendar) cadence/maturity honest-miss flags → QA
     si_asof = mech.stock_info.as_of if mech.stock_info is not None else None
-    if (stale := _price_stale_note(si_asof, today)) is not None:
+    if (stale := _price_stale_note(si_asof, reference_date)) is not None:
         flags.append(f"stock-info: {stale}")  # loud twin of the CMP-row note — machine-visible
+    _warn_stale_at_assembly(record.identity.ticker, si_asof, today)
+    # (row 51 (2)) the non-operating window ending more than a quarter before the filer's latest
+    # filed quarter — a FLAG, never a refusal; the window is still read and shown, said so in its
+    # prose and cite
+    if facts is not None and isinstance(nw := _nonop_window(facts, reference_date),
+                                        _NonopWindow) and nw.stale:
+        flags.append(f"nonoperating: {nw.stale_note()}")
     flags.append(f"primary-source: {len(primary.releases)} EX-99.1 release(s) + "
                  f"{'1' if primary.filing is not None else '0'} 10-Q parsed "
                  f"(+{ps_latency:.1f}s fetch)")

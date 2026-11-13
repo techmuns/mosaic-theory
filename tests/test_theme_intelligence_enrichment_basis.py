@@ -354,8 +354,9 @@ def test_an_annual_report_on_an_older_submissions_page_is_found(tmp_path: Path) 
                 return {"filings": {"recent": {
                     "form": ["10-Q"], "filingDate": ["2025-11-01"],
                     "accessionNumber": ["0000000001-25-000002"], "primaryDocument": ["x-q.htm"]},
+                    # listed as EDGAR lists a page: its span from its oldest row (#878)
                     "files": [{"name": "CIK0000000001-submissions-001.json",
-                               "filingFrom": "2024-01-01"}]}}
+                               "filingFrom": "2025-02-26"}]}}
             if url == SUBMISSIONS_PAGE.format(name="CIK0000000001-submissions-001.json"):
                 return {"form": ["10-K"], "filingDate": ["2025-02-26"],
                         "accessionNumber": ["0000000001-25-000001"],

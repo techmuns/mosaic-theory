@@ -25,8 +25,9 @@ The gap is per REQUEST: the prompt cache is keyed by the prompt, so only a build
 request can warm it; builds of other pages may run between. Under one approval's ledger a request
 is drawn under ONE registration (a second registration of the same bytes is refused, whatever its
 note), and one build is checked and claimed at a time (a lock beside the ledger). A build of the
-same bytes under ANOTHER approval's ledger is not visible here; the first draw's recorded
-cache-read tokens are what show whether a build opened uncached.
+same bytes under ANOTHER approval's ledger is not visible here; the index refuses a registration
+whose every request another registration drew (`registry.claim_draw`, #1030 review round 2), and
+the first draw's recorded cache-read tokens are what show whether a build opened uncached.
 """
 from __future__ import annotations
 
@@ -96,6 +97,17 @@ class RunRegistration:
             raise rp.ReplayError("not a build registration (`register-run` writes one)")
         fields: dict[str, Any] = {k: tuple(v) if isinstance(v, list) else v for k, v in d.items()}
         return cls(**fields)
+
+
+def draw_key(reg: RunRegistration) -> str:
+    """A build registration's DESIGN, the index's drawn-once key (#1030 review round 1, item 1):
+    everything but its words (`note`) and its record of what was read (`inputs`, a path's
+    spelling included), so one design re-registered with new words is refused under a second
+    approval once its first has drawn. Its pages are a set: the order they were given in draws
+    nothing different (#1030 review round 2, F2)."""
+    d = {k: v for k, v in json.loads(reg.to_json()).items() if k not in ("note", "inputs")}
+    d["pages"] = sorted(d["pages"])
+    return hashlib.sha256(json.dumps(d, sort_keys=True).encode()).hexdigest()
 
 
 def _resolve(code_ref: str, repo: Path = rp.ROOT) -> str:
@@ -232,12 +244,23 @@ def _claim(ledger: Path) -> Iterator[None]:
 
 def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budget,
               draws_out: Path, ciq_root: Path, sdk: Any | None = None,
-              clock: Callable[[], float] = time.time) -> list[dict[str, Any] | None]:
+              clock: Callable[[], float] = time.time,
+              claim: Callable[[], object] | None = None) -> list[dict[str, Any] | None]:
     """PAID: build ``build`` of ``ticker`` — ``reg.draws`` draws of the pinned request through
     `replay.run_request`, every refusal (`prepare_build`) made before the first one is sent. The
-    end row is written even when the build stops, so the next build's gap is measured from it."""
+    end row is written even when the build stops, so the next build's gap is measured from it.
+    ``claim`` (the index's `registry.claim_draw`) is called under the lock once every $0 refusal
+    has passed, so a refused build never consumes its unit."""
+    from vinci.evals import gold as gd
+    gd.verify_committed_gold()   # RG-D11: the gold's hashes, before any paid draw (gap 4)
     with _claim(budget.ledger):   # the check and the claim (the start row) are one step
         pb = prepare_build(reg, ticker, build, budget=budget, ciq_root=ciq_root, clock=clock)
+        if claim is None and rp.paid_draw(sdk):   # RG-D9 in the library (B's review of #1030)
+            raise rp.ReplayError(f"{pb.label}: a paid build needs its index claim "
+                                 "(`registry.claim_draw`, after `registry.require_on_main`) — "
+                                 "unclaimed, it could be drawn twice, so nothing is drawn")
+        if claim is not None:
+            claim()
         head = {"registration": reg.sha, "ticker": ticker, "build": build, "label": pb.label,
                 "request": reg.requests[ticker]}
         budget.record({"build_start": {**head, "t": pb.t, "gap_s": pb.gap_s,
@@ -248,7 +271,7 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
     stopped = True
     try:
         raws = rp.run_request(pb.request, draws=reg.draws, budget=budget, label=pb.label,
-                              draws_out=draws_out, sdk=sdk)
+                              draws_out=draws_out, sdk=sdk, registration=reg.sha)
         stopped = False
     finally:
         drawn = [r for r in budget.rows() if r.get("label") == pb.label and "usage" in r]

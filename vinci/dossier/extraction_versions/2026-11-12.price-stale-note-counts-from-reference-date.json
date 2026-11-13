@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-12.price-stale-note-counts-from-reference-date",
+  "follows": [
+    "2026-11-11.figure-trace-as-written",
+    "2026-11-12.reconciliation-dated-by-its-filings"
+  ],
+  "names": "the stock-info price note (and its QA twin) counts a stale last close from the page's own reference date — 'PRICE STALE AT THE REFERENCE DATE: … N calendar days before the page's reference date <date>' — never from today, so the synthesis request no longer moves with the calendar (operator, 2026-11-12: 'Yes, fix it'); the assembly-time check against today is a stderr warning only, never on the page"
+}

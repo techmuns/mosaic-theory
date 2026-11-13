@@ -1,6 +1,6 @@
 ---
 id: 2026-10-30-submissions-pages
-status: open
+status: shipped
 date: 2026-10-30
 prs: [878]
 supersedes:
