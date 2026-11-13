@@ -1052,9 +1052,9 @@ _ROW_SYNONYMS = {"fcf": ("free cash flow",), "cfo": ("operating cash flow", "cas
                  "net income": ("net loss", "net earnings", "net profit"),
                  # (W05, a, review round 1) the words a claim writes for a row labelled otherwise:
                  # read as no row at all, "revenues were $7,178M" met TJX's EBIT, and "a $250M
-                 # impairment" TGT's restructuring charge. "sales" alone is no revenue
-                 # ("comparable sales"), nor "profit" any one row: each stays a mention of none
-                 # (`_OTHER_METRICS`)
+                 # impairment" TGT's restructuring charge. "sales" and "profit" are no synonym:
+                 # QUALIFIED ("comparable sales") each stays a mention of none (`_OTHER_METRICS`),
+                 # and only BARE does each name its rows (`_BARE_ROWS`, the W05 follow-up)
                  "revenue": ("revenues", "net sales"),
                  "ebit": ("operating income", "operating profit"),
                  "asset writedown": ("impairment", "impairments", "writedown", "writedowns",
@@ -1085,19 +1085,100 @@ def _names_metric(tokens: list[str], phrase: str) -> bool:
                for i, tok in enumerate(tokens) if tok == want[0] or tok in want)
 
 
-#: (W05, a) a metric named in words no row of THIS table carries — "profit", "sales", or a
-#: synonym above whose row the table lacks ("impairment" where no "Asset Writedown" row is). Read
-#: as a mention of NO row: a figure whose own metric is one of these meets the cited fact, never
-#: another metric the claim names. Where the table has the row, the synonym names it
+#: (W05, a) a metric named in words no row of THIS table carries — a qualified "profit" or
+#: "sales" (bare, each names its rows: `_BARE_ROWS`), or a synonym above whose row the table lacks
+#: ("impairment" where no "Asset Writedown" row is). Read as a mention of NO row: a figure whose
+#: own metric is one of these meets the cited fact, never another metric the claim names. Where
+#: the table has the row, the synonym names it
 _OTHER_METRICS = ("revenues", "net sales", "sales", "operating income", "operating profit",
                   "capital expenditures", "profit", "profits", "impairment", "impairments",
                   "writedown", "write down")
+
+#: (W05 follow-up) a word written BARE names rows: "while sales were $7,178M" is TJX's revenue, so
+#: EBIT's figure under it is refused, and bare "profit" is one of the profit rows (EBITDA, EBIT,
+#: net income) — which one, the word does not say, so its figure meets any of them and no other
+#: ("profit was $60,372M" is revenue's figure). Beside "EBITDA was $8,425M", a bare "profit" is
+#: still another metric's figure: its rows are not EBITDA's (`_bound_cells`' comparison guard
+#: compares the rows themselves). QUALIFIED, the word names no one row and stays a mention of
+#: none: "comparable", "same-store", "open-market" (an insider's share sales), "European" or
+#: "hip" (a segment's), "segment profit" — the modifiers the committed syntheses write before
+#: them, so the rule admits the words that are no modifier rather than refusing a list
+_PROFIT_ROWS = ("ebitda", "ebit", "net income")
+_BARE_ROWS: dict[str, tuple[str, ...]] = {
+    "sales": ("revenue",), "profit": _PROFIT_ROWS, "profits": _PROFIT_ROWS}
+#: what may stand before a bare word: a function word, a verb of being, "total", a period, a year,
+#: a possessive ("TJX's sales"), or a clause boundary (a comma, colon, semicolon, dash, an opening
+#: parenthesis, a spaced " - ", or a full stop ending a sentence) — never "of" or "from", which
+#: make it the object of another metric ("cost of sales", "proceeds from sales") (/code-review
+#: high, round 0 of the follow-up; the possessive, "(" and " - " in review round 1)
+_BARE_BEFORE = frozenset({
+    "a", "an", "the", "its", "their", "his", "her", "our", "this", "that", "these", "those",
+    "and", "or", "but", "while", "whereas", "both", "as", "on", "in", "at", "to",
+    "by", "for", "with", "than", "vs", "versus", "was", "were", "is", "are", "be", "been",
+    "total", "where", "when", "whose"})
+_CLAUSE_BREAK = re.compile(r"[,;:—–(]|\.\s+[A-Z]|\s-\s")
+#: (review round 1) what may FOLLOW a bare word, so that it is not the first noun of a compound
+#: ("sales leverage", "the sales mix", "sales productivity", "profit growth", "profit per share",
+#: "the profit split"): a verb, a preposition but "per", a conjunction, a few adverbs — or the end
+#: of its clause, read off the text (`_BARE_CLAUSE_END`)
+_BARE_AFTER = frozenset({
+    "was", "were", "is", "are", "be", "been", "being", "has", "have", "had", "will", "would",
+    "could", "should", "may", "might", "can", "did", "does", "do",
+    "rose", "rise", "rises", "risen", "rising", "fell", "fall", "falls", "fallen", "falling",
+    "grew", "grow", "grows", "grown", "growing", "declined", "decline", "declines", "declining",
+    "increased", "increase", "increases", "increasing", "decreased", "decrease", "decreases",
+    "decreasing", "reached", "reach", "reaches", "totaled", "totalled", "totals", "came", "come",
+    "comes", "climbed", "climb", "climbs", "slipped", "dropped", "drop", "drops", "jumped",
+    "surged", "slowed", "slow", "slows", "recovered", "recover", "recovers", "recovering",
+    "turned", "turn", "turns", "improved", "improve", "improves", "expanded", "expand", "expands",
+    "contracted", "contract", "contracts", "shrank", "shrink", "shrinks", "stood", "stand",
+    "stands", "remained", "remain", "remains", "accelerated", "accelerate", "accelerates",
+    "decelerated", "held", "hold", "holds", "missed", "beat", "beats", "exceeded", "exceed",
+    "exceeds", "topped", "doubled", "halved", "amounted", "amount", "amounts", "dipped",
+    "softened", "weakened", "strengthened", "outpaced", "lagged", "trailed",
+    "of", "at", "to", "in", "on", "for", "by", "from", "with", "over", "than", "versus", "vs",
+    "and", "or", "but", "while", "whereas", "through", "across", "into", "since", "during",
+    "after", "before", "under", "above", "below", "around", "about",
+    "also", "still", "then", "now", "again", "only", "already"})
+#: the end of a bare word's clause: a comma, colon, semicolon, dash, parenthesis, a spaced " - ",
+#: or a full stop
+_BARE_CLAUSE_END = re.compile(r"[,;:—–()]|\.(?:\s|$)|\s-\s")
+#: what may not follow a bare word: "sales and marketing" / "sales & marketing" is an expense,
+#: "sales, general and administrative" (SG&A) too, and "profit and loss" a statement
+_BARE_NOT_AFTER = (("and", "marketing"), ("&", "marketing"), ("general", "and"), ("and", "loss"))
 
 #: what may stand between a figure and the metric written after it, for that metric to be its own
 _BESIDE = frozenset({"of", "in", "the", "a", "an", "its", "for"})
 #: a figure's own written scale word and unit, read off before what follows it
 _UNIT_TAIL = re.compile(r"^\s*(?:thousand|million|billion|trillion|mn|bn|tn|[kmbt](?![a-z]))?\s*"
                         r"(?:%|percent|pts?\b|pp\b|bps?\b|x(?![a-z]))?")
+
+
+def _bare_word(text: str, spans: list[tuple[int, str]], i: int) -> tuple[bool, bool]:
+    """(W05 follow-up) Whether the word at ``spans[i]`` (a `_BARE_ROWS` word) is written BARE —
+    nothing before it but a function word, a period, a year, a possessive or a clause break
+    (`_BARE_BEFORE`, `_CLAUSE_BREAK`), and nothing after it but a verb, a preposition, a
+    conjunction or its clause's end (`_BARE_AFTER`, `_BARE_CLAUSE_END`), never a compound
+    (`_BARE_NOT_AFTER`) — and whether it opens its own clause. ``spans`` are `_claim_rows`'
+    (start, word) pairs over ``text``."""
+    tokens = [w for _, w in spans]
+    tok = tokens[i]
+    lead = tokens[i - 1] if i else ""
+    opened = bool(lead) and bool(
+        _CLAUSE_BREAK.search(text[spans[i - 1][0] + len(lead):spans[i][0] + 1]))
+    if opened:
+        lead = ""   # the word opens its clause: "$8,425M; sales were …"
+    if lead == "s" and spans[i - 1][0] and text[spans[i - 1][0] - 1] in "'’":
+        lead = ""   # a possessive is a determiner: "TJX's sales were …" (review round 1)
+    # (review round 1) and what follows it is no noun the word modifies: "sales leverage",
+    # "profit per share" name no row
+    follow = tokens[i + 1] if i + 1 < len(tokens) else ""
+    gap = text[spans[i][0] + len(tok):spans[i + 1][0] if follow else len(text)]
+    if tuple(tokens[i + 1:i + 3]) in _BARE_NOT_AFTER or not (
+            not follow or follow in _BARE_AFTER or _BARE_CLAUSE_END.search(gap)):
+        return False, opened
+    return (not lead or lead in _BARE_BEFORE or _period_key(lead) is not None
+            or bool(re.fullmatch(r"(?:19|20)\d\d", lead))), opened
 
 
 def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -> set[str]:
@@ -1115,7 +1196,8 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
     - else the nearest after it.
     (W05, a) A metric written in words no row carries (`_OTHER_METRICS`) is a mention too: where
     it is the figure's own, the figure binds NO row and meets the cited fact — "FY25 EBITDA was
-    $262M while profit was $104M" does not hold $104M to EBITDA."""
+    $262M while segment profit was $104M" does not hold $104M to EBITDA. Written BARE, "sales" and
+    "profit" name their rows instead (`_BARE_ROWS`, the W05 follow-up)."""
     if fig is None or fig.start < 0:
         tokens = _words(text)
         return {r for r in metrics
@@ -1145,6 +1227,14 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
     # (review round 1 of W05)
     mentions += [(spans[i][0], r) for i, r, own, by_syn in found
                  if not (by_syn and any(r2 != r and own < own2 for _, r2, own2, _ in found))]
+    opens: set[int] = set()   # a bare word's mention that opens its own clause (review round 1)
+    for i, tok in enumerate(tokens):
+        bare = [r for r in _BARE_ROWS.get(tok, ()) if r in metrics]
+        if bare and i not in covered and (read := _bare_word(text, spans, i))[0]:
+            mentions += [(spans[i][0], r) for r in bare]
+            covered.add(i)
+            if read[1]:
+                opens.add(spans[i][0])
     for phrase in _OTHER_METRICS:
         want = phrase.split()
         mentions += [(spans[i][0], None) for i in range(len(tokens) - len(want) + 1)
@@ -1157,7 +1247,9 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
         words = re.findall(r"[^\s,()]+", between)
         if not re.search(r"[,;:—–]|\.\s", between + " ") and all(
                 w in _BESIDE or _period_key(w) is not None for w in words) and not (
-                fig.unit in ("pct", "bps") and "of" in words):
+                fig.unit in ("pct", "bps") and "of" in words) and min(after) not in opens:
+            # a bare word that opens its own clause is that clause's, never the figure's
+            # before it: "$8,425M (sales were $7,178M)" (review round 1)
             at = min(after)
     if at is None and before:
         at = max(before)
@@ -1178,6 +1270,12 @@ def _claim_rows(text: str, metrics: set[str], fig: _ClaimFigure | None = None) -
     if at is None:
         at = min(after) if after else None
     return {r for pos, r in mentions if pos == at and r is not None} if at is not None else set()
+
+
+def _base_rows(rows: set[str]) -> set[str]:
+    """``rows`` less each that is a rate variant of another of them: "revenue growth" beside
+    "revenue" (the relation `_bound_cells` widens a row by)."""
+    return {m for m in rows if not any(m != r and m.startswith(r + " ") for r in rows)}
 
 
 #: (W05, a, review round 1) words that place a figure in a period other than the one written before
@@ -1220,9 +1318,12 @@ def _bound_cells(cells: list[_Cell], claim: str, fig: _ClaimFigure | None = None
         others = [g for g in _claim_figures_as_written(claim) if g.start != fig.start]
 
         def _shares_row(g: _ClaimFigure) -> bool:
-            # the same row, or both bound to none: a comparison, which keeps every column
-            o = _claim_rows(claim, metrics, g)
-            return bool(o & rows) or not (o or rows)
+            # the same rows, or both bound to none: a comparison, which keeps every column. The
+            # rows THEMSELVES, never an overlap: a bare "profit" (EBITDA, EBIT or net income)
+            # beside "EBITDA was $8,425M" is another metric's figure (the W05 follow-up). Each
+            # set less its rate variants (review round 1): "revenue growth" names Revenue Growth
+            # and Revenue, and "a revenue base of $56,360M" shares its row
+            return _base_rows(_claim_rows(claim, metrics, g)) == _base_rows(rows)
 
         if before and before[-1] in columns and not any(_shares_row(g) for g in others):
             periods = {before[-1]}
