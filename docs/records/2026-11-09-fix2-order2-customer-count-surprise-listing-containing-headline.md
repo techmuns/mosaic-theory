@@ -155,3 +155,7 @@ the count rides as a structured field, and a page that cannot be given one print
   - one went through a Bash script, which the hook does not see: the two writer names in
     `LAYER_REFRESH_WRITERS` and `LayerRefresh.writer`.
   - None touches `Synthesis`. The operator should read that diff as one the hook did not ask about.
+## Amendments
+
+- **2026-11-13 — what this PR's next build changes, from the impact sweep** (operator ruling 3, 2026-11-12, verbatim: "Yes, as appended amendments (Recommended)"). The body above is unchanged. The sweep ran this PR with `vinci.impact` (base `7c87164a`, head `6fbbb4a2`, measured 2026-11-11, $0): base code against head code on the same inputs, which shows what each page's NEXT build would change. Its record, with every row of the sweep, is `docs/records/2026-11-13-fix2-impact-sweep.md`.
+  - **#936: PARR's synthesis request moves**, in its `facts` section (the surprise history, now read from the NYSE:PARR block, RA-D1). PARR is off the panel. The body says "All 28 pages' synthesis requests, built by main's code (`replay.capture_at("HEAD")`) and by this branch's, are byte-identical". That compare held each committed page fixed, so it could not see the page's own re-read.
