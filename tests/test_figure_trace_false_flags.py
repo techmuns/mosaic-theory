@@ -504,8 +504,10 @@ def test_a_bare_word_reads_its_own_clause_and_compound_on_tjx() -> None:
     before a bare word was read across punctuation, so after a figure — "$8,425M; sales were" —
     it was the figure's "425m", no modifier the rule admits, and EBIT's figure under "sales" passed.
     (−) "of" and "from" were admitted before it, and nothing after it was read, so "cost of sales",
-    "proceeds from sales" and "sales and marketing" each named Revenue, and a cost's figure was
-    refused where, a mention of no row, it meets the cited fact."""
+    "proceeds from sales" and "sales and marketing" each named Revenue, and the figure under it
+    was refused where, a mention of no row, it meets the cited fact. The figure is EBIT's, a
+    stand-in for a cost the table does not hold, so these four claims are wrong as written and
+    pass: RESIDUAL, as in `test_residual_three_wrong_claims_under_a_compound_pass_on_tjx`."""
     _, mech = _page("TJX")
     ref, _ = _annual(mech)
     ebitda, ebit = (_value(mech, lbl, "FY26") for lbl in ("EBITDA ($M)", "EBIT ($M)"))
@@ -526,24 +528,21 @@ def test_a_bare_word_reads_its_own_clause_and_compound_on_tjx() -> None:
 
 def test_a_bare_word_is_no_compound_on_tjx_tgt_and_ncno() -> None:
     """REVIEW ROUND 1. FAILED at c06061d6: "bare" read only the word before, so a noun after made
-    a compound that still named rows — "sales leverage", "the sales mix", "profit per share",
-    "profit growth" and "sales, general and administrative" each held a correct figure to Revenue
-    or a profit row and refused it. What follows must be a verb, a preposition (never "per"), a
-    conjunction or the clause's end. (−) The refusals stay: "FY26 sales were …" with EBITDA's
-    figure, TGT's "profit was" revenue's, NCNO's "on sales of" EBIT's."""
+    a compound that still named rows — "sales leverage", "the sales mix" and "profit per share"
+    each held a correct figure to Revenue or a profit row and refused it. What follows must be a
+    verb, a preposition (never "per"), a conjunction or the clause's end. (−) The refusals stay:
+    "FY26 sales were …" with EBITDA's figure, TGT's "profit was" revenue's, NCNO's "on sales of"
+    EBIT's. (Two more compounds the review listed here as correct are not: they are RESIDUAL,
+    `test_residual_three_wrong_claims_under_a_compound_pass_on_tjx`.)"""
     _, tjx = _page("TJX")
     ref, _ = _annual(tjx)
-    ebitda, eps, dna = (_value(tjx, lbl, "FY26") for lbl in (
-        "EBITDA ($M)", "EPS (GAAP, dil.)", "D&A ($M)"))
+    ebitda, eps = (_value(tjx, lbl, "FY26") for lbl in ("EBITDA ($M)", "EPS (GAAP, dil.)"))
     margin = ebitda / _value(tjx, "Revenue ($M)", "FY26") * 100
     for claim in (f"FY26 EBITDA was {_m(ebitda)}, as sales leverage lifted the margin to "
                   f"{margin:.1f}%.",
                   f"FY26 EBITDA was {_m(ebitda)} as the sales mix lifted the margin to "
                   f"{margin:.1f}%.",
-                  f"FY26 profit per share was ${eps:.2f}.",
-                  f"FY26 EBITDA was {_m(ebitda)} while sales, general and administrative costs "
-                  f"were {_m(dna)}.",
-                  f"FY26 EBITDA margin was {margin:.1f}% and profit growth was 7%."):
+                  f"FY26 profit per share was ${eps:.2f}."):
         assert _page_caveated("TJX", claim, ref) == [], claim
     assert _page_caveated("TJX", f"FY26 sales were {_m(ebitda)}.", ref) == [_shown(ebitda)]
     _, tgt = _page("TGT")
@@ -557,6 +556,29 @@ def test_a_bare_word_is_no_compound_on_tjx_tgt_and_ncno() -> None:
     assert _page_caveated(
         "NCNO", f"FY26 EBITDA was ${n_ebitda:.1f}M on sales of ${n_ebit:.1f}M.",
         nref) == [f"{round(n_ebit, 1):g}"]
+
+
+def test_residual_three_wrong_claims_under_a_compound_pass_on_tjx() -> None:
+    """RESIDUAL (review round 2) — three WRONG claims the trace does not catch, pinned as what it
+    does, never as correct. TJX's table holds no SG&A row and no volume, and its FY26 net income
+    grew 13%: the SG&A figure here is D&A's, and each 7% is revenue growth. A compound names no
+    row, so its figure meets the cited fact's period, where another row holds it, as on main.
+    At c06061d6 the first two were refused, by reading the compound as a bare word: the right
+    outcome for the wrong reason. The pin still holds two rules: with "sales, general and
+    administrative" read as "sales", or "profit growth" as "profit", a figure here is refused."""
+    _, tjx = _page("TJX")
+    ref, table = _annual(tjx)
+    assert not [r.label for r in table.rows if re.search(r"SG&A|general|volume", r.label, re.I)]
+    rev26, rev25 = _value(tjx, "Revenue ($M)", "FY26"), _value(tjx, "Revenue ($M)", "FY25")
+    ni26, ni25 = _value(tjx, "Net income ($M)", "FY26"), _value(tjx, "Net income ($M)", "FY25")
+    assert (round((rev26 / rev25 - 1) * 100), round((ni26 / ni25 - 1) * 100)) == (7, 13)
+    ebitda, dna = _value(tjx, "EBITDA ($M)", "FY26"), _value(tjx, "D&A ($M)", "FY26")
+    margin = ebitda / rev26 * 100
+    for claim in (f"FY26 EBITDA was {_m(ebitda)} while sales, general and administrative costs "
+                  f"were {_m(dna)}.",
+                  f"FY26 EBITDA margin was {margin:.1f}% and profit growth was 7%.",
+                  f"FY26 EBITDA was {_m(ebitda)} while sales volume rose 7%."):
+        assert _page_caveated("TJX", claim, ref) == [], claim
 
 
 def test_a_rate_row_and_its_amount_row_are_one_comparison_on_tjx() -> None:

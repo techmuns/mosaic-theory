@@ -61,14 +61,25 @@ the suite green.
 **HOW VERIFIED.** All at $0.
 - **The committed corpus, re-validated** with main's code (`fd1c97f3`) and this branch's: **474
   flags at both, the same set.** The class is latent on today's pages.
-- **The re-review's 15 claims** (`cases_r1.json`): n1 ("sales" carrying EBIT's figure) is now
-  refused; the other 14 read as on main.
-- **Review round 1's 24 claims** (`rev1050_tools/cases.txt`, frozen TJX, TGT and NCNO), main
-  against round 1's head:
-  - every correct one reads as on main, but T5 ("up 7% on sales of $56,360M"), refused on main,
-    which now traces;
-  - every wrong one (F1 to F7) is refused, F3 to F5 for the first time (main passes them);
-  - at `c06061d6` seven correct ones were refused (T1 to T4, T8, T10, T14).
+- **The re-review's 15 constructed claims** (on frozen TJX, NCNO and TGT; a reviewer's list,
+  not committed): "sales" carrying EBIT's figure is now refused (pinned,
+  `test_a_bare_word_names_its_rows_on_tjx`); the other 14 read as on main.
+- **Review round 1's 24 constructed claims** (on frozen TJX, TGT and NCNO; a reviewer's list, not
+  committed; each case that bears on a rule is pinned in `tests/test_figure_trace_false_flags.py`
+  under the round-1 and round-2 tests named below), main against round 1's head:
+  - the 7 wrong ones the list names are refused, all 7 passed on main. Each is another metric's
+    figure under a bare "sales" or "profit": "FY26 sales were $8,425M", "while sales grew 14.0%"
+    (the margin), TGT's "profit was $104,780M", NCNO's "on sales of $16.8M", and three after a
+    possessive, "(" or " - ", which `c06061d6` passed too;
+  - of the 17 the list labels correct, 14 are. Each reads as on main but "up 7% on sales of
+    $56,360M", refused on main, which now traces. Five of the 14 were refused at `c06061d6`: the
+    two growth-on-base claims, "sales leverage", "the sales mix" and "profit per share";
+  - 3 are WRONG (review round 2): "profit growth was 7%" (TJX's FY26 net income grew 13%; 7% is
+    revenue growth), an SG&A figure that is D&A's $1,247M (the table has no SG&A row), and "sales
+    volume rose 7%" (the page states no volume). Each passes, as on main: see WHAT IT COSTS.
+    `c06061d6` refused the first two by reading the compound as a bare word, the right outcome
+    for the wrong reason. Pinned as RESIDUAL,
+    `test_residual_three_wrong_claims_under_a_compound_pass_on_tjx`.
 - **How the committed mentions read.** Of the 54 "sales" and "profit" mentions (below), the rule
   at `c06061d6` read 8 as bare. Round 1 reads 2 as bare, and both mean revenue: SMPL's "FY26 sales
   decline" and TGT's "as sales recover". The other 6 are compounds or segment uses: BURL's "sales
@@ -91,7 +102,8 @@ the suite green.
   guard, the guard by overlap (#1040's round-1 form) and the inside-the-print guard; and (round
   1) the rate variants kept, the word after not read, SG&A and P&L not refused, the possessive
   (not read, or read without its apostrophe), "(" and " - ", the clause-opening rule and the
-  period and year lead.
+  period and year lead. (Review round 2: SG&A's exclusion alone fails the residual pin; P&L's
+  alone fails none, so "profit and loss" has no pin of its own.)
 - **No synthesis request moves.** The trace reads the draw and writes nothing the model is sent.
   The impact check (`python -m vinci.impact run`) is in the PR body.
 
@@ -113,6 +125,14 @@ regex that missed a mention starting its text):
 - **A qualified word still meets the cited fact's period.** "European sales" or "segment profit"
   is not held to Revenue or to a profit row, so a wrong segment figure that happens to equal
   another row of its period passes. The table holds no segment rows to bind it to.
+- **So does a compound** (review round 2). "profit growth", "sales volume" or "sales, general
+  and administrative" names no row, so a wrong figure under it that equals another row of its
+  period passes, as on main: on TJX, "profit growth was 7%" and "sales volume rose 7%" (revenue
+  growth), and an SG&A figure that is D&A's. Pinned as RESIDUAL in
+  `test_residual_three_wrong_claims_under_a_compound_pass_on_tjx`; so is EBIT's figure under
+  "cost of sales", "proceeds from sales" and "sales and marketing", in
+  `test_a_bare_word_reads_its_own_clause_and_compound_on_tjx`. Falsifier: a rebuilt page whose
+  figure under a compound is another row's figure and wrong.
 - **The claim-wide path is unchanged.** A figure read from a literal (a computed figure's input)
   binds every row the claim names, and a bare word names none there, as on main.
 - **A word placing a figure in another period releases it to every column** (#1040's stop words).
@@ -134,6 +154,15 @@ regex that missed a mention starting its text):
 - the period and year lead had no pin (FIXED, pinned);
 - a possessive, "(" and a spaced " - " broke no clause, as on main (FIXED, pinned);
 - this record's word counts did not reproduce (FIXED, re-counted with the boundary above).
+
+**REVIEW ROUND 2** (the re-review at `23c903fe`, MERGE on substance; two LOW points; one commit,
+text and a test relabel, no logic change):
+- two wrong claims were pinned and counted as correct: "profit growth was 7%" and the SG&A figure
+  that is D&A's (FIXED, moved to a RESIDUAL pin; "sales volume rose 7%", the same shape and
+  pinned nowhere, joins them, and round 0's four compounds carrying EBIT's figure are labelled
+  RESIDUAL in their docstring; the counts above corrected);
+- this record cited two reviewer scratch files outside the repo (FIXED, both citations dropped;
+  the cases that bear on a rule are in the test file).
 
 **NOT DONE.** No committed page is rebuilt; the next build of each prints the caveats. STATE.md
 is untouched: no §5.0 row opens or closes.
