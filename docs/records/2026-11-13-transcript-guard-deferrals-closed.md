@@ -52,11 +52,21 @@ bounded rounds were spent, so they are closed here as their own small PR rather 
   `vinci/graph/filings.py`. Its words with the separators in place now equal its words with them
   replaced; on main they differed from line 32.
 - **The guard on this Mac**, on main `01ab6923` plus this branch: 91 calls read, 0 unreadable;
-  3,128 files scanned; 108 runs shared with a call, 96 excused by an SEC document and 12 by a KD
-  export, 0 unexcused.
-  The counts differ from #1046's (113, 104 and 9) because main moved under it. MVST's pages were
-  retired, so fewer runs are SEC-excused. The 2026-10-26 frozen pages of BRBR and BURL carry the
-  same four KD-excused runs by hash, so they sit in 12 files rather than 9.
+  3,129 files scanned (this record among them); 108 runs shared with a call, 96 excused by an SEC
+  document and 12 by a KD export, 0 unexcused.
+  The counts differ from #1046's (113, 104 and 9) because main moved under it. That change is
+  two operations, not one, measured run by run between `8cfb8cb2` and `fbb1a37d`:
+  - **−26:** #1044 (`12764514`) removed MVST's page and its mirror,
+    `data/dossiers/MVST/dossier.json` and `frontend/dossiers/MVST.json`, which held 13
+    SEC-excused runs each.
+  - **+21** in frozen test fixtures:
+    - the same 13 MVST runs (the same hashes, the same SEC excuse), now in
+      `tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json`;
+    - 5 SEC-excused runs in the 2026-10-29 frozen ROST (1) and TJX (4) pages;
+    - 3 KD-excused runs in the 2026-10-26 frozen BRBR (1) and BURL (2) pages.
+  - So SEC is 104 − 26 + 13 + 5 = 96 and KD is 9 + 3 = 12.
+  MVST's runs are still in the public repo, in a frozen fixture: their net effect on the count is
+  −13, not −26.
 - **Gate**, at `18508617`:
   - `ruff check vinci tests` and `mypy --strict vinci`: clean.
   - The full `nice pytest -m "not network"`, CI-like (a worktree with no CIQ folder and no cache, as
