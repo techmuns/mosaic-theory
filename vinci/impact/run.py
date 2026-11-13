@@ -694,6 +694,11 @@ def text_diff(a: str, b: str, versions: Sequence[str] = ()) -> dict[str, Any]:
             "version_lines": len(marked)}
 
 
+def _canonical(kwargs: Any) -> str:
+    """A request with every key sorted: equal for two requests that differ only in key order."""
+    return json.dumps(kwargs, sort_keys=True, default=str, ensure_ascii=False)
+
+
 def request_diff(base: Any, head: Any) -> dict[str, Any]:
     if base is None or head is None:
         return {"status": "not compared", "missing": [s for s, r in (("base", base), ("head", head))
@@ -713,6 +718,10 @@ def request_diff(base: Any, head: Any) -> dict[str, Any]:
     out["sha256"] = {side: hashlib.sha256(wire(reqs[side]).encode()).hexdigest()
                      for side in SIDES}
     if not out["identical"]:
+        # KEY ORDER IS PART OF THE REQUEST (2026-11-13): the child keeps the captured order
+        # (`child.write_request`), so a reorder of the tool schema's fields or of the top-level
+        # arguments reaches `identical`; this names the case where nothing else moved
+        out["key_order_only"] = _canonical(b) == _canonical(h)
         bu, hu = user_sections(str(b["messages"][0]["content"])), user_sections(
             str(h["messages"][0]["content"]))
         out["sections"] = sorted(k for k in set(bu) | set(hu) if bu.get(k) != hu.get(k))
