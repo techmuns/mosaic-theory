@@ -173,12 +173,12 @@ superseded-by:
   | **All 10** | | **$36.96** |
 
   - NCNO, IT and WERN have no recorded build and are priced at the $4.44 median, as above.
-  - With this record's ×1.255 allowance the 10 come to $46.38 (36.96 × 1.255 = 46.3848; B's note rounds it to about $46.39).
+  - With this record's ×1.255 allowance the 10 come to $46.38 (36.96 × 1.255 = 46.3848). B's note says about $46.39, which this amendment could not reproduce: rounding each page half-up gives $46.37.
   - Group 2's three losses are accepted (operator, 2026-11-13, verbatim *"accept all three"*, issuecomment-6847662066): EPAM's `buyback_avg_price` for 2023-Q1, LLY's `buyback_shares` for 2021-H1 and VITL's `buyback_shares` for 2019.
 - **Active, no rebuild now: VRRM.** Its AVOID is scored on 2026-12-15 from prices, and its 11-09 page is newer than its Q3 10-Q.
 - **Watch, no paid rebuild (15):** AMZN, BURL, CNXC, FUBO, MCK, NFLX, NKE, ORKA, PARR, ROST, TECX, TGT, UBER, V and WLK.
   - Their pages stay as committed, and no re-export is owed for them.
   - Of group 1, CNXC, NKE, TECX, UBER and WLK leave the rebuild; of group 2, AMZN, MCK, NFLX and V, whose losses are not incurred; of group 3, ORKA and PARR; of group 4, BURL, FUBO, ROST and TGT.
-  - Six keep known errors until they go active: UBER (STATE rows 28 and 34); WLK, PARR, AMZN and NFLX (row 34); ORKA (row 35).
+  - B's note names six that keep known errors until they go active: UBER (STATE rows 28 and 34); WLK, PARR, AMZN and NFLX (row 34); ORKA (row 35). They are not re-measured here.
   - A watch name goes active on an underwrite, a machine proposal, the screen admitting it to the queue's top 20, or the operator's say-so.
 - **The cost line.** The body's $140.91 on 27 pages, and the amendment above's $135.34 on 26, price pages the rebuild no longer builds. It now spends about $46 against the approved $170 cap (batches of $116, $26 and $27), which stands. The body is as measured.
