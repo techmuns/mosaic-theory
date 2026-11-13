@@ -85,6 +85,7 @@ The rest of issuecomment-6847522000 quotes further operator answers: no feature 
 
 **BOUNDARY.**
 - **The PRs:** every first-parent commit on `origin/main` from batch 7's base `98707f29` through `0d8a2a43`, less batch 7 itself (#1047, `dad8f441`). These are #1043, #1039, #1040, #1045, #1044 and #1048, and #1050, which merged after this branch was cut from `b207c8a9` and was merged in. They were read on 2026-11-13.
+- **Not booked here: #1028** (`9fcd4a74`, the fix-request-2 impact sweep), merged 2026-11-13 09:24Z, after this batch was counted, and merged in with no conflict. Its bookkeeping section asks for about ten Pages-cell corrections (RA-D1, RE1-D8, RE1-D11, A-D2, RE2-D2, RE2-D5, RE2-D8, RA-D16, RE2-D9, RE2-D10, RA-D4) and two row-60 clauses (#966, #983). That is batch 9's. Its correction that #956's fix is #1039 agrees with this batch's amendment on #956's record.
 - **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `0d8a2a43`, on 2026-11-13.
 - **The fail-first runs:** #1039's 4 nodes at `c0b6a519`, #1040's 34-node file at `f676616f` and #1050's 3 nodes at `b207c8a9`, on 2026-11-13.
 - **The page checks:** `mechanical.concentration.customers_listed` and the `next-fy` count, read from the 26 committed `data/dossiers/*/dossier.json` at `b207c8a9`.
