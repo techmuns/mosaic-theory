@@ -138,12 +138,28 @@ def test_a_byte_identical_copy_counts_once_and_a_non_ledger_is_refused(tmp_path:
     copy.parent.mkdir()
     copy.write_bytes(led.read_bytes())
     b = spend.evals([led, copy], "2026-11")
-    assert (b.usd, b.rows) == (2.0, 1) and "1 byte-identical copy(ies) counted once" in b.note
+    assert (b.usd, b.rows) == (2.0, 1) and "1 copy(ies) of another ledger" in b.note
     other = tmp_path / "a" / "draws.jsonl"
     other.write_text(json.dumps(_draw(9.0)) + "\n", encoding="utf-8")
     with pytest.raises(spend.SpendRecordError, match="not a budget ledger"):
         spend.evals([other], "2026-11")
     assert spend._ledgers([], [str(tmp_path)]) == [led, copy]
+
+
+def test_an_earlier_copy_of_a_ledger_counts_once_and_no_ledger_is_not_read(tmp_path: Path) -> None:
+    """(+) A copy taken before the budget drew more is a prefix of the live ledger: its draws are
+    the live ledger's, so they count once, not twice. (-) No ledger passed is NOT READ (None) —
+    a $0 there would sit in the total as a bucket read."""
+    led = _ledger(tmp_path / "a" / "ledger.jsonl", [_draw(2.0)], opened_at="2026-11-10T10:00:00Z")
+    early = tmp_path / "b" / "ledger.jsonl"
+    early.parent.mkdir()
+    early.write_bytes(led.read_bytes())
+    Budget.load(led).record(_draw(3.0))
+    b = spend.evals([early, led], "2026-11")
+    assert (b.usd, b.rows) == (5.0, 2) and "1 copy(ies) of another ledger" in b.note
+    none = spend.evals([], "2026-11")
+    assert none.usd is None and none.note.startswith("NOT READ")
+    assert "NOT included: evals" in spend.render("2026-11", [none])
 
 
 # --- theme desk: the state branch's export shape -------------------------------------------------
@@ -192,8 +208,12 @@ def test_the_graph_judge_reads_the_committed_rejudge() -> None:
     month = str(judged["on"])[:7]
     b = spend.graph_judge(ROOT / "data", month)
     assert b.rows == 1 and b.usd == pytest.approx(judged["cost_usd"])
-    other = spend.graph_judge(ROOT / "data", "1999-01")
-    assert (other.usd, other.rows) == (0.0, 0)
+    after = spend.graph_judge(ROOT / "data", "2999-01")
+    assert (after.usd, after.rows) == (0.0, 0)
+    # (-) a month before the recorded re-judge: any re-judge in it was overwritten — NOT READ,
+    # never $0
+    before = spend.graph_judge(ROOT / "data", "1999-01")
+    assert (before.usd, before.rows) == (None, 0) and before.note.startswith("NOT READ")
 
 
 def test_the_total_names_every_bucket_it_left_out() -> None:
@@ -207,7 +227,7 @@ def test_the_total_names_every_bucket_it_left_out() -> None:
 
 
 def test_a_month_that_is_not_yyyy_mm_is_refused() -> None:
-    for bad in ("2026-1", "11-2026", "2026/11", "2026-11-01"):
+    for bad in ("2026-1", "11-2026", "2026/11", "2026-11-01", "2026-13", "2026-00"):
         with pytest.raises(spend.SpendRecordError, match="YYYY-MM"):
             spend.report(bad, repo=ROOT, snapshots=SNAPS, data_dir=ROOT / "data", ledgers=[])
 

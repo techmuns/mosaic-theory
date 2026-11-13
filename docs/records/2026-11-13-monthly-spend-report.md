@@ -25,9 +25,9 @@ It adds no write path.
 |---|---|---|
 | pages | `data/snapshots/assembly_runs/*.jsonl` (committed): one line per name a build attempted, with refused and failed lines included. `usd` is the list price of its metered calls. Each line is dated by its own `started_at`. | a build whose run file was not committed |
 | confirmations | `data/snapshots/proposal_confirmations.jsonl`: rows counted by `drawn_at` | **every cost.** A row carries no `usd` or usage, and a confirmation refused after its draws writes no row. The bucket is NOT RECORDED, and no file is committed yet. |
-| evals | the budget ledgers (`vinci.evals.replay.Budget`), which are outside the repo by design. Only the ledgers passed in are read. A draw row has no time of its own, so it is dated by the latest stamp above it: the approval's `opened_at`, or a `build_start`'s `started_at`. Byte-identical copies count once. | a ledger not passed in, or one kept on another machine |
+| evals | the budget ledgers (`vinci.evals.replay.Budget`), which are outside the repo by design. Only the ledgers passed in are read; with none passed the bucket is NOT READ, never $0. A draw row has no time of its own, so it is dated by the latest stamp above it: the approval's `opened_at`, or a `build_start`'s `started_at`. A copy that is another ledger's bytes, or an earlier prefix of them, counts once. | a ledger not passed in, or one kept on another machine; and the month of a `run-compare` or `judge` draw, which writes no stamp and so can fall in an earlier month |
 | theme desk | `registry/llm_calls.jsonl` on the `theme-intelligence-state` branch, read with `git show`. The weekly CI run and a local `state push` write it, so **CI's spend is visible here.** Rows have `cost_usd` and `at`; a cache hit costs $0, and a live call with no cost is unpriced. | a local run not yet pushed to the branch |
-| graph judge | `judged_by` in the committed `data/graph_coverage.json` | any earlier re-judge, because each run overwrites the last; and any `graph-coverage` run, which records no cost |
+| graph judge | `judged_by` in the committed `data/graph_coverage.json`. A month before the recorded re-judge is NOT READ. | any earlier re-judge, because each run overwrites the last; a re-judge that STOPPED and wrote nothing; and any `graph-coverage` run, which records no cost |
 | validate-keys | nothing | **every run.** A one-token billable ping per CI run is recorded nowhere: NOT RECORDED |
 
 **How the report reads its records.**
@@ -72,7 +72,7 @@ bucket                usd   rows  source
 pages              $66.98     16  data/snapshots/assembly_runs/*.jsonl
 confirmations           —      0  data/snapshots/proposal_confirmations.jsonl   (NOT RECORDED)
 evals             $243.07    592  budget ledgers passed to this run (6 of 6 carry a row)
-theme desk         $23.73    185  origin/theme-intelligence-state:registry/llm_calls.jsonl
+theme desk         $23.73    185  origin/theme-intelligence-state@ea8fb4a6:registry/llm_calls.jsonl
 graph judge         $2.61      1  data/graph_coverage.json (the re-judge of 2026-11-09)
 validate-keys           —      0  none   (NOT RECORDED)
 total of the 4 bucket(s) read: $336.39 — NOT included: confirmations, validate-keys
@@ -90,9 +90,9 @@ Each figure was checked a second way, apart from the module:
 - **theme desk:** 163 live calls, $23.72712; 22 cached, $0.
 - **graph judge:** the committed `judged_by` reads `cost_usd` 2.6083 on 2026-11-09.
 
-October at the same commit reads $136.49 over the same four buckets.
+October at the same commit reads $136.49 over three buckets: pages, evals ($0.00, 0 of the six ledgers carry an October row) and the theme desk. Its graph judge is NOT READ, since the 2026-11-09 re-judge overwrote any earlier one.
 
-**The tests** (`tests/test_spend_report.py`, 17 cases) are built from real records:
+**The tests** (`tests/test_spend_report.py`, 18 cases) are built from real records:
 - committed assembly lines;
 - ledgers written by the real `Budget`;
 - the theme branch's row shape;
@@ -105,9 +105,10 @@ What they pin:
 - A `build_start` moves the draws after it into the next month.
 - Unpriced rows are counted apart.
 - A malformed row raises.
-- A byte-identical ledger counts once.
+- A byte-identical ledger, or an earlier prefix copy, counts once; no ledger passed is NOT READ.
 - A non-ledger is refused.
-- An unreadable theme ref is "NOT READ", not zero.
+- An unreadable theme ref, and a graph-judge month before the recorded re-judge, are "NOT READ", not zero.
+- A month outside 01–12 is refused.
 - The total names every bucket it left out.
 - The module imports no model client and no HTTP layer.
 

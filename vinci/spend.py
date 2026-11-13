@@ -19,13 +19,18 @@ WHERE EACH BUCKET IS READ FROM, AND WHAT IT CANNOT SEE (each bucket prints both)
 - **evals** — the budget ledgers (`vinci.evals.replay.Budget`), which live OUTSIDE the repo by
   design, so only the ledgers this run is given are read (`--evals-ledger`, or every ledger under
   `--evals-root`). A ledger's draw rows carry no time: each is dated by the latest timestamp above
-  it — the approval's `opened_at`, or a `build_start`'s `started_at`. A ledger on another machine,
-  or not passed, is not seen. Two byte-identical ledgers count once.
+  it — the approval's `opened_at`, or a `build_start`'s `started_at`; a `run-compare` or `judge`
+  run writes no stamp of its own, so its draws can fall in an earlier month. A ledger on another
+  machine, or not passed, is not seen; with none passed the bucket is NOT READ, never $0. A ledger
+  that is another's bytes, or an earlier prefix of them (a copy taken before more draws), counts
+  once.
 - **theme desk** — `registry/llm_calls.jsonl` on the `theme-intelligence-state` branch, which the
   weekly CI run and a local `state push` write: one row per call, `cost_usd` and `at`. That is
-  what makes CI's spend visible here. A local run not yet pushed to the branch is not seen.
+  what makes CI's spend visible here. A local run not yet pushed to the branch, or a push since
+  the local ref was fetched, is not seen; the source names the commit read.
 - **graph judge** — `judged_by` in the committed `data/graph_coverage.json` (`graph-rejudge`). Each
-  run OVERWRITES it, so only the latest re-judge is seen; `graph-coverage` records no cost at all.
+  run OVERWRITES it, so only the latest re-judge is seen (a month before it is NOT READ), a
+  re-judge that STOPPED wrote nothing, and `graph-coverage` records no cost at all.
 - **validate-keys** — a one-token billable ping per CI run, recorded nowhere: NOT RECORDED.
 
 Months are UTC calendar months. Every figure is list price (`vinci.config.LLM_PRICE_PER_MTOK`), as
@@ -35,7 +40,6 @@ would print a total smaller than the spend.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import subprocess
 import sys
@@ -105,7 +109,8 @@ def _usd(value: Any, where: str, *, nullable: bool = False) -> float | None:
 def pages(snapshots: Path, month: str) -> Bucket:
     """The dossier builds: every line of every committed assembly run, dated by ``started_at``."""
     runs = sorted((snapshots / "assembly_runs").glob("*.jsonl"))
-    usd, rows, unpriced, read = 0.0, 0, 0, []
+    usd, rows, unpriced = 0.0, 0, 0
+    read: set[str] = set()
     for path in runs:
         for i, r in enumerate(_jsonl(path.read_text(encoding="utf-8"), path.name), 1):
             where = f"{path.name}:{i}"
@@ -114,7 +119,7 @@ def pages(snapshots: Path, month: str) -> Bucket:
             if _month_of(str(r["started_at"]), where) != month:
                 continue
             rows += 1
-            read.append(path.name)
+            read.add(path.name)
             cost = _usd(r["usd"], where, nullable=True)
             if cost is None:
                 unpriced += 1
@@ -122,8 +127,8 @@ def pages(snapshots: Path, month: str) -> Bucket:
                 usd += cost
     return Bucket("pages", round(usd, 4), rows, "data/snapshots/assembly_runs/*.jsonl",
                   "a build whose run file was not committed", unpriced=unpriced,
-                  note=f"{len(set(read))} of {len(runs)} run files carry a line in the month",
-                  sources_read=sorted(set(read)))
+                  note=f"{len(read)} of {len(runs)} run files carry a line in the month",
+                  sources_read=sorted(read))
 
 
 def confirmations(snapshots: Path, month: str) -> Bucket:
@@ -152,19 +157,33 @@ def is_ledger(path: Path) -> bool:
     return isinstance(row, dict) and "approval" in row
 
 
+_EVALS_CANNOT = ("a ledger not passed here, or kept on another machine; and the month of a "
+                 "`run-compare` or `judge` draw, which carries no stamp and takes the approval's "
+                 "or an earlier `build_start`'s, so it can fall in an earlier month")
+
+
 def evals(ledgers: Iterable[Path], month: str) -> Bucket:
-    """The evals harness's budget ledgers, each draw dated by the latest timestamp above it."""
-    usd, rows, read, seen = 0.0, 0, [], set()
-    duplicates = 0
-    for path in sorted({p.resolve() for p in ledgers}):
-        text = path.read_text(encoding="utf-8")
-        digest = hashlib.sha256(text.encode()).hexdigest()
-        if digest in seen:
-            duplicates += 1
+    """The evals harness's budget ledgers, each draw dated by the latest timestamp above it.
+
+    No ledger at all is NOT READ (``usd`` None), never $0. A ledger whose text is another's, or
+    an earlier prefix of it (a copy taken before the budget drew more), is that ledger and counts
+    once: the ledger only ever grows by appending."""
+    usd, rows, read = 0.0, 0, []
+    texts: dict[Path, str] = {p: p.read_text(encoding="utf-8")
+                              for p in sorted({p.resolve() for p in ledgers})}
+    if not texts:
+        return Bucket("evals", None, 0, "budget ledgers passed to this run", _EVALS_CANNOT,
+                      note="NOT READ: no budget ledger was passed (--evals-ledger / --evals-root)")
+    kept: dict[Path, str] = {}
+    for path, text in texts.items():
+        if any(other.startswith(text) and (len(other) > len(text) or (other == text and o < path))
+               for o, other in texts.items() if o != path):
             continue
-        seen.add(digest)
+        kept[path] = text
+    duplicates = len(texts) - len(kept)
+    for path, text in kept.items():
         body = _jsonl(text, path.name)
-        if not body or "approval" not in body[0]:
+        if not body or not isinstance(body[0].get("approval"), dict):
             raise SpendRecordError(f"{path}: not a budget ledger (its first line is no approval)")
         stamp = str(body[0]["approval"].get("opened_at"))
         in_month = False
@@ -184,11 +203,10 @@ def evals(ledgers: Iterable[Path], month: str) -> Bucket:
             rows += 1
         if in_month:
             read.append(path.name)
-    return Bucket("evals", round(usd, 4), rows, "budget ledgers passed to this run",
-                  "a ledger not passed here, or kept on another machine",
-                  note=(f"{len(read)} of {len(seen)} ledger(s) carry a row in the month"
-                        + (f"; {duplicates} byte-identical copy(ies) counted once"
-                           if duplicates else "")),
+    return Bucket("evals", round(usd, 4), rows, "budget ledgers passed to this run", _EVALS_CANNOT,
+                  note=(f"{len(read)} of {len(kept)} ledger(s) carry a row in the month"
+                        + (f"; {duplicates} copy(ies) of another ledger (byte-identical or its "
+                           "earlier prefix) counted once" if duplicates else "")),
                   sources_read=read)
 
 
@@ -197,13 +215,18 @@ def theme_desk(repo: Path, month: str, ref: str = THEME_REF) -> Bucket:
     proc = subprocess.run(["git", "show", f"{ref}:{THEME_CALLS}"], cwd=repo,
                           capture_output=True, text=True, timeout=60)
     if proc.returncode:
+        err = proc.stderr.strip()
+        err = err if len(err) <= 160 else f"{err[:160]}… (first 160 of {len(err)} characters)"
         return Bucket("theme desk", None, 0, f"{ref}:{THEME_CALLS}", _THEME_CANNOT,
-                      note=f"NOT READ: {proc.stderr.strip()[:160]} — fetch the branch "
+                      note=f"NOT READ: {err} — fetch the branch "
                            "(`git fetch origin theme-intelligence-state`)")
-    return theme_calls(proc.stdout, month, source=f"{ref}:{THEME_CALLS}")
+    sha = subprocess.run(["git", "rev-parse", "--short=8", ref], cwd=repo, capture_output=True,
+                         text=True, timeout=60, check=True).stdout.strip()
+    return theme_calls(proc.stdout, month, source=f"{ref}@{sha}:{THEME_CALLS}")
 
 
-_THEME_CANNOT = "a local theme run not yet pushed to the state branch"
+_THEME_CANNOT = ("a local theme run not yet pushed to the state branch, and any push since the "
+                 "local ref was last fetched")
 
 
 def theme_calls(text: str, month: str, *, source: str) -> Bucket:
@@ -235,7 +258,8 @@ def theme_calls(text: str, month: str, *, source: str) -> Bucket:
 def graph_judge(data_dir: Path, month: str) -> Bucket:
     """The graph re-judge's one recorded run, from the committed coverage map."""
     path = data_dir / "graph_coverage.json"
-    cannot = "an earlier re-judge (each run overwrites the last) and any `graph-coverage` run"
+    cannot = ("an earlier re-judge (each run overwrites the last), a re-judge STOPPED before it "
+              "wrote (over budget, or a judge error), and any `graph-coverage` run")
     if not path.exists():
         return Bucket("graph judge", None, 0, f"data/{path.name}", cannot,
                       note=f"NOT READ: no {path.name}")
@@ -243,7 +267,12 @@ def graph_judge(data_dir: Path, month: str) -> Bucket:
     if not isinstance(judged, dict):
         return Bucket("graph judge", 0.0, 0, f"data/{path.name}", cannot,
                       note="no re-judge is recorded")
-    if f"{judged.get('on', '')}"[:7] != month:
+    on = f"{judged.get('on', '')}"[:7]
+    if month < on:
+        return Bucket("graph judge", None, 0, f"data/{path.name}", cannot,
+                      note=f"NOT READ: the re-judge of {judged.get('on')} overwrote any "
+                           "earlier one")
+    if month > on:
         return Bucket("graph judge", 0.0, 0, f"data/{path.name}", cannot,
                       note=f"the recorded re-judge is dated {judged.get('on')}")
     cost = _usd(judged.get("cost_usd"), f"{path.name}: judged_by")
@@ -259,7 +288,8 @@ def validate_keys() -> Bucket:
 
 def report(month: str, *, repo: Path, snapshots: Path, data_dir: Path,
            ledgers: Sequence[Path], theme_ref: str = THEME_REF) -> list[Bucket]:
-    if len(month) != 7 or month[4] != "-" or not (month[:4] + month[5:]).isdigit():
+    if (len(month) != 7 or month[4] != "-" or not (month[:4] + month[5:]).isdigit()
+            or not 1 <= int(month[5:]) <= 12):
         raise SpendRecordError(f"--month {month!r}: expected YYYY-MM")
     return [pages(snapshots, month), confirmations(snapshots, month), evals(ledgers, month),
             theme_desk(repo, month, theme_ref), graph_judge(data_dir, month), validate_keys()]
