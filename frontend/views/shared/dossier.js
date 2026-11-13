@@ -1325,7 +1325,7 @@ function underwriteDetail(d, verdict, m, card, mark) {
 }
 
 // Where the screening anchor went, said on the Brief card it left. Twin: render._SCREEN_POINTER
-// (pinned equal by tests/test_parity_pins.py).
+// (pinned equal by tests/test_anchor_off_headline.py).
 const SCREEN_POINTER = "This name has not been underwritten. Its screening anchor — how it surfaced, not a verdict — is in Analysis, under Valuation, beside the own-history multiple it re-rates to.";
 
 // the company-identity block shared by the opener: one-liner · segments / geography / customer

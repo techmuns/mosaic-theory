@@ -4514,8 +4514,9 @@ def _ev_gap_tail(g: dict[str, Any], br: dict[str, Any], cons: dict[str, Any],
 
 def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     """(D1·§4) "Valuation & own-history" — the cross-sectional read (the edge) first, then implied
-    expectations, then the own-history reads; the mid-cycle underwrite block closes it when a
-    record exists. Twin: dossier.js valuation().
+    expectations, then the own-history reads, then the screening anchor (moved off the Brief,
+    #1004 item 3c); the mid-cycle underwrite block closes it when a record exists. Twin:
+    dossier.js valuation().
 
     Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
