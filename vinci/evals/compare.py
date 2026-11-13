@@ -868,6 +868,9 @@ def _check_run(out_dir: Path, reg: Registration, rows: list[dict[str, Any]]) -> 
     # RG-D12 WHOLE, IN THE LIBRARY (#1030 review round 1, D1): the fingerprint alone let a
     # registration whose BASE holds other production files be scored here
     refuse_unless_registered_scorer(reg)
+    # both arms on one SDK: a re-sync between BASE and CAND would be a second difference between
+    # them (review of #1049, round 1)
+    rp.one_sdk(rows, f"registration {reg.sha[:12]}")
     seen = Counter(r["label"] for r in rows)
     pages = {lab.split(":")[0] for lab in seen}
     if pages != set(reg.pages):

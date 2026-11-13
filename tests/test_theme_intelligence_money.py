@@ -501,8 +501,8 @@ def test_a_resumed_run_with_no_limit_says_so(
 
 def test_a_paid_call_row_states_the_sdk_it_went_through(tmp_path: Path) -> None:
     """The theme desk's paid-call ledger names the installed `anthropic` SDK on every row
-    (operator, 2026-11-13: "Check, then pin newest (Recommended)"): its four paid Actions runs
-    installed four versions and no row said which."""
+    (operator, 2026-11-13: "Check, then pin newest (Recommended)"): its four Actions runs (three
+    of them paid) installed four versions and no row said which."""
     import anthropic
 
     p, rid = _first_attempt(tmp_path, spent=1.0, finish=False)

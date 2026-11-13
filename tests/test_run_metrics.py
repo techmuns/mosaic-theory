@@ -353,9 +353,10 @@ def test_an_unpriced_model_stays_unknown_even_when_no_call_was_metered() -> None
 # --- the SDK every call went through (operator, 2026-11-13: "Check, then pin newest") -----------
 
 def test_a_run_record_states_the_sdk_its_calls_went_through() -> None:
-    """(+) Each line names the installed `anthropic` SDK. The four paid Actions runs of the theme
-    desk installed 1.16.0, 1.17.0, 2.3.0 and 2.6.0 while local builds ran 0.112.0, and none of the
-    44 committed assembly records said which: the version had to be dug out of CI logs."""
+    """(+) Each line names the installed `anthropic` SDK. The theme desk's four Actions runs
+    (three of them paid) installed 1.16.0, 1.17.0, 2.3.0 and 2.6.0 while local builds ran
+    0.112.0, and none of the 44 committed assembly records said which: the version had to be dug
+    out of CI logs."""
     import anthropic
 
     meter = MeteredLlmClient(_client(lambda **kw: _msg(1000)))

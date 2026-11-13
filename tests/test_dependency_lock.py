@@ -118,3 +118,11 @@ def test_the_locked_installs_pass() -> None:
             "          python -m pip install --no-deps -e .\n"
             "          # a comment naming pip install -e \".[dev]\" is not an install\n")
     assert unlocked_installs(text) == []
+
+
+def test_the_lock_says_it_is_regenerated_in_place() -> None:
+    """Review of #1049, round 1: its command reproduces the lock byte for byte only because uv
+    reads the committed file's pins as preferences. Into an empty file the same command moved 24
+    of the 52 pins (uv 0.13.8, 2026-11-13). So the header says so, where the command is read."""
+    header = LOCK.read_text().splitlines()[1]
+    assert "uv pip compile pyproject.toml" in header and "IN PLACE" in header, header

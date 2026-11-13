@@ -3,7 +3,9 @@ request matched by (path, label, n).
 
 It prints per path the requests compared and the bodies byte-identical, then every header that
 differs (name and both values, a key's value masked), in full and never cut. Exit 1 when any body
-differs, or a request is on one side only.
+differs, a request is on one side only, a method or URL differs, or a header differs that is not
+one of `ACCEPTED` (review of #1049, round 1: a planted `?beta=true` and an added beta header both
+passed).
 
     python scripts/sdk_byte_check/compare.py <capture A> <capture B>
 """
@@ -18,6 +20,12 @@ from typing import Any
 Key = tuple[str, str, int]
 #: Headers whose VALUE is a credential: compared as present or absent, never printed.
 SECRET = frozenset({"x-api-key", "authorization"})
+#: The headers `docs/records/2026-11-13-the-anthropic-sdk-is-pinned-at-2-6-0-behind-a-byte-check.md`
+#: accepted as moving with the SDK (0.112.0 → 2.6.0), with the header order. Any OTHER header that
+#: differs fails the check: a bump adding a beta or content header is a change to what the server
+#: receives, and it is named, never waved through with the bodies.
+ACCEPTED = frozenset({"anthropic-version", "x-api-key", "authorization", "user-agent",
+                      "x-stainless-package-version", "accept-encoding", "(header order)"})
 
 
 def load(d: Path) -> dict[Key, dict[str, Any]]:
@@ -65,11 +73,13 @@ def compare(a: Path, b: Path) -> tuple[int, list[str]]:
     lines += [f"  {k} on {n} request(s)" for k, n in urls.items()]
     lines.append(f"headers differing ({len(headers)} distinct):")
     lines += [f"  {name}: {vx!r} -> {vy!r}  (on {n} request(s))"
+              + ("" if name in ACCEPTED else "  — NOT ACCEPTED by the record: fails")
               for (name, vx, vy), n in sorted(headers.items(), key=lambda t: str(t[0]))]
+    unaccepted = sorted({name for name, _, _ in headers if name not in ACCEPTED})
     if not set(ra) & set(rb):   # two empty captures are no check, never a pass
         lines.append("no request compared: a capture with nothing in it checks nothing")
         return 1, lines
-    return (1 if only or bodies else 0), lines
+    return (1 if only or bodies or urls or unaccepted else 0), lines
 
 
 if __name__ == "__main__":

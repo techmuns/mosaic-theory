@@ -463,6 +463,30 @@ class Budget:
             f.write(json.dumps(row, sort_keys=True) + "\n")
 
 
+def one_sdk(rows: Sequence[dict[str, Any]], what: str) -> str | None:
+    """The one `anthropic` SDK every draw row of a scored run went through, or None when no row
+    states one (rows written before `GuardedSdk` stamped `sdk_version`, 2026-11-13).
+
+    REFUSES A RUN DRAWN ACROSS A RE-SYNC (review of #1049, round 1). The API version moves with
+    the SDK (0.112.0 sends `2023-06-01`, 2.6.0 `2026-10-21`), so a registration whose builds or
+    arms straddle a venv re-sync carries a second difference that its test reads as the one it
+    measures: dispersion between builds, or a move between BASE and CAND. Rows on more than one
+    SDK are refused, naming them; so are rows of which some state an SDK and some do not, because
+    which SDK the older ones used is unknown. Re-sync between registrations, never during one."""
+    stated = [r for r in rows if "sdk_version" in r]
+    if stated and len(stated) != len(rows):
+        raise ReplayError(f"{what}: {len(rows) - len(stated)} of {len(rows)} draw rows state no "
+                          "SDK and the rest do — the run was drawn across the pin, and the "
+                          "older rows' SDK is unknown; it is not scored")
+    versions = sorted({str(r["sdk_version"]) for r in stated})
+    if len(versions) > 1:
+        raise ReplayError(f"{what}: its draws went through {len(versions)} SDKs "
+                          f"({', '.join(versions)}) — the API version moved with them, so the "
+                          "score would read it as the effect it measures; it is not scored. "
+                          "Re-sync a venv between registrations, never during one")
+    return versions[0] if versions else None
+
+
 def worst_case_usd(model: str, prompt_tokens: int, max_tokens: int) -> float:
     """One draw at its most expensive: the whole prompt WRITTEN to cache (1.25x input) and every
     output token spent. Raises for a model with no list price — never a zero."""

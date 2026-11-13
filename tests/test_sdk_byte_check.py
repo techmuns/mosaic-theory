@@ -92,14 +92,16 @@ def test_a_capture_refuses_to_write_inside_the_repo() -> None:
     assert not (ROOT / "sdk-capture-here").exists()
 
 
-def _fake_run(d: Path, bodies: dict[str, bytes], version: str) -> None:
+def _fake_run(d: Path, bodies: dict[str, bytes], version: str, *, url: str = "u",
+              extra: tuple[tuple[str, str], ...] = ()) -> None:
     d.mkdir(parents=True)
     rows = []
     for label, body in bodies.items():
         (d / f"{label}.body").write_bytes(body)
-        rows.append({"path": "p", "label": label, "n": 1, "method": "POST", "url": "u",
+        rows.append({"path": "p", "label": label, "n": 1, "method": "POST", "url": url,
                      "headers": [["user-agent", f"Anthropic/Python {version}"],
-                                 ["x-api-key", "sk-ant-secret"]], "body_file": f"{label}.body"})
+                                 ["x-api-key", "sk-ant-secret"], *map(list, extra)],
+                     "body_file": f"{label}.body"})
     (d / "index.json").write_text(json.dumps(rows))
     (d / "summary.json").write_text(json.dumps({"anthropic": version, "http_lib": "httpx"}))
 
@@ -147,3 +149,26 @@ def test_the_impact_child_reads_only_names_the_inputs_module_serves() -> None:
                           .read_text()))
     assert "capture_calls" in read
     assert [n for n in sorted(read) if not hasattr(module, n)] == []
+
+
+def test_a_changed_url_or_an_unaccepted_header_fails_and_the_accepted_seven_do_not(
+        tmp_path: Path) -> None:
+    """Review of #1049, round 1: a planted `/v1/messages?beta=true` printed "method/URL
+    differing: 1" and exited 0. Now a method or URL difference fails, and so does a header outside
+    the ones the 2026-11-13 record accepted as moving with the SDK: an added beta header would
+    otherwise pass the upgrade rule with every body identical."""
+    cmp = _load("compare")
+    v1 = "https://api.anthropic.com/v1/messages"
+    accepted = (("anthropic-version", "2026-10-21"), ("accept-encoding", "gzip, deflate, zstd"),
+                ("x-stainless-package-version", "2"))
+    _fake_run(tmp_path / "a", {"x": b'{"a":1}'}, "1", url=v1)
+    _fake_run(tmp_path / "ok", {"x": b'{"a":1}'}, "2", url=v1, extra=accepted)
+    _fake_run(tmp_path / "url", {"x": b'{"a":1}'}, "1", url=v1 + "?beta=true")
+    _fake_run(tmp_path / "beta", {"x": b'{"a":1}'}, "1", url=v1,
+              extra=(("anthropic-beta", "files-api-2025-04-14"),))
+    code, lines = cmp.compare(tmp_path / "a", tmp_path / "ok")
+    assert code == 0, lines
+    code, lines = cmp.compare(tmp_path / "a", tmp_path / "url")
+    assert code == 1 and "method/URL differing: 1" in lines, lines
+    code, lines = cmp.compare(tmp_path / "a", tmp_path / "beta")
+    assert code == 1 and any("anthropic-beta" in x and "NOT ACCEPTED" in x for x in lines), lines

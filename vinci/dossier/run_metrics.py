@@ -61,7 +61,7 @@ only when the record of the reads could not itself be built; the line says so in
 ``sdk_version`` (schema 3, 2026-11-13; operator: "Check, then pin newest (Recommended)") is the
 installed `anthropic` SDK every call of the build went through (`graph.llm.sdk_version`): ``null``
 on a build that made no call (no LLM client, or refused before its first), and when none is
-installed. Records before it do not say: the four paid Actions runs of the theme desk
+installed. Records before it do not say: the theme desk's four Actions runs (three of them paid)
 installed 1.16.0, 1.17.0, 2.3.0 and 2.6.0, read back from CI logs, while local builds ran 0.112.0.
 """
 

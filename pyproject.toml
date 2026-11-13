@@ -17,6 +17,9 @@ dependencies = [
     # confirmation, the judge, the theme desk, validate-keys): 452 bodies, every byte identical.
     # THE UPGRADE RULE: a bump is a PR that first repeats that $0 check (the record names its
     # method) and shows every body byte-identical, or names what moved; never a bare edit here.
+    # THE LOCK IS REGENERATED IN PLACE: uv reads the committed requirements.lock as its preferences,
+    # so `--upgrade-package anthropic==<X>` moves the SDK and its own dependencies only. Into an
+    # empty file the same command takes the newest of everything (24 of 52 pins moved, 2026-11-13).
     # docs/records/2026-11-13-the-anthropic-sdk-is-pinned-at-2-6-0-behind-a-byte-check.md
     "anthropic==2.6.0",
     "beautifulsoup4>=4.12",  # 10-K HTML → text for the graph extractor
