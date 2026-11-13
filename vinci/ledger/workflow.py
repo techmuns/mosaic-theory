@@ -76,6 +76,34 @@ def follow_origin(ticker: str, followed_since: date) -> OriginRef:
     return OriginRef(kind="follow_entry", id=ticker.upper(), followed_since=followed_since)
 
 
+def require_underwrite(ticker: str, underwrite: UnderwriteLink | None,
+                       no_underwrite_reason: str | None) -> str | None:
+    """THE UNDERWRITE REFUSALS, one definition (2026-11-13, #1004 item 5): asked by `log-verdict`
+    before its paid confirmation draws anything, and again at the seat in `log_verdict`. Returns
+    the stated reason for logging with no record (stripped), or None.
+
+    A verdict is logged against its live record, or states why it has none; a reason beside a
+    live record is refused. A record WITHOUT A HORIZON loads, prints and recomputes as it always
+    has (refusing at load would repeat #762); it is refused only here, at the decision, because a
+    call struck on a record with no realisation date has no IRR to stand on."""
+    why_none = (no_underwrite_reason or "").strip() or None
+    if underwrite is None and why_none is None:
+        raise LedgerError(
+            f"REFUSED: {ticker} has no live underwrite record (scenarios/{ticker.upper()}.json) "
+            f"— a verdict is logged against the record that priced it, or states why there is "
+            f"none (`--no-underwrite-reason`).")
+    if underwrite is not None and why_none is not None:
+        raise LedgerError(
+            f"{ticker} has a live underwrite record ({underwrite.ref}), so no reason for "
+            f"logging without one applies — the verdict is sealed against the record")
+    if underwrite is not None and underwrite.horizon_years is None:
+        raise LedgerError(
+            f"REFUSED: {underwrite.ref} states no horizon (its base leg has no years_to_terminal), "
+            f"so its IRR is undefined — a verdict is not logged on a record with no realisation "
+            f"date. Re-underwrite with a stated horizon; the record itself still loads as it is.")
+    return why_none
+
+
 def _require_verdict_in_sleeve(
     verdict: Verdict, sleeve: str | None, *, machine_proposal: Verdict | None = None
 ) -> None:
@@ -211,6 +239,10 @@ def log_verdict(
     # screen row left untagged read as overshoot through `sleeve_of` and skipped the book's
     # vocabulary check below, so a screen PASS could be sealed into a book that records none.
     if cand is not None:
+        if origin_ref is not None:
+            raise LedgerError(
+                f"{candidate_id!r} is a screen candidate, so its origin is its screen run — an "
+                f"origin_ref passed for it ({origin_ref.kind} {origin_ref.id!r}) would be dropped")
         origin_ref = OriginRef(kind="screen_run", id=cand.candidate_id,
                                screen_run_at=cand.screen_run_at,
                                screens_fired=tuple(cand.screens_fired))
@@ -224,25 +256,8 @@ def log_verdict(
             f"that covered the name")
     _require_verdict_in_sleeve(verdict, sleeve, machine_proposal=machine_proposal)
     # THE UNDERWRITE LINK (2026-11-13, #1004 item 5), refused HERE as the limit is: the ledger is
-    # append-only. A verdict is logged against its live record, or states why it has none. A
-    # record WITHOUT A HORIZON loads, prints and recomputes as it always has (refusing at load
-    # would repeat #762); it is refused only here, at the decision, because a call struck on a
-    # record with no realisation date has no IRR to stand on.
-    why_none = (no_underwrite_reason or "").strip() or None
-    if underwrite is None and why_none is None:
-        raise LedgerError(
-            f"REFUSED: {ident.ticker} has no live underwrite record (scenarios/"
-            f"{ident.ticker.upper()}.json) — a verdict is logged against the record that priced "
-            f"it, or states why there is none (`--no-underwrite-reason`).")
-    if underwrite is not None and why_none is not None:
-        raise LedgerError(
-            f"{ident.ticker} has a live underwrite record ({underwrite.ref}), so no reason for "
-            f"logging without one applies — the verdict is sealed against the record")
-    if underwrite is not None and underwrite.horizon_years is None:
-        raise LedgerError(
-            f"REFUSED: {underwrite.ref} states no horizon (its base leg has no years_to_terminal), "
-            f"so its IRR is undefined — a verdict is not logged on a record with no realisation "
-            f"date. Re-underwrite with a stated horizon; the record itself still loads as it is.")
+    # append-only (`require_underwrite`).
+    why_none = require_underwrite(ident.ticker, underwrite, no_underwrite_reason)
     sector = resolve_label(resolver.sic_for(ident.cik)[0]).sector
 
     try:

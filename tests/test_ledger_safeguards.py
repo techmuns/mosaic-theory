@@ -414,3 +414,32 @@ def test_the_primary_line_is_unchanged_by_the_floor() -> None:
     md = aggregate(_scores(2, 1), cost_bps=25.0, n_pending=0).to_markdown()
     assert "**BUY−AVOID spread (primary): +15.0%**" in md
 
+
+
+# ─── review round 0 (/code-review high) ───────────────────────────────────────────────────────
+
+def test_every_underwrite_refusal_is_asked_before_the_paid_confirmation() -> None:
+    """STRUCTURAL, as the edge-basis gate's pin: the confirmation draws ten paid syntheses, so the
+    one refusal function runs before it — a reason beside a live record was first refused only at
+    the write, after the spend."""
+    src = (ROOT / "vinci" / "cli.py").read_text()
+    body = src[src.index("def _cmd_log_verdict"):]
+    body = body[:body.index("\ndef ", 10)]
+    assert body.index("require_underwrite(") < body.index("_confirm_seal(") < body.index(
+        "= log_verdict(")
+
+
+def test_the_reader_finds_the_record_from_a_subdirectory(tmp_path: Path) -> None:
+    """Run from below the repository root, the record still exists — never read as absent."""
+    repo = _repo_with(tmp_path, "SMPL")
+    link = read_underwrite("SMPL", root=repo / "scenarios")
+    assert link is not None and link.ref == "scenarios/SMPL.json"
+
+
+def test_a_screen_candidate_refuses_a_passed_origin(tmp_path: Path) -> None:
+    with Store(tmp_path / "t.db") as store:
+        cid = _seed(store, _ident("ACME", "SEC-ACME", "0000000001"))
+        with pytest.raises(LedgerError, match="would be dropped"):
+            log_verdict(store, candidate_id=cid, verdict=Verdict.BUY,
+                        decided_at=datetime(2026, 6, 15, 10, 0),
+                        origin_ref=follow_origin("ACME", date(2026, 1, 1)), **NO_RECORD, **KW)

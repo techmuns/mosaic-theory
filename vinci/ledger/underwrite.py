@@ -40,6 +40,9 @@ def read_underwrite(ticker: str, *, root: Path) -> UnderwriteLink | None:
     import vinci.scenarios as sc
 
     rel = f"scenarios/{ticker.upper()}.json"
+    # THE REPOSITORY'S ROOT, not the directory given: run from a subdirectory, `root / rel` would
+    # miss a record that exists and the verdict would read as having none
+    root = Path(_git(root, "rev-parse", "--show-toplevel").decode().strip())
     path = root / rel
     if not path.exists():
         return None
@@ -65,12 +68,14 @@ def read_underwrite(ticker: str, *, root: Path) -> UnderwriteLink | None:
     def ratio_at(price: float) -> tuple[float | None, str | None]:
         try:
             res = sc.run_recipe(rec.model_copy(update={"spot": price})).result
-        except ValueError as exc:
+        except (ValueError, KeyError, ArithmeticError) as exc:
             raise LedgerError(f"{rel}: its recipe cannot be re-run at the entry {price:g} "
                               f"({exc}) — nothing was logged") from exc
         if res is None:
             raise LedgerError(f"{rel}: its recipe returned no result at {price:g}")
-        return res.ratio, (res.ratio_undefined or None)
+        if res.ratio is None:     # never a silent None: the recipe's reason, or that it gave none
+            return None, (res.ratio_undefined or "the recipe returned no ratio and no reason")
+        return res.ratio, None
 
     ratio_at(rec.spot)        # a record its own recipe refuses is refused before any decision
     return UnderwriteLink(ref=rel, commit=commit, sha256=hashlib.sha256(raw).hexdigest(),

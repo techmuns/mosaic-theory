@@ -1830,17 +1830,9 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
             # at the seat. Read from the checkout the command runs in, as the limit always was.
             from vinci.ledger.underwrite import read_underwrite
             link = read_underwrite(ticker, root=Path.cwd())
-            why_none = (getattr(args, "no_underwrite_reason", None) or "").strip() or None
-            if link is None and why_none is None:
-                raise LedgerError(
-                    f"REFUSED: {ticker} has no live underwrite record (scenarios/{ticker}.json) — "
-                    f"log the verdict against the record that priced it, or state why there is "
-                    f"none (`--no-underwrite-reason`). Nothing was drawn or written.")
-            if link is not None and link.horizon_years is None:
-                raise LedgerError(
-                    f"REFUSED: {link.ref} states no horizon, so its IRR is undefined — a verdict "
-                    f"is not logged on a record with no realisation date. Nothing was drawn or "
-                    f"written.")
+            from vinci.ledger.workflow import require_underwrite
+            why_none = require_underwrite(ticker, link,
+                                          getattr(args, "no_underwrite_reason", None))
             print(f"underwrite: {link.ref} at {link.commit[:12]}, sha256 {link.sha256[:16]}, "
                   f"horizon {link.horizon_years:g}y" if link is not None
                   else f"underwrite: none — {why_none}")
