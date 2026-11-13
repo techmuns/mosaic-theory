@@ -1,0 +1,318 @@
+"""THE MONTHLY SPEND REPORT — each paid bucket's list-price spend in one calendar month, read from
+the records that already exist. It REPORTS AND REFUSES NOTHING (operator, 2026-11-13: "Report
+only"); per-run control is unchanged — every paid run still spends only under the operator's
+approved cap (`python -m vinci.evals budget-open --cap … --approval "…"`, `graph-rejudge
+--budget-usd`, the theme desk's run budget).
+
+    python -m vinci.spend --month 2026-11 [--evals-ledger FILE …] [--evals-root DIR …]
+                          [--theme-ref REF] [--json]
+
+WHERE EACH BUCKET IS READ FROM, AND WHAT IT CANNOT SEE (each bucket prints both):
+
+- **pages** — `data/snapshots/assembly_runs/*.jsonl` (committed): one line per name a build
+  attempted, refused and failed included; `usd` is list price over its METERED calls, `null` for an
+  unpriced model (counted apart, never as zero). Dated by the line's `started_at`. Cannot see a
+  build whose run file was not committed.
+- **confirmations** — `data/snapshots/proposal_confirmations.jsonl` (the seal-time ten-draw
+  confirmation). Its rows carry `drawn_at` but NO cost, and a confirmation refused after its draws
+  writes no row at all, so this bucket's spend is NOT RECORDED: the rows are counted, never priced.
+- **evals** — the budget ledgers (`vinci.evals.replay.Budget`), which live OUTSIDE the repo by
+  design, so only the ledgers this run is given are read (`--evals-ledger`, or every ledger under
+  `--evals-root`). A ledger's draw rows carry no time: each is dated by the latest timestamp above
+  it — the approval's `opened_at`, or a `build_start`'s `started_at`. A ledger on another machine,
+  or not passed, is not seen. Two byte-identical ledgers count once.
+- **theme desk** — `registry/llm_calls.jsonl` on the `theme-intelligence-state` branch, which the
+  weekly CI run and a local `state push` write: one row per call, `cost_usd` and `at`. That is
+  what makes CI's spend visible here. A local run not yet pushed to the branch is not seen.
+- **graph judge** — `judged_by` in the committed `data/graph_coverage.json` (`graph-rejudge`). Each
+  run OVERWRITES it, so only the latest re-judge is seen; `graph-coverage` records no cost at all.
+- **validate-keys** — a one-token billable ping per CI run, recorded nowhere: NOT RECORDED.
+
+Months are UTC calendar months. Every figure is list price (`vinci.config.LLM_PRICE_PER_MTOK`), as
+each writer priced it. A malformed record raises — a report that skipped what it could not read
+would print a total smaller than the spend.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import subprocess
+import sys
+from collections.abc import Iterable, Sequence
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
+
+THEME_REF = "origin/theme-intelligence-state"
+THEME_CALLS = "registry/llm_calls.jsonl"
+
+
+class SpendRecordError(ValueError):
+    """A spend record this report cannot read. Raised, never skipped."""
+
+
+@dataclass
+class Bucket:
+    """One bucket's month. ``usd`` is None when the bucket's spend is not recorded or was not
+    read — a missing number, never a zero."""
+
+    name: str
+    usd: float | None
+    rows: int
+    source: str
+    cannot_see: str
+    unpriced: int = 0
+    note: str = ""
+    sources_read: list[str] = field(default_factory=list)
+
+
+def _month_of(stamp: str, where: str) -> str:
+    """The UTC calendar month (``YYYY-MM``) of an ISO timestamp; a naive stamp is refused."""
+    try:
+        t = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    except (TypeError, ValueError) as exc:
+        raise SpendRecordError(f"{where}: {stamp!r} is not an ISO timestamp") from exc
+    if t.tzinfo is None:
+        raise SpendRecordError(f"{where}: {stamp!r} carries no UTC offset, so its month is unknown")
+    return f"{t.astimezone(UTC):%Y-%m}"
+
+
+def _jsonl(text: str, where: str) -> list[dict[str, Any]]:
+    out = []
+    for i, line in enumerate(text.splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise SpendRecordError(f"{where}:{i}: not JSON ({exc.msg})") from exc
+        if not isinstance(row, dict):
+            raise SpendRecordError(f"{where}:{i}: a row is not an object")
+        out.append(row)
+    return out
+
+
+def _usd(value: Any, where: str, *, nullable: bool = False) -> float | None:
+    if value is None and nullable:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise SpendRecordError(f"{where}: usd is {value!r}, not a number")
+    return float(value)
+
+
+def pages(snapshots: Path, month: str) -> Bucket:
+    """The dossier builds: every line of every committed assembly run, dated by ``started_at``."""
+    runs = sorted((snapshots / "assembly_runs").glob("*.jsonl"))
+    usd, rows, unpriced, read = 0.0, 0, 0, []
+    for path in runs:
+        for i, r in enumerate(_jsonl(path.read_text(encoding="utf-8"), path.name), 1):
+            where = f"{path.name}:{i}"
+            if "usd" not in r or "started_at" not in r:
+                raise SpendRecordError(f"{where}: an assembly line without usd or started_at")
+            if _month_of(str(r["started_at"]), where) != month:
+                continue
+            rows += 1
+            read.append(path.name)
+            cost = _usd(r["usd"], where, nullable=True)
+            if cost is None:
+                unpriced += 1
+            else:
+                usd += cost
+    return Bucket("pages", round(usd, 4), rows, "data/snapshots/assembly_runs/*.jsonl",
+                  "a build whose run file was not committed", unpriced=unpriced,
+                  note=f"{len(set(read))} of {len(runs)} run files carry a line in the month",
+                  sources_read=sorted(set(read)))
+
+
+def confirmations(snapshots: Path, month: str) -> Bucket:
+    """The seal-time confirmations: counted by ``drawn_at``, never priced — no cost is written."""
+    path = snapshots / "proposal_confirmations.jsonl"
+    rows = 0
+    if path.exists():
+        for i, r in enumerate(_jsonl(path.read_text(encoding="utf-8"), path.name), 1):
+            if _month_of(str(r.get("drawn_at")), f"{path.name}:{i}") == month:
+                rows += 1
+    return Bucket("confirmations", None, rows, f"data/snapshots/{path.name}",
+                  "every cost: a row carries no usd or usage, and a confirmation refused after "
+                  "its draws writes no row",
+                  note=("NOT RECORDED" if path.exists() else
+                        f"NOT RECORDED; no {path.name} is committed"))
+
+
+def is_ledger(path: Path) -> bool:
+    """A budget ledger's first line is its approval (`Budget.open`)."""
+    with path.open(encoding="utf-8") as f:
+        first = f.readline()
+    try:
+        row = json.loads(first)
+    except json.JSONDecodeError:
+        return False
+    return isinstance(row, dict) and "approval" in row
+
+
+def evals(ledgers: Iterable[Path], month: str) -> Bucket:
+    """The evals harness's budget ledgers, each draw dated by the latest timestamp above it."""
+    usd, rows, read, seen = 0.0, 0, [], set()
+    duplicates = 0
+    for path in sorted({p.resolve() for p in ledgers}):
+        text = path.read_text(encoding="utf-8")
+        digest = hashlib.sha256(text.encode()).hexdigest()
+        if digest in seen:
+            duplicates += 1
+            continue
+        seen.add(digest)
+        body = _jsonl(text, path.name)
+        if not body or "approval" not in body[0]:
+            raise SpendRecordError(f"{path}: not a budget ledger (its first line is no approval)")
+        stamp = str(body[0]["approval"].get("opened_at"))
+        in_month = False
+        for i, r in enumerate(body[1:], 2):
+            where = f"{path.name}:{i}"
+            start = r.get("build_start")
+            if isinstance(start, dict) and start.get("started_at"):
+                stamp = str(start["started_at"])
+            if "usd" not in r:
+                raise SpendRecordError(f"{where}: a ledger row without usd")
+            if _month_of(stamp, where) != month:
+                continue
+            in_month = True
+            cost = _usd(r["usd"], where)
+            assert cost is not None
+            usd += cost
+            rows += 1
+        if in_month:
+            read.append(path.name)
+    return Bucket("evals", round(usd, 4), rows, "budget ledgers passed to this run",
+                  "a ledger not passed here, or kept on another machine",
+                  note=(f"{len(read)} of {len(seen)} ledger(s) carry a row in the month"
+                        + (f"; {duplicates} byte-identical copy(ies) counted once"
+                           if duplicates else "")),
+                  sources_read=read)
+
+
+def theme_desk(repo: Path, month: str, ref: str = THEME_REF) -> Bucket:
+    """The theme desk's per-call rows, read from its state branch with `git show`."""
+    proc = subprocess.run(["git", "show", f"{ref}:{THEME_CALLS}"], cwd=repo,
+                          capture_output=True, text=True, timeout=60)
+    if proc.returncode:
+        return Bucket("theme desk", None, 0, f"{ref}:{THEME_CALLS}", _THEME_CANNOT,
+                      note=f"NOT READ: {proc.stderr.strip()[:160]} — fetch the branch "
+                           "(`git fetch origin theme-intelligence-state`)")
+    return theme_calls(proc.stdout, month, source=f"{ref}:{THEME_CALLS}")
+
+
+_THEME_CANNOT = "a local theme run not yet pushed to the state branch"
+
+
+def theme_calls(text: str, month: str, *, source: str) -> Bucket:
+    """The month's rows of an exported ``llm_calls.jsonl``: each row's ``payload`` (a JSON string)
+    carries ``at`` and ``cost_usd``. The desk's own rule (`pipeline.py`): a cache hit spends nothing
+    now; a live call with no cost is unpriced, counted apart and never as zero."""
+    usd, rows, cached, unpriced = 0.0, 0, 0, 0
+    for i, r in enumerate(_jsonl(text, THEME_CALLS), 1):
+        where = f"{THEME_CALLS}:{i}"
+        try:
+            call = json.loads(r["payload"]) if isinstance(r.get("payload"), str) else r
+        except json.JSONDecodeError as exc:
+            raise SpendRecordError(f"{where}: its payload is not JSON") from exc
+        if "cost_usd" not in call or "at" not in call:
+            raise SpendRecordError(f"{where}: a call row without cost_usd or at")
+        if _month_of(str(call["at"]), where) != month:
+            continue
+        rows += 1
+        cached += bool(call.get("cached"))
+        cost = _usd(call["cost_usd"], where, nullable=True)
+        if cost is not None:
+            usd += cost
+        elif not call.get("cached"):
+            unpriced += 1       # a cache hit with no cost spent nothing now; it is not unpriced
+    return Bucket("theme desk", round(usd, 4), rows, source, _THEME_CANNOT, unpriced=unpriced,
+                  note=f"{cached} of {rows} call row(s) served from its cache")
+
+
+def graph_judge(data_dir: Path, month: str) -> Bucket:
+    """The graph re-judge's one recorded run, from the committed coverage map."""
+    path = data_dir / "graph_coverage.json"
+    cannot = "an earlier re-judge (each run overwrites the last) and any `graph-coverage` run"
+    if not path.exists():
+        return Bucket("graph judge", None, 0, f"data/{path.name}", cannot,
+                      note=f"NOT READ: no {path.name}")
+    judged = json.loads(path.read_text(encoding="utf-8")).get("judged_by")
+    if not isinstance(judged, dict):
+        return Bucket("graph judge", 0.0, 0, f"data/{path.name}", cannot,
+                      note="no re-judge is recorded")
+    if f"{judged.get('on', '')}"[:7] != month:
+        return Bucket("graph judge", 0.0, 0, f"data/{path.name}", cannot,
+                      note=f"the recorded re-judge is dated {judged.get('on')}")
+    cost = _usd(judged.get("cost_usd"), f"{path.name}: judged_by")
+    return Bucket("graph judge", cost, 1, f"data/{path.name}", cannot,
+                  note=f"the re-judge of {judged.get('on')}, {judged.get('billed_calls')} "
+                       "billed call(s)")
+
+
+def validate_keys() -> Bucket:
+    return Bucket("validate-keys", None, 0, "none", "every run: a one-token billable ping per "
+                  "CI run is recorded nowhere", note="NOT RECORDED")
+
+
+def report(month: str, *, repo: Path, snapshots: Path, data_dir: Path,
+           ledgers: Sequence[Path], theme_ref: str = THEME_REF) -> list[Bucket]:
+    if len(month) != 7 or month[4] != "-" or not (month[:4] + month[5:]).isdigit():
+        raise SpendRecordError(f"--month {month!r}: expected YYYY-MM")
+    return [pages(snapshots, month), confirmations(snapshots, month), evals(ledgers, month),
+            theme_desk(repo, month, theme_ref), graph_judge(data_dir, month), validate_keys()]
+
+
+def render(month: str, buckets: Sequence[Bucket]) -> str:
+    lines = [f"spend report, {month} (UTC calendar month, list price) — reports, refuses nothing",
+             "", f"{'bucket':<14} {'usd':>10} {'rows':>6}  source"]
+    for b in buckets:
+        usd = "—" if b.usd is None else f"${b.usd:,.2f}"
+        lines.append(f"{b.name:<14} {usd:>10} {b.rows:>6}  {b.source}")
+        extra = [b.note] if b.note else []
+        if b.unpriced:
+            extra.append(f"{b.unpriced} row(s) unpriced, not counted as zero")
+        for x in extra:
+            lines.append(f"{'':<33}{x}")
+        lines.append(f"{'':<33}cannot see: {b.cannot_see}")
+    seen = [b for b in buckets if b.usd is not None]
+    blind = [b.name for b in buckets if b.usd is None]
+    total = sum(b.usd for b in seen if b.usd is not None)
+    lines += ["", f"total of the {len(seen)} bucket(s) read: ${total:,.2f}"
+              + (f" — NOT included: {', '.join(blind)}" if blind else "")]
+    return "\n".join(lines)
+
+
+def _ledgers(paths: Sequence[str], roots: Sequence[str]) -> list[Path]:
+    out = [Path(p) for p in paths]
+    for root in roots:
+        out += [p for p in sorted(Path(root).rglob("*.jsonl")) if is_ledger(p)]
+    return out
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    from vinci.config import get_config
+
+    p = argparse.ArgumentParser(prog="python -m vinci.spend", description=__doc__.split("\n")[0])
+    p.add_argument("--month", required=True, help="YYYY-MM (UTC)")
+    p.add_argument("--evals-ledger", action="append", default=[], help="a budget ledger file")
+    p.add_argument("--evals-root", action="append", default=[],
+                   help="every budget ledger (*.jsonl whose first line is an approval) under it")
+    p.add_argument("--theme-ref", default=THEME_REF)
+    p.add_argument("--json", action="store_true")
+    a = p.parse_args(argv)
+    cfg = get_config()
+    repo = Path(__file__).resolve().parents[1]
+    buckets = report(a.month, repo=repo, snapshots=cfg.snapshots_dir, data_dir=cfg.data_dir,
+                     ledgers=_ledgers(a.evals_ledger, a.evals_root), theme_ref=a.theme_ref)
+    if a.json:
+        print(json.dumps({"month": a.month, "buckets": [asdict(b) for b in buckets]}, indent=1))
+    else:
+        print(render(a.month, buckets))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
