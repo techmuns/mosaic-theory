@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-13
-prs: [1028, 1039, 1040, 1043, 1044, 1045, 1048, 1050]
+prs: [1028, 1039, 1040, 1043, 1044, 1045, 1048, 1049, 1050]
 supersedes:
 superseded-by:
 ---
@@ -41,6 +41,7 @@ superseded-by:
   - **#1043** (`c0b6a519`): the transcripts design, STATE row 61. Its body: "None: no fix-log ID moves".
   - **#1045** (`b73bd4ef`): the local-path guard reads the theme desk's committed logs and STATE.md.
   - **#1048** (`b207c8a9`): coordinator default 3, the replication rule as the default. It closed row 53 item (7) itself. Its body: "not a fix-request ID".
+  - **#1049** (`96d0cfea`, merged 2026-11-13 09:30Z): the anthropic SDK pinned at 2.6.0 with a hashed lock. It is coordinator default 7, not an ID, and its body has no bookkeeping section. It opened STATE row 62 itself (the shared venv still runs 0.112.0).
   - **#1044** (`12764514`): booked ahead in batch 7. Its bookkeeping section asked for RBC-D1's line, made here.
 - **The operator's four rulings of 2026-11-13**, below, carried into STATE §5.0:
   - **Rows 28 and 41:** a dated UPDATE each. The rebuild is the 10 active pages; VRRM is active with no rebuild; 15 pages go on watch with no paid rebuild. The unlock cells no longer ask for a watch page's re-export or rebuild.
@@ -97,9 +98,9 @@ The rest of issuecomment-6847522000 quotes further operator answers: no feature 
 - **Lints and the full gate:** in the PR.
 
 **BOUNDARY.**
-- **The PRs:** every first-parent commit on `origin/main` from batch 7's base `98707f29` through `0d8a2a43`, less batch 7 itself (#1047, `dad8f441`). These are #1043, #1039, #1040, #1045, #1044 and #1048, and #1050, which merged after this branch was cut from `b207c8a9` and was merged in. They were read on 2026-11-13.
-- **#1028** (`9fcd4a74`), merged 2026-11-13 09:24Z after this batch was first counted, is merged in with no conflict and booked (above), at the coordinator's request. Its correction that #956's fix is #1039 agrees with this batch's amendment on #956's record.
-- **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `9fcd4a74`, on 2026-11-13.
+- **The PRs:** every first-parent commit on `origin/main` from batch 7's base `98707f29` through `96d0cfea`, less batch 7 itself (#1047, `dad8f441`). These are #1043, #1039, #1040, #1045, #1044 and #1048, and then #1050, #1028 and #1049, which merged after this branch was cut from `b207c8a9` and were merged in. They were read on 2026-11-13.
+- **#1028** (`9fcd4a74`), merged 2026-11-13 09:24Z after this batch was first counted, is merged in with no conflict and booked (above), at the coordinator's request. **#1049** (`96d0cfea`) is merged in the same way and moves no ID. Its correction that #956's fix is #1039 agrees with this batch's amendment on #956's record.
+- **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `96d0cfea`, on 2026-11-13.
 - **The fail-first runs:** #1039's 4 nodes at `c0b6a519`, #1040's 34-node file at `f676616f` and #1050's 3 nodes at `b207c8a9`, on 2026-11-13.
 - **The page checks:** `mechanical.concentration.customers_listed` and the `next-fy` count, read from the 26 committed `data/dossiers/*/dossier.json` at `b207c8a9`.
 - **The coverage set:** B's table at main `12764514`, as the note states. Last costs are from #1041's record.
