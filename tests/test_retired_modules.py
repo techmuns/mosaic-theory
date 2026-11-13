@@ -20,6 +20,7 @@ Restore any of them from the commit before this PR's squash (see the record).
 from __future__ import annotations
 
 import ast
+import functools
 import importlib.util
 import inspect
 from pathlib import Path
@@ -41,6 +42,7 @@ def _module_of(path: Path) -> str:
     return ".".join(parts[:-1] if parts[-1] == "__init__" else parts)
 
 
+@functools.cache  # each parametrized case re-scans the same trees; parse each file once
 def imported_names(source: str, module: str, is_package: bool = False) -> list[tuple[int, str]]:
     """Every module name `source` imports, each as its full dotted name with its line: `import a.b`,
     `from a import b` (as `a` and `a.b`, since `b` may be a module), a relative `from . import b`
@@ -142,8 +144,8 @@ def test_vinci_rank_runs_on_the_committed_queue(tmp_path: Path, monkeypatch: pyt
     """END TO END, the command an operator runs: `vinci rank --no-write` over the committed
     snapshots. The first cut of this retirement left the summary line reading the removed cause
     map, and the name then resolved to `from __future__ import annotations`, so the command
-    crashed after ranking; no unit test reached the line. Every row it ranks carries the
-    retired slot's constant."""
+    crashed after ranking; no unit test reached the line. Every row of the committed queue it
+    re-ranks carries the retired slot's constant, and the removed flag is refused."""
     from vinci import cli
 
     snaps = ROOT / "data" / "snapshots"
@@ -159,3 +161,6 @@ def test_vinci_rank_runs_on_the_committed_queue(tmp_path: Path, monkeypatch: pyt
     assert (snaps / "ranked_queue.jsonl").stat().st_mtime_ns == before, "--no-write wrote"
     rows = [ln for ln in (snaps / "ranked_queue.jsonl").read_text().splitlines() if ln.strip()]
     assert rows and all('"cause_class":"unclassified"' in ln for ln in rows)
+    with pytest.raises(SystemExit):
+        cli.build_parser().parse_args(["rank", "--cause-file", "x.json"])
+    capsys.readouterr()
