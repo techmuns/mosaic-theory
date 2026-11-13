@@ -297,7 +297,10 @@ _INCLUDED = re.compile(r"\bincluded\b", re.I)
 #: label no lease, interest or tax (#956: a lease is not debt; accrued interest is not principal):
 #: A10 Networks' "Total deferred revenue 142,806 … Less: current portion ( 80,824 )" is revenue.
 _NOTE_NOT_DEBT = re.compile(r"\bleases?\b|\binterest\b|\btax", re.I)
-_OF = re.compile(r"\bof\b", re.I)
+#: The portion's OWN object: an "of" right after "current portion"/"current maturities" — never a
+#: modifier's ("Less: current maturities, net of unamortized discount and deferred financing costs
+#: ( 1,048 )", PARR's Q2 10-Q, whose "of" qualifies: Codex P1, round 1).
+_OBJECT = re.compile(r"current\s+(?:portion|maturities)\s+of\s+(.*)", re.I | re.S)
 
 
 def _note_subtracts_current(text: str) -> bool:
@@ -309,9 +312,9 @@ def _note_subtracts_current(text: str) -> bool:
             less = None  # a row's own ", less current maturities 19,779", not a subtraction
         if not (less or _INCLUDED.search(label)):
             continue  # a row's own label ("net of current portion 138,316"), not a subtraction
-        of = _OF.split(label, maxsplit=1)
-        if len(of) == 2:
-            other = not _BS_DEBT_WORD.search(of[1])
+        obj = _OBJECT.match(label)
+        if obj is not None:
+            other = not _BS_DEBT_WORD.search(obj[1])
         else:
             lo = text.rfind(". ", max(0, m.start() - 300), m.start())
             table = text[lo + 2 if lo != -1 else max(0, m.start() - 300):m.start()]

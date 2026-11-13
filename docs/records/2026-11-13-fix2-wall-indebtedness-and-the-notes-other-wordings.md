@@ -51,22 +51,31 @@ partial sum" contract leaking on a REAL sheet:
   deferred revenue 142,806"). The subject rule above is the fix.
 
 **HOW VERIFIED.**
-- **Fail first, on main `f676616f`** (`tests/test_wall_whole_debt_followup.py`, 28 tests): 4
-  fail on the defect each names, and 24 pass at both. The 4:
+- **Fail first, on main `f676616f`** (`tests/test_wall_whole_debt_followup.py`, 29 tests): 5
+  fail on the defect each names, and 24 pass at both. The 5:
   - `test_prgo_current_indebtedness_is_a_borrowing_row` (Perrigo's real sheet and Note 13; located
     $0.0);
   - `test_bs_neg_a_current_indebtedness_row_refuses_the_total` (it read 803.0);
   - `test_bs_neg_every_note_wording_of_a_folded_portion_refuses_the_total` (each wording, and
     round 0's lower-case, all-caps, spaced-colon and caption cases);
-  - `test_an_accrued_interest_on_notes_row_is_no_borrowing` (main refused the total).
+  - `test_an_accrued_interest_on_notes_row_is_no_borrowing` (main refused the total);
+  - `test_codex_round_1_a_modifier_of_is_not_the_portions_object` (below; it also fails on the PR's
+    first head `d3b99b31`).
 
   The 2 new positive pins pass at both, because they guard against over-refusal:
   - `test_aten_a_bare_current_portion_of_deferred_revenue_is_no_folded_debt` (A10's real text) failed
     first on this PR's own first widening, where it read no total;
   - `test_a_lease_or_an_interest_line_is_no_folded_debt_portion` (the lease, interest and tax lines
     stay out).
-- **Mutants: 10 of 10 killed.** Each guard was removed in turn: the indebtedness word, the
-  interest-on-notes lookbehind, the bare cell, the lettered footnote, the "included" form, the lower-case row skip, the table subject
+- **Codex, round 1 (P1):** PARR's Q2 10-Q (`0000821483-26-000014`, Note 11) subtracts "Less:
+  current maturities, net of unamortized discount and deferred financing costs ( 1,048 )". The
+  first head split the label on its first "of", so the object read "unamortized discount …". That
+  names no debt, so the guard skipped a real current portion of debt, and a sheet that did not list
+  it read a current portion of 0.0. Only an "of" right after "current portion" or "current
+  maturities" names the object now; a modifier's "of" leaves the label bare, and its table decides.
+  Re-run on the fixed code, the sweep and the real texts are unchanged.
+- **Mutants: 11 of 11 killed.** Each guard was removed in turn: the indebtedness word, the
+  interest-on-notes lookbehind, the object right after the label, the bare cell, the lettered footnote, the "included" form, the lower-case row skip, the table subject
   rule, the of-object rule, the no-swallow rule and the case-insensitive "less".
 - **Real texts, main against this code:** 33 normalized 10-Q/10-K texts, among them Werner's
   Q2/Q3, Microvast's, Amazon's, Alphabet's, Uber's, Perrigo's, PARR's and A10's.
@@ -91,7 +100,7 @@ partial sum" contract leaking on a REAL sheet:
     differs is `snapshots/extraction_versions.json`, the new vintage.
 
 **BOUNDARY.**
-- **Fail first and mutants:** `tests/test_wall_whole_debt_followup.py` (28 tests), against main
+- **Fail first and mutants:** `tests/test_wall_whole_debt_followup.py` (29 tests), against main
   `f676616f`'s `filing_sections.py`; the mutants are also scored on `tests/test_wall_part_of_the_debt.py`
   and `tests/test_filing_wall_and_concentration_roles.py`.
 - **Real texts:** the 33 normalized texts in the coordinator's review folder plus Perrigo's, read

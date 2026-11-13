@@ -569,3 +569,20 @@ def test_an_accrued_interest_on_notes_row_is_no_borrowing() -> None:
     assert _balance_sheet_debt(text) == (_WERN_DATE, 803.0, 0.0)
     w = _maturity_wall(text, "10-Q x")
     assert w is not None and w.state == "located" and w.within_12m_total == 0.0
+
+
+def test_codex_round_1_a_modifier_of_is_not_the_portions_object() -> None:
+    """(-) Codex P1 (round 1): PARR's Q2 10-Q (0000821483-26-000014, Note 11, verbatim wording)
+    subtracts "Less: current maturities, net of unamortized discount and deferred financing costs
+    ( 1,048 )". Its "of" qualifies the maturities; it is not what they are maturities OF. Split on
+    the first "of", the object read "unamortized discount …", which names no debt, so the guard
+    skipped a real current portion of debt. A sheet that does not list it then read a current
+    portion of 0.0, and Werner's figure located $0.0 beside $10.0M due. Only an "of" right after
+    "current portion" or "current maturities" names the object. CONSTRUCTED: the line's figure,
+    on Werner's sheet."""
+    line = ("Less: current maturities, net of unamortized discount and deferred financing costs "
+            "( 10,000 )")
+    text = _wern_noted(line)
+    assert _balance_sheet_debt(text) is None
+    w = _maturity_wall(text, "10-Q x")
+    assert w is not None and w.state == "not_stated", _k(w)
