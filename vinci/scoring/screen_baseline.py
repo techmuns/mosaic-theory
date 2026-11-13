@@ -312,6 +312,12 @@ def cohort_lines(c: Cohort, px: Closes, as_of: date) -> list[str]:
         f"- admitted {sides.count(True)} · rejected {sides.count(False)} · neither (not admitted, "
         f"not assessed) {sides.count(None)}",
     ]
+    # A RUN THE PRICES HAVE NOT REACHED (pr-feedback round 1): the next weekly run is committed
+    # before the cache holds its next session — its cohort says so, and the others still read
+    if not any(d > run.reference_date for d in px.sessions):
+        lines.append(f"- not yet priced — no session after {run.reference_date} is held (prices "
+                     f"held through {px.through})")
+        return lines
     for h in HORIZONS:
         r = read_horizon(run, px, h, as_of)
         if not r.passed:
@@ -338,10 +344,11 @@ def cohort_lines(c: Cohort, px: Closes, as_of: date) -> list[str]:
     return lines
 
 
-def report(repo: Path, cache_root: Path, as_of: date) -> str:
+def report(repo: Path, cache_root: Path, as_of: date, *, min_results: int = 3000) -> str:
     runs = committed_runs(repo)
     cs = cohorts(runs)
-    px = cached_closes(cache_root, min(c.run.reference_date for c in cs), as_of)
+    px = cached_closes(cache_root, min(c.run.reference_date for c in cs), as_of,
+                       min_results=min_results)
     out = [f"# Screen-basket baseline (paper, $0) — scored {as_of}, prices held through "
            f"{px.through}",
            f"_Pre-registered: `{RECORD}`. PRICE return, names and benchmarks alike; each cohort "

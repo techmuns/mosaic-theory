@@ -265,3 +265,22 @@ def test_a_non_positive_close_is_no_price() -> None:
     """A zero close in a cached response is no traded price: read as absent, never divided by."""
     c = sb.Closes((ENTRY,), {ENTRY: {"Z": 0.0, "P": 5.0}}, ENTRY)
     assert (c.close("Z", ENTRY), c.close("P", ENTRY)) == (None, 5.0)
+
+
+def test_a_run_beyond_the_prices_held_prints_as_not_yet_priced(tmp_path: Path) -> None:
+    """PR-FEEDBACK ROUND 1 (Codex at its usage limit; /code-review high). The next weekly run is
+    committed before the cache reaches it: its cohort prints as not yet priced, and every other
+    cohort still reads — one new run file must not stop the report. Driven through `report()`."""
+    adm, rej, _n = _real_rows()
+    late = {**adm, "reference_date": "2026-10-30"}
+    late_rej = {**rej, "reference_date": "2026-10-30"}
+    repo = _repo(tmp_path, {
+        "2026-08-12-01": [_as(adm, "ADM"), _as(rej, "REJ")],
+        "2026-10-30-01": [_as(late, "LAT", run_id="2026-10-30-01"),
+                          _as(late_rej, "LRJ", run_id="2026-10-30-01")]})
+    days = _days(REF, 40)                       # held through 2026-10-06 or so
+    cache = _cache(tmp_path, _flat(days, ADM=10.0, REJ=10.0, IWM=100.0, MDY=100.0))
+    md = sb.report(repo, cache, date(2026, 11, 13), min_results=1)
+    assert "## 2026-08-12" in md and "1. control, admitted − rejected" in md
+    late_block = md[md.index("## 2026-10-30"):]
+    assert "not yet priced" in late_block and "control" not in late_block
