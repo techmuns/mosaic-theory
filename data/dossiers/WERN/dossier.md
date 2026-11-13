@@ -1,6 +1,6 @@
 # Dossier — WERNER ENTERPRISES INC (Nasdaq: WERN)
 
-_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-10.driver-text-filed_
+_September 17, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-11-12.transcript-runs-cut-to-twelve-words_
 
 # Brief — first cut
 
@@ -88,7 +88,7 @@ _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
 - Consensus EBITDA is guided to rise from LTM $342M to FY26E $433.6M and FY27E $535.5M, implying a forward NTM multiple of 6.49x well below the trailing 8.3x — the level the market prices is on a recovering, not flat, EBITDA base. [10]
-- Management reports adjusted One-Way Truckload OI margins improved over 700 basis points year-over-year on upper-single- to double-digit contractual bid increases, a pricing-and-restructuring mechanism behind the operating inflection. [11]
+- Management reports adjusted One-Way Truckload OI margins improved over 700 basis points year… on upper-single- to double-digit contractual bid increases, a pricing-and-restructuring mechanism behind the operating inflection. [11]
 - The FirstFleet acquisition drove TTS segment revenue up 35.7% ($184.9M) in Q2 2026, a mechanism grounding the top-line re-acceleration in an identified, dated operating driver rather than a bare multiple. [12]
 _Bear case — the decline is real:_
 - The name's own credit-health scores (Overall/Operational/Solvency/Liquidity 4/4/4/3, weaker on every leg) sit below the peer-median 2.5/2.5/2.5/2.5 — a genuine relative-quality deficit that helps explain part of the peer discount as EARNED. [13]
@@ -198,7 +198,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ### Bull case — the decline is overdone
 - Consensus EBITDA is guided to rise from LTM $342M to FY26E $433.6M and FY27E $535.5M, implying a forward NTM multiple of 6.49x well below the trailing 8.3x — the level the market prices is on a recovering, not flat, EBITDA base. [10]
-- Management reports adjusted One-Way Truckload OI margins improved over 700 basis points year-over-year on upper-single- to double-digit contractual bid increases, a pricing-and-restructuring mechanism behind the operating inflection. [11]
+- Management reports adjusted One-Way Truckload OI margins improved over 700 basis points year… on upper-single- to double-digit contractual bid increases, a pricing-and-restructuring mechanism behind the operating inflection. [11]
 - The FirstFleet acquisition drove TTS segment revenue up 35.7% ($184.9M) in Q2 2026, a mechanism grounding the top-line re-acceleration in an identified, dated operating driver rather than a bare multiple. [12]
 - Absolute LTM revenue has re-accelerated to $3,252M with same-quarter revenue +22.8% YoY, so the falling margin % masks a rising top line rather than a shrinking business. [35]
 - On the earned-vs-residual decomposition the name's revenue growth is 10% vs peer-median 4% while its EBITDA margin (10% vs 13%) and leverage (Debt/EBITDA 2.4 vs 1.0) are worse — posing whether the discount is a value trap on margin/leverage or an overshoot given superior top-line, a question for the human. [36]
@@ -700,6 +700,7 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm_
   - 2026-11-09 · mechanical.concentration — ciq-reread at 2026-11-09.order2-pages
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
+  - 2026-11-12 · synthesis — transcript-run-cut at 2026-11-12.transcript-runs-cut-to-twelve-words
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 30d old — 2026-08-18 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 35d old (2026-08-13, valuation.implied_expectations.multiples_as_of) — within the ceiling

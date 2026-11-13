@@ -32,13 +32,21 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import sys
 import time
 import traceback
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 _READS: dict[str, dict[str, Any]] = {}
+
+#: Set by the parent unless ``--allow-vendor-pulls``: a price vendor's response the cache lacks is
+#: refused, never fetched — "no Polygon or Tiingo bulk pulls without asking" (coordinator,
+#: 2026-11-11). SEC misses are still fetched, through the paced client.
+NO_VENDOR_PULLS = "IMPACT_NO_VENDOR_PULLS"
+VENDOR_HOSTS = frozenset({"api.polygon.io", "api.tiingo.com"})
 
 
 def _sha(text: str) -> str:
@@ -66,6 +74,10 @@ def freeze_cache() -> None:
         return text
 
     def logged_fetch(self: Any, url: str, **kw: Any) -> str:
+        host = urlsplit(url).hostname or ""
+        if os.environ.get(NO_VENDOR_PULLS) and host in VENDOR_HOSTS:
+            raise RuntimeError(f"not in the cache, and a {host} pull is the operator's call "
+                               f"(coordinator, 2026-11-11): {url}")
         text: str = fetch(self, url, **kw)
         _READS[url] = {"sha256": _sha(text), "live": True, "file": where(self, url)}
         return text
@@ -133,6 +145,10 @@ def _step(out: Path, name: str, timings: dict[str, float], fn: Any) -> Any:
         timings[name] = round(time.monotonic() - t0, 2)
 
 
+def utc_day() -> str:
+    return time.strftime("%Y-%m-%d", time.gmtime())
+
+
 def _side_file(path: Path, obj: Any) -> None:
     """A page side's own record (request, reads, timing) — never the page, which is saved through
     `dossier_json` (``built.json``)."""
@@ -147,6 +163,7 @@ def page(ticker: str, out: Path, *, capture: Any, requests: bool, committed: boo
 
     out.mkdir(parents=True, exist_ok=True)
     _READS.clear()
+    first_day = utc_day()
     cfg = Config()
     timings: dict[str, float] = {}
     root = cfg.data_dir / "dossiers"
@@ -171,7 +188,7 @@ def page(ticker: str, out: Path, *, capture: Any, requests: bool, committed: boo
             doc = json.loads(dossier_json(built))
             doc["mechanical"] = json.loads(
                 assemble._mark_material(built.mechanical).model_dump_json())
-            model = getattr(cfg, "graph_llm_model", None) or capture.DEFAULT_MODEL
+            model = getattr(cfg, "graph_llm_model", None) or capture.production_model()
             from vinci.dossier.synthesis import SYNTHESIS_DRAWS
 
             calls = capture.capture_calls(doc, transcript_for_synthesis(bundle), model=model,
@@ -185,6 +202,9 @@ def page(ticker: str, out: Path, *, capture: Any, requests: bool, committed: boo
                             card=assemble._read_scenario_card(ticker), dossiers_root=root),
             encoding="utf-8"))
     _side_file(out / "reads.json", _READS)
+    # every UTC day the steps ran across: the build stamps today's date on the page
+    # (`run.build_days`), so two sides compare only when built within one and the same day
+    _side_file(out / "clock.json", {"utc_days": sorted({first_day, utc_day()})})
     _side_file(out / "timing.json", timings)
 
 

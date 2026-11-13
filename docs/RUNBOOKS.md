@@ -551,8 +551,9 @@ spread will ever carry. That holds once `R-VRRM-screen2-20260617` is in the comm
    a minute makes it a multi-hour run.
 
    Do NOT run it in the primary itself. `bin/commit` (step 6) refuses unstaged or untracked files,
-   and the primary carries some (a modified `.claude/launch.json`, `pr*-review-fixes.patch`). Never
-   `git stash` them: the stash is shared across every worktree. From the primary:
+   and the primary carries some (`pr*-review-fixes.patch`; its `.claude/launch.json` no longer
+   counts, git-ignored since 2026-11-12). Never `git stash` them: the stash is shared across every
+   worktree. From the primary:
 
    ```
    git fetch origin main
@@ -687,11 +688,14 @@ first"** — no prompt change or paid rebuild ships unmeasured.
 
 1. **Declare the TARGET in the PR before any draw** — one deterministic metric (`M-LABEL`; a
    material-direction change targets `M-SIGN` on NFLX, the page where it fires), or a judged class
-   once a judge passes its bar (record §9). The record's R2 named `M-LABEL` on the panel; `M-GAP`
-   joined it after meeting its pre-registered bar on fresh gold (step 7;
-   `docs/records/2026-11-09-m-gap-gold-and-metric.md`), and #927's registration targeted it
-   (`docs/records/2026-11-09-fix4a-measured-on-the-panel.md`). The LLM judge FAILED its bar on
-   TEST (PR 2: kappa 0.23), so no judged class can be a target or a gate.
+   once a judge passes its bar (record §9). The record's R2 names `M-LABEL` on the panel. `M-GAP`
+   met its pre-registered bar on fresh gold (step 7; `docs/records/2026-11-09-m-gap-gold-and-
+   metric.md`) and #927's registration targeted it, but it is **barred as a target since fix
+   request 2, order 8 (RG-D13, operator 2026-11-11: "Bar it now")**: its truth is the gap types the
+   candidate's own code wrote, so it measures compliance, not fidelity. It is scored and printed,
+   and no decision reads it, until an independent coding of the gap types exists
+   (`docs/records/2026-11-11-fix2-order8-the-evaluation-harness.md`). The LLM judge FAILED its bar
+   on TEST (PR 2: kappa 0.23), so no judged class can be a target or a gate.
 2. **$0 first.** `python -m vinci.evals panel` (the rule still yields the frozen six), then
    `python -m vinci.evals compare --base origin/main --cand <branch> [--transform NAME]` (its
    capture child holds no key and no network): every
@@ -720,6 +724,47 @@ first"** — no prompt change or paid rebuild ships unmeasured.
    drawn ONCE:** `run-compare` refuses a sha the ledger already records, and a capture whose bytes
    differ from the registered ones. A stopped run is reported as stopped; drawing again needs a
    NEW registration, said so in the record. The cap is the approval's, never one run's.
+   **Since fix request 2, order 8 (2026-11-11):**
+   - **Register from a checkout of the FIXED SCORER** (RG-D12): BASE's PRODUCTION files
+     (`compare.PRODUCTION_SCORER_FILES`) under `origin/main`'s HARNESS at registration
+     (`HARNESS_SCORER_FILES`), recorded as `scorer_ref`. For a prospective change BASE is main, so
+     that is a checkout of `origin/main`. For a retrospective one whose BASE's production files
+     differ from main's (#953's do, all of them), it is a COMPOSITE checkout: BASE checked out,
+     then `git checkout origin/main -- vinci/evals docs/evals tests/fixtures/synthesis_gold`;
+     a plain checkout of `origin/main` is refused. `register`, `run-compare` and `score` (and
+     the library's `run_compare` and `score_run`, since #1030's review round 1) refuse any other
+     scorer: a candidate never scores itself.
+   - **A retrospective of a merged change** (fresh builds, not the frozen page): `register
+     --from-impact <an impact export>` reads the export's two commits, each page's two requests
+     and the layers they carried, every file checked against its manifest's sha256; `run-compare`
+     draws those bytes, and `score` scores each arm against its own layer.
+   - **The registration's row goes to main first.** `register` / `register-run` append a row to
+     `docs/evals/registrations.jsonl`. Merge it in a docs-only PR; `run-compare`, `run`, `score`
+     and `score-run` refuse a registration `origin/main` does not hold (fetch after the merge), so
+     main's history shows it registered before its draws (RG-D14).
+   - **A DESIGN is drawn once across approvals** (RG-D9; since #1030's review round 1). Each paid
+     draw, and the judge's TEST read, is a row of the same index. Every `registered` row carries
+     its design key (`compare.draw_key`, `builds.draw_key`: the design fields, never the words or
+     a path's spelling), so the same design re-registered under a second approval with a new
+     `--note` is refused once the first has drawn. A replication names the run it replicates, so
+     it is a design of its own, drawn once too. Commit the `drawn` rows with the run's record.
+     Since #1030's review round 2:
+     - **The index derives every row from the registration**, and the draw derives it again:
+       a row that disagrees is refused.
+     - **One design has one spelling.** Pages, targets and gated families given in another order
+       are the same design, and a target given twice is refused.
+     - **One set of request bytes is drawn once across approvals** (operator 2026-11-12: "Refuse
+       by request pins"). A registration whose every request pin another registration already
+       drew is refused, whatever its design, harness commit or kind. The run a replication
+       replicates is the one exemption.
+     - **The judge's TEST read is claimed by `judge.run_half` itself.**
+     - **Two checkouts can still each draw a twin** before either `drawn` row reaches main (an
+       accepted risk). So one agent runs every paid panel, one at a time, announced on #1004
+       first.
+   - **M-GAP is never a target** (RG-D13, until an independent coding of the gap types exists):
+     it is scored and printed, and no decision reads it.
+   - **Six pages are held out** (`vinci/evals/held_out_pages.json`, by a fixed rule): they are
+     never used to build or tune a metric.
    **The replication rule** (coordinator, 2026-11-07): `register --ship-alpha 0.01` — a first run
    ships at p_lower ≤ 0.01; in (0.01, 0.05] its score decides "replication required", and it
    counts only if `register --replicates <first> --budget-ledger <the same ledger>` (the same
@@ -776,8 +821,15 @@ inputs, at $0 (no model call). Code: `vinci/impact/`; record:
    whatever its age, a miss fetched once and named in the report. **A cold cache is
    network-bound** — the machine's 8/3-a-second share of SEC's budget — and a warm one is not
    (the record gives both wall times). A page side built before with the same code, inputs and
-   store is reused from `~/.cache/vinci/impact-builds/` once every response it read is checked
-   unchanged, so main's side is built once per main commit. `--resume` continues a run of the
+   store ON THE SAME UTC DAY is reused from `~/.cache/vinci/impact-builds/` once every response
+   it read is checked unchanged, so main's side is built once per main commit per day. **The day
+   is an input:** a build stamps today's UTC date on the page (`as_filed_by`), and it reaches the
+   synthesis request. A page whose two sides were not built within one UTC day has its off-day
+   side re-built once; if it still is not, it is set apart as run noise, never counted as a move
+   (#984's sweep run moved 5 pages on the date alone). `--allow-vendor-pulls` lets a Polygon or
+   Tiingo response the cache lacks be fetched; by default it is refused, since a vendor pull is
+   the operator's call. `--skip-fail-first` leaves part 1 out (a sweep of merged PRs), and the
+   section says so. `--resume` continues a run of the
    same base, head and store; `--theme-data <a theme-intelligence data dir>` lets the theme desk
    consumer run; `--run-screen` lets the screen run (slow).
    **Base is the MERGE BASE** of `--base` and head, never main's tip: a tip the branch has not

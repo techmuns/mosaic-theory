@@ -222,3 +222,14 @@ def test_an_identical_tally_in_another_order_is_not_a_lean_move(tmp_path: Path,
     rows += [("NFLX", "CAND", r, "tool_use") for r in (b, m, b, m, x)]
     s = cm.score_run(_rows(tmp_path / "r", rows, _reg()), _reg(), pages={"NFLX": nflx})
     assert not any("lean moved" in r for r in s.reasons), s.reasons
+
+
+@pytest.fixture(autouse=True)
+def _scorer_is_the_fingerprint(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These tests pin the harness's other rules under placeholder refs or old commits. Since
+    #1030's review round 1 the library runs RG-D12 whole (BASE's production files, the harness
+    at `scorer_ref`), which no such ref holds; it is stood in by the fingerprint comparison
+    these tests were written against (`tests/evals_scorer_stub.py`). RG-D12's own pins are in
+    `tests/test_evals_order8.py` and `tests/test_evals_order8_round1.py`."""
+    from tests.evals_scorer_stub import fingerprint_only
+    monkeypatch.setattr(cm, "refuse_unless_registered_scorer", fingerprint_only)

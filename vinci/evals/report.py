@@ -64,10 +64,26 @@ def fired_on_gold(gold: list[gd.GoldClaim], *, ref: str = GOLD_REF,
     return out
 
 
+#: The harness's held-out pages (`held_out_pages.json`): never used to build or tune a metric.
+HELD_OUT_FILE = Path(__file__).with_name("held_out_pages.json")
+
+
+def held_out_pages() -> list[str]:
+    pages: list[str] = json.loads(HELD_OUT_FILE.read_text(encoding="utf-8"))["pages"]
+    return pages
+
+
 def gold_report() -> str:
-    gold = gd.load_gold()
+    """Each metric's precision and recall on the gold, DEV and TEST — WITHOUT the held-out pages'
+    claims (B's check of order 8, gap 5): this is the command a metric change re-runs (RUNBOOKS §n
+    step 7), so a held-out page scored here would be a page a metric was tuned on."""
+    whole = gd.load_gold()
+    held = set(held_out_pages())
+    gold = [g for g in whole if g.page not in held]
     fired = fired_on_gold(gold)
-    lines = [json.dumps(gd.summary(gold)), f"pages read at the gold freeze {GOLD_REF[:12]}"]
+    lines = [json.dumps(gd.summary(whole)), f"pages read at the gold freeze {GOLD_REF[:12]}",
+             f"held out, never scored here: {sorted(held)} — {len(whole) - len(gold)} claims "
+             f"({sorted({g.half for g in whole if g.page in held})})"]
     if moved := living_drift(sorted({g.page for g in gold})):
         lines.append(f"NOTE: the living pages of {moved} have moved since; the gold scores the "
                      "frozen ones")

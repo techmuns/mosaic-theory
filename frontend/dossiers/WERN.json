@@ -10151,7 +10151,7 @@
         "cited": true
       },
       {
-        "claim": "Management reports adjusted One-Way Truckload OI margins improved over 700 basis points year-over-year on upper-single- to double-digit contractual bid increases, a pricing-and-restructuring mechanism behind the operating inflection.",
+        "claim": "Management reports adjusted One-Way Truckload OI margins improved over 700 basis points year… on upper-single- to double-digit contractual bid increases, a pricing-and-restructuring mechanism behind the operating inflection.",
         "source_ref": "CIQ transcript: Werner Enterprises, Inc., Q2 2026 Earnings Call, Jul 28, 2026.rtf",
         "cited": true
       },
@@ -14828,6 +14828,14 @@
       "writer": "driver-facts-pass",
       "layers": [
         "mechanical.operating_drivers"
+      ]
+    },
+    {
+      "date": "2026-11-12",
+      "extraction_version": "2026-11-12.transcript-runs-cut-to-twelve-words",
+      "writer": "transcript-run-cut",
+      "layers": [
+        "synthesis"
       ]
     }
   ],

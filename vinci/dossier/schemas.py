@@ -2033,7 +2033,10 @@ class StatementReconciliation(BaseModel, frozen=True):
     (2026-10-26) — what the data-quality scorecard's `revenue_vs_xbrl` and `ocf_vs_xbrl` read."""
 
     rows: list[StatementReconRow]
-    as_filed_by: str                          # ISO — the facts as filed by this date
+    #: ISO — the latest filing date of the filings the rows name (each row's `accession`; a
+    #: composed LTM names its year-to-date's); None when no row has one. Never the build's own day
+    #: (operator ruling 2, 2026-11-12: it reached the synthesis request)
+    as_filed_by: str | None
     source_ref: str
 
 
@@ -3282,7 +3285,8 @@ class PriceStoreStamp(BaseModel):
 #: The writers that change a committed page WITHOUT re-assembling it. Each one records itself in
 #: `Dossier.layer_refreshes`; a full assembly writes a fresh page and carries none forward.
 LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                         "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass")
+                         "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass",
+                         "transcript-run-cut")
 
 
 class LayerRefresh(BaseModel):
@@ -3305,7 +3309,10 @@ class LayerRefresh(BaseModel):
     date: str                       # ISO date (UTC) the writer ran
     extraction_version: str         # the declared extraction version current when it ran
     writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
-                    "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass"]
+                    "anchor-retag", "ciq-reread", "caveat-reword", "driver-facts-pass",
+                    # (2026-11-11) the $0 cut of a synthesis string's copied transcript run to 12
+                    # words and "…" (`transcript_run_pass`; operator: "$0 guard + redaction now")
+                    "transcript-run-cut"]
     layers: list[str]
 
     model_config = {"frozen": True}

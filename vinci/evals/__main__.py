@@ -88,8 +88,14 @@ def _run(a: argparse.Namespace) -> int:
         _paid(a)     # prints the refusal to spend
         return 2
     _paid(a)         # loads the key from the local env
+    from vinci.evals import registry
+    registry.require_on_main(reg.sha)   # RG-D14: drawn only once main holds the registration
+    approval = registry.approval_id(a.budget_ledger)
+
+    def claim() -> object:   # RG-D9: called by run_build after its $0 checks, under its lock
+        return registry.claim_draw(reg, approval=approval, unit=f"{a.ticker}:{a.build}")
     raws = bd.run_build(reg, a.ticker, a.build, budget=budget, draws_out=a.draws_out,
-                        ciq_root=ciq_root)
+                        ciq_root=ciq_root, claim=claim)
     start, end = (bd.build_row(budget, reg, k, a.ticker, a.build)
                   for k in ("build_start", "build_end"))
     gap = "first build" if start["gap_s"] is None else f"{start['gap_s']:.0f}s after the last"
@@ -109,8 +115,9 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--approval", required=True)
     for name in ("compare", "register"):
         c = sub.add_parser(name)
-        c.add_argument("--base", required=True)
-        c.add_argument("--cand", required=True)
+        # register --from-impact reads its two commits from the export (both may be omitted)
+        c.add_argument("--base", required=name == "compare")
+        c.add_argument("--cand", required=name == "compare")
         c.add_argument("--transform", action="append", default=[])
         c.add_argument("--ciq-root", type=Path,
                        help="the CIQ folders transcripts and comps exports are read from "
@@ -137,6 +144,9 @@ def main(argv: list[str] | None = None) -> int:
                            help="with --replicates: the approval's ledger, which records the "
                                 "first run and its ledger-backed score")
             c.add_argument("--draws", type=int, default=5)
+            c.add_argument("--from-impact", type=Path, metavar="EXPORT",
+                           help="register an impact run's captured requests and layers (fresh "
+                                "builds at each arm's code), never a replay of the frozen page")
             c.add_argument("--out", required=True, type=Path)
     rc = sub.add_parser("run-compare")
     rc.add_argument("--registration", required=True, type=Path)
@@ -181,6 +191,8 @@ def main(argv: list[str] | None = None) -> int:
                     help="the CIQ folders transcripts and comps exports are read from "
                          "(default: the assembler's copy)")
     rr.add_argument("--note")
+    rr.add_argument("--budget-ledger", required=True, type=Path,
+                    help="the approval that may draw this registration (bound in the index)")
     rr.add_argument("--out", required=True, type=Path)
     sr = sub.add_parser("score-run")
     sr.add_argument("--registration", required=True, type=Path)
@@ -213,12 +225,44 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "register":
         from vinci.evals import compare as cm
+        from vinci.evals import registry
         rp.refuse_inside_repo(a.out, "the registration")
         if a.out.exists():
             raise rp.ReplayError(f"{a.out} exists: a registration is written once")
-        pages = cm.registered_pages(a.ticker)
-        cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform,
-                                  ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
+        # THE APPROVAL FIRST (#1030 review round 1, item 7): refused after the file was written,
+        # the file left behind blocked the retry
+        if a.budget_ledger is None:
+            raise rp.ReplayError("register needs --budget-ledger: a registration is bound to the "
+                                 "approval that may draw it (open it first: budget-open)")
+        approval = registry.approval_id(a.budget_ledger)
+        from vinci.evals.builds import _resolve
+        if a.from_impact is not None:   # the impact run's fresh captures, read as captured
+            if a.transform:
+                raise rp.ReplayError("--transform: an impact export's requests were built by "
+                                     "each arm's own code; there is nothing to transform")
+            if a.ticker:
+                raise rp.ReplayError("--ticker: an impact export is registered with the pages "
+                                     "it captured; none is chosen or dropped")
+            cap = cm.captured_from_impact(a.from_impact)
+            for given, got in ((a.base, cap.base_ref), (a.cand, cap.cand_ref)):
+                if given is not None and _resolve(given) != got:
+                    raise rp.ReplayError(f"{given}: the export's commits are {cap.base_ref[:12]}"
+                                         f" and {cap.cand_ref[:12]}")
+            a.base, a.cand = cap.base_ref, cap.cand_ref
+            p = rp.load_panel_file()
+            pages_of = [t for t, cond in cap.requests if cond == "BASE"]
+            a.ticker = None if set(pages_of) == set(p["panel"]) else pages_of
+        elif a.base is None or a.cand is None:
+            raise rp.ReplayError("register needs --base and --cand, or --from-impact")
+        else:
+            # PINNED TO COMMITS (review round 0): RG-D14's own merge moves main between
+            # registering and drawing, so a ref recorded as given would be read at a moved main
+            a.base, a.cand = _resolve(a.base), _resolve(a.cand)
+        scorer, scorer_ref = cm.fixed_scorer(a.base)   # RG-D12: BASE production, main harness
+        if a.from_impact is None:
+            pages = cm.registered_pages(a.ticker)
+            cap = cm.compare_requests(a.base, a.cand, tickers=pages, transforms=a.transform,
+                                      ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
         cm.refuse_if_unreached(cap)
         first = (cm.Registration.from_json(a.replicates.read_text(encoding="utf-8"))
                  if a.replicates else None)
@@ -229,7 +273,15 @@ def main(argv: list[str] | None = None) -> int:
                           no_worsening_families={
                               m: f.split(",") for m, _, f in
                               (x.partition("=") for x in a.no_worsening_families)})
+        if reg.scorer != scorer:
+            raise rp.ReplayError(f"the scorer registered ({reg.scorer[:12]}) is not the fixed "
+                                 f"scorer ({scorer[:12]}) at {scorer_ref[:12]}")
+        import dataclasses
+        reg = dataclasses.replace(reg, scorer_ref=scorer_ref)
         cm.write_registration(reg, a.out)
+        registry.record_registered(reg, approval=approval)   # its key derived from it (round 2)
+        print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
+              "any draw (RG-D14)")
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
               f"{list(reg.held_out) or 'none'} -> {a.out}")
@@ -245,8 +297,12 @@ def main(argv: list[str] | None = None) -> int:
             budget = rp.Budget.load(a.budget_ledger, cap_usd=a.cap)
         else:
             base, cand, transforms, tickers = a.base, a.cand, tuple(a.transform), a.ticker
-        cap = cm.compare_requests(base, cand, tickers=tickers, transforms=transforms,
-                                  ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
+        imp = run.inputs.get("impact") if run is not None else None
+        if imp:   # an impact registration: the exported bytes, checked, never a replay
+            cap = cm.captured_from_impact(Path(imp["dir"]))   # its manifest: run_compare's check
+        else:
+            cap = cm.compare_requests(base, cand, tickers=tickers, transforms=transforms,
+                                      ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT)
         for d in cap.diffs:
             delta = {k: d.cand_sizes.get(k, 0) - v for k, v in d.base_sizes.items()
                      if d.cand_sizes.get(k, 0) != v}
@@ -260,7 +316,14 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if not _paid(a):
             return 2
-        cm.run_compare(cap, budget=budget, out_dir=a.out_dir, registration=run)
+        cm.refuse_unless_registered_scorer(run)   # RG-D12: the fixed scorer, never the candidate's
+        from vinci.evals import registry
+        registry.require_on_main(run.sha)   # RG-D14: drawn only once main holds the registration
+        approval = registry.approval_id(a.budget_ledger)
+
+        def claim() -> object:   # RG-D9: called by run_compare after its $0 refusals
+            return registry.claim_draw(run, approval=approval)
+        cm.run_compare(cap, budget=budget, out_dir=a.out_dir, registration=run, claim=claim)
         print(f"drawn; the approval's spend is now ${budget.spent():.4f} of "
               f"${budget.cap_usd:.2f}; score with `python -m vinci.evals score --out-dir "
               f"{a.out_dir} --registration {a.registration} --budget-ledger {a.budget_ledger}`")
@@ -271,11 +334,16 @@ def main(argv: list[str] | None = None) -> int:
         rp.refuse_inside_repo(a.out, "the registration")
         if a.out.exists():
             raise rp.ReplayError(f"{a.out} exists: a registration is written once")
+        from vinci.evals import registry
+        approval = registry.approval_id(a.budget_ledger)   # the approval first (round 1, item 7)
         breg = bd.register_run(code_ref=a.code_ref, pages=cm.registered_pages(a.ticker),
                                transforms=a.transform, draws=a.draws, builds=a.builds,
                                min_gap_s=a.min_gap_s, ciq_root=a.ciq_root or rp.DEFAULT_CIQ_ROOT,
                                note=a.note)
         bd.write_registration(breg, a.out)
+        registry.record_registered(breg, approval=approval)   # its key derived from it (round 2)
+        print(f"indexed in {registry.INDEX}: merge that row to main in a docs-only PR before "
+              "any draw (RG-D14)")
         print(f"registered {breg.sha[:16]}: pages {list(breg.pages)}, {breg.builds} builds of "
               f"{breg.draws} draws a page, at least {breg.min_gap_s:.0f}s between a page's "
               f"builds, code {breg.code_ref[:12]}, transforms {list(breg.transforms)} -> {a.out}")
@@ -286,6 +354,8 @@ def main(argv: list[str] | None = None) -> int:
         from vinci.evals import builds as bd
         from vinci.evals import independence as ind
         breg = bd.RunRegistration.from_json(a.registration.read_text(encoding="utf-8"))
+        from vinci.evals import registry
+        registry.require_on_main(breg.sha)   # RG-D14: scored only as main holds it registered
         res = ind.score(breg, rp.Budget.load(a.budget_ledger), a.draws_out)
         print(ind.score_text(res))
         # every STOP exits 1, NOT TESTABLE included (Codex round 1, #978), so no gate reads past it
@@ -293,6 +363,9 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "score":
         from vinci.evals import compare as cm
         reg = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
+        cm.refuse_unless_registered_scorer(reg)   # RG-D12: the fixed scorer, never the candidate's
+        from vinci.evals import registry
+        registry.require_on_main(reg.sha)   # RG-D14: scored only as main holds it registered
         print(cm.score_text(cm.score_run(a.out_dir, reg, ledger=a.budget_ledger)))
         return 0
     if a.cmd in ("capture", "prove"):
@@ -327,6 +400,7 @@ def main(argv: list[str] | None = None) -> int:
         if not _paid(a):
             return 2
         gold = gd.load_gold()
+        # RG-D9's TEST-once across approvals is claimed by run_half itself (#1030 round 2, F5)
         judged = jg.run_half(a.half, budget=budget, out_dir=a.out_dir, gold=gold,
                              tickers=a.ticker)
         print(jg.calibration_text(jg.calibrate(judged, gold, a.half, tickers=a.ticker)))

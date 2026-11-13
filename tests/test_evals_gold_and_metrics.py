@@ -8,6 +8,7 @@ facts have not moved since the freeze (design record `2026-11-06-synthesis-eval-
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import subprocess
@@ -66,6 +67,12 @@ def test_a_disagreement_without_adjudication_is_refused(tmp_path: Path) -> None:
         shutil.copy(f, tmp_path / f.name)
     lines = (tmp_path / "adjudicated.jsonl").read_text(encoding="utf-8").splitlines()
     (tmp_path / "adjudicated.jsonl").write_text("\n".join(lines[1:]) + "\n", encoding="utf-8")
+    # the copy's manifest is re-hashed, so the load reaches the adjudication check (RG-D11: an
+    # edited gold is otherwise refused first, by its hash)
+    m = json.loads((tmp_path / "MANIFEST.json").read_text(encoding="utf-8"))
+    m["source_sha256"]["adjudicated.jsonl"] = hashlib.sha256(
+        (tmp_path / "adjudicated.jsonl").read_bytes()).hexdigest()
+    (tmp_path / "MANIFEST.json").write_text(json.dumps(m), encoding="utf-8")
     with pytest.raises(ValueError, match="no adjudication"):
         gd.load_gold(tmp_path)
 

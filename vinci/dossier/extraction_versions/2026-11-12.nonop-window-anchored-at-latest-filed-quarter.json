@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-12.nonop-window-anchored-at-latest-filed-quarter",
+  "follows": [
+    "2026-11-12.price-stale-note-counts-from-reference-date"
+  ],
+  "names": "the non-operating window's trailing four quarters end at the filer's latest filed quarter (the newest period a 10-Q or 10-K states as its own, as filed by the page's price date), a quarter of them that cannot be read leaving the window short, never replaced; a window ending MORE than one quarter before that quarter is FLAGGED, never refused — 'STALE: the window ends <end>, N quarters before the filer's latest filed quarter <date>, which has no <totals> filed or derivable' — in the count's cite, the prose and a 'nonoperating:' QA flag; where none of the four can be read the window falls back to the newest readable quarter and its four, flagged (STATE row 51 (2), coordinator default under the operator's delegation, 2026-11-12)"
+}

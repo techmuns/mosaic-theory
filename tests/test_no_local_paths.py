@@ -16,7 +16,15 @@ text. So every file under every committed artifact folder — all of `data/`, `f
 the build run records (`data/snapshots/assembly_runs/`), which carry free-text exception messages
 (`run_metrics`) and, since #911, each build's input manifest. Widened in #915's round 2 at a
 cost of nothing: every hit the four folders (1,100 files, 147 MB) held on main c4c9f432 was a
-price-store stamp, and on the cleaned tree they hold none.
+price-store stamp, and on the cleaned tree they hold none. Widened again on 2026-11-12 (STATE row
+49) to the agent config and the local gate, `.claude/` and `bin/`, once their one per-machine file
+was git-ignored: at main 407dc809 the widened scan found 18 hits in 1,441 files, all in the then
+tracked `.claude/launch.json`, and none once it was ignored. The records' prose (`docs/records/`)
+stays outside it, as written, by the same default. Widened a third time on 2026-11-13 (the
+operator: "Guard them too (Recommended)") to the theme desk's committed logs
+(`docs/theme_intelligence/`) and STATE.md: over main f2e31cea's blobs the two held 9 hits in 2 of
+597 files, a session scratchpad in one run log (2) and row 38's machine folders (7), and none once
+scrubbed.
 
     python -m tests.test_no_local_paths     # print every hit, file:line, with the count
 
@@ -42,6 +50,7 @@ the mirrors (`python frontend/build.py`). Any other hit is a new leak: remove it
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -52,8 +61,16 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 #: Every committed artifact folder — pages, mirrors, run records, snapshots, scenarios, the web
-#: app's data — and every test fixture.
-SCANNED = ("data", "frontend", "scenarios", "tests/fixtures")
+#: app's data — and every test fixture. And since 2026-11-12 (STATE row 49, the coordinator's
+#: default 6 — not an operator ruling) the agent config and the local gate: not artifacts, but
+#: where a survey of every other tracked file at main c4c9f432 found per-machine paths outside the
+#: records' prose — `.claude/launch.json` 18 (now git-ignored, so not read) and `bin/commit` 1
+#: (removed by #996, RH-D3). And since 2026-11-13 (the operator: "Guard them too (Recommended)")
+#: the theme desk's committed run logs and STATE.md, the two places that survey left: at main
+#: f2e31cea, `docs/theme_intelligence/` 2 (a session scratchpad in one run log) and STATE.md 7
+#: (row 38's two machines' user folders). `docs/records/` stays outside: records stay as written.
+SCANNED = ("data", "frontend", "scenarios", "tests/fixtures", ".claude", "bin",
+           "docs/theme_intelligence", "STATE.md")
 
 #: An absolute POSIX path under a home, temp or mount root, where it begins. The lookbehind keeps a
 #: URL out: a URL's path follows a host character (`sec.gov/…`, `:8080/…`), a local path follows a
@@ -149,7 +166,7 @@ LEAKED = (
     '"declared_path": "C:\\\\Users\\\\x\\\\mosaic-theory\\\\data\\\\vinci.db",',
     "`D:/a/mosaic-theory/data/vinci.db`",
     "file:///Users/x/report.pdf",
-    # a shell default, the shape `bin/commit` carries (outside this guard's scope)
+    # a shell default, the shape `bin/commit` carried until #996 (RH-D3)
     'VENV="${VENV:-/Users/x/mosaic-theory/.venv/bin/python}"',
     # the other mount and home roots, and WSL's view of a Windows drive (round 2: synthetic — the
     # corpus has held none)
@@ -211,7 +228,14 @@ def test_a_hit_cut_short_says_so_and_a_whole_one_does_not() -> None:
 def _repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, tracked: dict[str, str | bytes],
           untracked: dict[str, str | bytes] | None = None) -> Path:
     """A throwaway git repository the scan is pointed at (`ROOT`), so a killed run leaves nothing
-    in this one."""
+    in this one. The machine's own excludes are switched off for it (`core.excludesFile`, set
+    through git's command-environment config, which outranks every config file): a global ignore
+    of `bin/` or `.claude/` — common ones — would otherwise keep a tracked file out of `git add`
+    and an untracked one out of the scan, and the pins would test that machine, not the repo's
+    `.gitignore`."""
+    for k, v in {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.excludesFile",
+                 "GIT_CONFIG_VALUE_0": os.devnull}.items():
+        monkeypatch.setenv(k, v)
     repo = tmp_path / "repo"
     repo.mkdir()
     subprocess.run(["git", "init", "-q", str(repo)], check=True)
@@ -233,7 +257,7 @@ def test_every_folder_every_kind_of_file_and_every_line_is_read(
     deep in a page laid out as the writer lays one out (`indent=2`), not on its first line; a
     rendered `.md`; a web mirror under `frontend/`; a scenario record; a build's run record; a
     Windows path in plain text (a binary-only read drops the drive letter); a PDF's metadata (a
-    text-only read drops it). (−) A file outside the four folders is not read."""
+    text-only read drops it). (−) A file outside the scanned folders is not read."""
     page = json.dumps({"ticker": "T", "mechanical": {"a": 1, "b": [1, 2]},
                        "price_store": {"declared_path": "/Users/x/w/data/vinci.db"}}, indent=2)
     _repo(tmp_path, monkeypatch, {
@@ -254,6 +278,58 @@ def test_every_folder_every_kind_of_file_and_every_line_is_read(
                      "data/snapshots/assembly_runs/r.jsonl:2", "frontend/dossiers/T.json:2",
                      "scenarios/T.json:1", "tests/fixtures/meta.pdf:2",
                      "tests/fixtures/win.txt:1"], hits
+
+
+def test_the_agent_config_and_the_local_gate_are_read_and_the_preview_config_is_not(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """STATE row 49, widened 2026-11-12 under the coordinator's default 6 (not an operator
+    ruling). (+) A local path in `.claude/` or `bin/` is a hit, tracked or about to be: on main
+    c4c9f432 `.claude/launch.json` held 18 and `bin/commit` 1 (removed by #996, RH-D3). (−) The
+    per-machine preview config, `.claude/launch.json`, is not read: it names its own checkout's
+    folders by design, so THIS repository's `.gitignore` (copied in, not restated) keeps it out of
+    git and out of the scan. The shared settings beside it are still read (+)."""
+    gitignore = (ROOT / ".gitignore").read_text()
+    _repo(tmp_path, monkeypatch, {
+        ".gitignore": gitignore,
+        ".claude/settings.json": '{"hooks": {"command": "/Users/x/hooks/gate.py"}}\n',
+        "bin/commit": 'VENV="${VENV:-/Users/x/mosaic-theory/.venv/bin/python}"\n',
+    }, {
+        ".claude/launch.json": '{"runtimeArgs": ["--directory", "/Users/x/m/frontend"]}\n',
+        ".claude/hooks/new_hook.py": "# reads /private/tmp/claude-501/x/scratchpad\n",
+    })
+    files, hits = scan()
+    assert ".claude/launch.json" not in {str(f.relative_to(ROOT)) for f in files}, files
+    where = sorted(h.split(": ", 1)[0] for h in hits)
+    assert where == [".claude/hooks/new_hook.py:1", ".claude/settings.json:1",
+                     "bin/commit:1"], hits
+
+
+def test_the_theme_desk_logs_and_state_are_read_and_the_records_are_not(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The operator, 2026-11-13: "Guard them too (Recommended)". (+) A local path in a committed
+    theme-desk run log, or in STATE.md, is a hit: at main f2e31cea the guard did not read either,
+    and `docs/theme_intelligence/state-pull-ledger-2026-10-11/run-log.txt` held 2 (one session
+    scratchpad, matched by the root and its dashed form) and STATE.md row 38 held 7 (the two
+    machines' user folders). (−) A record is not read: records stay as written, and a record's
+    body is immutable once merged."""
+    _repo(tmp_path, monkeypatch, {
+        "STATE.md": "| 38 | score on `/Users/x`'s store |\n",
+        # the shape line 16 held at main f2e31cea, its user replaced by `u`: the root and the
+        # dashed project folder inside it, two hits on one line
+        "docs/theme_intelligence/a-2026-10-11/run-log.txt":
+            "$ ingest-file --path /private/tmp/claude-501/-Users-u-Documents-GitHub-m/s/"
+            "scratchpad/input/a.md\n",
+        "docs/records/2026-11-05-r.md": "a record quoting /Users/x/Documents/a\n",
+        "docs/README.md": "/Users/x/elsewhere in docs\n",
+    })
+    files, hits = scan()
+    assert {str(f.relative_to(ROOT)) for f in files} == {
+        "STATE.md", "docs/theme_intelligence/a-2026-10-11/run-log.txt"}, files
+    where = sorted(h.split(": ", 1)[0] for h in hits)
+    assert where == ["STATE.md:1", "docs/theme_intelligence/a-2026-10-11/run-log.txt:1",
+                     "docs/theme_intelligence/a-2026-10-11/run-log.txt:1"], hits
 
 
 def test_a_printed_hit_stops_at_its_line() -> None:
@@ -297,8 +373,11 @@ def test_a_tracked_file_deleted_in_the_working_tree_is_skipped_not_a_crash(
 def test_no_committed_page_mirror_or_fixture_carries_an_absolute_local_path() -> None:
     """THE GUARD. On main c4c9f432, over the four folders (1,100 files), it lists 144 hits on 118
     lines of 59 files — every line a price-store stamp, 26 of them carrying both `/private/` and
-    the dashed `-Users-` session folder; on the cleaned tree it lists none. The count is printed
-    beside the full list, never a cut."""
+    the dashed `-Users-` session folder; on the cleaned tree it lists none. Over the six folders
+    at main 407dc809 (1,441 files) it listed 18, every one in the then-tracked
+    `.claude/launch.json`; with that file git-ignored it lists none. Over all eight scopes on the
+    scrubbed tree of 2026-11-13 (2,037 files) it lists none. The count is printed beside the full
+    list, never a cut."""
     files, hits = scan()
     pages = set((ROOT / "data" / "dossiers").glob("*/dossier.json"))
     assert pages and pages <= set(files), (
@@ -307,7 +386,8 @@ def test_no_committed_page_mirror_or_fixture_carries_an_absolute_local_path() ->
     assert not hits, (
         f"{len(hits)} absolute local path(s) in the corpus ({len(files)} files scanned); this "
         "repository is public. A price-store stamp is fixed by scripts/rewrite_store_stamps.py; "
-        "anything else is a new leak, removed at its writer:\n" + "\n".join(hits))
+        "a machine's folder in STATE.md is named by its role instead; anything else is a new "
+        "leak, removed at its writer:\n" + "\n".join(hits))
 
 
 def test_every_committed_page_prints_the_price_store_line_its_stamp_renders() -> None:

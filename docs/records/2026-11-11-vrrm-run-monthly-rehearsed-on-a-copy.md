@@ -158,3 +158,35 @@ coordinator A asked on #1004.
   (`TiingoBudget`), rises by at most 5.
 - Nothing was written to the primary checkout, the committed ledger or `main`.
 - The worktrees and store clones stay in the session's scratchpad.
+## Amendments
+
+- **2026-11-12 — THE SECOND REHEARSAL RAN CLEAN, ON `/Users/work`, ON COPIES, AFTER A'S SIGNAL** (S1, for B).
+  This is the rehearsal row 38 asked for. It ran once #1015 (`1df0dc18`, the void keyed on the session filed) and the 2026-11-11 monitor day (#1022, `493995f0`) were on main. The operator has since ruled that the 2026-12-16 scoring runs on `/Users/work` after a fresh price refresh ("Approve all three", `docs/records/2026-11-12-operator-delegation-and-defaults.md`), so this run is its dress rehearsal.
+  - **Code:** a detached worktree of `main` at `4b2f0cb9`. Nothing on the scoring path has changed between it and main `650057f3`: `git diff` over the paths in this record's boundary is empty.
+  - **Copies only.**
+    - Store: an APFS clone of `/Users/work`'s primary `data/vinci.db`, taken at 14:06:06Z. sha256 `78e2239147045795a10ca27f48cd0057f54e2d624eddb20b599420622f77c4a1` (the same file as the first rehearsal), 389,201,920 bytes, content `.dump` `62ac9d76…`, bars to 2026-08-05. The primary's file hashed the same before and after the clone, and again after the reads below.
+    - Caches: clones of the primary's Polygon cache (1,563 files) and Tiingo cache (202 files).
+    - `.env` is linked read only.
+  - **The run.** `python -m vinci run-monthly` (default `--as-of` 2026-11-12) ran once, 14:06:32Z → 14:32:24Z. It exited 0 and printed `spread=None pending=4`, with no failure.
+  - **The ledger exports byte-identical.** `data/snapshots/decision_ledger.jsonl` kept sha256 `a3c8af3e8dd979e04ad20f94691a0362bef2c77913930d53469514cad5c42675` (10 rows). Of the 97 tracked `data/snapshots` files, only two changed: `issuers.jsonl` (warning 1's `IDX` flip, IWM → SPY) and `scoring_report.md` (VRRM's correction note and GOOGL's void note, warning 4).
+  - **The store.** The run moved it from `78e22391…` to `cd8620cf8b27a9d4ca22a52a21aa6b91bcb5e41e850a94410af0d34c844dfb8e` (430,755,840 bytes), content `.dump` `cf2359f1b7b66b404692d676b7cd1654a18c9b170f862486cc8018a5eca09ac4`. A second clone, opened by `score_ledger` for the reads below, moved to `f1faf30f…` with the same content. That is warning 3 again.
+  - **Latest bars:** VRRM 2.06 and IWM 283.09, both on **2026-11-11**. IT, SMPL, MDY and SPY also end 2026-11-11. The 2026-11-12 session was not yet served, because the run was before midnight ET.
+  - **The interim mark**, as of 2026-11-12, read through `score_ledger` with sources over the run's own span and as-of:
+
+    | Leg | Entry close | 2026-11-11 close | Total return | Price return |
+    |---|---|---|---|---|
+    | VRRM | 4.44 (2026-06-18, the correction) | 2.06 | −53.60% | −53.60% |
+    | IWM | 295.59 (2026-06-18) | 283.09 | −3.98% | −4.23% |
+
+    The excess is **−49.63 pts**. At `as_of` 2026-12-15, on the same store, VRRM is held PENDING: "its horizon 2026-12-15 has passed, but the benchmark's last bar on or before 2026-12-15 is 2026-11-11 — awaiting the horizon session's close."
+  - **The live calls.** Polygon made 102:
+    - 97 grouped-daily: 69 sessions 2026-08-06 → 2026-11-11; 7 restatement checks at the held sessions 06-30, 07-22, 07-30, 07-31, 08-03, 08-04 and 08-05; and the same 21 holidays;
+    - 5 splits references: IT, IWM, MDY, SMPL, VRRM.
+
+    Tiingo made 5 (IT, IWM, MDY, SMPL, VRRM). The reads above made none: the caches held 1,575 and 207 files before and after them.
+  - **Warnings 1–4 recur unchanged.** Warning 2 also still holds: the voided V-GOOGL still has SPY refreshed.
+  - **BOUNDARY:**
+    - calls are the cache files written between 14:06:32Z and 14:32:24Z in the cloned caches;
+    - returns are total return, as of 2026-11-12, on bars through 2026-11-11, for the four live screen-origin rows (VRRM, IT, SMPL ×2; GOOGL is voided);
+    - the snapshot count is `git ls-files data/snapshots` at `4b2f0cb9`.
+  - **COST:** $0 of LLM. Nothing from the run is committed, and the primary checkout and its store are untouched. The re-rehearsal around 2026-12-07 and the scoring run on 2026-12-16 after 10:30 IST (RUNBOOKS §l) remain.

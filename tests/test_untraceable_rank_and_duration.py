@@ -8,6 +8,8 @@ without widening what a figure may trace to (2026-11-04).
 2. A DURATION IS A LABEL HOWEVER IT IS WRITTEN. "5 years" was skipped and "a 5-year window",
    "the 52-week low", "over ~2y" were figures. In the claim trace only: `driver_extract`'s row
    check keeps reading them as figures a row's quote must state.
+   REVERSED by RG-D5 (2026-11-11): a label is never read, so a made-up "47 months" of runway
+   passed. A duration is a figure now, traced as a span a fact of the page states (section 2).
 
 NARROWED by the cross-review of #890 (posted after merge): the rank traced in ANY context
 ("2.0x", "2 turns", "fell 2%" cited to a percentile all passed), and every decimal duration was
@@ -213,7 +215,11 @@ def test_every_percentile_field_of_the_page_schema_is_in_the_closed_set() -> Non
     assert found == set(syn._PERCENTILE_FIELDS), found
 
 
-# --- 2. a duration is a label --------------------------------------------------------------------
+# --- 2. a duration is a figure, traced as a span the page states (RG-D5, 2026-11-11) ------------
+# Until RG-D5 a whole-number duration was a LABEL the trace never read, so a made-up "47 months" of
+# runway or a "95 days" DSO passed (STATE row 45). It is a figure in its time unit now, and traces
+# as a span a fact of the page states: in a field its name times (`window_span_years`), or as a
+# window named in a ref, a field name or the code's own text ("180d", `pe_percentile_5y`, "~1.7y").
 
 @pytest.mark.parametrize("claim", [
     "impairment-free over the 5-year window",
@@ -222,16 +228,32 @@ def test_every_percentile_field_of_the_page_schema_is_in_the_closed_set() -> Non
     "the band spans ~9y",
     "a 180-day return",
 ])
-def test_a_hyphenated_or_abbreviated_duration_is_no_figure(claim: str) -> None:
-    """FAILED on 9e996d7f for each: the spaced form ("5 years") was skipped, these were flagged.
-    Whole numbers only (cross-review of #890)."""
+def test_a_duration_the_page_states_traces(claim: str) -> None:
+    """Each was a label before RG-D5; each is now READ, as a duration, and traces as a span the
+    frozen SMPL page states (its 5-year percentile window, its 52-week high and low, its share
+    count's ~2-year trail, its ~8.8-year band, its 180-day return)."""
     mech = _frozen()
     ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert ref
     assert _flagged(mech, claim, ref) == []
-    assert syn._claim_figures(claim) == []
+    figs = syn._claim_figures_as_written(claim)
+    assert figs and all(f.unit.startswith("dur:") for f in figs)
     # the transcript-row check is unmoved: there the duration is still a figure its quote must state
     assert dx._figures(claim) != []
+
+
+@pytest.mark.parametrize(("claim", "figure"), [
+    ("Cash runway is 47 months at the current burn.", "47"),   # audit G-D5
+    ("Days sales outstanding rose to 95 days.", "95"),         # audit G-D5
+    ("a new 7-year supply contract", "7"),
+])
+def test_a_duration_no_fact_of_the_page_states_is_flagged(claim: str, figure: str) -> None:
+    """The negative half (RG-D5): each PASSED unread on main before this change. No fact of the
+    frozen page states a 47-month, 95-day or 7-year span."""
+    mech = _frozen()
+    ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
+    assert ref
+    assert _flagged(mech, claim, ref) == [figure]
 
 
 @pytest.mark.parametrize(("claim", "figure"), [
@@ -253,7 +275,7 @@ def test_a_decimal_duration_is_a_figure(claim: str, figure: str) -> None:
 @pytest.mark.parametrize(("claim", "figures"), [
     ("a 5-year CAGR of 345.6%", ["345.6"]),
     ("$5-billion of new capacity", ["5"]),
-    ("growth of 5-10% a year", ["5", "-10"]),
+    ("growth of 5-10% a year", ["5", "10"]),   # a range's end, never a negative (RG-D1)
     ("a 7-yard gain", ["7"]),
 ])
 def test_a_figure_beside_a_duration_or_a_hyphen_is_still_a_figure(
@@ -266,19 +288,20 @@ def test_a_figure_beside_a_duration_or_a_hyphen_is_still_a_figure(
     assert _flagged(mech, claim, ref) == figures
 
 
-# --- the G-D6 draw is unmoved --------------------------------------------------------------------
+# --- the G-D6 draw ------------------------------------------------------------------------------
 
-def test_the_gd6_draw_flags_the_same_195_of_199() -> None:
+def test_the_gd6_draw_flags_all_199() -> None:
     """`test_model_input_checks`'s made-up-figure draw (seed 20261029, 199 figures in [100, 1000)
-    at 1 dp, cited to the relative return) flagged 195 of 199 on 9e996d7f and flags the same 195
-    here: neither change can reach a 1-dp figure above 25."""
+    at 1 dp, cited to the relative return) flagged 195 of 199 on 9e996d7f. The 4 that traced did
+    so only inside the old 2% width; at the width each is WRITTEN to (RG-D4: half a unit of its
+    last digit, never wider than the old bound) all 199 are flagged."""
     mech = _frozen()
     ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert ref
     random.seed(20261029)
     figs = sorted({round(random.uniform(100, 1000), 1) for _ in range(200)})
     assert len(figs) == 199
-    assert sum(bool(_flagged(mech, f"the figure is {f:,.1f}", ref)) for f in figs) == 195
+    assert sum(bool(_flagged(mech, f"the figure is {f:,.1f}", ref)) for f in figs) == 199
 
 
 # --- the committed corpus: phrasing-free invariants ----------------------------------------------
@@ -313,16 +336,47 @@ def _ranks_by_ref(mech: ds.MechanicalLayer) -> dict[str, set[float]]:
     return out
 
 
+#: a span the CODE names: a ref's or a field name's "180d", "_5y", "52w" — read here from the raw
+#: page, not through the code under test
+_NAMED_SPAN = re.compile(r"(?<![\d.])(\d+)[_-]?(d|w|y)(?![a-z])")
+_SPAN_UNIT = {"d": "day", "w": "week", "y": "year"}
+#: a whole-number duration as a claim writes it, spaced or hyphenated or abbreviated
+_CLAIM_SPAN = re.compile(r"^(?:\s*|-)(days?|weeks?|years?)\b|^(y)\b", re.IGNORECASE)
+
+
+def _named_spans(raw: dict[str, Any]) -> set[tuple[float, str]]:
+    """Each (number, unit) span the page's refs and field names name."""
+    out: set[tuple[float, str]] = set()
+
+    def walk(o: Any) -> None:
+        if isinstance(o, dict):
+            for k, v in o.items():
+                for m in _NAMED_SPAN.finditer(str(k)):
+                    out.add((float(m.group(1)), _SPAN_UNIT[m.group(2)]))
+                if k == "source_ref" and isinstance(v, str):
+                    for m in _NAMED_SPAN.finditer(v):
+                        out.add((float(m.group(1)), _SPAN_UNIT[m.group(2)]))
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    walk(raw["mechanical"])
+    return out
+
+
 @pytest.mark.parametrize("path", _COMMITTED, ids=lambda p: p.parent.name)
-def test_no_committed_point_is_flagged_for_its_own_percentile_rank_or_a_duration(
+def test_no_committed_point_is_flagged_for_its_own_percentile_rank_or_a_span_its_page_names(
         path: Path) -> None:
     """Every committed synthesis point, through `_validate` and the caveat split: no caveat names a
-    number WRITTEN as a rank that is the rank of a percentile the point's cited fact states, nor a
-    whole number the point writes only as a duration. On 9e996d7f this failed on IT, NFLX, NKE, TJX
-    (a rank) and EPAM, LLY, NFLX, WLK (a duration); each page is validated as itself."""
+    number WRITTEN as a rank that is the rank of a percentile the point's cited fact states (on
+    9e996d7f this failed on IT, NFLX, NKE, TJX), nor a whole-number duration whose span a ref or a
+    field name of its page names ("the 180-day return", "the 5-year window"). Before RG-D5 the
+    second half read "nor any whole-number duration": a duration was a label the trace never read,
+    which let a made-up runway pass (row 45). Each page is validated as itself."""
     raw = json.loads(path.read_text())
     mech = ds.MechanicalLayer.model_validate(raw["mechanical"])
     ranks = _ranks_by_ref(mech)
+    named = _named_spans(raw)
     for p in _points(raw):
         if syn._TRANSCRIPT_REF.search(p.source_ref):
             continue
@@ -330,14 +384,15 @@ def test_no_committed_point_is_flagged_for_its_own_percentile_rank_or_a_duration
             mech, p.claim, p.source_ref, ticker=raw["ticker"], name=raw.get("name", ""))}
         own_rank = ranks.get(comparison_key(p.source_ref), set())
         written_as_rank: set[float] = set()
-        durations: set[float] = set()
+        spans: set[float] = set()
         others: set[float] = set()
         for m in syn._NUM.finditer(p.claim):
             v = abs(float(m.group().replace(",", "")))
             tail = p.claim[m.end():]
             if _RANK_AFTER.match(tail):
                 written_as_rank.add(v)
-            whole = "." not in m.group()
-            (durations if whole and _DURATION_AFTER.match(tail) else others).add(v)
+            u = _CLAIM_SPAN.match(tail) if "." not in m.group() else None
+            unit = (u.group(1) or "year").lower().rstrip("s") if u else None
+            (spans if unit and (v, "year" if unit == "y" else unit) in named else others).add(v)
         assert not flagged & own_rank & written_as_rank, (p.claim, flagged & own_rank)
-        assert not {abs(f) for f in flagged} & (durations - others), p.claim
+        assert not {abs(f) for f in flagged} & (spans - others), p.claim

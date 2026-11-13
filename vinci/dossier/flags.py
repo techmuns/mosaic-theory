@@ -81,6 +81,9 @@ _WHERE_HUMAN: dict[str, str] = {
     "bear_point": "a bear point",
     "decisive.for": "a decisive-for point",
     "decisive.against": "a decisive-against point",
+    "key_unknown": "a key unknown",                  # (RG-D6) traced since 2026-11-11
+    "decisive.question": "the decisive question",
+    "evidence_balance": "the evidence balance",
 }
 # token → plain lead, for the caveats emitted as `TOKEN {where}: '<claim>' — <explanation>`. The
 # post-`—` explanation is already human-readable, so re-voicing only swaps the ALL-CAPS token +
@@ -110,12 +113,20 @@ def revoice(flag: str) -> str:
     the `pull CIQ …` incomplete-input notes match no token and pass through unchanged."""
     # UNTRACEABLE has an infix ("figure 'N' in {where}: …") so it needs its own re-voice, not the
     # simple TOKEN-{where} form below.
-    m = re.match(r"UNTRACEABLE figure '([^']*)' in (\S+?)(?: \[cited to (.*?)\])?: ('.*)",
+    m = re.match(r"UNTRACEABLE figure '([^']*)' in (\S+?)"
+                 r"(?: \[(cited to|from the call|on no fact of the page) ?(.*?)\])?: ('.*)",
                  flag, re.DOTALL)
     if m:
-        n, where, ref, rest = m.groups()
+        n, where, how, ref, rest = m.groups()
         human = _WHERE_HUMAN.get(where, where)
-        if ref is not None:   # (item 29) the figure carried its own footnote, to this fact
+        if how == "from the call":   # (RG-D7) none of the call's validated figures states it
+            return (f"Untraceable figure {n} ({human}) — cited to the earnings call {ref}, whose "
+                    "validated figures do not include it (no figure is read from a call's text); "
+                    f"verify against the call before relying on it: {rest}")
+        if how == "on no fact of the page":   # (RG-D6) a key unknown, the question, the balance
+            return (f"Untraceable figure {n} ({human}) — no fact of the page states it; verify "
+                    f"the source before relying on it: {rest}")
+        if how is not None:   # (item 29) the figure carried its own footnote, to this fact
             return (f"Untraceable figure {n} ({human}) — footnoted to {ref}, which does not "
                     f"contain it; verify the source before relying on it: {rest}")
         return (f"Untraceable figure {n} ({human}) — cited to structured data that does not "

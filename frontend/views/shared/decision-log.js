@@ -149,11 +149,38 @@ export function spreadCard(mon) {
     </div>`;
 }
 
+// THE PANEL STATES WHAT IT DID NOT READ (STATE §5.0 row 42 (b); preview approved by the operator
+// 2026-11-12, "Approve, build it"). A name whose freshness row the monitor could not write is in
+// the day's typed `freshness_dropped`, never only in its notes: "A TRUNCATED OUTPUT PRINTS ITS OWN
+// TRUNCATION". The count is the whole set's, each dropped name and its short cause sit in the main
+// body — every one of them, never cut to a first few — and the whole reason is one click down,
+// force-opened in print with every other <details>. A day with no drop, or committed before the
+// field, renders exactly as before.
+const DROP_CAUSE = {
+  filings_unread: "its EDGAR filings could not be read",
+  record_date_unreadable: "its record's evidence date could not be read",
+};
+function droppedNames(rows, dropped) {
+  if (!dropped.length) return "";
+  const named = dropped.map((d) => `<span class="mono" style="font-weight:650;">${escapeHtml(d.ticker)}</span> not read — ${escapeHtml(DROP_CAUSE[d.cause] || d.cause)}`).join(" · ");
+  const why = dropped.map((d) => `<li><span class="mono">${escapeHtml(d.ticker)}</span> — ${escapeHtml(d.detail)}</li>`).join("");
+  return `
+      <div class="fact-caveat" style="margin-bottom:8px;">${fmtInt(rows.length)} of ${fmtInt(rows.length + dropped.length)} names read · ${named}</div>
+      <details class="ds-dropped" style="margin-bottom:10px;">
+        <summary class="muted" style="font-size:12px;">Why ${dropped.length === 1 ? "it was" : "they were"} not read</summary>
+        <ul class="kv-list">${why}</ul>
+      </details>`;
+}
+
 // FRESHNESS / TRIGGERS — the machine FLAGS (a filing newer than the record's evidence), it never
 // adjudicates a trigger as fired. Triggers print verbatim so the human reads the actual wording.
 function freshnessPanel(mon, voidedNames = new Set()) {
   const rows = (mon && mon.freshness) || [];
-  if (!rows.length) return "";
+  // A VOIDED CALL IS NOT A DROPPED NAME: the cards' own void filter (`voidedBefore`) — a call
+  // ruled out of the record after the day is neither counted nor listed as one the day missed
+  const dropped = ((mon && mon.freshness_dropped) || [])
+    .filter((d) => !voidedNames.has(String(d.ticker).toUpperCase()));
+  if (!rows.length && !dropped.length) return "";
   const card = (f) => {
     const flag = f.unread_print
       ? `<span class="pill avoid">unread print</span>`
@@ -211,7 +238,7 @@ function freshnessPanel(mon, voidedNames = new Set()) {
     <div style="margin:18px 0 6px;">
       <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-3); margin-bottom:8px;">Trigger &amp; freshness panel</div>
       <div class="subtitle muted" style="margin-bottom:10px;">The machine flags a filing newer than each record's evidence; it never concludes that a trigger fired. Next-print dates are estimates from the filer's own cadence.</div>
-      ${rows.map(card).join("")}
+      ${droppedNames(rows, dropped)}${rows.map(card).join("")}
     </div>`;
 }
 
