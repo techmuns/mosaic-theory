@@ -23,6 +23,10 @@ zero". #1061 had used its two bounded rounds, so both were deferred to this PR.
      - The upper bound is a `build_end` only. A `build_start`'s time is taken before its request is
        captured, under a lock that a concurrent build's draws do not take. A draw appended above it
        can therefore be later than its stamp (review round 0).
+     - A `build_end` bounds only its OWN build's draws, matched by label
+       (`<registration sha>:<ticker>:build<n>`, which `run_build` gives its draws). Its `t` is
+       taken before its row is written, with no lock held over the draws, so another command's
+       draw appended just above it can be later (Codex P2 on #1064, round 1).
      - With no `build_end` below, the upper bound is the ledger file's last write, the latest time
        any row can have been appended. For byte-identical copies, it is the earliest of their file
        times.
@@ -60,6 +64,11 @@ spent (the pr-feedback skill).
   input:
   - `test_a_build_start_is_no_upper_bound_for_the_draws_above_it`, the concurrent-build case;
   - `test_a_byte_identical_copy_bounds_by_the_earliest_last_write`.
+- **Round 1 (Codex P2 on #1064)** added `test_a_build_end_bounds_only_its_own_builds_draws`, which
+  is red on `6f7594de`. In an interleaved ledger, a `run-compare` draw above a build's
+  `build_end` is not that build's, so it is not October's. Re-run as of 2026-11-13 14:11:57Z:
+  November at least $384.17 (evals $290.85, still growing). October is unchanged at $136.49. No
+  row in either month is named as may-belong.
 - **The test ledgers' file times are set,** never the day the suite runs, because the last write
   is now an input.
 - **The real run,** re-made after review round 0, as of 2026-11-13 13:34:22Z, over the two ledger

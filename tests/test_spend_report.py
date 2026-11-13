@@ -171,11 +171,30 @@ def test_a_build_end_bounds_the_draws_before_it(tmp_path: Path) -> None:
     November. Without it they would span the boundary and be named as may-belong."""
     end_t = datetime(2026, 10, 31, 23, 20, tzinfo=UTC).timestamp()
     led = _ledger(tmp_path / "l.jsonl", [
-        {"build_start": {"started_at": "2026-10-31T23:10:00Z"}, "usd": 0.0}, _draw(2.0),
-        {"build_end": {"t": end_t}, "usd": 0.0}], opened_at="2026-10-31T23:00:00Z",
-        last_write="2026-11-02T10:00:00Z")
+        {"build_start": {"label": "arm-a", "started_at": "2026-10-31T23:10:00Z"}, "usd": 0.0},
+        _draw(2.0), {"build_end": {"label": "arm-a", "t": end_t}, "usd": 0.0}],
+        opened_at="2026-10-31T23:00:00Z", last_write="2026-11-02T10:00:00Z")
     b = spend.evals([led], "2026-10")
     assert (b.usd, b.rows, b.unknown) == (2.0, 3, [])
+
+
+def test_a_build_end_bounds_only_its_own_builds_draws(tmp_path: Path) -> None:
+    """(-) Codex P2 on #1064: `run_build` takes its `build_end` time before the row is written,
+    and the build lock is not held during draws, so a concurrent `run-compare` draw appended just
+    above that row can be later than its `t`. A `build_end` bounds only the draws of its own
+    build, matched by label (`registration:ticker:buildN`). The other draw falls back to the
+    last write and, spanning the boundary, is not October's. (+) The build's own draw is."""
+    end_t = datetime(2026, 10, 31, 23, 20, tzinfo=UTC).timestamp()
+    build = "registration:SMPL:build1"          # `<registration sha[:12]>:<ticker>:build<n>`
+    led = _ledger(tmp_path / "l.jsonl", [
+        {"build_start": {"label": build, "started_at": "2026-10-31T23:10:00Z"}, "usd": 0.0},
+        {**_draw(2.0), "label": build}, {**_draw(3.0), "label": "compare:arm-b"},
+        {"build_end": {"label": build, "t": end_t}, "usd": 0.0}],
+        opened_at="2026-10-31T23:00:00Z", last_write="2026-11-02T10:00:00Z")
+    oct_ = spend.evals([led], "2026-10")
+    assert (oct_.usd, oct_.rows) == (2.0, 3)       # build_start, its draw, build_end
+    assert oct_.unknown == ["1 undated row(s) in evals ($3.00) that ran across a month boundary "
+                            "and may belong to this month"]
 
 
 def test_a_build_start_is_no_upper_bound_for_the_draws_above_it(tmp_path: Path) -> None:

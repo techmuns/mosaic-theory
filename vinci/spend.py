@@ -22,11 +22,13 @@ WHERE EACH BUCKET IS READ FROM, AND WHAT IT CANNOT SEE (each bucket prints both)
   `--evals-root`, by default the folders in ``VINCI_LEDGER_ROOTS``). The report PRINTS every root
   it searched and every ledger it read, never a wider claim. A draw row carries no time, so it
   is BOUNDED, never guessed: it lies after the stamp above it (the approval's `opened_at`, a
-  `build_start`'s `started_at`, a `build_end`'s `t`) and before the `build_end` below it, or the
-  ledger file's last write. (A `build_start` bounds only what follows it: its time is taken before
-  its request is captured, so a concurrent build's draw can be appended above it later.) Bounds
-  in one month place it there; bounds spanning months (a `run-compare` resumed in a later month)
-  do not place it, and the month's figure becomes a floor naming it. A ledger on
+  `build_start`'s `started_at`, a `build_end`'s `t`) and before its own build's `build_end` below
+  it (matched by label), or the ledger file's last write. (A `build_start` bounds only what
+  follows it: its time is taken before its request is captured, so a concurrent build's draw can
+  be appended above it later; and a `build_end` bounds only its own build's draws, since another
+  command's draw can be appended between its `t` and its row.) Bounds in one month place it
+  there; bounds spanning months (a `run-compare` resumed in a later month) do not place it, and
+  the month's figure becomes a floor naming it. A ledger on
   another machine, or not passed, is not seen; with none passed the bucket is NOT READ, never $0.
   A ledger that is another's bytes, or an earlier prefix of them (a copy taken before more draws),
   counts once.
@@ -236,10 +238,11 @@ def evals(ledgers: Iterable[Path], month: str, *, roots: Sequence[str] = ()) -> 
                 raise SpendRecordError(f"{path.name}:{i}: a ledger row without usd")
         # EVERY ROW'S TIME IS BOUNDED, NEVER GUESSED (Codex P1 on #1061): a stamped row (the
         # approval, a `build_start`, a `build_end`) is dated by its own stamp; a draw carries none,
-        # so it lies after the stamp above it and before the `build_end` below it — or the file's
-        # last write, the latest any row in it can have been appended. A `build_start` is no UPPER
-        # bound: its time is taken before its request is captured, under a lock a concurrent
-        # build's draws do not take, so a draw appended above it can be later than its stamp.
+        # so it lies after the stamp above it and before its own build's `build_end` below it —
+        # or the file's last write, the latest any row in it can have been appended. A
+        # `build_start` is no UPPER bound: its time is taken before its request is captured,
+        # under a lock a concurrent build's draws do not take, so a draw appended above it can be
+        # later than its stamp.
         # Within one month a row is that month's; a span across months is NOT placed: a resumed
         # `run-compare` must not land in the month its ledger was opened.
         stamps = [_row_stamp(r, f"{path.name}:{i}") for i, r in enumerate(rows_, 2)]
@@ -249,13 +252,19 @@ def evals(ledgers: Iterable[Path], month: str, *, roots: Sequence[str] = ()) -> 
         for own_ in stamps:
             below = below if own_ is None else own_
             lower.append(below)
-        upper: list[datetime] = []          # the first `build_end` below each row, or last write
-        above = datetime.fromtimestamp(mtimes[text], UTC)
+        # the first `build_end` below each row OF ITS OWN BUILD, matched by label, or the last
+        # write: a `build_end`'s `t` is taken before its row is written, with no lock held over
+        # the draws, so another command's draw appended just above it can be later (Codex P2)
+        upper: list[datetime] = []
+        last_write = datetime.fromtimestamp(mtimes[text], UTC)
+        ends_below: dict[str, datetime] = {}
         for k in reversed(range(len(rows_))):
-            upper.append(above)
-            end = stamps[k]
-            if "build_end" in rows_[k] and end is not None:
-                above = end
+            label = rows_[k].get("label")
+            upper.append(ends_below.get(label, last_write) if isinstance(label, str)
+                         else last_write)
+            end, at = rows_[k].get("build_end"), stamps[k]
+            if isinstance(end, dict) and isinstance(end.get("label"), str) and at is not None:
+                ends_below[end["label"]] = at
         upper.reverse()
         in_month = False
         led_usd, led_draws, led_unplaced = 0.0, 0, 0
