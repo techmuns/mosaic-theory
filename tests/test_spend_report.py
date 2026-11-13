@@ -11,6 +11,7 @@ from __future__ import annotations
 import ast
 import json
 import os
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -96,7 +97,11 @@ def test_a_malformed_line_raises_rather_than_being_skipped(tmp_path: Path,
 
 
 # --- evals: ledgers written by the real Budget ---------------------------------------------------
-def _ledger(path: Path, rows: list[dict[str, Any]], opened_at: str) -> Path:
+def _ledger(path: Path, rows: list[dict[str, Any]], opened_at: str,
+            last_write: str | None = None) -> Path:
+    """A ledger written by the real `Budget`. Its file time is SET — the last write bounds an
+    undated draw's time — to ``last_write``, by default a minute after its latest stamp, so no
+    test depends on the day it runs."""
     budget = Budget.open(path, cap_usd=35.0, approval="test approval")
     first, *_ = path.read_text(encoding="utf-8").splitlines()
     head = json.loads(first)
@@ -104,7 +109,15 @@ def _ledger(path: Path, rows: list[dict[str, Any]], opened_at: str) -> Path:
     path.write_text(json.dumps(head) + "\n", encoding="utf-8")
     for r in rows:
         budget.record(r)
+    stamps = [opened_at] + [r["build_start"]["started_at"] for r in rows if "build_start" in r]
+    latest = max(datetime.fromisoformat(x.replace("Z", "+00:00")) for x in stamps)
+    _last_write(path, last_write or (latest + timedelta(minutes=1)).isoformat())
     return path
+
+
+def _last_write(path: Path, at: str) -> None:
+    t = datetime.fromisoformat(at.replace("Z", "+00:00")).timestamp()
+    os.utime(path, (t, t))
 
 
 def _draw(usd: float) -> dict[str, Any]:
@@ -113,16 +126,104 @@ def _draw(usd: float) -> dict[str, Any]:
             "seconds": 1.0}
 
 
-def test_a_draw_is_dated_by_the_latest_stamp_above_it(tmp_path: Path) -> None:
-    """(+) A ledger opened on 30 Nov in India (+05:30) carries its first draws in November; a
-    `build_start` stamped 1 Dec moves every draw after it to December."""
+def test_a_draw_whose_bounds_span_months_is_not_placed_and_the_figure_is_a_floor(
+        tmp_path: Path) -> None:
+    """(-) Two draws sit between an approval opened 30 Nov in India (04:30Z) and a `build_start`
+    on 1 Dec (03:30Z): they ran in November OR December, so neither month takes them; each
+    month's figure is a floor naming them. (+) The draw after the `build_start`, bounded by it
+    and the last write the same morning, is December's."""
     led = _ledger(tmp_path / "ledger.jsonl", [
         _draw(1.0), _draw(2.0),
         {"build_start": {"started_at": "2026-12-01T09:00:00+0530"}, "usd": 0.0},
-        _draw(4.0)], opened_at="2026-11-30T10:00:00+0530")
+        _draw(4.0)], opened_at="2026-11-30T10:00:00+0530", last_write="2026-12-01T04:00:00Z")
     nov, dec = spend.evals([led], "2026-11"), spend.evals([led], "2026-12")
-    assert (nov.usd, nov.rows) == (3.0, 2)
+    assert (nov.usd, nov.rows) == (0.0, 0)
     assert (dec.usd, dec.rows) == (4.0, 2)        # the build_start row and its draw
+    for b in (nov, dec):
+        assert b.unknown == ["2 undated row(s) in evals ($3.00) that ran across a month "
+                             "boundary and may belong to this month"]
+    assert "≥$0.00" in spend.render("2026-11", [nov])
+    assert "at least $4.00 — 2 undated row(s) in evals ($3.00)" in spend.render("2026-12", [dec])
+
+
+def test_a_resumed_run_compare_is_never_put_in_the_month_its_ledger_opened(
+        tmp_path: Path) -> None:
+    """(-) Codex P1 on #1061: a `run-compare` ledger opened 28 Oct and resumed in November has
+    undated draws; they took the approval's month, so November's spend landed in October as a
+    definite figure. Bounded by the last write (3 Nov), they now belong to neither month for
+    sure. (+) The same draws with the ledger last written on 29 Oct are October's."""
+    rows = [_draw(1.0), _draw(2.5)]
+    resumed = _ledger(tmp_path / "a" / "ledger.jsonl", rows, opened_at="2026-10-28T10:00:00Z",
+                      last_write="2026-11-03T10:00:00Z")
+    for month in ("2026-10", "2026-11"):
+        b = spend.evals([resumed], month)
+        assert (b.usd, b.rows) == (0.0, 0) and b.unknown, month
+    done = _ledger(tmp_path / "b" / "ledger.jsonl", rows, opened_at="2026-10-28T10:00:00Z",
+                   last_write="2026-10-29T10:00:00Z")
+    oct_ = spend.evals([done], "2026-10")
+    assert (oct_.usd, oct_.rows, oct_.unknown) == (3.5, 2, [])
+    assert spend.evals([done], "2026-11").usd == 0.0
+
+
+def test_a_build_end_bounds_the_draws_before_it(tmp_path: Path) -> None:
+    """(+) A `build_end`'s ``t`` (epoch seconds) is a stamp: the draws between a 31 Oct
+    `build_start` and its 31 Oct `build_end` are October's, though the file was last written in
+    November. Without it they would span the boundary and be named as may-belong."""
+    end_t = datetime(2026, 10, 31, 23, 20, tzinfo=UTC).timestamp()
+    led = _ledger(tmp_path / "l.jsonl", [
+        {"build_start": {"label": "arm-a", "started_at": "2026-10-31T23:10:00Z"}, "usd": 0.0},
+        _draw(2.0), {"build_end": {"label": "arm-a", "t": end_t}, "usd": 0.0}],
+        opened_at="2026-10-31T23:00:00Z", last_write="2026-11-02T10:00:00Z")
+    b = spend.evals([led], "2026-10")
+    assert (b.usd, b.rows, b.unknown) == (2.0, 3, [])
+
+
+def test_a_build_end_bounds_only_its_own_builds_draws(tmp_path: Path) -> None:
+    """(-) Codex P2 on #1064: `run_build` takes its `build_end` time before the row is written,
+    and the build lock is not held during draws, so a concurrent `run-compare` draw appended just
+    above that row can be later than its `t`. A `build_end` bounds only the draws of its own
+    build, matched by label (`registration:ticker:buildN`). The other draw falls back to the
+    last write and, spanning the boundary, is not October's. (+) The build's own draw is."""
+    end_t = datetime(2026, 10, 31, 23, 20, tzinfo=UTC).timestamp()
+    build = "registration:SMPL:build1"          # `<registration sha[:12]>:<ticker>:build<n>`
+    led = _ledger(tmp_path / "l.jsonl", [
+        {"build_start": {"label": build, "started_at": "2026-10-31T23:10:00Z"}, "usd": 0.0},
+        {**_draw(2.0), "label": build}, {**_draw(3.0), "label": "compare:arm-b"},
+        {"build_end": {"label": build, "t": end_t}, "usd": 0.0}],
+        opened_at="2026-10-31T23:00:00Z", last_write="2026-11-02T10:00:00Z")
+    oct_ = spend.evals([led], "2026-10")
+    assert (oct_.usd, oct_.rows) == (2.0, 3)       # build_start, its draw, build_end
+    assert oct_.unknown == ["1 undated row(s) in evals ($3.00) that ran across a month boundary "
+                            "and may belong to this month"]
+
+
+def test_a_build_start_is_no_upper_bound_for_the_draws_above_it(tmp_path: Path) -> None:
+    """(-) Review of #1064: a `build_start`'s time is taken BEFORE its request is captured, under a
+    lock a concurrent build's draws do not take, so a draw appended above it can be later than its
+    stamp. A draw above a 31 Oct 23:59Z `build_start`, in a ledger last written 1 Nov, may be
+    November's: it is not placed in October. (+) The draw after the `build_start` is November's
+    only if bounded there — here it spans too, so October holds nothing for sure."""
+    led = _ledger(tmp_path / "l.jsonl", [
+        _draw(1.0), {"build_start": {"started_at": "2026-10-31T23:59:00Z"}, "usd": 0.0},
+        _draw(2.0)], opened_at="2026-10-31T23:00:00Z", last_write="2026-11-01T00:05:00Z")
+    oct_ = spend.evals([led], "2026-10")
+    assert (oct_.usd, oct_.rows) == (0.0, 1)           # the build_start row alone, at its stamp
+    assert oct_.unknown == ["2 undated row(s) in evals ($3.00) that ran across a month boundary "
+                            "and may belong to this month"]
+
+
+def test_a_byte_identical_copy_bounds_by_the_earliest_last_write(tmp_path: Path) -> None:
+    """(+) Review of #1064: two byte-identical copies are one ledger, and each was complete by its
+    own file time, so the earliest bounds its draws — not whichever path sorts first. A copy made
+    in November that sorts first must not push an October draw across the boundary."""
+    orig = _ledger(tmp_path / "b" / "ledger.jsonl", [_draw(2.0)],
+                   opened_at="2026-10-20T10:00:00Z", last_write="2026-10-20T11:00:00Z")
+    copy = tmp_path / "a" / "ledger.jsonl"
+    copy.parent.mkdir()
+    copy.write_bytes(orig.read_bytes())
+    _last_write(copy, "2026-11-05T10:00:00Z")
+    b = spend.evals([orig, copy], "2026-10")
+    assert (b.usd, b.rows, b.unknown) == (2.0, 1, [])
 
 
 def test_a_ledger_opened_on_the_first_in_india_is_the_previous_utc_month(tmp_path: Path) -> None:
@@ -156,6 +257,7 @@ def test_an_earlier_copy_of_a_ledger_counts_once_and_no_ledger_is_not_read(tmp_p
     early.parent.mkdir()
     early.write_bytes(led.read_bytes())
     Budget.load(led).record(_draw(3.0))
+    _last_write(led, "2026-11-10T11:00:00Z")          # the append set it to today
     b = spend.evals([early, led], "2026-11")
     assert (b.usd, b.rows) == (5.0, 2) and "1 copy(ies) of another ledger" in b.note
     none = spend.evals([], "2026-11")
@@ -209,12 +311,21 @@ def test_the_graph_judge_reads_the_committed_rejudge() -> None:
     month = str(judged["on"])[:7]
     b = spend.graph_judge(ROOT / "data", month)
     assert b.rows == 1 and b.usd == pytest.approx(judged["cost_usd"])
-    after = spend.graph_judge(ROOT / "data", "2999-01")
-    assert (after.usd, after.rows) == (0.0, 0)
+    # its own month is a floor: an earlier re-judge it overwrote, or a stopped one, is unseen
+    assert b.unknown and f"≥${judged['cost_usd']:,.2f}" in spend.render(month, [b])
     # (-) a month before the recorded re-judge: any re-judge in it was overwritten — NOT READ,
     # never $0
     before = spend.graph_judge(ROOT / "data", "1999-01")
     assert (before.usd, before.rows) == (None, 0) and before.note.startswith("NOT READ")
+
+
+def test_a_month_after_the_latest_rejudge_is_not_read() -> None:
+    """(-) Codex P1 on #1061: a re-judge that STOPPED (over budget, or a judge error) after the
+    latest recorded one spent and wrote nothing, so a later month printed a definite $0.00. It
+    is NOT READ, and the total names it as left out."""
+    after = spend.graph_judge(ROOT / "data", "2999-01")
+    assert (after.usd, after.rows) == (None, 0) and after.note.startswith("NOT READ")
+    assert "NOT included: graph judge" in spend.render("2999-01", [after])
 
 
 def test_the_total_names_every_bucket_it_left_out() -> None:
