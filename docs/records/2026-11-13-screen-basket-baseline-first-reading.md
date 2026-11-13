@@ -2,7 +2,7 @@
 id: 2026-11-13-screen-basket-baseline-first-reading
 status: shipped
 date: 2026-11-13
-prs: [1058]
+prs: [1060]
 supersedes:
 superseded-by:
 ---

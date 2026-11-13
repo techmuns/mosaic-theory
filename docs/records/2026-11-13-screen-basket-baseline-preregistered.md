@@ -2,7 +2,7 @@
 id: 2026-11-13-screen-basket-baseline-preregistered
 status: recorded
 date: 2026-11-13
-prs: []
+prs: [1060]
 supersedes:
 superseded-by:
 ---
