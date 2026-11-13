@@ -46,7 +46,11 @@ import pytest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 VINCI = ROOT / "vinci"
 
-OUTCOME_LAYER = ("vinci.scoring", "vinci.ledger", "vinci.monitor")
+#: THE SCREEN-BASKET BASELINE (#1004 item 2, 2026-11-13) reads forward returns of every screen
+#: run's admitted and rejected names. It sits under `vinci.scoring` and is named here as well, so
+#: moving it out of that package cannot quietly take it out of the fence.
+SCREEN_BASELINE = "vinci.scoring.screen_baseline"
+OUTCOME_LAYER = ("vinci.scoring", "vinci.ledger", "vinci.monitor", SCREEN_BASELINE)
 DIRECT_ONLY = ("vinci.schemas.ledger",)
 LEDGER_WRITE_PATHS = ("vinci.ledger", "vinci.store")
 #: `Store` is a legitimate import of the screen (prices, candidates), and it also READS the ledger.
@@ -232,6 +236,17 @@ def test_no_gate_or_threshold_module_reaches_the_outcome_layer_through_another(
         crossed = sorted(m for m in via if _under(m, OUTCOME_LAYER))
         assert not crossed, ("forward-return data is reachable: "
                              + "; ".join(_chain(via, m) for m in crossed))
+
+
+def test_the_screen_basket_baseline_is_inside_the_fence() -> None:
+    """#1004 item 2: the baseline measures whether the screen selects anything, so it must never
+    be readable from the screen it measures. It exists, the fence names it, an import of it from a
+    screen module is seen, and it reaches the screen's records — the one allowed direction."""
+    assert SCREEN_BASELINE in MODULES, "the fence names a module that does not exist"
+    hits = imported_names("from vinci.scoring.screen_baseline import report\n",
+                          module="vinci.screens.run", is_package=False)
+    assert any(_under(m, OUTCOME_LAYER) for m in hits), hits
+    assert "vinci.screens.retention" in reach(SCREEN_BASELINE)
 
 
 def _docstring_nodes(tree: ast.Module) -> set[int]:

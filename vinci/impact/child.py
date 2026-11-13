@@ -15,7 +15,7 @@ PER PAGE, each step on its own, a failure written down and never fatal to the ne
    (`prespend.mechanical_build`), rendered as ``assemble._write`` renders it;
 2. ``request.json`` — the synthesis request that build's layer would send, captured with a client
    that sends nothing (`capture_child.capture_calls`), the layer marked material first as
-   ``assemble_one`` marks it;
+   ``assemble_one`` marks it, and kept in the captured key order (`write_request`);
 3. ``committed.md`` — the COMMITTED ``dossier.json`` rendered by this ref's code;
 4. ``reads.json`` — every HTTP response the page read (URL → sha256), and which were fetched live.
 
@@ -150,9 +150,21 @@ def utc_day() -> str:
 
 
 def _side_file(path: Path, obj: Any) -> None:
-    """A page side's own record (request, reads, timing) — never the page, which is saved through
-    `dossier_json` (``built.json``)."""
+    """A page side's own record (reads, clock, timing) — never the page, which is saved through
+    `dossier_json` (``built.json``), and never its request (`write_request`)."""
     path.write_text(json.dumps(obj, sort_keys=True), encoding="utf-8")
+
+
+def write_request(path: Path, calls: list[dict[str, Any]]) -> None:
+    """A page side's synthesis request, ``{"calls": [kwargs, …]}``, in the CAPTURED KEY ORDER.
+
+    Never sorted (2026-11-13). The paid path sends this order (`capture_child.jsonable`: a sorted
+    copy would send production's tool schema with its fields reordered, the defect PR 2 drew), and
+    the run compares the two sides byte for byte (`replay.wire`). Written key-sorted, as every side
+    file was, the record erased exactly the change that reorders the tool schema's fields or the
+    top-level arguments: the two sides read identical, and a request exported from the run was
+    not the one production sends."""
+    path.write_text(json.dumps({"calls": calls}, ensure_ascii=False), encoding="utf-8")
 
 
 def page(ticker: str, out: Path, *, capture: Any, requests: bool, committed: bool) -> None:
@@ -193,7 +205,7 @@ def page(ticker: str, out: Path, *, capture: Any, requests: bool, committed: boo
 
             calls = capture.capture_calls(doc, transcript_for_synthesis(bundle), model=model,
                                           draws=SYNTHESIS_DRAWS)
-            _side_file(out / "request.json", {"calls": [capture.jsonable(c) for c in calls]})
+            write_request(out / "request.json", [capture.jsonable(c) for c in calls])
         _step(out, "request", timings, request)
     page_json = root / ticker / "dossier.json"
     if committed and page_json.exists():

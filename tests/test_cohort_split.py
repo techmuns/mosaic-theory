@@ -88,8 +88,8 @@ def test_attaching_the_split_changes_no_order_and_no_score() -> None:
     cfg = get_config()
     if not (cfg.snapshots_dir / "candidate_records.jsonl").is_file():
         pytest.skip("no committed candidate records")
-    flags, causes = carry_forward_assessment(cfg)
-    rows = rank_from_snapshots(cfg, structural_flags=flags, annotations=causes)
+    flags = carry_forward_assessment(cfg)
+    rows = rank_from_snapshots(cfg, structural_flags=flags)
     committed = [json.loads(x) for x in
                  (cfg.snapshots_dir / "ranked_queue.jsonl").read_text().splitlines() if x.strip()]
     assert [r.ticker for r in rows] == [c["ticker"] for c in committed], (

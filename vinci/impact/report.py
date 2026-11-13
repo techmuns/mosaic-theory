@@ -219,14 +219,21 @@ def requests_lines(r: dict[str, Any]) -> list[str]:
              "differ", "",
              "Each side's request captured from its OWN $0 build (the layer marked material as "
              "`assemble_one` marks it; a client that sends nothing; five draws, byte-identical), "
-             "compared byte for byte (`replay.wire`). The covenant digest, maturity event and "
-             "transcript drivers the paid build's LLM phases add are absent on both sides."]
+             "compared byte for byte (`replay.wire`), key order included. The covenant digest, "
+             "maturity event and transcript drivers the paid build's LLM phases add are absent "
+             "on both sides."]
     for t, q in differ:
         u = q.get("user_diff") or {}
         lines.append(f"- **{t}**: sections {', '.join(q.get('sections') or []) or 'none'}; "
                      f"system {'same' if q.get('system_equal') else 'DIFFERS'}; tool schema "
                      f"{'same' if q.get('tools_equal') else 'DIFFERS'}; USER −{u.get('removed')} "
-                     f"+{u.get('added')} line(s)")
+                     f"+{u.get('added')} line(s)"
+                     + (f"; **KEY ORDER ONLY**, in {', '.join(q.get('order_moved') or ['?'])} "
+                        "— every value is equal and some keys' order differs: inside a kwarg "
+                        "production sends each side in its own order; a reorder of the "
+                        "top-level arguments alone the SDK may send alike (`replay.wire` fails "
+                        "safe there)"
+                        if q.get("key_order_only") else ""))
     moved = {p["ticker"] for p in res if p["status"] == "moves"}
     unreached = sorted(t for t, q in compared if t in moved and q["identical"])
     if moved:

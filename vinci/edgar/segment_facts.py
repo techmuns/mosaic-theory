@@ -1,7 +1,8 @@
 """Per-segment PROFIT from an annual report's own XBRL instance (a 10-K, or a foreign filer's 20-F /
 40-F) — the structured source, not a rendered table.
 
-WHY NOT THE R-FILES (`vinci/edgar/segments.py`). That route reads the SEC's RENDERED segment table,
+WHY NOT THE R-FILES (`vinci/edgar/segments.py`, retired 2026-11-13). That route read the SEC's
+RENDERED segment table,
 and the rendering is the filer's layout: segments as row headings (AMZN, GOOGL, AORT, UBER) or as
 COLUMNS (IT, EPAM, PARR, WERN), nested sub-members (WLK, VRRM), and report titles that name
 the right table in a different vocabulary at every filer. Measured on the ten multi-segment names in

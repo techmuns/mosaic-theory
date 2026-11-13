@@ -14,7 +14,7 @@ The BUY−AVOID spread's integrity depends on these. They are real today.
 ### Reproducibility — the spread must be reconstructable
 - Same inputs → same outputs. A run's result must be reproducible from committed state (JSONL
   snapshots) + the code at that commit.
-- LLM calls (the ranker's Tier-3 cause-classifier, the dossier-assembler) are NON-DETERMINISTIC.
+- LLM calls (the dossier-assembler) are NON-DETERMINISTIC.
   Therefore: **pass no sampling parameter** — no `temperature`, `top_p` or `top_k`. The API
   refuses them on the configured model family with a 400 error (`temperature` measured 2026-09-24,
   `vinci/graph/llm.py:_REJECTED_SAMPLING_PARAMS`, "DO NOT ADD THEM BACK"). This line used to say
@@ -23,8 +23,8 @@ The BUY−AVOID spread's integrity depends on these. They are real today.
   modal committed lean reaches the vote rule's bar, 5 of 5 attempted, so a failed draw counts as
   dissent (`vinci/dossier/synthesis.py:SYNTHESIS_DRAWS`, `verdict.draw_gate`). The proposal
   `log-verdict` seals is decided by a ten-draw confirmation, 9 of 10 (`confirmation.CONFIRM_DRAWS`).
-  The ranker's cause-classifier has no such design: `vinci/rank/cause.py:classify_cause` makes one
-  call, so its label is a single draw. **Log the model
+  (The ranker's cause-classifier, `vinci/rank/cause.py`, made one call, a single draw; it was
+  retired unfed on 2026-11-13.) **Log the model
   identifier and the raw LLM output** alongside any artifact derived from it; and never let an LLM
   output silently become a NUMBER that feeds the spread. LLM output may annotate or classify; the
   numeric inputs to the spread come from deterministic computation on real data.
@@ -152,6 +152,11 @@ PR (CLAUDE.md: coin-time translation).
 - **Pre-registered void reason** (2026-11-13, #1004 item 5). Plain words: *the three grounds on
   which a decision may be taken out of the record — a data error at entry, the wrong instrument,
   the wrong identity; a change of mind is a close, and stays scored*. `VOID_REASONS`.
+- **Screen-basket baseline** (2026-11-13, #1004 item 2). Plain words: *does the screen select
+  anything? Each committed screen run's admitted names, held equal-weight from the next close,
+  against the names the same run rejected (the control) and against their cap-band benchmarks, at
+  30/90/180 days, each run its own cohort, from cached prices at $0*. `vinci/scoring/screen_baseline.py`;
+  pre-registered in `docs/records/2026-11-13-screen-basket-baseline-preregistered.md`.
 - **Gap test / `disclosure_gaps` / our gap · does not apply · company's normal practice · change
   or deviation · type not determined** (2026-11-07, fix 4a, operator ruling "Yes, use the test").
   Plain words: *before the synthesis may treat a missing fact as a risk, the code sorts WHY it is

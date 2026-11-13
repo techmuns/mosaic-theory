@@ -40,7 +40,7 @@ from vinci.dossier.anchor import (
     DecisionWriteError,
     preserve_operator_tag,
 )
-from vinci.dossier.render import _screening_context_lines
+from vinci.dossier.render import _operator_decision_lines, _screening_context_lines
 from vinci.dossier.schemas import Dossier, write_dossier
 
 #: these tests write real pages, whose transcript words `assemble._write` files first (RG-D19)
@@ -392,11 +392,19 @@ def test_retag_dry_run_writes_nothing(tmp_path: Path, monkeypatch: pytest.Monkey
 
 # --- the human surface: decision first, machine's read beneath, divergence stated ----------------
 
+
+def _page_order(anchor: Anchor) -> str:
+    """The decision and the screening block in the page's own order. Since #1004 item 3c round 1
+    (operator, 2026-11-13: "Keep your 4 decisions on Brief (Recommended)") the decision renders on
+    the Brief and the block, with the machine's read, under Analysis → Valuation — so the decision
+    still reads first."""
+    return "\n".join(_operator_decision_lines(anchor) + _screening_context_lines(anchor))
+
 @pytest.mark.parametrize("ticker", ERASED)
 def test_the_page_prints_the_decision_above_the_machines_read(ticker: str) -> None:
     case = FIX[ticker]
     anchor = Anchor.model_validate({**_decided(case), "reason": case["rebuilt"]["reason"]})
-    md = "\n".join(_screening_context_lines(anchor))
+    md = _page_order(anchor)
     head = f"**The operator's decision: {case['decision']['recipe']}** — "
     assert md.index(head) < md.index(f"> {case['decision']['reason']}") < md.index(
         "_The machine’s read: ")
@@ -405,7 +413,7 @@ def test_the_page_prints_the_decision_above_the_machines_read(ticker: str) -> No
     assert DIVERGES not in md
     split = anchor.model_copy(update={"machine_recipe_hint": "R1_midcycle_margin_evebitda"})
     flag = f"{DIVERGES} R1_midcycle_margin_evebitda.**"
-    assert flag in "\n".join(_screening_context_lines(split))
+    assert flag in _page_order(split)
 
 
 def test_an_undecided_page_reads_as_it_did() -> None:
@@ -613,7 +621,7 @@ def test_a_placeholder_machine_hint_is_a_gap_not_a_disagreement() -> None:
         assert kept.machine_recipe_hint == hint
         assert not [n for n in notes if n.startswith("DIVERGES")], notes
         assert [n for n in notes if n.startswith("NO MACHINE READ")], notes
-        md = "\n".join(_screening_context_lines(kept))
+        md = _page_order(kept)
         assert DIVERGES not in md and "a data gap, not a disagreement" in md
     # NEGATIVE: a real recipe that differs is still a divergence
     split = Anchor.model_validate({**case["rebuilt"], "recipe_hint": "R3_forward_pe"})

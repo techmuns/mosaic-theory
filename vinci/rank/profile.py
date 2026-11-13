@@ -22,13 +22,14 @@ from vinci.schemas.cohort import CohortRead
 
 
 class CauseClass(enum.StrEnum):
-    """Tier-3 LLM cause-classification — an ANNOTATION that *colours* the queue, never the sort key.
+    """The slot of the Tier-3 LLM cause-classification — RETIRED UNFED 2026-11-13.
 
-    Populated only by an explicit, separate LLM read of a name's de-rating text (8-K/news). It is
-    ``UNCLASSIFIED`` by default: an unclassified name is **not** demoted (we never fabricate a
-    terminal verdict from a model's confident, unfalsifiable opinion — same discipline as the
-    assembler not rendering verdicts). It can DEMOTE a terminal-looking name; it is never the
-    primary sort key.
+    The channel that would have filled it (`vinci/rank/cause.py`, an LLM read of a name's
+    de-rating text, loaded through `vinci rank --cause-file`) never ran: every row of the committed
+    queue read ``UNCLASSIFIED``. It left with its module
+    (docs/records/2026-11-13-three-uncalled-modules-retired.md). The ranker no longer reads a
+    cause; it writes ``UNCLASSIFIED`` as a constant so the committed queue's format does not move,
+    and the two other values stay so a queue written before still parses.
     """
 
     MEAN_REVERT = "mean_revert"  # guidance miss / one-time charge / sentiment overreaction
@@ -125,7 +126,7 @@ class RankedCandidate(BaseModel, frozen=True):
     # can hold the result while the fence still stops `vinci.rank` deriving one; `vinci.cohort` does
     # the derivation and is fenced out alongside `vinci.sectors`. None until a screen log exists.
     cohort: CohortRead | None = None
-    cause_class: CauseClass  # Tier-3 annotation (UNCLASSIFIED by default)
+    cause_class: CauseClass  # the retired Tier-3 slot: always UNCLASSIFIED (see CauseClass)
     structurally_disqualified: bool  # a deterministic 8-K structural signal fired → sunk
     structural_flag: StructuralDisqualifier | None  # the source-bound signal (None = no flag)
     unknown_axes: list[str]  # Tier-1 axes that were UNKNOWN — depth tasks (flagged, never imputed)

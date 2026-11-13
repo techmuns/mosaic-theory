@@ -730,10 +730,33 @@ first"** — no prompt change or paid rebuild ships unmeasured.
      (`HARNESS_SCORER_FILES`), recorded as `scorer_ref`. For a prospective change BASE is main, so
      that is a checkout of `origin/main`. For a retrospective one whose BASE's production files
      differ from main's (#953's do, all of them), it is a COMPOSITE checkout: BASE checked out,
-     then `git checkout origin/main -- vinci/evals docs/evals tests/fixtures/synthesis_gold`;
-     a plain checkout of `origin/main` is refused. `register`, `run-compare` and `score` (and
-     the library's `run_compare` and `score_run`, since #1030's review round 1) refuse any other
-     scorer: a candidate never scores itself.
+     then `git checkout origin/main -- vinci/evals docs/evals tests/fixtures/synthesis_gold
+     vinci/graph/llm.py`; a plain checkout of `origin/main` is refused. `register`, `run-compare`
+     and `score` (and the library's `run_compare` and `score_run`, since #1030's review round 1)
+     refuse any other scorer: a candidate never scores itself.
+     - **Why `vinci/graph/llm.py`** (coordinator, 2026-11-13, harness plumbing): since #1049,
+       `vinci/evals/replay.py` imports `sdk_version` from it at import time (the ledger stamps
+       each draw's SDK version). A BASE from before #1049 lacks that name, so the harness does not
+       import at all: #953's composite failed so. `llm.py` is in neither `PRODUCTION_SCORER_FILES`
+       nor `HARNESS_SCORER_FILES`, so the scorer fingerprint does not move. Main's `llm.py` imports
+       only `vinci.config` names a BASE of 2026-11-10 already defines.
+     - **What the composite needs is the NAMES the harness imports, not its import closure.**
+       Measured at main `01ab6923` against #953's BASE `586fdcfd`: `vinci/evals/`'s static closure
+       reaches 124 modules outside `vinci/evals`, and 50 of them changed since BASE. That is
+       production code the composite keeps at BASE on purpose, so the whole closure is the wrong
+       unit. Of the 33 production names `vinci/evals/` imports directly, BASE lacks 2:
+       - `vinci.graph.llm.sdk_version`, imported at the top of `replay.py`: the import fails;
+       - `vinci.dossier.ciq.workbook_kind`, imported inside `replay.comps_export`: only a
+         frozen-page replay with a comps transform reaches it, never `register --from-impact`.
+       **Check before registering,** from the composite, so that a missing top-level name fails
+       here and not at the draw:
+       `python -P -c 'import importlib, pkgutil, vinci.evals as e; [importlib.import_module("vinci.evals." + m.name) for m in pkgutil.iter_modules(e.__path__) if m.name != "__main__"]'`.
+       It imports all 14 modules. Measured: it passes on #953's composite and fails, naming
+       `sdk_version`, on a copy holding BASE's `llm.py`. `register --help` is NOT a check: argparse
+       exits before the harness imports, and it returns 0 on that broken copy. A missing lazy name is
+       found only by reading the harness's imports against BASE's definitions, as above.
+       A harness that named its own production imports, checked by a test against each
+       composite's BASE, would make this a refusal rather than a step. That is proposed, not built.
    - **A retrospective of a merged change** (fresh builds, not the frozen page): `register
      --from-impact <an impact export>` reads the export's two commits, each page's two requests
      and the layers they carried, every file checked against its manifest's sha256; `run-compare`
