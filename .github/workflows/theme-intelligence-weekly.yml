@@ -53,7 +53,10 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          # From the lock, as gate.yml installs (operator, 2026-11-13): the paid scan runs on the
+          # pinned SDK, not whatever was newest that day (1.17.0, 2.3.0, 2.6.0 so far)
+          python -m pip install --require-hashes -r requirements.lock
+          python -m pip install --no-deps -e .
 
       # gate.yml's three checks, in gate.yml's order — the code is gated before it runs, and this is
       # the gate before the state-branch push below (tests/test_scheduled_workflows.py).

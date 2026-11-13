@@ -206,7 +206,7 @@ def test_every_input_of_the_signature_is_signed() -> None:
 
 
 def test_the_signer_imports_the_standard_library_only() -> None:
-    """validate_keys.py loads it by path in a job that installs only anthropic and httpx."""
+    """validate_keys.py loads it by path in a job that never installs `vinci`."""
     tree = ast.parse((ROOT / "vinci" / "facts" / "sigv4.py").read_text())
     names = {a.name.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.Import)
              for a in n.names}

@@ -348,3 +348,42 @@ def test_an_unpriced_model_stays_unknown_even_when_no_call_was_metered() -> None
         finished=dt.datetime(2026, 10, 23, 0, 1, tzinfo=dt.UTC), meter=meter)
     assert record["totals"]["unmetered_calls"] == 1
     assert record["usd"] is None, "an unpriced model's cost was recorded as a known $0.00"
+
+
+# --- the SDK every call went through (operator, 2026-11-13: "Check, then pin newest") -----------
+
+def test_a_run_record_states_the_sdk_its_calls_went_through() -> None:
+    """(+) Each line names the installed `anthropic` SDK. The theme desk's four Actions runs
+    (three of them paid) installed 1.16.0, 1.17.0, 2.3.0 and 2.6.0 while local builds ran
+    0.112.0, and none of the 44 committed assembly records said which: the version had to be dug
+    out of CI logs."""
+    import anthropic
+
+    meter = MeteredLlmClient(_client(lambda **kw: _msg(1000)))
+    meter.extract(system="s", user="u", tool={"name": "covenant_terms"})
+    when = {"started": dt.datetime(2026, 11, 13, tzinfo=dt.UTC),
+            "finished": dt.datetime(2026, 11, 13, 0, 1, tzinfo=dt.UTC)}
+    record = run_metrics.name_record(run_id="r", ticker="X", meter=meter, **when)
+    assert record["sdk_version"] == anthropic.__version__
+    assert record["schema"] == run_metrics.SCHEMA == 3
+    # (−) a build that made no call names no SDK: no LLM client, or refused before its first
+    none = run_metrics.name_record(run_id="r", ticker="X", meter=None, **when)
+    unused = MeteredLlmClient(_client(lambda **kw: _msg(1000)))
+    refused = run_metrics.name_record(run_id="r", ticker="X", meter=unused, **when)
+    assert none["sdk_version"] is None and refused["sdk_version"] is None
+
+
+def test_an_sdk_that_is_not_installed_is_unknown_never_guessed(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) No SDK, no call: the version is None, never a default or the pinned number."""
+    import builtins
+
+    from vinci.graph.llm import sdk_version
+    real = builtins.__import__
+
+    def no_sdk(name: str, *a: Any, **k: Any) -> Any:
+        if name == "anthropic":
+            raise ImportError("no anthropic here")
+        return real(name, *a, **k)
+    monkeypatch.setattr(builtins, "__import__", no_sdk)
+    assert sdk_version() is None

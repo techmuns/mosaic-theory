@@ -36,6 +36,7 @@ from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.schemas import MechanicalLayer
 from vinci.evals.capture_child import DEFAULT_MAX_TOKENS, capture_calls, jsonable
 from vinci.graph.llm import AnthropicLlmClient, LlmError, cost_usd
+from vinci.graph.llm import sdk_version as sdk_version  # re-exported: the SDK `GuardedSdk` stamps
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -463,6 +464,30 @@ class Budget:
             f.write(json.dumps(row, sort_keys=True) + "\n")
 
 
+def one_sdk(rows: Sequence[dict[str, Any]], what: str) -> str | None:
+    """The one `anthropic` SDK every draw row of a scored run went through, or None when no row
+    states one (rows written before `GuardedSdk` stamped `sdk_version`, 2026-11-13).
+
+    REFUSES A RUN DRAWN ACROSS A RE-SYNC (review of #1049, round 1). The API version moves with
+    the SDK (0.112.0 sends `2023-06-01`, 2.6.0 `2026-10-21`), so a registration whose builds or
+    arms straddle a venv re-sync carries a second difference that its test reads as the one it
+    measures: dispersion between builds, or a move between BASE and CAND. Rows on more than one
+    SDK are refused, naming them; so are rows of which some state an SDK and some do not, because
+    which SDK the older ones used is unknown. Re-sync between registrations, never during one."""
+    stated = [r for r in rows if "sdk_version" in r]
+    if stated and len(stated) != len(rows):
+        raise ReplayError(f"{what}: {len(rows) - len(stated)} of {len(rows)} draw rows state no "
+                          "SDK and the rest do — the run was drawn across the pin, and the "
+                          "older rows' SDK is unknown; it is not scored")
+    versions = sorted({str(r["sdk_version"]) for r in stated})
+    if len(versions) > 1:
+        raise ReplayError(f"{what}: its draws went through {len(versions)} SDKs "
+                          f"({', '.join(versions)}) — the API version moved with them, so the "
+                          "score would read it as the effect it measures; it is not scored. "
+                          "Re-sync a venv between registrations, never during one")
+    return versions[0] if versions else None
+
+
 def worst_case_usd(model: str, prompt_tokens: int, max_tokens: int) -> float:
     """One draw at its most expensive: the whole prompt WRITTEN to cache (1.25x input) and every
     output token spent. Raises for a model with no list price — never a zero."""
@@ -507,7 +532,8 @@ class GuardedSdk:
             msg = self.inner.messages.create(**kwargs)
         except anthropic.APIError as exc:   # no response body to price: a failed draw, recorded
             self._write({"label": self.label, "draw": self.n, "usd": 0.0, "raw": None,
-                         "stop_reason": None, "error": f"{type(exc).__name__}: {exc}"[:400]})
+                         "stop_reason": None, "error": f"{type(exc).__name__}: {exc}"[:400],
+                         "sdk_version": sdk_version()})
             raise
         self.client._record_usage(msg)        # production's reader; `extract` repeats it
         recorded = self.client.last_usage
@@ -523,7 +549,9 @@ class GuardedSdk:
         served = str(getattr(msg, "model", ""))
         row = {"label": self.label, "draw": self.n, "usage": usage, "usd": round(usd, 6),
                "served_model": served, "stop_reason": getattr(msg, "stop_reason", None),
-               "seconds": round(time.monotonic() - t0, 1)}
+               "seconds": round(time.monotonic() - t0, 1),
+               # the SDK the draw went through (operator, 2026-11-13: "Check, then pin newest")
+               "sdk_version": sdk_version()}
         self.budget.record(row)
         raw = next((dict(b.input) for b in getattr(msg, "content", [])
                     if getattr(b, "type", None) == "tool_use"), None)

@@ -35,8 +35,10 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          # `[dev]` for the pre-push gate below — this job now runs the offline suite itself.
-          python -m pip install -e ".[dev]"
+          # The lock is `[dev]`, for the pre-push gate below — this job runs the offline suite
+          # itself. From the lock, as gate.yml installs (operator, 2026-11-13).
+          python -m pip install --require-hashes -r requirements.lock
+          python -m pip install --no-deps -e .
 
       - name: Restore EOD cache
         uses: actions/cache@v4
