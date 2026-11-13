@@ -162,18 +162,19 @@ def py_strings(text: str) -> str | None:
     operators, comments, the `f`/`r`/`b` prefixes, the quotes, an f-string's `{…}` fields) and its
     newlines kept, so the joined words read as one run on the line each starts on. Escapes are read
     as the JSON view reads them."""
+    # each line's offset is taken from the very lines the tokenizer is handed (split at "\n" only):
+    # `str.splitlines` also splits at U+2028, U+2029 and other separators, which the tokenizer
+    # keeps inside a line, and every offset after one drifted (re-review of #1046:
+    # `vinci/graph/filings.py` from about line 32)
+    lines = io.StringIO(text).readlines()
     try:
-        toks = list(tokenize.generate_tokens(io.StringIO(text).readline))
+        toks = list(tokenize.generate_tokens(iter(lines).__next__))
     except (tokenize.TokenError, SyntaxError):
         return None
     if any(t.type == tokenize.ERRORTOKEN and t.string.strip() for t in toks):
         return None  # an older tokenizer's way of saying the same
-    # each line's offset, split exactly as the tokenizer's own readline splits (the same StringIO,
-    # at "\n" only): `str.splitlines` also splits at U+2028, U+2029 and other separators, which
-    # the tokenizer keeps inside a line, and every offset after one drifted (re-review of #1046:
-    # `vinci/graph/filings.py` from about line 32)
     starts = [0]
-    for line in io.StringIO(text).readlines():
+    for line in lines:
         starts.append(starts[-1] + len(line))
     chars = [c if c == "\n" else " " for c in text]
 
@@ -967,6 +968,8 @@ def _outcome(run: Callable[[], None]) -> str:
         run()
     except AssertionError as exc:
         return f"failed: {exc}"
+    except pytest.fail.Exception as exc:  # a `pytest.fail` is a failure too, never an escape
+        return f"failed: {exc}"
     except pytest.skip.Exception as exc:
         return f"skipped: {exc}"
     return "passed"
@@ -1077,6 +1080,9 @@ def test_a_line_separator_inside_a_literal_moves_no_offset() -> None:
     text = (ROOT / "vinci/graph/filings.py").read_text()
     assert "\u2028" in text and "\u2029" in text, "the file no longer holds what this pins"
     plain = text.replace("\u2028", " ").replace("\u2029", " ")
-    assert words(py_strings(text) or "") == words(py_strings(plain) or "")
+    joined, joined_plain = py_strings(text), py_strings(plain)
+    # a None on both sides would compare equal and pass with no view read at all
+    assert joined is not None and joined_plain is not None
+    assert words(joined) == words(joined_plain)
     assert words(py_strings('a = "x\u2028y"\nb = "zeta"\n') or "") == (["x", "y", "zeta"],
                                                                          [1, 1, 2])

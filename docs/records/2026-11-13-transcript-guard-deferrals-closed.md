@@ -34,6 +34,11 @@ three, each behind a pin that fails under the defect. It changes only
    Pin: `test_a_line_separator_inside_a_literal_moves_no_offset`, on that real file (CI-runnable):
    replacing the two characters with spaces must leave the view's words where they were.
 
+**WHY.** A guard nobody can break unnoticed is the point of #1046, and these were three ways to
+break it unnoticed: an unpinned wire, a pin that a skip could silence, and an offset that drifted
+on one real file. Each was found by the independent re-review and deferred only because the
+bounded rounds were spent, so they are closed here as their own small PR rather than left open.
+
 **HOW VERIFIED.** $0.
 - **Fail first, by mutation**, applied to this branch's guard and to main's:
 
