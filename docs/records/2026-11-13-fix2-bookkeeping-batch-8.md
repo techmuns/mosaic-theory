@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-13
-prs: [1028, 1039, 1040, 1043, 1044, 1045, 1048, 1049, 1050]
+prs: [1028, 1039, 1040, 1043, 1044, 1045, 1046, 1048, 1049, 1050]
 supersedes:
 superseded-by:
 ---
@@ -23,6 +23,7 @@ superseded-by:
   - **RG-D4** (item (b)): a figure inside the cited fact's printed width traces. PARR's "$21.54" clears at its next build, and PARR is on watch. #1050 pins the inside-the-print guard; that pin passes at its parent by design.
   - **RG-D5** (items (c) and (e)): a year naming what it dates is no figure, and a field name, an accession, a URL or a hash states no span. VITL's "2030" clears at its rebuild. (e)'s residual stands, as #1040 measured it.
   - **RBC-D1's MVST part** reads "not fixing: name retired (operator 2026-11-12)", its page off the corpus with #1044 (`12764514`), as AORT's part reads. MVST leaves the "count written at $0" list.
+  - **RG-D19 gains #1046** (`01ab6923`, merged 2026-11-13 09:55Z, after this branch was cut, and merged in). It cuts the transcript runs in tracked files that batch 7 named as pending: **27**, not the 25 batch 7 wrote. They are the audit's 21, the 4 its guard found, and 2 its review found split across string literals, from six records, four tests and a comment. Its local guard, `test_no_tracked_file_shares_13_consecutive_words_with_a_call`, skips in CI. Its fail-first is #1046's own: on `68bd4b33` it finds #1036's three runs, and on the operator's Mac at its head 0 are unexcused. It is not re-run here: it needs the calls and the SEC cache on one disk. Row 60's RG-D19 clause now says #1046 cut them.
   - **No other row naming MVST is open.** Only E2-D11 (batch 7) and RBC-D1 name it, and both are `fixed`.
   - **RBC-D1's page lists were stale** (review round 0, checked against the committed pages at `b207c8a9`). EPAM, UBER, V and WLK carry a `customers_listed` count from their 2026-11-09 builds, though the cell listed them as having none. NCNO, TECX and BURL carry none, and BURL was in neither list. The cell now says so.
 - **#1028's section, folded in** (#1028, `9fcd4a74`, the fix-request-2 impact sweep, merged 2026-11-13 09:24Z; the coordinator's addition to this batch). Its headline: **12 of 71 PRs moved something their own body did not state**, 7 MISS (#936, #944, #948, #953, #956, #966, #983), 3 a wider count (#960, #962, #965), 1 coverage (#981) and 1 correction (#976) (`docs/records/2026-11-13-fix2-impact-sweep.md`). No status moves; each Pages cell gains what the next build moves:
@@ -98,9 +99,9 @@ The rest of issuecomment-6847522000 quotes further operator answers: no feature 
 - **Lints and the full gate:** in the PR.
 
 **BOUNDARY.**
-- **The PRs:** every first-parent commit on `origin/main` from batch 7's base `98707f29` through `96d0cfea`, less batch 7 itself (#1047, `dad8f441`). These are #1043, #1039, #1040, #1045, #1044 and #1048, and then #1050, #1028 and #1049, which merged after this branch was cut from `b207c8a9` and were merged in. They were read on 2026-11-13.
+- **The PRs:** every first-parent commit on `origin/main` from batch 7's base `98707f29` through `96d0cfea`, less batch 7 itself (#1047, `dad8f441`). These are #1043, #1039, #1040, #1045, #1044 and #1048, and then #1050, #1028, #1049 and #1046, which merged after this branch was cut from `b207c8a9` and were merged in. Main is `01ab6923`. They were read on 2026-11-13.
 - **#1028** (`9fcd4a74`), merged 2026-11-13 09:24Z after this batch was first counted, is merged in with no conflict and booked (above), at the coordinator's request. **#1049** (`96d0cfea`) is merged in the same way and moves no ID. Its correction that #956's fix is #1039 agrees with this batch's amendment on #956's record.
-- **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `96d0cfea`, on 2026-11-13.
+- **The counts:** all 178 fix-log rows by their Status cell, and the 148 asked, which is every Order but `§4`. They are counted on this branch's log, at main `01ab6923`, on 2026-11-13.
 - **The fail-first runs:** #1039's 4 nodes at `c0b6a519`, #1040's 34-node file at `f676616f` and #1050's 3 nodes at `b207c8a9`, on 2026-11-13.
 - **The page checks:** `mechanical.concentration.customers_listed` and the `next-fy` count, read from the 26 committed `data/dossiers/*/dossier.json` at `b207c8a9`.
 - **The coverage set:** B's table at main `12764514`, as the note states. Last costs are from #1041's record.
