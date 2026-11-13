@@ -13,7 +13,7 @@ ledger-y (operator's pre-pull backup): 3 call(s), $0.3082; not on the branch: ['
 ledger-w (fresh's pre-pull backup): 9 call(s), $0.9726; not on the branch: ['R-20261011T150313Z-ingest']
 
 ===== 1a. machine X: paid import 1 (SYNTHETIC Markdown note)
-$ --data-dir data/theme_intelligence/v2/ledger-x ingest-file --path /private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-research-alpha-audit-bcba59/40b3c74c-6d2f-48a2-aecb-6ff27f598bd0/scratchpad/input/synthetic-grid-ledger-note.md --source gs_research --llm-permitted --as-of 2026-10-11 --budget 2
+$ --data-dir data/theme_intelligence/v2/ledger-x ingest-file --path <scratchpad>/input/synthetic-grid-ledger-note.md --source gs_research --llm-permitted --as-of 2026-10-11 --budget 2
 run R-20261011T173147Z-ingest: ingest SUCCEEDED — synthetic-grid-ledger-note.md
   D-1d40d4bf415e8a02  INGESTED   article A-5cd5bcb27e4e  no article of this publisher resembles it; pipeline PROCESSED
 cost $0.255 · outputs: data/theme_intelligence/v2/ledger-x/runs/R-20261011T173147Z-ingest

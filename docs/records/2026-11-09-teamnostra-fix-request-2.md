@@ -287,3 +287,12 @@ R2 bucket privacy settled: private (operator, 2026-11-09).
 - It is recorded by the RG-D19 / RG-D8 stream (`docs/records/2026-11-10-driver-facts-not-quotes.md`),
   whose private evidence store relies on it.
 - How SEC treats two machines was settled separately, from SEC's own pages (#939).
+
+### 2026-11-13: MVST is retired
+
+MVST is retired (operator, 2026-11-12, verbatim: "we want to drop/remove MVST altogether from our list for future as well").
+- §1's order 1 names MVST among the committed pages that carry the old figures. Its page leaves the corpus with #1044.
+- So MVST's part of E2-D11, the headline revenue its releases state, reads `not fixing: name retired (operator 2026-11-12)` in E2-D11's row. Its strict-xfail pin leaves the row.
+- E2-D11's status is unchanged for EPAM and WERN.
+- The §2 counts were measured on 28 pages at `622786a2` and stand on that boundary.
+- Booked in bookkeeping batch 7 (`docs/records/2026-11-13-fix2-bookkeeping-batch-7.md`), as AORT's retirement was on 2026-11-09.
