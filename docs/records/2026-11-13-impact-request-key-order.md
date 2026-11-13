@@ -50,7 +50,7 @@ superseded-by:
 - **"8 nodes"** are the 8 test nodes of the new file (one test is parametrised over the 2 planted
   reorders).
 - **"12 of 12"** counts the 6 pages × 2 arms of #953's panel run: this tool's run stamped
-  2026-11-13 ~10:3xZ, the export `manifest.json` `0fb65dad…`, and the morning run 09:58Z.
+  2026-11-13T10:32:03Z, the export `manifest.json` `0fb65dad…`, and the morning run 09:58:21Z.
 - **Main:** `01ab6923`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
