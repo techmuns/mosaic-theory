@@ -104,6 +104,9 @@ _KW = dict(  # noqa: C408 — common verdict kwargs
     confidence=Confidence.MEDIUM,
     reference_date=date(2026, 6, 15),
     staleness_days=5,
+    # every verdict states its underwrite (2026-11-13, #1004 item 5): these fixtures have no record
+    underwrite=None,
+    no_underwrite_reason="fixture: no underwrite record",
 )
 
 

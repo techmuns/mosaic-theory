@@ -68,6 +68,7 @@ from vinci.schemas.ledger import (
     EVENT_VOID,
     ORIGIN_FOLLOWED,
     ORIGIN_SCREEN,
+    VOID_REASONS,
     Confidence,
     LedgerEntry,
     Verdict,
@@ -75,6 +76,8 @@ from vinci.schemas.ledger import (
     corrected,
     corrections_by_decision,
     origin_of,
+    reaffirmation_note,
+    reaffirmations,
     sleeve_of,
     voids_by_decision,
 )
@@ -1698,27 +1701,6 @@ def _confirm_seal(cfg: Config, args: argparse.Namespace, ticker: str) -> _Seal:
     return _Seal(p.action, p.lean, assembled, tally, conf.reused, lines)
 
 
-def _committed_limit(ticker: str) -> Any:
-    """The STATED limit off the committed scenario record, or None when there is no record.
-
-    NO RECORD AND AN UNREADABLE RECORD ARE DIFFERENT FACTS, and the first draft of this collapsed
-    them: a bare `except Exception` returned None for both, so a corrupt or schema-invalid
-    `scenarios/<T>.json` SILENTLY DISABLED THE GATE and a BUY above a stated limit went through.
-    Its docstring even argued for it — "a read failure must never block a write" — which is the
-    wrong reasoning for a guard, where the reassuring answer (unenforced, proceed) is exactly the
-    dangerous one. #362's rule, applied to a safety check rather than to a rendered fact.
-
-    So: a MISSING record is None and unenforced, because most names have no record and never will.
-    Anything else propagates and refuses the write loudly — a commitment we cannot read is not a
-    commitment that is absent.
-    """
-    import vinci.scenarios as _sc
-    try:
-        return _sc.read_record(ticker.upper(), root=Path.cwd()).limit
-    except FileNotFoundError:
-        return None                        # no record for this name — unenforced, and that is true
-
-
 def _committed_ev_gap(cfg: Config, ticker: str) -> Any:
     """The COMMITTED dossier's persisted EV gap, or None.
 
@@ -1756,6 +1738,20 @@ def _followed_identity(
     if entry is None:
         return None, None
     return resolver.resolve_ticker(ticker.upper()), entry.sleeve
+
+
+def _follow_origin(cfg: Config, ticker: str) -> Any:
+    """The follow-list entry a followed verdict names (`OriginRef`), read through the DATED reader
+    of the follow list (`vinci.followed`) — `_follow_entry` reads no dates. Its ``followed_since``
+    is the date the name was covered from."""
+    from vinci.followed import follow_records
+    from vinci.ledger.workflow import follow_origin
+
+    rec = next((r for r in follow_records(cfg.data_dir / "followed.json")
+                if r.ticker == ticker.upper()), None)
+    if rec is None:
+        raise LedgerError(f"{ticker} has no dated follow entry in data/followed.json")
+    return follow_origin(rec.ticker, rec.since)
 
 
 def _screen_id_book_conflict(cfg: Config, ticker: str) -> str | None:
@@ -1806,7 +1802,7 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
             # positional argument is its TICKER. Resolved here rather than inside `log_verdict`
             # because establishing that a name is genuinely followed is a dossier-layer question
             # (`followed.json`), and the ledger package must not import the dossier package.
-            identity, origin, sleeve = None, ORIGIN_SCREEN, None
+            identity, origin, sleeve, origin_ref = None, ORIGIN_SCREEN, None, None
             if cand is None:
                 identity, sleeve = _followed_identity(cfg, resolver, args.candidate_id)
                 if identity is None:
@@ -1815,6 +1811,7 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                         f"ticker in data/followed.json — run the screen first, or add the follow "
                         f"entry (with its reason and sleeve) if this name is covered out of band.")
                 origin = ORIGIN_FOLLOWED
+                origin_ref = _follow_origin(cfg, str(identity.ticker))
             # (A4) THE EDGE-BASIS GATE, BEFORE the ledger write. The ledger is APPEND-ONLY, so a
             # verdict that reaches it cannot be un-logged — the gate has to refuse here or not at
             # all. It reads the COMMITTED dossier's persisted gap rather than recomputing: the
@@ -1828,6 +1825,25 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 getattr(args, "edge_basis", None),
                 ev_gap=_committed_ev_gap(cfg, ticker),
                 note=getattr(args, "edge_note", None))
+            # THE LIVE UNDERWRITE RECORD, read and its refusals asked BEFORE the confirmation
+            # below draws anything paid (2026-11-13, #1004 item 5); `log_verdict` asks them again
+            # at the seat. Read from the checkout the command runs in, as the limit always was.
+            from vinci.ledger.underwrite import read_underwrite
+            link = read_underwrite(ticker, root=Path.cwd())
+            why_none = (getattr(args, "no_underwrite_reason", None) or "").strip() or None
+            if link is None and why_none is None:
+                raise LedgerError(
+                    f"REFUSED: {ticker} has no live underwrite record (scenarios/{ticker}.json) — "
+                    f"log the verdict against the record that priced it, or state why there is "
+                    f"none (`--no-underwrite-reason`). Nothing was drawn or written.")
+            if link is not None and link.horizon_years is None:
+                raise LedgerError(
+                    f"REFUSED: {link.ref} states no horizon, so its IRR is undefined — a verdict "
+                    f"is not logged on a record with no realisation date. Nothing was drawn or "
+                    f"written.")
+            print(f"underwrite: {link.ref} at {link.commit[:12]}, sha256 {link.sha256[:16]}, "
+                  f"horizon {link.horizon_years:g}y" if link is not None
+                  else f"underwrite: none — {why_none}")
             seal = _confirm_seal(cfg, args, ticker)
             for line in seal.lines:
                 print(line)
@@ -1852,7 +1868,9 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 # THE COMMITTED RECORD'S limit, read here and passed in — the gate itself must not
                 # reach for a file. A name with no record, or a record with no limit, passes None
                 # and is unenforced, which is every name today.
-                stated_limit=_committed_limit(ticker),
+                # THE RECORD'S limit comes with the record (`link.limit`), read once with it
+                stated_limit=None,
+                underwrite=link, no_underwrite_reason=why_none, origin_ref=origin_ref,
                 machine_proposal=seal.action, machine_lean=seal.lean,
                 proposal_assembled_at=seal.assembled, machine_tally=seal.tally,
                 revealed_pre_verdict=getattr(args, "saw_proposal", False) or seal.revealed,
@@ -1866,6 +1884,14 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
         except sqlite3.IntegrityError:
             print(f"a verdict is already logged for {args.candidate_id} (ledger is append-only)")
             return 1
+    if entry.underwrite_ref is not None:
+        ratio = (f"{entry.ratio_at_entry:.2f}" if entry.ratio_at_entry is not None
+                 else f"undefined ({entry.ratio_at_entry_undefined})")
+        print(f"sealed against {entry.underwrite_ref} at {entry.underwrite_commit}: ratio at the "
+              f"entry {entry.entry_price:.2f} = {ratio}")
+    with Store(cfg.db_path) as store:
+        if (earlier := reaffirmations(list(store.iter_ledger())).get(entry.entry_id)) is not None:
+            print(reaffirmation_note(entry, earlier))
     prop_note = (
         f"machine proposed {entry.machine_proposal.value}" if entry.machine_proposal is not None
         else "no machine proposal"
@@ -2154,6 +2180,13 @@ def _cmd_void_decision(args: argparse.Namespace) -> int:
     if not reason:
         print("REFUSED: --reason is required — a decision is voided only on stated grounds.")
         return 1
+    # A PRE-REGISTERED GROUND, refused before any fetch (2026-11-13, #1004 item 5)
+    code = getattr(args, "void_reason", None)
+    if code not in VOID_REASONS:
+        print(f"REFUSED: --void-reason must be one of {sorted(VOID_REASONS)} — a decision is "
+              f"voided only for a data error at entry, the wrong instrument or the wrong identity. "
+              f"A change of mind is a CLOSE (`close-position`), and it stays scored.")
+        return 1
     ruled_on = date.fromisoformat(args.ruled_on)
     path = cfg.snapshots_dir / "decision_ledger.jsonl"
     committed = [LedgerEntry.model_validate(json.loads(json.loads(ln)["payload"]))
@@ -2182,7 +2215,7 @@ def _cmd_void_decision(args: argparse.Namespace) -> int:
     print(f"  the result to date the void seals: {mark.position_return:+.2%} vs {mark.benchmark} "
           f"{mark.benchmark_return:+.2%}, excess {mark.excess * 100:+.2f} pts "
           f"({mark.return_basis}, marked {mark.price:g} on {mark.as_of})")
-    print(f"  ruled {ruled_on}: {reason}")
+    print(f"  ruled {ruled_on} ({code}): {reason}")
     if args.dry_run:
         print("  DRY RUN: nothing written.")
         return 0
@@ -2191,7 +2224,7 @@ def _cmd_void_decision(args: argparse.Namespace) -> int:
             store.rebuild_from_snapshots(cfg.snapshots_dir, tables=["decision_ledger"])
             # stamped as a close is (naive UTC, as `close-position`): an event's time
             row = void_decision(store, entry_id=decision.entry_id, reason=reason,
-                                ruled_on=ruled_on, mark=mark,
+                                ruled_on=ruled_on, mark=mark, reason_code=code,
                                 voided_at=datetime.now(UTC).replace(tzinfo=None))
     except LedgerError as exc:
         print(f"could not void: {exc}")
@@ -4009,6 +4042,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="append the VOID row for a decision an operator's ruling removes from the record")
     p_void.add_argument("entry_id", help="the decision's entry id, e.g. V-GOOGL")
     p_void.add_argument("--reason", required=True, help="the ruling's grounds, sealed into the row")
+    p_void.add_argument("--void-reason", dest="void_reason", required=True,
+                        choices=sorted(VOID_REASONS),
+                        help="the pre-registered ground: a data error at entry, the wrong "
+                             "instrument or the wrong identity (a change of mind is a CLOSE)")
     p_void.add_argument("--ruled-on", dest="ruled_on", required=True,
                         help="the ruling's date, YYYY-MM-DD")
     p_void.add_argument("--dry-run", dest="dry_run", action="store_true",
@@ -4054,6 +4091,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--dry-run", action="store_true",
         help="draw (or reuse) the ten-draw confirmation and print what would be sealed; write "
              "nothing to the ledger. It reveals the proposal, and a later log seals it as revealed")
+    p_log.add_argument(
+        "--no-underwrite-reason", dest="no_underwrite_reason",
+        help="WHY this verdict is logged with no live scenarios/<T>.json — required when there is "
+             "none, refused when there is one; sealed into the row")
     p_log.add_argument("--ciq-root", help="the CIQ folders the page's transcripts are read from "
                                           "(default: data/manual/ciq)")
     p_log.set_defaults(func=_cmd_log_verdict)

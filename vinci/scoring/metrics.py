@@ -13,7 +13,7 @@ import statistics
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from vinci.schemas.ledger import ORIGIN_SCREEN, Disposition, Verdict
+from vinci.schemas.ledger import ORIGIN_SCREEN, READING_FLOOR, Disposition, Verdict
 from vinci.sleeves import DEFAULT_SLEEVE
 
 #: THE RETURN BASIS, ruled 2026-10-26 (operator, ruling B) and registered before the first ledger
@@ -270,6 +270,15 @@ class ScoreReport:
     # EACH RESOLVED ROW'S BENCHMARK, (benchmark, entry_id) — the hit-rates, excess and β pair
     # each row with its own (`harness.row_benchmark`), so the report names which (review of #856).
     benchmarks: tuple[tuple[str, str], ...] = ()
+    # --- 2026-11-13, #1004 item 5 --------------------------------------------------------------
+    # Each VOIDED decision's line (`void_note`), with the result to date its void sealed, printed
+    # BESIDE THE CURVE rather than under the pending count; and each REAFFIRMATION's line — a
+    # decision that is not a new observation (`reaffirmations`). Neither reaches any number.
+    void_notes: tuple[str, ...] = ()
+    reaffirmation_notes: tuple[str, ...] = ()
+    #: The READING FLOOR each book's curve is read at (`READING_FLOOR`) — stamped so the JSON says
+    #: which rule the rendered report applied. The numbers above are computed regardless.
+    reading_floor: int = READING_FLOOR
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -341,6 +350,14 @@ class ScoreReport:
                 f"  _Same spread over the **{held}** still held: **{open_txt}** "
                 f"(BUY n={self.n_open_buy} · AVOID n={self.n_open_avoid})._",
             ]
+        # VOIDED AND REAFFIRMED ROWS, beside the curve (#1004 item 5): out of every number above,
+        # and each named once, here — a removal the reader cannot see reads as a hidden loser
+        if self.void_notes:
+            lines += ["- **Voided** — out of every count, spread and curve; each result to date "
+                      "as its void sealed it:", *(f"  - {n}" for n in self.void_notes)]
+        if self.reaffirmation_notes:
+            lines += ["- **Reaffirmations** — not new observations (one observation per name):",
+                      *(f"  - {n}" for n in self.reaffirmation_notes)]
         sector_lines = [
             f"- {v.sector}: {('spread ' + pct(v.spread)) if v.sufficient else 'insufficient data'} "
             f"({v.n_buy} buy / {v.n_avoid} avoid)"
@@ -358,6 +375,18 @@ class ScoreReport:
         # is worse than pooling it: the row exists, is scored, and appears nowhere.
         sleeve_lines = []
         for v in self.by_sleeve.values():
+            # THE READING FLOOR (#1004 item 5): a book's curve is read only once it holds
+            # `reading_floor` resolved observations; below it the COUNT prints and no reading —
+            # neither the spread nor the kill test under it. A display rule: `by_sleeve` keeps
+            # every number.
+            n_book = v.n_long + v.n_short
+            if n_book < self.reading_floor:
+                sleeve_lines.append(
+                    f"- **{v.sleeve}** — {v.long_label}−{v.short_label}: {n_book} resolved "
+                    f"({v.n_long} {v.long_label.lower()} / {v.n_short} "
+                    f"{v.short_label.lower()}) — below the reading floor of "
+                    f"{self.reading_floor}, so its curve is not read yet")
+                continue
             sleeve_lines.append(
                 f"- **{v.sleeve}** — {v.long_label}−{v.short_label} spread {pct(v.spread)} "
                 f"({v.n_long} {v.long_label.lower()} / {v.n_short} {v.short_label.lower()} "
@@ -394,6 +423,8 @@ class ScoreReport:
             "_reproduces the primary above; the others accumulate beside it and are never pooled._",
             "_The indented line is the book's own KILL TEST where it names one: the long leg_ "
             "_against simply INDEXING the same followed names, over those verdicts' own windows._",
+            f"_A book's curve is read once it holds {self.reading_floor} resolved observations;_ "
+            "_below that its count prints and nothing else (the reading floor, 2026-11-13)._",
             *(sleeve_lines or ["- (no resolved verdicts yet)"]),
         ]
         override_lines = [
@@ -559,6 +590,8 @@ def aggregate(
     bench_daily: list[float] | None = None,
     basket_labels: dict[str, str] | None = None,
     row_notes: tuple[str, ...] = (),
+    void_notes: tuple[str, ...] = (),
+    reaffirmation_notes: tuple[str, ...] = (),
 ) -> ScoreReport:
     """Aggregate per-verdict scores into the report. ``*_daily`` feed the beta/alpha regression;
     ``row_notes`` (the harness's, per row held back or marked short) are carried to the report."""
@@ -669,4 +702,7 @@ def aggregate(
         overrides=overrides,
         row_notes=row_notes,
         benchmarks=tuple(sorted((s.benchmark or "unnamed", s.entry_id) for s in scores)),
+        void_notes=void_notes,
+        reaffirmation_notes=reaffirmation_notes,
+        reading_floor=READING_FLOOR,    # read at call time: the one value every report applies
     )

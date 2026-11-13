@@ -146,10 +146,15 @@ def test_the_split_reaches_the_rendered_report_only_when_something_is_closed(
 
 
 def test_a_re_entered_ticker_is_keyed_by_decision_not_by_name(tmp_path: Path) -> None:
-    """SMPL IS THE LIVE SHAPE: closed 2026-07-22 and re-entered 2026-08-04. A ticker-keyed close set
-    marks the live re-entry closed too and drops it out of the still-held figure."""
+    """A ticker-keyed close set marks a live re-entry closed too and drops it out of the
+    still-held figure. SMPL was this test's shape (closed 2026-07-22, re-entered 2026-08-04) until
+    2026-11-13: a same-call re-entry on the same security inside the first call's window is now a
+    REAFFIRMATION, in no count (`test_ledger_safeguards.py`). So the re-entry here is a distinct
+    observation that shares the ticker — another security filed under it — which is exactly the
+    row a ticker-keyed set would mis-mark."""
     first = _decision("MEH", "SEC-MEH", Verdict.BUY)
-    again = first.model_copy(update={"entry_id": "V-MEH-2", "candidate_id": "MEH-c2"})
+    again = first.model_copy(update={"entry_id": "V-MEH-2", "candidate_id": "MEH-c2",
+                                     "internal_id": "SEC-WIN"})
     bad = _decision("BAD", "SEC-BAD", Verdict.AVOID_TERMINAL)
     scores, rep = _score(tmp_path, [first, again, bad, _close_of(first, on=date(2026, 2, 1))])
 

@@ -420,8 +420,13 @@ def test_a_proposal_from_another_books_vocabulary_is_refused() -> None:
                                    machine_proposal=Verdict.AVOID_TERMINAL)
 
 
-def test_the_per_sleeve_curves_reach_the_markdown_a_reader_actually_gets() -> None:
-    """OPERATOR P1 ON #378, and it is the repo's own rule: a fix is satisfied at the SURFACE WHERE
+def test_the_per_sleeve_curves_reach_the_markdown_a_reader_actually_gets(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """THE READING FLOOR (2026-11-13) is lowered to 1 here: this pins the curve's line, which the
+    floor (20 resolved, `tests/test_ledger_safeguards.py`) gates.
+
+    OPERATOR P1 ON #378, and it is the repo's own rule: a fix is satisfied at the SURFACE WHERE
     THE HARM OCCURS. `by_sleeve` existed in `to_dict()` only, while BOTH default paths — `vinci
     score` (cli) and `run_monthly`'s committed `scoring_report.md` (orchestrator) — emit ONLY the
     markdown, with JSON opt-in. So a resolved followed verdict was correctly kept out of the
@@ -431,6 +436,8 @@ def test_the_per_sleeve_curves_reach_the_markdown_a_reader_actually_gets() -> No
     PINNED ON THE MARKDOWN, not on `to_dict()`, for exactly the reason the defect existed — a pin
     on the machine tier would have passed throughout. Asserted on the STRUCTURED facts the row must
     carry (its own leg labels and counts), never on the surrounding prose."""
+    from vinci.scoring import metrics
+    monkeypatch.setattr(metrics, "READING_FLOOR", 1)
     from vinci.schemas.ledger import Verdict
     from vinci.scoring.metrics import VerdictScore, aggregate
 

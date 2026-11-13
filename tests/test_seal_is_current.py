@@ -55,7 +55,8 @@ def _log(store: Store, cid: str, decided: datetime) -> LedgerEntry:
     return log_verdict(
         store, resolver=_Sic(), candidate_id=cid, verdict=Verdict.BUY, twin_call="t",
         thesis="t", kill_criteria="k", horizon_days=180, confidence=Confidence.MEDIUM,
-        decided_at=decided, reference_date=decided.date(), staleness_days=STALENESS)
+        decided_at=decided, reference_date=decided.date(), staleness_days=STALENESS,
+        underwrite=None, no_underwrite_reason="fixture: no underwrite record")
 
 
 def test_a_close_a_month_old_is_never_sealed(tmp_path: Path) -> None:
@@ -116,7 +117,8 @@ def test_a_back_dated_reference_cannot_seal_an_old_close(tmp_path: Path) -> None
             log_verdict(
                 store, resolver=_Sic(), candidate_id=cid, verdict=Verdict.BUY, twin_call="t",
                 thesis="t", kill_criteria="k", horizon_days=180, confidence=Confidence.MEDIUM,
-                decided_at=decided, reference_date=date(2026, 8, 14), staleness_days=STALENESS)
+                decided_at=decided, reference_date=date(2026, 8, 14), staleness_days=STALENESS,
+                underwrite=None, no_underwrite_reason="fixture: no underwrite record")
         assert list(store.iter_ledger()) == []
 
 
@@ -128,5 +130,6 @@ def test_a_decision_logged_a_day_after_its_reference_still_seals(tmp_path: Path)
             store, resolver=_Sic(), candidate_id=cid, verdict=Verdict.BUY, twin_call="t",
             thesis="t", kill_criteria="k", horizon_days=180, confidence=Confidence.MEDIUM,
             decided_at=datetime(2026, 10, 3, 9), reference_date=date(2026, 10, 2),
-            staleness_days=STALENESS)
+            staleness_days=STALENESS,
+            underwrite=None, no_underwrite_reason="fixture: no underwrite record")
     assert entry.entry_price_as_of == date(2026, 10, 2)

@@ -47,6 +47,14 @@ EXIT_D = date(2026, 8, 10)                  # as_of — comfortably past the hor
 COMMITTED_FOLLOWED = ROOT / "data" / "followed.json"
 
 
+@pytest.fixture(autouse=True)
+def _below_the_reading_floor(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These pin the kill-test line a book's curve prints. Since 2026-11-13 a curve prints only at
+    the reading floor (20 resolved; `tests/test_ledger_safeguards.py` pins it), and these books
+    hold two or three rows — so the floor is lowered here to pin the line it gates."""
+    from vinci.scoring import metrics
+    monkeypatch.setattr(metrics, "READING_FLOOR", 1)
+
 def _bars(iid: str, start: float, end: float) -> list[PriceBar]:
     return [
         PriceBar(internal_id=iid, bar_date=d, open=c, high=c + 1, low=c - 1, close=c,
@@ -510,9 +518,11 @@ def test_an_absent_follow_list_is_the_normal_state(tmp_path: pathlib.Path) -> No
 
 
 def test_the_baseline_uses_each_verdicts_own_window(tmp_path: pathlib.Path) -> None:
-    """THE PAIRING THAT MAKES THE COMPARISON HONEST. Two BUYs entered months apart must each be
-    compared to the basket over THEIR window; one basket return reused across both would compare
-    the judgement's windows to a window nobody held."""
+    """THE PAIRING THAT MAKES THE COMPARISON HONEST. Two verdicts entered months apart must each
+    be compared to the basket over THEIR window; one basket return reused across both would
+    compare the judgement's windows to a window nobody held. The later one is a PASS: since
+    2026-11-13 a second BUY on the same name inside the first's window is a REAFFIRMATION and in
+    no count (`tests/test_ledger_safeguards.py`), while an opposite call is its own row."""
     followed = _followed_file(tmp_path, {"AAA": "quality"})
     late = ENTRY_D + timedelta(days=90)
     with Store(tmp_path / "s.db") as store:
@@ -524,7 +534,7 @@ def test_the_baseline_uses_each_verdicts_own_window(tmp_path: pathlib.Path) -> N
                      volume=1e6, source="t")
             for d, c in ((ENTRY_D, 100.0), (HORIZON_D, 120.0), (EXIT_D, 130.0))])
         store.append_ledger(_entry("AAA", "SEC-AAA", Verdict.BUY, "quality", "followed"))
-        early = _entry("AAA", "SEC-AAA", Verdict.BUY, "quality", "followed").model_copy(
+        early = _entry("AAA", "SEC-AAA", Verdict.PASS, "quality", "followed").model_copy(
             update={"entry_id": "V-AAA-late", "entry_price_as_of": late,
                     "decided_at": datetime.combine(late, datetime.min.time())})
         store.append_ledger(early)

@@ -11,6 +11,7 @@ The ledger is append-only: re-logging a candidate fails loud (a verdict is never
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from dataclasses import dataclass
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, Protocol
 
@@ -30,6 +31,7 @@ from vinci.schemas.ledger import (
     Disposition,
     LedgerEntry,
     LedgerFact,
+    OriginRef,
     Verdict,
     corrected,
     corrections_by_decision,
@@ -49,6 +51,29 @@ class SicSource(Protocol):
 
 class LedgerError(RuntimeError):
     """The verdict cannot be recorded (unknown candidate, or no price to anchor the entry)."""
+
+
+@dataclass(frozen=True)
+class UnderwriteLink:
+    """The LIVE underwrite record a verdict is logged against, as `log-verdict` read it
+    (`vinci.ledger.underwrite.read_underwrite`): its path, the commit it was read at, the sha256 of
+    its bytes (equal to that commit's blob), its base leg's horizon, its stated limit, and the
+    record's own recipe re-run at a price (``ratio_at``), so the ratio is struck at the frozen
+    entry inside `log_verdict` — the one place that price exists."""
+
+    ref: str                       # e.g. "scenarios/SMPL.json"
+    commit: str                    # full sha of the commit the record was read at
+    sha256: str                    # of the record's bytes
+    horizon_years: float | None    # the base leg's `years_to_terminal`
+    limit: StatedLimit | None
+    #: price → (ratio, why undefined); the recipe's own arithmetic, never a second definition
+    ratio_at: Callable[[float], tuple[float | None, str | None]]
+
+
+#: ``origin_ref`` for a followed row is built from its follow entry; screen rows build their own
+def follow_origin(ticker: str, followed_since: date) -> OriginRef:
+    """The origin of a FOLLOWED row: its follow-list entry and the date it was followed from."""
+    return OriginRef(kind="follow_entry", id=ticker.upper(), followed_since=followed_since)
 
 
 def _require_verdict_in_sleeve(
@@ -132,6 +157,9 @@ def log_verdict(
     identity: Identity | None = None,
     origin: str = ORIGIN_SCREEN,
     sleeve: str | None = None,
+    underwrite: UnderwriteLink | None,
+    no_underwrite_reason: str | None = None,
+    origin_ref: OriginRef | None = None,
 ) -> LedgerEntry:
     """Freeze the entry price + the sector and append a verdict for ``candidate_id``; returns it.
 
@@ -177,7 +205,44 @@ def log_verdict(
                 f"screen verdict.")
         assert identity is not None  # narrowed by the guard above; mypy cannot see it
         ident = identity
+    # EVERY NEW ROW NAMES ITS ORIGIN AND ITS BOOK (2026-11-13, #1004 item 5). A screen row names
+    # its candidate record's run; a followed row names its follow entry, which only the caller can
+    # read (the ledger package reads no follow list). The screen's book is the default book: a
+    # screen row left untagged read as overshoot through `sleeve_of` and skipped the book's
+    # vocabulary check below, so a screen PASS could be sealed into a book that records none.
+    if cand is not None:
+        origin_ref = OriginRef(kind="screen_run", id=cand.candidate_id,
+                               screen_run_at=cand.screen_run_at,
+                               screens_fired=tuple(cand.screens_fired))
+        if sleeve is None:
+            from vinci.sleeves import DEFAULT_SLEEVE
+            sleeve = DEFAULT_SLEEVE
+    elif origin_ref is None or origin_ref.kind != "follow_entry":
+        raise LedgerError(
+            f"a FOLLOWED verdict for {ident.ticker} names its follow entry (origin_ref, with "
+            f"followed_since) — a row whose origin is unnamed cannot be traced to the decision "
+            f"that covered the name")
     _require_verdict_in_sleeve(verdict, sleeve, machine_proposal=machine_proposal)
+    # THE UNDERWRITE LINK (2026-11-13, #1004 item 5), refused HERE as the limit is: the ledger is
+    # append-only. A verdict is logged against its live record, or states why it has none. A
+    # record WITHOUT A HORIZON loads, prints and recomputes as it always has (refusing at load
+    # would repeat #762); it is refused only here, at the decision, because a call struck on a
+    # record with no realisation date has no IRR to stand on.
+    why_none = (no_underwrite_reason or "").strip() or None
+    if underwrite is None and why_none is None:
+        raise LedgerError(
+            f"REFUSED: {ident.ticker} has no live underwrite record (scenarios/"
+            f"{ident.ticker.upper()}.json) — a verdict is logged against the record that priced "
+            f"it, or states why there is none (`--no-underwrite-reason`).")
+    if underwrite is not None and why_none is not None:
+        raise LedgerError(
+            f"{ident.ticker} has a live underwrite record ({underwrite.ref}), so no reason for "
+            f"logging without one applies — the verdict is sealed against the record")
+    if underwrite is not None and underwrite.horizon_years is None:
+        raise LedgerError(
+            f"REFUSED: {underwrite.ref} states no horizon (its base leg has no years_to_terminal), "
+            f"so its IRR is undefined — a verdict is not logged on a record with no realisation "
+            f"date. Re-underwrite with a stated horizon; the record itself still loads as it is.")
     sector = resolve_label(resolver.sic_for(ident.cik)[0]).sector
 
     try:
@@ -245,6 +310,8 @@ def log_verdict(
     # chose not to commit, which is a different fact from a commitment. `price is None` is
     # therefore checked explicitly rather than trusted from `state`: two ways to ask the
     # same question is how they drift, and the model already refuses the mismatch.
+    if underwrite is not None and stated_limit is None:
+        stated_limit = underwrite.limit      # the record's limit, read once with the record
     _lim = stated_limit.price if stated_limit is not None else None
     if (verdict is Verdict.BUY and stated_limit is not None
             and _lim is not None and close.value > _lim):
@@ -262,6 +329,10 @@ def log_verdict(
         else Disposition.CONFIRMED if machine_proposal is verdict
         else Disposition.OVERRIDDEN
     )
+    # THE RATIO AT ENTRY, by the record's own recipe at the price just frozen — never the record's
+    # spot, which is the underwrite date's and has since moved
+    ratio, ratio_why = (underwrite.ratio_at(close.value) if underwrite is not None
+                        else (None, None))
     entry = LedgerEntry(
         # one OPEN decision per candidate, never entered before the earlier one left the book
         entry_id=next_decision_id(store, candidate_id, entering_on=close.as_of),
@@ -271,10 +342,17 @@ def log_verdict(
         sector=sector,
         origin=origin,
         sleeve=sleeve,
+        origin_ref=origin_ref,
         verdict=verdict,
         twin_call=twin_call,
         entry_price=close.value,  # frozen
         entry_price_as_of=close.as_of,  # frozen
+        ratio_at_entry=ratio,
+        ratio_at_entry_undefined=ratio_why if ratio is None and underwrite is not None else None,
+        underwrite_ref=underwrite.ref if underwrite is not None else None,
+        underwrite_commit=underwrite.commit if underwrite is not None else None,
+        underwrite_sha256=underwrite.sha256 if underwrite is not None else None,
+        no_underwrite_reason=why_none,
         thesis=thesis,
         facts=dict(facts or {}),
         kill_criteria=kill_criteria,
