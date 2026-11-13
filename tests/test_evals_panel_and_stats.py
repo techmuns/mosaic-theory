@@ -45,6 +45,9 @@ def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
         path = ROOT / f"data/dossiers/{t}/dossier.json"
         if t == "AORT":  # retired 2026-11-09: its page as committed on 2026-10-26, frozen
             path = ROOT / "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json"
+        if t == "MVST":  # retired 2026-11-12. Its page moved after the panel froze, so its row
+            # was skipped on main and still is
+            path = ROOT / "tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json"
         blob = subprocess.run(["git", "hash-object", str(path)], capture_output=True, text=True,
                               check=True).stdout.strip()
         unmoved = {FROZEN["pages"][t]["dossier_blob"]} | ({_AORT_PASSED_BLOB} if t == "AORT"
