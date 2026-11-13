@@ -29,7 +29,10 @@ superseded-by:
   alpha is refused by `register` and by `Registration` itself, and so is a single run with no
   target or a replication of one.
 - **Printed.** `register` now prints the rule it registered: the replication rule with its two
-  bounds, a single run, a replication of a named first run, or no-worsening only.
+  bounds, a single run, a replication of a named first run, or no-worsening only. The replication
+  rule says "(the default)" only when its ship alpha came from the default. A ship alpha given
+  with `--ship-alpha` prints as "set at registration with --ship-alpha; the default is 0.01"
+  (#1048 review round 1).
 - **What does not move.**
   - A no-worsening-only registration has no target. The default never reaches it, and it is
     written with the same keys as before. Six of the eight paid panel runs since 2026-11-07 had
@@ -77,12 +80,12 @@ superseded-by:
   advance, not an omission.
 
 **HOW VERIFIED.**
-- **`tests/test_evals_replication_default.py` (18 tests).** 9 fail on main `98707f29`'s code (its
+- **`tests/test_evals_replication_default.py` (20 tests).** 11 fail on main `98707f29`'s code (its
   `vinci/evals/compare.py` and `__main__.py` swapped in), for six reasons:
   - `SHIP_ALPHA` is absent;
   - `register` returns `ship_alpha` None;
-  - the CLI writes no `ship_alpha` and prints no rule (two tests);
-  - `--single-run` and `single_run` are unknown (three tests);
+  - the CLI writes no `ship_alpha` and prints no rule (three tests);
+  - `--single-run` and `single_run` are unknown (four tests);
   - a default registration's band run decides "ships";
   - the end-to-end test's first registration reads `None == 0.01`.
 
@@ -104,6 +107,14 @@ superseded-by:
      pins": "A replication under the replication rule stays allowed"), at p_lower 1/252, and
      `score` decides "replicated: ships". The index holds exactly two `drawn` rows, the first run's
      and the replication's.
+  4. **The single-run loophole is closed, and pinned** (#1048 review round 1,
+     `test_a_band_result_re_registered_as_a_single_run_is_not_drawn_through_the_cli`). After a
+     band result, the same pages and arms re-registered with `--single-run` under a second
+     approval would ship on one run. It is another design (`ship_alpha` and `rule` differ), so the
+     ledger check and the design key both pass it. Order 8's request-pins check refuses it in
+     `claim_draw`, before any client, because every pin was drawn by the first run and only its
+     replication is exempt. With that check stubbed out, the single run is drawn ("DID NOT
+     RAISE").
 - **The test helper's draw count.** Order 8's `_impact_export` captures each request at one draw.
   A real export carries one of its run's five identical calls, `cache_control` included (the
   session notes' `impact-captures-format.md`, and `vinci/impact/child.py`'s
@@ -111,8 +122,8 @@ superseded-by:
   differs from the one captured at $0"). The end-to-end test re-captures each arm at five draws,
   as the real export does. Order 8's tests never reached a draw, so they never met this. It is
   not a harness defect.
-- **Mutants.** 17 mutants of this change, each run against the new module with every file
-  restored by sha256 after it: **17 of 17 killed** (§BOUNDARY). They are:
+- **Mutants.** 19 mutants, each run against the new module with every file restored by sha256
+  after it: **19 of 19 killed** (§BOUNDARY). They are:
   - the default set to None, its condition flipped, or never applied;
   - the default moved onto the field, so old files read 0.01;
   - the ship band tested at alpha;
@@ -123,7 +134,9 @@ superseded-by:
   - `single_run` made a design field;
   - `register` or the CLI dropping it;
   - each refusal removed;
-  - the rule not printed, or the single run printed as nothing.
+  - the rule not printed, or the single run printed as nothing;
+  - from review round 1: an explicit ship alpha printed as the default, and order 8's
+    request-pins check stubbed out (the single-run loophole's pin).
 - **Existing registrations do not move.**
   - `git show origin/main:docs/evals/registrations.jsonl` at `98707f29` holds one row, a
     `judge_test_read`, and no `registered` row, so no indexed registration can change sha or key.
@@ -138,12 +151,12 @@ superseded-by:
     with a `scorer_ref`, and a replication.
 
 **BOUNDARY.**
-- **18 tests**: `tests/test_evals_replication_default.py`, run with main `98707f29`'s two harness
-  files swapped in (9 failed, 9 passed) and on this branch (18 passed).
+- **20 tests**: `tests/test_evals_replication_default.py`, run with main `98707f29`'s two harness
+  files swapped in (11 failed, 9 passed) and on this branch (20 passed).
 - **Five real registrations**: every `registration-*.json` under the `synthesis-eval-*` folders
   of the session notes folder on the operator's Mac, read 2026-11-13, at `98707f29` and on this
   branch.
-- **17 mutants**: the list in HOW VERIFIED, each run against `tests/test_evals_replication_default.py`
+- **19 mutants**: the list in HOW VERIFIED, each run against `tests/test_evals_replication_default.py`
   alone (`-x`).
 - **"Six of the eight paid panel runs since 2026-11-07"**: the eight records named
   `docs/records/2026-11-*-measured-on-the-panel.md`, 2026-11-07 to 2026-11-11. Fix 3a and fix 4a

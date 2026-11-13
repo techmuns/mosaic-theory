@@ -60,23 +60,28 @@ def _paid(a: argparse.Namespace) -> bool:
     return True
 
 
-def _rule_line(reg: Registration) -> str:
+def _rule_line(reg: Registration, *, ship_alpha_given: bool) -> str:
     """The rule a `register` registration is decided by, as printed: the replication rule is the
-    default for a target (coordinator default 3, 2026-11-12), so a single run says it opted out.
-    A gated metric's families are printed too: the no-worsening check reads only those."""
+    default for a target (coordinator default 3, 2026-11-12), so a single run says it opted out,
+    and a ship alpha given with `--ship-alpha` says it was set at registration, never "the
+    default" (#1048 review round 1). A gated metric's families are printed too: the no-worsening
+    check reads only those."""
     gates = "".join(f"; {m}'s no-worsening check counts only {fams}"
                     for m, fams in sorted(reg.no_worsening_families.items()))
-    return _rule_body(reg) + gates
+    return _rule_body(reg, ship_alpha_given=ship_alpha_given) + gates
 
 
-def _rule_body(reg: Registration) -> str:
+def _rule_body(reg: Registration, *, ship_alpha_given: bool) -> str:
     if reg.no_worsening:
         return f"no-worsening only (no target): no class metric worsens at p_upper <= {reg.alpha}"
     if reg.replicates is not None:
         return (f"a REPLICATION of {reg.replicates[:16]} under the replication rule: its "
                 f"target(s) must reach p_lower <= {reg.alpha}")
     if reg.ship_alpha is not None:
-        return (f"the replication rule (the default): ships at p_lower <= {reg.ship_alpha}; in "
+        from vinci.evals.compare import SHIP_ALPHA
+        how = (f"ship alpha {reg.ship_alpha} set at registration with --ship-alpha; the default "
+               f"is {SHIP_ALPHA}" if ship_alpha_given else "the default")
+        return (f"the replication rule ({how}): ships at p_lower <= {reg.ship_alpha}; in "
                 f"({reg.ship_alpha}, {reg.alpha}] a fresh registered replication (`register "
                 f"--replicates`) must reach p_lower <= {reg.alpha}; above {reg.alpha} it does "
                 "not ship")
@@ -325,7 +330,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
               f"{list(reg.held_out) or 'none'} -> {a.out}")
-        print(f"rule: {_rule_line(reg)}")
+        print(f"rule: {_rule_line(reg, ship_alpha_given=a.ship_alpha is not None)}")
         return 0
     if a.cmd in ("compare", "run-compare"):
         from vinci.evals import compare as cm

@@ -145,8 +145,22 @@ def test_the_default_through_the_cli_is_in_the_registration_and_printed(
     assert json.loads((tmp_path / "r.json").read_text())["ship_alpha"] == 0.01
     assert reg.rule == cm.REPLICATION_RULE
     out = capsys.readouterr().out
-    assert "the replication rule" in out and "p_lower <= 0.01" in out
+    assert "the replication rule (the default)" in out and "p_lower <= 0.01" in out
     assert "(0.01, 0.05]" in out and "SINGLE RUN" not in out
+
+
+def test_an_explicit_ship_alpha_is_printed_as_set_at_registration_not_as_the_default(
+        tmp_path: Path, index: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """(+) #1048 review round 1: `--ship-alpha 0.005` printed "the replication rule (the
+    default): ships at p_lower <= 0.005", which reads as if 0.005 were the default. A ship alpha
+    given at registration says so, and names the default it departs from. FAILS AT 5005b7fd."""
+    export, _ = _impact_export(tmp_path)
+    reg = _register(export, _ledger(tmp_path, "a1"), tmp_path / "r.json", "--target", "M-LABEL",
+                    "--ship-alpha", "0.005")
+    assert reg.ship_alpha == 0.005
+    rule = next(x for x in capsys.readouterr().out.splitlines() if x.startswith("rule: "))
+    assert "(the default)" not in rule and "p_lower <= 0.005" in rule
+    assert "ship alpha 0.005 set at registration with --ship-alpha; the default is 0.01" in rule
 
 
 def test_no_worsening_is_registered_as_it_was(tmp_path: Path, index: Path) -> None:
@@ -459,3 +473,38 @@ def test_a_default_first_run_in_the_band_needs_and_accepts_a_replication_through
         "replicated: ships")
     drawn = [r for r in registry.working_rows(index) if r.get("event") == "drawn"]
     assert [r["registration"] for r in drawn] == [first.sha, repl.sha]
+
+
+def test_a_band_result_re_registered_as_a_single_run_is_not_drawn_through_the_cli(
+        tmp_path: Path, index: Path, drawer: list[int]) -> None:
+    """(−) #1048 review round 1, THE SINGLE-RUN LOOPHOLE, END TO END: a default first run decides
+    "replication required"; the same pages and arms re-registered with `--single-run` under a
+    second approval would ship on one run at 6/252. It is ANOTHER DESIGN (`ship_alpha` and `rule`
+    differ), so neither the per-approval ledger check nor the design key catches it: order 8's
+    request-pins check does (F3; operator 2026-11-12, "Refuse by request pins") — every pin it
+    would draw was drawn by the first run, and only a replication of that run is exempt. Refused
+    by `claim_draw` before any client is built. (Mutant: the pins check stubbed out — the single
+    run is drawn.)"""
+    export, page = _drawable_export(tmp_path)
+    raw = _nflx_synthesis(page)
+    band = [raw] * 5 + [_clean(raw)] * 4 + [raw]
+    l1, l2 = _ledger(tmp_path, "a1"), _ledger(tmp_path, "a2")
+    first = _register(export, l1, tmp_path / "first.json", "--target", "M-LABEL")
+    _to_main(index)
+    _QUEUE.extend(band)
+    assert _run_compare(tmp_path / "first.json", l1, tmp_path / "run-first") == 0
+    assert _score(tmp_path / "run-first", tmp_path / "first.json", l1) == cm.REPLICATION_REQUIRED
+    assert drawer == [1, 1]
+
+    single = _register(export, l2, tmp_path / "single.json", "--target", "M-LABEL",
+                       "--single-run")
+    assert single.single_run and single.requests == first.requests
+    assert cm.design_differs(single, first) == ["ship_alpha", "rule"]
+    assert cm.draw_key(single) != cm.draw_key(first)
+    _to_main(index)
+    _QUEUE.extend(band)   # what it would draw, were it drawn
+    with pytest.raises(ReplayError, match="every request"):
+        _run_compare(tmp_path / "single.json", l2, tmp_path / "run-single")
+    assert drawer == [1, 1] and not (tmp_path / "run-single").exists()
+    drawn = [r for r in registry.working_rows(index) if r.get("event") == "drawn"]
+    assert [r["registration"] for r in drawn] == [first.sha]
