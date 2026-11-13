@@ -6,10 +6,12 @@ registration written before the first draw.
                                               one ledger per approval; every run shares it
     compare --base main --cand <ref> [--transform NAME ...]       $0: does CAND's request differ?
     register --base main --cand <ref> [--transform NAME ...] (--target M-LABEL [--target ...] |
-             --no-worsening) [--ticker T ...] [--ciq-root DIR] [--ship-alpha 0.01
-             [--replicates FIRST.json --budget-ledger FILE]] --out FILE
+             --no-worsening) [--ticker T ...] [--ciq-root DIR] [--ship-alpha A | --single-run]
+             [--replicates FIRST.json] --budget-ledger FILE --out FILE
                                               BEFORE any draw, $0: pages, draws, targets, scorer,
-                                              and every request's bytes (captured here)
+                                              and every request's bytes (captured here); a target
+                                              is under the replication rule at ship alpha 0.01
+                                              BY DEFAULT, and --single-run opts out, stated
     run-compare --registration FILE --budget-ledger FILE --out-dir DIR [--cap USD] --paid
                                               PAID: the registered draws, page by page, ONCE
     score --out-dir DIR --registration FILE --budget-ledger FILE
@@ -42,6 +44,10 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from vinci.evals.compare import Registration
 
 
 def _paid(a: argparse.Namespace) -> bool:
@@ -52,6 +58,38 @@ def _paid(a: argparse.Namespace) -> bool:
     from vinci.config import load_local_env
     load_local_env()
     return True
+
+
+def _rule_line(reg: Registration, *, ship_alpha_given: bool) -> str:
+    """The rule a `register` registration is decided by, as printed: the replication rule is the
+    default for a target (coordinator default 3, 2026-11-12), so a single run says it opted out,
+    and a ship alpha given with `--ship-alpha` says it was set at registration, never "the
+    default" (#1048 review round 1). A gated metric's families are printed too: the no-worsening
+    check reads only those."""
+    gates = "".join(f"; {m}'s no-worsening check counts only {fams}"
+                    for m, fams in sorted(reg.no_worsening_families.items()))
+    return _rule_body(reg, ship_alpha_given=ship_alpha_given) + gates
+
+
+def _rule_body(reg: Registration, *, ship_alpha_given: bool) -> str:
+    if reg.no_worsening:
+        return f"no-worsening only (no target): no class metric worsens at p_upper <= {reg.alpha}"
+    if reg.replicates is not None:
+        return (f"a REPLICATION of {reg.replicates[:16]} under the replication rule: its "
+                f"target(s) must reach p_lower <= {reg.alpha}")
+    if reg.ship_alpha is not None:
+        from vinci.evals.compare import SHIP_ALPHA
+        how = (f"ship alpha {reg.ship_alpha} set at registration with --ship-alpha; the default "
+               f"is {SHIP_ALPHA}" if ship_alpha_given else "the default")
+        return (f"the replication rule ({how}): ships at p_lower <= {reg.ship_alpha}; in "
+                f"({reg.ship_alpha}, {reg.alpha}] a fresh registered replication (`register "
+                f"--replicates`) must reach p_lower <= {reg.alpha}; above {reg.alpha} it does "
+                "not ship")
+    if reg.single_run:
+        return (f"SINGLE RUN (--single-run, stated in the registration): ships at p_lower <= "
+                f"{reg.alpha} on one run, with no replication — it opts out of the replication "
+                "rule, the default")
+    return reg.rule
 
 
 def _run(a: argparse.Namespace) -> int:
@@ -129,9 +167,14 @@ def main(argv: list[str] | None = None) -> int:
             c.add_argument("--target", action="append", default=[])
             c.add_argument("--no-worsening", action="store_true",
                            help="no target: only that no class metric worsens (§6.1)")
-            c.add_argument("--ship-alpha", type=float,
-                           help="the replication rule: ship at p_lower <= this; up to alpha, "
-                                "a fresh registered replication must reach alpha")
+            rule = c.add_mutually_exclusive_group()
+            rule.add_argument("--ship-alpha", type=float,
+                              help="the replication rule, THE DEFAULT for a target at 0.01: ship "
+                                   "at p_lower <= this; up to alpha, a fresh registered "
+                                   "replication must reach alpha")
+            rule.add_argument("--single-run", action="store_true",
+                              help="opt a target OUT of the replication rule: one run, decided "
+                                   "at alpha — stated in the registration and printed")
             c.add_argument("--replicates", type=Path,
                            help="register a REPLICATION of this registration (same design)")
             c.add_argument("--no-worsening-families", action="append", default=[],
@@ -141,8 +184,9 @@ def main(argv: list[str] | None = None) -> int:
             c.add_argument("--note", help="what the registration states before the draw (in "
                                           "its sha): what the target covers and does not")
             c.add_argument("--budget-ledger", type=Path,
-                           help="with --replicates: the approval's ledger, which records the "
-                                "first run and its ledger-backed score")
+                           help="required: the approval that may draw this registration (with "
+                                "--replicates, the ledger that records the first run and its "
+                                "ledger-backed score)")
             c.add_argument("--draws", type=int, default=5)
             c.add_argument("--from-impact", type=Path, metavar="EXPORT",
                            help="register an impact run's captured requests and layers (fresh "
@@ -269,6 +313,7 @@ def main(argv: list[str] | None = None) -> int:
         reg = cm.register(a.base, a.cand, targets=a.target, draws=a.draws,
                           transforms=a.transform, pages=a.ticker, captured=cap,
                           no_worsening=a.no_worsening, ship_alpha=a.ship_alpha,
+                          single_run=a.single_run,
                           replicates=first, ledger=a.budget_ledger, note=a.note,
                           no_worsening_families={
                               m: f.split(",") for m, _, f in
@@ -285,6 +330,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"registered {reg.sha[:16]}: pages {list(reg.pages)}, {reg.draws} draws per "
               f"condition, targets {list(reg.targets)}, held out from this change "
               f"{list(reg.held_out) or 'none'} -> {a.out}")
+        print(f"rule: {_rule_line(reg, ship_alpha_given=a.ship_alpha is not None)}")
         return 0
     if a.cmd in ("compare", "run-compare"):
         from vinci.evals import compare as cm
