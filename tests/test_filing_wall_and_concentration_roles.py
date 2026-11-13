@@ -206,6 +206,9 @@ def _committed_panel(ticker: str) -> list[ps.PanelInstrument]:
     from vinci.dossier.schemas import CapitalStructure
 
     page = Path(__file__).resolve().parent.parent / "data" / "dossiers" / ticker / "dossier.json"
+    if ticker == "MVST":  # retired 2026-11-12: its page as committed on 2026-09-17, frozen
+        page = (Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-09-17"
+                / "MVST" / "dossier.json")
     mech = json.loads(page.read_text())["mechanical"]
     return dm._wall_panel(CapitalStructure.model_validate(mech["capital_structure"]))
 
