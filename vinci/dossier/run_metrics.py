@@ -19,9 +19,9 @@ the outcome a loop most needs to count. ``outcome`` says which: ``written``, ``r
 
 THE RECORD — shape contract, one literal example (abridged to one call):
 
-    {"schema": 1, "run_id": "3f9c2a1b", "ticker": "VRRM", "outcome": "written", "error": null,
+    {"schema": 3, "run_id": "3f9c2a1b", "ticker": "VRRM", "outcome": "written", "error": null,
      "started_at": "2026-10-23T13:40:12Z", "finished_at": "2026-10-23T13:44:57Z", "seconds": 285.0,
-     "model": "claude-opus-4-8", "extraction_version": "…",
+     "model": "claude-opus-4-8", "sdk_version": "2.6.0", "extraction_version": "…",
      "calls": [{"phase": "assemble_dossier_framing", "ok": true, "error": null,
                 "cached_prompt": true,
                 "usage": {"input_tokens": 41, "output_tokens": 4120,
@@ -57,6 +57,12 @@ every response listed (``responses_listed: "all"``), where the page carries the 
 fact layer's sources under the same ``inputs_id``; on a refused or failed build, everything it
 read before it stopped — so a refusal can be replayed on the inputs that produced it. ``null``
 only when the record of the reads could not itself be built; the line says so in ``error``.
+
+``sdk_version`` (schema 3, 2026-11-13; operator: "Check, then pin newest (Recommended)") is the
+installed `anthropic` SDK every call of the build went through (`graph.llm.sdk_version`): ``null``
+on a build that made no call (no LLM client, or refused before its first), and when none is
+installed. Records before it do not say: the theme desk's four Actions runs (three of them paid)
+installed 1.16.0, 1.17.0, 2.3.0 and 2.6.0, read back from CI logs, while local builds ran 0.112.0.
 """
 
 from __future__ import annotations
@@ -74,9 +80,9 @@ from vinci.dossier.extraction_version import EXTRACTION_VERSION
 from vinci.dossier.inputs_schema import InputManifest
 from vinci.dossier.schemas import Dossier
 from vinci.dossier.verdict import split_lean
-from vinci.graph.llm import MeteredLlmClient, cost_usd
+from vinci.graph.llm import MeteredLlmClient, cost_usd, sdk_version
 
-SCHEMA = 2
+SCHEMA = 3
 RUNS_DIR = "assembly_runs"
 ERROR_CAP = 300
 _TOKEN_FIELDS = ("input_tokens", "output_tokens", "cache_creation_input_tokens",
@@ -152,7 +158,8 @@ def name_record(
         "error": _capped(said),
         "started_at": _iso(started), "finished_at": _iso(finished),
         "seconds": round((finished - started).total_seconds(), 1),
-        "model": model, "extraction_version": EXTRACTION_VERSION,
+        "model": model, "sdk_version": sdk_version() if meter is not None and meter.calls else None,
+        "extraction_version": EXTRACTION_VERSION,
         "calls": calls,
         "totals": {"calls": len(calls), "failed_calls": sum(1 for c in calls if not c["ok"]),
                    "unmetered_calls": len(calls) - len(metered),

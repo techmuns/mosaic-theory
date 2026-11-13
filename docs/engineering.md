@@ -681,7 +681,10 @@ reproducible across people and laptops (12-factor config):
 
 1. `git clone …` && `cd mosaic-theory`
 2. `python -m venv .venv && . .venv/bin/activate`
-3. `pip install -e ".[dev]"` — **re-run after any `git pull` that changes dependencies.**
+3. `pip install --require-hashes -r requirements.lock && pip install --no-deps -e .` — the lock
+   first, every package pinned with its hashes as CI installs it, then `vinci` with nothing added.
+   A bare `pip install -e ".[dev]"` would take the newest of every package `pyproject.toml` does not
+   pin exactly. **Re-run the lock line after any `git pull` that changes `requirements.lock`.**
 4. `cp .env.example .env`, then fill `POLYGON_API_KEY` / `ANTHROPIC_API_KEY` / `SEC_USER_AGENT`.
    `.env` is git-ignored and per-laptop — it never leaves the machine, never enters git.
 

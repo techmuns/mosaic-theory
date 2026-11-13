@@ -175,6 +175,19 @@ class AnthropicLlmClient(LlmClient):
         raise LlmError(f"model {self._model} returned no tool_use block (stop={msg.stop_reason})")
 
 
+def sdk_version() -> str | None:
+    """The installed `anthropic` SDK's version: every call this process makes goes through it.
+    Stamped on each run record (operator, 2026-11-13: "Check, then pin newest (Recommended)"),
+    because the theme desk's four Actions runs (three of them paid) installed 1.16.0, 1.17.0,
+    2.3.0 and 2.6.0 while local builds ran 0.112.0, and no record said which. ``None`` when the
+    SDK is not installed, so no call could have been made: unknown, never the pinned number."""
+    try:
+        import anthropic
+    except ImportError:
+        return None
+    return str(anthropic.__version__)
+
+
 def cost_usd(model: str, usage: dict[str, int] | None) -> float | None:
     """List-price USD of one call, from its ``usage`` — ``None`` when the model is not in
     `vinci.config.LLM_PRICE_PER_MTOK` or the call has no usage. UNKNOWN, never zero: a zero would
