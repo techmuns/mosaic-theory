@@ -648,14 +648,22 @@ def as_the_call_prints_it(body: str, quote: str) -> str | None:
     or spacing, and the write-once spool refused the page after every model call
     (`driver_evidence.EvidenceBytesDifferError`). Two draws of one passage now file one text.
     THE MATCH IS THE KEY'S OWN FOLD (`_norm`) and the same first occurrence
-    `_paragraph_and_speaker` counts from. A span that does not fold back to the quote (a character
-    whose lower case is longer) is None, and the row keeps the model's string."""
+    `_paragraph_and_speaker` counts from. The match is cut back to the call's characters through
+    each one's lower case, so a character whose lower case is longer ("İ") anywhere before the
+    quote never shifts the cut; a span that still does not fold back to the quote is None, and the
+    row keeps the model's string."""
     flat, _ = _flat_with_index_map(body)
     needle = _norm(quote)
-    j = flat.lower().find(needle)
-    if j < 0:
+    lowered: list[str] = []
+    owner: list[int] = []   # each lower-cased character's index in ``flat``
+    for k, ch in enumerate(flat):
+        low = ch.lower()
+        lowered.append(low)
+        owner.extend([k] * len(low))
+    j = "".join(lowered).find(needle)
+    if j < 0 or not needle:
         return None
-    span = flat[j:j + len(needle)]
+    span = flat[owner[j]:owner[j + len(needle) - 1] + 1]
     return span if _norm(span) == needle else None
 
 

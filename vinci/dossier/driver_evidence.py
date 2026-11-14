@@ -35,8 +35,8 @@ paragraph after it, and nothing that varies by row or by build:
   key are refused in the spool and in the bucket (`R2Client.put_new`, ``If-None-Match: *``).
   ONE exception, in the spool (`EvidenceSpool.file`): a held passage whose quote differs from the
   new one only in what the key folds (case, spacing) is the same passage, so the bytes filed first
-  stand and the page names the record (`refolded_flag`). The bucket only ever receives the
-  spool's own bytes.
+  stand and the page names the record (`refolded_flag`). The upload holds the same rule against
+  the bucket (`upload_spool`), so a cleared spool never overwrites the bucket's first bytes.
 - **Every read and every upload re-checks** that the quote hashes to its locator's
   ``quote_sha256``, so a record cannot claim a passage it does not hold.
 """
@@ -344,7 +344,6 @@ class EvidenceSpool:
             return Filing(key, written=False, held_refolded_on=filed)
         raise EvidenceBytesDifferError(f"{key}: {refusal}")
 
-
     def get(self, key: str) -> Record:
         return _parse(self.path(key).read_bytes(), key)
 
@@ -464,7 +463,8 @@ def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, Spoo
                 rep.written += 1
             else:
                 rep.already += 1
-            if filed.held_refolded_on is not None:
+            # ONE NOTE PER RECORD: a passage backing several rows meets the held file once each
+            if filed.held_refolded_on is not None and all(k != filed.key for k, _ in rep.refolded):
                 rep.refolded.append((filed.key, filed.held_refolded_on))
         rows.append(r.model_copy(update={"locator": loc}))
     mech = dossier.mechanical.model_copy(update={
@@ -503,6 +503,9 @@ class UploadReport:
     written: list[str] = field(default_factory=list)
     already: list[str] = field(default_factory=list)
     skipped: list[str] = field(default_factory=list)  # spool files that are not evidence
+    #: keys the bucket already held as the same passage in another case or spacing
+    #: (`_same_passage`): counted in ``already`` too, its first bytes kept
+    refolded: list[str] = field(default_factory=list)
 
 
 def upload_spool(spool: EvidenceSpool, client: R2Client) -> UploadReport:
@@ -512,12 +515,28 @@ def upload_spool(spool: EvidenceSpool, client: R2Client) -> UploadReport:
     Each record is re-read and re-checked first (`_parse`: quote hash, key, serialisation), and
     read back from the bucket after its PUT (a key already held was read back and compared by
     `put_new` itself). A record is never deleted from the spool here: the operator keeps or
-    clears the folder."""
+    clears the folder.
+
+    THE SAME PASSAGE IN ANOTHER CASE OR SPACING IS ALREADY HELD HERE TOO (2026-11-14, review of
+    the fix). A cleared spool can file a passage afresh in the call's words while the bucket holds
+    the model's case of it: the bucket's first bytes stand, never overwritten, and the key is
+    counted in ``refolded``; anything else that differs still raises."""
+    from vinci.facts.remote import RemoteBytesDifferError
+
     held, other = spool.keys()
     rep = UploadReport(skipped=other)
     for key in held:
-        data = record_bytes(spool.get(key))
-        if not client.put_new(key, data):
+        rec = spool.get(key)
+        data = record_bytes(rec)
+        try:
+            new = client.put_new(key, data)
+        except RemoteBytesDifferError:
+            if not _same_passage(client.get(key), rec, key):
+                raise
+            rep.already.append(key)
+            rep.refolded.append(key)
+            continue
+        if not new:
             rep.already.append(key)
             continue
         rep.written.append(key)
@@ -554,8 +573,10 @@ def main(argv: Iterable[str] | None = None) -> int:
     spool = EvidenceSpool(a.spool) if a.spool is not None else EvidenceSpool.from_env()
     with R2Client.from_env() as client:
         rep = upload_spool(spool, client)
-    print(f"uploaded {len(rep.written)} record(s), {len(rep.already)} already in the bucket; "
-          f"{len(rep.skipped)} other file(s) in the spool left alone: {_shown(rep.skipped)}")
+    print(f"uploaded {len(rep.written)} record(s), {len(rep.already)} already in the bucket "
+          f"({len(rep.refolded)} of them held in another case or spacing: "
+          f"{_shown(rep.refolded)}); {len(rep.skipped)} other file(s) in the spool left alone: "
+          f"{_shown(rep.skipped)}")
     return 0
 
 

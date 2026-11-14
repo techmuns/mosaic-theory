@@ -28,14 +28,16 @@ import os
 import re
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
 from tests.stripped_pages import ciq_root, committed_page
+from tests.test_facts_remote import FakeBucket, _client
 from vinci.dossier import driver_evidence as de
 from vinci.dossier import driver_extract as dx
 from vinci.dossier.schemas import Dossier, OperatingDriver
+from vinci.graph.llm import LlmClient
 
 CASE: dict[str, Any] = json.loads(
     (Path(__file__).parent / "fixtures" / "evidence_same_passage" / "GOOGL.json").read_text())
@@ -74,8 +76,8 @@ def _cut_slice() -> str:
 
 def _row(quote: str, slice_text: str | None = None) -> OperatingDriver:
     rows, _flags, _ = dx.extract_transcript_drivers(
-        slice_text or _cut_slice(), llm=_Llm(quote), ticker="GOOGL", name="Alphabet Inc.",
-        transcript_sha256={CASE["call"]: CASE["transcript_sha256"]})
+        slice_text or _cut_slice(), llm=cast(LlmClient, _Llm(quote)), ticker="GOOGL",
+        name="Alphabet Inc.", transcript_sha256={CASE["call"]: CASE["transcript_sha256"]})
     (row,) = rows
     return row
 
@@ -144,9 +146,11 @@ def test_anything_else_that_differs_under_the_key_is_still_refused(
     spool, path = _held(tmp_path, held)
     before = path.read_bytes()
     loc = held.locator
-    other = {"speaker": {"locator": loc.model_copy(update={"speaker": "Ruth Porat"})},
-             "context": {"following_context": "Another paragraph."},
-             "call": {"locator": loc.model_copy(update={"call": "Another call.rtf"})}}[change]
+    changes: dict[str, dict[str, Any]] = {
+        "speaker": {"locator": loc.model_copy(update={"speaker": "Ruth Porat"})},
+        "context": {"following_context": "Another paragraph."},
+        "call": {"locator": loc.model_copy(update={"call": "Another call.rtf"})}}
+    other = changes[change]
     with pytest.raises(de.EvidenceBytesDifferError):
         spool.put(held.model_copy(update={"verbatim": _case_flip(SPAN), **other}))
     assert path.read_bytes() == before
@@ -198,6 +202,33 @@ def test_the_page_names_a_passage_held_in_another_case_with_its_key_and_filed_da
     assert key in new[0] and CASE["filed"] in new[0]
 
 
+def test_a_passage_backing_two_rows_is_named_once(tmp_path: Path) -> None:
+    """(-) ONE NOTE PER RECORD. One passage backs several rows (63 of the 810 keys on the 28
+    committed pages); each row meets the held file, and the page named it once per row."""
+    row = _row(SPAN)
+    other = row.model_copy(update={"metric": "another metric", "value": "another value"})
+    held = _record(row).model_copy(update={"verbatim": _case_flip(SPAN)})
+    spool, _ = _held(tmp_path, held)
+    page = _page(row)
+    od = page.mechanical.operating_drivers
+    assert od is not None
+    page = page.model_copy(update={"mechanical": page.mechanical.model_copy(
+        update={"operating_drivers": od.model_copy(update={"rows": [row, other]})})})
+    out, rep = de.spool_dossier(page, spool)
+    key = de.key_of(held)
+    assert rep.refolded == [(key, CASE["filed"])]
+    assert [f for f in out.qa_flags if f not in page.qa_flags] == [
+        de.refolded_flag(key, CASE["filed"])]
+
+
+def test_a_longer_lower_case_before_the_quote_never_shifts_the_cut() -> None:
+    """(-) "İ" lower-cases to two characters, so a find in the lower-cased call is one place
+    ahead of the call's own text after it, and the row kept the model's string."""
+    body = "Thanks to \u0130nan.\n\nRevenue grew   Strongly this quarter."
+    assert dx.as_the_call_prints_it(body, "revenue grew strongly") == "Revenue grew Strongly"
+    assert dx.as_the_call_prints_it(body, "revenue fell") is None
+
+
 def test_a_page_meeting_only_its_own_bytes_gains_no_flag(tmp_path: Path) -> None:
     """(+) NEGATIVE PIN: a passage held byte for byte adds nothing to the page."""
     row = _row(SPAN)
@@ -205,6 +236,51 @@ def test_a_page_meeting_only_its_own_bytes_gains_no_flag(tmp_path: Path) -> None
     page = _page(row)
     out, rep = de.spool_dossier(page, spool)
     assert rep.refolded == [] and out.qa_flags == page.qa_flags
+
+
+# --- the bucket holds the same rule: a cleared spool never overwrites its first bytes -------------
+
+def _upload_twice(tmp_path: Path, first: de.EvidenceRecord,
+                  second: de.EvidenceRecord,
+                  ) -> tuple[FakeBucket, dict[str, bytes], de.UploadReport]:
+    """``first`` uploaded from one spool, then the spool cleared ("the operator keeps or clears
+    the folder", `upload_spool`) and ``second`` filed afresh and uploaded."""
+    bucket = FakeBucket()
+    one, two = tmp_path / "before-clear", tmp_path / "after-clear"
+    one.mkdir()
+    two.mkdir()
+    de.EvidenceSpool(one).put(first)
+    de.EvidenceSpool(two).put(second)
+    with _client(bucket) as client:
+        de.upload_spool(de.EvidenceSpool(one), client)
+        held = dict(bucket.objects)
+        rep = de.upload_spool(de.EvidenceSpool(two), client)
+    return bucket, held, rep
+
+
+def test_an_upload_meeting_the_same_passage_in_another_case_keeps_the_buckets_bytes(
+        tmp_path: Path) -> None:
+    """(-) REVIEW ROUND 0. The bucket holds the model's capital (one of the spool's 3); a cleared
+    spool files the call's words afresh. On the fix's first commit `put_new` refused the key and
+    the upload stopped there; now the bucket's first bytes stand and the key is counted."""
+    words = _record(_row(SPAN))
+    capital = words.model_copy(update={"verbatim": _case_flip(SPAN)})
+    bucket, held, rep = _upload_twice(tmp_path, capital, words)
+    key = de.key_of(words)
+    assert (rep.written, rep.already, rep.refolded) == ([], [key], [key])
+    assert bucket.objects == held
+
+
+def test_an_upload_meeting_another_record_under_the_key_still_refuses(tmp_path: Path) -> None:
+    """(+) NEGATIVE PIN: another context under the key is another record; the bucket refuses it,
+    as before."""
+    from vinci.facts.remote import RemoteBytesDifferError
+
+    words = _record(_row(SPAN))
+    other = words.model_copy(update={"verbatim": _case_flip(SPAN),
+                                     "following_context": "Another paragraph."})
+    with pytest.raises(RemoteBytesDifferError):
+        _upload_twice(tmp_path, other, words)
 
 
 # --- the real call, by hashes and locator (skips where the licensed call is not on disk) ---------
