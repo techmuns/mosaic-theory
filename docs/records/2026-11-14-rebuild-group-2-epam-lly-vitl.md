@@ -42,8 +42,11 @@ superseded-by:
 - **Other value changes, read leaf by leaf against main `1f32cbdf`:**
   - LLY's and VITL's `buyback_cash` keep their values (4,334.0; 35.001). Their "PERIOD MISMATCH" note leaves with the stale share count it compared against.
   - LLY's held build wrote `catalyst_path.insider_activity` unknown → present: the defect above.
-  - EPAM's covenant table gains two rate floors ("Base Rate floor", "Euro-Rate floor") and loses no row. Three of its terms are refused to UNKNOWN because their value states figures their quote doesn't (E5): the financial-maintenance covenant's "4.00 to 1.00", a principal set and a prepayment threshold.
-  - EPAM's 10-K exhibit `exhibit1017-epamnonxempl.htm` (`0001352010-26-000015`) is refused as not a debt agreement (E5).
+  - EPAM's covenant table goes from 14 rows to 16 and loses no row, but one value goes (#1068's independent review):
+    - its 2017 credit agreement (`0001352010-17-000022`) gains two rate-floor rows, "Base Rate floor" and "Euro-Rate floor";
+    - its 2021 amended credit agreement (`0001352010-21-000039`, maturity 2026-10-21) loses its Interest row's `floor_pct` 0.0, with the quote behind it, as its base-rate label goes from "Adjusted Eurocurrency Rate (LIBOR Rate)" to "Adjusted Eurocurrency Rate". It is a JSON-only value of a list member from a paid redraw of the terms, so `prespend.compare` does not see it.
+    - Three of its terms are refused to UNKNOWN because their value states figures their quote doesn't (E5): the financial-maintenance covenant's "4.00 to 1.00", a principal set and a prepayment threshold.
+  - EPAM's 10-K exhibit `exhibit1017-epamnonxempl.htm` (`0001352010-26-000015`) is refused as not a debt agreement (E5): its flag says it "declares itself no agreement at all".
   - `layer_refreshes` empties on all three, as on any fresh assembly.
   - The remaining moves are lists re-drawn by this build (synthesis points, transcript driver rows) or re-read under fix request 2's code (release guides).
 - **The store** is group 1's working copy, content sha256 `598a3d2c07f17df5f071742f1a0ea6cc23452f02334c0273bc755de523fa1cb6`, frontier 2026-11-11, unchanged after the three builds.
@@ -78,8 +81,8 @@ superseded-by:
 **THE SDK (#1049's falsifier).** 20 calls, 0 failed, all on 2.6.0. Against each page's last 0.112.0 build: EPAM $4.49 → $4.46, LLY $3.03 → $3.70 and VITL $2.59 → $2.49, each on the same call count. No later draw re-wrote the prompt cache (0 of 12). With group 1, that is 1 of 24 later draws on 2.6.0 against 2 of 176 on 0.112.0, not distinguishable. The code moved too, so this describes the builds and does not test the SDK.
 
 **FOUND, NOT FIXED.**
-- **The covenant table's "cost bound / fetch fail" line** (group 1's record; `vinci/dossier/render.py:1943-1944`, `frontend/views/shared/dossier.js:3139`) also stands on EPAM's new page.
-  - It names `0001352010-26-000015`, the 10-K exhibit refused as not a debt agreement (E5). NCNO's `0001902733-26-000022` and TJX's `0000109198-26-000008` are the same shape.
+- **The covenant table's "cost bound / fetch fail" line** (#1067's FOUND, NOT FIXED row, `docs/records/2026-11-14-rebuild-group-1-ncno-smpl-tjx.md:107`; `vinci/dossier/render.py:1943-1944`, `frontend/views/shared/dossier.js:3139`) also stands on EPAM's new page (`data/dossiers/EPAM/dossier.md:700`). STATE §5.0 row 63 now owns it.
+  - It names `0001352010-26-000015` as "not extracted this run (cost bound / fetch fail)". That reason is false: the exhibit was refused by E5 because it "declares itself no agreement at all", and that reason is in `qa_flags` only, never on the page. NCNO's `0001902733-26-000022` and TJX's `0000109198-26-000008` are the same shape.
   - 15 committed pages carry the line: AMZN, BRBR, BURL, CNXC, EPAM, NCNO, NFLX, NKE, PARR, TGT, TJX, UBER, V, VRRM, WLK.
 
 **BOUNDARY.**
