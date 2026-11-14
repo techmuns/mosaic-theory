@@ -304,9 +304,10 @@ console.log(JSON.stringify(html.replace(/\s+/g, " ")));
 
 
 def test_an_old_page_renders_as_it_did() -> None:
-    """(+) C7: a committed page's tally (no `passes`) prints the old line, word for word."""
+    """(+) C7: a pre-rule page's tally (no `passes`) prints the old line, word for word. LLY's
+    2026-11-03 page, frozen: its living page, rebuilt 2026-11-14, records R1's gate."""
     from vinci.dossier.render import _draw_agreement_md
     from vinci.dossier.schemas import Synthesis
-    doc = json.loads((ROOT / "data/dossiers/LLY/dossier.json").read_text())
+    doc = json.loads((ROOT / "tests/fixtures/frozen_pages/2026-11-03/LLY/dossier.json").read_text())
     md = "\n".join(_draw_agreement_md(Synthesis.model_validate(doc["synthesis"])))
     assert "Reproducibility" in md and "rule" not in md
