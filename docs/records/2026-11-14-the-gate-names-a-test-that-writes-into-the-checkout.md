@@ -30,7 +30,8 @@ superseded-by:
 - **The deselected count, in `tests/conftest.py`.** Each worker keeps the ids `pytest_deselected`
   hands it and, once its collection is done, sends them in xdist's `workeroutput`. The controller
   keeps what each worker sent (`pytest_testnodedown`) and prints the count on the line above the
-  summary line: `39 deselected (-m "not network"), the same 39 on each of the 4 workers`.
+  summary line: `39 deselected (-m "not network"), the same 39 on each of the 8 workers` in the
+  real run below (`-n auto` on 8 cores; CI's runner has 4).
   - A worker that sent nothing (one that died) makes it `deselected: UNKNOWN (gw0 39, gw1 sent
     none, …)`. An unknown count is never printed as a number.
   - **Beside the summary line, not in it.** The first cut put the ids into the terminal reporter's
