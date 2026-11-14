@@ -78,3 +78,7 @@ superseded-by:
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $8.83 of the $13.37 cap, WERN's held $5.18 included; the three groups together $32.42 of $46.30. LLY's and WERN's pages are bought and not yet committed: LLY waits for a paid rebuild after #1069, and WERN for a $0 refresh after the #829 fix.
 - IT's two KD-sourced rows ship under the coordinator's ruling; the publication question is the operator's.
+- **DEFERRED, Codex P1 on #1070:** IT's `date_semantics.analysis_as_of` reads 2026-11-11 while its CIQ inputs were exported 2026-11-12, and a CIQ fact is knowable only from its export date.
+  - The field is, by its own stated rule, the latest of the inputs' DATA dates (`valuation_basis.date_semantics`, main's code); the page states the export beside the data ("data 2026-11-11, exported 2026-11-12"). No ledger, scoring, seal, screen or monitor reads it.
+  - The shape is not IT's: 8 of the 26 committed pages at `4f7a5d64` state a CIQ export later than their `analysis_as_of` (IT, MCK, NKE, ORKA, TECX, V, VRRM, WLK; 9 counting LLY's file mtime, a day after its stated export). Measured by each page's latest "exported YYYY-MM-DD" in a `source_ref` against its `analysis_as_of`.
+  - Counting a CIQ input's export date into the field is a code change for its own PR, never a re-stamp of one page; re-pricing IT at 11-12 needs a vendor pull and a paid build, neither in this PR's authority.
