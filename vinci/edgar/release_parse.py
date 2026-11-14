@@ -265,12 +265,27 @@ def figure_stated(quote: str, value: float, units: tuple[str, ...]) -> QuotedFig
     return None
 
 
-def _verbatim(text: str, start: int, end: int, *, cap: int = VERBATIM_CAP) -> str:
-    """A ≤cap-char verbatim window, snapped back to the enclosing bullet/sentence, single-spaced."""
+def _verbatim(text: str, start: int, end: int, *, cap: int = VERBATIM_CAP,
+              keep_end: bool = False) -> str:
+    """A ≤cap-char verbatim window, snapped back to the enclosing bullet/sentence, single-spaced.
+
+    Over ``cap``, the default keeps the window's START: the guidance readers decide on it (its
+    period, a superseded or withdrawn guide, the metrics a sentence names), so it never moves.
+    A quote STORED beside a match that ENDS at its figure (a reconciliation actual, a guide range)
+    passes ``keep_end=True`` (#829): it keeps the END and drops whole words from its start. A
+    one-off's, an event impact's or a driver's match runs past its figure, so it keeps the start.
+    Kept from the start, WERN's −0.03 was quoted by "…diluted loss per share of" and TJX's
+    $4.93–$5.02 guide by "…earnings per share to be", each stopping before the figure it backs."""
     lo0 = max(0, start - 170)
     b = max(text.rfind("•", lo0, start), text.rfind(". ", lo0, start))
     lo = (b + 1) if b != -1 else start
-    return " ".join(text[lo:end].split())[:cap].strip()
+    flat = " ".join(text[lo:end].split())
+    if len(flat) <= cap or not keep_end:
+        return flat[:cap].strip()
+    tail = flat[-cap:]
+    if not flat[-cap - 1].isspace() and " " in tail:
+        tail = tail[tail.index(" ") + 1:]   # the cut split a word: start at the next whole one
+    return tail.strip()
 
 
 def _period_near(text: str, start: int, end: int) -> str:
@@ -1282,7 +1297,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         stated[(metric, p)] = val
         out.append(ReconciliationValue(
             metric=metric, period=p, value=val, change=_change_after(text, m.end()),
-            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+            verbatim=_verbatim(text, m.start(), m.end(), keep_end=True), source_ref=src,
         ))
     for m in _REVENUE.finditer(text):  # headline revenue actual (same current/prior discipline)
         if _segment(m.start()):
@@ -1343,7 +1358,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         stated[("revenue", p)] = val
         out.append(ReconciliationValue(
             metric="revenue", period=p, value=val,
-            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+            verbatim=_verbatim(text, m.start(), m.end(), keep_end=True), source_ref=src,
         ))
     # THE COMPANY'S GAAP GROSS MARGIN (audit E2-D9, D4). "Non-GAAP gross margin was 47.0%" passed a
     # 12-character "adjusted" look-back and was stored as the GAAP figure, and only the FIRST
@@ -1369,7 +1384,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
             break
         out.append(ReconciliationValue(
             metric="gross margin", period=gp, value=v,
-            verbatim=_verbatim(text, gm.start(), gm.end()), source_ref=src,
+            verbatim=_verbatim(text, gm.start(), gm.end(), keep_end=True), source_ref=src,
         ))
         break
     return out
@@ -2560,8 +2575,9 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
                 "it is not read as guidance", vb, at)
         return True
 
-    def _admit_range(r: re.Match[str], metric: str, period: str, vb: str) -> None:
-        """Store ONE stated range, scaled and unit-labelled from its OWN tokens — or refuse it."""
+    def _admit_range(r: re.Match[str], metric: str, period: str, vb: str, quote: str) -> None:
+        """Store ONE stated range, scaled and unit-labelled from its OWN tokens — or refuse it.
+        ``vb`` is the window the readers decided on; ``quote`` is the one stored (#829)."""
         low, high = _money(r["low"]), _money(r["high"])
         if low is None or high is None:
             return
@@ -2624,7 +2640,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         out.append(GuidanceItem(
             metric=metric, period=period,
             low=low, high=high, unit=unit, qualitative=False,
-            verbatim=vb, source_ref=src,
+            verbatim=quote, source_ref=src,
         ))
         _flag_default(metric, period, vb)
 
@@ -2683,7 +2699,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             continue
         first_held = _held(metric, period)
         if not first_held:
-            _admit_range(m, metric, period, vb)
+            _admit_range(m, metric, period, vb, _verbatim(text, m.start(), m.end(), keep_end=True))
         if pair is None:
             continue
         # THE SECOND RANGE OF THE SENTENCE (audit E2-D13): read when it states its own period
@@ -2698,7 +2714,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             _refuse(f"a second {metric} range, for {second}, falls in a scope this release "
                     f"already gives for {metric}; one range per metric per scope is read", vb2)
         else:
-            _admit_range(pair.second, metric, second, vb2)
+            _admit_range(pair.second, metric, second, vb2, vb2)
     # "GUIDANCE TO $X TO $Y" (TeamNostra fix request 2, RE2-D7 and RE2-D19): "raises its fiscal 2026
     # revenue guidance to $1.10 billion to $1.15 billion" and "raised … outlook to … from its prior
     # outlook of …" stored nothing — the prior range names no metric, so no guide at all. AFTER the
@@ -2738,7 +2754,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             _refuse(f"one range is shared by {len(named)} metrics ({', '.join(sorted(named))}), "
                     "so which it governs cannot be read from the sentence", vb, m.start())
             continue
-        _admit_range(m, metric, period, vb)
+        _admit_range(m, metric, period, vb, _verbatim(text, m.start(), m.end(), keep_end=True))
     for m in _GUIDE_PCT.finditer(text):
         metric = _guide_metric(m.group(1))
         lo, hi = _money(m.group(2)), _money(m.group(3))
@@ -2786,7 +2802,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         out.append(GuidanceItem(
             metric=metric, period=period,
             low=lo, high=hi, unit="%", basis="change", qualitative=False,
-            verbatim=vb, source_ref=src,
+            verbatim=_verbatim(text, m.start(), m.end(), keep_end=True), source_ref=src,
         ))
         _flag_default(metric, period, vb)
     # CHANGE-BASIS GUIDES, AFTER the level patterns and gated on `seen`, so a metric that stated a
@@ -2821,7 +2837,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             out.append(GuidanceItem(
                 metric=metric, period=period,
                 low=lo, high=hi, unit=unit, basis="change", qualitative=False,
-                verbatim=vb, source_ref=src,
+                verbatim=_verbatim(text, m.start(), m.end(), keep_end=True), source_ref=src,
             ))
             _flag_default(metric, period, vb)
 
