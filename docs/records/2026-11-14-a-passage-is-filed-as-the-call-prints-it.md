@@ -61,11 +61,13 @@ superseded-by:
 - **The real call end to end** (the licensed call on disk, `VINCI_CIQ_ROOT`): the quote is the paragraph's words at the fixture's span, checked against its hash. A case flip and a spacing flip each now file the record whose sha256 the spool holds (`aac26cb3…`). In CI the pin skips, because no call is on disk.
 - **No test reads or writes the operator's spool;** a pytest folder plays it.
 - **The gate** (`bin/commit`, which commits only on exit 0, in a clean worktree with no git-ignored data):
-  - at `b51703b6`: ruff clean; `mypy --strict` clean on 219 files; 11,456 passed, 670 skipped, 9 xfailed, 0 failed; the mirror in sync;
-  - at `d6a9d62e`: 11,454 passed, 0 failed.
-- **The local 12-word transcript guard** at `b51703b6` (the operator's 66 current calls; the archive of replaced exports not read): 3,198 files scanned; 73 runs shared with a call, 60 excused by SEC filings and 13 by Key Developments exports; 0 unexcused, none in this change's files.
-- **The cross-setup section** (`python -m vinci.impact run`, head `b51703b6`, base `68e8c474`, patch-id `d9efa58c`, the 11-11 store):
-  - 12 tests fail at base and pass at head: 10 of the new file's, and the 2 extraction-version pins. The real-call pin skips there.
+  - at `cd5ace48`, the PR's code head: ruff clean; `mypy --strict` clean on 219 files; 11,457 passed, 670 skipped, 9 xfailed, 0 failed; the mirror in sync;
+  - at `4b5efa2e` and `cdd25154`: 11,457 passed, 0 failed; at `b51703b6`: 11,456 passed, 0 failed; at `d6a9d62e`: 11,454 passed, 0 failed.
+- **The local 12-word transcript guard** at `cd5ace48` (the operator's 66 current calls; the archive of replaced exports not read): 3,199 files scanned; 73 runs shared with a call, 60 excused by SEC filings and 13 by Key Developments exports; 0 unexcused, none in this change's files.
+  - Two earlier runs at that head left 25 and then 4 calls unread, because LibreOffice produced no text; the third read all 66.
+  - The guard's unchanged Markdown-link pin failed in that third run and passes alone. It reads a window of the calls on disk, and the same run at `b51703b6` passed it.
+- **The cross-setup section** (`python -m vinci.impact run`, head `cd5ace48`, base `68e8c474`, patch-id `d0623d72`, the 11-11 store):
+  - 13 tests fail at base and pass at head: 11 of the new file's, and the 2 extraction-version pins. The real-call pin skips there.
   - Of 25 pages built at $0, 0 move. PARR is not built: its mislabelled quarterly export.
   - 0 of 25 synthesis requests differ, and 0 of 6 frozen-panel requests, so no row-53 panel check is owed.
   - 0 committed pages re-render differently.
