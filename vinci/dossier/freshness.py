@@ -330,6 +330,19 @@ def corrected_ciq_as_of(stated: str, bars: list[Any]) -> CiqAsOf:
 _COVERAGE_GAP_DAYS = 4
 
 
+def _as_date(v: Any) -> dt.date | None:
+    """A bar's date as a date, or None when it is not one (a malformed bar is skipped, never read
+    as a date)."""
+    if isinstance(v, dt.datetime):
+        return v.date()
+    if isinstance(v, dt.date):
+        return v
+    try:
+        return dt.date.fromisoformat(str(v))
+    except (TypeError, ValueError):
+        return None
+
+
 def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = None,
                   tol: float = 0.005) -> dt.date | None:
     """The date whose close IS this price — or None when the store cannot say so unambiguously.
@@ -349,16 +362,6 @@ def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = 
     ``not_after`` that same recency rule is dangerous** — the latest match may sit AFTER the panel
     and move the stamp FORWARD, the one thing this correction must never do — so an unbounded call
     that finds SEVERAL matches refuses rather than picking one."""
-    def _as_date(v: Any) -> dt.date | None:
-        if isinstance(v, dt.datetime):
-            return v.date()
-        if isinstance(v, dt.date):
-            return v
-        try:
-            return dt.date.fromisoformat(str(v))
-        except (TypeError, ValueError):
-            return None
-
     # COVERAGE PRECONDITION (HLF, 2026-08-21). The panel names a bar; if the store's history STOPS
     # BEFORE the stamp, that bar is ABSENT BY CONSTRUCTION and every match below is a coincidence.
     #
@@ -392,21 +395,17 @@ def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = 
         if frontier is not None and (not_after - frontier).days > _COVERAGE_GAP_DAYS:
             return None
 
-    hits = []
-    for b in bars:
-        d = _as_date(getattr(b, "bar_date", None))
-        c = getattr(b, "close", None)
-        if d is None or not isinstance(c, (int, float)):
-            continue
-        # STRICTLY BEFORE THE STAMP. An export cannot predate the data it carries, so a bar AFTER
-        # the stamp can never be its source; and CIQ's measured convention (11 of 11) is that the
-        # data is the PRIOR trading close, so a bar ON the stamp cannot be it either. Excluding
-        # both also bounds an otherwise five-year scan that would eventually meet a coincidental
-        # match — publishing a date years off, or moving the stamp FORWARD.
-        if not_after is not None and d >= not_after:
-            continue
-        if abs(float(c) - close) <= tol:
-            hits.append(d)
+    # THE MATCH LIES IN THE PANEL'S OWN WINDOW (2026-11-14). The precondition above asks whether
+    # the store REACHES the stamp, and a store missing exactly the panel's session still does:
+    # WERN's 2026-11-12 panel prints 27.84, the 2026-11-11 close; a store ending 11-10 sits two
+    # days short, passes, and the scan below took the latest 27.84 anywhere before — 2025-10-17,
+    # so the build refused WERN's panel as 392 days old. The panel's data is the close before its
+    # stamp, so a bar more than the routine gap before the stamp is never that close, whatever it
+    # prints: the session is refused (None, the stamp stands), never matched elsewhere. LEFT OPEN:
+    # a bar INSIDE the window that happens to print the missing session's close is still taken,
+    # a date at most the gap too old; no market calendar is available here to tell it apart.
+    hits = [d for d in matching_closes(close, bars, not_after=not_after, tol=tol)
+            if not_after is None or (not_after - d).days <= _COVERAGE_GAP_DAYS]
     if not hits:
         return None
     # UNBOUNDED + AMBIGUOUS = REFUSE (review of #469). Recency is only principled relative to the
@@ -424,6 +423,29 @@ def date_of_close(close: float, bars: list[Any], *, not_after: dt.date | None = 
     # away an answer the corpus supports. Measured fleet-wide: 13 names unchanged, 4 resolved,
     # 0 moved — and NIKE, whose printed close matches NO bar, still correctly refuses above.
     return max(hits)
+
+
+def matching_closes(close: float, bars: list[Any], *, not_after: dt.date | None = None,
+                    tol: float = 0.005) -> list[dt.date]:
+    """Every bar date whose close is ``close`` within ``tol``, strictly before ``not_after`` —
+    wherever it sits. `date_of_close` reads only the ones in the panel's window; a match outside
+    it is what the build names when it refuses one (`mechanical._uncorrected_reason`)."""
+    hits = []
+    for b in bars:
+        d = _as_date(getattr(b, "bar_date", None))
+        c = getattr(b, "close", None)
+        if d is None or not isinstance(c, (int, float)):
+            continue
+        # STRICTLY BEFORE THE STAMP. An export cannot predate the data it carries, so a bar AFTER
+        # the stamp can never be its source; and CIQ's measured convention (11 of 11) is that the
+        # data is the PRIOR trading close, so a bar ON the stamp cannot be it either. Excluding
+        # both also bounds an otherwise five-year scan that would eventually meet a coincidental
+        # match — publishing a date years off, or moving the stamp FORWARD.
+        if not_after is not None and d >= not_after:
+            continue
+        if abs(float(c) - close) <= tol:
+            hits.append(d)
+    return sorted(hits)
 
 
 def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:
