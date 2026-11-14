@@ -33,6 +33,10 @@ paragraph after it, and nothing that varies by row or by build:
   `driver-evidence/v1/unlocated/<sha256 of the call's file name>/`.
 - **The bytes** are canonical JSON. The same record twice is a no-op; different bytes under one
   key are refused in the spool and in the bucket (`R2Client.put_new`, ``If-None-Match: *``).
+  ONE exception, in the spool (`EvidenceSpool.file`): a held passage whose quote differs from the
+  new one only in what the key folds (case, spacing) is the same passage, so the bytes filed first
+  stand and the page names the record (`refolded_flag`). The upload holds the same rule against
+  the bucket (`upload_spool`), so a cleared spool never overwrites the bucket's first bytes.
 - **Every read and every upload re-checks** that the quote hashes to its locator's
   ``quote_sha256``, so a record cannot claim a passage it does not hold.
 """
@@ -287,15 +291,30 @@ class EvidenceSpool:
         return self.root / key.replace("/", _SEP)
 
     def put(self, rec: Record) -> bool:
-        """Write ``rec``. True when written; False when the same bytes were already there.
+        """Write ``rec``. True when written; False when the spool already held it (`file`).
         Different bytes under its key raise: a record is never overwritten."""
+        return self.file(rec).written
+
+    def file(self, rec: Record) -> Filing:
+        """Write ``rec`` unless the spool already holds it, and say which it was.
+
+        THE SAME PASSAGE IN ANOTHER CASE OR SPACING IS ALREADY HELD (2026-11-14). The key hashes
+        the quote FOLDED (`quote_key`), so two draws of one passage share a key, and before the
+        extractor filed the call's own words (`driver_extract.as_the_call_prints_it`) the record
+        held the model's string. A held passage record that differs from ``rec`` in its quote's
+        case or spacing ONLY, through the key's own fold, is that passage: the bytes filed first
+        stand, untouched, and the `Filing` says so, so the page can name the record
+        (`spool_dossier`). The day it was filed is UNKNOWN: the record carries no date, a field
+        added now would change every held record's bytes, and a file's time is no date of filing
+        (a copy, a restore or a sync resets it; Codex P2 and the coordinator, #1077).
+        Anything else that differs under the key still raises. Measured the
+        day it was written: of 1,285 passage records in the operator's spool, 3 differ from their
+        call's words in one capital letter, and 1,098 others match them byte for byte."""
         verify(rec)
         key = key_of(rec)
         path, data = self.path(key), record_bytes(rec)
         if path.exists():
-            if path.read_bytes() == data:
-                return False
-            raise EvidenceBytesDifferError(f"{key}: the spool holds another record under it")
+            return self._held(path, key, rec, data, "the spool holds another record under it")
         part = path.with_name(path.name + ".part")
         try:
             # exclusive: two writers never share a partial file
@@ -309,13 +328,22 @@ class EvidenceSpool:
             with os.fdopen(fd, "wb") as fh:
                 fh.write(data)
             if path.exists():   # written meanwhile: it must be the same record
-                if path.read_bytes() != data:
-                    raise EvidenceBytesDifferError(f"{key}: written meanwhile with another record")
-                return False
+                return self._held(path, key, rec, data, "written meanwhile with another record")
             os.replace(part, path)
         finally:
             part.unlink(missing_ok=True)
-        return True
+        return Filing(key, written=True)
+
+    @staticmethod
+    def _held(path: Path, key: str, rec: Record, data: bytes, refusal: str) -> Filing:
+        """What a held file under ``key`` means for ``rec``: the same record, the same passage in
+        another case or spacing (`_same_passage`), or a refusal."""
+        held = path.read_bytes()
+        if held == data:
+            return Filing(key, written=False)
+        if _same_passage(held, rec, key):
+            return Filing(key, written=False, held_refolded=True)
+        raise EvidenceBytesDifferError(f"{key}: {refusal}")
 
     def get(self, key: str) -> Record:
         return _parse(self.path(key).read_bytes(), key)
@@ -335,12 +363,51 @@ class EvidenceSpool:
         return held, other
 
 
+@dataclass(frozen=True)
+class Filing:
+    """What `EvidenceSpool.file` did with one record."""
+
+    key: str
+    written: bool  # False: the spool already held it
+    #: True when the held record's quote differs from this one only in case or spacing (the key's
+    #: fold); False when the bytes were this record's own, or it was written.
+    held_refolded: bool = False
+
+
+def _same_passage(held: bytes, rec: Record, key: str) -> bool:
+    """``held`` is the passage ``rec`` is: both passage records, their quotes equal under the key's
+    own fold (`quote_key`, imported from the extractor, never re-implemented), and every other
+    byte the same. A held file that does not parse as its key's record is never the same."""
+    if not isinstance(rec, EvidenceRecord):
+        return False
+    try:
+        was = _parse(held, key)
+    except EvidenceIntegrityError:
+        return False
+    if not isinstance(was, EvidenceRecord) or quote_key(was.verbatim) != quote_key(rec.verbatim):
+        return False
+    return record_bytes(was.model_copy(update={"verbatim": rec.verbatim})) == record_bytes(rec)
+
+
 @dataclass
 class SpoolReport:
     written: int = 0
     already: int = 0
     no_evidence: int = 0  # rows with text that cite no call or state no value: never filed
     stripped: int = 0  # transcript rows already without text: spooled by an earlier write
+    #: the key of each passage already held in another case or spacing, once: counted in
+    #: ``already`` too, and named on the page (`refolded_flag`)
+    refolded: list[str] = field(default_factory=list)
+
+
+def refolded_flag(key: str) -> str:
+    """The page's note for a passage the spool already held in another case or spacing. It names
+    the record's key, says the day it was filed is UNKNOWN (no stable source holds it), and quotes
+    no transcript word."""
+    return (f"driver evidence: {key} is already in the spool with this passage's quote in another "
+            "case or spacing — the same passage under the key's fold, so the record filed first "
+            "stands, unchanged; the day it was filed is UNKNOWN (the record carries no date, and a "
+            "file's time is not one)")
 
 
 #: How a transcript row cites its call: ``CIQ transcript: <the call's file name>``; a bare
@@ -365,7 +432,9 @@ def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, Spoo
     - A row that cites NO call (a quote said on two calls whose period named neither) or states
       no value has nowhere to be filed. It is counted in ``no_evidence`` and returned as it was:
       the serializer keeps its words, so the CALLER must refuse to write the page
-      (`assemble._write`, `driver_pass.run`), never publish them."""
+      (`assemble._write`, `driver_pass.run`), never publish them.
+    - A passage the spool already held in another case or spacing keeps its first bytes, and the
+      page gains one `refolded_flag` per such record."""
     od = dossier.mechanical.operating_drivers
     rep = SpoolReport()
     if od is None:
@@ -392,14 +461,21 @@ def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, Spoo
                                                value_sha256=value_key(r.value),
                                                stated_value=r.value)]
         for x in recs:
-            if spool.put(x):
+            filed = spool.file(x)
+            if filed.written:
                 rep.written += 1
             else:
                 rep.already += 1
+            # ONE NOTE PER RECORD: a passage backing several rows meets the held file once each
+            if filed.held_refolded and filed.key not in rep.refolded:
+                rep.refolded.append(filed.key)
         rows.append(r.model_copy(update={"locator": loc}))
     mech = dossier.mechanical.model_copy(update={
         "operating_drivers": od.model_copy(update={"rows": rows})})
-    return dossier.model_copy(update={"mechanical": mech}), rep
+    # NAMED, NEVER SILENT: each passage held in another case or spacing is a note on the page
+    notes = [refolded_flag(k) for k in rep.refolded]
+    return dossier.model_copy(update={"mechanical": mech,
+                                      "qa_flags": [*dossier.qa_flags, *notes]}), rep
 
 
 def rehydrate(rows: Sequence[OperatingDriver], get: Callable[[str], Record]
@@ -430,6 +506,9 @@ class UploadReport:
     written: list[str] = field(default_factory=list)
     already: list[str] = field(default_factory=list)
     skipped: list[str] = field(default_factory=list)  # spool files that are not evidence
+    #: keys the bucket already held as the same passage in another case or spacing
+    #: (`_same_passage`): counted in ``already`` too, its first bytes kept
+    refolded: list[str] = field(default_factory=list)
 
 
 def upload_spool(spool: EvidenceSpool, client: R2Client) -> UploadReport:
@@ -439,12 +518,28 @@ def upload_spool(spool: EvidenceSpool, client: R2Client) -> UploadReport:
     Each record is re-read and re-checked first (`_parse`: quote hash, key, serialisation), and
     read back from the bucket after its PUT (a key already held was read back and compared by
     `put_new` itself). A record is never deleted from the spool here: the operator keeps or
-    clears the folder."""
+    clears the folder.
+
+    THE SAME PASSAGE IN ANOTHER CASE OR SPACING IS ALREADY HELD HERE TOO (2026-11-14, review of
+    the fix). A cleared spool can file a passage afresh in the call's words while the bucket holds
+    the model's case of it: the bucket's first bytes stand, never overwritten, and the key is
+    counted in ``refolded``; anything else that differs still raises."""
+    from vinci.facts.remote import RemoteBytesDifferError
+
     held, other = spool.keys()
     rep = UploadReport(skipped=other)
     for key in held:
-        data = record_bytes(spool.get(key))
-        if not client.put_new(key, data):
+        rec = spool.get(key)
+        data = record_bytes(rec)
+        try:
+            new = client.put_new(key, data)
+        except RemoteBytesDifferError:
+            if not _same_passage(client.get(key), rec, key):
+                raise
+            rep.already.append(key)
+            rep.refolded.append(key)
+            continue
+        if not new:
             rep.already.append(key)
             continue
         rep.written.append(key)
@@ -481,8 +576,10 @@ def main(argv: Iterable[str] | None = None) -> int:
     spool = EvidenceSpool(a.spool) if a.spool is not None else EvidenceSpool.from_env()
     with R2Client.from_env() as client:
         rep = upload_spool(spool, client)
-    print(f"uploaded {len(rep.written)} record(s), {len(rep.already)} already in the bucket; "
-          f"{len(rep.skipped)} other file(s) in the spool left alone: {_shown(rep.skipped)}")
+    print(f"uploaded {len(rep.written)} record(s), {len(rep.already)} already in the bucket "
+          f"({len(rep.refolded)} of them held in another case or spacing: "
+          f"{_shown(rep.refolded)}); {len(rep.skipped)} other file(s) in the spool left alone: "
+          f"{_shown(rep.skipped)}")
     return 0
 
 

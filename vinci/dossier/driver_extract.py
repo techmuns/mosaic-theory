@@ -638,6 +638,35 @@ def _paragraph_and_speaker(body: str, quote: str) -> tuple[int, str | None] | No
     return len(paragraphs) - 1, names[-1] if names else None
 
 
+def as_the_call_prints_it(body: str, quote: str) -> str | None:
+    """The call's own words at ``quote``'s folded match: its case, its whitespace runs as single
+    spaces. None when the quote is not in ``body``.
+
+    WHY A ROW FILES THESE AND NOT THE MODEL'S STRING (2026-11-14). The evidence key hashes the
+    quote folded (`quote_key`), and the record held the model's raw string. GOOGL's paid build
+    (run `8d2e72e8`, $3.84) re-drew a passage the spool had held since 2026-11-10, in another case
+    or spacing, and the write-once spool refused the page after every model call
+    (`driver_evidence.EvidenceBytesDifferError`). Two draws of one passage now file one text.
+    THE MATCH IS THE KEY'S OWN FOLD (`_norm`) and the same first occurrence
+    `_paragraph_and_speaker` counts from. The match is cut back to the call's characters through
+    each one's lower case, so a character whose lower case is longer ("İ") anywhere before the
+    quote never shifts the cut; a span that still does not fold back to the quote is None, and the
+    row keeps the model's string."""
+    flat, _ = _flat_with_index_map(body)
+    needle = _norm(quote)
+    lowered: list[str] = []
+    owner: list[int] = []   # each lower-cased character's index in ``flat``
+    for k, ch in enumerate(flat):
+        low = ch.lower()
+        lowered.append(low)
+        owner.extend([k] * len(low))
+    j = "".join(lowered).find(needle)
+    if j < 0 or not needle:
+        return None
+    span = flat[owner[j]:owner[j + len(needle) - 1] + 1]
+    return span if _norm(span) == needle else None
+
+
 def locate_quote(quote: str, label: str | None, body: str | None,
                  shas: Mapping[str, str] | None) -> TranscriptLocator | None:
     """The locator of a quote cited to call ``label``, whose section text is ``body`` (the one
@@ -799,13 +828,15 @@ def extract_transcript_drivers(
         fact = check_fact(metric, value, quote)
         if fact.status == "unknown":
             flags.append(f"operating-drivers: Tier-B value UNKNOWN — {fact.reason} ({metric})")
+        # the words filed are the CALL'S, never the model's case or spacing of them
+        printed = as_the_call_prints_it(loc.body, quote) if loc.body is not None else None
         rows.append(OperatingDriver(
             kind=DriverKind(kind), metric=metric, period=period,
             # the structured value is `figures`, read from the quote; `value_num` stays the
             # anchored extractors' single parsed number, so a reader of it is never handed a
             # transcript figure without its direction and bound
             value=value, value_num=None, unit=None,
-            verbatim=quote, following_context=loc.context,
+            verbatim=printed or quote, following_context=loc.context,
             source_ref=src, tier="llm-fenced",
             figures=list(fact.figures), value_status=fact.status, unknown_reason=fact.reason,
             locator=locate_quote(quote, loc.label, loc.body, transcript_sha256),
