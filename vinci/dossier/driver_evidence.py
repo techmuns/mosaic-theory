@@ -51,7 +51,6 @@ import re
 import sys
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -304,9 +303,10 @@ class EvidenceSpool:
         extractor filed the call's own words (`driver_extract.as_the_call_prints_it`) the record
         held the model's string. A held passage record that differs from ``rec`` in its quote's
         case or spacing ONLY, through the key's own fold, is that passage: the bytes filed first
-        stand, untouched, and the `Filing` names the day the held FILE is dated, so the page can
-        say so (`spool_dossier`). That is the file's time, never a filing date: the record carries
-        no date, and a copy or a restore that resets file times moves it (Codex P2, #1077).
+        stand, untouched, and the `Filing` says so, so the page can name the record
+        (`spool_dossier`). The day it was filed is UNKNOWN: the record carries no date, a field
+        added now would change every held record's bytes, and a file's time is no date of filing
+        (a copy, a restore or a sync resets it; Codex P2 and the coordinator, #1077).
         Anything else that differs under the key still raises. Measured the
         day it was written: of 1,285 passage records in the operator's spool, 3 differ from their
         call's words in one capital letter, and 1,098 others match them byte for byte."""
@@ -342,8 +342,7 @@ class EvidenceSpool:
         if held == data:
             return Filing(key, written=False)
         if _same_passage(held, rec, key):
-            filed = datetime.fromtimestamp(path.stat().st_mtime, tz=UTC).date().isoformat()
-            return Filing(key, written=False, held_refolded_on=filed)
+            return Filing(key, written=False, held_refolded=True)
         raise EvidenceBytesDifferError(f"{key}: {refusal}")
 
     def get(self, key: str) -> Record:
@@ -370,10 +369,9 @@ class Filing:
 
     key: str
     written: bool  # False: the spool already held it
-    #: The UTC day the held record's spool FILE is dated (its modification time: the record carries
-    #: no date), when its quote differs from this one only in case or spacing (the key's fold);
-    #: None when the bytes were this record's own, or it was written.
-    held_refolded_on: str | None = None
+    #: True when the held record's quote differs from this one only in case or spacing (the key's
+    #: fold); False when the bytes were this record's own, or it was written.
+    held_refolded: bool = False
 
 
 def _same_passage(held: bytes, rec: Record, key: str) -> bool:
@@ -397,18 +395,19 @@ class SpoolReport:
     already: int = 0
     no_evidence: int = 0  # rows with text that cite no call or state no value: never filed
     stripped: int = 0  # transcript rows already without text: spooled by an earlier write
-    #: ``(key, the day its spool file is dated)`` of each passage already held in another case or
-    #: spacing: counted in ``already`` too, and named on the page (`refolded_flag`)
-    refolded: list[tuple[str, str]] = field(default_factory=list)
+    #: the key of each passage already held in another case or spacing, once: counted in
+    #: ``already`` too, and named on the page (`refolded_flag`)
+    refolded: list[str] = field(default_factory=list)
 
 
-def refolded_flag(key: str, dated: str) -> str:
+def refolded_flag(key: str) -> str:
     """The page's note for a passage the spool already held in another case or spacing. It names
-    the record's key and the day its spool file is dated, never a filing day it cannot know, and
-    quotes no transcript word."""
-    return (f"driver evidence: {key} is already in the spool, its spool file dated {dated}, with "
-            "this passage's quote in another case or spacing — the same passage under the key's "
-            "fold, so the record filed first stands, unchanged")
+    the record's key, says the day it was filed is UNKNOWN (no stable source holds it), and quotes
+    no transcript word."""
+    return (f"driver evidence: {key} is already in the spool with this passage's quote in another "
+            "case or spacing — the same passage under the key's fold, so the record filed first "
+            "stands, unchanged; the day it was filed is UNKNOWN (the record carries no date, and a "
+            "file's time is not one)")
 
 
 #: How a transcript row cites its call: ``CIQ transcript: <the call's file name>``; a bare
@@ -468,13 +467,13 @@ def spool_dossier(dossier: Dossier, spool: EvidenceSpool) -> tuple[Dossier, Spoo
             else:
                 rep.already += 1
             # ONE NOTE PER RECORD: a passage backing several rows meets the held file once each
-            if filed.held_refolded_on is not None and all(k != filed.key for k, _ in rep.refolded):
-                rep.refolded.append((filed.key, filed.held_refolded_on))
+            if filed.held_refolded and filed.key not in rep.refolded:
+                rep.refolded.append(filed.key)
         rows.append(r.model_copy(update={"locator": loc}))
     mech = dossier.mechanical.model_copy(update={
         "operating_drivers": od.model_copy(update={"rows": rows})})
     # NAMED, NEVER SILENT: each passage held in another case or spacing is a note on the page
-    notes = [refolded_flag(k, d) for k, d in rep.refolded]
+    notes = [refolded_flag(k) for k in rep.refolded]
     return dossier.model_copy(update={"mechanical": mech,
                                       "qa_flags": [*dossier.qa_flags, *notes]}), rep
 

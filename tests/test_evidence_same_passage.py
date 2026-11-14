@@ -42,7 +42,8 @@ from vinci.graph.llm import LlmClient
 CASE: dict[str, Any] = json.loads(
     (Path(__file__).parent / "fixtures" / "evidence_same_passage" / "GOOGL.json").read_text())
 SPAN: str = CASE["cut"]["span"]   # the quote's first 10 words, as the call prints them
-#: The day the held record was filed, as its file's time: 2026-11-10 17:46:04Z
+#: The held real record's file time, 2026-11-10 17:46:04Z: set on every stand-in file, so a pin
+#: shows the day never reaches the page
 FILED_AT = datetime(2026, 11, 10, 17, 46, 4, tzinfo=UTC).timestamp()
 
 
@@ -89,7 +90,7 @@ def _record(row: OperatingDriver) -> de.EvidenceRecord:
 
 
 def _held(tmp_path: Path, rec: de.EvidenceRecord) -> tuple[de.EvidenceSpool, Path]:
-    """A spool holding ``rec``, its file dated the day the real record was filed."""
+    """A spool holding ``rec``, its file timed as the real record's file is."""
     spool = de.EvidenceSpool(tmp_path)
     assert spool.put(rec) is True
     path = spool.path(de.key_of(rec))
@@ -124,7 +125,7 @@ def test_a_held_passage_in_another_case_or_spacing_is_already_held_and_left_as_f
     again = held.model_copy(update={"verbatim": REDRAWS[redraw](SPAN)})
     assert spool.put(again) is False
     filed = spool.file(again)
-    assert (filed.written, filed.held_refolded_on) == (False, CASE["filed"])
+    assert (filed.written, filed.held_refolded) == (False, True)
     assert (path.read_bytes(), path.stat().st_mtime) == before
     assert [p.name for p in tmp_path.iterdir()] == [path.name]
     assert spool.get(de.key_of(held)) == held
@@ -183,10 +184,9 @@ def _page(row: OperatingDriver) -> Dossier:
     return page.model_copy(update={"mechanical": mech})
 
 
-def test_the_page_names_a_passage_held_in_another_case_with_its_key_and_filed_day(
-        tmp_path: Path) -> None:
+def test_the_page_names_a_passage_held_in_another_case_with_its_key(tmp_path: Path) -> None:
     """(-) The re-draw is never silent. A page whose row meets a held record that holds the model's
-    capital (the 3 the spool keeps) carries one QA flag naming the key and the day it was filed,
+    capital (the 3 the spool keeps) carries one QA flag naming the key, its filing day UNKNOWN,
     with no word of the quote. On main the page was refused."""
     row = _row(SPAN)
     held = _record(row).model_copy(update={"verbatim": _case_flip(SPAN)})
@@ -194,22 +194,30 @@ def test_the_page_names_a_passage_held_in_another_case_with_its_key_and_filed_da
     page = _page(row)
     out, rep = de.spool_dossier(page, spool)
     key = de.key_of(held)
-    assert rep.refolded == [(key, CASE["filed"])]
+    assert rep.refolded == [key]
     new = [f for f in out.qa_flags if f not in page.qa_flags]
-    assert new == [de.refolded_flag(key, CASE["filed"])]
-    # built from the key and the day alone: no word of the quote can enter it
-    assert new[0].replace(key, "K").replace(CASE["filed"], "D") == de.refolded_flag("K", "D")
-    assert key in new[0] and CASE["filed"] in new[0]
+    assert new == [de.refolded_flag(key)]
+    # built from the key alone: no word of the quote and no day can enter it
+    assert new[0].replace(key, "K") == de.refolded_flag("K")
+    assert key in new[0] and "UNKNOWN" in new[0] and CASE["filed"] not in new[0]
 
 
-def test_the_flag_dates_the_spool_file_and_never_claims_a_filing_day() -> None:
-    """(-) CODEX P2 (#1077, round 1). The record carries no date, so the day is its spool file's
-    time, which a copy or a restore that resets file times moves. The flag said the record "was
-    already filed on" that day, a filing date it cannot know; it now names the day as the spool
-    file's, which is true whatever moved the file."""
-    flag = de.refolded_flag("driver-evidence/v1/k.json", "2026-11-10")
-    assert "filed on" not in flag
-    assert "spool file dated 2026-11-10" in flag
+def test_a_files_time_never_reaches_the_flag_and_the_filing_day_reads_unknown(
+        tmp_path: Path) -> None:
+    """(-) CODEX P2 AND THE COORDINATOR (#1077, round 1). The record carries no date, and a file's
+    time is no date of filing: a copy, a restore or a sync resets it. Round 1's first fix printed
+    the file's day as "its spool file dated <day>"; the day now reads UNKNOWN, and moving the
+    file's time changes nothing on the page."""
+    row = _row(SPAN)
+    held = _record(row).model_copy(update={"verbatim": _case_flip(SPAN)})
+    spool, path = _held(tmp_path, held)
+    first, _ = de.spool_dossier(_page(row), spool)
+    later = datetime(2027, 3, 1, tzinfo=UTC).timestamp()   # the spool restored from a copy
+    os.utime(path, (later, later))
+    again, _ = de.spool_dossier(_page(row), spool)
+    assert first.qa_flags == again.qa_flags
+    (flag,) = [f for f in again.qa_flags if "driver evidence:" in f]
+    assert "UNKNOWN" in flag and not re.search(r"\d{4}-\d{2}-\d{2}", flag)
 
 
 def test_a_passage_backing_two_rows_is_named_once(tmp_path: Path) -> None:
@@ -226,9 +234,8 @@ def test_a_passage_backing_two_rows_is_named_once(tmp_path: Path) -> None:
         update={"operating_drivers": od.model_copy(update={"rows": [row, other]})})})
     out, rep = de.spool_dossier(page, spool)
     key = de.key_of(held)
-    assert rep.refolded == [(key, CASE["filed"])]
-    assert [f for f in out.qa_flags if f not in page.qa_flags] == [
-        de.refolded_flag(key, CASE["filed"])]
+    assert rep.refolded == [key]
+    assert [f for f in out.qa_flags if f not in page.qa_flags] == [de.refolded_flag(key)]
 
 
 def test_a_longer_lower_case_before_the_quote_never_shifts_the_cut() -> None:

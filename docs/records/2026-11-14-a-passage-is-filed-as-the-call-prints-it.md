@@ -20,11 +20,12 @@ superseded-by:
   - The failing draw's quote was never saved, because the build stops before it writes. So the variant is shown by construction, not observed.
 - **The rulings.**
   - The operator, relayed 2026-11-14: "Fix, then one build at $5.78 (Recommended)". The option reads: a $0 evidence fix, a $0 re-check, then ONE paid GOOGL build capped at $5.78, #1041's rule on the last cost ($3.84 × 1.255 × 1.2).
+  - The coordinator, on review round 1 (2026-11-14): the filing date "must come from a stable source or read UNKNOWN, never mtime, and no new field may be added to existing records". This supersedes the brief's "the filed-on date".
   - The coordinator chose (b) of three after the census below: file new passages as the call prints them, AND hold a passage that differs only in the key's fold as the same passage. Filing the call's words alone would leave the spool's 3 capital-letter records colliding on any re-draw, and the spool and bucket are write-once, so nothing can re-file them.
 - **The rule.**
   1. `driver_extract.as_the_call_prints_it`: a located row files the CALL'S words at its quote's folded match. That is the same first occurrence `_paragraph_and_speaker` counts from, with its case kept and whitespace runs as one space. A span that does not fold back to the quote falls back to the model's string; its key is the same either way.
   2. `EvidenceSpool.file` (`put` delegates to it): a held passage record whose quote differs from the new one ONLY under the key's own fold is the same passage. The fold is `quote_key`, imported, never re-implemented; every other byte must match. The bytes filed first stand, untouched. A changed speaker, context, call name or word still refuses.
-  3. `spool_dossier` names every such record on the page: one QA flag per record, never per row (`refolded_flag`), with its key and the UTC day its spool file is dated, and no transcript word. The day is the file's time, never claimed as a filing date (review round 1). They are also listed in `SpoolReport.refolded` and counted in `already`.
+  3. `spool_dossier` names every such record on the page: one QA flag per record, never per row (`refolded_flag`), with its key and no transcript word. The day the record was filed reads UNKNOWN (review round 1). They are also listed in `SpoolReport.refolded` and counted in `already`.
   4. `upload_spool` holds the same rule against the bucket. A cleared spool ("the operator keeps or clears the folder") can file a passage afresh in the call's words while the bucket holds the model's case of it. The bucket's first bytes then stand, and the key is counted in `UploadReport.refolded`; anything else that differs still raises.
   5. `driver_evidence.py` now writes a page field, so it leaves `NOT_EXTRACTION` and is pinned. New vintage: `2026-11-14.a-passage-is-filed-as-the-call-prints-it`.
 
@@ -76,10 +77,11 @@ superseded-by:
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The 3 records keep the model's capital letter privately.** No public fact moves: a page carries the fact and the locator, and the quote's hash is the fold's, the same either way.
 - **The $0 precheck cannot see this class of refusal.** The spool is written after the paid draws, and the $0 check draws no transcript row, so it could not have stopped GOOGL's spend. Falsifier: another `EvidenceBytesDifferError` after spend. Under this rule that means something other than the fold differed.
-- **The day a flag names is the spool file's time, and the flag says so.** The record carries no date, and adding one would change all 1,285 passages' bytes.
-  - So a copy or a restore of the spool that resets file times moves the day a later flag names.
-  - The flag reads "its spool file dated <day>", never "filed on". Round 0's draft said "already filed on <day>"; Codex P2 in round 1 showed that claims a filing date the code cannot know.
-  - Fixed in review round 1's commit, pinned by `test_the_flag_dates_the_spool_file_and_never_claims_a_filing_day`.
+- **A flag cannot name the day its record was filed, so the day reads UNKNOWN.**
+  - The record carries no date, and adding a field would change every held record's bytes.
+  - A file's time is no date of filing: a copy, a restore or a sync resets it (Codex P2, round 1).
+  - Round 0 printed "already filed on <day>" from the file's time, and round 1's first fix (`cdd25154`) relabelled it "its spool file dated <day>". The coordinator ruled the day must come from a stable source or read UNKNOWN. No stable source holds it.
+  - Pinned by `test_a_files_time_never_reaches_the_flag_and_the_filing_day_reads_unknown`: moving the held file's time changes nothing on the page.
 - **The pre-existing match in `_paragraph_and_speaker` keeps the "İ" shift** that `as_the_call_prints_it` no longer has. Making them one shared helper is a refactor of code outside this change (review round 0, deferred). On the census, every one of the 1,098 located passages re-derives its paragraph byte for byte.
 - **The equivalence is the key's fold, nothing wider.** A quote differing in punctuation, or in where it ends, is another passage with another key, and never a collision.
 - **The run line `8d2e72e8` ($3.84, refused)** is not in this PR. It is committed with GOOGL's artifact PR, beside the new build's, because the cost-and-outcome series counts refusals.
