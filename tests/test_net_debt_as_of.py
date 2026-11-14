@@ -205,9 +205,10 @@ def test_every_leg_of_the_anchor_reads_the_facts_as_filed_by_the_price_date() ->
 
 
 def test_ncnos_filings_after_its_price_date_reach_every_leg_unless_cut() -> None:
-    """NON-VACUITY, the live case. Read uncut (no stored close, no reference date), the later
+    """NON-VACUITY, on the living page. Read uncut (no stored close, no reference date), the later
     filings move every leg the anchor reads from EDGAR — so the equality above tests each of them,
-    not only net debt."""
+    not only net debt. The later filings are `_filed_later`'s synthetic ones: since the 2026-11-14
+    rebuild priced NCNO at 2026-11-11, no real filing in its fixture falls after the price date."""
     mech, facts, ref, cut = _page("NCNO")
     later = _filed_later(facts, cut)
     cut_read = anc.compute_anchor(mech, facts=later, computed_at=NOW, reference_date=ref)
@@ -287,7 +288,8 @@ def test_the_at_price_ex_lease_multiple_reads_its_share_count_as_filed_by_the_pr
     """`ex_lease_at_price` cut net debt at the page's price date (#885) but handed the facts it was
     given to `share_denominator` whole. The valuation-bases refresh gives it the UNCUT blob, so one
     multiple paired a price-date balance sheet with a share count corroborated against a later
-    10-Q: on NCNO (price date 2026-08-17), the diluted average of the 10-Q filed 2026-08-25.
+    10-Q: on NCNO's 2026-08-18 page (price date 2026-08-17, now read frozen by the non-vacuity pin
+    below), the diluted average of the 10-Q filed 2026-08-25.
 
     On every committed page that states the multiple, it is the same on the page's tracking
     fixture, on that fixture cut at the price date, and once every row gains a later filing."""

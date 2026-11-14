@@ -174,8 +174,15 @@ def test_every_committed_page_decides_as_it_did() -> None:
     is the one R1 computes from the same page's tally — so its proposal is the rule's, never a
     stored verdict that the tally does not reproduce."""
     from vinci.dossier import verdict as v
+
+    def decision(g: v.DrawGate) -> tuple[object, ...]:
+        # the decision fields; `labels` is the printed split, whose tie order the two readers
+        # break differently (by name on the record, by draw order on a live build)
+        return (g.lean, g.count, g.attempted, g.required, g.passes, g.state)
+
     pages = _pages()
     assert len(pages) >= 19
+    post_rule: list[str] = []
     for doc in pages:
         s, da = doc["synthesis"], doc["synthesis"]["draw_agreement"]
         sleeve = doc.get("sleeve") or "overshoot"
@@ -185,17 +192,17 @@ def test_every_committed_page_decides_as_it_did() -> None:
         if "passes" in da:   # built after the rule: the recorded gate is R1 on the recorded tally
             recorded = v.DrawGate.from_record(da)
             assert recorded is not None, doc["ticker"]
-            # the decision fields; `labels` is the printed split, whose tie order the two readers
-            # break differently (by name on the record, by draw order on a live build)
-            def decision(g: v.DrawGate) -> tuple[object, ...]:
-                return (g.lean, g.count, g.attempted, g.required, g.passes, g.state)
             assert decision(recorded) == decision(gate), doc["ticker"]
             assert v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve,
                                      gate=recorded).action == new.action, doc["ticker"]
+            post_rule.append(doc["ticker"])
             continue
         old = v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve,
                                 draws_unanimous=da["unanimous"])
         assert old.action == new.action, doc["ticker"]
+    # NON-VACUITY: the post-rule branch ran on real pages (NCNO, SMPL and TJX from 2026-11-14), so
+    # a reader that stopped finding `passes` would red here rather than pass by skipping it
+    assert len(post_rule) >= 3, post_rule
 
 
 def test_an_old_tally_serializes_as_it_was_written() -> None:
