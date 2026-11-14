@@ -418,10 +418,15 @@ def _load_build():  # type: ignore[no-untyped-def]
     return mod
 
 
-def test_emit_scenarios_is_deterministic() -> None:
+def test_emit_scenarios_is_deterministic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Two emits of `frontend/scenarios/<T>.json` must be byte-identical (committed output never
     churns). Runs against the real committed `scenarios/`. (The half that matched the card the
-    theme JSON embedded left with `frontend/themes/` on 2026-11-04.)"""
+    theme JSON embedded left with `frontend/themes/` on 2026-11-04.)
+
+    The emit goes to a folder of the test's own and is compared with the committed mirror: the
+    emit removes its folder and writes it again, so emitting over `frontend/scenarios/` itself
+    left it missing, then half written, for any test reading it at the same time on another
+    pytest-xdist worker (gate.yml, 2026-11-13)."""
     build = _load_build()
     root = Path(__file__).resolve().parents[1]
     cards = build._scenario_cards()
@@ -429,8 +434,9 @@ def test_emit_scenarios_is_deterministic() -> None:
     out = root / "frontend" / "scenarios"
     if out.is_dir():                                        # emitted by the build → pinned stable
         first = {p.name: p.read_bytes() for p in sorted(out.glob("*.json"))}
+        monkeypatch.setattr(build, "OUT_SCEN", tmp_path / "scenarios")
         build.emit_scenarios()
-        second = {p.name: p.read_bytes() for p in sorted(out.glob("*.json"))}
+        second = {p.name: p.read_bytes() for p in sorted((tmp_path / "scenarios").glob("*.json"))}
         assert first == second                              # idempotent, byte-for-byte
         idx = json.loads(second["index.json"].decode())
         assert idx == {"tickers": sorted(cards)}
