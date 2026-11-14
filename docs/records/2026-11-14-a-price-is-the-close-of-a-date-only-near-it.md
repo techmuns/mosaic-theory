@@ -63,7 +63,7 @@ superseded-by:
   - start at 3 → the start ACCEPT pin; end at 3 → the end ACCEPT pin; `date_of_close` at 3 → the Labor Day pin;
   - start at 5 → the start REJECT pin; end at 5 → the end REJECT pin; `date_of_close` at 5 → the 5-day comps REJECT pin.
 - **Two existing tests changed.** `tests/test_benchmark_bar_guard.py` and `tests/test_benchmark_figures_refresh.py` used `_window_return` itself as their picture of "the old, unbounded lookup". That oracle is the code changed here, so both now spell out the old reads with `eod.features._close_on_or_before`.
-- **Cross-setup validation (`python -m vinci.impact run`, base `e17ceee9` vs head):**
+- **Cross-setup validation (`python -m vinci.impact run`).** First run: base `e17ceee9` vs head `3c033df6`. Re-run after round 1 and one merge of main: base `4fc47c88` vs head `ed933185`. The re-run has the same page moves, row for row on the 11-11 store and with the same counts on the 11-10 store; its fail-first shows 9 of 33 nodes red at base, 0 red at head. `vinci.impact verify` reads VALID on both stores:
   - **On the 11-11 store:** 3 of 25 pages move, all in the cohort.
     - AMZN: 10 of 21 refused — CRSR, EXTR, NN, SPB, TRNS, AAPL, INTC, MSFT, NVDA and WMT, their last closes 06-12 to 07-02. The read now rests on 1 name, not 11.
     - GOOGL: 4 of 12 refused; the read rests on 1 name, not 5.
@@ -80,7 +80,10 @@ superseded-by:
     - **WERN's oldest export panel by the gate's own reading** (`freshness.panel_age`, kind `export`, on each side's $0 build, assembled 2026-11-14): 393 days (`valuation.implied_expectations.tev_as_of`, 2025-10-17, refused against the 45-day ceiling) → 4 days (`stock_info.as_of`, 2026-11-10).
     - IT does not move: its 193.00 matches no bar at either side, and its stamp stands at both.
     - 0 live fetches.
-- **Gate:** ruff, `mypy --strict vinci` and `pytest -m "not network"` are green on the final head.
+- **Gate:**
+  - Round 0: ruff, `mypy --strict vinci` and `pytest -m "not network"` were green on the merged tree `1daacb4f` (11,376 passed, 661 skipped, 11 xfailed, 0 failed).
+  - Round 1: `5c278374` was committed through `bin/commit`, and its full offline gate was green.
+  - The merged head `ed933185`: CI `gate` passes.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **LEFT OPEN (comps date).** A store missing the panel's session, in which another bar INSIDE the 4-day window happens to print the missing close (within half a cent), still dates the panel by that bar. The date is then at most 4 days too old: the gate reads it older, the safe direction. No market calendar is available inside `date_of_close` to tell the two apart. Falsifier: a corrected comps date that sits on a session for which the store holds the symbol's bar but not the market's.
@@ -96,7 +99,7 @@ superseded-by:
   - The pull is the operator's call.
 
 **BOUNDARY.**
-- **Code:** base main `e17ceee9`, head `3c033df6` (the code the impact check built; later commits are docs only) on `claude/price-date-bounds`.
+- **Code:** on `claude/price-date-bounds`. The first run was base main `e17ceee9`, head `3c033df6`. Round 1 is base main `4fc47c88`, head `ed933185`; later commits are docs only.
 - **Stores** (`vinci.impact.run.store_digest`: every table but `meta`):
   - The 2026-11-11 working copy: content `598a3d2c07f1…`, 2,543,246 rows, frontier 2026-11-11.
   - The 2026-11-10 copy: content `a60b31c9…`, 2,543,233 rows, frontier 2026-11-10.
