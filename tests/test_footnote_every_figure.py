@@ -542,8 +542,11 @@ def test_the_ebitda_bases_and_the_ex_lease_multiple_carry_their_computation_ref(
     page, facts, _ref, _cut = _page("NCNO")
     at = ex_lease_at_price(ds.MechanicalLayer.model_validate(page), facts)
     assert at is not None and at.source_ref and at.source_ref.startswith("Assembler: ")
-    # the committed pages, assembled before this change, carry none — absent, not null
-    assert "source_ref" not in (raw["mechanical"]["valuation"].get("ev_ebitda_basis") or {})
+    # a page assembled before this change carries none — absent, not null: GOOGL's 2026-11-03
+    # page, frozen, since the living page is assembled after it (2026-11-14)
+    frozen = json.loads(
+        (ROOT / "tests/fixtures/frozen_pages/2026-11-03/GOOGL/dossier.json").read_text())
+    assert "source_ref" not in (frozen["mechanical"]["valuation"].get("ev_ebitda_basis") or {})
 
 
 def test_peer_rows_and_the_intensity_block_carry_their_refs() -> None:

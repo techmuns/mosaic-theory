@@ -51,10 +51,12 @@ class _Scripted:
 
 @pytest.fixture()
 def googl() -> dict[str, typing.Any]:
-    """GOOGL's committed page: a BACKFILLED input record, which never lists a transcript, so its
-    transcript inputs cannot be identified (Codex round 1: such a page cannot be confirmed)."""
+    """GOOGL's 2026-11-03 page, frozen (`tests/fixtures/frozen_pages/2026-11-03/GOOGL/`): a
+    BACKFILLED input record, which never lists a transcript, so its transcript inputs cannot be
+    identified (Codex round 1: such a page cannot be confirmed). The living page's record is a
+    BUILD since its 2026-11-14 rebuild, so it no longer holds the premise."""
     page: dict[str, typing.Any] = json.loads(
-        (ROOT / "data/dossiers/GOOGL/dossier.json").read_text())
+        (ROOT / "tests/fixtures/frozen_pages/2026-11-03/GOOGL/dossier.json").read_text())
     assert page["inputs"]["recorded"] == "backfill"
     return page
 
@@ -445,8 +447,12 @@ def test_a_page_that_cannot_identify_its_transcripts_is_not_confirmed(
         _confirm(googl, [BULL] * 10, tmp_path / "c.jsonl")
     monkeypatch.setattr(llm_mod.AnthropicLlmClient, "from_config",
                         classmethod(lambda cls, c=None: llm))
+    # log-verdict reads `<data_dir>/dossiers/GOOGL/dossier.json`: the same frozen page, there
+    cfg = get_config().model_copy(update={"data_dir": tmp_path / "data"})
+    (cfg.data_dir / "dossiers" / "GOOGL").mkdir(parents=True)
+    (cfg.data_dir / "dossiers" / "GOOGL" / "dossier.json").write_text(json.dumps(googl))
     with pytest.raises(LedgerError, match="cannot identify"):
-        cli._confirm_seal(get_config(), _args(tmp_path, dry_run=True), "GOOGL")
+        cli._confirm_seal(cfg, _args(tmp_path, dry_run=True), "GOOGL")
     assert llm.calls == 0 and not (tmp_path / "c.jsonl").exists()
 
 
