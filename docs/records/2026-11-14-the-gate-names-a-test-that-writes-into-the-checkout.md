@@ -6,7 +6,7 @@ supersedes:
 superseded-by:
 ---
 
-# The gate fails, by name, on any file the tests write into the checkout, which closes most of #1065's accepted risk, and a run on workers prints its deselected count again
+# The gate fails, by name, on a file in the checkout whose status changed while the tests ran, a restore that copies the old times back included, which narrows #1065's accepted risk to a file created and deleted inside the run or a write outside the checkout; and a run on workers prints its deselected count again
 
 **WHAT.**
 - **The authority.** Coordinator B checked #1065 independently and briefed this session to close
@@ -18,11 +18,16 @@ superseded-by:
     checkout.
   - `pytest (offline)`: unchanged but for `id: pytest`.
   - `the tests wrote no file into the checkout`: runs whenever the pytest step ran, passed or
-    failed. It lists every file, not directory, newer than the mark outside `.git/`,
-    `.pytest_cache`, `.hypothesis` and every `__pycache__`. Any file listed fails the job, by
-    name. It also fails if nothing at all is newer than the mark, not even the bytecode every
-    run writes, since then the check cannot see the run. Otherwise it prints how many files it
-    saw and that every one is in a cache.
+    failed. It lists every file, not directory, outside `.git/`, `.pytest_cache`, `.hypothesis`
+    and every `__pycache__` whose STATUS changed after the mark (`find -cnewer`: its ctime). Any
+    file listed fails the job, by name. It also fails if nothing at all changed after the mark,
+    not even the bytecode every run writes, since then the check cannot see the run. Otherwise it
+    prints how many files it saw and that every one is in a cache.
+  - **The status time, never the modification time.** A write, a rename, a chmod or a utime each
+    moves a file's ctime, and no call sets it back. A modification time can be set back:
+    `shutil.copy2` restores the old one with the old bytes. The first cut compared modification
+    times (`-newer`), and coordinator B's review of #1072 showed a backup-rewrite-restore with
+    `copy2` passing it (round 2, below).
   - `git status --porcelain` would not do: a test that restores a file byte for byte leaves git
     clean, and that is the shape #1065 accepted.
   - **CI only.** On a person's machine a file they edit during the run would trip it, which is
@@ -52,22 +57,33 @@ superseded-by:
     killed mid-run (`os._exit`) makes the count UNKNOWN.
   - The guard, gate.yml's own step script run as GitHub runs a step that names no `shell:`
     (`bash -e`, no pipefail) in a scratch git checkout: a committed file written back byte for
-    byte trips it while `git status --porcelain` is empty; a new file beside a dossier trips it;
+    byte trips it while `git status --porcelain` is empty; so does one rewritten and restored
+    with `shutil.copy2`, old times and all; a new file beside a dossier trips it;
     the three caches and `.git/` pass; a mark that sees nothing is refused; a folder the guard
-    cannot read fails the step rather than passing it. A sixth pin keeps the mark just before the
-    tests and the guard just after them, before the mirror build, which rewrites `frontend/` by
-    design.
+    cannot read fails the step rather than passing it. A seventh pin keeps the mark just before
+    the tests and the guard just after them, before the mirror build, which rewrites `frontend/`
+    by design.
+  - **The fixture never backdates.** It takes the mark only once the clock has moved past every
+    file the scratch checkout holds, then waits past the mark before the "run" writes: it writes
+    a probe until the probe's ctime is later, so it waits one clock tick, not a fixed sleep. An
+    `os.utime` backdate, which the first cut used, moves the very ctime the guard reads.
   - **The pre-PR review's one fix.** The guard pipes `find` into `sort` and `wc`, and GitHub runs
     a step with no `shell:` under `bash -e` without pipefail. A `find` that failed part-way, on a
     folder it could not read, handed its partial list on and the step passed green over a file it
     never saw. The unreadable-folder pin failed so (exit 0, "4 files are newer than the mark,
     every one in…" beside `find: ./data/locked: Permission denied`); the step now opens with
     `set -euo pipefail`, and the pin passes.
-  - **Seven mutants, seven caught.** Each pin set was run against a mutant of the code it pins,
+  - **Round 2, coordinator B's review (Codex failed on its usage limit).** The guard compared
+    modification times, so a test that backs a committed file up with `shutil.copy2`, rewrites
+    it and restores it with `copy2` (the suite calls copy2 or copytree in about a dozen places)
+    put the old time back and passed it, while another worker could still have read the file
+    mid-write. The `copy2` pin failed on `3ca610a3` (exit 0, "4 files are newer than the mark,
+    every one in…"); both finds now use `-cnewer`, and it passes.
+  - **Eight mutants, eight caught.** Each pin set was run against a mutant of the code it pins,
     each turning at least one pin red: the guard reading `git status` instead of file times;
-    `scenarios/` left out as if it were a cache; the blindness check removed; the guard step
-    renamed away; `set -euo pipefail` removed; a worker never sending its ids; a worker that sent
-    none counted as agreeing.
+    `scenarios/` left out as if it were a cache; `-cnewer` back to `-newer`; `set -euo pipefail`
+    removed; the blindness check removed; the guard step renamed away; a worker never sending its
+    ids; a worker that sent none counted as agreeing.
 
 **WHY.**
 - **The cache list is measured, not guessed.** A real run of the suite, in a clean clone of
@@ -110,6 +126,23 @@ superseded-by:
     ```
     968 files are newer than the mark, every one in .pytest_cache, .hypothesis or a __pycache__
     ```
+- **Round 2, the status time on the real suite.** The same clean clone, at this round's code
+  (both finds on `-cnewer`, the fixture without `os.utime`), caches cleared, gate.yml's step
+  scripts:
+  - **Real.** `3 failed, 11421 passed, 669 skipped, 11 xfailed`. The guard passed:
+    `970 files are newer than the mark, every one in .pytest_cache, .hypothesis or a __pycache__`.
+    So the status time raised no false alarm on today's suite. The 3 failures were the clone's:
+    a `git fetch` had pointed its `origin/main` at a stale local branch. Two
+    `test_fix_log.py` cases and `test_git_refs_reachable_from_main.py` failed; all three pass
+    once `origin/main` is main.
+  - **Planted, restored with `copy2`.** A test backed up `scenarios/SMPL.json` with
+    `shutil.copy2`, wrote it empty and copied the backup back, old times included. The guard
+    failed: `::error::the tests wrote 1 file(s) into the checkout: …` and
+    `./scenarios/SMPL.json`.
+- **On CI, at `3ca610a3` (before round 2, on `-newer`):** gate run 43601107316 passed every step.
+  Its pytest step ended `39 deselected (-m "not network"), the same 39 on each of the 4 workers`
+  and `11422 passed, 670 skipped, 11 xfailed in 475.46s (0:07:55)`. The guard printed
+  `970 files are newer than the mark, every one in .pytest_cache, .hypothesis or a __pycache__`.
 - **The deselected count, on a real run.** Both runs above printed the same count; the real one
   ended:
 
@@ -120,7 +153,7 @@ superseded-by:
 
   The 39 are main's serial count (gate run 43571490422 at `0f5e3eb2`: `11393 passed, 671
   skipped, 39 deselected, 11 xfailed`). #1065's parallel run 43454365815 printed no count.
-- **The pins and the mutants**, above. The six guard pins and the one-process pin run in the
+- **The pins and the mutants**, above. The seven guard pins and the one-process pin run in the
   shared venv too; the three that start workers skip there ("could not import 'xdist'") and run
   on CI, which installs the lock.
 
@@ -135,10 +168,13 @@ superseded-by:
   run 43571490422.
 - **Directories (28):** outside `.git/` and the three caches, newer than the mark, in the real
   run at `4386c830`.
+- **The 968 and both 970s before round 2** compare modification times (`-newer`). Round 2's 970
+  compares status times (`-cnewer`), over the same population: files, not directories, outside
+  `.git/`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **#1065's accepted risk is narrowed, not closed.** What the guard cannot see:
-  - **A file a test creates in the tree and deletes before the run ends** leaves no newer file.
+  - **A file a test creates in the tree and deletes before the run ends** leaves no file to read.
     That was the shape of one of #1065's four (`test_cohort_anchoring.py` planted 12 dossiers),
     and a directory check cannot see it either, for the reason in WHY.
   - **A write outside the checkout** (the user's cache, a shared temp file).
@@ -148,7 +184,9 @@ superseded-by:
   - **The falsifier** is #1065's, narrowed: a gate failure, on a single run, in a test that reads
     a committed path, that a re-run passes, while this guard is green.
 - **A guard red is not always a bug.** A test that is meant to write into the tree, a new cache
-  a new tool writes, would trip it. Either the test moves into its own folder, as #1065's four
+  a new tool writes, would trip it, and so, under the status time, would a test that only
+  chmods, utimes or hard-links a committed file. Each is still a change to the checkout while
+  other workers read it. Either the test moves into its own folder, as #1065's four
   did, or the path joins the left-out list with its measurement, in this step and in its pin.
 - **Local runs keep the risk.** `bin/commit` stays on one process and has no guard, so a writing
   test passes it every time and fails only on CI. That is where it is now caught.

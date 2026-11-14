@@ -19,8 +19,10 @@ from __future__ import annotations
 
 import os
 import re
+import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -155,10 +157,23 @@ def _git(repo: Path, *args: str) -> str:
                            *args], capture_output=True, text=True, check=True).stdout
 
 
+def _wait_past(ns: int, probe: Path) -> None:
+    """Wait until a file written now carries a status time later than ``ns``: past the clock's
+    granularity, which on Linux is a kernel tick. The fixture never backdates with `os.utime`,
+    because a utime moves the status time (`ctime`) the guard reads."""
+    deadline = time.monotonic() + 10
+    while True:
+        probe.write_bytes(b"")
+        if probe.stat().st_ctime_ns > ns:
+            return
+        assert time.monotonic() < deadline, "the clock did not move in 10 s"
+        time.sleep(0.005)
+
+
 def _checkout(tmp_path: Path) -> tuple[Path, dict[str, str]]:
-    """A git checkout with committed files and gate.yml's mark taken by gate.yml's own step. The
-    mark is then dated a minute ago and every file in the checkout two, so what the "run" writes
-    next is newer than the mark on any filesystem's clock granularity."""
+    """A git checkout with committed files and gate.yml's mark taken by gate.yml's own step, after
+    the clock has moved past every file the checkout holds; then the clock moves past the mark
+    too, so what the "run" writes next is after it."""
     repo = tmp_path / "checkout"
     for rel in ("scenarios/SMPL.json", "data/dossiers/AMZN/dossier.json", "tests/test_x.py"):
         (repo / rel).parent.mkdir(parents=True, exist_ok=True)
@@ -170,12 +185,10 @@ def _checkout(tmp_path: Path) -> tuple[Path, dict[str, str]]:
     runner_temp = tmp_path / "runner-temp"
     runner_temp.mkdir()
     env = {**os.environ, "RUNNER_TEMP": str(runner_temp)}
+    probe = tmp_path / "clock-probe"
+    _wait_past(max(p.lstat().st_ctime_ns for p in [repo, *repo.rglob("*")]), probe)
     subprocess.run([*_GITHUB_DEFAULT_SHELL, _step_script(_MARK)], cwd=repo, env=env, check=True)
-    mark = runner_temp / "before-the-tests"
-    now = mark.stat().st_mtime
-    os.utime(mark, (now - 60, now - 60))
-    for path in [repo, *repo.rglob("*")]:
-        os.utime(path, (now - 120, now - 120), follow_symlinks=False)
+    _wait_past((runner_temp / "before-the-tests").stat().st_mtime_ns, probe)
     return repo, env
 
 
@@ -220,6 +233,25 @@ def test_a_committed_file_rewritten_and_restored_trips_the_guard(tmp_path: Path)
     out = _guard(repo, env)
     assert out.returncode == 1, out.stdout + out.stderr
     assert "the tests wrote 1 file(s) into the checkout" in out.stdout
+    assert out.stdout.splitlines()[-1] == "./scenarios/SMPL.json", out.stdout
+
+
+def test_a_committed_file_restored_with_its_old_times_trips_the_guard(tmp_path: Path) -> None:
+    """POSITIVE: a test that backs a committed file up with `shutil.copy2`, rewrites it and
+    restores it with `copy2` puts back the bytes AND the old modification time, so a check on
+    modification times (`find -newer`) saw nothing, while another worker could still have read the
+    file mid-write. Its status-change time moves on every write and no call sets it back
+    (coordinator B's review of #1072, round 2)."""
+    repo, env = _checkout(tmp_path)
+    _the_run_writes(repo, *_CACHES)
+    committed = repo / "scenarios" / "SMPL.json"
+    backup = tmp_path / "backup.json"
+    shutil.copy2(committed, backup)
+    committed.write_text('{"mid": "write"}\n')
+    shutil.copy2(backup, committed)
+    assert _git(repo, "status", "--porcelain") == ""  # git cannot see it
+    out = _guard(repo, env)
+    assert out.returncode == 1, out.stdout + out.stderr
     assert out.stdout.splitlines()[-1] == "./scenarios/SMPL.json", out.stdout
 
 
