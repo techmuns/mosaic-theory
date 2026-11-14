@@ -67,6 +67,10 @@ superseded-by:
     - the Loan Security Agreement Facility, $325.0M, due 2027-09-21.
   - The September-quarter 10-Q `0000793074-26-000172` states $0.0M due within twelve months.
   - The mechanical wall line beside it states the panel's same-window sum and its divergence correctly.
-  - The line is LLM-written and the panel predates the termination. So a fix needs either a paid re-synthesis or a fresh CIQ export: the operator's open call.
+  - The line is LLM-written and the panel predates the termination. So a fix needs either a paid re-synthesis or a fresh CIQ export.
+  - **The operator ruled on 2026-11-14,** verbatim: "Wait for a fresh CIQ export (Recommended)". #1076 merges with the misstatement recorded in STATE as open.
+    - Owner: the operator.
+    - What unlocks it: a WERN CIQ re-export made after the 2026-10-05 termination.
+    - Then: one paid WERN rebuild under #1041's rule, capped at about $7.80.
 - **DEFERRED, review round 0, to the bookkeeping after merge:** `docs/fix-log-teamnostra-2.md` rows E2-D11 and E2-D15 still say WERN's half waits. `test_fix_log` refuses a fixed row that names a PR not yet merged on main, so the two notes move when #1076 has landed. Their Status is already "fixed", so STATE row 60's counts do not move.
 - **DEFERRED, review round 0:** the re-pointed WERN pins assert values against the living page, as every pin in `test_pages_await_parser_rebuild.py` does; moving that module's pins to frozen fixtures is a change of its own.
