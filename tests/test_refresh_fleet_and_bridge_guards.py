@@ -53,8 +53,12 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     (tmp_path / "frontend" / "build.py").write_text(
         (ROOT / "frontend" / "build.py").read_text())
 
+    # A SENTINEL NO PAGE CAN CARRY. It was the word "STALE", which SMPL's 2026-11-14 page states
+    # in its own text (a non-operating read whose window ends before the latest filed quarter), so
+    # a correctly rebuilt mirror read as stale.
+    sentinel = "MIRROR-NOT-REBUILT-SENTINEL-3f9c1e"
     mirror = tmp_path / "frontend" / "dossiers" / "SMPL.md"
-    mirror.write_text("STALE — this must be overwritten by the pass\n")
+    mirror.write_text(f"{sentinel} — this must be overwritten by the pass\n")
 
     cwd = Path.cwd()
     try:
@@ -64,7 +68,7 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     finally:
         os.chdir(cwd)
 
-    assert "STALE" not in mirror.read_text(), (
+    assert sentinel not in mirror.read_text(), (
         "a fleet refresh left the web mirror stale — mirror_to_frontend is not wired into the pass")
     assert mirror.read_text() == (tmp_path / "data/dossiers/SMPL/dossier.md").read_text()
 

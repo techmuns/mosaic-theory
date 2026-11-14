@@ -167,22 +167,76 @@ def _pages() -> list[dict[str, typing.Any]]:
     return out
 
 
-def test_every_committed_page_decides_as_it_did() -> None:
-    """(+) C7 on the live corpus: a page written before the rule carries no `passes`, so its
-    proposal is read from `unanimous` exactly as before — and R1 on its own tally agrees with it."""
+#: The UTC day the vote rule landed on main (`83258405`; `docs/records/2026-11-11-the-vote-rule-
+#: implemented.md`): a page assembled before it cannot have been built with R1's gate.
+RULE_DAY = "2026-11-11"
+
+
+def _decides_as_it_did(doc: dict[str, typing.Any]) -> bool:
+    """One committed page's C7 check; True when it is a page built after the rule.
+
+    A page written before the rule carries no `passes`, so its proposal is read from `unanimous`
+    exactly as before — and R1 on its own tally agrees with it. A page built after the rule (from
+    the 2026-11-14 rebuild on) records R1's gate, and that gate is the one R1 computes from the
+    same page's tally — so its proposal is the rule's, never a stored verdict the tally does not
+    reproduce. WHICH OF THE TWO is the page's assembly date, not the presence of `passes`: an old
+    page that gained the rule's fields would otherwise be read as a new one (#1067's review)."""
     from vinci.dossier import verdict as v
+
+    def decision(g: v.DrawGate) -> tuple[object, ...]:
+        # the decision fields; `labels` is the printed split, whose tie order the two readers
+        # break differently (by name on the record, by draw order on a live build)
+        return (g.lean, g.count, g.attempted, g.required, g.passes, g.state)
+
+    t, assembled = doc["ticker"], str(doc.get("assembled_at") or "")
+    s, da = doc["synthesis"], doc["synthesis"]["draw_agreement"]
+    sleeve = doc.get("sleeve") or "overshoot"
+    labels = [lab for lab, n in da["labels"].items() for _ in range(n)]
+    gate = v.draw_gate(labels, da["attempted"])
+    new = v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve, gate=gate)
+    if assembled[:10] >= RULE_DAY:   # built after the rule: R1's gate, on the recorded tally
+        assert "passes" in da, f"{t}: assembled {assembled}, after the rule, records no gate"
+        recorded = v.DrawGate.from_record(da)
+        assert recorded is not None, t
+        assert decision(recorded) == decision(gate), t
+        assert v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve,
+                                 gate=recorded).action == new.action, t
+        return True
+    assert "passes" not in da, (
+        f"{t}: assembled {assembled}, before the rule ({RULE_DAY}), carries R1's gate")
+    old = v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve,
+                            draws_unanimous=da["unanimous"])
+    assert old.action == new.action, t
+    return False
+
+
+def test_every_committed_page_decides_as_it_did() -> None:
+    """(+) C7 on the live corpus, page by page (`_decides_as_it_did`)."""
     pages = _pages()
     assert len(pages) >= 19
-    for doc in pages:
-        s, da = doc["synthesis"], doc["synthesis"]["draw_agreement"]
-        assert "passes" not in da, doc["ticker"]
-        old = v.derive_proposal(s.get("evidence_balance"), sleeve=doc.get("sleeve") or "overshoot",
-                                draws_unanimous=da["unanimous"])
-        labels = [lab for lab, n in da["labels"].items() for _ in range(n)]
-        gate = v.draw_gate(labels, da["attempted"])
-        new = v.derive_proposal(s.get("evidence_balance"), sleeve=doc.get("sleeve") or "overshoot",
-                                gate=gate)
-        assert old.action == new.action, doc["ticker"]
+    post_rule = [doc["ticker"] for doc in pages if _decides_as_it_did(doc)]
+    # NON-VACUITY: the post-rule branch ran on real pages (NCNO, SMPL and TJX from 2026-11-14), so
+    # a reader that stopped finding them would red here rather than pass by skipping the branch
+    assert len(post_rule) >= 3, post_rule
+
+
+def test_a_page_built_before_the_rule_that_carries_its_gate_is_refused() -> None:
+    """(-) #1067's review mutant: ROST's 2026-10-29 page (frozen), its own tally given R1's fields
+    consistent with it — an OLD page that gained the rule's fields. Chosen by `passes` alone, the
+    check read it as a post-rule page and passed it; read by its assembly date, it is refused."""
+    from vinci.dossier import verdict as v
+
+    doc = json.loads((ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-29" / "ROST"
+                      / "dossier.json").read_text())
+    assert _decides_as_it_did(doc) is False   # (+) as frozen: a pre-rule page, deciding as it did
+    da = doc["synthesis"]["draw_agreement"]
+    labels = [lab for lab, n in da["labels"].items() for _ in range(n)]
+    g = v.draw_gate(labels, da["attempted"])
+    da.update(modal_count=g.count, required=g.required, passes=g.passes,
+              rule="R1: one-sided exact binomial test that the lean is the majority read, at 5%")
+    assert v.DrawGate.from_record(da) is not None   # a valid gate, consistent with the tally
+    with pytest.raises(AssertionError, match="before the rule"):
+        _decides_as_it_did(doc)
 
 
 def test_an_old_tally_serializes_as_it_was_written() -> None:
