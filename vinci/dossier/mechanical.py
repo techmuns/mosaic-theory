@@ -3630,15 +3630,17 @@ def _form4_codes(
     return OwnershipDoc(int(issuer), _refuse_inconsistent_prices(out, accession))
 
 
-#: How far apart two open-market prices of one code may sit inside ONE Form 4 before the filing's
-#: prices are inconsistent. One filing's sales (or buys) are one person's trades over days, so its
-#: weighted-average prices sit within a few percent of each other; a factor of ten is a dropped
-#: decimal point, never a market move. A face-validity bound, set before any outcome was read.
-_FORM4_PRICE_SPAN = 10.0
+#: How far apart two open-market prices of one code may sit inside ONE Form 4 before none of them
+#: can be used. One filing's sales (or buys) are one person's trades over days, so its weighted-
+#: average prices sit close together; a misplaced decimal point moves a price tenfold or more, so
+#: it always crosses 5x, and on the HTTP cache's 1,856 filing-and-code groups (2026-11-14) no
+#: legitimate group reaches it: the widest are 1.51x (UBER, a director's ten purchases over months)
+#: and 1.44x (WERN). A face-validity bound between the two, set before any outcome was read.
+_FORM4_PRICE_SPAN = 5.0
 
 
 def _refuse_inconsistent_prices(lines: list[Form4Line], accession: str) -> list[Form4Line]:
-    """REFUSE, NEVER PRICE, a stated open-market price its own filing contradicts.
+    """REFUSE, NEVER PRICE, the stated open-market prices of a filing that contradicts itself.
 
     THE CASE (Codex on #1068, 2026-11-14). Lilly Endowment's Form 4 `0000316011-25-000073` (filed
     2025-11-17) states four sales on 2025-11-14 at weighted averages of 1030.312, 1031414, 1032319
@@ -3648,37 +3650,29 @@ def _refuse_inconsistent_prices(lines: list[Form4Line], accession: str) -> list[
     Its 2025-02-25 filing does the same to one of fifteen lines (878401 among 877.311-891.874).
 
     THE RULE, on the STRUCTURED prices alone (the footnotes are free text, never parsed). Per
-    open-market code (`P`, `S`), when the filing's stated prices span more than
-    `_FORM4_PRICE_SPAN`, the lines within its square root of the group's median, either side, are
-    kept only if they are a strict majority, and every other line is refused. The square root, so
-    the kept lines agree with EACH OTHER within the span: a window of the full factor either side
-    of the median kept a one-digit shift (103.10 beside 10.30-10.32) that fired the trigger, and
-    multiplied it (review round 0). With no strict majority, as on the
-    2-2 filing above, every priced line of that code is refused: nothing in the filing says which
-    half is right, and the store's closes are split-adjusted while a Form 4 states its prices as
-    filed, so a close is no arbiter for a filing made before a split. A refused line keeps its
-    count and its date; its price is never multiplied (`Form4Line.usd`), and `compose_insider_line`
-    names it.
-    Measured on the 5,601 Form 4 documents in the HTTP cache on 2026-11-14 (1,856 filing-and-code
-    groups with a stated price): 2 groups span more than tenfold, both the Endowment's above."""
+    open-market code (`P`, `S`), when one filing's stated prices span more than
+    `_FORM4_PRICE_SPAN`, EVERY priced line of that code in the filing is refused. Never a vote: a
+    majority can be the wrong half (#1069's review: the same filer's pattern on 3 of 5 sales kept
+    the three wrong prices, multiplied them into a $30,968.88M total, and refused the two right
+    ones), and nothing in the filing says which half is right. Nor the store's closes: they are
+    split-adjusted while a Form 4 states its prices as filed, so a close is no arbiter for a filing
+    made before a split. A refused line keeps its count and its date; its price is never multiplied
+    (`Form4Line.usd`), and `compose_insider_line` names it.
+
+    THE COST, measured on the 5,601 Form 4 documents in the HTTP cache on 2026-11-14 (1,856
+    filing-and-code groups with a stated price): 2 groups span more than 5x, both the Endowment's
+    above, so 19 sale prices are refused, 16 of them correct: the 2025-02-25 filing's other 14 (the
+    whole-group rule's added cost) and `0000316011-25-000073`'s two.
+    It fails toward UNKNOWN, never toward a figure the filing does not support."""
     out = list(lines)
-    half = _FORM4_PRICE_SPAN ** 0.5
     for code in _OPEN_MARKET_CODES:
         idx = [i for i, ln in enumerate(out) if ln.code == code and ln.price > 0]
         prices = sorted(out[i].price for i in idx)
         if len(prices) < 2 or prices[-1] <= prices[0] * _FORM4_PRICE_SPAN:
             continue
-        median = statistics.median(prices)
-        near = [i for i in idx if median / half <= out[i].price <= median * half]
-        keep = set(near) if 2 * len(near) > len(idx) else set()
-        span = f"${prices[0]:,.2f} to ${prices[-1]:,.2f}"
+        why = (f"Form 4 {accession}: its {len(idx)} '{code}' prices run ${prices[0]:,.2f} to "
+               f"${prices[-1]:,.2f}, more than {_FORM4_PRICE_SPAN:.0f}-fold apart, so none is used")
         for i in idx:
-            if i in keep:
-                continue
-            why = (f"Form 4 {accession}: its {len(idx)} '{code}' prices run {span}, more than "
-                   f"{_FORM4_PRICE_SPAN:.0f}-fold apart, "
-                   + (f"and ${out[i].price:,.2f} is outside the {len(keep)} that agree"
-                      if keep else "with no majority that agrees"))
             out[i] = out[i]._replace(refused=why)
     return out
 
