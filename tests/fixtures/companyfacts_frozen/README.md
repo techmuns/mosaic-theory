@@ -37,6 +37,7 @@ a test reads the file here first, and the tracking fixture only when none is her
   2026-08-14: its August vintage carries the five share tags dated after their own filing, which those
   pins measure; refreeze it only with them. `tests/test_cross_check.py` reads WLK's for the quarter its
   self-funding cite names (2026-06-30).
+- `WERN.json` — the tracking fixture as committed at main `4fc47c88` (last changed in `53cbe9fe`; its balance sheet at 2026-06-30). Frozen 2026-11-14, when WERN's held group 3 build landed on its September-quarter 10-Q, for `tests/test_net_debt_one_builder.py`: the anchor's net debt on the date CIQ's frozen WERN figures share, the names that move toward CIQ (896.501 before), and the current tag a quarter old (793.0). Refreeze it together with the CIQ side, never alone.
 - `UBER.json` — the tracking fixture as committed at main `6fbbb4a2` (cash instant 2026-06-30, the
   date CIQ's frozen UBER figures carry). Frozen 2026-11-09, when UBER's page moved to its
   September-quarter 10-Q (fix request 2, order 1). Refreeze it together with the CIQ side, never alone.

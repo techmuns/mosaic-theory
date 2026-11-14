@@ -206,14 +206,16 @@ def test_e2_d15_millions_are_read_as_before() -> None:
 
 
 def test_e2e_werner_full_page_text_still_agrees() -> None:
-    """END TO END on Werner's committed panel: both real sentences, in their 10-Q's order (the
+    """END TO END on the panel of Werner's page that read this 10-Q (frozen 2026-09-17; the living
+    page reads the September quarter): both real sentences, in their 10-Q's order (the
     obligations bullet precedes the liquidity sentence), read $0 and AGREE."""
     filing = fs.parse_filing_sections(f"{_WERN_BULLET} {_WERN_TOTAL}", source_ref=_SRC)
     import json
     from pathlib import Path
 
     from vinci.dossier.schemas import CapitalStructure
-    page = Path(__file__).resolve().parent.parent / "data" / "dossiers" / "WERN" / "dossier.json"
+    page = (Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-09-17" / "WERN"
+            / "dossier.json")
     mech = json.loads(page.read_text())["mechanical"]
     panel = dm._wall_panel(CapitalStructure.model_validate(mech["capital_structure"]))
     read = dm._wall_read(filing, panel, date(2026, 6, 30))
