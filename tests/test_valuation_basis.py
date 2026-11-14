@@ -407,14 +407,22 @@ def test_a_spliced_anchor_is_written_with_blocks_that_describe_it(tmp_path: path
     assert {"anchor", "valuation_basis"} <= set(rec["layers"])
 
 
+#: IT's page as committed on 2026-08-18, frozen: its share counts disagreed by 5.43%, the refusal
+#: the guard pin below needs. Its 2026-11-14 rebuild reads counts that agree, so it is priceable.
+_FROZEN_SHARE_GUARD = {"IT": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "IT"}
+
+
 def test_the_gate_applies_the_templates_own_share_guard() -> None:
     """Wherever the share count enters (R1, R4), the block's verdict IS `resolve_shares`'s — read
-    off the guard itself, on every page. IT and LLY (5.43%, 5.06%) are the live refusals."""
+    off the guard itself, on every page and on IT's frozen 2026-08-18 page. IT (5.43%, frozen) and
+    LLY (5.06%, living) are the refusals."""
     from vinci.dossier.propose import resolve_shares
 
     refused = []
-    for t in PAGES:
-        doc = _page(t)
+    docs = [(t, _page(t)) for t in PAGES] + [
+        (t, json.loads((folder / "dossier.json").read_text()))
+        for t, folder in _FROZEN_SHARE_GUARD.items()]
+    for t, doc in docs:
         b, a = doc["valuation_basis"], doc["anchor"]
         if not (b["recipe"] == sc.RECIPE_R4 or (b["recipe"].startswith("R1") and a["applicable"])):
             continue
