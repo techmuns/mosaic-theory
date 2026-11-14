@@ -79,8 +79,42 @@ jobs:
       # out (`tests/test_one_gate.py`): `bin/commit` does, because the shared venv it runs in has
       # no pytest-xdist until re-synced from the lock, and the scheduled workflows' gates do.
       # Every test runs on both: docs/records/2026-11-13-the-gate-runs-the-suite-across-workers.md
+      #
+      # A TEST WRITES NO FILE INTO THE CHECKOUT (2026-11-14). On workers, a test that rewrites a
+      # committed file, even one it restores byte for byte, can be read mid-write by a test on
+      # another worker: a failure that comes and goes, which #1065 accepted as a risk. git cannot
+      # see it, because a restored file leaves `git status` clean. So the time is marked before the
+      # tests, and any file newer than the mark after them fails the job, by name. Left out: the
+      # caches a real run of the suite writes, measured, not guessed — `.pytest_cache`,
+      # `.hypothesis` and every `__pycache__` (ruff's and mypy's are written before the mark).
+      # CI only: on a person's machine a file they edit during the run would trip it too, so
+      # `bin/commit` has no such step. The measurement and what it does not catch:
+      # docs/records/2026-11-14-the-gate-names-a-test-that-writes-into-the-checkout.md
+      - name: mark the time before the tests
+        run: touch "$RUNNER_TEMP/before-the-tests"
       - name: pytest (offline)
+        id: pytest
         run: python -m pytest -m "not network" -p no:warnings --tb=short -rs -n auto
+      - name: the tests wrote no file into the checkout
+        if: ${{ !cancelled() && steps.pytest.outcome != 'skipped' }}
+        run: |
+          # A step with no `shell:` runs under `bash -e`, with no pipefail: without this line a
+          # find that fails part-way would hand its partial list to `sort` and the step pass (D16).
+          set -euo pipefail
+          since="$RUNNER_TEMP/before-the-tests"
+          newer=$(( $(find . -path ./.git -prune -o ! -type d -newer "$since" -print | wc -l) ))
+          written="$(find . \( -path ./.git -o -path ./.pytest_cache -o -path ./.hypothesis \
+            -o -name __pycache__ \) -prune -o ! -type d -newer "$since" -print | sort)"
+          if [ "$newer" -eq 0 ]; then
+            echo "::error::no file is newer than the mark, not even in the caches: this check cannot see the run"
+            exit 1
+          fi
+          if [ -n "$written" ]; then
+            echo "::error::the tests wrote $(( $(printf '%s\n' "$written" | wc -l) )) file(s) into the checkout: on workers, another test can read one mid-write"
+            printf '%s\n' "$written"
+            exit 1
+          fi
+          echo "$newer files are newer than the mark, every one in .pytest_cache, .hypothesis or a __pycache__"
 
       # THE MIRROR IS DERIVED, AND NOTHING WAS ENFORCING THAT. `frontend/` is rebuilt from
       # committed data by `frontend/build.py`, but the rebuild ran only when a human remembered —
