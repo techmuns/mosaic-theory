@@ -15,11 +15,11 @@ It says the page does not state one, and names where the extraction's notes are 
 
 FROZEN FIXTURES. `tests/fixtures/covenant_unextracted/<T>.json` holds the committed
 `mechanical.capital_structure` block of EPAM, NCNO, AMZN and BURL at main 188e0476 (2026-11-14),
-unmodified, and that dossier's `(E5)` QA flags in order. All four are unchanged at 6652a242. Each end-to-end test renders the REAL
-committed dossier of that name with its block swapped for the frozen one, through
-`render_markdown` and through the production `renderDossier` in node. A re-assembly cannot redraw
-the accessions asserted here (CLAUDE.md TEST-LAYER rule). The living-corpus test asserts only that
-no line names a cause.
+unmodified, and that dossier's `(E5)` QA flags in order. All four are unchanged at 6652a242. Each
+end-to-end test renders the REAL committed dossier of that name with its block swapped for the
+frozen one, through `render_markdown` and through the production `renderDossier` in node. A
+re-assembly cannot redraw the accessions asserted here (CLAUDE.md TEST-LAYER rule). The
+living-corpus test asserts only that no line names a cause.
 """
 
 from __future__ import annotations
@@ -47,6 +47,8 @@ _HEAD = "located agreement exhibit(s) not extracted this run"
 #: every cause `extract_covenant_terms` can record for a located exhibit it did not extract
 _CAUSES = ("cost bound", "fetch fail", "refused", "not a debt agreement", "too large",
            "LLM error")
+#: the defect's own words: the two causes the line gave every exhibit, whatever happened to it
+_OLD_CLAIM = "cost bound / fetch fail"
 
 
 class _Case(typing.NamedTuple):
@@ -139,14 +141,12 @@ def test_the_frozen_record_holds_each_exhibits_reason(c: _Case) -> None:
 @pytest.mark.parametrize("c", CASES, ids=_IDS)
 def test_the_markdown_line_names_no_cause_e2e(c: _Case) -> None:
     """(−) Real committed dossier → `render_markdown`. The line lists every unextracted accession
-    and names no cause. On a page where E5 refused every one, "cost bound" and "fetch fail" appear
-    nowhere on the page."""
+    and names no cause, and the old claim is printed nowhere on the page."""
     md = render_markdown(Dossier.model_validate(_host(c.ticker)))
     line = _md_line(md)
     assert _listed(line) == sorted(c.refused + c.cost_bound), line
     assert not [w for w in _CAUSES if w in line], line
-    if not c.cost_bound:
-        assert "cost bound" not in md and "fetch fail" not in md
+    assert _OLD_CLAIM not in md
 
 
 @pytest.mark.parametrize("c", CASES, ids=_IDS)
@@ -158,8 +158,7 @@ def test_the_web_line_names_no_cause_and_matches_the_markdown_e2e(
     line = _web_line(page)
     assert _listed(line) == sorted(c.refused + c.cost_bound), line
     assert not [w for w in _CAUSES if w in line], line
-    if not c.cost_bound:
-        assert "cost bound" not in page and "fetch fail" not in page
+    assert _OLD_CLAIM not in page
     assert line == _md_line(render_markdown(Dossier.model_validate(_host(c.ticker))))
 
 
@@ -178,9 +177,10 @@ def test_a_cost_bound_exhibit_is_still_listed_and_its_reason_reachable_e2e(
 
 
 def test_no_committed_page_names_a_cause_on_the_line() -> None:
-    """(− · living corpus) On every committed page with covenant term rows, the line, where it is
-    printed, names no cause. Phrasing-independent: it asserts only that the cause words are
-    absent."""
+    """(− · living corpus) Over every committed dossier.json with covenant term rows, the line THIS
+    renderer prints, where it prints one, names no cause. It reads the JSON, not the committed
+    dossier.md, so a page still carrying the old line until its re-render does not trip it.
+    Phrasing-independent: it asserts only that the cause words are absent."""
     checked = 0
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         cs_raw = json.loads(p.read_text()).get("mechanical", {}).get("capital_structure")

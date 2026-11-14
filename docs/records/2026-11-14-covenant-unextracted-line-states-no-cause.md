@@ -31,10 +31,11 @@ a STRUCTURED field records it. None does. `CovenantPointer` carries `family`, `f
 `filing_date`, `accession`, `exhibits` and `note`. `CovenantTerm` carries a term's value and
 citation. The reason exists only as an `(E5)` QA-flag string, which `flags._QA_MARKERS` hides from
 the page. The cost-bound string names the exhibit's filename, not its accession, so a reader of the
-flags would have to re-derive which pointer it belongs to. One path leaves no flag at all: an
-exhibit the extraction ran on and the model returned no terms for. Parsers consume structured
-values, never rendered strings (CLAUDE.md), so the line claims no cause. It says where the notes
-are kept, and does not promise one for each exhibit.
+flags would have to re-derive which pointer it belongs to. Two paths leave no flag at all: an
+exhibit the extraction ran on and the model returned no terms for, and a located pointer with no
+exhibit for `_core_agreement_exhibits` to target (none on the committed corpus at `6652a242`).
+Parsers consume structured values, never rendered strings (CLAUDE.md), so the line claims no
+cause. It says where the notes are kept, and does not promise one for each exhibit.
 
 *The field the extractor would need* (not built; populating it needs a paid re-assembly): one
 outcome per targeted exhibit, written by `extract_covenant_terms` at the point each branch of its
@@ -54,8 +55,8 @@ the field, which is every committed page until it is re-assembled, keeps the neu
   production `renderDossier` in node:
   - (precondition) located minus cited is exactly the case's refused and cost-bound accessions,
     and the frozen flags record each one's reason;
-  - (−) EPAM, NCNO, AMZN, BURL: neither renderer's line names a cause. On EPAM and NCNO, "cost
-    bound" and "fetch fail" appear nowhere on either page. The web line equals the Markdown line;
+  - (−) EPAM, NCNO, AMZN, BURL: neither renderer's line names a cause, and "cost bound / fetch
+    fail" appears nowhere on either page. The web line equals the Markdown line;
   - (+) AMZN, BURL: each genuinely cost-bound exhibit is still listed on both renderers. The line
     names the record that holds its cost-bound note;
   - (− living corpus) no committed page's line names a cause.
@@ -91,4 +92,6 @@ exists, because a line that names the right cause on some exhibits and the wrong
 cannot tell the reader which is which. The 16 committed pages carry the old line until the $0
 re-render, which the coordinator signals. Falsifier: a committed page whose line names a cause, or
 whose unextracted exhibit has no `(E5)` note in its QA flags. `test_no_committed_page_names_a_cause_on_the_line`
-reads the first on every committed page. The second is checked here, by hand, once.
+reads the first through HEAD's renderer over every committed `dossier.json`; it does not read the
+committed `dossier.md`, so the 16 pages that still carry the old line until the re-render do not
+trip it. The second is checked here, by hand, once.

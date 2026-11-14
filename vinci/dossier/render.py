@@ -1938,8 +1938,9 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     # one; on 12 of the 16 committed pages carrying it at main 6652a242, E5 had REFUSED each exhibit
     # it named as no debt agreement (22 of its 29 accessions refused, 7 cost bound, 0 fetch fail).
     # The reason is only a QA-flag string (`covenant_extract.extract_covenant_terms`); no structured
-    # field carries it, and an exhibit the model returns no terms for gets no flag at all. So the
-    # line names where the extraction's notes are kept and claims none of them.
+    # field carries it, and an exhibit the model returns no terms for (or a located pointer with no
+    # exhibit to target) gets no flag at all. So the line names where the extraction's notes are
+    # kept and claims none of them.
     located = {p.accession for p in (ptrs.value if ptrs is not None and ptrs.value else [])
                if p.accession}
     extracted = {m.group(1) for r in rows_s.value
