@@ -3649,8 +3649,11 @@ def _refuse_inconsistent_prices(lines: list[Form4Line], accession: str) -> list[
 
     THE RULE, on the STRUCTURED prices alone (the footnotes are free text, never parsed). Per
     open-market code (`P`, `S`), when the filing's stated prices span more than
-    `_FORM4_PRICE_SPAN`, the lines within that factor of the group's median are kept only if they
-    are a strict majority, and every other line is refused. With no strict majority, as on the
+    `_FORM4_PRICE_SPAN`, the lines within its square root of the group's median, either side, are
+    kept only if they are a strict majority, and every other line is refused. The square root, so
+    the kept lines agree with EACH OTHER within the span: a window of the full factor either side
+    of the median kept a one-digit shift (103.10 beside 10.30-10.32) that fired the trigger, and
+    multiplied it (review round 0). With no strict majority, as on the
     2-2 filing above, every priced line of that code is refused: nothing in the filing says which
     half is right, and the store's closes are split-adjusted while a Form 4 states its prices as
     filed, so a close is no arbiter for a filing made before a split. A refused line keeps its
@@ -3659,15 +3662,14 @@ def _refuse_inconsistent_prices(lines: list[Form4Line], accession: str) -> list[
     Measured on the 5,601 Form 4 documents in the HTTP cache on 2026-11-14 (1,856 filing-and-code
     groups with a stated price): 2 groups span more than tenfold, both the Endowment's above."""
     out = list(lines)
-    for code in ("P", "S"):
+    half = _FORM4_PRICE_SPAN ** 0.5
+    for code in _OPEN_MARKET_CODES:
         idx = [i for i, ln in enumerate(out) if ln.code == code and ln.price > 0]
         prices = sorted(out[i].price for i in idx)
         if len(prices) < 2 or prices[-1] <= prices[0] * _FORM4_PRICE_SPAN:
             continue
-        mid = len(prices) // 2
-        median = prices[mid] if len(prices) % 2 else (prices[mid - 1] + prices[mid]) / 2
-        near = [i for i in idx
-                if median / _FORM4_PRICE_SPAN <= out[i].price <= median * _FORM4_PRICE_SPAN]
+        median = statistics.median(prices)
+        near = [i for i in idx if median / half <= out[i].price <= median * half]
         keep = set(near) if 2 * len(near) > len(idx) else set()
         span = f"${prices[0]:,.2f} to ${prices[-1]:,.2f}"
         for i in idx:
@@ -4188,9 +4190,12 @@ def compose_insider_line(
         # noise dressed as a finding. Compared at the PRECISION SHOWN, not the underlying float.
         if refused:
             n = len(refused)
+            # "FIRST:" WHEN THE REASONS DIFFER (review round 0): one reason stated beside a count
+            # drawn from several read as if every refused line were that filing's
+            first = "first: " if len({r.refused for r in refused}) > 1 else ""
             out += (f" · largest {label} UNKNOWN — {n} of {len(rows)} {label}"
                     f"{'s' if len(rows) != 1 else ''} {scan} carr{'ies' if n == 1 else 'y'} a "
-                    f"stated price this reader refuses ({refused[0].refused})")
+                    f"stated price this reader refuses ({first}{refused[0].refused})")
         elif biggest is not latest and _amount(biggest) != _amount(latest):
             out += (f" · largest {'priced ' if gap else ''}{label} "
                     + _event(biggest, "").lstrip())
@@ -4200,7 +4205,7 @@ def compose_insider_line(
         # it names the scan exactly as the absence clause does
         if gap:
             out += (f" · {gap} of {len(rows)} {label}{'s' if len(rows) != 1 else ''} {scan} "
-                    f"with no price stated" + (", not ranked" if priced else ""))
+                    f"with no price stated" + (", not ranked" if priced and not refused else ""))
         return out
 
     counts: dict[str, int] = {}

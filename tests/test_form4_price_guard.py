@@ -101,3 +101,38 @@ def test_a_line_with_no_refused_price_names_its_largest_as_before() -> None:
     line = _line(CONSISTENT)
     assert "UNKNOWN" not in line and "refuse" not in line
     assert "last sale $" in line
+
+
+def _s(price: float, shares: float = 100.0) -> mech.Form4Line:
+    return mech.Form4Line("S", shares, price, date(2026, 6, 1), "cikA", "director")
+
+
+def test_a_one_digit_decimal_shift_is_refused_not_kept_beside_the_prices_it_contradicts() -> None:
+    """(-) REVIEW ROUND 0: the tenfold trigger fired on 10.30-103.10, yet a keep window of TENFOLD
+    EITHER SIDE of the median (10.315) spanned 1.03-103.15 and kept all four, so the shifted
+    103.10 was multiplied beside the three it contradicts. The kept lines must agree with EACH
+    OTHER within the span, so the window is its square root either side of the median."""
+    out = mech._refuse_inconsistent_prices([_s(10.30), _s(10.31), _s(10.32), _s(103.10)], "acc")
+    assert [bool(ln.refused) for ln in out] == [False, False, False, True]
+    assert "outside the 3 that agree" in out[3].refused
+
+
+def test_a_refusal_drawn_from_several_reasons_names_only_the_first_as_first() -> None:
+    """(-) REVIEW ROUND 0: with the 1-of-15 filing read first, the line counted 5 refused sales and
+    named only that filing's reason ("outside the 14 that agree"), as if all five were its."""
+    line = _line(ONE_OF_FIFTEEN, NO_MAJORITY)
+    assert ("5 of 19 sales in the 3y scanned carry a stated price this reader refuses "
+            "(first: ") in line
+    assert "(first: " not in _line(NO_MAJORITY)       # one reason, all four lines: no "first"
+
+
+def test_an_unpriced_count_says_not_ranked_only_where_a_largest_was_named() -> None:
+    """(-) REVIEW ROUND 0: with the largest UNKNOWN nothing was ranked, yet the unpriced clause
+    still read ", not ranked" as if a largest had been named without it."""
+    rows = [_s(50.0), _s(0.0), mech.Form4Line("S", 100, 5.0, date(2026, 6, 1), "c", "director",
+                                               refused="Form 4 acc: refused")]
+    line = mech.compose_insider_line(rows, reference_date=date(2026, 7, 1),
+                                     last_filing=date(2026, 6, 1))
+    assert "largest sale UNKNOWN" in line
+    assert "1 of 3 sales in the 3y scanned with no price stated" in line
+    assert "not ranked" not in line
