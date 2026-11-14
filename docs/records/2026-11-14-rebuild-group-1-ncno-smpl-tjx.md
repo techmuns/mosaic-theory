@@ -35,7 +35,16 @@ superseded-by:
 | 10-Q read · newest release | `0001902733-26-000101` · `…-000099` (was `…-000066` · `…-000064`) | `0001702744-26-000023` · `…-000028` (unchanged) | `0000109198-26-000048` · `…-000045` (unchanged) |
 | Sourced fields lost | 0 | 0 | 0 |
 
-- **NCNO's covenant table goes from 29 rows to 15, a fix landing that the page states.** Its own (E5) flag says the 10-K exhibit `exhibit1035secondamendment.htm` (`0001902733-26-000022`) declares itself an office lease. It is refused as not a debt agreement rather than extracted under the pointer's guess, so the 15 rows that filing gave (8 lease terms, and 7 filed under debt-term headings) leave. The two credit-facility documents give 15 rows (was 14): `0001902733-24-000041`, the First Amendment row 43 said this re-assembly would send, and `…24-000171`. Three of those rows read UNKNOWN, because their value states a figure their quote doesn't (E5).
+- **NCNO's covenant table goes from 29 rows to 15: a fix landing, which the page's surface misstates.**
+  - **The cause, in the page's `qa_flags`:** an (E5) flag says the 10-K exhibit `exhibit1035secondamendment.htm` (`0001902733-26-000022`) declares itself an office lease. It is refused as not a debt agreement rather than extracted under the pointer's guess. So the 15 rows that filing gave leave: 8 lease terms, and 7 filed under debt-term headings, among them `margin_pct` 2.0.
+  - **What remains:** the two credit-facility documents give 15 rows (was 14). They are `0001902733-24-000041`, the First Amendment row 43 said this re-assembly would send, and `…24-000171`. Three of those rows read UNKNOWN, because their value states a figure their quote doesn't (E5).
+  - **The rendered page gives a false reason.** `dossier.md` says "1 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001902733-26-000022". The refusal is in `qa_flags` only and never reaches the page (#1067's review; FOUND, NOT FIXED below).
+- **NCNO's other value loss is the export's.** `ev_bridge.consensus.forward["FY 2029"]` (−211.37) is gone: the Estimates export the page reads changed (`f08e783c6d` → `bbafd3d81b`, re-pulled 2026-10-28) and carries no FY 2029 consensus line. `ev_bridge.exit_claims[2]` still names FY 2029.
+- **Benign removals, on all three pages:**
+  - `layer_refreshes` (NCNO 19, SMPL 4, TJX 3 → 0): a fresh assembly starts with no refresh log;
+  - `inputs.unrecorded` (3 → 0 each): the build records every input class;
+  - `inputs.ciq[].stamped_by` (2 → 0 each);
+  - the "trailing only — no forward basis" note on `valuation.ev_ebitda`, dropped because a forward multiple now exists.
 - **The two proposal moves are the paid draw's, not a rule's.** NCNO's 08-18 page carried a strongly-bullish lean and proposed BUY; its five draws now give 4 mixed and 1 strongly-bullish, and mixed proposes nothing. TJX's draws give 4 strongly-bullish and 1 mixed: the R1 vote rule needs 5 of 5, so the BUY it would have proposed is withheld and stated as borderline on the page. No verdict of record is touched; a human confirm or override is what the ledger seals.
 - **The store.** A working copy of the primary's `data/vinci.db` (read `mode=ro`, never written), filled to 2026-11-11 at $0: `vinci refresh <the 10 names, IWM, MDY, SPY> --start 2026-11-11 --end 2026-11-11`, grouped-daily, run through `vinci/impact/child.py --frozen-cache --no-network`, which read the cached 2026-11-10 and 2026-11-11 grouped-daily files (fetched 2026-11-11 11:42Z and 2026-11-12 05:52Z) and fetched nothing (sockets blocked). It wrote 13 bars and restated none.
   - Content sha256 (every table but `meta`, `vinci.impact.run.store_digest`) **`598a3d2c07f17df5f071742f1a0ea6cc23452f02334c0273bc755de523fa1cb6`**, 2,543,246 rows, frontier 2026-11-11; the same after the precheck re-run and after all three builds. The 11-10 copy it was filled from reads `a60b31c9…` (2,543,233 rows).
@@ -72,6 +81,19 @@ superseded-by:
 - **The cross-setup section** (`python -m vinci.impact run`, head `1919bf28`): base and head carry byte-identical `vinci/`, so nothing moves by construction. The changed tests have 0 failures at head, and 410 nodes pass at both refs. It is in #1067's body.
 - **Read-only inputs.** The 109 CIQ exports of the 10 active names, the primary's `data/vinci.db` (sha256 `2b75fe39…6b79`) and the primary's `data/cache` hash and count the same before and after.
 
+**THE INDEPENDENT REVIEW of `7f34e64c`** (relayed by the coordinator, 2026-11-14: "FIX FIRST", text and one test, no rebuild).
+- **It confirmed:**
+  - the artifact commit holds artifacts only, and `frontend/scenarios/NCNO.json` reproduces byte for byte from `frontend/build.py`;
+  - main's tests fail on exactly the 13 moved nodes, the frozen NCNO 08-18 page equals main's, and 11 of the reviewer's mutants are caught;
+  - the run records: 2.6.0, $12.94, 0 failed calls, prices and reference data on 11-11, no vendor calls, the FINRA read disclosed;
+  - both proposal moves follow from the tallies, with no ledger change;
+  - the transcript guard and the gates.
+- **MEDIUM:** this record and #1067's body said NCNO's covenant drop was "a fix landing that the page states". The page states a false reason instead. Corrected above, and the renderer defect is added to FOUND, NOT FIXED.
+- **LOW:** `test_vote_rule` chose its post-rule branch by the presence of `passes`. So an old page that gained the rule's fields passed: the reviewer stamped tally-consistent R1 fields onto ROST's 2026-10-29 page, head's test passed and main's failed.
+  - Fixed: the branch is chosen by `assembled_at` against the rule's day (2026-11-11, `83258405`). A page assembled after it must carry the gate, and one before it must not.
+  - Pinned with that mutant on the frozen ROST page (`test_a_page_built_before_the_rule_that_carries_its_gate_is_refused`). The pin is red on the first selection ("DID NOT RAISE") and green on this one.
+- **LOW:** NCNO's two value losses and the benign removals are named above.
+
 **THE SDK (#1049's falsifier).** These are the first paid dossier builds on anthropic 2.6.0. Set beside the 0.112.0 builds (main's 44 committed run lines, which record no SDK; 0.112.0 by the records' own text):
 - 27 calls, 0 failed (0.112.0: 370 calls, 0 failed).
 - Costs: SMPL $2.99 → $3.08 (+3%), TJX $4.32 → $4.92 (+14%), the same call counts; NCNO has no earlier run.
@@ -82,6 +104,7 @@ superseded-by:
 **FOUND, NOT FIXED** (the code PR the operator ordered, after the builds):
 - **The cohort leg prices a member on a stale last close.** `mechanical._window_return` reads the close on or before the reference date, however old, so a member whose bars stop in July gets a short-window return labelled 180-day. On this store GOOGL's cohort reads 5 of the committed page's 12 names, four of them ending 06-12 to 07-02 (EXTR 0.208 → 0.656). GOOGL is not built here.
 - **The comps-date matcher accepts a coincidental close.** `freshness.date_of_close`'s coverage precondition allows a 4-day gap, so a store missing exactly the panel's prior close passes it, and the scan takes the latest matching close anywhere before. On the 11-10 store WERN's $27.84 (the 11-11 close) matched 2025-10-17 and refused the build at 392 days; IT's $193.00 matched nothing and its export stamp stood a day too new.
+- **The covenant table labels every located exhibit it did not extract "cost bound / fetch fail", whatever the reason** (#1067's review). `vinci/dossier/render.py:1943-1944` and its twin `frontend/views/shared/dossier.js:3139` derive the line as located pointer accessions minus extracted ones, and attach that one reason to all of them. On NCNO's page it names `0001902733-26-000022`, which was REFUSED as an office lease (E5) rather than missed. The renderer fix is a separate $0 code PR, followed by a $0 re-render of the pages it moves (the coordinator routes it).
 
 **BOUNDARY.**
 - **Code:** main `1f32cbdf`, on branch `artifacts/ncno-smpl-tjx-rebuild-2026-11-14` (claims `artifacts/smpl-rebuild-2026-11-14`, `artifacts/tjx-rebuild-2026-11-14`).
