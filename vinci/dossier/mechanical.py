@@ -40,7 +40,7 @@ from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
 from vinci.dossier.filed_tiebreak import SAME_END_DAYS as FILED_SAME_END_DAYS
 from vinci.dossier.filed_tiebreak import _quarter_ref as _filed_quarter_ref
 from vinci.dossier.filed_tiebreak import filed_quarter
-from vinci.dossier.freshness import _COVERAGE_GAP_DAYS
+from vinci.dossier.freshness import _COVERAGE_GAP_DAYS, matching_closes
 from vinci.dossier.gaps import disclosure_gaps
 from vinci.dossier.midcycle import MIN_YEARS as _MIDCYCLE_MIN_YEARS
 from vinci.dossier.schemas import (
@@ -331,9 +331,19 @@ def _covering_close(bars: list[PriceBar], d: date) -> PriceBar | None:
 
 
 def _window_return(bars: list[PriceBar], ref: date, days: int) -> float | None:
-    then = _close_on_or_before(bars, ref - timedelta(days=days))
-    now = _close_on_or_before(bars, ref)
-    return (now / then - 1.0) if (then and now and then > 0) else None
+    """The return over the ``days`` before ``ref`` — None when EITHER END has no covering close.
+
+    BOTH ENDS ARE BOUNDED (2026-11-14). Each end read the close on or before its date however old
+    (`_close_on_or_before`), so a series that stopped early was priced on its last close and the
+    figure kept its 180-day label. On the 2026-11-11 store GOOGL's cohort read four members on
+    closes from 06-12 to 07-02 under an 11-11 end — EXTR's +20.8% is the 48 days 05-15 → 07-02,
+    published as the 180-day move (at the page's own 10-16 end, +65.6% against the committed
+    +20.8% its complete store gave). The bound is `_covering_close`'s, the one the
+    benchmark leg beside it already holds a close to: further back than the routine gap between
+    two trading days, a close is a fetch that did not run, never the close of the date."""
+    then = _covering_close(bars, ref - timedelta(days=days))
+    now = _covering_close(bars, ref)
+    return (now.close / then.close - 1.0) if (then and now and then.close > 0) else None
 
 
 # --- drawdown cause: label by 8-K item codes + parse the catalyst from the filing TEXT --------
@@ -1110,6 +1120,9 @@ def _cohort(
             note=f"{ticker} not in graph_coverage.json — no exposed cross-section to compare"
         )
     members: list[CohortMember] = []
+    stale_end: list[str] = []
+    stale_start: list[str] = []
+    start = ref - timedelta(days=_DECLINE_WINDOW_DAYS)
     for x in graph.exposed_within(node, hops=2):
         if not x.ticker:
             continue
@@ -1117,18 +1130,30 @@ def _cohort(
             bars = store.get_price_history(resolver.resolve_ticker(x.ticker).internal_id)
         except (ResolutionError, LookupError):
             bars = []
+        ret = _window_return(bars, ref, _DECLINE_WINDOW_DAYS) if bars else None
+        # A MEMBER WITH BARS AND NO RETURN WAS REFUSED, and the cohort says which and why — a
+        # dash beside it would read as a name with no history (2026-11-14, GOOGL's July members)
+        if bars and ret is None:
+            if _covering_close(bars, ref) is None:
+                last = _bar_on_or_before(bars, ref)
+                stale_end.append(f"{x.ticker} {last.bar_date if last else 'none by then'}")
+            elif _covering_close(bars, start) is None:
+                before = _bar_on_or_before(bars, start)
+                stale_start.append(f"{x.ticker} " + (f"{before.bar_date}" if before else
+                                                     f"first close {bars[0].bar_date}"))
         members.append(
-            CohortMember(
-                ticker=x.ticker, hops=x.hops,
-                ret_180d=_window_return(bars, ref, _DECLINE_WINDOW_DAYS) if bars else None,
-                via=(" · ".join(x.path))[:200],
-            )
-        )
+            CohortMember(ticker=x.ticker, hops=x.hops, ret_180d=ret,
+                         via=(" · ".join(x.path))[:200]))
     if not members:
         return Sourced.unknown(note=f"{ticker} in graph but no US-listed exposed names to price")
-    return Sourced.present(
-        members, source_ref=f"graph_coverage.json node={node}; EOD {_DECLINE_WINDOW_DAYS}d ret"
-    )
+    ref_note = f"graph_coverage.json node={node}; EOD {_DECLINE_WINDOW_DAYS}d ret"
+    if stale_end:
+        ref_note += (f"; {len(stale_end)} of {len(members)} refused, their latest close more than "
+                     f"{_COVERAGE_GAP_DAYS} days before the {ref} end: {', '.join(stale_end)}")
+    if stale_start:
+        ref_note += (f"; {len(stale_start)} of {len(members)} refused, no close within "
+                     f"{_COVERAGE_GAP_DAYS} days of the {start} start: {', '.join(stale_start)}")
+    return Sourced.present(members, source_ref=ref_note)
 
 
 def _idio_read(name_180d: Sourced[float], cohort: Sourced[list[CohortMember]]) -> Sourced[str]:
@@ -5464,6 +5489,11 @@ def _uncorrected_reason(stamp: date | None, price_bars: list[Any] | None,
     the store is untouched, so blaming it ("carries no bar at that panel's printed close" for a
     panel that prints no close) is the same wrong-cause defect one branch further out. Each guard
     that can suppress the correction states itself.
+
+    A MATCH OUTSIDE THE PANEL'S WINDOW IS NAMED (2026-11-14). `date_of_close` now takes a match
+    only within the routine gap before the stamp, and on WERN's 11-10 store the one bar that
+    carries 27.84 is 2025-10-17: "carries no bar at that panel's printed close" would be false of
+    a store that holds one, so the refused match is stated with its date.
     """
     if stamp is None:
         return ("the panel carries no decodable export-stamp header, so there is no bound to "
@@ -5477,6 +5507,11 @@ def _uncorrected_reason(stamp: date | None, price_bars: list[Any] | None,
         return (f"the price store ends {frontier.isoformat()}, before the {stamp.isoformat()} "
                 "export stamp — the bar this panel names is absent, so any match would be "
                 "coincidence")
+    if far := matching_closes(printed_close, price_bars or [], not_after=stamp):
+        return (f"the store's latest bar at that panel's printed close is {far[-1].isoformat()}, "
+                f"more than {_COVERAGE_GAP_DAYS} days before the {stamp.isoformat()} export "
+                "stamp — not the panel's session, so it is never read as its date; no bar in "
+                f"those {_COVERAGE_GAP_DAYS} days carries that close")
     return "the store carries no bar at that panel's printed close"
 
 

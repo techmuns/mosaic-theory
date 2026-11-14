@@ -73,8 +73,12 @@ def test_a_benchmark_that_stopped_before_the_page_date_is_refused(tmp_path: Path
     assert "IWM is stale (latest close 2026-09-16)" in (idio.rel_vs_market.note or "")
     assert idio.name_180d_return.value is not None
     assert idio.name_180d_return.source_ref.endswith("to 2026-09-22")
-    # what the old lookup did: read the 09-16 close as the 09-22 close
-    assert dm._window_return(_bars("IWM", drop=HOLE), REF, 180) is not None
+    # what the old lookup did: read the 09-16 close as the 09-22 close (the unbounded
+    # `_close_on_or_before`, which `_window_return` itself read until 2026-11-14 and now refuses)
+    holed = _bars("IWM", drop=HOLE)
+    assert dm._close_on_or_before(holed, REF) == next(
+        b.close for b in holed if b.bar_date == date(2026, 9, 16))
+    assert dm._window_return(holed, REF, 180) is None
 
 
 def test_within_the_calendar_gap_both_legs_end_on_the_common_last_bar(tmp_path: Path) -> None:

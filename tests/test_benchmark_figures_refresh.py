@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import json
 import shutil
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -160,7 +160,12 @@ def test_the_transform_restores_a_page_built_on_a_benchmark_hole(tmp_path: Path)
     ref = date(2026, 9, 22)
     iwm = [PriceBar(**json.loads(x)) for x in (PRICES / "IWM.jsonl").read_text().splitlines()
            if x.strip() and not HOLE[0] <= date.fromisoformat(json.loads(x)["bar_date"]) <= HOLE[1]]
-    stale_mkt = dm._window_return(iwm, ref, 180)
+    # THE OLD LOOKUP, spelled out: `_window_return` read each end's close on or before its date
+    # however old until 2026-11-14, and now refuses a stale end itself, so the stale page is rebuilt
+    # with the unbounded reads it was built with
+    then = dm._close_on_or_before(iwm, ref - timedelta(days=180))
+    now = dm._close_on_or_before(iwm, ref)
+    stale_mkt = now / then - 1.0 if (then and now) else None
     assert stale_mkt is not None and stale_mkt != committed["idiosyncratic_vs_shared"][
         "market_180d_return"]["value"]  # the hole really moves the figure
     doc = json.loads(page.read_text())
