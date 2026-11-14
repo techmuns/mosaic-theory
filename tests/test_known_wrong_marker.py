@@ -68,8 +68,11 @@ def test_a_marker_reaches_the_rendered_page_above_the_numbers(tmp_path: pathlib.
     """THE POSITIVE HALF, on a TEMPORARY marker rather than a live name. A banner that renders below
     the figures it disowns is a banner a reader meets too late, so it must lead the page.
 
-    Written against a real committed record with a sidecar dropped beside it and removed after, so
-    the mechanism is exercised end to end without any name having to stay broken to prove it.
+    Written against a real committed record with a sidecar dropped beside it, so the mechanism is
+    exercised end to end without any name having to stay broken to prove it. The sidecar sits in a
+    dossiers root of the test's own, passed as `dossiers_root=` as every production render passes
+    it: one dropped into `data/dossiers/` itself sealed that name, for the moment it was there, in
+    every test reading the committed tree on another pytest-xdist worker (gate.yml, 2026-11-13).
     """
     from vinci.dossier.render import render_markdown
     from vinci.dossier.schemas import Dossier
@@ -77,15 +80,18 @@ def test_a_marker_reaches_the_rendered_page_above_the_numbers(tmp_path: pathlib.
     host = next((d for d in sorted(DOSSIERS.iterdir()) if (d / "dossier.json").is_file()), None)
     if host is None:
         pytest.skip("no committed dossier to host a temporary marker")
-    marker = host / "known_wrong.json"
-    assert not marker.exists(), f"{host.name} is already sealed — pick an unsealed host"
+    assert not (host / "known_wrong.json").exists(), (
+        f"{host.name} is already sealed — pick an unsealed host")
+    marker = tmp_path / host.name / "known_wrong.json"
+    marker.parent.mkdir()
 
     marker.write_text(json.dumps({
         "ticker": host.name, "kind": "known_wrong", "recorded": "2026-08-13",
         "items": [{"id": "t", "claim": "A test claim.", "known_false": "why it is false"}],
     }))
     try:
-        md = render_markdown(Dossier.model_validate_json((host / "dossier.json").read_text()))
+        md = render_markdown(Dossier.model_validate_json((host / "dossier.json").read_text()),
+                             dossiers_root=tmp_path)
         assert "KNOWN-WRONG" in md, "the marker did not reach the rendered page"
         banner = md.index("KNOWN-WRONG")
         # ABOVE THE NUMBERS: the first figure-bearing line must come after the warning.
@@ -110,8 +116,11 @@ def test_a_broken_marker_fails_loud_instead_of_vanishing(tmp_path: pathlib.Path)
     host = next((d for d in sorted(DOSSIERS.iterdir()) if (d / "dossier.json").is_file()), None)
     if host is None:
         pytest.skip("no committed dossier to host a temporary marker")
-    marker = host / "known_wrong.json"
-    assert not marker.exists(), f"{host.name} is already sealed — pick an unsealed host"
+    assert not (host / "known_wrong.json").exists(), (
+        f"{host.name} is already sealed — pick an unsealed host")
+    # In a dossiers root of the test's own, for the reason the test above gives.
+    marker = tmp_path / host.name / "known_wrong.json"
+    marker.parent.mkdir()
 
     try:
         for bad, _why in (("{ not json", "malformed"),
@@ -119,9 +128,10 @@ def test_a_broken_marker_fails_loud_instead_of_vanishing(tmp_path: pathlib.Path)
                           (json.dumps({"ticker": host.name}), "no items key")):
             marker.write_text(bad)
             with pytest.raises(ValueError, match="known-wrong|names no items|cannot be read"):
-                _known_wrong_lines(host.name)
+                _known_wrong_lines(host.name, tmp_path)
     finally:
         marker.unlink()
 
     # ABSENT still renders nothing — the fix must not turn silence into an error for every name.
+    assert _known_wrong_lines(host.name, tmp_path) == []
     assert _known_wrong_lines(host.name) == []
