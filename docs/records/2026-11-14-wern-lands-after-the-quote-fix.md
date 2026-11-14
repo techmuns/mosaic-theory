@@ -32,7 +32,11 @@ superseded-by:
 
 - **Against main's page** (`prespend.compare`): 0 regressions, 0 list members gone, 0 moves; 6 fields gained (`capital_structure.maturity_filings`, `concentration.segment_profit`, the two drawdown-anchor shapes, `leverage_survival.credit_health_panels`, `valuation.forward_multiples`).
 - **The covenant table's not-extracted line** (STATE row 63): WERN's page carries it for `0000793074-26-000090`, in #1073's neutral wording ("this page does not state why"). E5 refused that 8-K/A exhibit as no debt agreement: it "declares itself" a stock purchase agreement. Main's page carried no such line.
-- **The wall divergence is the page's own statement:** its wall-coherence line reads "DIVERGES from panel — verify; neither silently preferred: panel same-window $752.0M (CIQ panel, principal basis) vs filing $0.0M (10-Q, repayment basis)", and the page names the CIQ panel as predating the Oct-8 Item 1.02 termination (the 22 Unsecured Credit Agreement, replaced by a 2031 revolver, 8-K `0000793074-26-000159`).
+- **The wall divergence is the page's own statement:** its wall-coherence line reads "DIVERGES from panel — verify; neither silently preferred: panel same-window $752.0M (CIQ panel, principal basis) vs filing $0.0M (10-Q, repayment basis)", and the page names the CIQ panel as predating the Item 1.02 termination of the 22 Unsecured Credit Agreement (replaced by a 2031 revolver; 8-K `0000793074-26-000159`). The termination was effective 2026-10-05, the 8-K's report date in EDGAR's submissions. The page's `maturity_filings` lists the 8-K at the agreement's 2026-10-05 maturity, and 2026-10-08 is the day it was filed.
+- **WERN's Key Developments rows.** 7 rows are sourced to CIQ Key Developments, against 5 on main's page:
+  - 6 `operating_drivers` rows, tier `anchored`, each quoting 29–49 words of CIQ's text in its `verbatim` (dated Jan-28-2026 to Oct-19-2026);
+  - 1 `catalyst_calendar` row, untiered.
+  - Whether KD text may be published is the operator's open item, not yet ruled (STATE row 60, item 3b), as for IT's rows in group 3. No WERN file carries a run of 13 or more words, shared with a call, that only a KD export excuses (the guard below).
 - **Four premise moves** (tests only, each red under a mutant of what it guards):
   1. `test_pages_await_parser_rebuild::test_wern_revenues_of_releases_carry_their_headline_revenue` (E2-D11): re-pointed to the releases the page cites, `-000165` (Q3 2026, 950.5) and `-000129` (Q2 2026, 933.9), and flipped from strict-xfail. Its 2026-10-19 8-K `-000162` is a preliminary release stating a range the company expects, not an actual. Red with the Q3 revenue row deleted.
   2. `test_pages_await_parser_rebuild::test_wern_stated_twelve_month_wall_is_located` (E2-D15): re-pointed to the September-quarter 10-Q `-000172`, located at $0.0, and flipped. Red with the wall un-located. That file now holds no strict-xfail pin.
@@ -57,6 +61,12 @@ superseded-by:
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $0 for the refresh; the $5.18 was group 3's, already counted in its $8.83.
 - The page's synthesis is the held build's, drawn on main `1f32cbdf`; the refresh re-reads release actuals only.
-- **DEFERRED, review round 0:** a key-unknowns synthesis line (`dossier.md:253`) calls the panel's same-window sum "a $752.0M facility". It is two instruments: the $427M 22 Unsecured Credit Agreement, terminated Oct 8, and the $325M Loan Security Agreement Facility, maturing 2027-09-21. The mechanical wall line beside it states the sum and its divergence correctly. The line is LLM-written, so correcting it takes a paid re-synthesis; it is the operator's call.
+- **DEFERRED, review round 0, to the operator (STATE row 41, OPERATOR ACTION):** a key-unknowns synthesis line (`dossier.md:253`, and its mirror `frontend/dossiers/WERN.md:253`) says the CIQ panel shows "a $752.0M facility" in the ≤12m window.
+  - The page's own instruments (`capital_structure.instruments`) are two:
+    - the 22 Unsecured Credit Agreement, $427.0M (CIQ maturity 2026-10-05), which the Item 1.02 in 8-K `0000793074-26-000159` terminated, effective 2026-10-05 and filed 2026-10-08. The line's "Oct-8" is the filing date;
+    - the Loan Security Agreement Facility, $325.0M, due 2027-09-21.
+  - The September-quarter 10-Q `0000793074-26-000172` states $0.0M due within twelve months.
+  - The mechanical wall line beside it states the panel's same-window sum and its divergence correctly.
+  - The line is LLM-written and the panel predates the termination. So a fix needs either a paid re-synthesis or a fresh CIQ export: the operator's open call.
 - **DEFERRED, review round 0, to the bookkeeping after merge:** `docs/fix-log-teamnostra-2.md` rows E2-D11 and E2-D15 still say WERN's half waits. `test_fix_log` refuses a fixed row that names a PR not yet merged on main, so the two notes move when #1076 has landed. Their Status is already "fixed", so STATE row 60's counts do not move.
 - **DEFERRED, review round 0:** the re-pointed WERN pins assert values against the living page, as every pin in `test_pages_await_parser_rebuild.py` does; moving that module's pins to frozen fixtures is a change of its own.
