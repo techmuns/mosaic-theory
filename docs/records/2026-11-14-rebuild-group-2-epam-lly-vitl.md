@@ -7,9 +7,14 @@ supersedes:
 superseded-by:
 ---
 
-# Rebuild of the 10 active pages, group 2: EPAM, LLY and VITL are re-assembled once each on main `1f32cbdf`, priced at the 2026-11-11 close on the cache-filled store with Polygon and Tiingo calls blocked, for $10.65 of a $15.22 cap on anthropic 2.6.0 — each loses only the fix-3b figure the operator accepted, and no machine proposal moves
+# Rebuild of the 10 active pages, group 2: EPAM and VITL are re-assembled once each on main `1f32cbdf`, priced at the 2026-11-11 close on the cache-filled store with Polygon and Tiingo calls blocked, each losing only the fix-3b figure the operator accepted, with no machine proposal moving; LLY was built too but is HELD, its page left as main's, because its new insider line states a $57,664.29M sale from a malformed Form 4 price that reached its synthesis request — $10.65 of a $15.22 cap on anthropic 2.6.0
 
 **WHAT.**
+- **LLY IS HELD, not committed** (Codex P2 on #1068; coordinator 2026-11-14: "not DEFER … #1068 does NOT merge until this is resolved"). The other two pages land.
+  - **The defect:** LLY's build wrote `catalyst_path.insider_activity` as present (main's page states it UNKNOWN), naming a "largest sale $57664.29M, 10% owner, 2025-11-14". Codex reads the 2025-11-14 Form 4 as carrying one malformed structured price, $1,031,414, among prices near $1,031. The arithmetic is consistent: $57,664.29M over 55,908 shares is $1,031,414 a share, about a thousand times the stock's price. The filing itself was not re-read here: a search of the cache for the price found no hit within its time limit.
+  - **It reached the synthesis.** `synthesize` sends the layer as `mech.model_dump(exclude=NOT_SENT)` (`vinci/dossier/synthesis.py:2714`), and `NOT_SENT` (`:2647`) does not exclude `catalyst_path.insider_activity`. That exclusion applied to LLY's built layer leaves "57664.29" in the facts. LLY's synthesis text never cites it (0 mentions of insider, the figure, "10% owner" or the Endowment), but its five draws were made with it.
+  - **So the page is not committed.** `data/dossiers/LLY/` and its mirrors stay main's 2026-11-03 page, byte for byte. Its run line `48120f17` IS committed: the $3.70 was spent, and the run series records every build attempted.
+  - **Next:** a $0 code PR guarding the Form 4 reader's prices (`vinci/dossier/mechanical.py:3611`, no sanity check today), pinned on the real filing; then a paid LLY rebuild on the operator's go (group 2's cap has $4.57 left; last cost $3.70), after a fresh $0 precheck on the fixed code.
 - **The scope and the rulings** are group 1's (`docs/records/2026-11-14-rebuild-group-1-ncno-smpl-tjx.md`):
   - the operator's coverage marking of 2026-11-13;
   - the 2026-11-14 rulings on prices ("Fill to 11-11 from cache (Recommended)"), caps ("#1041's rule, $52.97 total (Recommended)") and reference data ("11-11 cache, calls blocked (Recommended)");
@@ -17,7 +22,7 @@ superseded-by:
 - Group 2's losses are the three the operator accepted on 2026-11-13 ("accept all three", issuecomment-6847662066).
 - Each page was built once, in the order EPAM, LLY, VITL, one at a time, with no refused re-roll.
 
-| | EPAM | LLY | VITL |
+| | EPAM | LLY (built, **HELD**: page not committed, run line committed) | VITL |
 |---|---|---|---|
 | committed page before | 2026-11-09, ext `2026-11-09.asof-cut` | 2026-11-03, ext `2026-11-03.ex-lease-share-cut` | 2026-11-09, ext `2026-11-09.asof-cut` |
 | $0 precheck on the 11-11 store | exit 1 · the accepted regression only · 0 refusals (117 fields) | exit 1 · the accepted one · 0 (116) | exit 1 · the accepted one · 0 (110) |
@@ -36,7 +41,7 @@ superseded-by:
 - **The losses are exactly the accepted three.** `prespend.compare`, committed page against written page, lists the one regression on each, with 0 list members gone and 0 moves.
 - **Other value changes, read leaf by leaf against main `1f32cbdf`:**
   - LLY's and VITL's `buyback_cash` keep their values (4,334.0; 35.001). Their "PERIOD MISMATCH" note leaves with the stale share count it compared against.
-  - LLY's `catalyst_path.insider_activity` goes unknown → present.
+  - LLY's held build wrote `catalyst_path.insider_activity` unknown → present: the defect above.
   - EPAM's covenant table gains two rate floors ("Base Rate floor", "Euro-Rate floor") and loses no row. Three of its terms are refused to UNKNOWN because their value states figures their quote doesn't (E5): the financial-maintenance covenant's "4.00 to 1.00", a principal set and a prepayment threshold.
   - EPAM's 10-K exhibit `exhibit1017-epamnonxempl.htm` (`0001352010-26-000015`) is refused as not a debt agreement (E5).
   - `layer_refreshes` empties on all three, as on any fresh assembly.
@@ -45,7 +50,7 @@ superseded-by:
 - **One as-of date, vendor calls blocked.** Every build ran under the guard that refuses `api.polygon.io` and `api.tiingo.com`; 0 were refused. Each page read its 14 Polygon reference responses from the 11-11 cache (`fetched_at` 2026-11-11 03:53–04:00Z in its built-from record), beside price series ending 2026-11-11. Live reads: EPAM 0, LLY 1 FINRA, VITL 1 FINRA.
 - **The transcript evidence** went to the operator's spool (`manual/driver-evidence/`), write-once: 100 files added (76 claims, 24 located passages). The 2,333 there after group 1 are unchanged by sha256 and by mtime, and none is missing.
 - **One pin moved** (`5619c9ed`): `test_vote_rule::test_an_old_page_renders_as_it_did` read LLY's living page as its pre-rule example. It now reads `tests/fixtures/frozen_pages/2026-11-03/LLY/`, byte-identical to main `1f32cbdf`'s page.
-  - Review round 0 (`58189bab`) pins the frozen line whole, and raises the post-rule non-vacuity floor to the six pages built after the rule.
+  - Review round 0 (`58189bab`) pins the frozen line whole, and raised the post-rule non-vacuity floor to six. With LLY held, review round 1 sets it to the five pages built after the rule and committed (NCNO, SMPL, TJX, EPAM, VITL). The frozen-LLY pin stands: LLY's living page is main's, a pre-rule page, byte-identical to the frozen one.
 
 **WHY.** These are the next three of the 10 active pages, rebuilt so each carries fix request 2's code once. The order agreed with B on #1004 was the venv re-sync, then this rebuild.
 
@@ -88,6 +93,7 @@ superseded-by:
 - **Leaf comparison:** every JSON leaf non-null at `1f32cbdf` and null or absent at the written page.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- $10.65 of the $15.22 cap; groups 1 and 2 together $23.59 of $32.92, inside the operator's $170.
-- The three fix-3b losses, by the operator's ruling.
+- $10.65 of the $15.22 cap, LLY's held $3.70 included; groups 1 and 2 together $23.59 of $32.92, inside the operator's $170. LLY's build bought a page that is not committed, and its rebuild, on the operator's go, costs again.
+- The fix-3b losses of EPAM and VITL, by the operator's ruling. LLY's accepted loss is not incurred while its page stays main's.
+- **REVIEW ROUND 1** (Codex P2, `data/dossiers/LLY/dossier.json:4213`): FIX by holding LLY's page, not by editing it. The coordinator ruled it not a DEFER. The code defect is the separate $0 PR above.
 - The pages are priced at 11-11, not the latest close, by ruling.

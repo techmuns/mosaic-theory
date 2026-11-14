@@ -215,10 +215,10 @@ def test_every_committed_page_decides_as_it_did() -> None:
     pages = _pages()
     assert len(pages) >= 19
     post_rule = [doc["ticker"] for doc in pages if _decides_as_it_did(doc)]
-    # NON-VACUITY: the post-rule branch ran on real pages (NCNO, SMPL and TJX, then EPAM, LLY and
-    # VITL, from 2026-11-14), so a reader that stopped finding them would red here rather than pass
-    # by skipping the branch
-    assert len(post_rule) >= 6, post_rule
+    # NON-VACUITY: the post-rule branch ran on real pages (NCNO, SMPL and TJX, then EPAM and VITL,
+    # from 2026-11-14; LLY's rebuild is held, its page main's), so a reader that stopped finding
+    # them would red here rather than pass by skipping the branch
+    assert len(post_rule) >= 5, post_rule
 
 
 def test_a_page_built_before_the_rule_that_carries_its_gate_is_refused() -> None:
