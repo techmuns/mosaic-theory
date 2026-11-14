@@ -1,0 +1,22 @@
+{
+ "_about": "GOOGL's Q2 2026 call, paragraph 8: the passage whose re-draw the spool refused in run 8d2e72e8 (2026-11-14). The record's locator and hashes as the operator's spool holds it (read, never written), and a CUT of the call: its speaker block and the quote's first 10 words as the call prints them. No run of more than 12 transcript words.",
+ "call": "Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf",
+ "transcript_sha256": "cab0759d72a5466c31dc8dd644a2c22376b6bee2d8601746e87fe00bae848fba",
+ "paragraph": 8,
+ "speaker": "Sundar Pichai",
+ "quote_sha256": "62fca102432dcc1a47b972a9e07c860d56f2c4f96e2b7fca98e3ea35d87b171a",
+ "record_sha256": "aac26cb37db73af4de6bea382d1162ff606a8849b2901003ad2028388b93d6a6",
+ "filed": "2026-11-10",
+ "quote_words": 24,
+ "quote_word_span": [
+  76,
+  100
+ ],
+ "cut": {
+  "speaker_block": [
+   "Sundar  Pichai",
+   "CEO & Director"
+  ],
+  "span": "It's been incredible to see that over 1.7 billion unique"
+ }
+}
