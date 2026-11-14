@@ -43,6 +43,10 @@ superseded-by:
   - The local 12-word guard excuses them as KD-sourced and reports them apart.
   - Main's BRBR, BURL and V pages carry the same shape.
   - Whether KD text may be published is the operator's open item (STATE row 60, item 3b). The coordinator ruled it fine to ship and is raising it with the operator.
+- **IT now carries the covenant table's false "cost bound / fetch fail" line** (STATE row 63; #1070's independent review). Main's IT page carried none.
+  - `data/dossiers/IT/dossier.md:690` and its mirror `frontend/dossiers/IT.md` print "1 located agreement exhibit(s) not extracted this run (cost bound / fetch fail)" for `0000930413-17-000070`.
+  - That reason is false. E5 refused the exhibit as "not a debt agreement": the pointer guessed a State of Connecticut economic development loan, and its `c86994_ex10-1.htm` "declares itself no agreement at all". The reason is in `qa_flags` only, never on the page, the shape groups 1 and 2 found on NCNO, TJX and EPAM.
+  - So 16 of the 26 committed pages at this branch carry the line, against 15 at main `188e0476` (measured by the line's text in each `data/dossiers/<T>/dossier.md`). Row 63's $0 code fix and re-render covers IT with the rest.
 - **The store, the as-of date and the vendor guard** are group 1's: content sha256 `598a3d2c07f17df5f071742f1a0ea6cc23452f02334c0273bc755de523fa1cb6`, frontier 2026-11-11.
   - Each page read its 14 Polygon reference responses from the 11-11 cache; 0 were refused.
   - Live reads: IT 1 FINRA and 1 SEC; WERN 1 FINRA and 1 SEC.
