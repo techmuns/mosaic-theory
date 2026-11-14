@@ -154,12 +154,16 @@ def test_the_one_record_that_genuinely_carries_the_other_quantity() -> None:
         "the live record and its own archive must disagree here — that disagreement IS item 24")
 
 
-def test_the_stamps_round_trip_and_an_unstamped_fact_emits_no_key() -> None:
+def test_the_stamps_round_trip_and_an_unstamped_fact_emits_no_key(tmp_path: Path) -> None:
     """Absent-vs-null, the `leg_fy` rule: a record that never stated a quantity carries NO key for
-    one, so every pre-field record round-trips byte-identically."""
+    one, so every pre-field record round-trips byte-identically.
+
+    Written to a root of the test's own: writing over the committed `scenarios/SMPL.json` left it
+    empty for a moment, which a test reading it on another pytest-xdist worker could catch
+    (gate.yml, 2026-11-13)."""
     rec = _rec("SMPL")
     committed = (ROOT / "scenarios" / "SMPL.json").read_text()
-    assert sc.write_record(rec, root=ROOT).read_text() == committed
+    assert sc.write_record(rec, root=tmp_path).read_text() == committed
     scoped = sc._version_scoped(rec.model_copy(update={
         "facts": {**rec.facts, "diluted_shares": _fact(rec, quantity_kind="")}}))
     assert "quantity_kind" not in scoped["facts"]["diluted_shares"]

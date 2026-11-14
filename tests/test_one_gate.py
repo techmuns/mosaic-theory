@@ -26,7 +26,12 @@ ROOT = Path(__file__).resolve().parents[1]
 BIN_COMMIT = ROOT / "bin" / "commit"
 GATE_YML = ROOT / ".github" / "workflows" / "gate.yml"
 #: Options that take the next token as their value.
-_VALUED = {"-m", "-p", "-k"}
+_VALUED = {"-m", "-p", "-k", "-n"}
+#: HOW the suite is spread over processes, never WHICH tests run or what a log reports: `-n`,
+#: pytest-xdist's worker count. gate.yml runs the suite over the runner's cores (2026-11-13); every
+#: other gate may run it on one. `bin/commit` runs in the shared venv, which agents may not
+#: reinstall (STATE row 62), and that venv has no pytest-xdist until it is re-synced from the lock.
+_SCHEDULING = {"-n"}
 
 
 def _pytest_commands(path: Path) -> list[list[str]]:
@@ -59,6 +64,11 @@ def _gate_flags() -> list[tuple[str, ...]]:
     return flags
 
 
+def _required_flags() -> list[tuple[str, ...]]:
+    """gate.yml's flags less its scheduling ones: what every gate must run with too."""
+    return [f for f in _gate_flags() if f[0] not in _SCHEDULING]
+
+
 def _gates() -> list[Path]:
     workflows = [p for p in sorted((ROOT / ".github" / "workflows").glob("*.yml"))
                  if _pytest_commands(p)]
@@ -76,10 +86,25 @@ def test_every_gate_runs_pytest_with_the_gates_own_flags() -> None:
     gates = _gates()
     assert {p.name for p in gates} >= {"gate.yml", "weekly-screen.yml", "monthly-score.yml",
                                         "theme-intelligence-weekly.yml", "commit"}, gates
-    required = _gate_flags()
+    required = _required_flags()
     missing = {f"{p.name}: {' '.join(argv)}": [" ".join(f) for f in required if not _has(argv, f)]
                for p in gates for argv in _pytest_commands(p)}
     assert not {k: v for k, v in missing.items() if v}, missing
+
+
+def test_only_the_worker_count_is_left_to_each_gate() -> None:
+    """The scheduling exemption admits a gate that runs the suite on one process, and nothing
+    else: a gate dropping `-rs`, the `not network` selection or `-p no:warnings` is still caught,
+    with or without workers of its own."""
+    required = _required_flags()
+    assert not any(f[0] in _SCHEDULING for f in required), required
+    one_process = shlex.split('python -m pytest -m "not network" -p no:warnings --tb=short -rs')
+    assert [f for f in required if not _has(one_process, f)] == []
+    workers = shlex.split('python -m pytest -m "not network" -p no:warnings --tb=short -rs -n 4')
+    for dropped in (("-rs",), ("-p", "no:warnings"), ("-m", "not network")):
+        argv = ["python", "-m", "pytest",
+                *(a for f in _flags(workers) if f != dropped for a in f)]
+        assert [f for f in required if not _has(argv, f)] == [dropped], argv
 
 
 def test_the_local_gate_carries_no_machines_path() -> None:
