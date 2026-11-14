@@ -591,7 +591,7 @@ _Source §: 8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm · amende
 
 _Source §: 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm · amended by 0000320187-24-000009_
 
-- _1 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0000320187-26-000088_
+- _1 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0000320187-26-000088_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

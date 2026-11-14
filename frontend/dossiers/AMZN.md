@@ -640,7 +640,7 @@ _Source §: 8-K 0001193125-20-176528 · d948849dex101.htm_
 
 _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 
-- _2 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001104659-26-072140, 0001193125-18-139368_
+- _2 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0001104659-26-072140, 0001193125-18-139368_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

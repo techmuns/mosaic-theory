@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-14.a-release-quote-keeps-the-figure-it-backs",
+  "follows": [
+    "2026-11-14.form4-price-its-filing-contradicts-is-refused"
+  ],
+  "names": "#829: a reconciliation actual's or a guide range's stored quote, over the 200-character cap, keeps its END (the figure) and drops whole words from its start, where it had kept the start and cut the figure off. The window the guidance readers decide on (period, superseded, withdrawn, sub-line, shared-metric) is unchanged, and a one-off's, an event impact's or a driver's quote keeps its start. WERN's held build stored adjusted EPS -0.03 under '…diluted loss per share of' (8-K 0000793074-26-000165 EX-99.1); TJX's committed Fiscal 2027 EPS guide ($4.93 to $5.02, 8-K 0000109198-26-000004 EX-99.1) under '…earnings per share to be'. Over the 117 EX-99.1 releases cited on the 26 committed pages at main 6652a242 (329 stored items, base against head, cache only), 1 stored quote moves, TJX's guide, and no value, period, count or qa flag"
+}

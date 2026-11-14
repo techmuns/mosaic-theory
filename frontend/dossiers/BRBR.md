@@ -627,7 +627,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 
-- _1 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001193125-19-270862_
+- _1 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0001193125-19-270862_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

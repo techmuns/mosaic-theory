@@ -602,7 +602,7 @@ _Source §: 8-K 0001552781-21-000058 · e21071_ex10-1.htm · amended by 00015527
 
 _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
 
-- _1 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001552781-23-000469_
+- _1 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0001552781-23-000469_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

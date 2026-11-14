@@ -1932,8 +1932,15 @@ def _covenant_term_lines(cs: Any) -> list[str]:
         out += _table(f"Covenant terms — {fam} (governing agreement)", rows_s.source_ref,
                       cols, rows, note=footer)
     # (FIX-2) ONE human line inside the covenant block for located agreement exhibits NOT extracted
-    # this run (cost bound / fetch fail) — the per-exhibit machine detail is a QA flag, not a
-    # caveat. Derived: located pointer accessions minus the accessions the extraction actually read.
+    # this run — the per-exhibit machine detail is a QA flag, not a caveat. Derived: located
+    # pointer accessions minus the accessions the extraction actually read.
+    # IT STATES NO CAUSE (STATE row 63, 2026-11-14). It said "(cost bound / fetch fail)" for every
+    # one; on 12 of the 16 committed pages carrying it at main 6652a242, E5 had REFUSED each exhibit
+    # it named as no debt agreement (22 of its 29 accessions refused, 7 cost bound, 0 fetch fail).
+    # The reason is only a QA-flag string (`covenant_extract.extract_covenant_terms`); no structured
+    # field carries it, and an exhibit the model returns no terms for (or a located pointer with no
+    # exhibit to target) gets no flag at all. So the line names where the extraction's notes are
+    # kept and claims none of them.
     located = {p.accession for p in (ptrs.value if ptrs is not None and ptrs.value else [])
                if p.accession}
     extracted = {m.group(1) for r in rows_s.value
@@ -1941,8 +1948,9 @@ def _covenant_term_lines(cs: Any) -> list[str]:
                                  r.value.source_ref or r.value.note or ""))}
     missing = sorted(located - extracted)
     if missing:
-        out.append(f"- _{len(missing)} located agreement exhibit(s) not extracted this run "
-                   f"(cost bound / fetch fail) — see the pointer table: {', '.join(missing)}_")
+        out.append(f"- _{len(missing)} located agreement exhibit(s) not extracted this run; this "
+                   f"page does not state why (the extraction's notes are QA flags in dossier.json)"
+                   f" — see the pointer table: {', '.join(missing)}_")
     return out
 
 
