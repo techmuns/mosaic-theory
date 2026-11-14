@@ -1,0 +1,9 @@
+{
+  "id": "2026-11-14.form4-price-its-filing-contradicts-is-refused",
+  "follows": [
+    "2026-11-11.guide-periods-read-where-stated-and-one-off-periods",
+    "2026-11-13.bare-sales-and-profit-name-their-rows",
+    "2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings"
+  ],
+  "names": "Codex P2 on #1068, rounds 0-1 of #1069: a Form 4 whose open-market prices of one code (P or S) span more than fivefold has every priced line of that code refused, never priced and never chosen by a vote (a majority can be the wrong half). 5x sits between the corpus's widest legitimate span (1.51x, UBER; 1.44x, WERN) and any misplaced decimal point (tenfold or more). A refused line keeps its count and date, the window totals count it apart ('N with a price refused'), and the largest of its side reads UNKNOWN naming the filing, the first of several. LLY's held build had published 'largest sale $57664.29M' from Lilly Endowment's 0000316011-25-000073 (two prices with dropped decimals). Of 1,856 cached filing-and-code groups with a stated price, 2 span more than 5x, both the Endowment's on LLY, refusing 19 sale prices, 14 of them correct (the 2025-02-25 filing's). No committed page re-renders differently; of the 25 committed pages a $0 build reaches (PARR's mislabelled export stops it), the field moves on LLY alone, whose largest sale now reads UNKNOWN in place of $57664.29M (its page is main's, the line UNKNOWN there)"
+}
