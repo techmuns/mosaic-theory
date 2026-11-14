@@ -1,0 +1,9 @@
+{
+  "id": "2026-11-14.form4-price-its-filing-contradicts-is-refused",
+  "follows": [
+    "2026-11-11.guide-periods-read-where-stated-and-one-off-periods",
+    "2026-11-13.bare-sales-and-profit-name-their-rows",
+    "2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings"
+  ],
+  "names": "Codex P2 on #1068: a Form 4 open-market price its own filing contradicts is refused, never priced. When one filing's prices of one code (P or S) span more than tenfold, a strict majority within that factor of the group's median is kept and every other line refused; with no majority every priced line of that code is refused. A refused line keeps its count and date, the window totals count it apart ('N with a price refused'), and the largest of its side reads UNKNOWN naming the filing. LLY's held build had published 'largest sale $57664.29M' from Lilly Endowment's 0000316011-25-000073 (two prices with dropped decimals); of 1,856 cached filing-and-code groups with a stated price, 2 span tenfold, both LLY's. No committed page re-renders differently; of the 25 committed pages a $0 build reaches (PARR's mislabelled export stops it), the field moves on LLY alone, whose largest sale now reads UNKNOWN in place of $57664.29M (its page is main's, the line UNKNOWN there)"
+}

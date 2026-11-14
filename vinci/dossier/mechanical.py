@@ -3525,13 +3525,16 @@ class Form4Line(NamedTuple):
     on: date | None
     who: str
     role: str
+    #: Why the stated price is NOT used, or "" when it is (`_refuse_inconsistent_prices`)
+    refused: str = ""
 
     @property
     def usd(self) -> float | None:
-        """Dollar value, or None when the filing states no price. A `G` (gift) or `A` (grant)
-        carries shares at no price; multiplying by a defaulted 0.0 would report a real transfer as
-        a $0 event, which reads as *nothing happened*."""
-        return self.shares * self.price if self.price else None
+        """Dollar value, or None when the filing states no price, or states one this reader
+        refuses. A `G` (gift) or `A` (grant) carries shares at no price; multiplying by a defaulted
+        0.0 would report a real transfer as a $0 event, which reads as *nothing happened*. A
+        refused price is never multiplied: it is the line's fact that it cannot be priced."""
+        return self.shares * self.price if self.price and not self.refused else None
 
 
 class OwnershipUnreadableError(Exception):
@@ -3624,7 +3627,58 @@ def _form4_codes(
         if code:
             out.append(Form4Line(code, float(sh) if sh else 0.0, float(px) if px else 0.0,
                                  on, who or accession, role))
-    return OwnershipDoc(int(issuer), out)
+    return OwnershipDoc(int(issuer), _refuse_inconsistent_prices(out, accession))
+
+
+#: How far apart two open-market prices of one code may sit inside ONE Form 4 before the filing's
+#: prices are inconsistent. One filing's sales (or buys) are one person's trades over days, so its
+#: weighted-average prices sit within a few percent of each other; a factor of ten is a dropped
+#: decimal point, never a market move. A face-validity bound, set before any outcome was read.
+_FORM4_PRICE_SPAN = 10.0
+
+
+def _refuse_inconsistent_prices(lines: list[Form4Line], accession: str) -> list[Form4Line]:
+    """REFUSE, NEVER PRICE, a stated open-market price its own filing contradicts.
+
+    THE CASE (Codex on #1068, 2026-11-14). Lilly Endowment's Form 4 `0000316011-25-000073` (filed
+    2025-11-17) states four sales on 2025-11-14 at weighted averages of 1030.312, 1031414, 1032319
+    and 1033.155: the middle two dropped their decimal points (the filing's footnotes give their
+    ranges as $1,031.00-$1,031.99 and $1,032.00-$1,032.95). Read as stated, 55,908 shares at
+    $1,031,414 published "largest sale $57664.29M" on LLY's page, in its synthesis request too.
+    Its 2025-02-25 filing does the same to one of fifteen lines (878401 among 877.311-891.874).
+
+    THE RULE, on the STRUCTURED prices alone (the footnotes are free text, never parsed). Per
+    open-market code (`P`, `S`), when the filing's stated prices span more than
+    `_FORM4_PRICE_SPAN`, the lines within that factor of the group's median are kept only if they
+    are a strict majority, and every other line is refused. With no strict majority, as on the
+    2-2 filing above, every priced line of that code is refused: nothing in the filing says which
+    half is right, and the store's closes are split-adjusted while a Form 4 states its prices as
+    filed, so a close is no arbiter for a filing made before a split. A refused line keeps its
+    count and its date; its price is never multiplied (`Form4Line.usd`), and `compose_insider_line`
+    names it.
+    Measured on the 5,601 Form 4 documents in the HTTP cache on 2026-11-14 (1,856 filing-and-code
+    groups with a stated price): 2 groups span more than tenfold, both the Endowment's above."""
+    out = list(lines)
+    for code in ("P", "S"):
+        idx = [i for i, ln in enumerate(out) if ln.code == code and ln.price > 0]
+        prices = sorted(out[i].price for i in idx)
+        if len(prices) < 2 or prices[-1] <= prices[0] * _FORM4_PRICE_SPAN:
+            continue
+        mid = len(prices) // 2
+        median = prices[mid] if len(prices) % 2 else (prices[mid - 1] + prices[mid]) / 2
+        near = [i for i in idx
+                if median / _FORM4_PRICE_SPAN <= out[i].price <= median * _FORM4_PRICE_SPAN]
+        keep = set(near) if 2 * len(near) > len(idx) else set()
+        span = f"${prices[0]:,.2f} to ${prices[-1]:,.2f}"
+        for i in idx:
+            if i in keep:
+                continue
+            why = (f"Form 4 {accession}: its {len(idx)} '{code}' prices run {span}, more than "
+                   f"{_FORM4_PRICE_SPAN:.0f}-fold apart, "
+                   + (f"and ${out[i].price:,.2f} is outside the {len(keep)} that agree"
+                      if keep else "with no majority that agrees"))
+            out[i] = out[i]._replace(refused=why)
+    return out
 
 
 class OwnRead(NamedTuple):
@@ -4081,10 +4135,15 @@ def compose_insider_line(
         # A LINE WITH NO PRICE IS NOT IN THE TOTAL, AND THE TOTAL SAYS SO (audit RD-D2). The count
         # holds every line while the dollars hold only the priced ones, so "2 ($0.50M)" read as two
         # sales worth $0.50M when one of them stated no price — the wall total's rule (D-D4).
-        gap = sum(1 for ln in rows if ln.usd is None)
-        unpriced = f"{gap} with no price stated" if gap else ""
-        dollars = (f", ${usd / 1e6:.2f}M" + (f" + {unpriced}" if gap else "") if usd
-                   else f", {unpriced}" if gap else "")
+        # A REFUSED PRICE IS COUNTED APART from an absent one: the filing stated a price, and this
+        # reader would not use it (`_refuse_inconsistent_prices`) — two facts, two clauses
+        refused = sum(1 for ln in rows if ln.refused)
+        gap = sum(1 for ln in rows if ln.usd is None and not ln.refused)
+        unpriced = " + ".join(
+            ([f"{gap} with no price stated"] if gap else [])
+            + ([f"{refused} with a price refused"] if refused else []))
+        dollars = (f", ${usd / 1e6:.2f}M" + (f" + {unpriced}" if unpriced else "") if usd
+                   else f", {unpriced}" if unpriced else "")
         return f"{len(rows)} ({people} insider{'s' if people != 1 else ''}{dollars})"
 
     def _amount(ln: Form4Line) -> str:
@@ -4118,12 +4177,21 @@ def compose_insider_line(
         # larger unpriced sale was never the largest, and nothing said one had been passed over:
         # the largest is named among the priced lines, and the unpriced ones are counted beside it.
         priced = [r for r in rows if r.usd is not None]
-        gap = len(rows) - len(priced)
+        refused = [r for r in rows if r.refused]
+        gap = len(rows) - len(priced) - len(refused)
         biggest = max(priced, key=lambda r: r.usd or 0.0) if priced else latest
+        # A REFUSED PRICE LEAVES THE LARGEST UNKNOWN, never named among the rest. Its shares were
+        # traded at SOME price this reader cannot state, so any priced line named "largest" might
+        # not be (#1068: the Endowment's 55,908 shares, refused, against a $7.64M largest priced).
         # SUPPRESSED WHEN IT RENDERS THE SAME. AORT's two largest buys differ by cents and both
         # print "$0.26M", so the second clause repeated a number the reader cannot tell apart —
         # noise dressed as a finding. Compared at the PRECISION SHOWN, not the underlying float.
-        if biggest is not latest and _amount(biggest) != _amount(latest):
+        if refused:
+            n = len(refused)
+            out += (f" · largest {label} UNKNOWN — {n} of {len(rows)} {label}"
+                    f"{'s' if len(rows) != 1 else ''} {scan} carr{'ies' if n == 1 else 'y'} a "
+                    f"stated price this reader refuses ({refused[0].refused})")
+        elif biggest is not latest and _amount(biggest) != _amount(latest):
             out += (f" · largest {'priced ' if gap else ''}{label} "
                     + _event(biggest, "").lstrip())
         # "1 OF 2", so the clause counts the set and never reads as one more sale; "not ranked"
