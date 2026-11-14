@@ -24,7 +24,7 @@ superseded-by:
 - **The rule.**
   1. `driver_extract.as_the_call_prints_it`: a located row files the CALL'S words at its quote's folded match. That is the same first occurrence `_paragraph_and_speaker` counts from, with its case kept and whitespace runs as one space. A span that does not fold back to the quote falls back to the model's string; its key is the same either way.
   2. `EvidenceSpool.file` (`put` delegates to it): a held passage record whose quote differs from the new one ONLY under the key's own fold is the same passage. The fold is `quote_key`, imported, never re-implemented; every other byte must match. The bytes filed first stand, untouched. A changed speaker, context, call name or word still refuses.
-  3. `spool_dossier` names every such record on the page: one QA flag per record, never per row (`refolded_flag`), with its key and the UTC day its file was written, and no transcript word. They are also listed in `SpoolReport.refolded` and counted in `already`.
+  3. `spool_dossier` names every such record on the page: one QA flag per record, never per row (`refolded_flag`), with its key and the UTC day its spool file is dated, and no transcript word. The day is the file's time, never claimed as a filing date (review round 1). They are also listed in `SpoolReport.refolded` and counted in `already`.
   4. `upload_spool` holds the same rule against the bucket. A cleared spool ("the operator keeps or clears the folder") can file a passage afresh in the call's words while the bucket holds the model's case of it. The bucket's first bytes then stand, and the key is counted in `UploadReport.refolded`; anything else that differs still raises.
   5. `driver_evidence.py` now writes a page field, so it leaves `NOT_EXTRACTION` and is pinned. New vintage: `2026-11-14.a-passage-is-filed-as-the-call-prints-it`.
 
@@ -44,13 +44,13 @@ superseded-by:
 
   - The 3 are held as filed. A re-draw of any of them is now the same passage, named on its page.
   - The 77 and the 107 were not checked. A key naming a call not on disk can only be re-drawn if that file returns. A fresh build never files a call-only record, because a row that cites a call always carries its locator.
-- **Fail first** (`tests/test_evidence_same_passage.py`, 16 tests: 12 at the fix's first commit `d6a9d62e`, 4 added by review round 0). The fixture is a cut of GOOGL's real call, at most 10 consecutive words, plus the stored record's locator and sha256. On main's code, 11 fail locally (10 in the cross-setup run, where the real-call pin skips):
+- **Fail first** (`tests/test_evidence_same_passage.py`, 17 tests: 12 at the fix's first commit `d6a9d62e`, 4 added by review round 0, 1 by round 1). The fixture is a cut of GOOGL's real call, at most 10 consecutive words, plus the stored record's locator and sha256. On main's code, 12 fail locally (11 in the cross-setup run, where the real-call pin skips):
   - 8 on behaviour:
     - the row files the model's case and spacing;
     - the spool raises `EvidenceBytesDifferError`;
     - the bucket raises `RemoteBytesDifferError`;
     - the real call's re-drawn record hashes to `2769effe…`, not the spool's `aac26cb3…`.
-  - 3 because main lacks `as_the_call_prints_it`, `EvidenceSpool.file` and `SpoolReport.refolded`.
+  - 4 because main lacks `as_the_call_prints_it`, `EvidenceSpool.file`, `SpoolReport.refolded` and `refolded_flag`.
   - The 5 negative pins pass on both: a changed speaker, context or call name is refused under the key; one changed word is refused; a changed paragraph keys elsewhere; another record is refused at the bucket.
 - **Review round 0** (`/code-review high --fix`). Three fixes, each pinned by a test red on `d6a9d62e`:
   - one flag per record, not per row (one passage backs several rows; 63 of 810 keys on the committed pages);
@@ -76,7 +76,10 @@ superseded-by:
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The 3 records keep the model's capital letter privately.** No public fact moves: a page carries the fact and the locator, and the quote's hash is the fold's, the same either way.
 - **The $0 precheck cannot see this class of refusal.** The spool is written after the paid draws, and the $0 check draws no transcript row, so it could not have stopped GOOGL's spend. Falsifier: another `EvidenceBytesDifferError` after spend. Under this rule that means something other than the fold differed.
-- **The day a flag names is the spool file's time.** The record carries no date, and adding one would change all 1,285 passages' bytes. So a copy of the spool that resets file times would move the day a later flag names. Falsifier: a flag naming a day after the build that filed its record.
+- **The day a flag names is the spool file's time, and the flag says so.** The record carries no date, and adding one would change all 1,285 passages' bytes.
+  - So a copy or a restore of the spool that resets file times moves the day a later flag names.
+  - The flag reads "its spool file dated <day>", never "filed on". Round 0's draft said "already filed on <day>"; Codex P2 in round 1 showed that claims a filing date the code cannot know.
+  - Fixed in review round 1's commit, pinned by `test_the_flag_dates_the_spool_file_and_never_claims_a_filing_day`.
 - **The pre-existing match in `_paragraph_and_speaker` keeps the "İ" shift** that `as_the_call_prints_it` no longer has. Making them one shared helper is a refactor of code outside this change (review round 0, deferred). On the census, every one of the 1,098 located passages re-derives its paragraph byte for byte.
 - **The equivalence is the key's fold, nothing wider.** A quote differing in punctuation, or in where it ends, is another passage with another key, and never a collision.
 - **The run line `8d2e72e8` ($3.84, refused)** is not in this PR. It is committed with GOOGL's artifact PR, beside the new build's, because the cost-and-outcome series counts refusals.

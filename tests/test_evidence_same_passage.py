@@ -202,6 +202,16 @@ def test_the_page_names_a_passage_held_in_another_case_with_its_key_and_filed_da
     assert key in new[0] and CASE["filed"] in new[0]
 
 
+def test_the_flag_dates_the_spool_file_and_never_claims_a_filing_day() -> None:
+    """(-) CODEX P2 (#1077, round 1). The record carries no date, so the day is its spool file's
+    time, which a copy or a restore that resets file times moves. The flag said the record "was
+    already filed on" that day, a filing date it cannot know; it now names the day as the spool
+    file's, which is true whatever moved the file."""
+    flag = de.refolded_flag("driver-evidence/v1/k.json", "2026-11-10")
+    assert "filed on" not in flag
+    assert "spool file dated 2026-11-10" in flag
+
+
 def test_a_passage_backing_two_rows_is_named_once(tmp_path: Path) -> None:
     """(-) ONE NOTE PER RECORD. One passage backs several rows (63 of the 810 keys on the 28
     committed pages); each row meets the held file, and the page named it once per row."""

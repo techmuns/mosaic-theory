@@ -304,8 +304,10 @@ class EvidenceSpool:
         extractor filed the call's own words (`driver_extract.as_the_call_prints_it`) the record
         held the model's string. A held passage record that differs from ``rec`` in its quote's
         case or spacing ONLY, through the key's own fold, is that passage: the bytes filed first
-        stand, untouched, and the `Filing` names the day they were filed so the page can say so
-        (`spool_dossier`). Anything else that differs under the key still raises. Measured the
+        stand, untouched, and the `Filing` names the day the held FILE is dated, so the page can
+        say so (`spool_dossier`). That is the file's time, never a filing date: the record carries
+        no date, and a copy or a restore that resets file times moves it (Codex P2, #1077).
+        Anything else that differs under the key still raises. Measured the
         day it was written: of 1,285 passage records in the operator's spool, 3 differ from their
         call's words in one capital letter, and 1,098 others match them byte for byte."""
         verify(rec)
@@ -368,8 +370,9 @@ class Filing:
 
     key: str
     written: bool  # False: the spool already held it
-    #: The UTC day the held record was filed, when its quote differs from this one only in case or
-    #: spacing (the key's fold); None when the bytes were this record's own, or it was written.
+    #: The UTC day the held record's spool FILE is dated (its modification time: the record carries
+    #: no date), when its quote differs from this one only in case or spacing (the key's fold);
+    #: None when the bytes were this record's own, or it was written.
     held_refolded_on: str | None = None
 
 
@@ -394,17 +397,18 @@ class SpoolReport:
     already: int = 0
     no_evidence: int = 0  # rows with text that cite no call or state no value: never filed
     stripped: int = 0  # transcript rows already without text: spooled by an earlier write
-    #: ``(key, the day it was filed)`` of each passage already held in another case or spacing:
-    #: counted in ``already`` too, and named on the page (`refolded_flag`)
+    #: ``(key, the day its spool file is dated)`` of each passage already held in another case or
+    #: spacing: counted in ``already`` too, and named on the page (`refolded_flag`)
     refolded: list[tuple[str, str]] = field(default_factory=list)
 
 
-def refolded_flag(key: str, filed: str) -> str:
+def refolded_flag(key: str, dated: str) -> str:
     """The page's note for a passage the spool already held in another case or spacing. It names
-    the record's key and the day it was filed, and quotes no transcript word."""
-    return (f"driver evidence: {key} was already filed on {filed} with this passage's quote in "
-            "another case or spacing — the same passage under the key's fold, so the record filed "
-            "first stands, unchanged")
+    the record's key and the day its spool file is dated, never a filing day it cannot know, and
+    quotes no transcript word."""
+    return (f"driver evidence: {key} is already in the spool, its spool file dated {dated}, with "
+            "this passage's quote in another case or spacing — the same passage under the key's "
+            "fold, so the record filed first stands, unchanged")
 
 
 #: How a transcript row cites its call: ``CIQ transcript: <the call's file name>``; a bare
