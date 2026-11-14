@@ -199,7 +199,8 @@ _MVST_WALL = (
 
 
 def _committed_panel(ticker: str) -> list[ps.PanelInstrument]:
-    """The CIQ capital panel the committed page carries, read as assembly reads it."""
+    """The CIQ capital panel the committed page carries, read as assembly reads it — for MVST and
+    WERN, the frozen 2026-09-17 page's (`tests/fixtures/frozen_pages/README.md`)."""
     import json
     from pathlib import Path
 
@@ -240,7 +241,7 @@ def test_e2e_werner_stated_zero_never_diverges() -> None:
     bal = date(2026, 6, 30)
     in_window = [i for i in panel if i.maturity is not None and i.principal_musd
                  and bal <= i.maturity < date(2027, 6, 30)]
-    assert not in_window, f"WERN's committed panel now has principal in the window: {in_window}"
+    assert not in_window, f"WERN's frozen 2026-09-17 panel has principal in the window: {in_window}"
     read = _e2e_read(_WERN_WALL, "WERN", bal)
     assert "DIVERGES" not in read.line
     # stated and compared — main never read the zero, so it never reached the comparison at all
