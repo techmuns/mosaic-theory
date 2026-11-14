@@ -1,13 +1,13 @@
 ---
 id:
-status: shipped
+status: open
 date: 2026-11-14
 prs: []
 supersedes:
 superseded-by:
 ---
 
-# The covenant block's not-extracted line stops stating a cause the record does not hold: both renderers now say the page does not state why, and name the QA flags in dossier.json where the extraction's notes are kept. It was "(cost bound / fetch fail)" for every exhibit, and E5 had refused 22 of the 29 it names. The 16 committed pages keep the old line until a $0 re-render (STATE row 63)
+# The covenant block's not-extracted line stops stating a cause the record does not hold: both renderers now say the page does not state why, and name the QA flags in dossier.json where the extraction's notes are kept. It was "(cost bound / fetch fail)" for every exhibit, and E5 had refused 22 of the 29 it names. The 16 committed pages that carried it are re-rendered at $0 in the same PR, each moving by that one line and nothing else (STATE row 63)
 
 **WHAT.** `vinci/dossier/render.py` (`_covenant_term_lines`) and `frontend/views/shared/dossier.js`
 (the covenant-terms block) print one line for the located agreement exhibits the term rows do not
@@ -17,7 +17,12 @@ cite. Each printed "(cost bound / fetch fail)" for every such exhibit. Both now 
 > extraction's notes are QA flags in dossier.json) — see the pointer table: <accessions>
 
 The set of accessions is unchanged: located pointer accessions minus those the term rows cite.
-No committed page is re-rendered here.
+The 16 committed pages that printed the old line are re-rendered in their own artifact-only
+commit, through the no-op refresh path (`refresh.refresh_fleet`: `refresh_dossier` with no
+transform on every committed name, then the frontend mirror). That path makes no assembly, no
+model call and no vendor pull. The brief first kept this re-render for a later artifact PR. The
+coordinator moved it into this PR (ruling: "Include"), because neither half could go green alone,
+as HOW VERIFIED below sets out.
 
 **WHY.** The line gave two causes for every exhibit, whatever happened to it. On the committed
 corpus most of them were refused, a cause it did not offer. E5 reads the exhibit's own heading and
@@ -73,6 +78,19 @@ the field, which is every committed page until it is re-assembled, keeps the neu
   `frontend/dossiers/<T>.md` equals its `data/dossiers/<T>/dossier.md` at `6652a242`, so the
   mirror moves on the same 16. The web view renders from the JSON, so it changes on deploy with
   no artifact.
+- *Why the pages are in this PR.* The new line makes the committed `dossier.md` pages stale
+  against the renderer. Three suite tests read that staleness:
+  `test_refresh_path::test_a_noop_refresh_is_byte_identical`,
+  `test_dossier::test_analysis_tier_reads_in_decision_order_e2e` and
+  `test_parity_pins::test_screening_context_reaches_every_committed_dossier_e2e`. They failed on
+  the code commits alone. A separate artifact PR alone would fail the same three, since its pages
+  would be stale against main's renderer. #1070 had merged. #1071 (LLY) touches only LLY's files,
+  and LLY renders byte-identical under this change, so no page overlaps.
+- *The re-render, committed.* `refresh_fleet()` reported 16 moved, 10 unchanged and 0 refused.
+  The commit touches 32 files: the 16 `data/dossiers/<T>/dossier.md` and their 16
+  `frontend/dossiers/<T>.md`. Each file moves by one line out and one in. All 32 removed lines are
+  the old wording, all 32 added lines are the new, and no other line moves. No `dossier.json` and
+  no `index.json` is touched. Each page is byte-identical to the over-a-copy render above.
 
 **BOUNDARY.** Every count is over the committed corpus at main `6652a242` (2026-11-14): 26
 `data/dossiers/*/dossier.json`, of which 16 print the line. The line names 29 accessions: 22
@@ -89,9 +107,8 @@ only refused exhibits; AMZN and WLK only cost-bound ones; BURL and NFLX both. At
 and BURL's and NFLX's cost-bound ones) no longer state that cause on the page. Its reason stays in
 dossier.json's QA flags, which the line names. This is accepted until the outcome field above
 exists, because a line that names the right cause on some exhibits and the wrong one on others
-cannot tell the reader which is which. The 16 committed pages carry the old line until the $0
-re-render, which the coordinator signals. Falsifier: a committed page whose line names a cause, or
-whose unextracted exhibit has no `(E5)` note in its QA flags. `test_no_committed_page_names_a_cause_on_the_line`
-reads the first through HEAD's renderer over every committed `dossier.json`; it does not read the
-committed `dossier.md`, so the 16 pages that still carry the old line until the re-render do not
-trip it. The second is checked here, by hand, once.
+cannot tell the reader which is which. Falsifier: a committed page whose line names a cause, or
+whose unextracted exhibit has no `(E5)` note in its QA flags.
+`test_no_committed_page_names_a_cause_on_the_line` reads the first through HEAD's renderer over
+every committed `dossier.json`. The three staleness tests above hold each committed `dossier.md`
+to that renderer. The second is checked here, by hand, once.
