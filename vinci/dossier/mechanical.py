@@ -310,11 +310,6 @@ def _at_latest_close(record: DataRecord, store: Store, edgar: EdgarClient) -> Da
         "fundamentals": f.model_copy(update={"pe": pe, "pe_pctile_vs_history": pct})})
 
 
-def _close_on_or_before(bars: list[PriceBar], ref: date) -> float | None:
-    elig = [b for b in bars if b.bar_date <= ref]
-    return max(elig, key=lambda b: b.bar_date).close if elig else None
-
-
 def _covering_close(bars: list[PriceBar], d: date) -> PriceBar | None:
     """The bar that may be read AS the close of ``d``: the latest at or before ``d`` — refused
     (None) when it is dated more than ``_COVERAGE_GAP_DAYS`` before ``d``. Further back than a long
@@ -344,6 +339,37 @@ def _window_return(bars: list[PriceBar], ref: date, days: int) -> float | None:
     then = _covering_close(bars, ref - timedelta(days=days))
     now = _covering_close(bars, ref)
     return (now.close / then.close - 1.0) if (then and now and then.close > 0) else None
+
+
+def _window_refusal(bars: list[PriceBar], ref: date, days: int) -> tuple[str, str] | None:
+    """Which end `_window_return` refused a series at — ("end" | "start", the bar it would have
+    read) — or None when the series holds no bars or was not refused at either end."""
+    if not bars:
+        return None
+    if _covering_close(bars, ref) is None:
+        last = _bar_on_or_before(bars, ref)
+        return "end", f"{last.bar_date}" if last else "none by then"
+    start = ref - timedelta(days=days)
+    if _covering_close(bars, start) is None:
+        before = _bar_on_or_before(bars, start)
+        return "start", f"{before.bar_date}" if before else f"first close {bars[0].bar_date}"
+    return None
+
+
+def _no_return_note(bars: list[PriceBar], ref: date | None, what: str) -> str | None:
+    """The reason a leg's 180-day return is UNKNOWN when its series HAS bars but an end was
+    refused — None when it was not (the caller's own no-bars note then stands). A refused end is
+    never "no bars": that names the wrong cause (2026-11-14)."""
+    why = _window_refusal(bars, ref, _DECLINE_WINDOW_DAYS) if ref is not None else None
+    if why is None:
+        return None
+    assert ref is not None
+    if why[0] == "end":
+        return (f"{what}'s latest close by {ref} is {why[1]}, more than {_COVERAGE_GAP_DAYS} days "
+                "before it — never read as that day's close")
+    start = ref - timedelta(days=_DECLINE_WINDOW_DAYS)
+    return (f"{what} has no close within {_COVERAGE_GAP_DAYS} days of the {start} window start "
+            f"(it would have read {why[1]}) — the {_DECLINE_WINDOW_DAYS}d return is refused")
 
 
 # --- drawdown cause: label by 8-K item codes + parse the catalyst from the filing TEXT --------
@@ -1133,14 +1159,8 @@ def _cohort(
         ret = _window_return(bars, ref, _DECLINE_WINDOW_DAYS) if bars else None
         # A MEMBER WITH BARS AND NO RETURN WAS REFUSED, and the cohort says which and why — a
         # dash beside it would read as a name with no history (2026-11-14, GOOGL's July members)
-        if bars and ret is None:
-            if _covering_close(bars, ref) is None:
-                last = _bar_on_or_before(bars, ref)
-                stale_end.append(f"{x.ticker} {last.bar_date if last else 'none by then'}")
-            elif _covering_close(bars, start) is None:
-                before = _bar_on_or_before(bars, start)
-                stale_start.append(f"{x.ticker} " + (f"{before.bar_date}" if before else
-                                                     f"first close {bars[0].bar_date}"))
+        if ret is None and (why := _window_refusal(bars, ref, _DECLINE_WINDOW_DAYS)):
+            (stale_end if why[0] == "end" else stale_start).append(f"{x.ticker} {why[1]}")
         members.append(
             CohortMember(ticker=x.ticker, hops=x.hops, ret_180d=ret,
                          via=(" · ".join(x.path))[:200]))
@@ -1163,7 +1183,8 @@ def _idio_read(name_180d: Sourced[float], cohort: Sourced[list[CohortMember]]) -
         )
     rets = [m.ret_180d for m in cohort.value if m.ret_180d is not None]
     if not rets:
-        return Sourced.unknown(note="cohort names have no price history over the window")
+        return Sourced.unknown(note="no cohort name has a 180-day return over the window — the "
+                                    "cohort's source names any refused for a stale close")
     med = statistics.median(rets)
     gap = name_180d.value - med
     # MOVED, not "fell" — the verb is book-neutral because this layer is. The quality book's own
@@ -1237,7 +1258,8 @@ def _market_legs(
     name_180d = (
         Sourced.present(name_ret, source_ref=f"EOD {sym} {_DECLINE_WINDOW_DAYS}d to {end}")
         if name_ret is not None
-        else Sourced.unknown(note="name has no bars over the window")
+        else Sourced.unknown(note=_no_return_note(bars, end, sym)
+                             or "name has no bars over the window")
     )
     # a name with no bars still shows the market's move, to the benchmark's own end
     m_end = end if end is not None else (b_end if not stale else None)
@@ -1255,7 +1277,8 @@ def _market_legs(
                  f"`vinci refresh {bsym}`")
     else:
         market_180d = Sourced.unknown(
-            note=f"{bsym} benchmark bars unavailable — run `vinci refresh {bsym}`")
+            note=(_no_return_note(bench_bars, m_end, bsym) or f"{bsym} benchmark bars unavailable")
+                 + f" — run `vinci refresh {bsym}`")
     # rel is RECOMPUTED here on the same yardstick as market_180d. The screen record's G2 rel
     # (name−IWM, the universe-wide gate) stays in the record — mixing the two would put a
     # small-cap denominator under a mid/large-cap read.
@@ -1267,9 +1290,9 @@ def _market_legs(
         if (name_ret is not None and mkt_ret is not None)
         else Sourced.unknown(
             note=f"name−{bsym} needs both legs; "
-                 + ("missing name bars" if name_ret is None else
+                 + ("no name return (see its note)" if name_ret is None else
                     f"{bsym} is stale (latest close {b_end})" if stale else
-                    f"missing {bsym} bars"))
+                    f"no {bsym} return (see its note)"))
     )
     return name_180d, market_180d, rel, end
 

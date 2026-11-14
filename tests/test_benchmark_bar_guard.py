@@ -25,6 +25,7 @@ import pytest
 
 from vinci.dossier import mechanical as dm
 from vinci.dossier.freshness import _COVERAGE_GAP_DAYS
+from vinci.eod.features import _close_on_or_before
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
 from vinci.store import Store
@@ -76,7 +77,7 @@ def test_a_benchmark_that_stopped_before_the_page_date_is_refused(tmp_path: Path
     # what the old lookup did: read the 09-16 close as the 09-22 close (the unbounded
     # `_close_on_or_before`, which `_window_return` itself read until 2026-11-14 and now refuses)
     holed = _bars("IWM", drop=HOLE)
-    assert dm._close_on_or_before(holed, REF) == next(
+    assert _close_on_or_before(holed, REF) == next(
         b.close for b in holed if b.bar_date == date(2026, 9, 16))
     assert dm._window_return(holed, REF, 180) is None
 
@@ -130,12 +131,12 @@ def test_the_chart_stops_a_stale_benchmark_line_and_refuses_its_return(tmp_path:
         full = dm._stock_performance(GOOGL, s, REF, bench=IWM)
     assert full is not None
     iwm = _bars("IWM")
-    base = dm._close_on_or_before(iwm, date.fromisoformat(full.points[0].date))
+    base = _close_on_or_before(iwm, date.fromisoformat(full.points[0].date))
     assert base is not None
     assert [p.benchmark for p in full.points] == [
-        round(c / base * 100.0, 2) if (c := dm._close_on_or_before(iwm, date.fromisoformat(p.date)))
+        round(c / base * 100.0, 2) if (c := _close_on_or_before(iwm, date.fromisoformat(p.date)))
         else None for p in full.points]
-    last = dm._close_on_or_before(iwm, full.as_of)
+    last = _close_on_or_before(iwm, full.as_of)
     assert last is not None and full.benchmark_return == pytest.approx(last / base - 1.0)
     assert "latest" not in full.source_ref
 

@@ -25,7 +25,6 @@ from typing import Any
 
 import pytest
 
-from vinci.dossier import mechanical as dm
 from vinci.dossier.refresh import (
     RefreshRefusedError,
     benchmark_figures_transform,
@@ -33,6 +32,7 @@ from vinci.dossier.refresh import (
     refresh_dossier,
     return_cited,
 )
+from vinci.eod.features import _close_on_or_before
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
 from vinci.store import Store
@@ -163,8 +163,8 @@ def test_the_transform_restores_a_page_built_on_a_benchmark_hole(tmp_path: Path)
     # THE OLD LOOKUP, spelled out: `_window_return` read each end's close on or before its date
     # however old until 2026-11-14, and now refuses a stale end itself, so the stale page is rebuilt
     # with the unbounded reads it was built with
-    then = dm._close_on_or_before(iwm, ref - timedelta(days=180))
-    now = dm._close_on_or_before(iwm, ref)
+    then = _close_on_or_before(iwm, ref - timedelta(days=180))
+    now = _close_on_or_before(iwm, ref)
     stale_mkt = now / then - 1.0 if (then and now) else None
     assert stale_mkt is not None and stale_mkt != committed["idiosyncratic_vs_shared"][
         "market_180d_return"]["value"]  # the hole really moves the figure

@@ -32,6 +32,7 @@ from typing import Any
 
 from vinci.dossier import mechanical as dm
 from vinci.dossier.freshness import date_of_close
+from vinci.dossier.schemas import CohortMember, Sourced
 from vinci.graph.exposure import ExposureGraph
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
@@ -145,6 +146,38 @@ def test_a_hole_at_the_window_start_is_refused_and_said(tmp_path: Path) -> None:
     assert cohort.value is not None and cohort.value[0].ret_180d is None
     assert ("1 of 1 refused, no close within 4 days of the 2026-05-15 start: AMZN 2026-04-17"
             in cohort.source_ref), cohort.source_ref
+
+
+def test_a_leg_refused_at_one_end_names_that_end_never_no_bars() -> None:
+    """REJECT THE WRONG CAUSE. The bound refuses the page's own two legs too, and a refused leg
+    HAS bars: its note names the window start and the bar it would have read, on the name leg and
+    the benchmark leg alike, and the relative read points at them. NO OBSERVED CASE: the real
+    AMZN and SPY bars with the start hole cut. RED BEFORE THE REVIEW FIX: the notes read "name has
+    no bars over the window" and "SPY benchmark bars unavailable", and the cohort read said its
+    names "have no price history" when every one was refused for a stale close."""
+    hole = (date(2026, 4, 20), date(2026, 5, 20))
+    amzn, spy = _bars("AMZN"), _bars("SPY")
+    cut = [b for b in amzn if not hole[0] <= b.bar_date <= hole[1]]
+    name, mkt, rel, end = dm._market_legs(cut, spy, END, sym="AMZN", bsym="SPY", bench_basis="t")
+    assert end == date(2026, 11, 10) and name.value is None and mkt.value is not None
+    assert name.note == ("AMZN has no close within 4 days of the 2026-05-14 window start (it "
+                         "would have read 2026-04-17) — the 180d return is refused"), name.note
+    assert "no name return" in (rel.note or ""), rel.note
+    spy_cut = [b for b in spy if not hole[0] <= b.bar_date <= hole[1]]
+    name, mkt, rel, end = dm._market_legs(amzn, spy_cut, END, sym="AMZN", bsym="SPY",
+                                          bench_basis="t")
+    assert name.value is not None and mkt.value is None
+    assert (mkt.note or "").startswith("SPY has no close within 4 days of the 2026-05-14 window "
+                                       "start (it would have read 2026-04-17)"), mkt.note
+    assert "no SPY return" in (rel.note or ""), rel.note
+    # the cohort read: every member refused is not "no price history"
+    cohort = Sourced.present([CohortMember(ticker="EXTR", hops=1, ret_180d=None, via="x")],
+                             source_ref="t")
+    read = dm._idio_read(name, cohort)
+    assert read.value is None and "price history" not in (read.note or ""), read.note
+    # ACCEPT: no bars at all keeps the no-bars note
+    assert dm._market_legs([], spy, END, sym="AMZN", bsym="SPY", bench_basis="t")[0].note == (
+        "name has no bars over the window")
 
 
 # --- defect 2: the comps-date matcher ------------------------------------------------------------
