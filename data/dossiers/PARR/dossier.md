@@ -561,7 +561,7 @@ _Source §: 8-K 0001193125-14-392228 · d814202dex101.htm_
 
 _Source §: 8-K 0001193125-23-158690 · d292719dex102.htm_
 
-- _1 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0000821483-26-000005_
+- _1 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0000821483-26-000005_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

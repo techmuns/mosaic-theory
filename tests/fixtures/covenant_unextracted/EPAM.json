@@ -1,0 +1,495 @@
+{
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "Long Term Debt - Other",
+     "type": "Other Borrowings",
+     "principal_musd": 0.0,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease Liabilities",
+     "type": "Capital Lease",
+     "principal_musd": 118.7,
+     "coupon": "4.800%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": 25.0,
+     "coupon": "4.800%",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2030-10-03",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": ""
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "leases 121.3; total principal 146.3; total debt 146.3 (3 months Q3 Sep-30-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2025 filed Feb-26-2026",
+  "maturity_filings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no trailing-12m instrument maturity to anchor an 8-K"
+  },
+  "covenant_pointers": {
+   "value": "material contracts (10-K exhibit i [0001352010-26-000015]; Revolving Credit Facility [0001352010-17-000022]; Revolving Credit Facility [0001352010-21-000039]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "material contracts (10-K exhibit index)",
+     "filing": "latest 10-K",
+     "filing_date": "2026-02-26",
+     "accession": "0001352010-26-000015",
+     "exhibits": [
+      "exhibit1017-epamnonxempl.htm",
+      "exhibit1017-epamnonxempl001.jpg",
+      "exhibit1017-epamnonxempl002.jpg",
+      "exhibit1017-epamnonxempl003.jpg",
+      "exhibit1017-epamnonxempl004.jpg",
+      "exhibit1017-epamnonxempl005.jpg",
+      "exhibit1017-epamnonxempl006.jpg"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2017-05-26",
+     "accession": "0001352010-17-000022",
+     "exhibits": [
+      "exhibit10-1epamcreditagree.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2021-10-25",
+     "accession": "0001352010-21-000039",
+     "exhibits": [
+      "exhibit101-arcreditagreeme.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Long Term Debt",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Operating Lease Liabilities",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[REVOLVING CREDIT FACILITY CREDIT AGREEMENT · 0001352010-17-000022]\n  Principal / commitment amount: $300,000,000.00 revolving credit facility (aggregate principal amount not to exceed…\n  Interest / coupon rate: Base Rate plus the Applicable Margin (Base Rate Option); or Euro-Rate plus the…\n  Maturity date: May 24, 2022 (Expiration Date)\n  Financial-maintenance covenants: Maximum Leverage Ratio (Section 7.2.13); Minimum Interest Coverage Ratio (Section…\n[REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT · 0001352010-21-000039]\n  Interest / coupon rate: Base Rate Option: Base Rate plus the Applicable Margin; Eurocurrency Rate Option:…\n  Maturity date: October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section…",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$300,000,000.00 revolving credit facility (aggregate principal amount not to exceed $300,000,000.00)",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “The Borrower has requested the Lenders to provide an amended and restated revolving credit facility to the Borrower in an aggregate principal amount not to exceed $300,000,000.00.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Base Rate plus the Applicable Margin (Base Rate Option); or Euro-Rate plus the Applicable Margin (Euro-Rate Option)",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “Revolving Credit Base Rate Option: A fluctuating rate per annum equal to the Base Rate plus the Applicable Margin ... Revolving Credit Euro-Rate Option: A rate per annum equal to the Euro-Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
+     },
+     "base_rate_label": "Euro-Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Euro-Rate floor",
+     "value": {
+      "value": "zero percent (0.00%)",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “Notwithstanding the foregoing, if the Euro-Rate as determined under any method above would be less than zero percent (0.00%), such rate shall be deemed to be zero percent (0.00%) for purposes of this Agreement.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Base Rate floor",
+     "value": {
+      "value": "zero (0.00)",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “Notwithstanding the foregoing, if the Base Rate as determined above would be less than zero (0.00), such rate shall be deemed to be zero (0.00) for purposes of this Agreement.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "May 24, 2022 (Expiration Date)",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “Expiration Date shall mean, with respect to the Revolving Credit Commitments, May 24, 2022.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Maximum Leverage Ratio (Section 7.2.13); Minimum Interest Coverage Ratio (Section 7.2.14)",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “7.2.13 Maximum Leverage Ratio. 7.2.14 Minimum Interest Coverage Ratio.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Guarantors party hereto (VESTED DEVELOPMENT, INC.; EPAM SYSTEMS, LLC; NAVIGATION ARTS, LLC; NAVIGATIONARTS, INC.; ALLIANCE GLOBAL SERVICES, LLC; ALLIANCE GLOBAL SERVICES, INC.; ALLIANCE CONSULTING GLOBAL HOLDINGS, INC.) deliver Guaranty Agreement; all liens and security interests granted under the Existing Credit Agreement terminated and released on the Closing Date",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “Guaranty Agreement shall mean the Continuing Agreement of Guaranty and Suretyship in substantially the form of Exhibit 1.1(G)(2) executed and delivered by each of the Guarantors to the Administrative Agent for the benefit of the Lenders.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory Prepayments: Section 4.7 (4.7.1 and 4.7.2 Intentionally omitted; 4.7.3 Currency Fluctuations; 4.7.4 Application Among Interest Rate Options). Events of Default: Section 8.1 (8.1.1 Payments; 8.1.2 Breach of Warranty; 8.1.3 Anti-Terrorism/Anti-Corruption Laws; 8.1.4 Breach of Negative Covenants; 8.1.5 Breach of Other Covenants; 8.1.6 Defaults in Other Agreements or Indebtedness; 8.1.7 Final Judgments or Orders; 8.1.8 Loan Document Unenforceable; 8.1.9 Uninsured Losses; 8.1.10 Plans and Benefit Arrangements; 8.1.11 Change of Control; 8.1.12 Relief Proceedings)",
+      "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+      "status": "present",
+      "note": "verbatim: “4.7 Mandatory Prepayments. 4.7.1 [Intentionally omitted]. 4.7.2 [Intentionally omitted]. 4.7.3 Currency Fluctuations. 4.7.4 Application Among Interest Rate Options. ... 8.1 Events of Default. An Event of Default shall mean the occurrence or existence of any one or more of the following events or conditions”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $50,000,000, $100,000,000, $150,000,000, $300,000,000, which the model's quote does not — 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Base Rate Option: Base Rate plus the Applicable Margin; Eurocurrency Rate Option: Adjusted Eurocurrency Rate plus the Applicable Margin",
+      "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
+      "status": "present",
+      "note": "verbatim: “Revolving Credit Base Rate Option: A fluctuating rate per annum ... equal to the Base Rate plus the Applicable Margin ... Revolving Credit Eurocurrency Rate Option: A rate per annum ... equal to the Adjusted Eurocurrency Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
+     },
+     "base_rate_label": "Adjusted Eurocurrency Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section 12.1",
+      "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
+      "status": "present",
+      "note": "verbatim: ““ Expiration Date ” means, with respect to the Revolving Credit Commitments, October 21, 2026, as such date may be extended pursuant to Section 12.1 [Modifications, Amendments or Waivers].”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states 4.00 to 1.00, which the model's quote does not — 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Guarantors: each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries), per the Guaranty Agreement (Continuing Agreement of Guaranty and Suretyship). Signatory Guarantors include Vested Development, Inc.; EPAM Systems, LLC; Navigation Arts, LLC; Navigation Arts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc.; Continuum Innovation, LLC; Continuum, LLC; ShareKnowledge, Inc.; Competentum USA, Ltd.; EPAM DX, LLC; EPAM Upskill, LLC. Security interest granted in Cash Collateral for Letter of Credit Obligations; no general asset collateral package stated",
+      "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
+      "status": "present",
+      "note": "verbatim: ““ Guarantors ” means, collectively, each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries). ... “ Guaranty Agreement ” means the Continuing Agreement of Guaranty and Suretyship, dated of even date herewith, executed and delivered by each of the Guarantors in favor of the Administrative Agent for the benefit of the Lenders.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $75,000,000, which the model's quote does not — 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": null,
+  "panel_vintage": {
+   "value": "the debt schedule is 232d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since",
+   "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-02-26",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001352010-26-000046",
+     "filed": "2026-08-06",
+     "read_as": "the latest periodic report",
+     "statements": 1,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001352010-26-000019",
+     "filed": "2026-03-05",
+     "read_as": "an 8-K after the panel",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001352010-21-000039",
+     "filed": "2021-10-25",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001352010-17-000022",
+     "filed": "2017-05-26",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Long Term Debt - Other' · not checked against a filing",
+     "instrument": 0,
+     "description": "Long Term Debt - Other",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Operating Lease Liabilities' · not checked against a filing",
+     "instrument": 1,
+     "description": "Operating Lease Liabilities",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Revolving Credit Facility' · checked against the 10-Q 0001352010-26-000046 (filed 2026-08-06)",
+     "instrument": 2,
+     "description": "Revolving Credit Facility",
+     "ciq_maturity_date": "2030-10-03",
+     "check": "agree",
+     "filing_maturity": "2030-10-03",
+     "source": "10-Q 0001352010-26-000046 (filed 2026-08-06)",
+     "source_filed": "2026-08-06",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "The 2025 Credit Agreement matures on October 3, 2030",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    }
+   ]
+  }
+ },
+ "e5_qa_flags": [
+  "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0001352010-26-000015 · exhibit1017-epamnonxempl.htm declares itself no agreement at all",
+  "(E5) covenant term refused — its value states $50,000,000, $100,000,000, $150,000,000, $300,000,000, which its quote does not, so it is UNKNOWN: Principal / commitment amount · 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
+  "(E5) covenant term refused — its value states 4.00 to 1.00, which its quote does not, so it is UNKNOWN: Financial-maintenance covenants · 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
+  "(E5) covenant term refused — its value states $75,000,000, which its quote does not, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm"
+ ]
+}

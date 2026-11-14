@@ -563,7 +563,7 @@ _Source §: 8-K 0001193125-20-109457 · d883886dex101.htm_
 
 _Source §: 8-K 0001564590-18-016500 · burl-ex101_6.htm · amended by 0001193125-21-364998, 0001193125-25-168007_
 
-- _3 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001193125-14-313404, 0001193125-22-200058, 0001193125-26-116001_
+- _3 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0001193125-14-313404, 0001193125-22-200058, 0001193125-26-116001_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

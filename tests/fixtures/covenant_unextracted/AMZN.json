@@ -1,0 +1,1109 @@
+{
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "25 Notes Issuance of $15.0 Billion",
+     "type": "Bonds and Notes",
+     "principal_musd": 15000.0,
+     "coupon": "3.900% - 5.550%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Euro Commercial Paper Programs",
+     "type": "Commercial Paper",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "Finance Leases",
+     "type": "Capital Lease",
+     "principal_musd": 12286.0,
+     "coupon": "3.400%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Financing Obligations",
+     "type": "Other Borrowings",
+     "principal_musd": 8158.0,
+     "coupon": "3.200%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Leases",
+     "type": "Capital Lease",
+     "principal_musd": 89252.0,
+     "coupon": "3.700%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Other Long-Term Debt",
+     "type": "Other Borrowings",
+     "principal_musd": 836.0,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2031-10-01",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Short-Term Credit Facilities",
+     "type": "Revolving Credit",
+     "principal_musd": 455.0,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": "2027-09-30",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "U.S. Dollar Commercial Paper Programs",
+     "type": "Commercial Paper",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured 364-Day Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "SOFR + 0.450%",
+     "maturity_date": "2027-10-01",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 12000.0,
+     "coupon": "3.150% - 4.250%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 7750.0,
+     "coupon": "1.200% - 2.700%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 15000.0,
+     "coupon": "1.650% - 3.250%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 9750.0,
+     "coupon": "3.300% - 4.100%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 5750.0,
+     "coupon": "4.550% - 4.700%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 2750.0,
+     "coupon": "4.800% - 4.950%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-06-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "term loans 17,500.0 (3 months Q2 Jun-30-2026 0.0 → 3 months Q3 Sep-30-2026 17,500.0); senior bonds 162,523.0; leases 114,783.0; total principal 305,776.0; total debt 304,841.0 (3 months Q3 Sep-30-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2025 filed Feb-06-2026",
+  "maturity_filings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no trailing-12m instrument maturity to anchor an 8-K"
+  },
+  "covenant_pointers": {
+   "value": "Revolving Credit Facility [0001104659-23-113444]; Revolving Credit Facility [0001018724-14-000042]; Short-Term Credit Facilities [0001193125-22-289041]; Short-Term Credit Facilities [0001193125-18-139368]; Unsecured 364-Day Revolving Credit [0001193125-20-176528]; Unsecured 364-Day Revolving Credit [0001104659-26-072140]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2023-11-01",
+     "accession": "0001104659-23-113444",
+     "exhibits": [
+      "tm2329405d1_ex10-1.htm",
+      "tm2329405d1_ex10-2.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2014-09-05",
+     "accession": "0001018724-14-000042",
+     "exhibits": [
+      "amzn2014september5-ex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Short-Term Credit Facilities",
+     "filing": "8-K",
+     "filing_date": "2022-11-18",
+     "accession": "0001193125-22-289041",
+     "exhibits": [
+      "d413765dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Short-Term Credit Facilities",
+     "filing": "8-K",
+     "filing_date": "2018-04-27",
+     "accession": "0001193125-18-139368",
+     "exhibits": [
+      "d574720dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Unsecured 364-Day Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2020-06-23",
+     "accession": "0001193125-20-176528",
+     "exhibits": [
+      "d948849dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Unsecured 364-Day Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2026-06-10",
+     "accession": "0001104659-26-072140",
+     "exhibits": [
+      "tm2613616d4_ex10-1.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "25 Notes Issuance of $15.0 Billion",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Euro Commercial Paper Programs",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Finance Leases",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Financing Obligations",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "4 more aggregate lines",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "showing 4 of 8 aggregate lines — the full instrument panel lists every one"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[FIVE-YEAR REVOLVING CREDIT AGREEMENT · 0001104659-23-113444]\n  Principal / commitment amount: As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000.\n  Interest / coupon rate: each Term SOFR Borrowing shall bear interest ... at a rate per annum equal to the…\n  Maturity date: the later of (a) November 1, 2028 and (b) if maturity is extended pursuant to…\n[364-DAY REVOLVING CREDIT AGREEMENT · 0001193125-22-289041]\n  Principal / commitment amount: US$10,000,000,000 (Aggregate Commitments as of the Closing Date)\n  Interest / coupon rate: Adjusted Term SOFR plus the Applicable Rate (Term SOFR Loans); Base Rate plus the…\n  Maturity date: the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to…\n  Financial-maintenance covenants: No separate financial-maintenance covenant article; a Consolidated Tangible Net…\n[AMENDED AND RESTATED CREDIT AGREEMENT · 0001193125-20-176528]\n  Interest / coupon rate: Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate; Base Rate Loans: Base…\n  Maturity date: the later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section…\n  Financial-maintenance covenants: No standalone financial-maintenance covenant (e.g., leverage/interest coverage…\n[CREDIT AGREEMENT · 0001018724-14-000042]\n… (+2 lower-priority terms in the table)",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000.",
+      "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+      "status": "present",
+      "note": "verbatim: ““ Aggregate Commitments ” means, at any time, the Commitments of all the Lenders at such time. As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "each Term SOFR Borrowing shall bear interest ... at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate",
+      "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Term SOFR Borrowing shall bear interest on the outstanding principal amount thereof for the Interest Period applicable to such Borrowing at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate;”"
+     },
+     "base_rate_label": "Term SOFR",
+     "margin_pct": 0.45,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "component_quotes": {
+      "margin_pct": "“ Applicable Rate ” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Term Benchmark Loans and RFR Loans, 0.45% per annum and (c) with respect to the commitment fee set forth in Section 2.07(a) , 0.03% per annum.",
+      "floor_pct": "provided that if the Term SOFR as so determined would be less than zero, such rate shall be deemed to be zero."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the later of (a) November 1, 2028 and (b) if maturity is extended pursuant to Section 2.12 , such extended maturity date as determined pursuant to such Section",
+      "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means the later of (a) November 1, 2028 and (b) if maturity is extended pursuant to Section 2.12 , such extended maturity date as determined pursuant to such Section; provided that, in each case, if such date is not a Business Day, the Maturity Date shall be the immediately preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Company Guaranty (Article X): the Company guarantees the Obligations of the Designated Borrowers; the Obligations of each Designated Borrower shall be guaranteed by the Company pursuant to the Guaranty contained in Article X. No collateral/security interest stated (unsecured revolving facility).",
+      "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+      "status": "present",
+      "note": "verbatim: “The Company hereby absolutely and unconditionally guarantees, as a guaranty of payment and not merely as a guaranty of collection, prompt payment when due ... of any and all of the Obligations ... of the Designated Borrowers to the Credit Parties, arising hereunder or under any other Loan Document”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states US$1,500,000,000, which the model's quote does not — 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-22-289041 · d413765dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "US$10,000,000,000 (Aggregate Commitments as of the Closing Date)",
+      "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Aggregate Commitments ” means, at any time, the Commitments of all the Lenders at such time. As of the Closing Date, the Aggregate Commitments equal to US$10,000,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Adjusted Term SOFR plus the Applicable Rate (Term SOFR Loans); Base Rate plus the Applicable Rate (Base Rate Loans); Adjusted Daily Simple SOFR plus the Applicable Rate (Daily Simple SOFR Loans)",
+      "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+      "status": "present",
+      "note": "verbatim: “each Term SOFR Borrowing shall bear interest on the outstanding principal amount thereof for the Interest Period applicable to such Borrowing at a rate per annum equal to the Adjusted Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Borrowing shall bear interest ... at a rate per annum equal to the Base Rate plus the Applicable Rate; and (iii) each Daily Simple SOFR Borrowing ... at a rate per annum equal to the Adjusted Daily Simple SOFR plus the Applicable Rate.”"
+     },
+     "base_rate_label": "Adjusted Term SOFR",
+     "margin_pct": 0.45,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "component_quotes": {
+      "margin_pct": "“ Applicable Rate ” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Term SOFR Loans and Daily Simple SOFR Loans, 0.45% per annum and (c) with respect to the commitment fee set forth in Section 2.07(a), 0.05% per annum.",
+      "floor_pct": "provided that if the Adjusted Term SOFR shall be less than zero, such rate shall be deemed to be zero."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date as determined pursuant to such Section",
+      "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means the later of (a) November 17, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date as determined pursuant to such Section; provided that, in each case, if such date is not a Business Day, the Maturity Date shall be the immediately preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "No separate financial-maintenance covenant article; a Consolidated Tangible Net Worth measure is used only within the Section 7.01(w) Liens basket (20% of Consolidated Tangible Net Worth)",
+      "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+      "status": "present",
+      "note": "verbatim: “other Liens not expressly permitted by clauses (a) through (v) above; provided that the aggregate principal amount of outstanding Indebtedness secured by such other Liens does not, at the time of, and after giving effect to the incurrence of such Indebtedness, exceed 20% of Consolidated Tangible Net Worth as of the end of the most recent fiscal quarter for which financial statements have been delivered (or otherwise made available) pursuant to Section 6.01.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Unsecured revolving credit facility; no collateral or guarantor provisions stated. Section 11.21 refers to “any liability of any party hereto ... to the extent such liability is unsecured.”",
+      "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Borrower has requested that the Lenders provide a revolving credit facility to the Borrower, and the Lenders are willing to do so on the terms and conditions set forth herein.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states US$1,000,000,000, which the model's quote does not — 8-K 0001193125-22-289041 · d413765dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-20-176528 · d948849dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $3,000,000,000, which the model's quote does not — 8-K 0001193125-20-176528 · d948849dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate; Base Rate Loans: Base Rate plus the Applicable Rate. Applicable Rate: (a) Base Rate Loans 0.00% per annum, (b) Eurocurrency Rate Loans 0.50% per annum",
+      "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the LIBO Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing or conversion date at a rate per annum equal to the Base Rate plus the Applicable Rate.”"
+     },
+     "base_rate_label": "LIBO Rate",
+     "margin_pct": 0.5,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "component_quotes": {
+      "margin_pct": "“ Applicable Rate ” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Eurocurrency Rate Loans, 0.50% per annum, and (c) with respect to the commitment fee set forth in Section 2.07(a) , 0.04% per annum.",
+      "floor_pct": "provided that if such rate shall be less than zero, such rate shall be deemed to be zero"
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date as determined pursuant to such Section",
+      "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means the later of (a) June 23, 2023 and (b) if maturity is extended pursuant to Section 2.12 , such extended maturity date as determined pursuant to such Section; provided that, in each case, if such date is not a Business Day, the Maturity Date shall be the immediately preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "No standalone financial-maintenance covenant (e.g., leverage/interest coverage ratio) stated; the only financial threshold stated is a Lien basket in Section 7.01(w) limited to 20% of Consolidated Tangible Net Worth",
+      "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
+      "status": "present",
+      "note": "verbatim: “other Liens not expressly permitted by clauses (a) through (v) above; provided that the aggregate principal amount of outstanding Indebtedness secured by such other Liens does not, at the time of, and after giving effect to the incurrence of such Indebtedness, exceed 20% of Consolidated Tangible Net Worth as of the end of the most recent fiscal quarter for which financial statements have been delivered (or otherwise made available) pursuant to Section 6.01 .”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the model's quote is not in 8-K 0001193125-20-176528 · d948849dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $1,000,000,000, which the model's quote does not — 8-K 0001193125-20-176528 · d948849dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $1,000,000,000, which the model's quote does not — 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Eurocurrency Rate Loans: Eurocurrency Rate plus the Applicable Rate; Base Rate Loans: Base Rate plus the Applicable Rate",
+      "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
+      "status": "present",
+      "note": "verbatim: “Subject to the provisions of subsection (b) below, (i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurocurrency Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate.”"
+     },
+     "base_rate_label": "Eurocurrency Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the later of (a) September 5, 2016 and (b) if maturity is extended pursuant to Section 2.12, such extended maturity date",
+      "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means the later of (a) September 5, 2016 and (b) if maturity is extended pursuant to Section 2.12 , such extended maturity date as determined pursuant to such Section; provided that, in each case, if such date is not a Business Day, the Maturity Date shall be the immediately preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Company Guaranty (Article X): the Company guarantees the Obligations of the Designated Borrowers. \"“ Guaranty ” means the Guarantee of the Obligations of the Designated Borrowers made by the Company in favor of the Credit Parties under Article X .\" No collateral/security interest stated.",
+      "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Company hereby absolutely and unconditionally guarantees, as a guaranty of payment and not merely as a guaranty of collection, prompt payment when due ... of any and all of the Obligations ... of the Designated Borrowers to the Credit Parties, arising hereunder or under any other Loan Document ... the “ Guarantee Obligations ”).”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $500,000,000, which the model's quote does not — 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": null,
+  "panel_vintage": {
+   "value": "the debt schedule is 252d old (source filed 2026-02-06); no Item 1.02 (termination of a material agreement) has been filed since",
+   "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-06-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-02-06",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001018724-26-000026",
+     "filed": "2026-07-31",
+     "read_as": "the latest periodic report",
+     "statements": 13,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001104659-26-072140",
+     "filed": "2026-06-10",
+     "read_as": "an 8-K the page links",
+     "statements": 7,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001104659-26-021050",
+     "filed": "2026-02-27",
+     "read_as": "an 8-K after the panel",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001104659-23-113444",
+     "filed": "2023-11-01",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-22-289041",
+     "filed": "2022-11-18",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "instrument": 0,
+     "description": "25 Notes Issuance of $15.0 Billion",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    },
+    {
+     "instrument": 1,
+     "description": "Euro Commercial Paper Programs",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 2,
+     "description": "Finance Leases",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 3,
+     "description": "Financing Obligations",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 4,
+     "description": "Operating Leases",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 5,
+     "description": "Other Long-Term Debt",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 6,
+     "description": "Revolving Credit Facility",
+     "ciq_maturity_date": "2031-10-01",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001018724-26-000026 (filed 2026-07-31)",
+     "source_filed": "2026-07-31",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current credit-facility maturity and the page lists 2",
+     "excluded": false
+    },
+    {
+     "instrument": 7,
+     "description": "Short-Term Credit Facilities",
+     "ciq_maturity_date": "2027-09-30",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001018724-26-000026 (filed 2026-07-31)",
+     "source_filed": "2026-07-31",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current credit-facility maturity and the page lists 2",
+     "excluded": false
+    },
+    {
+     "instrument": 8,
+     "description": "U.S. Dollar Commercial Paper Programs",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 9,
+     "description": "Unsecured 364-Day Revolving Credit Facility",
+     "ciq_maturity_date": "2027-10-01",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "instrument": 10,
+     "description": "Unsecured Senior Notes",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    },
+    {
+     "instrument": 11,
+     "description": "Unsecured Senior Notes",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    },
+    {
+     "instrument": 12,
+     "description": "Unsecured Senior Notes",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    },
+    {
+     "instrument": 13,
+     "description": "Unsecured Senior Notes",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    },
+    {
+     "instrument": 14,
+     "description": "Unsecured Senior Notes",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    },
+    {
+     "instrument": 15,
+     "description": "Unsecured Senior Notes",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    }
+   ]
+  }
+ },
+ "e5_qa_flags": [
+  "(E5) covenant term refused — its value states US$1,500,000,000, which its quote does not, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+  "(E5) covenant term refused — its value states US$1,000,000,000, which its quote does not, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001193125-22-289041 · d413765dex101.htm",
+  "(E5) covenant term refused — its value states $3,000,000,000, which its quote does not, so it is UNKNOWN: Principal / commitment amount · 8-K 0001193125-20-176528 · d948849dex101.htm",
+  "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Security / collateral / guarantors · 8-K 0001193125-20-176528 · d948849dex101.htm",
+  "(E5) covenant term refused — its value states $1,000,000,000, which its quote does not, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001193125-20-176528 · d948849dex101.htm",
+  "(E5) covenant term refused — its value states $1,000,000,000, which its quote does not, so it is UNKNOWN: Principal / commitment amount · 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
+  "(E5) covenant term refused — its value states $500,000,000, which its quote does not, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
+  "(E5) exhibit not extracted (cost bound): Short-Term Credit Facilities·d574720dex101.htm",
+  "(E5) exhibit not extracted (cost bound): Unsecured 364-Day Revolving Credit Facility·tm2613616d4_ex10-1.htm"
+ ]
+}

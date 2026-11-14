@@ -581,7 +581,7 @@ _Source §: 8-K 0001193125-25-242530 · vrrm-ex10_1.htm_
 
 _Source §: 8-K 0001564590-21-015880 · vrrm-ex101_62.htm_
 
-- _2 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0000950170-25-072679, 0001104659-18-041476_
+- _2 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0000950170-25-072679, 0001104659-18-041476_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

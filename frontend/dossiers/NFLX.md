@@ -616,7 +616,7 @@ _Source §: 8-K 0001193125-21-193187 · d552068dex101.htm · amended by 00011931
 
 _Source §: 8-K 0001193125-25-327462 · d82688dex101.htm_
 
-- _5 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001065280-26-000034, 0001193125-14-037000, 0001193125-18-134734, 0001193125-25-308651, 0001193125-26-015951_
+- _5 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0001065280-26-000034, 0001193125-14-037000, 0001193125-18-134734, 0001193125-25-308651, 0001193125-26-015951_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
