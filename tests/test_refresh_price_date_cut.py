@@ -7,9 +7,12 @@ of `docs/records/2026-11-02-inputs-are-cut-at-the-pages-price-date.md`:
 - `lease_basis_transform` and `valuation_bases_transform` read today's companyfacts uncut;
 - `statement_recon_transform` read them as filed by the page's ASSEMBLY date, after its price.
 
-REAL DATA. NCNO's committed page is priced 2026-08-17, and its committed companyfacts
+REAL DATA. NCNO's 2026-08-18 page is priced 2026-08-17, and its committed companyfacts
 (`tests/fixtures/companyfacts/NCNO.json`) carry the 10-Q it filed on 2026-08-25 — 481 facts dated
-after the page's close, the very shape the cut exists to keep out. TJX's frozen companyfacts carry
+after the page's close, the very shape the cut exists to keep out. That page is read FROZEN
+(`tests/fixtures/frozen_pages/2026-08-18/NCNO/`, byte-identical to the one committed until the
+2026-11-14 rebuild priced NCNO at 2026-11-11, after every filing in the fixture, where nothing is
+left to cut). TJX's frozen companyfacts carry
 the Q2 FY27 10-Q it filed on 2026-08-28; a page priced the day before must not read it however
 late it was assembled.
 """
@@ -28,6 +31,7 @@ from vinci.dossier.refresh import RefreshRefusedError, statement_recon_transform
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
+FROZEN_NCNO = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "NCNO" / "dossier.json"
 NCNO_PRICE = date(2026, 8, 17)
 
 
@@ -42,7 +46,7 @@ def _filed(facts: dict[str, Any] | None) -> set[str]:
 
 
 def _ncno_mech() -> dict[str, Any]:
-    page = json.loads((ROOT / "data" / "dossiers" / "NCNO" / "dossier.json").read_text())
+    page = json.loads(FROZEN_NCNO.read_text())
     assert page["mechanical"]["stock_info"]["as_of"] == NCNO_PRICE.isoformat()
     mech: dict[str, Any] = page["mechanical"]
     return mech

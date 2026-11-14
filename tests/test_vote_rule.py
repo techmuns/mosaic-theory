@@ -169,19 +169,32 @@ def _pages() -> list[dict[str, typing.Any]]:
 
 def test_every_committed_page_decides_as_it_did() -> None:
     """(+) C7 on the live corpus: a page written before the rule carries no `passes`, so its
-    proposal is read from `unanimous` exactly as before — and R1 on its own tally agrees with it."""
+    proposal is read from `unanimous` exactly as before — and R1 on its own tally agrees with it.
+    A page built after the rule (from the 2026-11-14 rebuild on) records R1's gate, and that gate
+    is the one R1 computes from the same page's tally — so its proposal is the rule's, never a
+    stored verdict that the tally does not reproduce."""
     from vinci.dossier import verdict as v
     pages = _pages()
     assert len(pages) >= 19
     for doc in pages:
         s, da = doc["synthesis"], doc["synthesis"]["draw_agreement"]
-        assert "passes" not in da, doc["ticker"]
-        old = v.derive_proposal(s.get("evidence_balance"), sleeve=doc.get("sleeve") or "overshoot",
-                                draws_unanimous=da["unanimous"])
+        sleeve = doc.get("sleeve") or "overshoot"
         labels = [lab for lab, n in da["labels"].items() for _ in range(n)]
         gate = v.draw_gate(labels, da["attempted"])
-        new = v.derive_proposal(s.get("evidence_balance"), sleeve=doc.get("sleeve") or "overshoot",
-                                gate=gate)
+        new = v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve, gate=gate)
+        if "passes" in da:   # built after the rule: the recorded gate is R1 on the recorded tally
+            recorded = v.DrawGate.from_record(da)
+            assert recorded is not None, doc["ticker"]
+            # the decision fields; `labels` is the printed split, whose tie order the two readers
+            # break differently (by name on the record, by draw order on a live build)
+            def decision(g: v.DrawGate) -> tuple[object, ...]:
+                return (g.lean, g.count, g.attempted, g.required, g.passes, g.state)
+            assert decision(recorded) == decision(gate), doc["ticker"]
+            assert v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve,
+                                     gate=recorded).action == new.action, doc["ticker"]
+            continue
+        old = v.derive_proposal(s.get("evidence_balance"), sleeve=sleeve,
+                                draws_unanimous=da["unanimous"])
         assert old.action == new.action, doc["ticker"]
 
 

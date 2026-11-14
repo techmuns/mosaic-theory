@@ -2750,9 +2750,15 @@ def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> No
         # expect the ungated line and this pin would red on every split page — reporting a
         # divergence between two things that never diverged. The point of the pin is that the
         # reveal shows exactly what the dossier's own data derives; the gate is part of that data.
+        # THE VOTE RULE'S GATE TOO (R1): the renderer passes `draw_agreement.gate()`, and a page
+        # built after the rule records it (`passes`), so an ungated derivation here expects the
+        # pre-rule DISAGREED line where the page renders R1's borderline one — TJX's 2026-11-14
+        # page, the first such page, 4 of 5 strongly-bullish. A pre-rule page's gate is None and
+        # reads by `unanimous` exactly as before.
         _a = s.draw_agreement if s is not None else None
         p = derive_proposal(s.evidence_balance if s is not None else None, sleeve=d.sleeve,
-                            draws_unanimous=_a.unanimous if _a is not None else None)
+                            draws_unanimous=_a.unanimous if _a is not None else None,
+                            gate=_a.gate() if _a is not None else None)
         hidden = dr.render_markdown(d)  # default: NO proposal surface at all (2026-07-21 round)
         revealed = dr.render_markdown(d, show_proposal=True)  # the operator's explicit peek
         # DEFAULT carries no proposal surface — no line, no sealed-note, no section header. The

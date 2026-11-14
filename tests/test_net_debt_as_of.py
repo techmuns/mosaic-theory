@@ -128,11 +128,17 @@ def test_the_bridge_refresh_cuts_the_edgar_cross_check_at_the_pages_price_date(
 
 PAGES = ROOT / "data" / "dossiers"
 FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
+# NCNO's 2026-08-18 page, priced 2026-08-17, a week before the 10-Q its tracking fixture holds
+# (filed 2026-08-25): the live case a cut is load-bearing on. Byte-identical to the page committed
+# until the 2026-11-14 rebuild priced NCNO at 2026-11-11, after every filing in the fixture.
+FROZEN_0818 = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18"
 
 
-def _page(ticker: str) -> tuple[dict[str, Any], dict[str, Any], date, date]:
-    """(mechanical, tracking-fixture facts, reference date, price date) of a committed page."""
-    doc = json.loads((PAGES / ticker / "dossier.json").read_text())
+def _page(ticker: str, pages: pathlib.Path = PAGES
+          ) -> tuple[dict[str, Any], dict[str, Any], date, date]:
+    """(mechanical, tracking-fixture facts, reference date, price date) of a committed page, or of
+    a frozen one when ``pages`` names a frozen root."""
+    doc = json.loads((pages / ticker / "dossier.json").read_text())
     facts = json.loads((FIXTURES / f"{ticker}.json").read_text())
     mech = doc["mechanical"]
     return (mech, facts, date.fromisoformat(doc["reference_date"]),
@@ -216,7 +222,7 @@ def test_ncnos_filings_after_its_price_date_reach_every_leg_unless_cut() -> None
 def test_the_cut_falls_back_to_the_reference_date_without_a_stored_close() -> None:
     """Item 8: no stored close → the page's reference date (`vinci.edgar.asof.page_price_date`).
     NEGATIVE PIN: neither date → the facts are read whole."""
-    mech, facts, ref, cut = _page("NCNO")
+    mech, facts, ref, cut = _page("NCNO", FROZEN_0818)
     at_close = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref))
     no_close = {**mech, "stock_info": {**mech["stock_info"], "as_of": None}}
     assert ref < cut
@@ -232,7 +238,7 @@ def test_the_assemblys_cross_check_is_cut_at_the_pages_price_date() -> None:
     from vinci.dossier.assemble import _edgar_cross_check
     from vinci.dossier.schemas import MechanicalLayer
 
-    mech, facts, ref, cut = _page("NCNO")
+    mech, facts, ref, cut = _page("NCNO", FROZEN_0818)
     m = MechanicalLayer.model_validate(mech)
     got = _edgar_cross_check(m, facts, reference_date=ref)
     assert got == anc.lease_inclusive_net_debt(facts, as_of=cut)
@@ -249,7 +255,7 @@ def test_the_at_price_ex_lease_multiple_is_cut_at_the_pages_price_date() -> None
     from vinci.dossier.ev_ebitda_basis import ex_lease_at_price
     from vinci.dossier.schemas import MechanicalLayer
 
-    mech, facts, _ref, cut = _page("NCNO")
+    mech, facts, _ref, cut = _page("NCNO", FROZEN_0818)
     got = ex_lease_at_price(MechanicalLayer.model_validate(mech), facts)
     assert got is not None
     as_filed = anc._lease_inclusive_net_debt(facts, as_of=cut, ex_operating_leases=True)
@@ -312,7 +318,7 @@ def test_ncnos_share_count_moves_with_a_filing_after_its_price_date_unless_cut()
     """NON-VACUITY for the pin above: on NCNO's fixture the share denominator read whole is the
     later 10-Q's diluted average (its point-in-time count refused against that quarter); read as
     filed by the price date it is the corroborated point-in-time count."""
-    mech, facts, _ref, cut = _page("NCNO")
+    mech, facts, _ref, cut = _page("NCNO", FROZEN_0818)
     whole = anc.share_denominator(mech, facts)
     as_filed = anc.share_denominator(mech, facts_as_of(facts, cut))
     assert whole is not None and as_filed is not None and whole != as_filed
