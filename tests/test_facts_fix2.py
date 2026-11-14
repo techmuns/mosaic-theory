@@ -154,10 +154,17 @@ def test_rfl_d2_a_schema_v2_snapshot_cannot_place_a_filing_on_the_cuts_day(
     assert nxt.accession == "0000027419-17-000008"
 
 
+#: Gartner's companyfacts FROZEN at its last filing of 2026-08-04 — byte-identical to the tracking
+#: fixture `companyfacts/IT.json` until the 2026-11-14 rebuild regenerated that one to IT's
+#: September-quarter 10-Q (RUNBOOKS §i step 6). The counts pinned below are this blob's; a tracking
+#: fixture moves with its page, so it can never hold a count still.
+_IT_CF = FIX / "facts" / "IT-companyfacts-filed-to-2026-08-04.json"
+
+
 def _it_cache(tmp: Path) -> Path:
     sub = FIX / "submissions_pages"
     return _cache(tmp, {
-        _cf_url(IT): (FIX / "companyfacts" / "IT.json").read_text(),
+        _cf_url(IT): _IT_CF.read_text(),
         _sub_url(IT): (sub / "IT.json").read_text(),
         "https://data.sec.gov/submissions/CIK0000749251-submissions-001.json":
             (sub / "IT-submissions-001.json").read_text(),
