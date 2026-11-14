@@ -1,0 +1,471 @@
+{
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "Financing Obligations - Lease",
+     "type": "Capital Lease",
+     "principal_musd": 51.2,
+     "coupon": "6.800%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease Liabilities",
+     "type": "Capital Lease",
+     "principal_musd": 14.0,
+     "coupon": "6.700%",
+     "floating_rate": "NA",
+     "maturity_date": "2034-12-01",
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Secured Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": 213.5,
+     "coupon": "5.680%",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2029-10-28",
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2026 filed Mar-31-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "term loans 197.5 (3 months Q1 Apr-30-2026 200.0 → 3 months Q2 Jul-31-2026 197.5); leases 63.3; total principal 339.3; total debt 338.6 (3 months Q2 Jul-31-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2026 filed Mar-31-2026",
+  "maturity_filings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no trailing-12m instrument maturity to anchor an 8-K"
+  },
+  "covenant_pointers": {
+   "value": "material contracts (10-K exhibit i [0001902733-26-000022]; Senior Secured Revolving Credit Fa [0001902733-24-000041]; Senior Secured Revolving Credit Fa [0001902733-24-000171]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "material contracts (10-K exhibit index)",
+     "filing": "latest 10-K",
+     "filing_date": "2026-03-31",
+     "accession": "0001902733-26-000022",
+     "exhibits": [
+      "exhibit1035secondamendment.htm",
+      "exhibit1036fourthamendment.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Secured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2024-02-13",
+     "accession": "0001902733-24-000041",
+     "exhibits": [
+      "firstamendmenttocreditagre.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Secured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2024-10-30",
+     "accession": "0001902733-24-000171",
+     "exhibits": [
+      "exhibit101creditagreementb.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Financing Obligations",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Operating Lease Liabilities",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[CREDIT AGREEMENT · 0001902733-24-000171 · amended by 0001902733-24-000171]\n  Principal / commitment amount: $250,000,000\n  Interest / coupon rate: Term SOFR plus the Applicable Rate (for Term SOFR Loans); Base Rate plus the…\n  Maturity date: October 28, 2029\n  Financial-maintenance covenants: Consolidated Total Leverage Ratio not greater than 4.00:1.00; Consolidated Interest…",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "February 11, 2025; provided, that, if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day",
+      "source_ref": "8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means February 11, 2025; provided, that, if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Guarantors: nCino Portfolio Analytics, LLC; SimpleNexus, LLC; SNX Insurance LLC; L. Brewer and Associates, LLC; Holdings: nCino, Inc.",
+      "source_ref": "8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm",
+      "status": "present",
+      "note": "verbatim: “GUARANTORS: NCINO PORTFOLIO ANALYTICS, LLC, a Delaware limited liability company ... SIMPLENEXUS, LLC, a Utah limited liability company ... SNX INSURANCE LLC, a Utah limited liability company ... L. BREWER AND ASSOCIATES, LLC, a Georgia limited liability company”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001902733-24-000041 · firstamendmenttocreditagre.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$250,000,000",
+      "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+      "status": "present",
+      "note": "verbatim: ““ Aggregate Revolving Commitments ” means the Commitments of all the Lenders.  The initial amount of the Aggregate Revolving Commitments in effect on the Closing Date is $250,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Term SOFR plus the Applicable Rate (for Term SOFR Loans); Base Rate plus the Applicable Rate (for Base Rate Loans)",
+      "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period from the applicable Borrowing date at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Loan (other than a Swingline Loan) shall bear interest on the outstanding principal amount thereof from the applicable Borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate”"
+     },
+     "base_rate_label": "Term SOFR",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "component_quotes": {
+      "floor_pct": "provided that if the Term SOFR determined in accordance with either of the foregoing provisions (a) or (b) of this definition would otherwise be less than zero, the Term SOFR shall be deemed zero for purposes of this Agreement."
+     }
+    },
+    {
+     "name": "Interest / coupon rate - initial Applicable Rate (Pricing Level 1)",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states 2.00%, 1.00%, 0.25%, which the model's quote does not — 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "October 28, 2029",
+      "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means October 28, 2029; provided , that, if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Consolidated Total Leverage Ratio not greater than 4.00:1.00; Consolidated Interest Coverage Ratio not less than 3.00:1.00 (each commencing with the fiscal quarter ending January 31, 2025)",
+      "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+      "status": "present",
+      "note": "verbatim: “(a) Consolidated Total Leverage Ratio . Permit the Consolidated Total Leverage Ratio as of the end of any fiscal quarter of Holdings (commencing with the fiscal quarter ending January 31, 2025) to be greater than 4.00:1.00. (b) Consolidated Interest Coverage Ratio . Permit the Consolidated Interest Coverage Ratio as of the end of any four fiscal quarter period of Holdings (commencing with the fiscal quarter ending January 31, 2025) to be less than 3.00:1.00.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states 100%, 65%, which the model's quote does not — 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $10,000,000, which the model's quote does not — 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": null,
+  "panel_vintage": {
+   "value": "the debt schedule is 199d old (source filed 2026-03-31); no Item 1.02 (termination of a material agreement) has been filed since",
+   "source_ref": "CIQ Capital Structure Details — A 2026 filed Mar-31-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-03-31",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001902733-26-000101",
+     "filed": "2026-08-25",
+     "read_as": "the latest periodic report",
+     "statements": 4,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001902733-24-000171",
+     "filed": "2024-10-30",
+     "read_as": "an 8-K the page links",
+     "statements": 1,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001902733-24-000041",
+     "filed": "2024-02-13",
+     "read_as": "an 8-K the page links",
+     "statements": 1,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Financing Obligations - Lease' · not checked against a filing",
+     "instrument": 0,
+     "description": "Financing Obligations - Lease",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Operating Lease Liabilities' · not checked against a filing",
+     "instrument": 1,
+     "description": "Operating Lease Liabilities",
+     "ciq_maturity_date": "2034-12-01",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Senior Secured Revolving Credit Facility' · checked against the 10-Q 0001902733-26-000101 (filed 2026-08-25)",
+     "instrument": 2,
+     "description": "Senior Secured Revolving Credit Facility",
+     "ciq_maturity_date": "2029-10-28",
+     "check": "agree",
+     "filing_maturity": "2029-10-28",
+     "source": "10-Q 0001902733-26-000101 (filed 2026-08-25)",
+     "source_filed": "2026-08-25",
+     "governs": false,
+     "also_stated_by": [
+      "8-K 0001902733-24-000171 (filed 2024-10-30)"
+     ],
+     "quote": "dit Agreement includes a senior secured revolving credit facility of up to $ 250.0 million (the “2024 Credit Facility”) with a maturity date of October 28, 2029",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    }
+   ]
+  }
+ },
+ "e5_qa_flags": [
+  "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm declares itself “OFFICE LEASE”",
+  "(E5) covenant term refused — its value states 2.00%, 1.00%, 0.25%, which its quote does not, so it is UNKNOWN: Interest / coupon rate - initial Applicable Rate (Pricing Level 1) · 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+  "(E5) covenant term refused — its value states 100%, 65%, which its quote does not, so it is UNKNOWN: Security / collateral / guarantors · 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+  "(E5) covenant term refused — its value states $10,000,000, which its quote does not, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm"
+ ]
+}

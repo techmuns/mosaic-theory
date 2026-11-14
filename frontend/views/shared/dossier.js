@@ -3130,13 +3130,17 @@ function covenantTerms(cs) {
   // (FIX-2 · D-1) mirror the Python transparency line — located pointer accessions minus the ones
   // the extraction actually read → "N located agreement exhibit(s) not extracted this run". Without
   // it the web view silently drops a covenant-completeness signal the .md/PDF shows (py↔js parity).
+  // It states NO cause (STATE row 63): the reason is only a QA-flag string, and on 12 of the 16
+  // committed pages carrying the old "(cost bound / fetch fail)" at main 6652a242, E5 had refused
+  // every exhibit it named.
   const located = new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean));
   const extracted = new Set(rs.value
     .map((r) => _accOf((r.value && (r.value.source_ref || r.value.note)) || "")).filter(Boolean));
   const missing = [...located].filter((a) => !extracted.has(a)).sort();
   const note = missing.length
     ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${missing.length} located ` +
-      `agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer ` +
+      `agreement exhibit(s) not extracted this run; this page does not state why (the ` +
+      `extraction's notes are QA flags in dossier.json) — see the pointer ` +
       `table: ${escapeHtml(missing.join(", "))}</i></div>`
     : "";
   return tables + note;
