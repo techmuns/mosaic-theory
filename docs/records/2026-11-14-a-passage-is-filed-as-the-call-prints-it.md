@@ -46,12 +46,13 @@ superseded-by:
   - The 3 are held as filed. A re-draw of any of them is now the same passage, named on its page.
   - The 77 and the 107 were not checked. A key naming a call not on disk can only be re-drawn if that file returns. A fresh build never files a call-only record, because a row that cites a call always carries its locator.
 - **Fail first** (`tests/test_evidence_same_passage.py`, 17 tests: 12 at the fix's first commit `d6a9d62e`, 4 added by review round 0, 1 by round 1). The fixture is a cut of GOOGL's real call, at most 10 consecutive words, plus the stored record's locator and sha256. On main's code, 12 fail locally (11 in the cross-setup run, where the real-call pin skips):
-  - 8 on behaviour:
+  - 9 on behaviour:
     - the row files the model's case and spacing;
     - the spool raises `EvidenceBytesDifferError`;
     - the bucket raises `RemoteBytesDifferError`;
-    - the real call's re-drawn record hashes to `2769effe…`, not the spool's `aac26cb3…`.
-  - 4 because main lacks `as_the_call_prints_it`, `EvidenceSpool.file`, `SpoolReport.refolded` and `refolded_flag`.
+    - the real call's re-drawn record hashes to `2769effe…`, not the spool's `aac26cb3…`;
+    - the page is refused, so a file's time cannot even be tested there.
+  - 3 because main lacks `as_the_call_prints_it`, `EvidenceSpool.file` and `SpoolReport.refolded`.
   - The 5 negative pins pass on both: a changed speaker, context or call name is refused under the key; one changed word is refused; a changed paragraph keys elsewhere; another record is refused at the bucket.
 - **Review round 0** (`/code-review high --fix`). Three fixes, each pinned by a test red on `d6a9d62e`:
   - one flag per record, not per row (one passage backs several rows; 63 of 810 keys on the committed pages);
