@@ -697,7 +697,7 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm_
 
 _Source §: 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm_
 
-- _1 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001352010-26-000015_
+- _1 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0001352010-26-000015_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)

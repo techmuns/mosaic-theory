@@ -616,7 +616,7 @@ _Source §: 8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm_
 
 _Source §: 8-K 0001803599-21-000215 · exhibit101122721.htm_
 
-- _4 located agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer table: 0001803599-23-000091, 0001803599-24-000117, 0001803599-25-000014, 0001803599-26-000027_
+- _4 located agreement exhibit(s) not extracted this run; this page does not state why (the extraction's notes are QA flags in dossier.json) — see the pointer table: 0001803599-23-000091, 0001803599-24-000117, 0001803599-25-000014, 0001803599-26-000027_
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
