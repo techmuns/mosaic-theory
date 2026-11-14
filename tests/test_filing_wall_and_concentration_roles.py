@@ -199,7 +199,8 @@ _MVST_WALL = (
 
 
 def _committed_panel(ticker: str) -> list[ps.PanelInstrument]:
-    """The CIQ capital panel the committed page carries, read as assembly reads it."""
+    """The CIQ capital panel the committed page carries, read as assembly reads it — for MVST and
+    WERN, the frozen 2026-09-17 page's (`tests/fixtures/frozen_pages/README.md`)."""
     import json
     from pathlib import Path
 
@@ -209,6 +210,11 @@ def _committed_panel(ticker: str) -> list[ps.PanelInstrument]:
     if ticker == "MVST":  # retired 2026-11-12: its page as committed on 2026-09-17, frozen
         page = (Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-09-17"
                 / "MVST" / "dossier.json")
+    if ticker == "WERN":  # the page that read the June-quarter 10-Q these pins quote, frozen; the
+        # living page (2026-11-14) reads the September quarter and a panel predating the Oct-8
+        # termination, whose divergence it states
+        page = (Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-09-17"
+                / "WERN" / "dossier.json")
     mech = json.loads(page.read_text())["mechanical"]
     return dm._wall_panel(CapitalStructure.model_validate(mech["capital_structure"]))
 
@@ -227,14 +233,15 @@ def test_e2e_netflix_principal_and_interest_reads_not_run_never_diverges() -> No
 
 
 def test_e2e_werner_stated_zero_never_diverges() -> None:
-    """WERN's 10-Q for the quarter ended 2026-06-30 states no principal due within 12 months; its
-    committed panel's only dated principal (the $325M facility) matures 2027-09-21, outside the
-    window — so the stated $0 MATCHES. On main it read as a 100% divergence."""
+    """WERN's 10-Q for the quarter ended 2026-06-30 states no principal due within 12 months; the
+    panel of the page that read it (frozen 2026-09-17) dates its only principal (the $325M
+    facility) 2027-09-21, outside the window — so the stated $0 MATCHES. On main it read as a 100%
+    divergence."""
     panel = _committed_panel("WERN")
     bal = date(2026, 6, 30)
     in_window = [i for i in panel if i.maturity is not None and i.principal_musd
                  and bal <= i.maturity < date(2027, 6, 30)]
-    assert not in_window, f"WERN's committed panel now has principal in the window: {in_window}"
+    assert not in_window, f"WERN's frozen 2026-09-17 panel has principal in the window: {in_window}"
     read = _e2e_read(_WERN_WALL, "WERN", bal)
     assert "DIVERGES" not in read.line
     # stated and compared — main never read the zero, so it never reached the comparison at all

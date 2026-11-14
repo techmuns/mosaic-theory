@@ -89,11 +89,13 @@ def test_epam_revenues_of_releases_carry_their_headline_revenue() -> None:
     assert not missing, f"EPAM: no headline revenue row: {missing}"
 
 
-@_awaits("audit E2-D11: 'Revenues of' was not read — WERN carries no headline revenue")
 def test_wern_revenues_of_releases_carry_their_headline_revenue() -> None:
-    missing = _no_headline_revenue("WERN", {"0000793074-26-000129": ("Q2 2026", 933.9),
-                                            "0000793074-26-000092": ("Q1 2026", 808.6),
-                                            "0000793074-26-000009": ("Q4 2025", 737.6)})
+    """Audit E2-D11, WERN's half — landed on WERN's 2026-11-14 page, group 3's held build refreshed
+    at $0. Re-pointed from the Q1 2026 and Q4 2025 releases (0000793074-26-000092, -000009), which
+    the page's window no longer cites; its 2026-10-19 8-K (-000162) is a preliminary release that
+    states a range the company expects, not an actual, so it carries no headline row."""
+    missing = _no_headline_revenue("WERN", {"0000793074-26-000165": ("Q3 2026", 950.5),
+                                            "0000793074-26-000129": ("Q2 2026", 933.9)})
     assert not missing, f"WERN: no headline revenue row: {missing}"
 
 
@@ -104,9 +106,10 @@ def test_nflx_stated_twelve_month_wall_is_located() -> None:
     assert nflx.get("basis") == "principal and interest"
 
 
-@_awaits("audit E2-D15: WERN's 10-Q states a ≤12m figure; the page says none is stated")
 def test_wern_stated_twelve_month_wall_is_located() -> None:
-    wern = _filing("WERN", "0000793074-26-000140")["maturity_wall"]
+    """Audit E2-D15, WERN's half — landed on WERN's 2026-11-14 page, which reads its
+    September-quarter 10-Q. Re-pointed from the June-quarter 10-Q 0000793074-26-000140."""
+    wern = _filing("WERN", "0000793074-26-000172")["maturity_wall"]
     assert (wern["state"], wern["within_12m_total"]) == ("located", 0.0)
 
 
