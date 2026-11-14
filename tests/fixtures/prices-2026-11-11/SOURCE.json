@@ -1,0 +1,114 @@
+{
+ "what": "Real Polygon bars cut from the 2026-11-11 working-copy price store, for the price-date-bounds pins (tests/test_price_date_bounds.py).",
+ "store": {
+  "content_sha256": "598a3d2c07f17df5f071742f1a0ea6cc23452f02334c0273bc755de523fa1cb6",
+  "frontier": "2026-11-11",
+  "identity": "vinci.impact.run.store_digest: every table but meta"
+ },
+ "cut": {
+  "cohort_names_from": "2026-04-01",
+  "wern_from": "2025-10-01",
+  "through": "2026-11-11",
+  "why_the_cut_cannot_move_a_result": "a 180-day window to 2026-11-11 reads no bar before 2026-05-11; date_of_close's base scan returns its LATEST match (2025-10-17), and no earlier bar can be later"
+ },
+ "symbols": {
+  "GOOGL": {
+   "internal_id": "SEC-0001652044-GOOGL",
+   "bars": 156,
+   "first": "2026-04-01",
+   "last": "2026-11-11",
+   "store_bars": 492,
+   "store_first": "2024-11-25",
+   "store_last": "2026-11-11"
+  },
+  "SPY": {
+   "internal_id": "IDX-SPY",
+   "bars": 156,
+   "first": "2026-04-01",
+   "last": "2026-11-11",
+   "store_bars": 492,
+   "store_first": "2024-11-25",
+   "store_last": "2026-11-11"
+  },
+  "EXTR": {
+   "internal_id": "SEC-0001078271-EXTR",
+   "bars": 64,
+   "first": "2026-04-01",
+   "last": "2026-07-02",
+   "store_bars": 1264,
+   "store_first": "2021-06-21",
+   "store_last": "2026-07-02"
+  },
+  "NN": {
+   "internal_id": "SEC-0001865631-NN",
+   "bars": 64,
+   "first": "2026-04-01",
+   "last": "2026-07-02",
+   "store_bars": 1172,
+   "store_first": "2021-10-29",
+   "store_last": "2026-07-02"
+  },
+  "AMZN": {
+   "internal_id": "SEC-0001018724-AMZN",
+   "bars": 155,
+   "first": "2026-04-01",
+   "last": "2026-11-10",
+   "store_bars": 1347,
+   "store_first": "2021-07-01",
+   "store_last": "2026-11-10"
+  },
+  "AAPL": {
+   "internal_id": "SEC-0000320193-AAPL",
+   "bars": 54,
+   "first": "2026-04-01",
+   "last": "2026-06-17",
+   "store_bars": 1246,
+   "store_first": "2021-07-01",
+   "store_last": "2026-06-17"
+  },
+  "MSFT": {
+   "internal_id": "SEC-0000789019-MSFT",
+   "bars": 51,
+   "first": "2026-04-01",
+   "last": "2026-06-12",
+   "store_bars": 1243,
+   "store_first": "2021-07-01",
+   "store_last": "2026-06-12"
+  },
+  "WERN": {
+   "internal_id": "SEC-0000793074-WERN",
+   "bars": 281,
+   "first": "2025-10-01",
+   "last": "2026-11-11",
+   "store_bars": 1356,
+   "store_first": "2021-06-21",
+   "store_last": "2026-11-11"
+  }
+ },
+ "the_store_holds_no_bars_for": [
+  "T",
+  "AVGO",
+  "CHKP",
+  "PANW",
+  "SNX",
+  "VZ",
+  "ZS"
+ ],
+ "wern_comps_panel": {
+  "export": "Company Comparable Analysis Werner Enterprises Inc.xls",
+  "export_sha256": "54b2114b068d0fbb62eddc608699f7aaa02603e95328c5cd542e6764dabd7265",
+  "sheet": "Financial Data",
+  "export_stamp": "2026-11-12",
+  "export_stamp_cell": {
+   "row": 9,
+   "col": 1
+  },
+  "printed_close": 27.84,
+  "printed_close_cell": {
+   "row": 26,
+   "col": 1
+  },
+  "decoded_by": "ciq_sheets.comps_export_stamp, ciq_sheets.comps_printed_close",
+  "knowable_from": "2026-11-12"
+ }
+}
