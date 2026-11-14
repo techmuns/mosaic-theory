@@ -513,7 +513,9 @@ ANCHORS_AWAITING_BACKFILL: set[str] = {
 #: which EDGAR no longer reads (the record
 #: `docs/records/2026-10-27-the-anchors-dep-amort-reads-the-guarded-line.md`), so their D&A, and
 #: the base R1 builds on it, needs the workbook.
-BRIDGE_ONLY_ANCHORS: set[str] = {"GOOGL", "NFLX", "IT", "LLY", "CNXC", "WERN"}
+#: IT LEFT on 2026-11-14 (rebuild group 3): the ciq=None recompute values its page at the committed
+#: 371.6709, so it is compared above, and listing it here would let it go unvalued unnoticed.
+BRIDGE_ONLY_ANCHORS: set[str] = {"GOOGL", "NFLX", "LLY", "CNXC", "WERN"}
 
 
 def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(

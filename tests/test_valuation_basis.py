@@ -420,7 +420,7 @@ def test_the_gate_applies_the_templates_own_share_guard() -> None:
 
     refused = []
     docs = [(t, _page(t)) for t in PAGES] + [
-        (t, json.loads((folder / "dossier.json").read_text()))
+        (f"{t}@{folder.parent.name}", json.loads((folder / "dossier.json").read_text()))
         for t, folder in _FROZEN_SHARE_GUARD.items()]
     for t, doc in docs:
         b, a = doc["valuation_basis"], doc["anchor"]
@@ -437,7 +437,8 @@ def test_the_gate_applies_the_templates_own_share_guard() -> None:
         if guard:
             assert b["priceable"] is False
             assert f"{vb.CONFLICT_FLAG}: {guard}" in doc["qa_flags"], t
-    assert {"IT", "LLY"} <= set(refused), refused
+    # The frozen page is labelled apart from the living one, so this names WHICH IT refused.
+    assert {"IT@2026-08-18", "LLY"} <= set(refused), refused
 
 
 def test_todays_multiple_names_its_snapshot_and_its_value_at_the_page_price() -> None:
