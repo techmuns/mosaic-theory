@@ -27,14 +27,14 @@ superseded-by:
 **HOW VERIFIED.**
 - **The corpus first,** before any synthetic case:
   - **On the committed pages at main `6652a242`:** 448 release figures are stored beside a quote. 2 are not stated in it, both cut at the cap: TJX's Fiscal 2027 guide bounds, 4.93 and 5.02. EPAM's and VRRM's cut figures (row 34's 2026-10-28 count: EPAM 1, TJX 2, VRRM 2) are no longer on their pages, both having been re-assembled since.
-  - **Base code against head code,** every EX-99.1 release cited on the 26 committed pages, read from the SEC cache only (117 releases, 329 stored items, 0 unreadable):
-    - 1 stored quote moves, TJX's guide, from "…and diluted earnings per share to be" to "…are to be in the range of $4.93 to $5.02";
+  - **Base code against head code,** every EX-99.1 release cited on the 26 committed pages, read from the SEC cache only (118 accessions cited; 117 releases parsed, 329 stored items; GOOGL's 8-K `0001652044-26-000043` is cited on its page but is in neither cache, and it carries 0 stored items, so no result changes):
+    - 1 stored quote moves, TJX's guide, from "…and diluted earnings per share to be" to "…share to be in the range of $4.93 to $5.02";
     - no value, period, unit, item count or qa flag moves.
   - WERN's held page is not committed, so it is not in that count. Its row re-quotes on the fixture below.
-- **Fail first,** on real text: `tests/fixtures/release_verbatim_cap/cases.json` holds the WERN and TJX passages as `normalize_text(html_to_text())` reads them from the SEC cache.
+- **Fail first:** two tests on real text and one synthetic. `tests/fixtures/release_verbatim_cap/cases.json` holds the WERN and TJX passages as `normalize_text(html_to_text())` reads them from the SEC cache.
   - `test_a_reconciliation_figure_is_quoted_with_its_figure` (WERN −0.03): red at base.
   - `test_a_guide_range_is_quoted_with_both_of_its_bounds` (TJX 4.93/5.02): red at base; red too under the first draft, where the guide disappeared.
-  - `test_a_long_window_keeps_its_end_and_starts_on_a_whole_word`: red at base.
+  - `test_a_long_window_keeps_its_end_and_starts_on_a_whole_word` (synthetic): red at base.
   - Negative pins, green at both:
     - `test_a_quote_that_fits_the_cap_is_unchanged`: WERN's 21.0 and 0.16 rows and TJX's first-quarter guide, each pinned to main's exact quote;
     - `test_the_window_the_guidance_readers_decide_on_still_keeps_its_start`.
@@ -45,7 +45,7 @@ superseded-by:
   - 0 synthesis requests differ, so no row-53 panel check is owed; 0 committed pages re-render differently.
 
 **THE ROWS ROW 34 NAMED.**
-- **TJX:** re-quotes. Its committed page keeps the cut quote until it is re-assembled or refreshed.
+- **TJX:** re-quotes only on a re-assembly, which is paid. The $0 release refresh (`refresh.release_figures_transform`, `vinci/dossier/refresh.py:931`) re-reads actuals only: "GUIDANCE is not re-read" (#1074's review ran it on TJX's committed page from the cache, and the quote stayed cut).
 - **EPAM and VRRM:** carry no cut figure on their committed pages today, so there is nothing to re-quote.
 - **WERN:** re-quotes on a $0 refresh of its held build, the next step (coordinator: "(b) now, then (a)").
 
@@ -60,3 +60,5 @@ superseded-by:
   - The review's fork changed it and added a test that names itself SYNTHETIC.
   - Measured with the fork's code, the corpus moves exactly as with this PR's: 1 of 329 stored items, TJX's guide. So no committed quote is cut on that path.
   - A latent fix with no observed case is hardening, so the edit and its test were reverted.
+  - It is real on synthetic text: #1074's review stored a quote ending before its high bound from a 262-character paired sentence. On real text: 1 paired range, 84 characters, in the 117 releases on the committed pages (the review: 1 in 185 cached exhibit-99 files). Accepted as a risk, named in STATE row 34.
+- **Shipped with no observed case and no pin** (#1074's review, re-run here by mutation): removing `keep_end=True` at `release_parse.py` lines 1361 and 1387 (two more reconciliation patterns), 2757 (the second level-guide loop), or 2805 and 2840 (the change-basis guides) leaves every test green. They apply the same rule as the two pinned sites (1300, WERN's row; 2702, TJX's guide), and no committed quote is cut at them.
