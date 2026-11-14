@@ -180,6 +180,50 @@ def test_a_leg_refused_at_one_end_names_that_end_never_no_bars() -> None:
         "name has no bars over the window")
 
 
+# --- the bound's edges: 4 days is read, 5 is not (round 1 of #1075's review) ---------------------
+# Every pin above lands at most 1 day from its close, so a bound narrowed to 1, 2 or 3 days kept
+# them all green while it turned every weekend- and holiday-adjacent figure UNKNOWN. These sit ON
+# the edge, with the real AMZN bars and a cut where no real gap reaches 4 days. Each ACCEPT pin
+# fails with that end's bound at 3 days; each REJECT pin fails with it at 5.
+
+
+def _cut(bars: list[PriceBar], lo: date, hi: date) -> list[PriceBar]:
+    return [b for b in bars if not lo <= b.bar_date <= hi]
+
+
+def test_a_start_close_four_days_back_still_starts_the_window() -> None:
+    """ACCEPT, window start. 11-11 less 180 days is Fri 05-15; with 05-12..05-15 cut the start
+    reads Mon 05-11, 4 days back — inside the routine gap, on the bar's own close."""
+    amzn = _cut(_bars("AMZN"), date(2026, 5, 12), date(2026, 5, 15))
+    assert dm._window_return(amzn, END, 180) == (
+        _close(amzn, END).close / _close(amzn, date(2026, 5, 11)).close - 1.0)
+
+
+def test_a_start_close_five_days_back_is_refused() -> None:
+    """REJECT, window start. 11-09 less 180 days is Wed 05-13; with 05-11..05-13 cut the start
+    would read Fri 05-08, 5 days back."""
+    amzn = _cut(_bars("AMZN"), date(2026, 5, 11), date(2026, 5, 13))
+    assert dm._window_return(amzn, date(2026, 11, 9), 180) is None
+    assert dm._window_refusal(amzn, date(2026, 11, 9), 180) == ("start", "2026-05-08")
+
+
+def test_an_end_close_four_days_back_still_ends_the_window() -> None:
+    """ACCEPT, window end. A Fri 11-06 last bar under a Mon 11-09 end (3 days, a weekend) and under
+    a Tue 11-10 end (4 days, the widest gap the bound reads) both end the window on 11-06."""
+    amzn = _cut(_bars("AMZN"), date(2026, 11, 9), date(2026, 11, 10))
+    for end, start in ((date(2026, 11, 9), date(2026, 5, 13)), (date(2026, 11, 10),
+                                                                date(2026, 5, 14))):
+        assert dm._window_return(amzn, end, 180) == (
+            _close(amzn, date(2026, 11, 6)).close / _close(amzn, start).close - 1.0), end
+
+
+def test_an_end_close_five_days_back_is_refused() -> None:
+    """REJECT, window end. The same Fri 11-06 last bar under a Wed 11-11 end is 5 days back."""
+    amzn = _cut(_bars("AMZN"), date(2026, 11, 9), date(2026, 11, 10))
+    assert dm._window_return(amzn, END, 180) is None
+    assert dm._window_refusal(amzn, END, 180) == ("end", "2026-11-06")
+
+
 # --- defect 2: the comps-date matcher ------------------------------------------------------------
 
 
@@ -199,3 +243,18 @@ def test_a_store_missing_the_panels_session_is_refused_never_matched_a_year_back
 def test_a_store_holding_the_panels_session_still_dates_it() -> None:
     """ACCEPT. The 11-11 store holds WERN's 27.84 on 11-11, the close before the 11-12 stamp."""
     assert date_of_close(PRINTED, _bars("WERN"), not_after=STAMP) == date(2026, 11, 11)
+
+
+def test_a_panel_stamped_the_tuesday_after_labor_day_is_dated_the_friday() -> None:
+    """ACCEPT, the window's edge, on WERN's real calendar: Fri 2026-09-04 closed at 40.04, Monday
+    09-07 was Labor Day, so a panel stamped Tue 09-08 carries the 09-04 close — 4 days back."""
+    wern = _bars("WERN")
+    assert [b.bar_date for b in wern if abs(b.close - 40.04) <= 0.005] == [date(2026, 9, 4)]
+    assert date_of_close(40.04, wern, not_after=date(2026, 9, 8)) == date(2026, 9, 4)
+
+
+def test_a_match_five_days_before_the_stamp_is_refused() -> None:
+    """REJECT, one day past the edge: stamped Wed 09-09 with the 09-08 session missing, the 09-04
+    close is 5 days back — never the panel's session."""
+    wern = _cut(_bars("WERN"), date(2026, 9, 8), date(2026, 9, 8))
+    assert date_of_close(40.04, wern, not_after=date(2026, 9, 9)) is None

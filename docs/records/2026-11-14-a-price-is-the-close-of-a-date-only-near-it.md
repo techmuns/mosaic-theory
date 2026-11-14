@@ -44,19 +44,31 @@ superseded-by:
 - **Pins, built from real data.** Real Polygon bars were cut from the 11-11 store into `tests/fixtures/prices-2026-11-11/`; `SOURCE.json` records the store's content hash, the cut windows, and why the cut cannot move a result. The pins also use the committed `data/graph_coverage.json`, the committed GOOGL page's 12 cohort names, and WERN's export stamp (2026-11-12) and printed close (27.84). Those two were read by `ciq_sheets.comps_export_stamp` / `comps_printed_close` from the 2026-11-12 export: sha256 `54b2114b068d…`, sheet Financial Data, the As-Of Date cell and the subject row's Day Close Price.
   - The cut was checked: on the full store and on the cut, base `date_of_close` gives 2026-11-11 (11-11 bars) and 2025-10-17 (bars to 11-10) on both.
   - The 11-10 WERN series is the 11-11 one less its 11-11 bar, checked identical against the 11-10 store copy.
-- **`tests/test_price_date_bounds.py`, six pins; four are red at base.** Shown red by running head's tests on main's `vinci/` (the impact check's part 1, below):
+- **`tests/test_price_date_bounds.py`, twelve pins: six on the defects, five of them red at base; six on the bound's edges (round 1), three of them red at base.** Shown red by running head's tests on main's `vinci/` (the impact check's part 1, below). The defect pins:
   - REJECT: EXTR, NN, AAPL, MSFT refused at an 11-11 end, with the count and dates stated. Red at base: EXTR read 0.2084.
   - ACCEPT: AMZN, one session behind the end, priced on its own two closes; the read rests on 1 name. Red at base only on the read count, which was 5.
   - REJECT: a window-start hole is refused and named (real AMZN bars, with a hole cut — no observed case). Red at base: 0.0811.
   - REJECT: a leg refused at one end names that end, never "no bars". Red at base.
   - REJECT: WERN's 11-10 bars give None, never 2025-10-17, and the reason names 2025-10-17. Red at base: 2025-10-17.
   - ACCEPT: WERN's 11-11 bars give 2026-11-11. Passes at base by design: it pins what must not be refused.
+- **The edge pins (round 1 of the review).** Every defect pin lands at most 1 day from its close, so a bound narrowed to 1, 2 or 3 days passed them all (the review's mutation run: 348 related tests green at a 1-, 2- or 3-day `_window_return` bound, and `date_of_close` at 3 survived; only the drift guard fired). These six sit on the edge, on the real AMZN and WERN bars:
+  - ACCEPT, window start: 05-12..05-15 cut, an 11-11 end's start reads Mon 05-11, 4 days back.
+  - REJECT, window start: 05-11..05-13 cut, an 11-09 end's start would read Fri 05-08, 5 days back.
+  - ACCEPT, window end: a Fri 11-06 last bar under a Mon 11-09 end (3 days) and a Tue 11-10 end (4 days).
+  - REJECT, window end: the same last bar under a Wed 11-11 end, 5 days back.
+  - ACCEPT, comps date, WERN's real Labor Day: a panel stamped Tue 2026-09-08 is dated by the Fri 09-04 close (40.04), 4 days back.
+  - REJECT, comps date: stamped Wed 09-09 with 09-08 cut, the 09-04 close is 5 days back.
+  - The three REJECT pins are red at base; the three ACCEPT pins pass there, since base refuses nothing.
+- **Mutation check of the edges.** Each end of each bound was set to 3 days and then to 5, in a scratch copy, with the twelve pins run against each mutant. Each of the six mutants fails exactly one pin, the one on its own edge:
+  - start at 3 → the start ACCEPT pin; end at 3 → the end ACCEPT pin; `date_of_close` at 3 → the Labor Day pin;
+  - start at 5 → the start REJECT pin; end at 5 → the end REJECT pin; `date_of_close` at 5 → the 5-day comps REJECT pin.
 - **Two existing tests changed.** `tests/test_benchmark_bar_guard.py` and `tests/test_benchmark_figures_refresh.py` used `_window_return` itself as their picture of "the old, unbounded lookup". That oracle is the code changed here, so both now spell out the old reads with `eod.features._close_on_or_before`.
 - **Cross-setup validation (`python -m vinci.impact run`, base `e17ceee9` vs head):**
   - **On the 11-11 store:** 3 of 25 pages move, all in the cohort.
     - AMZN: 10 of 21 refused — CRSR, EXTR, NN, SPB, TRNS, AAPL, INTC, MSFT, NVDA and WMT, their last closes 06-12 to 07-02. The read now rests on 1 name, not 11.
     - GOOGL: 4 of 12 refused; the read rests on 1 name, not 5.
-    - WLK: 1 of 6 refused (CLF, 07-02). WLK's read, "moved ALONE (idiosyncratic): name -44% vs cohort median -1%", rested on CLF alone and now reads UNKNOWN.
+    - WLK: 1 of 6 refused (CLF, 07-02). In the base $0 build on this store, WLK's read, "moved ALONE (idiosyncratic): name -44% vs cohort median -1%", rested on CLF alone; at head it reads UNKNOWN. The COMMITTED WLK page carries no stale read: it priced CLF at +21.9% on its own store, so nothing is owed for it.
+    - **ATKR, WLK's sixth name, is a resolver miss, not a refusal.** The store holds `SEC-0001666138-ATKR` to 2026-07-02 (1,264 bars), so had it resolved it would be refused, and WLK would count 2 of 6. But ATKR is absent from SEC's `company_tickers.json` and `company_tickers_exchange.json` as cached 2026-11-11T03:52Z, by ticker and by CIK 1666138. `EntityResolver.resolve_ticker("ATKR")` on that index raises `UnknownSymbolError` ("no US issuer for ticker 'ATKR' (renamed/delisted?)"), which `_cohort` catches as a `ResolutionError` and reads as no bars. The committed page's null for ATKR is consistent with this; its build-time index is not cached, so that is not shown. Nothing here changes it: a resolver question, outside this PR.
     - PARR is not built at either side (its mislabelled quarterly export).
     - 0 committed pages re-render differently from their JSON.
     - Synthesis requests differ on the same 3 pages, in FACTS only. The 6 frozen panel pages' requests are byte-identical, so the row-53 panel check is not owed. The request moves off the panel; measuring it is the operator's call.
@@ -73,7 +85,7 @@ superseded-by:
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **LEFT OPEN (comps date).** A store missing the panel's session, in which another bar INSIDE the 4-day window happens to print the missing close (within half a cent), still dates the panel by that bar. The date is then at most 4 days too old: the gate reads it older, the safe direction. No market calendar is available inside `date_of_close` to tell the two apart. Falsifier: a corrected comps date that sits on a session for which the store holds the symbol's bar but not the market's.
 - **REPORTED, NOT FIXED** (renderer changes, under the preview rule):
-  - The Markdown cohort list prints "no bars" for every member with no return (`vinci/dossier/render.py:4185`). For a refused member that names the wrong cause; the cohort's `source_ref`, printed on the line above, names the refusal. 1 committed Markdown page carries the label today (`frontend/dossiers/WLK.md`); AMZN and WLK are watch pages with no rebuild planned, and GOOGL's will carry no refusal once its cohort is back-filled.
+  - The Markdown cohort list prints "no bars" for every member with no return (`vinci/dossier/render.py:4185`). For a refused member that names the wrong cause; the cohort's `source_ref`, printed on the line above, names the refusal. 1 committed Markdown page carries the label today (`frontend/dossiers/WLK.md`, on ATKR — the resolver miss above, where "no bars" is also not the cause); AMZN and WLK are watch pages with no rebuild planned, and GOOGL's will carry no refusal once its cohort is back-filled.
   - The web's idiosyncratic block prints a fixed "benchmark bars unavailable — relative read UNKNOWN" whenever the market leg is UNKNOWN (`frontend/views/shared/dossier.js:3920`). That was already the wrong cause for #743's stale-benchmark refusal.
 - **NOT DONE HERE:** no Polygon or Tiingo pull, no page rebuilt or re-rendered, and GOOGL not built.
 - **WHAT GOOGL NEEDS BACK-FILLED.** For its cohort to read all 12 names at an 11-11 end:
