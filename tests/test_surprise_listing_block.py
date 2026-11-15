@@ -105,7 +105,7 @@ _AWAITS_REREAD = pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
 
 
 @pytest.mark.parametrize("name", [
-    pytest.param("GOOGL", marks=_AWAITS_REREAD), pytest.param("NFLX", marks=_AWAITS_REREAD)])
+    "GOOGL", pytest.param("NFLX", marks=_AWAITS_REREAD)])
 def test_the_committed_page_states_what_its_own_export_reads(name: str) -> None:
     """The committed page's value is the code's read of the export it stamps — whenever it was
     built from the one the fixture was cut from."""
