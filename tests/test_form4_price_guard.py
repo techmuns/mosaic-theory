@@ -13,10 +13,13 @@ through production's own `_form4_codes`.
 from __future__ import annotations
 
 import json
+import re
+import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
 from typing import Any, cast
 
+from vinci.dossier import extraction_version as ev
 from vinci.dossier import mechanical as mech
 from vinci.netcache import CachedHttp
 
@@ -178,3 +181,72 @@ def test_the_widest_legitimate_span_in_the_cached_corpus_is_kept() -> None:
     assert len(buys) == 10
     assert max(ln.price for ln in buys) / min(ln.price for ln in buys) > 1.5
     assert all(not ln.refused and ln.usd == ln.shares * ln.price for ln in buys)
+
+
+# --- the cost #1069's vintage states, measured on the filings it names ---------------------------
+
+#: #1069's extraction vintage. Its `names` states the rule's cost on the cached corpus, and that
+#: text renders on every page stamped with it (LLY's Record & reproduce Extraction row).
+VINTAGE = "2026-11-14.form4-price-its-filing-contradicts-is-refused"
+_DOLLARS = re.compile(r"\$([\d,]+\.\d+)")
+
+
+def _stated_ranges(accession: str) -> list[tuple[float, float]]:
+    """Each transaction's price range as its own price footnote states it, in document order.
+
+    The footnotes are the filer's free text. They are read HERE, to measure which refused prices
+    are wrong; production never parses them, so they decide nothing on a page."""
+    acc = accession.replace("-", "")
+    url = next(u for u in CASE["pages"] if f"/{acc}/" in u and u.endswith(".xml"))
+    root = ET.fromstring(CASE["pages"][url])
+    notes = {f.get("id"): "".join(f.itertext()) for f in root.iter("footnote")}
+    out = []
+    for t in root.iter("nonDerivativeTransaction"):
+        price = t.find(".//transactionPricePerShare")
+        assert price is not None
+        (fid,) = [f.get("id") for f in price.iter("footnoteId")]
+        lo, hi = (float(x.replace(",", "")) for x in _DOLLARS.findall(notes[fid])[:2])
+        out.append((lo, hi))
+    return out
+
+
+def test_the_vintage_states_the_refusal_cost_its_two_filings_measure() -> None:
+    """(-) FAILS ON #1069's MERGED TEXT, which said 19 refused "14 of them correct".
+
+    THE MEASUREMENT, from the real filings through production's `_form4_codes`: every refused sale
+    of the two filings that span more than 5x. These two are the only such groups among the HTTP
+    cache's 1,856 (measured on 2026-11-15 on #1069's code, `188e0476`; the cache is not in CI, so
+    that half is the record's). A refused price is WRONG when its own footnote's range excludes it
+    and CORRECT when the range holds it. The result is 19 refused: 3 wrong and 16 correct, 14 of
+    the 16 in the filing of 2025-02-25.
+
+    THE PIN, on the figures alone: the clause that states the cost (from "refusing" to its
+    closing parenthesis) states exactly these four counts, in order, and names that filing's
+    date. A reword that keeps the figures passes; a count that is not the filings' reds."""
+    wrong = correct = 0
+    correct_in: dict[str, int] = {}
+    for accession in (NO_MAJORITY, ONE_OF_FIFTEEN):
+        lines, ranges = _decode(accession), _stated_ranges(accession)
+        assert len(lines) == len(ranges)
+        for ln, (lo, hi) in zip(lines, ranges, strict=True):
+            assert ln.refused and ln.usd is None
+            if lo <= ln.price <= hi:
+                correct += 1
+                correct_in[accession] = correct_in.get(accession, 0) + 1
+            else:
+                wrong += 1
+    measured = (wrong + correct, wrong, correct, correct_in[ONE_OF_FIFTEEN])
+    assert measured == (19, 3, 16, 14)
+    assert correct_in[NO_MAJORITY] == 2
+
+    filed = next(f["filed"] for f in CASE["filings"] if f["accession"] == ONE_OF_FIFTEEN)
+    names = ev.names_of(VINTAGE)
+    assert names is not None
+    clause = re.search(r"refusing\b[^)]*\)", names)
+    assert clause, "the vintage no longer states the rule's cost"
+    stated = tuple(int(n) for n in re.findall(r"\d+", clause.group(0).replace(filed, "")))
+    assert stated == measured, (
+        f"the vintage states {stated} (refused, wrong, correct, correct in the {filed} filing); "
+        f"the filings measure {measured}: {clause.group(0)!r}")
+    assert filed in clause.group(0)
+
