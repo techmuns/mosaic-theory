@@ -51,7 +51,11 @@ superseded-by:
 **WHY.**
 - **The rule is set by face validity:** what the page could have known, and when. No outcome was read.
 - **Why only comps counts.** Of the CIQ inputs, only comps states its own export date on the corpus. CIQ stamps no Financials export. The page has only its filesystem `source_mtime`, which is not a date CIQ states and is absent on FUBO, ORKA and TECX, so it is not counted. The Estimates export states only a `≥` floor, already counted at its floor. An Estimates export that carried a header would already date the page through `forward_consensus.as_of`.
-- **Why a column's stated filing date is not counted.** CLAUDE.md allows one as an alternative knowable date for a CIQ fact, but a filing inside an export cannot postdate the export, so it never moves a latest-of.
+- **A column's stated filing date is not counted, and that is a gap, not a proof.** *(Restated in review, 2026-11-16: the first draft said a filing inside an export cannot postdate the export, so it never moves a latest-of. That holds only for comps, the one export whose date is counted.)*
+  - Financials, capital structure and Estimates are counted at their DATA dates: `balance_sheet_date` is a period end (IT's 2026-09-30), and `historical_multiple_latest_observation` is a close.
+  - A stated filing date in one of those exports could postdate every counted date, and the page would then read early.
+  - Measured at head `b4401cea`, it does not today. Across the 26 committed pages, 200 CIQ-context `filed <date>` reads were taken from string values that name CIQ or sit under a CIQ path, matched in ISO or `Mon-D-YYYY` form. 0 are later than their page's `analysis_as_of`. The coordinator's review measured 0 of 26 too.
+  - Counting it is a PR of its own, so it stays open in STATE row 64(a).
 - **Readers, searched before any change.** `git grep -E "analysis_as_of|date_semantics|DateSemantics"` over `vinci/`, `frontend/`, `scripts/`, `tests/` and `.github/`. The sibling fields' names were searched as a second vocabulary. `git log -S analysis_as_of` on code paths finds only #702.
   - The field is read only by its writer, the schema, three docstrings and tests. The renderer, `dossier.js`, the ledger, scoring, the seal, the screen, the monitor and the verdict path do not read it.
   - `vinci/theme_intelligence` has its own `analysis_as_of`, a homonym.
@@ -96,6 +100,9 @@ superseded-by:
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **$0.** No model call, no Polygon or Tiingo pull, no re-assembly.
+- **The pass does not name an export it skips.** `export_date_transform` passes over a recorded comps export that no file on this machine matches by sha256, and `refresh_fleet` then reports the page as plain "unchanged". None was skipped on this pass: all 16 matched.
+  - The end-to-end pin catches a build-recorded comps page left undated; the pass's own output does not.
+  - Open in STATE row 64(a). The fix is for the pass to name every export it skips.
 - **NKE and ORKA still read early** until their next assembly, which records the date. That is a paid build each and not this PR's to spend; STATE §5.0 names them.
 - **A build record now carries a field its build did not write.** The 16 build-recorded pages gain `export_date` from a later refresh. `layer_refreshes` names the write (`refresh`, `date_semantics` and `inputs`, at this vintage), the house record of a change made after assembly.
 - **Accepted risk:** a comps header that ever stated something other than the export date would date the page by it.
