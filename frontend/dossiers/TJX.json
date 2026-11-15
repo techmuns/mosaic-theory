@@ -16378,7 +16378,7 @@
     "screen_reference_date": "2026-10-16",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
     "analysis_as_of": "2026-11-11",
-    "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
+    "analysis_as_of_rule": "the latest date at which every input is knowable: the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date, historical_multiple_latest_observation and ciq_exported_as_of — a CIQ export holds history as restated up to its export, so its facts count from the export date it states (inputs.ciq[].export_date), never from the close they describe; CIQ states no Financials or Estimates export date, so those count at the dates named above",
     "price_as_of": "2026-11-11",
     "market_cap_as_of": "2026-10-16",
     "tev_as_of": "2026-10-16",
@@ -16389,7 +16389,8 @@
     "stock_performance_as_of": "2026-11-11",
     "assembled_at": "2026-11-14T04:35:01.884215Z",
     "valuation_snapshot_as_of": "2026-10-16",
-    "price_days_after_valuation_snapshot": 26
+    "price_days_after_valuation_snapshot": 26,
+    "ciq_exported_as_of": "2026-10-18"
   },
   "inputs": {
     "schema_version": 1,
@@ -16413,7 +16414,8 @@
         "file": "Company Comparable Analysis The TJX Companies Inc.xls",
         "sha256": "adacdbefa5e0ca8c59c4d228c7c5c71f036213adf441cf62a99321f71ddc64ec",
         "bytes": 149510,
-        "stamped_by": null
+        "stamped_by": null,
+        "export_date": "2026-10-18"
       },
       {
         "kind": "customers",
@@ -16620,6 +16622,17 @@
     ],
     "unrecorded": []
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-11-15",
+      "extraction_version": "2026-11-16.a-ciq-fact-dates-from-its-export",
+      "writer": "refresh",
+      "layers": [
+        "date_semantics",
+        "inputs"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,

@@ -1,6 +1,6 @@
 # Dossier — Alphabet Inc. (Nasdaq: GOOGL)
 
-_November 14, 2026 · extraction 2026-11-14.a-passage-is-filed-as-the-call-prints-it_
+_November 14, 2026 · extraction 2026-11-14.a-passage-is-filed-as-the-call-prints-it · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
 
 # Brief — first cut
 
@@ -660,6 +660,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-11-14 21:40 UTC
 - **Extraction:** 2026-11-14.a-passage-is-filed-as-the-call-prints-it — A transcript driver row files the CALL'S words at its quote's folded match (case kept, whitespace runs as one space), never the model's case or spacing of them, and the private spool holds a passage whose quote differs only in what the key folds as the same passage: the bytes filed first stand, and the page gains one QA flag naming the record's key, its filing day UNKNOWN (the record carries no date, and a file's time is not one). GOOGL's paid build (run 8d2e72e8, $3.84) was refused after every model call (EvidenceBytesDifferError on its Q2 2026 call's paragraph 8, filed 2026-11-10). A read-only census of the 2,757 spool files on 2026-11-14: 1,472 claims; of 1,285 passages, 1,098 are their call's words byte for byte, 3 differ in one capital letter, 77 name a call not on disk and 107 are call-only. driver_evidence.py now writes a page field (the flag), so it is pinned
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 15d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 13d old (2026-11-01, valuation.implied_expectations.multiples_as_of) — within the ceiling
