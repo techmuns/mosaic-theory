@@ -130,6 +130,9 @@ class FileRead:
     kind: str | None = None
     freq: str | None = None
     error: str | None = None
+    #: the export date the file STATES of itself, ISO (`inputs.export_dates`); None when it
+    #: states none
+    export_date: str | None = None
 
 
 #: How a whole-history price read is identified (`series_rows_sha256`): its rows' columns, in
@@ -312,7 +315,7 @@ def note_series_read(internal_id: str, rows: list[PriceRow], *, via: str) -> Non
 
 
 def note_file(role: str, path: Path, *, kind: str | None = None,
-              freq: str | None = None) -> None:
+              freq: str | None = None, export_date: str | None = None) -> None:
     """Hash and record one file a build reads. An unreadable file is recorded with its error and
     no hash. Nothing happens (and nothing is read) with no recorder."""
     rec = _ACTIVE.get()
@@ -320,7 +323,7 @@ def note_file(role: str, path: Path, *, kind: str | None = None,
         return
     try:
         sha, size = file_sha256(path)
-        read = FileRead(role, str(path), sha, size, kind, freq)
+        read = FileRead(role, str(path), sha, size, kind, freq, export_date=export_date)
     except OSError as exc:
         # the error's CLASS and reason only: an OSError's text carries the full local path, and
         # the record lands on a committed page in a public repository

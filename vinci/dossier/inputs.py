@@ -46,7 +46,7 @@ import json
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -96,10 +96,29 @@ _STAMP = re.compile(r"[0-9a-f]{10}")
 AS_OF_SIDECAR = "AS_OF"
 
 
+def export_dates(bundle: CiqBundle) -> dict[Path, date]:
+    """``{workbook path: the export date it STATES of itself}`` — THE ONE READER of it, for the
+    build (`load_bundle`) and for a committed page's backfill (`refresh.export_date_transform`).
+
+    Only the comps workbook states one the corpus carries: its `As-Of Date:` header, read by the
+    production reader (`ciq_sheets.comps_export_stamp`) — RAW, never the assembler's corrected
+    data date, which is the prior close the stamp describes. CIQ stamps no Financials export,
+    and an Estimates export that carried a header would already date the page through
+    `forward_consensus.as_of`, so neither is read here. A workbook that states none is left out:
+    never a guessed date (2026-11-15, the Codex P1 on #1070)."""
+    from vinci.dossier import ciq_sheets
+
+    wb = bundle.workbook("comps")
+    if wb is None or (stamp := ciq_sheets.comps_export_stamp(bundle)) is None:
+        return {}
+    return {wb.path: stamp}
+
+
 def load_bundle(ticker: str, files: list[Path]) -> CiqBundle:
     """THE BUILD'S CIQ BUNDLE, every file it reads recorded (`provenance.note_file`):
 
-    - each workbook the bundle holds — the one door every page reader reads CIQ through;
+    - each workbook the bundle holds — the one door every page reader reads CIQ through — with the
+      export date it states of itself (`export_dates`);
     - the ``AS_OF`` sidecar beside them, which sets the comps and estimates as-of;
     - each file no workbook kind matches: only its NAME is read, and it moves a caveat;
     - and, when the LOADER refuses the folder (two exports of a kind, a mislabelled export),
@@ -113,8 +132,17 @@ def load_bundle(ticker: str, files: list[Path]) -> CiqBundle:
         for p in shown:
             provenance.note_file("ciq", p)
         raise
+    # the stamp read PARSES the comps workbook, which can raise past `CiqUnavailableError` (a
+    # corrupt .xls is xlrd's own error): every file is still recorded before that propagates
+    unread_stamp: Exception | None = None
+    try:
+        stamps = export_dates(bundle)
+    except Exception as exc:  # noqa: BLE001 — re-raised below, once the reads are recorded
+        stamps, unread_stamp = {}, exc
     for wb in bundle.workbooks:
-        provenance.note_file("ciq", wb.path, kind=wb.kind, freq=wb.freq)
+        stamp = stamps.get(wb.path)
+        provenance.note_file("ciq", wb.path, kind=wb.kind, freq=wb.freq,
+                             export_date=stamp.isoformat() if stamp is not None else None)
     for folder in sorted({wb.path.parent for wb in bundle.workbooks}):
         if (folder / AS_OF_SIDECAR).is_file():
             provenance.note_file("ciq", folder / AS_OF_SIDECAR, kind="as_of_sidecar")
@@ -122,6 +150,8 @@ def load_bundle(ticker: str, files: list[Path]) -> CiqBundle:
     for p in shown:
         if p.name in unread:
             provenance.note_file("ciq", p, kind="unrecognised")
+    if unread_stamp is not None:
+        raise unread_stamp
     return bundle
 
 
@@ -193,7 +223,8 @@ def _ciq(files: Iterable[provenance.FileRead]) -> tuple[list[CiqExport], list[Un
             continue
         kind = f.kind or "unknown"
         exports[(kind, f.freq, name, f.sha256)] = CiqExport(
-            kind=kind, freq=f.freq, file=name, sha256=f.sha256, bytes=f.bytes)
+            kind=kind, freq=f.freq, file=name, sha256=f.sha256, bytes=f.bytes,
+            export_date=date.fromisoformat(f.export_date) if f.export_date else None)
     return sorted(exports.values(), key=lambda e: (e.kind, e.freq or "", e.file)), missing
 
 

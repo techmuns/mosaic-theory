@@ -471,6 +471,32 @@ def _day(s: Any) -> date | None:
         return None
 
 
+#: `analysis_as_of`'s rule on a page whose input record states no CIQ export date: the inputs' data
+#: dates alone. Kept word for word, so such a page round-trips byte-identically.
+RULE_DATA_DATES = (
+    "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date "
+    "counts at its floor), balance_sheet_date and historical_multiple_latest_observation")
+#: (2026-11-15) the rule once the record states one: the latest date at which EVERY input is
+#: knowable (CLAUDE.md: a CIQ fact is knowable from its export date, never from its period end).
+#: Set by face validity — what the page could have known, and when — never by an outcome.
+RULE_KNOWABLE = (
+    "the latest date at which every input is knowable: the latest of price_as_of, "
+    "market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), "
+    "balance_sheet_date, historical_multiple_latest_observation and ciq_exported_as_of — a CIQ "
+    "export holds history as restated up to its export, so its facts count from the export date "
+    "it states (inputs.ciq[].export_date), never from the close they describe; CIQ states no "
+    "Financials or Estimates export date, so those count at the dates named above")
+
+
+def _ciq_exported_as_of(d: dict[str, Any]) -> date | None:
+    """The latest export date the page's CIQ inputs STATE of themselves, read off the input record
+    (`inputs.ciq[].export_date`) — a structured field, never a `source_ref`'s text."""
+    rows = _get(d, "inputs", "ciq") or []
+    days = [x for r in rows if isinstance(r, dict)
+            and (x := _day(r.get("export_date"))) is not None]
+    return max(days) if days else None
+
+
 def date_semantics(d: dict[str, Any]) -> DateSemantics:
     """Every date the page's inputs carry, named — read, never inferred."""
     m = d.get("mechanical") or {}
@@ -483,15 +509,17 @@ def date_semantics(d: dict[str, Any]) -> DateSemantics:
         "historical_multiple_latest_observation": _get(d, "forward_multiple_history", "as_of"),
     }
     days = [x for x in map(_day, named.values()) if x is not None]
+    exported = _ciq_exported_as_of(d)
+    if exported is not None:
+        days.append(exported)
     return DateSemantics.model_validate({
         "screen_reference_date": str(d.get("reference_date"))[:10],
         "reference_date_semantics": (
             "the screening/reference date the page was assembled against — NOT the freshness "
             "date of its inputs; each input's own date is named in this block"),
         "analysis_as_of": max(days).isoformat() if days else None,
-        "analysis_as_of_rule": (
-            "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date "
-            "counts at its floor), balance_sheet_date and historical_multiple_latest_observation"),
+        "analysis_as_of_rule": RULE_KNOWABLE if exported is not None else RULE_DATA_DATES,
+        "ciq_exported_as_of": exported.isoformat() if exported is not None else None,
         **named,
         "historical_multiple_history_through": _get(d, "forward_multiple_history",
                                                     "history_through"),

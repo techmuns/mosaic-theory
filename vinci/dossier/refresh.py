@@ -33,7 +33,7 @@ from __future__ import annotations
 import json
 import math
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -57,9 +57,35 @@ TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
 #: caveat from the page's stored ratio, and refuses if any other caveat would move.
 #: `ev_bridge_unbuilt` since 2026-11-04, for ONE use: `ev_bridge_transform` clears it when it lands
 #: a bridge, since a page never carries both.
+#: `inputs` since 2026-11-15, for ONE use: `export_date_transform` writes the export date each
+#: recorded CIQ export states of itself; `refresh_dossier` refuses any other change to the record
+#: (`_only_export_dates`).
 _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history",
                                     "historical_forecast_error", "ev_bridge",
-                                    "ev_bridge_unbuilt", "caveats"})
+                                    "ev_bridge_unbuilt", "caveats", "inputs"})
+
+
+def _only_export_dates(old: Any, new: Any) -> bool:
+    """True when two input records differ in nothing but their CIQ rows' ``export_date`` — the
+    one change the `inputs` seam admits. The record says what a page was built FROM: a refresh
+    that could rewrite it could make a page claim inputs it never read."""
+    def _bare(rec: Any) -> Any:
+        if not isinstance(rec, dict):
+            return rec
+        rows = rec.get("ciq")
+        if not isinstance(rows, list):
+            return rec
+        return rec | {"ciq": [{k: v for k, v in r.items() if k != "export_date"}
+                              if isinstance(r, dict) else r for r in rows]}
+
+    def _held(rec: Any) -> list[Any]:
+        rows = rec.get("ciq") if isinstance(rec, dict) else None
+        return [r.get("export_date") if isinstance(r, dict) else None
+                for r in rows] if isinstance(rows, list) else []
+
+    # a stamp already recorded is what the build READ: the seam only fills an absent one
+    kept = all(o is None or o == n for o, n in zip(_held(old), _held(new), strict=False))
+    return bool(_bare(old) == _bare(new)) and kept
 
 
 class RefreshRefusedError(RuntimeError):
@@ -507,6 +533,9 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
         if stray := sorted(set(extra) - _TOP_LEVEL_REFRESHABLE):
             raise ValueError(f"{doc.get('ticker')}: a top-level refresh may set only "
                              f"{sorted(_TOP_LEVEL_REFRESHABLE)}, not {stray}")
+        if "inputs" in extra and not _only_export_dates(doc.get("inputs"), extra["inputs"]):
+            raise ValueError(f"{doc.get('ticker')}: a top-level refresh may change the input "
+                             "record only by its CIQ exports' export_date")
         doc.update(extra)
     # ONE SERIALIZER, SHARED WITH THE ASSEMBLER (`schemas.dossier_json`). This path used to re-dump
     # the model's payload with `json.dumps`, which differs from the assembler on unicode escaping
@@ -1176,6 +1205,50 @@ def forward_multiple_history_transform(ticker: str) -> TopLevelTransform:
         if built is None or built.source_sha256 not in stamps:
             return {}               # the export on disk is not the page's: re-assemble instead
         return {"forward_multiple_history": json.loads(built.model_dump_json())}
+
+    return _apply
+
+
+def export_date_transform(ticker: str, roots: Sequence[Path]) -> TopLevelTransform:
+    """A `refresh_dossier` top-level step writing `inputs.ciq[].export_date` — the export date a
+    CIQ export STATES of itself — onto a page built before the field, so `date_semantics` counts it
+    (2026-11-15, the Codex P1 on #1070).
+
+    ONLY FROM THE EXPORT THE PAGE RECORDS, BY ITS FULL SHA256. A row is filled only when a file
+    under ``roots`` hashes to the sha256 the page's own input record names (`inputs.candidates`,
+    the backfill's identity rule), and its stamp is read off that file by the build's own reader
+    (`inputs.export_dates`) — never off a `source_ref`'s text. A page whose record names no such
+    export (a BACKFILLED record names none for comps), or names one no file on this machine
+    matches, is left alone and gains the field on its next assembly. Nothing else in the record
+    moves (`_only_export_dates`, enforced by `refresh_dossier`). The write is recorded in
+    `layer_refreshes` beside the `date_semantics` it moves."""
+    from vinci.dossier import inputs as page_inputs
+    from vinci.dossier.ciq import CiqBundle
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        record = doc.get("inputs")
+        if not isinstance(record, dict):
+            return {}
+        rows = record.get("ciq") or []
+        todo = [i for i, r in enumerate(rows)
+                if isinstance(r, dict) and r.get("kind") == "comps" and not r.get("export_date")]
+        if not todo:
+            return {}
+        found = page_inputs.candidates(ticker, roots)
+        filled = list(rows)
+        for i in todo:
+            # a file held under several names is read under the name the record gives it, else
+            # the least of them: the loader kinds a workbook by its NAME, so a copy held under
+            # another name can read as no comps export at all
+            same = sorted((c for c in found if c.sha256 == str(rows[i].get("sha256"))),
+                          key=lambda c: (c.path.name != rows[i].get("file"), c.path.name))
+            if not same:
+                continue        # the export the page names is not on this machine
+            path = same[0].path
+            stamp = page_inputs.export_dates(CiqBundle.from_files(ticker, [path])).get(path)
+            if stamp is not None:
+                filled[i] = rows[i] | {"export_date": stamp.isoformat()}
+        return {} if filled == rows else {"inputs": record | {"ciq": filled}}
 
     return _apply
 
