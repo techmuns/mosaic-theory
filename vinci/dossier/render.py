@@ -4134,7 +4134,7 @@ def _midcycle_section(mc: Any) -> list[str]:
 
 #: (2026-11-15) What a graph-cohort member with no 180-day return prints. It printed "no bars",
 #: one cause of three: since #1075 a member WITH bars whose close sits more than
-#: `mechanical._COVERAGE_GAP_DAYS` from either end of the window is refused, and a member the
+#: `freshness._COVERAGE_GAP_DAYS` from either end of the window is refused, and a member the
 #: resolver cannot name is priced on no bars at all. `CohortMember` records none of the three. Only
 #: the cohort's `source_ref`, printed on the line above the list, names the refused members, and a
 #: renderer reads structured values, never a rendered string. So the line names no cause. Web

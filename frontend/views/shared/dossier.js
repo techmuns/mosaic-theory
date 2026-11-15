@@ -3886,10 +3886,11 @@ function drawdownCause(dc, sp, refDate, sleeve) {
 // (2026-11-15) WHY THE RELATIVE IS ABSENT, in the leg's OWN note: the words the Markdown's market
 // and relative rows print (render._fact). It was a fixed "benchmark bars unavailable", the wrong
 // cause for a benchmark that HAS bars and is refused: one trailing the name by more than the
-// 4-day gap (#743), or one with no close within 4 days of the window start (#1075). An absent
-// market leg is the cause when it is absent; otherwise the relative's own note says why.
-function noRelativeTail(io, mk, rel) {
-  const isMk = !(mk && mk.status === "present" && mk.value != null);
+// 4-day gap (#743), or one with no close within 4 days of either end of its window (#1075).
+// An absent market leg is the cause when it is absent; otherwise the relative's own note
+// says why.
+function noRelativeTail(io, mk, rel, has) {
+  const isMk = !has(mk);
   const s = (isMk ? mk : rel) || {};
   const label = isMk ? `Market (${io.benchmark_symbol || "IWM"}) 180d return` : "Relative vs market";
   const badge = s.status === "missing" ? "MISSING" : "UNKNOWN";
@@ -3935,7 +3936,7 @@ function idioVsShared(io, sym) {
         <span>${escapeHtml(io.benchmark_symbol || "IWM")} <b>${fmtPct(mk.value, { signed: true })}</b>${citeMark(mk.source_ref)}</span>` : ""}
         ${has(rel) ? `<span class="muted">→</span>
         <span><b style="color:var(--danger);">${fmtPct(rel.value, { signed: true }).replace("%", "pp")}</b> idiosyncratic${citeMark(rel.source_ref)}</span>`
-        : `<span class="muted" style="font-size:11.5px;">· ${escapeHtml(noRelativeTail(io, mk, rel))}</span>`}
+        : `<span class="muted" style="font-size:11.5px;">· ${escapeHtml(noRelativeTail(io, mk, rel, has))}</span>`}
       </div>`
     : factGrid([
       { label: "Name 180d return", s: io.name_180d_return, fmt: retHero },
