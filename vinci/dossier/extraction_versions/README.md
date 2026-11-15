@@ -41,8 +41,8 @@ every deploy (git-ignored), so nothing in `frontend/` is edited by hand.
     legacy row `2026-08-16.1`'s amendment (recorded in `../extraction_version.py`). A merged
     entry's `names` may be corrected only where it misstates the code the entry names, and never
     so that it names other code.
-  - **What stays fixed:** its `id`, its `follows` and every other field stay byte for byte as
-    merged, because those are what a page's stamp names.
+  - **What stays fixed:** its `id`, its `follows` and every other field keep their merged values
+    (the guard compares parsed values, not bytes), because those are what a page's stamp names.
   - **What it adds:** a `note` that quotes the words replaced and names the record that measured
     them.
   - **Its guard:** the entry joins `AMENDED` in `tests/test_extraction_version_entries.py`, which

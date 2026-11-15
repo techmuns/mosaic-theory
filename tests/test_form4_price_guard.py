@@ -64,8 +64,9 @@ def test_a_filing_whose_sale_prices_span_a_thousandfold_prices_none_of_them() ->
 
 def test_one_dropped_decimal_among_fifteen_sales_refuses_the_whole_group() -> None:
     """(-) REVIEW ROUND 1: never a vote. One price a thousandfold the rest makes the filing's
-    stated sale prices unusable, all fifteen: the cost is fourteen correct prices, the rule's
-    whole cost on the cached corpus, and it fails toward UNKNOWN."""
+    stated sale prices unusable, all fifteen: the cost is fourteen correct prices, what the
+    whole-group rule adds on the cached corpus (16 of its 19 refused prices are correct, pinned
+    below), and it fails toward UNKNOWN."""
     lines = _decode(ONE_OF_FIFTEEN)
     assert len(lines) == 15 and 878401.0 in [ln.price for ln in lines]
     assert [ln.usd for ln in lines] == [None] * 15
@@ -222,7 +223,8 @@ def test_the_vintage_states_the_refusal_cost_its_two_filings_measure() -> None:
 
     THE PIN, on the figures alone: the clause that states the cost (from "refusing" to its
     closing parenthesis) states exactly these four counts, in order, and names that filing's
-    date. A reword that keeps the figures passes; a count that is not the filings' reds."""
+    date. A reword that keeps these four figures, and no other number, inside one "refusing ... )"
+    clause passes; a count that is not the filings' reds."""
     wrong = correct = 0
     correct_in: dict[str, int] = {}
     for accession in (NO_MAJORITY, ONE_OF_FIFTEEN):

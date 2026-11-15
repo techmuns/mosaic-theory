@@ -19,7 +19,7 @@ superseded-by:
   - The `id`, the `follows` and the code the vintage names are unchanged.
 - **The rule it uses.** `vinci/dossier/extraction_versions/README.md` said an entry "is never edited or deleted once merged". It now carries one exception, scoped narrowly, beside the legacy row `2026-08-16.1`'s amendment:
   - a merged entry's prose may be corrected only where it misstates the code it names, and never so that it names other code;
-  - every other field stays byte for byte as merged;
+  - every other field keeps its merged value (the guard compares parsed values, not bytes);
   - the replaced words are quoted in a `note`;
   - the entry is listed in `AMENDED` (`tests/test_extraction_version_entries.py`).
 - **The page.** LLY's `dossier.md` was re-rendered from its stored record by `refresh._rerender_only`, which never writes the JSON, then `mirror_to_frontend()`. This was a separate artifact-only commit.
