@@ -5,9 +5,10 @@ reused; the split sealed beside the proposal in an optional ledger field.
 
 Run against main `e73e7a54`, every test here errors at setup (the record's path,
 `cli._confirmation_record`, does not exist there). One is a GUARD that would pass there without
-that fixture, by design: `test_a_row_before_the_rule_serializes_as_it_did`. The page is a real
-committed one (GOOGL, whose verdict is already in the ledger), read from an empty CIQ folder, so
-no licensed file is read; the LLM is scripted, so no call is paid.
+that fixture, by design: `test_a_row_before_the_rule_serializes_as_it_did`. The pages are real
+committed ones (TECX's living page; GOOGL's 2026-11-03 page, frozen under
+`tests/fixtures/frozen_pages/`, whose verdict is already in the ledger), read from an empty CIQ
+folder, so no licensed file is read; the LLM is scripted, so no call is paid.
 """
 from __future__ import annotations
 

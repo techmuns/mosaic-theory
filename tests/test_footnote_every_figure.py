@@ -542,6 +542,9 @@ def test_the_ebitda_bases_and_the_ex_lease_multiple_carry_their_computation_ref(
     page, facts, _ref, _cut = _page("NCNO")
     at = ex_lease_at_price(ds.MechanicalLayer.model_validate(page), facts)
     assert at is not None and at.source_ref and at.source_ref.startswith("Assembler: ")
+    # the living page, assembled after this change (2026-11-14), persists the ref it computes
+    living = raw["mechanical"]["valuation"]["ev_ebitda_basis"]
+    assert living["source_ref"].startswith("Assembler: ")
     # a page assembled before this change carries none — absent, not null: GOOGL's 2026-11-03
     # page, frozen, since the living page is assembled after it (2026-11-14)
     frozen = json.loads(
