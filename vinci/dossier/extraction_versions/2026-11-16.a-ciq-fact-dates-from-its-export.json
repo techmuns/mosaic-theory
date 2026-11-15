@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-16.a-ciq-fact-dates-from-its-export",
+  "follows": [
+    "2026-11-14.a-passage-is-filed-as-the-call-prints-it"
+  ],
+  "names": "a page's analysis_as_of is the latest date at which every input is knowable: each CIQ export's own stated export date is recorded in the input record (inputs.ciq[].export_date, the comps workbook's As-Of Date header, read raw) and counted, so a page is never dated before its CIQ inputs were exported; date_semantics names it (ciq_exported_as_of) and states the rule it then follows. A page whose record states no export date keeps its block word for word"
+}

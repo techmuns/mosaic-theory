@@ -327,7 +327,11 @@ def test_every_page_names_its_dates_from_its_layers() -> None:
         named = [ds[k] for k in ("price_as_of", "market_cap_as_of", "tev_as_of", "consensus_as_of",
                                  "balance_sheet_date", "historical_multiple_latest_observation")]
         days = [str(x).lstrip("≥")[:10] for x in named if x]
-        assert ds["analysis_as_of"] == (max(days) if days else None), t
+        # (2026-11-15) and the export date each CIQ input states of itself, off the input record
+        stamps = [r["export_date"] for r in (doc.get("inputs") or {}).get("ciq") or []
+                  if r.get("export_date")]
+        assert ds.get("ciq_exported_as_of") == (max(stamps) if stamps else None), t
+        assert ds["analysis_as_of"] == (max(days + stamps) if days + stamps else None), t
 
 
 # --- (2026-10-10) the four folded fixes -----------------------------------------------------------

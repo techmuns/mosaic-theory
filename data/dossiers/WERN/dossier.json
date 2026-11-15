@@ -16255,8 +16255,8 @@
   "date_semantics": {
     "screen_reference_date": "2026-10-16",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-11-11",
-    "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
+    "analysis_as_of": "2026-11-12",
+    "analysis_as_of_rule": "the latest date at which every input is knowable: the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date, historical_multiple_latest_observation and ciq_exported_as_of — a CIQ export holds history as restated up to its export, so its facts count from the export date it states (inputs.ciq[].export_date), never from the close they describe; CIQ states no Financials or Estimates export date, so those count at the dates named above",
     "price_as_of": "2026-11-11",
     "market_cap_as_of": "2026-11-11",
     "tev_as_of": "2026-11-11",
@@ -16267,7 +16267,8 @@
     "stock_performance_as_of": "2026-11-11",
     "assembled_at": "2026-11-14T09:30:22.404259Z",
     "valuation_snapshot_as_of": "2026-11-11",
-    "price_days_after_valuation_snapshot": 0
+    "price_days_after_valuation_snapshot": 0,
+    "ciq_exported_as_of": "2026-11-12"
   },
   "inputs": {
     "schema_version": 1,
@@ -16291,7 +16292,8 @@
         "file": "Company Comparable Analysis Werner Enterprises Inc.xls",
         "sha256": "54b2114b068d0fbb62eddc608699f7aaa02603e95328c5cd542e6764dabd7265",
         "bytes": 151046,
-        "stamped_by": null
+        "stamped_by": null,
+        "export_date": "2026-11-12"
       },
       {
         "kind": "credit_health",
@@ -16504,6 +16506,15 @@
       "writer": "refresh",
       "layers": [
         "mechanical.primary_source"
+      ]
+    },
+    {
+      "date": "2026-11-15",
+      "extraction_version": "2026-11-16.a-ciq-fact-dates-from-its-export",
+      "writer": "refresh",
+      "layers": [
+        "date_semantics",
+        "inputs"
       ]
     }
   ],

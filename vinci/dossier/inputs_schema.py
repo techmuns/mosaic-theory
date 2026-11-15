@@ -24,6 +24,12 @@ class CiqExport(BaseModel):
     bytes: int
     #: BACKFILL ONLY: the page sites whose own 10-hex stamp this file's sha256 begins with
     stamped_by: list[str] | None = None
+    #: (2026-11-15) the export date this file STATES of itself (`inputs.export_dates`): today only
+    #: the comps workbook's `As-Of Date:` header. A CIQ export holds history as restated up to its
+    #: export, so its facts are KNOWABLE from this date and no earlier; `date_semantics` counts it.
+    #: ABSENT on the page, never null, where the file states none or the record predates the field
+    #: (`schemas.dossier_json`).
+    export_date: date | None = None
 
     model_config = {"frozen": True}
 

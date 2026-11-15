@@ -1,0 +1,51 @@
+{
+ "_about": "Cut-down CIQ Comparable Analysis\u2192Financial Data sheets for the export-date pins (`inputs.export_dates`, `ciq_sheets.comps_export_stamp`; operator ruling 2026-11-04, #891, on cut-down CIQ fixtures). Each is the export the committed page at main c58d5b2f records by sha256 (`inputs.ciq`), as on disk 2026-11-15, read through the real decode path and cut by NULLING: trailing rows, then each cell, a null kept only when the stamp read is unchanged (the cutter: the session family's notes folder, analysis-as-of-knowable/cut_comps_stamp_fixture.py). So every cell left is read by a pin.",
+ "names": {
+  "IT": {
+   "workbook": "Company Comparable Analysis Gartner Inc.xls",
+   "sha256": "a3eeb41a2dde46a56659613c26168c7fe4804b7b38601edd4a6616560b025e5f",
+   "export_date": "2026-11-12",
+   "cells_kept": 2,
+   "sheets": {
+    "comps|Financial Data": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [
+      "As-Of Date:",
+      46338.0
+     ]
+    ]
+   }
+  },
+  "UBER": {
+   "workbook": "Company Comparable Analysis Uber Technologies Inc.xls",
+   "sha256": "7540155d8248f87cecdc1e36f6910be846feae263da63a5c17f4c517749a0461",
+   "export_date": "2026-11-05",
+   "cells_kept": 2,
+   "sheets": {
+    "comps|Financial Data": [
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [],
+     [
+      "As-Of Date:",
+      46331.0
+     ]
+    ]
+   }
+  }
+ }
+}

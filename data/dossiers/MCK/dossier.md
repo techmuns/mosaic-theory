@@ -1,6 +1,6 @@
 # Dossier — MCKESSON CORP (NYSE: MCK)
 
-_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-10.driver-text-filed_
+_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
 
 # Brief — first cut
 
@@ -646,6 +646,7 @@ _Source §: 8-K 0001193125-13-450016 · d629383dex101.htm · amended by 00009276
   - 2026-11-10 · mechanical.capital_allocation, mechanical.peer_capital_intensity — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.peer_capital_intensity — refresh at 2026-11-10.one-family-peers
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
+  - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-11-04
 - **Panel age:** oldest panel 1d old — 2026-11-04 (valuation.implied_expectations.tev_as_of), against a 2026-11-05 build
 - **Consensus age:** consensus 1d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

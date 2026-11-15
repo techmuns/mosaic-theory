@@ -1250,6 +1250,12 @@ class DateSemantics(BaseModel, frozen=True):
     # while every valuation input was from 08-05
     valuation_snapshot_as_of: str | None = None
     price_days_after_valuation_snapshot: int | None = None
+    # (2026-11-15) the latest export date the page's CIQ inputs STATE of themselves
+    # (`inputs.ciq[].export_date`; today the comps workbook's `As-Of Date:` header). A CIQ fact is
+    # knowable from its export, never from the close it describes, so `analysis_as_of` counts it
+    # (the Codex P1 on #1070: IT read 2026-11-11 beside a comps export of 2026-11-12). ABSENT,
+    # never null, on a page whose record holds no stamp (`TOP_DROP_WHEN_NONE`).
+    ciq_exported_as_of: str | None = None
 
 
 class ForwardConsensus(BaseModel, frozen=True):
@@ -3505,6 +3511,7 @@ TOP_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("forward_consensus", "pe_eps_basis"),
     ("forward_multiple_history", "latest_close_quarter_end"),
     ("forward_multiple_history", "history_through"),
+    ("date_semantics", "ciq_exported_as_of"),
 )
 
 #: (RG-D19 PR 3) A transcript driver row's fields that never reach a committed page once its words
@@ -3592,6 +3599,11 @@ def dossier_json(doc: Dossier) -> str:
         excl["ev_bridge_unbuilt"] = True
     if doc.inputs is None:
         excl["inputs"] = True
+    # the same rule PER ROW for a CIQ export's stated export date (2026-11-15): a record written
+    # before the field, or an export that states none, writes no key
+    elif unstamped := {i: {"export_date"} for i, e in enumerate(doc.inputs.ciq)
+                       if e.export_date is None}:
+        excl["inputs"] = {"ciq": unstamped}
     if doc.layer_refreshes is None:
         excl["layer_refreshes"] = True
     if doc.valuation_basis is None:
