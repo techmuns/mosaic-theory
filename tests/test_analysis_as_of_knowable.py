@@ -11,15 +11,16 @@ THE FIX. The build records the export date each workbook STATES of itself as a s
 header), `date_semantics` counts it, and `refresh.export_date_transform` writes it onto a page
 built before the field, from the export the page records by sha256.
 
-Value pins read pages as committed at main `c58d5b2f` (`replay.page_at`: the living pages move on
-re-assembly) and the stamp off the cut-down sheets in `fixtures/ciq_comps_export_date.json`
-(through the production reader); the CIQ-bound pins read the real workbooks and skip without them.
+Value pins read pages as committed at main `c58d5b2f`, frozen byte-identical in
+`fixtures/frozen_pages/` (the living pages move on re-assembly), and the stamp off the cut-down
+sheets in `fixtures/ciq_comps_export_date.json` (through the production reader); the CIQ-bound pins
+read the real workbooks and skip without them.
 """
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
-import subprocess
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -34,22 +35,23 @@ from vinci.dossier.refresh import _only_export_dates, export_date_transform, ref
 from vinci.dossier.schemas import Dossier, dossier_json
 
 ROOT = Path(__file__).resolve().parents[1]
-#: main as merged 2026-11-14 (#1078), the corpus measured: 9 of 26 pages state a comps export later
-#: than their `analysis_as_of`
-FREEZE = "c58d5b2f774a1afcb2edc36fcd10aefecf7aa077"
-BLOBS = {"IT": "0e9ffb4a192161f9c8b79eddbafd0d08b57a4189",
-         "UBER": "eb2db341a0a08fc83a06e5ae08b081f7c3f8965f",
-         "NKE": "bd836c13183a5e97aeb45e1672c090cb60bb7db4"}
+#: each page as committed at main `c58d5b2f` (merged 2026-11-14, #1078 — the corpus measured, 9 of
+#: 26 pages stating a comps export later than their `analysis_as_of`), and its git blob there
+FROZEN = ROOT / "tests" / "fixtures" / "frozen_pages"
+PAGES = {"IT": ("2026-11-14", "0e9ffb4a192161f9c8b79eddbafd0d08b57a4189"),
+         "UBER": ("2026-11-09", "eb2db341a0a08fc83a06e5ae08b081f7c3f8965f"),
+         "NKE": ("2026-10-29", "bd836c13183a5e97aeb45e1672c090cb60bb7db4")}
 FIXTURE: dict[str, Any] = json.loads(
     (ROOT / "tests" / "fixtures" / "ciq_comps_export_date.json").read_text())["names"]
 
 
 def _frozen(t: str) -> dict[str, Any]:
-    from vinci.evals import replay as rp
-    if subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", f"{FREEZE}^{{commit}}"],
-                      capture_output=True).returncode != 0:
-        pytest.skip(f"main {FREEZE[:8]} is not in this history")
-    return copy.deepcopy(rp.page_at(t, FREEZE, expect_blob=BLOBS[t]))
+    """The frozen page, refused unless its bytes are the blob main `c58d5b2f` committed."""
+    day, blob = PAGES[t]
+    raw = (FROZEN / day / t / "dossier.json").read_bytes()
+    assert hashlib.sha1(b"blob %d\0" % len(raw) + raw).hexdigest() == blob, t  # noqa: S324
+    page: dict[str, Any] = json.loads(raw)
+    return page
 
 
 def _bundle(t: str) -> tuple[CiqBundle, Path]:
