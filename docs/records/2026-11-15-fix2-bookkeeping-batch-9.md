@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# Fix request 2 bookkeeping, batch 9 (A, the coordinator): RE2-D6, RE2-D10, RE2-D17 and RE2-D20 to fixed (#1027, each verified against its diff and tests), E2-D11's and E2-D15's WERN halves landed (#1076), RG-D19's deferred test gaps closed (#1058), #953's retrospective booked into row 60, RD-D1 and RA-D4, STATE row 62 restated to B's machine, row 64 opened for #1070's deferred Codex P1 and #1069's vintage misstatement, and row 60 recounted (of 148 asked: 142 fixed, 0 open, 5 in progress, 1 disagreed)
+# Fix request 2 bookkeeping, batch 9 (A, the coordinator): RE2-D6, RE2-D10, RE2-D17 and RE2-D20 to fixed (#1027, each verified against its diff and tests), E2-D11's and E2-D15's WERN halves landed (#1076), RG-D19's deferred test gaps closed (#1058), #953's retrospective booked into row 60, RD-D1 and RA-D4, STATE row 62 restated to B's machine, row 41's WERN clause corrected (its stale part is the export's FY2025 column, not the export; operator: "Wait for the FY2026 10-K"), row 64 opened for #1070's deferred Codex P1 and #1069's vintage misstatement, and row 60 recounted (of 148 asked: 142 fixed, 0 open, 5 in progress, 1 disagreed)
 
 **WHAT.**
 - **The fix log**, `docs/fix-log-teamnostra-2.md`. Four statuses move, all by #1027 (`a7d6dc46`, the E2 remainder, merged 2026-11-13 13:12Z). Each row was checked against #1027's diff and its tests before it moved (HOW VERIFIED).
@@ -44,6 +44,14 @@ superseded-by:
       - The text renders into LLY's Extraction note: `data/dossiers/LLY/dossier.md`, line 657, and its mirror `frontend/dossiers/LLY.md`.
       - What fixes it: a code PR that changes the vintage text, then a $0 re-render of LLY. This batch is docs only and does not edit that file.
   - **Row 35** gains a pointer to row 64 (b), because it already holds #1069's guard and LLY's Extraction note.
+  - **Row 41's WERN clause, corrected** (the coordinator's addition to this batch, 2026-11-15). #1076 added an OPERATOR ACTION about WERN's key-unknowns line (`data/dossiers/WERN/dossier.md:253` and its mirror), which says the CIQ panel shows "a $752.0M facility" due within 12 months. That figure is the panel's two revolvers, $427.0M and $325.0M.
+    - **The wrong premise.** The clause said the misstatement was unlocked by "a WERN CIQ re-export made after the 2026-10-05 termination", then one paid rebuild of about $7.80. But the export is not stale: WERN's committed CIQ export is dated 2026-11-12, already after the termination.
+    - **What is stale is the PERIOD inside it.** `mechanical.capital_structure.instruments` is sourced from "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)", the FY2025 annual column, 232 days old by its `panel_vintage`. That column still lists the 22 Unsecured Credit Agreement ($427.0M, maturing 2026-10-05) and the Loan Security Agreement Facility ($325.0M, maturing 2027-09-21).
+    - **The filing.** The September-quarter 10-Q `0000793074-26-000172` states $803.0M outstanding under the Credit Facilities, with no principal due within 12 months.
+    - **Why a re-export does not help yet.** A same-settings re-export does not change that annual column before the FY2026 10-K. A quarterly column would: FUBO's committed page reads "Capital Structure Details (Q3 2026 filed Aug-05-2026)".
+    - **The rulings.** The ruling of 2026-11-14, "Wait for a fresh CIQ export (Recommended)", rested on the coordinator's wrong premise. The operator re-ruled on 2026-11-15, relayed to this session by the coordinator, verbatim: "Wait for the FY2026 10-K". The option reads: no action until Werner's FY2026 10-K (~Feb 2027) and a normal re-export, and the page keeps its vintage warning until then.
+    - **The new unlock:** Werner's FY2026 10-K and a normal CIQ re-export, then one paid WERN rebuild under #1041's rule. The old unlock text is struck as written, not rewritten.
+    - **Where the correction lives.** WERN's record (`docs/records/2026-11-14-wern-lands-after-the-quote-fix.md`, lines 64 to 71) is immutable, so the correction is stated here.
 - **No ID and no row,** each by its own body:
   - **#1053** (`53b77a1a`): the ledger safeguards (#1004 item 5).
   - **#1054** (`e832fbaa`): the R1 screening anchor moves off the headline (#1004 item 3c).
@@ -88,6 +96,14 @@ superseded-by:
 - **Row 62, the operator's Mac:** the primary checkout's `.venv` reads `anthropic.__version__` 2.6.0 with `pip check` "No broken requirements found" on 2026-11-15, read only.
   - All 11 run lines in `data/snapshots/assembly_runs/` dated 2026-11-14, one per file, state `sdk_version` 2.6.0: NCNO, SMPL, TJX, EPAM, LLY ×2, VITL, IT, WERN and GOOGL ×2. There are no run lines dated 2026-11-13 or 2026-11-15.
   - No run line carries a machine or host field. So nothing here shows what B's machine runs.
+- **Row 41's WERN correction:** read from WERN's committed `dossier.json` at main `c58d5b2f`.
+  - `mechanical.capital_structure.instruments.source_ref` and `detail_as_of` read "A 2025 filed Feb-26-2026".
+  - `panel_vintage` reads "the debt schedule is 232d old (source filed 2026-02-26)" and names the Item 1.02 of 2026-10-08.
+  - The instruments are the $427.0M revolver maturing 2026-10-05, the $325.0M one maturing 2027-09-21, and $41.9M of leases with no maturity.
+  - The wall's verbatim states $803.0 million "with no principal amount expected to be paid within 12 months".
+  - The page's CIQ `source_ref`s read "exported 2026-11-12".
+  - FUBO's committed page carries "Capital Structure Details (Q3 2026 filed Aug-05-2026)".
+  - The operator's re-ruling is the coordinator's relay to this session (2026-11-15). This batch did not see its source.
 - **Row 64 (a), re-measured:** the group 3 record's method was run on the 26 committed pages at main `c58d5b2f`: each page's latest "exported YYYY-MM-DD" in any `source_ref`, against its `valuation_basis.date_semantics.analysis_as_of`.
   - **9 of 26 pages** show an export after the as-of: IT, MCK, NKE, ORKA, TECX, V, VRRM, WERN and WLK.
   - **Against the record:** the record's 8 at `4f7a5d64` (#1070's branch) plus WERN, whose page landed after it (#1076: export 2026-11-12, as-of 2026-11-11).
@@ -130,4 +146,5 @@ superseded-by:
 **FOUND, NOT FIXED.**
 - **Other Pages cells may be stale.** Fix-log rows whose fix lands "at re-assembly" or "at the next build" were not re-measured against the 9 pages rebuilt on 2026-11-14 and 2026-11-15, outside the eight rows this batch edits. A Pages-cell sweep against those 9 pages is a candidate follow-up for the coordinator.
 - **TGT's committed page holds one `next-fy` guide** (8-K `0000027419-26-000012`, adjusted EPS). It is not among #1027's 21. This batch did not measure whether it is a defaulted period.
+- **The shared venv has no `pytest-xdist`.** #1065 added it to `requirements.lock` on 2026-11-14 (3.8.0, `-n auto` in CI's gate), after the operator's re-sync of 2026-11-13. So `pytest -n auto` is refused locally ("unrecognized arguments: -n"), and this batch's full suite ran serially. `pip check` is still clean, because nothing installed requires it. Row 62's anthropic claim stands; the venv simply no longer matches the whole lock. Agents may not reinstall it, so this is the operator's, at the next re-sync.
 - **Batch 8's merged title** reads "of 148 asked: 139 fixed, 1 open, 7 in progress, 1 disagreed". Its record and row 60 read 138, 1, 8 and 1, after RG-D3 moved to in progress in review. The title is git history and cannot be changed. This record and row 60 carry the right figures.
