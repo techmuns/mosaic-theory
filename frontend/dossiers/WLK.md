@@ -146,7 +146,7 @@ _Company-specific or market-wide?_
 - **Relative vs market:** -42.9% [9]
 - **Cohort read:** moved ALONE (idiosyncratic): name -44% vs cohort median 20% [10]
 - **Graph cohort** (`graph_coverage.json node=US:0001262823; EOD 180d ret`):
-  - [1h] ATKR: no bars · via ATKR —supplier→ Westlake ["our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"]
+  - [1h] ATKR: no 180d return · via ATKR —supplier→ Westlake ["our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"]
   - [2h] CLF: 22% · via ATKR —supplier→ Westlake ["our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"] · ATKR —supplier→ Cleveland-Cliffs ["Our primary suppliers of steel are Cleveland-Cliffs, Steel Dyn
   - [2h] LYB: -3% · via ATKR —supplier→ Westlake ["our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"] · ATKR —supplier→ LyondellBasell ["our primary suppliers of HDPE resin are LyondellBasell and Bayst
   - [2h] NUE: 31% · via ATKR —supplier→ Westlake ["our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls"] · ATKR —supplier→ Nucor ["Our primary suppliers of steel are Cleveland-Cliffs, Steel Dynamics and N
