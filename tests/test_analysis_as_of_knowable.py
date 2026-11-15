@@ -159,6 +159,30 @@ def test_the_page_writes_the_stamp_only_where_it_is_stated() -> None:
     assert [r["kind"] for r in written["inputs"]["ciq"] if "export_date" in r] == ["comps"]
 
 
+# --- end to end, on the committed corpus (TEST-LAYER RULE: invariants on living pages) -----------
+
+def test_no_committed_page_is_dated_before_a_ciq_export_it_records() -> None:
+    """Every page whose input record a BUILD wrote, naming a comps export, states the date that
+    export states of itself; and no page's `analysis_as_of` precedes any export date it records.
+    IT's committed page read 2026-11-11 against a comps export of 2026-11-12, recorded nowhere."""
+    pages = sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
+    checked: list[str] = []
+    for p in pages:
+        doc = json.loads(p.read_text())
+        rows = (doc.get("inputs") or {}).get("ciq") or []
+        dates = [r["export_date"] for r in rows if r.get("export_date")]
+        if (doc.get("inputs") or {}).get("recorded") == "build" and any(
+                r.get("kind") == "comps" for r in rows):
+            assert dates, (f"{p.parent.name}: its build recorded a comps export but no export "
+                           "date — a comps export with no As-Of Date header dates the page from "
+                           "its data alone; say so here before accepting it")
+            checked.append(p.parent.name)
+        if dates:
+            assert doc["date_semantics"]["analysis_as_of"] >= max(dates), p.parent.name
+            assert doc["date_semantics"]["ciq_exported_as_of"] == max(dates), p.parent.name
+    assert "IT" in checked and len(checked) >= 10, (checked, len(pages))   # never vacuous
+
+
 # --- the backfill: from the export the page records, by sha256 -----------------------------------
 
 def test_a_record_naming_no_comps_export_is_left_alone(tmp_path: Path) -> None:
