@@ -37,6 +37,18 @@ every deploy (git-ignored), so nothing in `frontend/` is edited by hand.
 - **An entry is never edited or deleted once merged**: a committed page may carry its id. The rows
   of `LEGACY_VERSIONS` in `../extraction_version.py` are frozen under the same rule, and no row is
   added there again.
+  - **One exception: the entry's prose** (coordinator's ruling, 2026-11-15). It sits beside the
+    legacy row `2026-08-16.1`'s amendment (recorded in `../extraction_version.py`). A merged
+    entry's `names` may be corrected only where it misstates the code the entry names, and never
+    so that it names other code.
+  - **What stays fixed:** its `id`, its `follows` and every other field keep their merged values
+    (the guard compares parsed values, not bytes), because those are what a page's stamp names.
+  - **What it adds:** a `note` that quotes the words replaced and names the record that measured
+    them.
+  - **Its guard:** the entry joins `AMENDED` in `tests/test_extraction_version_entries.py`, which
+    reds when any other field moves.
+  - **First amended:** `2026-11-14.form4-price-its-filing-contradicts-is-refused`, whose count of
+    the correct prices its guard refuses was false.
 - `note` is optional text for a reader of the file. Nothing renders it.
 
 Moving a row from an open PR: take main's `extraction_version.py` and `dossier.js`, write your row
