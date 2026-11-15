@@ -31,6 +31,7 @@ superseded-by:
     - **The operator's ruling,** verbatim from #1066: "Keep it, watch leans (Recommended)". FACTS-only request moves still owe no paid panel by default.
     - **RD-D1's cell** names the check.
     - **RA-D4's cell** said BURL's #983 move was "an operator question after #953's retrospective run". It now says the operator kept the default after that run.
+    - **RA-D4's Pages cell** also said "none rebuilt". #983 (`85306351`) is an ancestor of `1f32cbdf`, so SMPL, whose export the RA-D4 test reads, was rebuilt on its code (#1067). Its committed guidance bridge keeps both periods guided on 2026-10-27 (FQ1 2027 and FY 2027) for Revenue, EBITDA and Gross Margin %. #983's record counts 16 of 27 pages moving but does not name them all, so the other 8 rebuilt pages are not re-measured (review round 1).
 - **STATE.md §5.0.**
   - **Row 60:**
     - the batch-9 clause and the recount;
@@ -43,6 +44,7 @@ superseded-by:
     - **(b) #1069's vintage misstatement.** `vinci/dossier/extraction_versions/2026-11-14.form4-price-its-filing-contradicts-is-refused.json` says the guard refuses "19 sale prices, 14 of them correct". #1069's own record says 16 of the 19 are correct and 3 wrong, and 14 of the 16 are in the 2025-02-25 filing.
       - The text renders into LLY's Extraction note: `data/dossiers/LLY/dossier.md`, line 657, and its mirror `frontend/dossiers/LLY.md`.
       - What fixes it: a code PR that changes the vintage text, then a $0 re-render of LLY. This batch is docs only and does not edit that file.
+      - **#1080 (open, lane 3)** is that PR. It amends the vintage's prose and re-renders LLY's page and mirror at $0. The merge order is the coordinator's: this batch first, then #1080 merges main, keeps both row-35 edits, and closes 64 (b). Row 64's unlock cell names it.
   - **Row 35** gains a pointer to row 64 (b), because it already holds #1069's guard and LLY's Extraction note.
   - **Row 41's WERN clause, corrected** (the coordinator's addition to this batch, 2026-11-15). #1076 added an OPERATOR ACTION about WERN's key-unknowns line (`data/dossiers/WERN/dossier.md:253` and its mirror), which says the CIQ panel shows "a $752.0M facility" due within 12 months. That figure is the panel's two revolvers, $427.0M and $325.0M.
     - **The wrong premise.** The clause said the misstatement was unlocked by "a WERN CIQ re-export made after the 2026-10-05 termination", then one paid rebuild of about $7.80. But the export is not stale: WERN's committed CIQ export is dated 2026-11-12, already after the termination.
@@ -104,7 +106,7 @@ superseded-by:
   - The page's CIQ `source_ref`s read "exported 2026-11-12".
   - FUBO's committed page carries "Capital Structure Details (Q3 2026 filed Aug-05-2026)".
   - The operator's re-ruling is the coordinator's relay to this session (2026-11-15). This batch did not see its source.
-- **Row 64 (a), re-measured:** the group 3 record's method was run on the 26 committed pages at main `c58d5b2f`: each page's latest "exported YYYY-MM-DD" in any `source_ref`, against its `valuation_basis.date_semantics.analysis_as_of`.
+- **Row 64 (a), re-measured:** the group 3 record's method was run on the 26 committed pages at main `c58d5b2f`: each page's latest "exported YYYY-MM-DD" in any `source_ref`, against its top-level `date_semantics.analysis_as_of` (`vinci/dossier/schemas.py`, the page's `date_semantics` field).
   - **9 of 26 pages** show an export after the as-of: IT, MCK, NKE, ORKA, TECX, V, VRRM, WERN and WLK.
   - **Against the record:** the record's 8 at `4f7a5d64` (#1070's branch) plus WERN, whose page landed after it (#1076: export 2026-11-12, as-of 2026-11-11).
   - **LLY's file mtime:** the record also counts it as a ninth case at `4f7a5d64`. This method cannot see an mtime, and LLY's page has since been rebuilt (#1071).
@@ -136,10 +138,16 @@ superseded-by:
   - **The 30 open** are the 30 `§4` IDs, which TeamNostra builds.
 - **Against batch 8:** RE2-D17 moved from open to fixed, and RE2-D6, RE2-D10 and RE2-D20 from in progress to fixed.
 
+**REVIEW ROUND 1** (the coordinator's independent review of `1e15ff4c`, "FIX FIRST", docs only). It re-checked the numbers: #1027's fail-first (24 fail at its parent, 36 pass at head), row 60's 142, 30, 5 and 1 of 178, row 64 (a)'s two boundaries, and row 41's WERN correction. It found four, all fixed in one docs commit:
+1. **Medium:** row 64 (b) and this record did not name #1080, lane 3's open PR that fixes #1069's vintage, which opened after `1e15ff4c`. Both now name it, with the merge order. This batch's row-35 edit stays one clause of its own, so #1080 can keep both edits when it merges main.
+2. **Low:** E2-D11's Pages cell lacked the "not re-measured" caveat this record claimed for it. It now has it, with the "figure skipped" counts on the rebuilt pages (EPAM 4, SMPL 8, TJX 1, VITL 2 at main `c58d5b2f`), marked as not #962's count, because FUBO's pre-#962 page carries 2.
+3. **Low:** RA-D4's Pages cell still read "none rebuilt". It now names SMPL's rebuilt bridge (above).
+4. **Nit:** row 64 (a) and this record named the field `valuation_basis.date_semantics.analysis_as_of`. The page's field is the top-level `date_semantics.analysis_as_of`, which WERN's `dossier.json` confirms.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **RE2-D17's named test fails at its parent only on a missing field,** never reaching an assertion. The row names two siblings that fail there on behaviour, so the claim does not rest on the attribute error.
 - **RE2-D20's residual stays as #1027's record left it.** Verra Mobility's Q3 2025 basis-clause header is on no committed page, and the flag still marks it. The falsifier: a committed page whose `next-fy` guide is one of #1027's 21 after its re-assembly.
-- **#962's note counts in the RE2-D6 and E2-D11 cells are #1028's,** at their pages' next build. They are not re-measured on the 9 pages rebuilt since, so those cells say so. A first filter tried here ("figure skipped" in a release flag) also caught FUBO, built before #962, so it is not #962's note, and no count from it is written.
+- **#962's note counts in the RE2-D6 and E2-D11 cells are #1028's,** at their pages' next build. They are not re-measured on the 9 pages rebuilt since, so those cells say so (E2-D11's since review round 1). A first filter tried here ("figure skipped" in a release flag) also caught FUBO, built before #962, so it is not #962's note, and no count from it is written.
 - **§5.0 is now at 60 of its 60 lines.** The next build that opens a row must close one or fold it, as rows 32 and 64 do.
 - **Row 64's two items share a row.** When one closes, that build restates the row to the other. The owner and the unlock cell name both items.
 
