@@ -74,6 +74,61 @@ def test_the_frozen_rows_alone_are_the_table_as_it_was() -> None:
                zip(table, [None, *(v for v, _ in table[:-1])], strict=True))
 
 
+# --- an entry amended after it merged ------------------------------------------------------------
+
+#: The entries whose PROSE was corrected after they merged (README, the rule's one exception for an
+#: entry file), each with every other field exactly as merged and the false words it replaced. The
+#: prose may be corrected only where it misstates the code the entry names; an edit that touches
+#: any other field changes what a committed page's stamp names, and reds here.
+AMENDED: dict[str, tuple[dict[str, object], str]] = {
+    # Merged in #1069 (188e0476); its text miscounted the correct prices the guard refuses.
+    "2026-11-14.form4-price-its-filing-contradicts-is-refused": (
+        {"id": "2026-11-14.form4-price-its-filing-contradicts-is-refused",
+         "follows": ["2026-11-11.guide-periods-read-where-stated-and-one-off-periods",
+                     "2026-11-13.bare-sales-and-profit-name-their-rows",
+                     "2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings"]},
+        "14 of them correct"),
+}
+
+
+def _prose_alone(raw: dict[str, object], merged: dict[str, object], was: str) -> str | None:
+    """Why ``raw`` is not a prose-only amendment of ``merged``, or None when it is. Prose-only:
+    every field but `names` and `note` as merged, the false words out of `names` and quoted in a
+    `note`."""
+    rest = {k: v for k, v in raw.items() if k not in ("names", "note")}
+    if rest != merged:
+        return f"fields beyond the prose moved: {rest} != {merged}"
+    if was in str(raw.get("names", "")):
+        return f"`names` still says {was!r}"
+    if was not in str(raw.get("note", "")):
+        return f"no `note` keeps the words it replaced, {was!r}"
+    return None
+
+
+def test_an_amended_entry_corrects_its_prose_and_nothing_else() -> None:
+    """(+) Each amended entry on disk is its merged self with corrected prose, its false words
+    quoted in its note, and it still reads as a vintage whose id and follows are unchanged."""
+    entries = {v: f for v, f, _ in ev.read_entries()}
+    for vid, (merged, was) in AMENDED.items():
+        raw = json.loads((ev.ENTRIES_DIR / f"{vid}.json").read_text(encoding="utf-8"))
+        assert _prose_alone(raw, merged, was) is None, (vid, _prose_alone(raw, merged, was))
+        assert entries[vid] == tuple(merged["follows"])  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("edit", [
+    {"follows": ["2026-11-13.bare-sales-and-profit-name-their-rows"]},   # a follow dropped
+    {"id": "2026-11-14.form4-price-guard"},                               # the id renamed
+    {"extra": "x"},                                                        # a field added
+    {"note": "a note that does not quote the words it replaced"},         # the false text lost
+    {"names": "refusing 19 sale prices, 14 of them correct"},             # the false text kept
+])
+def test_an_amendment_beyond_the_prose_is_refused(edit: dict[str, object]) -> None:
+    """(-) NEGATIVE PINS: each edit the exception does not allow is named, on the real entry."""
+    vid, (merged, was) = next(iter(AMENDED.items()))
+    raw = json.loads((ev.ENTRIES_DIR / f"{vid}.json").read_text(encoding="utf-8"))
+    assert _prose_alone({**raw, **edit}, merged, was) is not None
+
+
 # --- a vintage file -------------------------------------------------------------------------------
 
 def test_new_writes_one_file_following_every_head(tmp_path: Path,
