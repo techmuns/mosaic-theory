@@ -4132,6 +4132,16 @@ def _midcycle_section(mc: Any) -> list[str]:
     return out
 
 
+#: (2026-11-15) What a graph-cohort member with no 180-day return prints. It printed "no bars",
+#: one cause of three: since #1075 a member WITH bars whose close sits more than
+#: `mechanical._COVERAGE_GAP_DAYS` from either end of the window is refused, and a member the
+#: resolver cannot name is priced on no bars at all. `CohortMember` records none of the three. Only
+#: the cohort's `source_ref`, printed on the line above the list, names the refused members, and a
+#: renderer reads structured values, never a rendered string. So the line names no cause. Web
+#: twin: the cohort table's dash cell (dossier.js `idioVsShared`), which names none either.
+COHORT_NO_RETURN = "no 180d return"
+
+
 def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE,
                          ref: date | str | None = None) -> list[str]:
     """(D1·§1) The drawdown READ — per-gap ledger when the
@@ -4190,7 +4200,7 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE,
         out.append(_fact("Cohort read", io.read))
         out.append(f"- **Graph cohort** (`{cohort.source_ref}`):")
         for cm in cohort.value:
-            ret = f"{cm.ret_180d:.0%}" if cm.ret_180d is not None else "no bars"
+            ret = f"{cm.ret_180d:.0%}" if cm.ret_180d is not None else COHORT_NO_RETURN
             out.append(f"  - [{cm.hops}h] {cm.ticker}: {ret} · via {cm.via}")
     else:
         # (declutter · buy-side) absence is ONE quiet footnote line, never a labelled fact row
