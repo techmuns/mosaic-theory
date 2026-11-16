@@ -46,13 +46,14 @@ from vinci.dossier.anchor import (
     lease_basis_mismatch,
     r1_multiple_band,
 )
+from vinci.dossier.midcycle import MULTIPLE_BASIS as R1_BASIS
 from vinci.dossier.schemas import PrimarySource
 from vinci.dossier.synthesis import (
     driver_value_as_read,
     guidance_vintage_mark,
     newest_guidance_date,
 )
-from vinci.scenarios import BASIS_EV_NTM_EBIT, RECIPE_R4, RefPoint
+from vinci.scenarios import BASIS_EV_NTM_EBIT, BASIS_PE, RECIPE_R3, RECIPE_R4, RefPoint
 
 #: A supplied leg value further than this from its anchor is a DEVIATION and must state why.
 #: Relative, so it reads the same on a 1,330 revenue and a 12.5x multiple. Not tuned on outcomes —
@@ -101,6 +102,19 @@ UNPROPOSED_REASON: dict[tuple[str, str], str] = {
 #: there would read as R1 base cells becoming unproposable.
 R4_EBIT_WHY = ("NTM EBIT at exit is the recipe's whole leg driver — a pre-filled number would be "
                "the machine writing the underwrite (the R3 EPS rule)")
+
+#: (R3) Why EPS at exit is never proposed, on any leg — the rule R4's EBIT reason cites. Kept out of
+#: `UNPROPOSED_REASON` for R4_EBIT_WHY's reason: that table is R1's six cells exactly.
+R3_EPS_WHY = ("EPS at exit is the recipe's whole leg driver — a pre-filled number would be the "
+              "machine writing the underwrite")
+
+#: (R3) Why the forward P/E is never proposed. R1's base anchor is a trailing EV/EBITDA median, an
+#: ENTERPRISE multiple — `_anchors_on_basis` drops it from a P/E record for exactly that reason —
+#: and the page's own P/NTM EPS history is context only (its note says so, beside it in the
+#: evidence), so no committed statistic anchors this cell.
+R3_MULTIPLE_WHY = ("no ruled anchor for a forward P/E — R1's own-history anchor is a trailing "
+                   "EV/EBITDA, an enterprise multiple, and the page's P/NTM EPS history is context "
+                   "only. That history, with its note, is in the evidence")
 
 
 class ProposalRefusedError(RuntimeError):
@@ -643,7 +657,7 @@ def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
 #: marks them, so a reviewer reading the diff can see at a glance what is input and what is context.
 COMMENTARY_PREFIX = "_"
 
-#: Why the horizon is never proposed — one sentence, read by the R1 and R4 templates alike.
+#: Why the horizon is never proposed — one sentence, read by the R1, R3 and R4 templates alike.
 HORIZON_WHY = ("no statistic anchors WHEN a thesis realises — it is the analyst's judgment about "
                "the catalyst path, and a default here would set the IRR the record is graded on. "
                "State it in years: 1.5 = 18 months.")
@@ -712,6 +726,13 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     if _get(doc, "anchor", "recipe_hint") == RECIPE_R4:
         return build_r4_template(doc)
     _refuse_if_recipe_unresolved(doc, ticker)
+    # AN R3-TAGGED PAGE GETS AN R3-SHAPED TEMPLATE (§5.0 row 10). The R1 shape wrote an EV/EBITDA
+    # basis `_run_r3` refuses, a pre-filled margin it refuses on a leg, and three enterprise facts
+    # it refuses, so GOOGL's R3 record was written by hand-correcting the template. Dispatched
+    # AFTER the applicable refusal above, unlike R4: R4's own eligibility says R1 cannot anchor,
+    # R3's asks nothing of R1, and that coupling is the separate open item on the same row.
+    if _get(doc, "anchor", "recipe_hint") == RECIPE_R3:
+        return build_r3_template(doc)
     # ONE LEASE BASIS OR NO TEMPLATE (review of #750): the facts below come from the anchor, the
     # multiple from its history; a page whose lease basis the anchor is not on would pair them
     # across the lease line
@@ -800,7 +821,9 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     return {
         "ticker": ticker,
         "recipe_id": _get(doc, "anchor", "recipe_hint"),
-        "multiple_basis": "EV/EBITDA",
+        # THE VALIDATOR'S OWN CONSTANT, never a second copy of the string: `run_recipe` refuses an
+        # R1 record whose basis is not `midcycle.MULTIPLE_BASIS`, so this is that name.
+        "multiple_basis": R1_BASIS,
         # THE ENTRY WINDOW — EMPTY, NEVER PROPOSED. `multiple_basis` names the METRIC; this names
         # the PERIOD the entry multiple's denominator covers (NTM | LTM | FY####). The template
         # cannot know which window the analyst struck their entry multiple on — the dossier
@@ -930,13 +953,31 @@ def r4_bridge_fact(doc: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _ev_ntm_ebit_band(doc: dict[str, Any]) -> dict[str, Any] | None:
-    """The page's own EV/NTM EBIT history band (`forward_multiple_history`), or None."""
+def _forward_band(doc: dict[str, Any], metric: str) -> dict[str, Any] | None:
+    """The page's own history band for one `forward_multiple_history` metric, or None."""
     for s in _get(doc, "forward_multiple_history", "series") or []:
-        if isinstance(s, dict) and s.get("metric") == "EV/NTM EBIT" and isinstance(
-                s.get("band"), dict):
+        if isinstance(s, dict) and s.get("metric") == metric and isinstance(s.get("band"), dict):
             return dict(s["band"], context_only=s.get("context_only"), note=s.get("note"))
     return None
+
+
+def _ev_ntm_ebit_band(doc: dict[str, Any]) -> dict[str, Any] | None:
+    """The page's own EV/NTM EBIT history band (`forward_multiple_history`), or None."""
+    return _forward_band(doc, "EV/NTM EBIT")
+
+
+def _band_line(label: str, b: dict[str, Any]) -> str:
+    """One own-history band as an evidence line — the R3 and R4 multiples print it alike."""
+    pct = b.get("percentile")
+    rank = (f"{float(pct) * 100:.1f}th pctile of its own range"
+            if isinstance(pct, (int, float)) else "rank unknown")
+    return (f"own history {label}: latest observed close "
+            f"{b.get('latest_observed_close')} on {b.get('latest_close_date')} ({rank}; not in the "
+            f"distribution) · low {b.get('low')} · median {b.get('median')} · high "
+            f"{b.get('high')} · {b.get('n_closes')} earlier closes over "
+            f"{b.get('window_span_years')}y"
+            + (" · CONTEXT ONLY" if b.get("context_only") else "")
+            + (f" · {b['note']}" if b.get("note") else ""))
 
 
 def _r4_multiple_why(doc: dict[str, Any]) -> str:
@@ -1028,17 +1069,7 @@ def r4_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
             + " · ".join(f"{m.get('period')} {m.get('value')}" for m in cm))
     b = _ev_ntm_ebit_band(doc)
     if b:
-        pct = b.get("percentile")
-        rank = (f"{float(pct) * 100:.1f}th pctile of its own range"
-                if isinstance(pct, (int, float)) else "rank unknown")
-        ev["multiple"].append(
-            f"own history EV/NTM EBIT (CIQ Financials→Multiples): latest observed close "
-            f"{b.get('latest_observed_close')} on {b.get('latest_close_date')} ({rank}; not in the "
-            f"distribution) · low {b.get('low')} · median {b.get('median')} · high "
-            f"{b.get('high')} · {b.get('n_closes')} earlier closes over "
-            f"{b.get('window_span_years')}y"
-            + (" · CONTEXT ONLY" if b.get("context_only") else "")
-            + (f" · {b['note']}" if b.get("note") else ""))
+        ev["multiple"].append(_band_line("EV/NTM EBIT (CIQ Financials→Multiples)", b))
     tm = _get(doc, "mechanical", "peer_comps", "trading_multiples")
     if isinstance(tm, dict) and tm.get("value"):
         ev["multiple"].append(f"PEER CROSS-SECTION (LTM and NTM) — {tm['value']}")
@@ -1150,6 +1181,140 @@ def build_r4_template(doc: dict[str, Any]) -> dict[str, Any]:
             "it is empty and needs a derivation. The two facts are the machine's: the share count, "
             "and the bridge — CIQ's TEV claims less market cap, held to exit by the operator's "
             "rule. Keys beginning '_' are commentary and are ignored on create."),
+    }
+
+
+# --- (R3) the forward P/E template ---------------------------------------------------------------
+
+def r3_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
+    """What the analyst needs beside the R3 cells: EPS and the P/E, from the page's forward layers.
+
+    Keyed by the recipe's own axes, as `axes_for` names them — `earnings`, `multiple` — so the
+    template carries no revenue, margin or EV/EBITDA frame for axes its arithmetic never reads.
+    Every list is COMPLETE, as R4's: a template is a file the analyst reads.
+    """
+    ev: dict[str, list[str]] = {"earnings": [], "multiple": []}
+    fc = doc.get("forward_consensus") or {}
+    as_of = fc.get("as_of")
+
+    # earnings — which EPS line the P/E is struck on FIRST: CIQ strikes some pages' P/E on GAAP EPS
+    # beside material non-operating income (row 10 (a)), so the line is the leg's first question
+    vb = doc.get("valuation_basis") or {}
+    if vb.get("recipe") == RECIPE_R3 and vb.get("earnings_basis"):
+        ev["earnings"].append(f"the page's R3 earnings basis (valuation_basis): "
+                              f"{vb['earnings_basis']}")
+    pb = fc.get("pe_eps_basis") or {}
+    if pb:
+        ev["earnings"].append(
+            f"the EPS line CIQ's P/E is struck on (forward_consensus.pe_eps_basis): fiscal years "
+            f"{pb.get('fiscal_years')} · NTM {pb.get('ntm')}")
+    for r in fc.get("spreads") or []:
+        if str(r.get("metric") or "").startswith("EPS"):
+            ev["earnings"].append(
+                f"consensus {r.get('metric')} {r.get('period')} ($/share, CIQ Estimates {as_of}): "
+                f"median {r.get('median')} · mean {r.get('mean')} · low {r.get('low')} · high "
+                f"{r.get('high')} · n {r.get('estimates')} · sd {r.get('std_dev')}")
+    for r in fc.get("paths") or []:
+        if str(r.get("metric") or "").startswith("EPS") and r.get("points"):
+            pts = " → ".join(f"{p.get('months_ago')}m ago {p.get('value')}" for p in r["points"])
+            ev["earnings"].append(f"consensus {r.get('metric')} {r.get('period')} path "
+                                  f"($/share): {pts}")
+    fs = _get(doc, "mechanical", "financial_summary", "annual", "value") or {}
+    for row in fs.get("rows") or []:
+        label = str(row.get("label", "")).strip()
+        if label.lower().startswith("eps"):
+            pairs = [f"{c} {v}" for c, v in zip(fs.get("columns") or [], row.get("values") or [],
+                                                strict=False) if v is not None]
+            if pairs:
+                ev["earnings"].append(f"reported/estimated {label} arc ($/share): "
+                                      + " → ".join(pairs))
+    ev["earnings"].extend(_guidance_lines(doc))
+
+    # multiple — today's P/E, the page's own history (context only where the page says so), peers
+    cm = [m for m in fc.get("current_multiples") or [] if m.get("metric") == "Price/Earnings"]
+    if cm:
+        ev["multiple"].append(
+            f"today's P/E (CIQ Estimates→Multiples, {as_of}): "
+            + " · ".join(f"{m.get('period')} {m.get('value')}" for m in cm))
+    cur = (vb.get("current_multiple") or {}) if vb.get("recipe") == RECIPE_R3 else {}
+    if cur.get("value_at_page_price") is not None:
+        ev["multiple"].append(
+            f"the NTM P/E at the page's price {cur.get('page_price')} "
+            f"({cur.get('page_price_as_of')}): {cur.get('value_at_page_price')} — "
+            f"{cur.get('value_at_page_price_basis')}")
+    b = _forward_band(doc, "P/NTM EPS")
+    if b:
+        ev["multiple"].append(_band_line("P/NTM EPS (CIQ Financials→Multiples)", b))
+    tm = _get(doc, "mechanical", "peer_comps", "trading_multiples")
+    if isinstance(tm, dict) and tm.get("value"):
+        ev["multiple"].append(f"PEER CROSS-SECTION (LTM and NTM) — {tm['value']}")
+
+    drivers = _operating_driver_lines(doc)
+    ev["earnings"].extend(drivers)
+    ev["multiple"].extend(drivers)
+    return ev
+
+
+def build_r3_template(doc: dict[str, Any]) -> dict[str, Any]:
+    """The R3 (forward P/E) underwrite template: the recipe's two axes and its evidence, no facts.
+
+    ONLY WHAT THE RECIPE READS, as R4's. `_run_r3` values a leg as EPS × P/E and refuses the rest:
+    a margin on a leg (EPS contains it) and a `net_debt`, `d_and_a` or `diluted_shares` fact (a P/E
+    already prices equity per share, so each would count something twice). So the template emits
+    `eps` and `multiple` cells and no fact — GOOGL's committed R3 record carries none.
+
+    NOTHING IS PRE-FILLED. EPS is the recipe's whole leg driver, and no committed statistic anchors
+    a forward P/E (`R3_MULTIPLE_WHY`), so all six cells arrive EMPTY with their reasons and
+    `scenario-create` requires a derivation for each. No share-count or lease-basis check runs:
+    both guard the enterprise bridge this recipe does not have.
+    """
+    anchor_fy = _get(doc, "mechanical", "ev_gap", "anchor_fy")
+    scenarios: dict[str, Any] = {}
+    for leg in LEGS:
+        cell: dict[str, Any] = {
+            "eps": None,
+            f"{COMMENTARY_PREFIX}eps_why_no_anchor": R3_EPS_WHY,
+            "eps_derivation": "",                    # REQUIRED — where this number came from
+            "multiple": None,
+            f"{COMMENTARY_PREFIX}multiple_why_no_anchor": R3_MULTIPLE_WHY,
+            "multiple_derivation": "",               # REQUIRED
+            "reason": "",
+        }
+        if leg == "base":
+            cell["years_to_terminal"] = None
+            cell[f"{COMMENTARY_PREFIX}years_to_terminal_why_no_anchor"] = HORIZON_WHY
+            # NOT PROPOSED, for R4's reason: R1 pre-fills the EV-gap's year because its revenue
+            # anchor is struck there; R3 proposes no EPS, so there is no year the proposal chose
+            cell["leg_fy"] = None
+            cell[f"{COMMENTARY_PREFIX}leg_fy_why_not_proposed"] = (
+                "the fiscal year this leg's EPS is struck at — not proposed, because R3 proposes "
+                "no EPS to strike it at"
+                + (f". A year other than the EV-gap's FY{anchor_fy} states why in `reason`"
+                   if anchor_fy else "") + ".")
+        if leg == "bear":
+            # NO `margin_basis`: `_require_bear_basis` refuses one on a leg with no margin
+            cell["bear_basis"] = ""
+        scenarios[leg] = cell
+    return {
+        "ticker": str(doc.get("ticker") or ""),
+        "recipe_id": RECIPE_R3,
+        "multiple_basis": BASIS_PE,
+        "entry_basis": "",
+        "entry_denominator": "",
+        "underwrite_date": "",
+        "analyst": "",
+        "spot": _get(doc, "mechanical", "stock_info", "price", "value"),
+        "spot_source": _get(doc, "mechanical", "stock_info", "price", "source_ref"),
+        "spot_as_of": _get(doc, "mechanical", "stock_info", "as_of"),
+        "facts": {},
+        "scenarios": scenarios,
+        f"{COMMENTARY_PREFIX}evidence": r3_evidence(doc),
+        f"{COMMENTARY_PREFIX}note": (
+            "R3 — forward P/E. No leg cell is pre-filled: EPS at exit is the recipe's whole leg "
+            "driver, and no committed statistic anchors a forward P/E, so each cell states why it "
+            "is empty and needs a derivation. No fact is carried: a P/E prices equity per share, "
+            "so the recipe refuses a net-debt, D&A or share-count fact. Keys beginning '_' are "
+            "commentary and are ignored on create."),
     }
 
 
