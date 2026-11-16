@@ -66,7 +66,7 @@ superseded-by:
      READ, never skipped:
      - a displaced agreement CONFUSABLE with two agreements on the page (the same date, and one name
        the other's tail) decides none of them. The page is every located exhibit AND every debt
-       agreement in a located filing beside one, which the loop reads for who it is but never sends
+       agreement among the exhibits a located pointer row lists, which the loop reads for who it is but never sends
        (F1: VRRM's term-loan restatement `vrrm-ex10_2.htm` sits beside its A&R revolver, both
        dated October 17, 2025). VRRM's revolver and its first-lien term loan are both dated March 1,
        2018, and their names are not confusable;
@@ -185,7 +185,7 @@ whatever they are.
 - *Pins* (`tests/test_covenant_coverage_rule.py`, 44 nodes, on
   `tests/fixtures/covenant_coverage_rule/`).
   - The fixtures are real: seven committed pages' layers, unmodified, and 61 cuts of the cached
-    exhibits: every target, and since round 2 every other exhibit of a located filing. Each cut
+    exhibits: every target, and since round 2 every other exhibit its pointer row lists. Each cut
     reads exactly as its full exhibit reads (its README). `round2_heads.json` holds three more real
     heads (UBER, VRRM `vrrm-ex10_2.htm`, NKE's five-year agreement).
   - **The brief's five:**
@@ -260,7 +260,7 @@ whatever they are.
   fails on the pushed head (`ea9c5c46`): 13 new nodes, 13 red there.
   - **F1** (medium) same-date sibling agreements read as one. A name now matches only the same
     name; the tail only makes two namings confusable, and two confusable agreements on a page make
-    the displaced name ambiguous. The page includes every debt agreement in a located filing that
+    the displaced name ambiguous. The page includes every debt agreement among the exhibits a pointer row lists that
     the selector does not target, read for who it is. A plain amendment's own date is no identity.
     Pins: VRRM's real `vrrm-ex10_2.htm` targeted and untargeted beside its A&R revolver against a
     derived later restatement (both read); the NKE shape, derived from NKE's real heads (a 364-day
@@ -376,6 +376,33 @@ whatever they are.
   deliberately leaves to the core agreement. Widening the targets is a selector change with its
   own cost and its own audit, and is not built here. It matters before VRRM's next paid build
   (re-rehearsal around 2026-12-07).
+- **Found after round 2, DEFERRED to the per-filing selector PR** (the coordinator's
+  verification of `995e3f21`, 2026-11-16). This PR has had its two feedback rounds, and none of
+  the three moves any of the 91 audit outcomes on today's pages. The selector PR builds on this
+  one, touches the same binder and widens the targets that would expose N1, so **it must fix N1
+  before it merges.**
+  - **N1 (medium), introduced by F5.** `_GAP_AGREEMENT` stops at "No.", so "Amendment No. 1 to the
+    Term Loan Agreement" reads as "1 to the Term Loan Agreement", with no AMENDMENT word.
+    `_second_agreement` then refuses the correct binding as a second agreement, and the
+    overlapping restart binds the term to the amendment's date.
+    - Real, re-checked here at `995e3f21`: UBER `0001552781-21-000058 · e21071_ex10-1.htm`. Its
+      "Existing 2016 Loan Agreement" binds TERM LOAN AGREEMENT dated 2018-06-13, where `e532bb0c`
+      bound 2016-07-13: the recital binding of July 13, 2016 is refused, and the June 13, 2018 one
+      is taken. That recital has no displacing verb, so `displaced_agreements` returns nothing and
+      no outcome moves.
+    - Derived from NKE's texts (the coordinator's): a predecessor recited "as amended by the First
+      Amendment to the Credit Agreement, dated as of March 8, 2024", and then terminated, would
+      also displace CREDIT AGREEMENT 2024-03-08, and NKE's live 2024 364-day agreement would read
+      superseded.
+  - **N2 (low), a stated limit.** Ambiguity is decided only from the documents on the page. If only
+    one of two agreements with the same name and date is located, the other can still be
+    superseded. NKE's own March 2022 8-K is not admitted as a pointer (its `active_…` exhibit
+    filenames), so NKE is not exposed today.
+  - **N3 (low).** The sibling read fetches every exhibit a pointer row lists, image files included:
+    EPAM's 10-K row (`0001352010-26-000015`) lists six `.jpg` files. One sibling that cannot be
+    fetched switches the page to "supersedes nothing", which costs calls, never correctness. The
+    record's "each located filing's other exhibits" is corrected above to "the exhibits the
+    pointer row lists".
 - *Falsifier.* A re-assembled page on which:
   - an exhibit reads superseded while the agreement it is or amends is still in force (its later
     exhibit's words named another agreement); or
