@@ -3085,11 +3085,20 @@ const _EXHIBIT_OUTCOME = {
   no_terms_returned: "read, and the model returned no terms",
 };
 
+// A refusal whose head gave no title: both readings, the pointer's family verbatim, or the first
+// clause alone with no family (operator, 2026-11-16; py: render._NO_TITLE_READ).
+const _NO_TITLE_READ = "refused: no agreement title was read from its head";
+
 // One exhibit's cause, from its structured outcome (py: render._exhibit_outcome_text).
 function exhibitOutcomeText(o) {
-  let why = _EXHIBIT_OUTCOME[o.outcome] ?? String(o.outcome);
-  if (o.outcome === "not_debt_agreement")
-    why += o.declared_title ? ` (it declares itself “${o.declared_title}”)` : " (its head declares no agreement)";
+  let why;
+  if (o.outcome === "not_debt_agreement" && !o.declared_title) {
+    const family = typeof o.family === "string" ? o.family : "";
+    why = _NO_TITLE_READ + (family.trim() ? `; it was located as ${family}` : "");
+  } else {
+    why = _EXHIBIT_OUTCOME[o.outcome] ?? String(o.outcome);
+    if (o.outcome === "not_debt_agreement") why += ` (it declares itself “${o.declared_title}”)`;
+  }
   return `${o.filename} — ${why}`;
 }
 
@@ -3114,9 +3123,18 @@ function unextractedLineHtml(missing, outcomes) {
 // above a present answer. Old JSON (no rows) → flat fact.
 function covenantTerms(cs) {
   const rs = cs.covenant_term_rows;
-  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
-    return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   const ptrs = cs.covenant_pointer_rows;
+  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length) {
+    // NO EXHIBIT GAVE ROWS (py: render._covenant_term_lines): with the per-exhibit outcomes, each
+    // located exhibit's own cause replaces the stored digest (#1084 review round 1); without them
+    // the digest prints as before.
+    const outcomes = cs.covenant_exhibit_outcomes;
+    const located = [...new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean))].sort();
+    if (outcomes && outcomes.status === "present" && located.length)
+      return `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>` +
+        `${unextractedLineHtml(located, outcomes)}</i></div>`;
+    return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
+  }
   const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
   if (!gov.length) return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   const families = [];

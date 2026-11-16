@@ -1,0 +1,152 @@
+{
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "Finance Lease Liability",
+     "type": "Capital Lease",
+     "principal_musd": 0.4,
+     "coupon": "10.640%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease Liability",
+     "type": "Capital Lease",
+     "principal_musd": 0.9,
+     "coupon": "17.620%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "Capital Structure Summary: no aggregates parsed"
+  },
+  "detail_as_of": "A 2025 filed Feb-26-2026",
+  "maturity_filings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no trailing-12m instrument maturity to anchor an 8-K"
+  },
+  "covenant_pointers": {
+   "value": "material contracts (10-K exhibit i [0001193125-26-076793]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "material contracts (10-K exhibit index)",
+     "filing": "latest 10-K",
+     "filing_date": "2026-02-26",
+     "accession": "0001193125-26-076793",
+     "exhibits": [
+      "tecx-ex10_4.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Finance Lease Liability",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Operating Lease Liability",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending).",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": null,
+  "maturity_event": null,
+  "panel_vintage": {
+   "value": "the debt schedule is 232d old (source filed 2026-02-26); no Item 1.02 (termination of a material agreement) has been filed since",
+   "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-02-26",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001193125-26-338062",
+     "filed": "2026-08-06",
+     "read_as": "the latest periodic report",
+     "statements": 0,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Finance Lease Liability' · not checked against a filing",
+     "instrument": 0,
+     "description": "Finance Lease Liability",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Operating Lease Liability' · not checked against a filing",
+     "instrument": 1,
+     "description": "Operating Lease Liability",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    }
+   ]
+  }
+ },
+ "e5_qa_flags": [
+  "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0001193125-26-076793 · tecx-ex10_4.htm declares itself no agreement at all"
+ ]
+}

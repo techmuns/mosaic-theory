@@ -1,0 +1,30 @@
+[
+  {
+    "accession": "0001193125-25-242530",
+    "filename": "vrrm-ex10_1.htm",
+    "family": "2021 Term Loan Due 2028",
+    "outcome": "extracted",
+    "declared_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001564590-21-015880",
+    "filename": "vrrm-ex101_62.htm",
+    "family": "Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001104659-18-041476",
+    "filename": "a18-15692_1ex10d1.htm",
+    "family": "2021 Term Loan Due 2028",
+    "outcome": "not_debt_agreement",
+    "declared_title": "GORES II SUBSCRIPTION AGREEMENT"
+  },
+  {
+    "accession": "0000950170-25-072679",
+    "filename": "vrrm-ex10_1.htm",
+    "family": "Revolving Credit Facility",
+    "outcome": "not_debt_agreement",
+    "declared_title": null
+  }
+]

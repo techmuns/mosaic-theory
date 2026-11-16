@@ -1878,12 +1878,22 @@ _EXHIBIT_OUTCOME = {
 }
 
 
+#: A refusal whose head gave no title. "Its head declares no agreement" was false on real pages:
+#: VRRM's `vrrm-ex10_1.htm` heads itself "Amendment No. 4 to REVOLVING CREDIT Agreement", which
+#: `agreement_title` does not read (#1084 independent review). So both readings print — none was
+#: read, and the pointer located it as its family, verbatim (operator, 2026-11-16: "State both
+#: readings (Recommended)"); with no family, the first clause alone. Mirrored by dossier.js.
+_NO_TITLE_READ = "refused: no agreement title was read from its head"
+
+
 def _exhibit_outcome_text(o: CovenantExhibitOutcome) -> str:
     """One exhibit's cause, from its structured outcome: the heading E5 read names a refusal."""
-    why = _EXHIBIT_OUTCOME[o.outcome]
-    if o.outcome == "not_debt_agreement":
-        why += (f" (it declares itself “{o.declared_title}”)" if o.declared_title
-                else " (its head declares no agreement)")
+    if o.outcome == "not_debt_agreement" and not o.declared_title:
+        why = _NO_TITLE_READ + (f"; it was located as {o.family}" if o.family.strip() else "")
+    else:
+        why = _EXHIBIT_OUTCOME[o.outcome]
+        if o.outcome == "not_debt_agreement":
+            why += f" (it declares itself “{o.declared_title}”)"
     return f"{o.filename} — {why}"
 
 
@@ -1911,9 +1921,18 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     answer (governing_terms takes the latest PRESENT). A pre-H1d dossier.json falls back to the flat
     one-line string."""
     rows_s = getattr(cs, "covenant_term_rows", None)
-    if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
-        return [_fact("Covenant terms (from the filed agreement)", cs.covenant_terms)]
     ptrs = getattr(cs, "covenant_pointer_rows", None)
+    if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
+        # NO EXHIBIT GAVE ROWS. With the per-exhibit outcomes, each located exhibit's own cause
+        # replaces the stored digest (#1084 review round 1): LLY's, ORKA's, TECX's and VITL's
+        # digest says "extraction failed" for an exhibit E5 refused before any call. Without them
+        # the digest prints as before.
+        outcomes_s = getattr(cs, "covenant_exhibit_outcomes", None)
+        none_cited = sorted({p.accession for p in (ptrs.value if ptrs is not None and ptrs.value
+                                                    else []) if p.accession})
+        if outcomes_s is not None and outcomes_s.status is SourceStatus.PRESENT and none_cited:
+            return [f"- _{_unextracted_line(none_cited, outcomes_s)}_"]
+        return [_fact("Covenant terms (from the filed agreement)", cs.covenant_terms)]
     gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
     if not gov:
         return [_fact("Covenant terms (from the filed agreement)", cs.covenant_terms)]

@@ -316,16 +316,19 @@ class _Case(typing.NamedTuple):
     causes: dict[str, str]  # each unextracted accession → the cause its line must state
 
 
+#: The operator's ruling on a refusal with no title read (2026-11-16, "State both readings
+#: (Recommended)"): both readings, the pointer's family verbatim.
+_NO_TITLE_10K = ("refused: no agreement title was read from its head; it was located as material "
+                 "contracts (10-K exhibit index)")
+
 #: #1073's four frozen cases, each exhibit's cause as the committed record states it
 CASES = [
-    _Case("EPAM", {"0001352010-26-000015":
-                   "refused: not a debt agreement (its head declares no agreement)"}),
+    _Case("EPAM", {"0001352010-26-000015": _NO_TITLE_10K}),
     _Case("NCNO", {"0001902733-26-000022":
                    "refused: not a debt agreement (it declares itself “OFFICE LEASE”)"}),
     _Case("AMZN", {"0001104659-26-072140": "not sent: past the cost bound on exhibits per page",
                    "0001193125-18-139368": "not sent: past the cost bound on exhibits per page"}),
-    _Case("BURL", {"0001193125-26-116001":
-                   "refused: not a debt agreement (its head declares no agreement)",
+    _Case("BURL", {"0001193125-26-116001": _NO_TITLE_10K,
                    "0001193125-14-313404": "not sent: past the cost bound on exhibits per page",
                    "0001193125-22-200058": "not sent: past the cost bound on exhibits per page"}),
 ]
@@ -476,3 +479,113 @@ def test_both_renderers_label_every_outcome_kind() -> None:
     assert set(re.findall(r"^\s+(\w+):", table, re.M)) == _ALL_KINDS
     for kind, label in _EXHIBIT_OUTCOME.items():
         assert f'{kind}: "{label}"' in table, kind
+    from vinci.dossier.render import _NO_TITLE_READ  # the untitled refusal's first reading
+    assert f'const _NO_TITLE_READ = "{_NO_TITLE_READ}";' in js
+
+
+# --- independent review, round 1 ----------------------------------------------------------------
+
+_DIGEST = "Covenant terms (from the filed agreement)"
+_TECX_ACC = "0001193125-26-076793"
+
+
+def _tecx(with_field: bool) -> dict[str, typing.Any]:
+    """TECX's frozen block (committed 2026-11-16): one located exhibit, refused by E5 before any
+    model call, so it carries no term rows and its stored digest says the extraction failed. With
+    the field, the real loop's outcome for it (the frozen fixture)."""
+    page = _hosted("TECX", _frozen_outcomes("TECX") if with_field else None)
+    assert page["mechanical"]["capital_structure"].get("covenant_term_rows") is None
+    return page
+
+
+def test_a_page_whose_exhibits_gave_no_rows_states_each_cause_not_the_digest_e2e(
+        tmp_path: pathlib.Path) -> None:
+    """(+) Review round 1 (LLY, ORKA, TECX, VITL). With no term rows both renderers returned the
+    stored digest, "extraction failed: no covenant terms extracted from located exhibits", which
+    is false for an exhibit E5 refused before any call. With the field they state each located
+    exhibit's own cause there too, on both renderers alike."""
+    page = _tecx(with_field=True)
+    md = _md_line(page)
+    stated = _stated(md)
+    assert stated == {_TECX_ACC: _NO_TITLE_10K}, md
+    from vinci.dossier.render import render_markdown
+    full = render_markdown(Dossier.model_validate(page))
+    digest = page["mechanical"]["capital_structure"]["covenant_terms"]["value"]
+    assert digest not in full and _DIGEST not in full, "the stored digest is not printed"
+    assert _web_line(tmp_path, page) == md
+
+
+def test_without_the_field_a_no_rows_page_keeps_its_stored_digest_e2e(
+        tmp_path: pathlib.Path) -> None:
+    """(−) The same page without the field — LLY, ORKA, TECX and VITL as committed — prints its
+    stored digest as before, on both renderers, and no unextracted line."""
+    from vinci.dossier.render import render_markdown
+
+    page = _tecx(with_field=False)
+    digest = page["mechanical"]["capital_structure"]["covenant_terms"]["value"]
+    md = render_markdown(Dossier.model_validate(page))
+    assert f"**{_DIGEST}:** {digest}" in md
+    assert _HEAD not in md
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    src = tmp_path / "page.json"
+    src.write_text(json.dumps(page))
+    driver = r"""
+import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { renderDossier } = await import(pathToFileURL(process.argv[1]).href);
+process.stdout.write(renderDossier(JSON.parse(readFileSync(process.argv[2])), null));
+"""
+    web = html.unescape(subprocess.run(
+        ["node", "--input-type=module", "-e", driver, str(JS), str(src)],
+        capture_output=True, text=True, check=True).stdout)
+    assert digest in web and _HEAD not in web
+
+
+def test_the_outcomes_are_never_in_the_synthesis_facts_dump() -> None:
+    """(−) Review round 1. `synthesis.NOT_SENT` keeps the field out of the facts the model reads,
+    on a page carrying it and on one without (where a dump would hold its null): every synthesis
+    request stays byte-identical to the one built before the field (row 53). Precedent:
+    `test_customer_count.py::test_the_count_is_never_sent_to_the_synthesis`."""
+    from vinci.dossier.synthesis import NOT_SENT
+
+    for page in (_tecx(with_field=True), _tecx(with_field=False)):
+        mech = Dossier.model_validate(page).mechanical
+        assert mech is not None
+        assert "covenant_exhibit_outcomes" not in mech.model_dump(
+            exclude=NOT_SENT)["capital_structure"]
+
+
+def test_a_refusal_with_no_title_states_both_readings_e2e(tmp_path: pathlib.Path) -> None:
+    """(+) The operator's ruling (2026-11-16, "State both readings (Recommended)"). E5 read no
+    title from the head of VRRM's `0000950170-25-072679 · vrrm-ex10_1.htm` (its head reads
+    "Amendment No. 4 to REVOLVING CREDIT Agreement", a recall defect for its own PR). The old label,
+    "its head declares no agreement", was false. Both readings print: no title was read, and the
+    pointer located it as its family, verbatim. Real outcomes (the frozen fixture) in VRRM's frozen
+    block; `vrrm-ex10_1.htm` is also the filename of an EXTRACTED exhibit under another accession,
+    so the line must key by accession. The titled refusal on the same line is unchanged."""
+    page = _hosted("VRRM", _frozen_outcomes("VRRM"))
+    md = _md_line(page)
+    assert _stated(md) == {
+        "0000950170-25-072679": "refused: no agreement title was read from its head; it was "
+                                "located as Revolving Credit Facility",
+        "0001104659-18-041476": "refused: not a debt agreement (it declares itself “GORES II "
+                                "SUBSCRIPTION AGREEMENT”)",
+    }, md
+    assert "0000950170-25-072679 · vrrm-ex10_1.htm — refused" in md
+    assert _web_line(tmp_path, page) == md
+
+
+@pytest.mark.parametrize("family", ["", "   "], ids=["empty", "blank"])
+def test_a_refusal_with_no_title_and_no_family_states_the_first_reading_alone_e2e(
+        tmp_path: pathlib.Path, family: str) -> None:
+    """(−) The ruling's second half: with no family to name, the first clause prints alone — a
+    family is never invented."""
+    outcomes = [{**o, "family": family} for o in _frozen_outcomes("TECX")]
+    page = _hosted("TECX", outcomes)
+    md = _md_line(page)
+    assert _stated(md) == {_TECX_ACC: "refused: no agreement title was read from its head"}, md
+    assert "located as" not in md
+    assert _web_line(tmp_path, page) == md

@@ -46,11 +46,21 @@ superseded-by:
   > burl-ex10_39.htm — refused: not a debt agreement (its head declares no agreement)
 
   - A refusal names the heading E5 read, where it read one: NCNO's "(it declares itself “OFFICE
-    LEASE”)".
+    LEASE”)". Where E5 read none, both readings print: "refused: no agreement title was read
+    from its head; it was located as <family>", the pointer's family verbatim, or the first
+    clause alone where the family is blank. The first draft said "(its head declares no
+    agreement)", which the independent review showed false: VRRM's `vrrm-ex10_1.htm` heads
+    itself "Amendment No. 4 to REVOLVING CREDIT Agreement".
   - An accession the field holds no outcome for reads "no outcome recorded". Neither renderer
     falls back to a QA-flag string.
   - With the field absent, both print #1073's neutral line. On the web that is the same bytes,
     the apostrophe unescaped as before.
+  - *Where no exhibit gave term rows* (#1084 independent review, round 1). Both renderers used
+    to print the stored covenant digest there, whatever the field held. LLY, ORKA, TECX and VITL
+    each have one located exhibit, which E5 refused before any model call. Their digest reads
+    "extraction failed: no covenant terms extracted from located exhibits", which is false for
+    each. With the field, that path now prints the same line, naming each located exhibit's
+    cause. Without the field, the digest prints as before.
 - *Vintage.* `2026-11-16.covenant-exhibits-state-their-outcome`, with `assemble.py`,
   `covenant_extract.py`, `schemas.py` and `synthesis.py` re-pinned to it.
 
@@ -70,7 +80,7 @@ any prompt change on the panel first, so `NOT_SENT` keeps the request byte-ident
 follows the precedent of `concentration.customers_listed`.
 
 **HOW VERIFIED.**
-- *Pins* (`tests/test_covenant_exhibit_outcomes.py`, 22 nodes):
+- *Pins* (`tests/test_covenant_exhibit_outcomes.py`, 28 nodes):
   - *The loop.* One run of the real loop over BURL's committed pointer rows, stubbed only at
     fetch and model, drives each of the seven branches once. Each exhibit's outcome is its
     branch, with the pointer's family and the heading read.
@@ -87,9 +97,20 @@ follows the precedent of `concentration.customers_listed`.
     recorded". Without the field, the line is the neutral line, exactly.
   - *Code-review round 0.* Two exhibits under one accession each print that accession. The two
     label tables, Python and JS, hold exactly the schema's seven kinds.
-- *Fail first.* Run with base code and head's `schemas.py` (so the file imports), 17 of the 22
-  nodes fail. The 5 that pass are the precondition and the 4 neutral-line pins, which pin today's
-  behaviour. A mutation that treats an absent field as an empty list reds those 4, and 11 of
+  - *Independent review, round 1.*
+    - TECX's committed page with its real-loop outcome (a frozen fixture, agreeing with its
+      committed flag) prints the line on both renderers, not its stored digest.
+    - The same page without the field prints the digest as before.
+    - The field is out of the synthesis facts dump (`NOT_SENT`), on a page with it and one
+      without. Removing that entry reds the pin, which before this nothing held.
+    - The untitled refusal states both readings, end to end on VRRM's real outcome for
+      `0000950170-25-072679 · vrrm-ex10_1.htm`, in VRRM's frozen block. Another accession's
+      extracted exhibit has the same filename there. With an empty or blank family, the first
+      clause prints alone. Both renderers give the same line, and the new constant is pinned on
+      both.
+- *Fail first.* Run with base code and head's `schemas.py` (so the file imports), 22 of the 28
+  nodes fail. The 6 that pass are the precondition, the 4 neutral-line pins and the no-rows
+  digest pin, which pin today's behaviour. A mutation that treats an absent field as an empty list reds those 4, and 11 of
   #1073's 15 nodes. #1073's other 4 nodes are preconditions, which read no renderer.
 - *Frozen fixtures, written through the real loop.* `tests/fixtures/covenant_exhibit_outcomes/`
   holds the loop's output over the four pages:
@@ -119,6 +140,23 @@ follows the precedent of `concentration.customers_listed`.
   folder, not in the repo. **Approved 2026-11-16** by the operator, relayed by the coordinator:
   "approve the covenant wording", covering the seven-row wording table in #1084's body as shown.
   The `(E5)` backfill stays unbuilt.
+  - *Round 1.* The independent review found the untitled refusal's label false. The operator
+    ruled on 2026-11-16: "State both readings (Recommended)". The review also asked for the
+    no-rows path. The preview adds LLY, ORKA, TECX and VITL, and VRRM's new line, each collapsed
+    and force-open. That preview is with the operator.
+
+  The wording, as approved and then ruled:
+
+  | outcome | printed |
+  |---|---|
+  | `cost_bound` | not sent: past the cost bound on exhibits per page |
+  | `fetch_failed` | could not be fetched |
+  | `not_debt_agreement`, a title read | refused: not a debt agreement (it declares itself “TITLE”) |
+  | `not_debt_agreement`, no title read | refused: no agreement title was read from its head; it was located as FAMILY (the first clause alone with no family) |
+  | `too_large` | too large for single-pass extraction; extract by hand |
+  | `llm_error` | the extraction call failed (LLM error) |
+  | `no_terms_returned` | read, and the model returned no terms |
+  | (no outcome for an accession) | no outcome recorded |
 
 **BOUNDARY.**
 - Every corpus count is at main `b64be6f1` (2026-11-16), over the 26 committed
@@ -130,18 +168,31 @@ follows the precedent of `concentration.customers_listed`.
   `fetch_failed`, all 5 of them cache misses.
 - The cache is the operator's EDGAR cache at `data/cache/sec` in the primary checkout, read on
   2026-11-16.
-- Fail-first counts are over the 22 nodes of the new file and the 15 of
+- Fail-first counts are over the 28 nodes of the new file and the 15 of
   `tests/test_covenant_unextracted_reason.py`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - *No committed page carries the field.* Each gains it at its next paid re-assembly, with no
-  separate spend, and until then keeps the neutral line. A $0 backfill from the `(E5)` strings
+  separate spend. Until then the 17 pages that print the line keep the neutral one. LLY, ORKA,
+  TECX and VITL keep their stored digest, whose "extraction failed" is false for each. A $0
+  backfill from the `(E5)` strings
   was not built, because parsers do not read QA flags. WLK's filename-only cost-bound flags show
   the strings cannot always be mapped back to an accession.
-- *Unchanged where the term rows are absent.* A page whose term rows are absent, because every
-  located exhibit was refused or failed, prints the covenant digest and no unextracted line, as
-  before. The field is attached there too, so its causes are in the JSON. Printing them on that
-  path is a separate render change, not made here.
+- *The digest the synthesis reads is unchanged.* On a page whose exhibits gave no term rows,
+  `assemble.covenant_fail_reason` still writes "no covenant terms extracted from located
+  exhibits" into the digest, and the synthesis reads that digest. Changing it would change the
+  synthesis prompt, which row 53 measures on the panel first, so it is not changed here. TECX's
+  committed synthesis repeats "(extraction failed)" in its own prose. The page no longer prints
+  the digest once it carries the field, but that prose stays until the synthesis is fed a true
+  cause.
+- *Found, not fixed: E5 misreads some debt headings.* `agreement_title` returns None on real
+  debt-contract heads, so E5 refuses them as "no agreement at all":
+  - VRRM's `0000950170-25-072679 · vrrm-ex10_1.htm`, whose head reads "Amendment No. 4 to
+    REVOLVING CREDIT Agreement" (checked on the cached text by the independent review);
+  - CNXC's third and fourth amendments to a receivables financing agreement.
+
+  On the 17 printed lines, 17 of the 23 refusals carry no heading read. This recall defect in
+  the E5 gate is its own PR, after #1084.
 - *The confirmation reuse key moves.* `confirmation.inputs_sha256` hashes the layer's full
   dump, so on every page it now hashes one more `null` key. No confirmation record
   (`data/snapshots/proposal_confirmations.jsonl`) exists in either checkout (checked 2026-11-16),
