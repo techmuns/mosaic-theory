@@ -448,3 +448,31 @@ def test_a_page_without_the_field_keeps_the_neutral_line_e2e(
                   f"{', '.join(sorted(c.causes))}")
     assert _web_line(tmp_path, page) == md
 
+
+
+def test_two_exhibits_under_one_accession_each_carry_it(tmp_path: pathlib.Path) -> None:
+    """(−) Two pointers can share an accession, each targeting its own exhibit. Each exhibit is
+    printed with its accession, so a reader never has to guess which accession an exhibit after a
+    "; " belongs to (code-review round 0; no committed page has such a pair at b64be6f1)."""
+    extra = {**_frozen_outcomes("BURL")[3], "filename": "burl-ex10_40.htm",
+             "outcome": "fetch_failed", "declared_title": None}
+    page = _hosted("BURL", [*_frozen_outcomes("BURL"), extra])
+    md = _md_line(page)
+    assert md.count("0001193125-26-116001 · ") == 2, md
+    assert "0001193125-26-116001 · burl-ex10_40.htm — could not be fetched" in md, md
+    assert md.startswith("3 located agreement exhibit(s)"), "the count stays accessions"
+    assert _web_line(tmp_path, page) == md
+
+
+def test_both_renderers_label_every_outcome_kind() -> None:
+    """(+) The label table covers every kind the schema allows, on both renderers (code-review
+    round 0): a kind added to one side only reds here rather than crashing one render."""
+    from vinci.dossier.render import _EXHIBIT_OUTCOME
+
+    assert set(_EXHIBIT_OUTCOME) == _ALL_KINDS
+    js = JS.read_text()
+    table = js[js.index("const _EXHIBIT_OUTCOME = {"):]
+    table = table[:table.index("};")]
+    assert set(re.findall(r"^\s+(\w+):", table, re.M)) == _ALL_KINDS
+    for kind, label in _EXHIBIT_OUTCOME.items():
+        assert f'{kind}: "{label}"' in table, kind

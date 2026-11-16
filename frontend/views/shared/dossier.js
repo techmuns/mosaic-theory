@@ -3103,8 +3103,10 @@ function unextractedLineHtml(missing, outcomes) {
       `dossier.json) — see the pointer table: ${escapeHtml(missing.join(", "))}`;
   const byAcc = {};
   (outcomes.value || []).forEach((o) => { (byAcc[o.accession] = byAcc[o.accession] || []).push(o); });
-  return escapeHtml(`${head}: ` + missing.map((acc) => `${acc} · ` +
-    (byAcc[acc] ? byAcc[acc].map(exhibitOutcomeText).join("; ") : "no outcome recorded")).join("; "));
+  // each exhibit carries its accession: two pointers may share one, each targeting its own file
+  const items = missing.flatMap((acc) => (byAcc[acc] || []).map((o) => `${acc} · ${exhibitOutcomeText(o)}`))
+    .concat(missing.filter((acc) => !byAcc[acc]).map((acc) => `${acc} · no outcome recorded`));
+  return escapeHtml(`${head}: ` + items.sort().join("; "));
 }
 
 // (P5/E5) fenced Tier-2 covenant terms, TERM-GOVERNED → ONE table per family, each term collapsed to

@@ -1898,10 +1898,10 @@ def _unextracted_line(missing: list[str], outcomes_s: Any) -> str:
     by_acc: dict[str, list[CovenantExhibitOutcome]] = {}
     for o in outcomes_s.value or []:
         by_acc.setdefault(o.accession, []).append(o)
-    items = [f"{acc} · " + ("; ".join(_exhibit_outcome_text(o) for o in by_acc[acc])
-                            if acc in by_acc else "no outcome recorded")
-             for acc in missing]
-    return f"{head}: " + "; ".join(items)
+    # each exhibit carries its accession: two pointers may share one, each targeting its own file
+    items = [f"{acc} · {_exhibit_outcome_text(o)}" for acc in missing for o in by_acc.get(acc, [])]
+    items += [f"{acc} · no outcome recorded" for acc in missing if acc not in by_acc]
+    return f"{head}: " + "; ".join(sorted(items))
 
 
 def _covenant_term_lines(cs: Any) -> list[str]:

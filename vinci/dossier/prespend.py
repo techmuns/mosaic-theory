@@ -499,7 +499,8 @@ def forecast_llm_fields(doc: Dossier, *, http: Any) -> dict[str, Forecast]:
 
     Mirrors ``assemble.assemble_one``: with a capital structure, ``covenant_terms`` becomes the
     digest (always PRESENT); ``maturity_event`` is whatever ``extract_maturity_event`` returns;
-    ``covenant_term_rows`` is set only when ``extract_covenant_terms`` returns rows. No capital
+    ``covenant_term_rows`` is set only when ``extract_covenant_terms`` returns rows;
+    ``covenant_exhibit_outcomes`` is PRESENT wherever an exhibit is located. No capital
     structure → the phase is skipped and nothing here is forecast."""
     from vinci.dossier.covenant_extract import extract_covenant_terms, extract_maturity_event
     from vinci.netcache import SecRateLimitedError, sec_refusal
