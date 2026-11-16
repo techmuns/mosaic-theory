@@ -3073,14 +3073,76 @@ function governingTerms(rows, pointers) {
   });
 }
 
+// (STATE row 63) What each E5 outcome says on the page — mirrors render._EXHIBIT_OUTCOME. An
+// "extracted" exhibit is cited by the term rows and so never listed.
+const _EXHIBIT_OUTCOME = {
+  extracted: "extracted",
+  cost_bound: "not sent: past the cost bound on exhibits per page",
+  fetch_failed: "could not be fetched",
+  not_debt_agreement: "refused: not a debt agreement",
+  too_large: "too large for single-pass extraction; extract by hand",
+  llm_error: "the extraction call failed (LLM error)",
+  no_terms_returned: "read, and the model returned no terms",
+};
+
+// A refusal whose head gave no title: both readings, the pointer's family verbatim, or the first
+// clause alone with no family (operator, 2026-11-16; py: render._NO_TITLE_READ).
+const _NO_TITLE_READ = "refused: no agreement title was read from its head";
+
+// One exhibit's cause, from its structured outcome (py: render._exhibit_outcome_text).
+function exhibitOutcomeText(o) {
+  let why;
+  if (o.outcome === "not_debt_agreement" && !o.declared_title) {
+    const family = typeof o.family === "string" ? o.family : "";
+    why = _NO_TITLE_READ + (family.trim() ? `; it was located as ${family}` : "");
+  } else {
+    why = _EXHIBIT_OUTCOME[o.outcome] ?? String(o.outcome);
+    if (o.outcome === "not_debt_agreement") why += ` (it declares itself “${o.declared_title}”)`;
+  }
+  return `${o.filename} — ${why}`;
+}
+
+// The line for located exhibits the term rows do not cite (py: render._unextracted_line), as HTML:
+// each one's own cause from covenant_exhibit_outcomes; without the field (a page assembled before
+// it) no cause, in the bytes #1073 left — the QA-flag strings are never parsed.
+// Matched by EXHIBIT, never by accession: one exhibit the term rows cite must not hide another
+// under the same accession (Codex, #1084 round 1). Returns null when nothing is unextracted.
+function unextractedLineHtml(located, extracted, outcomes) {
+  const missing = [...located].filter((a) => !extracted.has(a)).sort();
+  if (!outcomes || outcomes.status !== "present") {
+    if (!missing.length) return null;
+    return `${missing.length} located agreement exhibit(s) not extracted this run; this page does ` +
+      `not state why (the extraction's notes are QA flags in dossier.json) — see the pointer ` +
+      `table: ${escapeHtml(missing.join(", "))}`;
+  }
+  const outs = outcomes.value || [];
+  const have = new Set(outs.map((o) => o.accession));
+  // each exhibit carries its accession: two pointers may share one, each targeting its own file
+  const items = outs.filter((o) => o.outcome !== "extracted")
+    .map((o) => `${o.accession} · ${exhibitOutcomeText(o)}`)
+    .concat(missing.filter((acc) => !have.has(acc)).map((acc) => `${acc} · no outcome recorded`));
+  if (!items.length) return null;
+  return escapeHtml(`${items.length} located agreement exhibit(s) not extracted this run: ` +
+    items.sort().join("; "));
+}
+
 // (P5/E5) fenced Tier-2 covenant terms, TERM-GOVERNED → ONE table per family, each term collapsed to
 // its GOVERNING value (amendment over base), source citing the base § + "amended by". No UNKNOWN row
 // above a present answer. Old JSON (no rows) → flat fact.
 function covenantTerms(cs) {
   const rs = cs.covenant_term_rows;
-  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
-    return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   const ptrs = cs.covenant_pointer_rows;
+  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length) {
+    // NO EXHIBIT GAVE ROWS (py: render._covenant_term_lines): with the per-exhibit outcomes, each
+    // located exhibit's own cause replaces the stored digest (#1084 review round 1); without them
+    // the digest prints as before.
+    const outcomes = cs.covenant_exhibit_outcomes;
+    const located = new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean));
+    const line = outcomes && outcomes.status === "present"
+      ? unextractedLineHtml(located, new Set(), outcomes) : null;
+    if (line) return `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${line}</i></div>`;
+    return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
+  }
   const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
   if (!gov.length) return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   const families = [];
@@ -3130,19 +3192,14 @@ function covenantTerms(cs) {
   // (FIX-2 · D-1) mirror the Python transparency line — located pointer accessions minus the ones
   // the extraction actually read → "N located agreement exhibit(s) not extracted this run". Without
   // it the web view silently drops a covenant-completeness signal the .md/PDF shows (py↔js parity).
-  // It states NO cause (STATE row 63): the reason is only a QA-flag string, and on 12 of the 16
-  // committed pages carrying the old "(cost bound / fetch fail)" at main 6652a242, E5 had refused
-  // every exhibit it named.
+  // Its cause comes from covenant_exhibit_outcomes (STATE row 63): on 12 of the 16 committed pages
+  // carrying the old "(cost bound / fetch fail)" at main 6652a242, E5 had refused every exhibit it
+  // named. Without the field the line states no cause (unextractedLine).
   const located = new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean));
   const extracted = new Set(rs.value
     .map((r) => _accOf((r.value && (r.value.source_ref || r.value.note)) || "")).filter(Boolean));
-  const missing = [...located].filter((a) => !extracted.has(a)).sort();
-  const note = missing.length
-    ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${missing.length} located ` +
-      `agreement exhibit(s) not extracted this run; this page does not state why (the ` +
-      `extraction's notes are QA flags in dossier.json) — see the pointer ` +
-      `table: ${escapeHtml(missing.join(", "))}</i></div>`
-    : "";
+  const line = unextractedLineHtml(located, extracted, cs.covenant_exhibit_outcomes);
+  const note = line ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${line}</i></div>` : "";
   return tables + note;
 }
 

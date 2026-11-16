@@ -1272,6 +1272,7 @@ def assemble_one(
     synthesis = None
     logs: list[str] = []
     term_rows = None  # (E5) per-exhibit rows — attached to mech AFTER synthesis (render only)
+    exhibit_outcomes = None  # (E5) what the loop did with each exhibit — attached beside them
     if llm is not None:
         # (P1/FIX-0) Tier-2 covenant + maturity extraction runs BEFORE synthesis so the LLM reasons
         # with the ACTUAL governing terms via a term→value digest — never a pointer to unseen data.
@@ -1279,7 +1280,7 @@ def assemble_one(
         if mech.capital_structure is not None:
             http = build_sec_http(cfg)
             cik0 = rec.identity.cik or ""
-            term_rows, _sum, cov_flags, cov_log = extract_covenant_terms(
+            term_rows, _sum, cov_flags, cov_log, exhibit_outcomes = extract_covenant_terms(
                 mech.capital_structure, llm=llm, http=http, cik=cik0, ticker=ticker,
                 name=rec.identity.name)
             maturity_event, mat_flags, mat_log = extract_maturity_event(
@@ -1355,6 +1356,12 @@ def assemble_one(
         # (render) attach the structured per-exhibit rows AFTER synthesis (the LLM used the digest).
         if term_rows is not None and mech.capital_structure is not None:
             cs_post = mech.capital_structure.model_copy(update={"covenant_term_rows": term_rows})
+            mech = mech.model_copy(update={"capital_structure": cs_post})
+        # (STATE row 63) and beside them, whether or not any exhibit gave rows: each located
+        # exhibit's outcome, so the page states why one was not extracted
+        if exhibit_outcomes is not None and mech.capital_structure is not None:
+            cs_post = mech.capital_structure.model_copy(
+                update={"covenant_exhibit_outcomes": exhibit_outcomes})
             mech = mech.model_copy(update={"capital_structure": cs_post})
         # (P1, IC audit 2026-07-28) MATERIALITY GUARD — a one-off too big to go unmentioned may
         # not reach the reader by no route at all. Runs AFTER synthesis because "mentioned in the

@@ -2644,7 +2644,11 @@ def _cache_misses(sends: list[tuple[int, dict[str, Any], float]]) -> list[str]:
 #: the prompt keeps the row shape it always had, and what the check concluded reaches it through
 #: ONE field — an ``unknown`` row's value reads UNKNOWN with its reason (`prompt_driver_value`),
 #: in the facts and in the digest alike. So a verified row is sent byte for byte as before.
+#: ``capital_structure.covenant_exhibit_outcomes`` (STATE row 63) is attached after the synthesis,
+#: beside the term rows, for the page to print each exhibit's cause; its null on a page built before
+#: it would change every synthesis request (row 53), so the model never reads it.
 NOT_SENT: dict[str, Any] = {"primary_source": True,
+                            "capital_structure": {"covenant_exhibit_outcomes": True},
                             "catalyst_path": {"guidance_after_price_date": True},
                             "concentration": {"customers_listed": True},
                             "capital_allocation": {"impairment_headroom": True},
