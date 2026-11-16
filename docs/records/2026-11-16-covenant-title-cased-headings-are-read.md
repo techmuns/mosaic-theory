@@ -188,9 +188,23 @@ exhibit.
   and the gate passes NOTES as it always has. What drops the revolver is the selector:
   `_core_agreement_exhibits` orders by the pointer's family and round-robins, and NFLX's pointer
   files both purchase agreements under a debt family ("Senior Unsecured Bridge Term Loan
-  Facility"). Two fixes are left open: ordering within the bound (a selector change), or refusing
-  a 144A purchase agreement at the gate (a vocabulary change). Neither is made here.
-  CNXC's 2021 first amendment drops the same way. CNXC still sends its 2023 amendment and
+  Facility"). **This is the operator's decision, and none of the options is built.** Each was
+  simulated at $0 with the same stubbed loop over all 24 pages, the option patched in scratch
+  only:
+  - **(a) Admit the notes purchase agreements, as built.** NFLX sends the 2018 and 2014 purchase
+    agreements, the 2009 credit agreement (`0001193125-09-194962`) and the 2021 second amendment
+    (`0001193125-21-193187`). Its December 2025 revolver, its 2019 amendment and its January 2026
+    incremental commitments (`0001193125-26-015951`) are past the bound.
+  - **(b) Rank notes purchase agreements below every other target in the bound's order** (a
+    selector change). NFLX sends the 2009 credit agreement, the 2021 second amendment, the
+    December 2025 revolver and the 2019 amendment, the four it sends at base. Both purchase
+    agreements and the January 2026 commitments are past the bound.
+  - **(c) Keep notes purchase agreements refused** (a gate vocabulary change). NFLX sends the
+    same four as under (b), and both purchase agreements are refused, under their titles.
+  - Under (b) and (c), only NFLX differs from (a) among the 24 pages, because no other page
+    targets a notes purchase agreement. VRRM and CNXC gain the same under all three.
+
+  CNXC's 2021 first amendment drops the same way under every option. CNXC still sends its 2023 amendment and
   restatement and its 2025 amended and restated credit agreement.
 - *Spend at the next paid builds.* VRRM makes 1 more call (720,280 chars) and CNXC 1 more, a net
   +312,384 chars. NFLX makes the same number of calls with 540,483 fewer chars.
