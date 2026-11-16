@@ -225,8 +225,10 @@ def test_a_non_debt_document_never_reaches_the_extractor(monkeypatch) -> None:  
 
     assert not seen, "an executive offer letter was sent to the covenant extractor"
     assert rows is None, "a refused document must yield no covenant rows"
-    assert any("not a debt agreement" in f for f in flags), flags
-    assert any("no agreement at all" in f for f in flags), "the refusal states what it found"
+    # the refusal states what the reader did: no title was read (STATE row 63). It said the letter
+    # "declares itself no agreement at all" until 2026-11-16, a fact the reader cannot know.
+    assert any("no agreement title was read from the head of" in f
+               and "0000320187-26-000088" in f for f in flags), flags
 
 
 # --- REVIEW FIXES (2026-09-28) — three document classes the first gate refused wrongly ----------
@@ -583,13 +585,16 @@ def test_the_letters_and_confirmations_the_guard_exists_for_stay_refused() -> No
 
 
 def test_a_title_cased_heading_is_not_renamed_by_its_recital() -> None:
-    """(-) A DIFFERENT SHAPE, LEFT FOR ITS OWN FIX. VRRM's Amendment No. 4 names its contract in its
-    own title-cased heading — "Revolving Credit Agreement" — and its recital's defined term is the
-    shorter "Credit Agreement". Read from the recital it would be named a contract VRRM's revolver
-    is not, and split from the "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT" it amends. The
-    heading must be in capitals, as an agreement's heading is (see `_IS_AMENDMENT`)."""
-    got = agreement_title(_heads()[VRRM_AMENDMENT_4])
-    assert got != "CREDIT AGREEMENT", got
+    """(+/-) VRRM's Amendment No. 4 names its contract in its own title-cased heading — "Amendment
+    No. 4 to REVOLVING CREDIT Agreement" — and its recital's defined term is the shorter "Credit
+    Agreement". Read from the recital it would be named a contract VRRM's revolver is not. Until
+    2026-11-16 the heading was not read at all, so E5 refused the amendment before any model call.
+    It is read now, as a capitals heading is (`_HEADING_RUN`, STATE row 63), and named for itself:
+    REVOLVING CREDIT AGREEMENT, an amendment, which the gate passes."""
+    head = _heads()[VRRM_AMENDMENT_4]
+    got = agreement_title(head)
+    assert got == "REVOLVING CREDIT AGREEMENT", got
+    assert is_debt_agreement(got) and is_amendment(head)
 
 
 def test_a_recital_run_of_prose_is_not_the_contract_name() -> None:

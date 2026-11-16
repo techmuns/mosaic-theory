@@ -20,7 +20,7 @@ covenant-phase TARGET on a committed page (`_core_agreement_exhibits` over its
 | NKE | `nke-5312026exhibit1029.htm` | CFO offer letter | refuse |
 | TGT | `tgt20260131-exhibit1018.htm` | CEO transition letter | refuse |
 | TGT | `form8-k_creditagreement105.htm` | the 8-K's own cover document, which cites "the Credit Agreement" | refuse |
-| VRRM | `vrrm-ex10_1.htm` | Amendment No. 4 to the Revolving Credit Agreement, with a title-cased heading | not be renamed "CREDIT AGREEMENT" from its recital (a separate shape, still refused) |
+| VRRM | `vrrm-ex10_1.htm` | Amendment No. 4 to the Revolving Credit Agreement, with a title-cased heading | pass, named for its own heading (REVOLVING CREDIT AGREEMENT), never renamed "CREDIT AGREEMENT" from its recital; refused until 2026-11-16, when a title-cased heading was first read (STATE row 63) |
 | UBER | `e23472_ex10-1.htm` | capped-call dealer confirmation | refuse |
 
 To re-fetch one, call `_fetch_exhibit(build_sec_http(), cik, accession, exhibit)[:3000]`, where

@@ -641,6 +641,34 @@ _AMEND_HEAD = re.compile(r"^(?:(?!OF\b)[A-Z][A-Z\-]*\s+){0,3}AMENDMENT\b")
 _RECITAL_REF = re.compile(
     r"\b(?:that\s+certain|the)\s+[\u201c\"]?\s*((?:(?:[A-Z][\w'\-]*|and|of)\s+){1,6}"
     r"(?:Agreement|Indenture|Lease|Notes?|Guarant(?:y|ee)|Plan|Letter))\b")
+#: A TITLE-CASED HEADING IS READ IN CAPITALS (STATE row 63, 2026-11-16). `_TITLE` reads a heading
+#: set in capitals, and five real debt contracts on committed pointer rows head themselves in title
+#: case: VRRM's "Amendment No. 4 to REVOLVING CREDIT Agreement", CNXC's "Third Amendment to
+#: Receivables Financing Agreement" and its Fourth, and NFLX's two "... Senior Notes due 2028
+#: Purchase Agreement" heads. Each read as no title, so E5 refused it before any model call. A
+#: heading's case is typography, not identity, so its words are upper-cased and read by `_TITLE`'s
+#: grammar, then normalised exactly as a capitals title is. Two limits keep this a heading reader:
+#: - THE HEADING RUN only: the words at the head's start, before its first prose word. That keeps
+#:   the body out, for `_IS_AMENDMENT`'s reason: a base contract's body says "No amendment to this
+#:   Agreement shall be effective ...", and that never starts a head. The run takes capitalised
+#:   words, numbers and amounts, and only the lowercase words a title carries: `_TITLE`'s own OF,
+#:   TO, AND and THE, and DUE, a note's maturity ("Senior Notes due 2028"). Any other lowercase
+#:   word, or a mark such as "(", ":", "–" or "“", ends it. A sentence that opens inside the run
+#:   ("... Agreement This Third Amendment ...") is cut where `_clean_title` cuts a capitals one.
+#: - A CONTRACT NOUN ends the title: AGREEMENT, INDENTURE, GUARANTY or GUARANTEE, never an
+#:   INSTRUMENT (NOTES, DEBENTURE). A press release headlines in title case too, and names the
+#:   instrument it announces: CNXC's 2026 release "Concentrix Prices $600 Million Senior Notes
+#:   Offering" read as "MILLION SENIOR NOTES" and passed the gate until this limit.
+#: Measured over the 3,575 EDGAR archive documents in the operator's cache (2026-11-16): 9 heads
+#: read as untitled gain a title. 6 are debt contracts: the five above and CNXC's Fifth Amendment to
+#: its Receivables Financing Agreement, which no committed pointer targets. 3 are not, and the gate
+#: refuses each: an exchange agreement for convertible notes (BURL), an award agreement (LLY) and a
+#: press release whose headline ends "Termination of Agreement" (VRRM). No other read moves.
+_HEADING_RUN = re.compile(
+    r"^(?:(?:[A-Z][\w&'\.\-]*,?|\$?\d[\w,\.%\-]*|of|to|and|the|due)\s+)+")
+_HEADING_TITLE = re.compile(
+    rf"\b((?:{_W}\s+|\d[\w\-]*\s+|NO\.\s+|OF\s+|TO\s+|AND\s+|THE\s+){{1,14}}"
+    rf"(?:AGREEMENT|INDENTURE|GUARANTY|GUARANTEE))\b")
 #: The capture ran past the heading into the body — a title, not a sentence.
 _PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
                     r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
@@ -692,7 +720,20 @@ def is_amendment(text: str) -> bool:
     # on that.
     if m is None and _AMEND_HEAD.match(h):
         return True
+    # A title-cased heading, read in capitals (`_HEADING_RUN`): CNXC's "Third Amendment to
+    # Receivables Financing Agreement" is an amendment by its own heading, as a capitals one is.
+    t = _heading_title(h) if m is None else None
+    if t is not None and _AMEND_PREFIX.search(_clean_title(t.group(1))):
+        return True
     return bool(_IS_AMENDMENT.search(h[:900]))
+
+
+def _heading_title(h: str) -> re.Match[str] | None:
+    """The cleaned head's title-cased heading read in capitals: `_HEADING_TITLE` over the heading
+    run (`_HEADING_RUN`) upper-cased. None when the head has no run or the run names no contract
+    noun."""
+    run = _HEADING_RUN.match(h)
+    return _HEADING_TITLE.search(run.group(0).upper()) if run else None
 
 
 def _clean_title(t: str) -> str:
@@ -705,8 +746,9 @@ def _clean_title(t: str) -> str:
 
 
 def agreement_title(text: str) -> str | None:
-    """The agreement's SELF-DECLARED name, normalised to the BASE contract — or None when the head
-    declares no agreement at all (an offer letter, a dealer confirmation). Deterministic."""
+    """The agreement's SELF-DECLARED name, normalised to the BASE contract — or None when no
+    agreement title is read from the head (an offer letter, a dealer confirmation, and any head
+    whose title this reader does not parse). Deterministic."""
     h = re.sub(r"\s+", " ", text[:3000])
     h = re.sub(r"\s+", " ", _BOILER.sub(" ", _DOC_HDR.sub("", h))).strip()
     m = _TITLE.search(h[:1500])
@@ -724,9 +766,14 @@ def agreement_title(text: str) -> str | None:
         # `is_debt_agreement`'s call, not this function's: an amendment to a lease is named for
         # the lease, and refused for it.
         r = _RECITAL_REF.search(h) if _AMEND_HEAD.match(h) else None
-        if r is None:
+        if r is not None:
+            return _as_title(_LEAD_NOISE.sub("", _clean_title(r.group(1))))
+        # A title-cased heading, read in capitals (`_HEADING_RUN`) and normalised below exactly as
+        # a capitals title is. Tried last, so every head an earlier branch titles keeps its
+        # title.
+        m = _heading_title(h)
+        if m is None:
             return None
-        return _as_title(_LEAD_NOISE.sub("", _clean_title(r.group(1))))
     # CODES FIRST, THEN THE AMENDMENT PREFIX. `_AMEND_PREFIX` is anchored at ^, so while a filing
     # id still sits in front of the title it cannot match and the amendment INSTANCE survives
     # normalisation. WERN's Amendment No. 3 is the real case: its head begins
@@ -902,10 +949,17 @@ def extract_covenant_terms(
             # evidence. Without this, an executive offer letter (NKE, TGT), a stock purchase
             # agreement (WERN) and a capped-call confirmation (UBER) were each handed to a covenant
             # extractor and whatever it returned was labelled as that instrument's terms.
+            # WHAT THE READER DID, NOT WHAT THE DOCUMENT IS. A title read is the document's own
+            # word, and the gate judged it. With none read, the reader knows only that: until
+            # 2026-11-16 this flag said the exhibit "declares itself no agreement at all", which
+            # VRRM's revolver amendment, a debt contract with a title-cased heading, did not
+            # (STATE row 63). The wording is the renderer's (`render._NO_TITLE_READ`).
             flags.append(
                 f"(E5) not a debt agreement — refused rather than extracted under the pointer's "
-                f"guess ({row.family}): {src} declares itself "
-                f"{('“' + title + '”') if title else 'no agreement at all'}"
+                f"guess ({row.family}): {src} declares itself “{title}”"
+                if title else
+                f"(E5) refused rather than extracted under the pointer's guess ({row.family}): "
+                f"no agreement title was read from the head of {src}"
             )
             outcomes.append(_outcome(row, filename, "not_debt_agreement", title))
             continue
