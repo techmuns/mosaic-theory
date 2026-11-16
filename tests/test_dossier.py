@@ -1405,8 +1405,8 @@ def test_capital_structure_covenant_terms_note_is_opacity_as_signal() -> None:
 class _FakeExhibitHttp:
     """A fake SEC http whose get_text returns fixed exhibit text (or raises, for fail-loud).
     ``by_file`` serves a named exhibit its own text instead: since the selector (STATE row 63,
-    2026-11-16) every exhibit of a located filing is read, and one whose heading governs debt is
-    sent, so a fake that serves one debt text for every file would send them all."""
+    2026-11-16) every exhibit a located pointer row lists is read, and one whose heading governs
+    debt is sent, so a fake that serves one debt text for every file would send them all."""
 
     def __init__(self, *, fail: bool = False, text: str = "LOAN AND SECURITY AGREEMENT …",
                  by_file: dict[str, str] | None = None) -> None:

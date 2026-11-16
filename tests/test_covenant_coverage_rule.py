@@ -101,7 +101,7 @@ def _run(ticker: str, *, texts: dict[str, str | None] | None = None,
 
 def _one_outcome_per_target(rows: list[typing.Any], got: list[CovenantExhibitOutcome]) -> None:
     """The outcomes are the TARGETS, each once, in the located order (`_located_exhibits`): every
-    pointer's primary exhibit, and each other exhibit of its filing that governs debt or could not
+    pointer's primary exhibit, and each other exhibit its row lists that governs debt or could not
     be read (the selector, STATE row 63, 2026-11-16)."""
     keys = [(o.accession, o.filename) for o in got]
     located = [(r.accession, f) for r, f, _ in ce._located_exhibits(rows)]
@@ -500,7 +500,7 @@ def test_a_later_document_must_be_filed_later(filed: str) -> None:
 @pytest.mark.parametrize("ticker", ["AMZN", "BURL", "CNXC", "NFLX", "NKE", "TJX", "VRRM"])
 def test_every_fixture_target_is_a_committed_pointer_target(ticker: str) -> None:
     """(precondition) The fixture's layer is the committed page's, unmodified, so its exhibits are
-    the page's own: every target, and every other exhibit of a located filing, which the loop reads
+    the page's own: every target, and every other exhibit a pointer row lists, which the loop reads
     for who it is (review round 2, F1). A page re-assembled since moves its pointers, and this pin
     names it."""
     p = ROOT / "data" / "dossiers" / ticker / "dossier.json"
@@ -613,17 +613,17 @@ BURL_IPSA = "0001193125-20-109457 · d883886dex102.htm"
 
 
 def test_f1_an_untargeted_same_filing_sibling_makes_the_name_ambiguous_burl() -> None:
-    """(− / +) F1, the SIBLING half: an exhibit of a located filing that the selector does not
-    target is still read for WHO it is. BURL's 2020 filing carries its SECURITY AGREEMENT (the
+    """(− / +) F1, the SIBLING half: an exhibit a located pointer row lists that the selector does
+    not target is still read for WHO it is. BURL's 2020 filing carries its SECURITY AGREEMENT (the
     target) and, beside it, its INTELLECTUAL PROPERTY SECURITY AGREEMENT of the same date, which is
     credit support and never sent. A DERIVED later exhibit (BURL's real head and clause naming "the
-    Security Agreement, dated as of April 16, 2020", and VRRM's real operative restatement, its
-    term renamed) restates "the Security Agreement" of that date. The name fits both agreements of
-    that day, so it decides neither, and the security agreement is READ. With the sibling gone
-    from the filing, the same words supersede it: the sibling is what blocks.
-    MOVED WITH THE SELECTOR (2026-11-16): this pin first stood on VRRM's `vrrm-ex10_2.htm`, which
-    governs debt and is now a target
-    (`test_f1_a_same_day_sibling_makes_the_displaced_name_ambiguous_vrrm` keeps that half)."""
+    Security Agreement, dated as of April 16, 2020", and VRRM's real operative restatement, its term
+    renamed) restates "the Security Agreement" of that date. The name fits both agreements of that
+    day, so it decides neither, and the security agreement is READ. With the sibling gone from the
+    filing, the same words supersede it: the sibling is what blocks. MOVED WITH THE SELECTOR
+    (2026-11-16): this pin first stood on VRRM's `vrrm-ex10_2.htm`, which governs debt and is now a
+    target (`test_f1_a_same_day_sibling_makes_the_displaced_name_ambiguous_vrrm` keeps that
+    half)."""
     fx = _fixture("BURL")
     texts = dict(fx["texts"])
     third = texts["0001193125-21-364998 · d275638dex101.htm"] or ""

@@ -243,10 +243,11 @@ _DOCUMENT = re.compile(r"\.(?:htm|html|txt)$", re.I)
 
 
 def _located_exhibits(rows: list[CovenantPointer]) -> list[_Located]:
-    """EVERY DOCUMENT OF EVERY LOCATED FILING, in the loop's order: each pointer's primary target in
-    `_core_agreement_exhibits`' order, followed at once by the other documents of its filing, in the
-    filing's own order (never a page image, `_DOCUMENT`). An exhibit is listed once, however many
-    pointers carry its filing."""
+    """EVERY DOCUMENT A LOCATED POINTER ROW LISTS, in the loop's order: each pointer's primary
+    target in `_core_agreement_exhibits`' order, followed at once by the other documents its row
+    lists, in the row's own order (never a page image, `_DOCUMENT`). The row lists the filing's
+    exhibits the locator kept, not every document of the filing. An exhibit is listed once, however
+    many pointers carry its filing."""
     primaries = _core_agreement_exhibits(rows)
     primary = {(row.accession, filename) for row, filename in primaries}
     out: list[_Located] = []
@@ -1457,8 +1458,9 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
     cited, with its own words. Two refusals keep a guess out:
     - a displaced agreement that could mean two agreements on the page is AMBIGUOUS, and decides
       none of them (`_ambiguous`): "Credit Agreement, dated as of March 1, 2018" would fit VRRM's
-      revolver and its term loan, both dated that day. The page is every located exhibit and every
-      debt agreement in a located filing beside one (``siblings``), which the loop reads too;
+      revolver and its term loan, both dated that day. The page is every target and every other
+      debt agreement a located pointer row lists (``siblings``: credit support since the selector,
+      which the loop reads for who it is but never sends);
     - an empty or tied filing date cannot order two documents (the (X-4) rule of
       `governing_terms`), so it supersedes nothing.
     - a displaced agreement dated as a date an UNTITLED refused exhibit's head states
@@ -1519,9 +1521,9 @@ def _identities(exhibit: tuple[str, str], own: AgreementKey | None,
 
 def _ambiguous(key: AgreementKey, pool: list[_Identity]) -> bool:
     """Could ``key`` mean two agreements on this page? Every identity CONFUSABLE with it is
-    counted, located or in a located filing beside one (F1), as distinct agreements: an amendment
-    and what it amends, or two amendments of one agreement, are one (the same base name); each
-    exhibit that IS an agreement is its own, unless some amendment names it as its base. Two or
+    counted, targeted or listed beside one by a located pointer row (F1), as distinct agreements: an
+    amendment and what it amends, or two amendments of one agreement, are one (the same base name);
+    each exhibit that IS an agreement is its own, unless some amendment names it as its base. Two or
     more: ambiguous, so it decides nothing, and the exhibits are read."""
     bases = {k.name for _ex, k, role in pool if role == "base" and _confusable(key, k)}
     owns = {(ex, k.name) for ex, k, role in pool if role == "own" and _confusable(key, k)}
@@ -1548,7 +1550,7 @@ def extract_covenant_terms(
     - ``outcomes``: what each located exhibit's branch of the loop did with it — one
       :class:`CovenantExhibitOutcome` per target, in the located order (`_located_exhibits`; STATE
       row 63), or ``None`` when no exhibit is located. A target is each pointer's primary exhibit
-      (`_core_agreement_exhibits`) and every other exhibit of its filing that governs debt
+      (`_core_agreement_exhibits`) and every other exhibit its pointer row lists that governs debt
       (`_governs`) or could not be read. Written beside each branch's flag, so a page states the
       cause from a structured field and never parses the flag.
 
@@ -1571,7 +1573,7 @@ def extract_covenant_terms(
     logs: list[str] = []
     # one slot per target, in the located order: every branch below writes its target's slot, so
     # the outcomes list follows the targets whatever order the exhibits are sent in (STATE row 63).
-    # A target is a pointer's primary exhibit, or another exhibit of its filing that governs debt
+    # A target is a pointer's primary exhibit, or another exhibit its row lists that governs debt
     # or could not be read; each gets its slot when step 1 reaches it.
     slots: list[CovenantExhibitOutcome | None] = []
     extracted = 0
@@ -1606,13 +1608,13 @@ def extract_covenant_terms(
     # 1. READ EVERY LOCATED EXHIBIT FIRST. Which documents govern is decided across all of them (a
     # later exhibit's own words say what it displaced), so each is fetched and identified before
     # any is sent. Fetching is not the cost the guard bounds: the model call is.
-    # EVERY EXHIBIT OF A LOCATED FILING THAT GOVERNS DEBT IS A TARGET (STATE row 63, the selector,
-    # 2026-11-16). Until then each pointer targeted ONE exhibit, chosen by its file name
-    # (`_core_agreement_exhibits`), and the rest of its filing was never sent, so live governing
+    # EVERY EXHIBIT A LOCATED POINTER ROW LISTS THAT GOVERNS DEBT IS A TARGET (STATE row 63, the
+    # selector, 2026-11-16). Until then each pointer targeted ONE exhibit, chosen by its file name
+    # (`_core_agreement_exhibits`), and the rest its row listed were never sent, so live governing
     # documents were dropped: VRRM's 2025 term-loan restatement (`vrrm-ex10_2.htm`) beside its A&R
     # revolver, NKE's five-year agreement beside a 364-day one, NFLX's delayed-draw term loan
     # agreement beside its revolver, TJX's 2030 revolving credit agreement. The primary is still
-    # targeted as before, and refused as before. Each OTHER exhibit of its filing
+    # targeted as before, and refused as before. Each OTHER document its row lists
     # (`_located_exhibits`) is a target when its own title names a contract that governs debt
     # (`_governs`), and is then read by the coverage rule like any target: a 2025 restatement
     # supersedes the 2021 one it restates. One that cannot be read is a target too: it may be such a
@@ -1851,8 +1853,8 @@ def governing_terms(
     # TWO EXHIBITS OF ONE FILING NEVER SHARE A GROUP (STATE row 63, the selector, 2026-11-16;
     # coordinator's ruling). A filing's exhibits share its filing date, so in one group the
     # collapse could not order them: the later in the list would govern every term and the earlier
-    # one's base would be cited for it. Since the selector sends every exhibit of a filing that
-    # governs debt, WLK's `0001193125-10-276447` sends its GO Zone (`dex101.htm`) and IKE Zone
+    # one's base would be cited for it. Since the selector sends every exhibit a pointer row lists
+    # that governs debt, WLK's `0001193125-10-276447` sends its GO Zone (`dex101.htm`) and IKE Zone
     # (`dex102.htm`) bond loan agreements, both "LOAN AGREEMENT" of November 1, 2010, two
     # different contracts. So where two files of one accession share a label, each file's rows
     # form their own group, labelled with the file. A label one file per filing reaches is

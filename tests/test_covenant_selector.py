@@ -1,5 +1,5 @@
-"""The covenant phase's TARGET SELECTOR reads a located filing's live governing documents (STATE row
-63, 2026-11-16).
+"""The covenant phase's TARGET SELECTOR reads the live governing documents a located pointer row
+lists (STATE row 63, 2026-11-16).
 
 Until this, `_core_agreement_exhibits` targeted ONE exhibit per located pointer, chosen by its file
 name, and nothing else in the filing was ever sent. Measured at main 51784e53 over the 24 committed
@@ -15,16 +15,16 @@ among them:
 The other 6 are credit support (pledges, guaranties, security and collateral agreements), which
 secure obligations their credit agreement defines and which the selector leaves to it.
 
-Now every exhibit of a located filing is read, and one whose own title names a contract that
-governs debt (`_governs`) is a target, read by the coverage rule like any other: a 2025 restatement
-supersedes the 2021 one it restates. One that cannot be read is a target too, and its outcome says
-so. The reader learns two forms, each read on VRRM's real restatements: a term defined in the
-parenthetical at the agreement's date, however long its history (`_BIND_RECITAL_AFTER`), and the
-operative clause in the passive ("The Existing Credit Agreement is, …, hereby amended and
+Now every document a located pointer row lists is read, and one whose own title names a contract
+that governs debt (`_governs`) is a target, read by the coverage rule like any other: a 2025
+restatement supersedes the 2021 one it restates. One that cannot be read is a target too, and its
+outcome says so. The reader learns two forms, each read on VRRM's real restatements: a term defined
+in the parenthetical at the agreement's date, however long its history (`_BIND_RECITAL_AFTER`), and
+the operative clause in the passive ("The Existing Credit Agreement is, …, hereby amended and
 restated").
 
 THE FIXTURES ARE THE REAL TYPE: `tests/fixtures/covenant_coverage_rule/` (its README), seven
-committed pages' layers, unmodified, and a cut of every exhibit of every located filing, each
+committed pages' layers, unmodified, and a cut of every exhibit their pointer rows list, each
 reading as its full exhibit reads at this code. The loop runs unmodified, stubbed only at the fetch
 and the model.
 """
@@ -93,7 +93,7 @@ def test_the_2021_term_loan_line_prints_its_superseder_on_both_renderers_e2e(
     assert _web_line(tmp_path, page) == md
 
 
-# --- the other governing documents a located filing carries ---------------------------------------
+# --- the other governing documents a located pointer row lists -----------------------------------
 
 
 @pytest.mark.parametrize("ticker,key,primary", [
@@ -112,11 +112,11 @@ def test_the_2021_term_loan_line_prints_its_superseder_on_both_renderers_e2e(
 ])
 def test_a_governing_exhibit_beside_the_primary_is_targeted_and_sent(
         ticker: str, key: str, primary: str) -> None:
-    """(+) The second exhibit of a located filing, on six committed pages, each a contract that
-    governs debt by its own title: NKE's five-year agreement, NFLX's delayed-draw term loan
+    """(+) The second exhibit a located pointer row lists, on six committed pages, each a contract
+    that governs debt by its own title: NKE's five-year agreement, NFLX's delayed-draw term loan
     agreement, TJX's 2030 revolving credit agreement, CNXC's fifth amendment to its receivables
     financing agreement, AMZN's 2023 364-day agreement and BURL's 2014 first amendment to its ABL
-    agreement. Each is a target right after its filing's primary, and is sent. At main none was
+    agreement. Each is a target right after its row's primary, and is sent. At main none was
     read."""
     r = _run(ticker)
     keys = [f"{o.accession} · {o.filename}" for o in r.outcomes]
@@ -217,8 +217,8 @@ def test_what_is_not_debt_does_not_govern(title: str | None) -> None:
 
 def test_each_primary_is_followed_by_the_rest_of_its_filing() -> None:
     """(+) `_located_exhibits` over VRRM's real pointer rows: the primaries in
-    `_core_agreement_exhibits`' order, each followed at once by its filing's other exhibits in the
-    filing's own order, each exhibit once."""
+    `_core_agreement_exhibits`' order, each followed at once by the other exhibits its row lists, in
+    the row's own order, each exhibit once."""
     cs = CapitalStructure.model_validate(_fixture("VRRM")["capital_structure"])
     assert cs.covenant_pointer_rows is not None
     rows = list(cs.covenant_pointer_rows.value or [])
