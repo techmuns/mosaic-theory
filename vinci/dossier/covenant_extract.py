@@ -1000,6 +1000,22 @@ _GAP_AGREEMENT = re.compile(r"(?:\b[A-Z0-9][\w'\-]*\s+|\bN[Oo]\.\s*|\bof\s+|\bto
 #: Read in the characters before the recital's start; such a recital binds nothing.
 _OBJECT_OF_AMENDMENT = re.compile(r"\bAMENDMENT\b(?:\s+NO\.\s*\d+)?[^.;()“”\"]{0,40}?\bto\s+$",
                                   re.I)
+#: AN INSTRUMENT TO AN AGREEMENT IS THAT AGREEMENT'S HISTORY, WHATEVER THE INSTRUMENT (round 1 of
+#: #1091's review, extending N1 past "Amendment … to"): "the Joinder Agreement to the Security
+#: Agreement, dated as of December 7, 2021" in VRRM's 2025 restatement, a waiver, a consent, a
+#: supplement, an incremental assumption agreement. Its name is capitalised words (and "No. N"),
+#: then "to", then the agreement it is to; the date that follows is the instrument's.
+#: - In a recital's gap the whole span is the agreement's history, never a second agreement
+#:   (`_second_agreement`): VRRM's "Existing Security Agreement" binds the First Lien Security
+#:   Agreement of March 1, 2018, which the joinder read as a second agreement had refused.
+#: - A recital starting at the agreement it is TO binds nothing (`_OBJECT_OF_INSTRUMENT`, read
+#:   before the recital's start): VRRM's bound "Security Agreement" to the joinder's 2021-12-07.
+#: CASE-SENSITIVE: the instrument's name is capitalised, so "pursuant to the Credit Agreement" and
+#: "party to that certain Credit Agreement" are neither.
+_INSTRUMENT_TO = re.compile(
+    r"(?:\b[A-Z][\w'\-]*\s+(?:N[Oo]\.\s*\d+\s+)?){1,6}to\s+(?:the\s+|that\s+certain\s+)?"
+    r"(?:[A-Z0-9][\w'\-]*\s+|of\s+|and\s+){0,8}?(?:Agreement|AGREEMENT|Indenture|INDENTURE)\b")
+_OBJECT_OF_INSTRUMENT = re.compile(r"\b[A-Z][\w'\-]*(?:\s+N[Oo]\.\s*\d+)?\s+to\s+$")
 _BIND_RECITAL_PAREN = re.compile(
     rf"\b(?:that\s+certain|the)\s+{_REF_NAME}\s*{_NOT_OWN_PAREN}[^()]{{0,200}}?{_AGREEMENT_TERM}"
     rf"[^()]{{0,120}}\)\s*,?\s*{_REF_WHEN}")
@@ -1204,8 +1220,10 @@ def displaced_agreements(text: str) -> list[Displaced]:
             binds[term].append(key)
 
     def amended(start: int) -> bool:
-        """Is the recital at ``start`` the object of "Amendment … to" (`_OBJECT_OF_AMENDMENT`)?"""
-        return bool(_OBJECT_OF_AMENDMENT.search(flat[max(0, start - 80):start]))
+        """Is the recital at ``start`` the object of "Amendment … to" (`_OBJECT_OF_AMENDMENT`) or
+        of any other instrument's "<Name> to" (`_OBJECT_OF_INSTRUMENT`)?"""
+        before = flat[max(0, start - 80):start]
+        return bool(_OBJECT_OF_AMENDMENT.search(before) or _OBJECT_OF_INSTRUMENT.search(before))
 
     for m in _BIND_RECITAL_PAREN.finditer(flat):
         if not amended(m.start()):
@@ -1246,9 +1264,11 @@ def displaced_agreements(text: str) -> list[Displaced]:
 
 
 def _second_agreement(gap: str) -> bool:
-    """Does a recital's gap name an agreement that is not an amendment (its history)?"""
+    """Does a recital's gap name an agreement that is not its history: not an amendment, and not
+    an instrument TO an agreement (`_INSTRUMENT_TO`: a joinder, waiver, consent, supplement)?"""
+    rest = _INSTRUMENT_TO.sub(" ", gap)
     return any(not re.search(r"\bAMENDMENT\b", g.group(0), re.I)
-               for g in _GAP_AGREEMENT.finditer(gap))
+               for g in _GAP_AGREEMENT.finditer(rest))
 
 
 def _displacing_words(flat: str, term: str) -> str | None:

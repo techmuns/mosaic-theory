@@ -108,6 +108,22 @@ superseded-by:
       object of "Amendment … to" (`_OBJECT_OF_AMENDMENT`, read before its start) binds nothing. The
       fix covers all three recital binders: the parenthetical, the overlapping restart and this PR's
       `_BIND_RECITAL_AFTER`.
+    - **Extended in review round 1 to ANY instrument TO an agreement** (`_INSTRUMENT_TO`,
+      `_OBJECT_OF_INSTRUMENT`). A JOINDER, WAIVER, CONSENT, SUPPLEMENT or ASSUMPTION agreement "to
+      the X, dated as of D" is X's history, as an amendment is. It is never a second agreement in a
+      gap, and a recital starting at the X it is to binds nothing. The instrument's name is read in
+      capitals only, so "pursuant to the Credit Agreement" and "party to that certain Credit
+      Agreement" are neither.
+      - Real, at #1091's head: VRRM's 2025 restatement recites "that certain First Lien Security
+        Agreement, dated as of March 1, 2018 (as supplemented by the Joinder Agreement to the
+        Security Agreement, dated as of December 7, 2021, …, the “Existing Security Agreement”)".
+        The joinder read as a second agreement, so the true bind was refused, and a recital
+        restarting inside the joinder's name bound "SECURITY AGREEMENT" to the joinder's
+        2021-12-07. Now the term binds the First Lien Security Agreement of 2018-03-01. That
+        displacement matches no exhibit, before or after.
+      - Derived from NKE's texts in four wordings (a Joinder Agreement, a Waiver, a Consent and an
+        Incremental Assumption Agreement "to the Credit Agreement, dated as of March 8, 2024"). Each
+        displaced NKE's live 2024 364-day agreement, and none does now.
   - **N3 (low): the sibling read fetched page images.** EPAM's 2026 10-K row lists six `.jpg`. Each
     was fetched, and one that failed switched the page to "supersedes nothing". Now ONLY A DOCUMENT
     (.htm, .html, .txt; `_DOCUMENT`, the locator's own rule for a 20-F's exhibits) is read, picked
@@ -156,13 +172,25 @@ form-shaped residues.
   - The two reader forms add **3 displacements**, all in VRRM's restatements:
     - the 2025 one displaces the 2021 first-lien term loan agreement;
     - the 2021 one displaces the 2018 agreement;
-    - the 2025 one's security-agreement restatement binds through a recital #1090's binder already
-      read, to a joinder's date. It matches no exhibit.
-  - **N1 over every bind** (`_displacing_words` patched to accept any term, so every bound pair is
-    listed): 151 binds before N1 and 151 after. Exactly 3 move: UBER's three term-loan amendments
-    (`…21-000058`, `…23-000080`, `…23-000109`) lose the wrong bind to 2018-06-13 and gain the right
-    one to 2016-07-13. No correct bind is lost and no wrong one gained; displacements and links do
-    not move (UBER's clauses restate parts).
+    - the 2025 one restates its First Lien Security Agreement of March 1, 2018 (at #1091's head this
+      bound to the joinder's date, 2021-12-07, until review round 1). It matches no exhibit.
+  - **Every bind, main → this PR** (`_displacing_words` patched to accept any term, so every bound
+    pair is listed; distinct (name, date) per document): 146 at main `71f9d9bb`, 151 here. Every
+    move was read by hand and is correct:
+    - UBER's three term-loan amendments (`…21-000058`, `…23-000080`, `…23-000109`) lose the wrong
+      bind to 2018-06-13 (N1) and gain the right one to 2016-07-13;
+    - VRRM gains its 2021 restatement's bind to the 2018 first-lien term loan agreement, and its
+      2025 restatement's bind to the 2021 one (the parenthetical binder). The 2025 one also loses
+      its "SECURITY AGREEMENT" at the joinder's 2021-12-07 and gains its First Lien Security
+      Agreement of 2018-03-01 (review round 1);
+    - PARR gains three binds to its Delayed Draw Term Loan and Bridge Loan Credit Agreement of
+      July 11, 2014, in `0001193125-15-116573`'s `d902717dex102.htm` (pledge), `d902717dex103.htm`
+      (guaranty) and `d902717dex104.htm` (fourth amendment), all through the parenthetical binder.
+      None states a displacing verb, so nothing is displaced.
+
+    Round 1's own change moves one bind (VRRM's security agreement) and nothing else. The
+    reviewer's scan counts 156 → 161, with the same moves; its count of binds differs from mine by
+    method, not by any bind.
   - Within a CIK, links go from **14 to 16**. Both new links are real supersessions by hand read:
     0 false.
   - The passive form reads 49 times over the 92. The subject guard refuses the 46 that restate a
@@ -188,8 +216,8 @@ form-shaped residues.
   - The one value still not shown at head is BURL's 2014 ABL first amendment. Four later-dated
     amendments of the same agreement (2018–2025) govern ahead of it, which is the chain behaving
     as it should.
-- *Pins* (`tests/test_covenant_selector.py`, 52 nodes, on `tests/fixtures/covenant_coverage_rule/`'s
-  real cuts).
+- *Pins* (`tests/test_covenant_selector.py`, 58 nodes, on `tests/fixtures/covenant_coverage_rule/`'s
+  real cuts and `tests/fixtures/covenant_selector/`'s frozen page data).
   - The brief's: VRRM's ex10_2 targeted right after the revolver and sent, and its 2021
     restatement superseded citing ex10_2's words, on both renderers end to end.
   - The six governing siblings targeted and sent (NKE five-year, NFLX DDTL, TJX 2030 RCA, CNXC
@@ -200,17 +228,35 @@ form-shaped residues.
   - `_governs` on 12 real governing titles, 8 real credit-support titles and 4 non-debt ones.
   - The located order; a primary of any pointer stays a primary.
   - The reader's two forms on VRRM's real clauses; PARR's real restated PART displaces nothing;
-    "was amended and restated" is history; an agreement inside the parenthetical binds nothing.
+    "was amended and restated" is history; a joinder inside the parenthetical is history, and the
+    term binds the agreement before it (round 1).
   - N1: UBER's real recital binds 2016-07-13 only, and the NKE shape, derived from NKE's real
-    five-year agreement in both amendment forms, displaces only the 2022 agreement. N3: no image on
+    five-year agreement in six forms (two amendments, a joinder, a waiver, a consent and an
+    incremental assumption agreement), displaces only the 2022 agreement. VRRM's real ex10_2
+    displaces its First Lien Security Agreement of 2018-03-01, never the joinder's date. N3: no image on
     EPAM's real rows is fetched, targeted or made a primary.
   - The tie: WLK's real pair (one derived row: the IKE principal, quoting `dex102.htm`'s own
-    cached clause), as a unit pin and end to end on both renderers (web row equals Markdown row);
-    and, over the living corpus, no committed page splits a group.
+    cached clause), as a unit pin and end to end on both renderers (web row equals Markdown row).
+    The invariant holds on every committed page and on WLK's page as its next build would write
+    it: a group splits only where two exhibits of one filing share it, and no group governs with
+    one file of a filing while citing another as its base.
+  - VALUES ARE PINNED ON FROZEN DATA (review round 1, CLAUDE.md TEST-LAYER RULE): WLK's
+    $89,000,000 and EPAM's six images are read from `tests/fixtures/covenant_selector/`, frozen
+    from main `71f9d9bb`. Two pins changed with it: the living-corpus pin "no committed page splits
+    a group", which WLK's and PARR's next paid builds would turn red by design, became the
+    invariant above; and the WLK and EPAM value pins moved off the living pages.
 - *Fail first.* With main `71f9d9bb`'s `covenant_extract.py` and `dossier.js` (#1090 merged;
-  its code is `995e3f21`'s), 49 of the 52 new nodes fail. The 3 that pass there are negatives,
-  which hold trivially when nothing is widened; the capital-"The" one was red on this branch
-  before the review's fix. Each negative was also shown live by a mutation of head's code that removes one piece,
+  its code is `995e3f21`'s), 56 of the 58 new nodes fail.
+  - Said plainly: **41 of them fail only by `AttributeError`** (24 `_governs`, 15
+    `_located_exhibits`, 2 `_exhibit_of`). That shows the symbols are new, not the behaviour. The
+    behaviour is shown by the other 15, which fail on an assertion, and by the base-against-head
+    audit and loop above.
+  - The 2 that pass at main are negatives, which hold trivially when nothing is widened. The
+    capital-"The" one was red on this branch before round 0's fix.
+  - At #1091's head `a0569884`, round 1's 6 FIX 1 nodes fail (the four NKE instrument wordings,
+    VRRM's real recital, VRRM's real ex10_2 cut). Its FIX 2 pins pass there: they move pins, not
+    behaviour. They are red at main, and the WLK next-build invariant reds when the split is
+    removed from `governing_terms`. Each negative was also shown live by a mutation of head's code that removes one piece,
   each reddening its pin:
   - `_governs` admitting credit support;
   - any titled sibling promoted;
@@ -221,10 +267,13 @@ form-shaped residues.
     the pin, so only the pair reddens it);
   - the subject guard off;
   - siblings never promoted;
-  - the split applied to every group (reds the corpus pin);
+  - the split applied to every group (reds the invariant pins, every page and WLK's next build);
   - the JS mirror never splitting (reds the end-to-end pin);
   - the gap chain without "No." (reds UBER's pin); no amendment-object guard (reds UBER's and both
-    NKE pins); siblings that may be images, and a primary that may be one (each reds its N3 pin).
+    NKE pins); siblings that may be images, and a primary that may be one (each reds its N3 pin);
+  - round 1: an instrument's span kept in the gap (reds VRRM's two security-agreement pins); no
+    instrument-object guard (reds those two and the four NKE instrument wordings); no split at all
+    in `governing_terms` (reds the WLK next-build invariant).
   The 5 N1 and N3 nodes also fail at this PR's own earlier commit `e563c013`.
 - *Pins that move with the premise.* #1090's harnesses (`_run`, `_nflx_run`, the BURL plan's
   stub) now assert one outcome per TARGET in the located order. 14 of #1090's pins move: each
@@ -238,6 +287,13 @@ form-shaped residues.
     `data/` byte-identical.
   - Each committed `dossier.json` rendered through base and head `render_markdown` and
     `renderDossier` (node): 26 of 26 byte-identical on each.
+- *Independent review, round 1* (the coordinator's, at head `a0569884`; Codex found nothing).
+  It reproduced 48 → 60 calls, the 14 new governing targets, no ancillary target, UBER's and the
+  NKE binds, VRRM's and NKE's pairs, Python–JS parity on 20 pages plus synthetic ones, and 26 of 26
+  byte-identical. Two FIXes in one commit (above: N1 for any instrument; values on frozen data),
+  and three items recorded (the split label carries the file; the bind count; the eight senders'
+  tables). After the round: the stubbed loop over the 24 pages moves no outcome, 48 → 60 holds,
+  and every fixture cut reads as its full exhibit.
 - *Code review, round 0* (`/code-review high --fix`, on the branch after main `71f9d9bb` was
   merged in): 7 findings.
   - 4 fixed, each behind a pin that fails on the code before the fix where it changes behaviour:
@@ -257,9 +313,9 @@ form-shaped residues.
     agreement is a sent primary on its committed page, and the brief was to widen, not to narrow.
   - 2 deferred as one (grouping by identity, under WHAT IT COSTS).
 - *Cross-setup validation* (`python -m vinci.impact run --base origin/main --head HEAD`, head
-  `b5623e01`, the shared price store, the primary checkout's EDGAR cache, CIQ exports and `.env`;
+  `b59e88d6` after review round 1, the shared price store, the primary checkout's EDGAR cache, CIQ exports and `.env`;
   `python -m vinci.impact verify`: VALID):
-  - fail first: 83 of 520 tests fail on main's code and pass on head's; 0 fail at head;
+  - fail first: 90 of 526 tests fail on main's code and pass on head's; 0 fail at head;
   - pages: 25 of 26 built at $0, 0 move. PARR is not built at either side: its quarterly CIQ
     export is mislabelled (an input matter, the same at main). 0 responses fetched live;
   - synthesis requests: 0 of 25 differ, and the six frozen panel pages are byte-identical, so the
@@ -268,7 +324,8 @@ form-shaped residues.
     `dossier.js` as browser-run source it does not run; the node `renderDossier` comparison above
     (26 of 26 byte-identical) and the approved WLK preview cover it;
   - downstream: no consumer reached (screens, ledger, scoring, monitor, theme desk, frontend build).
-- *Suite.* `bin/commit`'s gate green at `b5623e01`: ruff, `mypy --strict`, `pytest -m "not network"`.
+- *Suite.* `bin/commit`'s gate green at `b5623e01` and again at round 1's `b59e88d6`: ruff,
+  `mypy --strict`, `pytest -m "not network"`.
 
 **BOUNDARY.**
 - Pages: the 26 committed `data/dossiers/*/dossier.json` at main `51784e53`. #1090 changes no page,
@@ -305,7 +362,10 @@ form-shaped residues.
 
 - *Not classifiable from located documents: 8, each SENT under the rule* (about $2.41 of the
   +$4.80). A dead document the words cannot show dead is read, as #1090 rules ("an unclassifiable
-  one is READ"):
+  one is READ"). A KNOWN EFFECT (review round 1): each that returns terms prints a "Covenant terms
+  — <label> (governing agreement)" table on its page, for a facility that is probably dead (PARR's
+  2015 Mid Pac papers, TJX's 2024 revolver, BRBR's 2019 term loan). That is "read when unsure"
+  showing on the page; a document's own words, not its age, may mark it dead:
   1. AMZN `0001104659-23-113444 · tm2329405d1_ex10-2.htm`, its 2023 364-day agreement. The
      panel's 364-day facility runs to 2027-10-01, likely a later renewal;
   2. BRBR `0001193125-19-270862 · d812149dex109.htm`, its 2019 credit agreement. The panel carries
@@ -338,6 +398,11 @@ form-shaped residues.
     its own.
   - Falsifier: a re-assembled page with a group labelled `<label> · <file>` and a bare `<label>`
     group from another filing.
+  - THE SPLIT LABEL CARRIES THE FILE, NOT THE ACCESSION (review round 1, recorded). Two filings
+    whose split exhibits share a file name, a label and a date would merge again under
+    `<label> · <file>`. Measured exposure: 0 (derived only). Grouping by identity closes this too.
+    The label is not changed here: its wording is the operator's approved preview, and a change
+    needs a new one.
 - *Split groups repeat a label with a file.* On WLK and PARR at their next paid build, the reader
   sees one table per exhibit, named by file. Two amendments of one agreement in one filing (PARR's
   2017 pair) show as two groups, because the filing date cannot say which governs.

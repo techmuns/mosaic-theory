@@ -1,0 +1,64 @@
+{
+ "ticker": "EPAM",
+ "cik": "0001352010",
+ "name": "EPAM Systems, Inc.",
+ "covenant_pointer_rows": {
+  "value": [
+   {
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-02-26",
+    "accession": "0001352010-26-000015",
+    "exhibits": [
+     "exhibit1017-epamnonxempl.htm",
+     "exhibit1017-epamnonxempl001.jpg",
+     "exhibit1017-epamnonxempl002.jpg",
+     "exhibit1017-epamnonxempl003.jpg",
+     "exhibit1017-epamnonxempl004.jpg",
+     "exhibit1017-epamnonxempl005.jpg",
+     "exhibit1017-epamnonxempl006.jpg"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2017-05-26",
+    "accession": "0001352010-17-000022",
+    "exhibits": [
+     "exhibit10-1epamcreditagree.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2021-10-25",
+    "accession": "0001352010-21-000039",
+    "exhibits": [
+     "exhibit101-arcreditagreeme.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Long Term Debt",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+  "status": "present",
+  "note": null
+ }
+}

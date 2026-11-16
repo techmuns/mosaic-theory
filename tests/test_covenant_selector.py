@@ -53,6 +53,8 @@ from tests.test_covenant_exhibit_outcomes import _committed, _md_line, _web_line
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.schemas import CapitalStructure
 
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+
 # --- the brief's pin: VRRM's term-loan restatement is targeted, and supersedes the 2021 one -------
 
 
@@ -297,12 +299,15 @@ def test_a_past_restatement_is_history_not_the_operative_clause() -> None:
     assert ce.displaced_agreements(f"{VRRM_RECITAL} … {history}") == []
 
 
-def test_an_agreement_inside_the_parenthetical_binds_nothing() -> None:
-    """(−) VRRM's real recital of its security agreement: "that certain First Lien Security
+def test_an_instrument_to_the_agreement_in_the_parenthetical_is_its_history_vrrm() -> None:
+    """(+ / −) VRRM's real recital of its security agreement: "that certain First Lien Security
     Agreement, dated as of March 1, 2018 (as supplemented by the Joinder Agreement to the Security
-    Agreement, …, the “Existing Security Agreement”)". The parenthetical names a second agreement,
-    the joinder, so the term is not bound to the agreement before it (`_second_agreement`, #1090's
-    F5)."""
+    Agreement, dated as of December 7, 2021, …, the “Existing Security Agreement”)". A joinder TO
+    the agreement is its history, as an amendment is: the term binds the First Lien Security
+    Agreement of March 1, 2018, and never the joinder's December 7, 2021 (round 1 of #1091's
+    review, extending N1 past "Amendment … to"). At #1091's head the joinder read as a second
+    agreement, the true bind was refused, and a recital restarting inside the joinder's name bound
+    "Security Agreement" to the joinder's date."""
     recital = ("that certain First Lien Security Agreement, dated as of March 1, 2018 (as "
                "supplemented by the Joinder Agreement to the Security Agreement, dated as of "
                "December 7, 2021, by and among the Credit Parties party thereto and the Collateral "
@@ -311,8 +316,17 @@ def test_an_agreement_inside_the_parenthetical_binds_nothing() -> None:
                "Security Agreement ”)")
     clause = VRRM_RESTATED.replace("Existing Credit Agreement", "Existing Security Agreement")
     keys = [d.key for d in ce.displaced_agreements(f"{recital} … {clause}")]
-    first_lien = ce.AgreementKey("FIRST LIEN SECURITY AGREEMENT", ce.date(2018, 3, 1))
-    assert first_lien not in keys, keys
+    assert keys == [ce.AgreementKey("FIRST LIEN SECURITY AGREEMENT", ce.date(2018, 3, 1))], keys
+    assert ce.AgreementKey("SECURITY AGREEMENT", ce.date(2021, 12, 7)) not in keys
+
+
+def test_vrrm_real_restatement_binds_its_security_agreement_not_the_joinders_date() -> None:
+    """(+ / −) END TO END on VRRM's real `vrrm-ex10_2.htm` cut: what it displaces is the 2021 term
+    loan agreement and the First Lien Security Agreement of March 1, 2018, never a "SECURITY
+    AGREEMENT" of the joinder's December 7, 2021."""
+    keys = {d.key for d in ce.displaced_agreements(_fixture("VRRM")["texts"][VRRM_EX102] or "")}
+    assert keys == {ce.AgreementKey("FIRST LIEN TERM LOAN CREDIT AGREEMENT", ce.date(2021, 3, 26)),
+                    ce.AgreementKey("FIRST LIEN SECURITY AGREEMENT", ce.date(2018, 3, 1))}, keys
 
 
 def test_a_primary_of_any_pointer_stays_a_primary() -> None:
@@ -355,12 +369,24 @@ WLK_IKE_CLAUSE = ("To provide funds for paying the Costs of the Projects, the Au
 PRINCIPAL = "Principal / commitment amount"
 
 
+SELECTOR_FIX = ROOT / "tests" / "fixtures" / "covenant_selector"
+
+
+def _frozen(name: str) -> dict[str, typing.Any]:
+    """A frozen copy of committed page data (`tests/fixtures/covenant_selector/README.md`)."""
+    out: dict[str, typing.Any] = json.loads((SELECTOR_FIX / f"{name}.json").read_text())
+    return out
+
+
 def _wlk_with_ike() -> dict[str, typing.Any]:
-    """WLK's committed page plus ONE DERIVED row: its GO Zone principal row (`dex101.htm`, $89m)
-    copied to the IKE Zone agreement beside it (`dex102.htm`), with that exhibit's own real clause
-    and figure, placed right after GO Zone's rows, as the loop sends `dex102.htm` right after
-    `dex101.htm`."""
+    """WLK's committed page, hosting its FROZEN capital structure (round 1 of #1091's review: a
+    value is pinned on a frozen fixture, never on the living page), plus ONE DERIVED row: its GO
+    Zone principal row (`dex101.htm`, $89m) copied to the IKE Zone agreement beside it
+    (`dex102.htm`), with that exhibit's own real clause and figure, placed right after GO Zone's
+    rows, as the loop sends `dex102.htm` right after `dex101.htm`: the page as WLK's next paid
+    build would write it."""
     page = _committed("WLK")
+    page["mechanical"]["capital_structure"] = _frozen("WLK")["capital_structure"]
     rows = page["mechanical"]["capital_structure"]["covenant_term_rows"]["value"]
     go = next(r for r in rows if r["name"] == PRINCIPAL
               and f"{WLK_ACC} · dex101.htm" in (r["value"].get("source_ref") or ""))
@@ -420,20 +446,50 @@ def test_each_exhibit_prints_its_own_value_on_both_renderers_wlk_e2e(
         assert _web_row(web, fam, PRINCIPAL) == [_norm(x) for x in row]
 
 
-def test_no_committed_page_splits_a_group() -> None:
-    """(− · living corpus) Every committed page sent one exhibit per filing, so no governing group
-    is split and each page collapses exactly as before (26 of 26 render byte-identical, base
-    against head, in this PR's record)."""
-    for p in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+def _split_only_where_one_filing_pairs(cs: CapitalStructure) -> None:
+    """THE INVARIANT a page holds, whatever its next build sends (round 1 of #1091's review): a
+    governing group is labelled with a file ONLY when that file is one of two or more files of one
+    filing among the page's term rows, and no group governs with one file of a filing while it
+    cites another file of the same filing as its base."""
+    rows = list(cs.covenant_term_rows.value or []) if cs.covenant_term_rows else []
+    files: dict[str, set[str]] = {}
+    for r in rows:
+        acc, doc = ce._exhibit_of(r)
+        if acc and doc:
+            files.setdefault(acc, set()).add(doc)
+    pairs = {doc for docs in files.values() if len(docs) > 1 for doc in docs}
+    gov = ce.governing_terms(rows, list((cs.covenant_pointer_rows.value or [])
+                                        if cs.covenant_pointer_rows else []))
+    for g in gov:
+        named = g.family.rsplit(" · ", 1)[-1] if " · " in g.family else ""
+        assert named not in {d for docs in files.values() for d in docs} or named in pairs, g.family
+        base = ce._EXHIBIT_RE.search(g.base_ref or "")
+        shown = ce._EXHIBIT_RE.search(g.value.source_ref or g.value.note or "")
+        if base and shown and base.group(1) == shown.group(1):
+            assert base.group(2) == shown.group(2), (g.family, g.term, g.base_ref, shown.group(0))
+
+
+def test_a_group_splits_only_where_one_filing_carries_two_exhibits_every_page() -> None:
+    """(− · living corpus) Every committed page holds the invariant, today and after any paid
+    build: today none sends two exhibits of one filing, so none splits; WLK's and PARR's next builds
+    will split by design (round 1 of #1091's review: the pin was "no page splits", which those
+    builds would turn red)."""
+    pages = 0
+    for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         raw = json.loads(p.read_text()).get("mechanical", {}).get("capital_structure")
-        cs = CapitalStructure.model_validate(raw) if raw else None
-        if cs is None or cs.covenant_term_rows is None or not cs.covenant_term_rows.value:
-            continue
-        rows = list(cs.covenant_term_rows.value)
-        files = {ce._exhibit_of(r)[1] for r in rows} - {""}
-        gov = ce.governing_terms(rows, list((cs.covenant_pointer_rows.value or [])
-                                            if cs.covenant_pointer_rows else []))
-        assert not any(g.family.endswith(f" · {f}") for g in gov for f in files), p.parent.name
+        if raw:
+            _split_only_where_one_filing_pairs(CapitalStructure.model_validate(raw))
+            pages += 1
+    assert pages
+
+
+def test_a_group_splits_only_where_one_filing_carries_two_exhibits_wlk_next_build() -> None:
+    """(+) The same invariant on WLK's page as its next paid build would write it (`_wlk_with_ike`):
+    the GO Zone and IKE Zone agreements of one filing split, each governing its own value. At main's
+    `governing_terms` this page breaks the invariant: one group governs with IKE's `dex102.htm`
+    and cites GO Zone's `dex101.htm` as its base."""
+    _split_only_where_one_filing_pairs(
+        CapitalStructure.model_validate(_wlk_with_ike()["mechanical"]["capital_structure"]))
 
 
 # --- #1090 verification's N1 and N3, deferred to this PR ------------------------------------------
@@ -465,10 +521,22 @@ NKE_RECITALS = (
     "2022 Credit Agreement ”)",
     "(as amended by that certain Amendment No. 1 to the Credit Agreement, dated as of March 8, "
     "2024, the “ 2022 Credit Agreement ”)",
+    # round 1 of #1091's review: any instrument TO the agreement is its history, not only an
+    # amendment
+    "(as supplemented by the Joinder Agreement to the Credit Agreement, dated as of March 8, 2024, "
+    "the “ 2022 Credit Agreement ”)",
+    "(as modified by the Waiver to the Credit Agreement, dated as of March 8, 2024, the “ 2022 "
+    "Credit Agreement ”)",
+    "(as modified by the Consent to the Credit Agreement, dated as of March 8, 2024, the “ 2022 "
+    "Credit Agreement ”)",
+    "(as supplemented by the Incremental Assumption Agreement to the Credit Agreement, dated as of "
+    "March 8, 2024, the “ 2022 Credit Agreement ”)",
 )
 
 
-@pytest.mark.parametrize("history", NKE_RECITALS, ids=["first-amendment", "amendment-no-1"])
+@pytest.mark.parametrize("history", NKE_RECITALS, ids=["first-amendment", "amendment-no-1",
+                                                     "joinder", "waiver", "consent",
+                                                     "incremental-assumption"])
 def test_n1_an_amendments_date_never_displaces_a_live_agreement_of_that_day_nke(
         history: str) -> None:
     """(−) N1, DERIVED from NKE's real five-year agreement, which defines its "2022 Credit
@@ -485,6 +553,23 @@ def test_n1_an_amendments_date_never_displaces_a_live_agreement_of_that_day_nke(
     assert ce.AgreementKey("CREDIT AGREEMENT", ce.date(2024, 3, 8)) not in keys, keys
 
 
+def _epam_rows() -> list[typing.Any]:
+    """EPAM's frozen pointer rows, as the real type."""
+    from vinci.dossier.schemas import CovenantPointer
+    return [CovenantPointer.model_validate(r)
+            for r in _frozen("EPAM")["covenant_pointer_rows"]["value"]]
+
+
+def _layer(rows: list[typing.Any]) -> CapitalStructure:
+    """A capital-structure layer carrying only ``rows`` as its located pointers."""
+    from vinci.dossier.schemas import Sourced
+    u = Sourced[str].unknown(note="n/a")
+    return CapitalStructure(
+        instruments=Sourced.unknown(note="n/a"), summary=u, detail_as_of="n/a", maturity_filings=u,
+        covenant_pointers=Sourced.present(f"{len(rows)} pointers", source_ref="EDGAR"),
+        covenant_pointer_rows=Sourced.present(rows, source_ref="EDGAR"), covenant_terms=u)
+
+
 class _Records:
     """An SEC stub that records every URL read and serves nothing (each read fails)."""
 
@@ -497,20 +582,19 @@ class _Records:
 
 
 def test_n3_an_image_is_never_read_or_targeted_epam() -> None:
-    """(−) N3, EPAM's committed pointer rows: its 2026 10-K row lists six page images (`.jpg`)
-    beside the exhibit it targets. An image holds no text: it is never fetched and never a target,
-    so one that cannot be fetched never switches the page to "supersedes nothing". At #1090's head
-    all six were fetched as siblings."""
-    page = _committed("EPAM")
-    cs = CapitalStructure.model_validate(page["mechanical"]["capital_structure"])
-    assert cs.covenant_pointer_rows is not None
-    rows = list(cs.covenant_pointer_rows.value or [])
+    """(−) N3, EPAM's pointer rows, FROZEN (round 1 of #1091's review): its 2026 10-K row lists six
+    page images (`.jpg`) beside the exhibit it targets. An image holds no text: it is never fetched
+    and never a target, so one that cannot be fetched never switches the page to "supersedes
+    nothing". At #1090's head all six were fetched as siblings."""
+    fx = _frozen("EPAM")
+    rows = _epam_rows()
+    cs = _layer(rows)
     images = [f for r in rows for f in r.exhibits if f.lower().endswith(".jpg")]
     assert len(images) == 6, images
     http = _Records()
     *_, outcomes = ce.extract_covenant_terms(cs, llm=typing.cast(typing.Any, None),
-                                             http=typing.cast(typing.Any, http), cik=page["cik"],
-                                             ticker="EPAM", name=page["name"])
+                                             http=typing.cast(typing.Any, http), cik=fx["cik"],
+                                             ticker="EPAM", name=fx["name"])
     assert http.urls and not any(u.lower().endswith(".jpg") for u in http.urls), http.urls
     assert outcomes is not None
     assert not any(o.filename.lower().endswith(".jpg") for o in outcomes.value or [])
@@ -518,13 +602,11 @@ def test_n3_an_image_is_never_read_or_targeted_epam() -> None:
 
 
 def test_n3_an_image_listed_first_is_never_the_primary() -> None:
-    """(−) N3, DERIVED from EPAM's real 10-K row with its images moved ahead of its document: the
-    primary is still the document, never a page image."""
-    cs = CapitalStructure.model_validate(_committed("EPAM")["mechanical"]["capital_structure"])
-    assert cs.covenant_pointer_rows is not None
+    """(−) N3, DERIVED from EPAM's real 10-K row (frozen) with its images moved ahead of its
+    document: the primary is still the document, never a page image."""
     rows = [r.model_copy(update={"exhibits": sorted(r.exhibits,
                                                     key=lambda f: not f.endswith(".jpg"))})
-            for r in cs.covenant_pointer_rows.value or []]
+            for r in _epam_rows()]
     assert any(r.exhibits and r.exhibits[0].endswith(".jpg") for r in rows)
     assert not any(f.endswith(".jpg") for _r, f in ce._core_agreement_exhibits(rows))
 
