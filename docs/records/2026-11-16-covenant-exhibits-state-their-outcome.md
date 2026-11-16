@@ -70,7 +70,7 @@ any prompt change on the panel first, so `NOT_SENT` keeps the request byte-ident
 follows the precedent of `concentration.customers_listed`.
 
 **HOW VERIFIED.**
-- *Pins* (`tests/test_covenant_exhibit_outcomes.py`, 20 nodes):
+- *Pins* (`tests/test_covenant_exhibit_outcomes.py`, 22 nodes):
   - *The loop.* One run of the real loop over BURL's committed pointer rows, stubbed only at
     fetch and model, drives each of the seven branches once. Each exhibit's outcome is its
     branch, with the pointer's family and the heading read.
@@ -85,7 +85,9 @@ follows the precedent of `concentration.customers_listed`.
     and the web line equals the Markdown's. The real loop's all-branch JSON puts all six
     non-extracted causes on both renderers. An accession the field omits reads "no outcome
     recorded". Without the field, the line is the neutral line, exactly.
-- *Fail first.* Run with base code and head's `schemas.py` (so the file imports), 15 of the 20
+  - *Code-review round 0.* Two exhibits under one accession each print that accession. The two
+    label tables, Python and JS, hold exactly the schema's seven kinds.
+- *Fail first.* Run with base code and head's `schemas.py` (so the file imports), 17 of the 22
   nodes fail. The 5 that pass are the precondition and the 4 neutral-line pins, which pin today's
   behaviour. A mutation that treats an absent field as an empty list reds those 4, and 11 of
   #1073's 15 nodes. #1073's other 4 nodes are preconditions, which read no renderer.
@@ -126,7 +128,7 @@ follows the precedent of `concentration.customers_listed`.
   `fetch_failed`, all 5 of them cache misses.
 - The cache is the operator's EDGAR cache at `data/cache/sec` in the primary checkout, read on
   2026-11-16.
-- Fail-first counts are over the 20 nodes of the new file and the 15 of
+- Fail-first counts are over the 22 nodes of the new file and the 15 of
   `tests/test_covenant_unextracted_reason.py`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
