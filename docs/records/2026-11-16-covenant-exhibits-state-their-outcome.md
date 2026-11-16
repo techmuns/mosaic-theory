@@ -37,13 +37,15 @@ superseded-by:
   (`confirmation.layer_as_synthesized`) clear it, as they clear the term rows.
 - *The $0 pre-spend check.* `prespend.LLM_WRITTEN` gains the field. The check forecasts it
   PRESENT wherever an exhibit is located, and ABSENT otherwise.
-- *The render.* `render._unextracted_line` and `dossier.js` `unextractedLineHtml` name, for each
-  located accession the term rows do not cite, its targeted file and its cause:
+- *The render.* `render._unextracted_line` and `dossier.js` `unextractedLineHtml` name every
+  located exhibit whose own outcome is not `extracted`, with its accession, its file and its
+  cause. It works by exhibit, not by accession (Codex, round 1). BURL's line reads:
 
   > 3 located agreement exhibit(s) not extracted this run: 0001193125-14-313404 ·
   > d772516dex101.htm — not sent: past the cost bound on exhibits per page; 0001193125-22-200058 ·
   > d393601dex101.htm — not sent: past the cost bound on exhibits per page; 0001193125-26-116001 ·
-  > burl-ex10_39.htm — refused: not a debt agreement (its head declares no agreement)
+  > burl-ex10_39.htm — refused: no agreement title was read from its head; it was located as
+  > material contracts (10-K exhibit index)
 
   - A refusal names the heading E5 read, where it read one: NCNO's "(it declares itself “OFFICE
     LEASE”)". Where E5 read none, both readings print: "refused: no agreement title was read
@@ -80,7 +82,7 @@ any prompt change on the panel first, so `NOT_SENT` keeps the request byte-ident
 follows the precedent of `concentration.customers_listed`.
 
 **HOW VERIFIED.**
-- *Pins* (`tests/test_covenant_exhibit_outcomes.py`, 28 nodes):
+- *Pins* (`tests/test_covenant_exhibit_outcomes.py`, 29 nodes):
   - *The loop.* One run of the real loop over BURL's committed pointer rows, stubbed only at
     fetch and model, drives each of the seven branches once. Each exhibit's outcome is its
     branch, with the pointer's family and the heading read.
@@ -108,7 +110,12 @@ follows the precedent of `concentration.customers_listed`.
       extracted exhibit has the same filename there. With an empty or blank family, the first
       clause prints alone. Both renderers give the same line, and the new constant is pinned on
       both.
-- *Fail first.* Run with base code and head's `schemas.py` (so the file imports), 22 of the 28
+  - *Codex, round 1 (P2).* The line matched by accession, so one exhibit the term rows cite hid
+    another under the same accession. It now lists every exhibit whose own outcome is not
+    `extracted`, and its count is exhibits. The pin hosts BURL with a sibling exhibit under its
+    extracted accession. No committed page has such a pair, since every one of the 24 pages has
+    one target per accession.
+- *Fail first.* Run with base code and head's `schemas.py` (so the file imports), 23 of the 29
   nodes fail. The 6 that pass are the precondition, the 4 neutral-line pins and the no-rows
   digest pin, which pin today's behaviour. A mutation that treats an absent field as an empty list reds those 4, and 11 of
   #1073's 15 nodes. #1073's other 4 nodes are preconditions, which read no renderer.
@@ -168,7 +175,7 @@ follows the precedent of `concentration.customers_listed`.
   `fetch_failed`, all 5 of them cache misses.
 - The cache is the operator's EDGAR cache at `data/cache/sec` in the primary checkout, read on
   2026-11-16.
-- Fail-first counts are over the 28 nodes of the new file and the 15 of
+- Fail-first counts are over the 29 nodes of the new file and the 15 of
   `tests/test_covenant_unextracted_reason.py`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
