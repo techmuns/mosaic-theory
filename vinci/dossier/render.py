@@ -1897,21 +1897,30 @@ def _exhibit_outcome_text(o: CovenantExhibitOutcome) -> str:
     return f"{o.filename} — {why}"
 
 
-def _unextracted_line(missing: list[str], outcomes_s: Any) -> str:
-    """The covenant block's line for the located exhibits the term rows do not cite. With the
-    per-exhibit outcomes (STATE row 63) it states each one's own cause; without them — every page
-    assembled before the field — it states none, exactly as #1073 left it."""
-    head = f"{len(missing)} located agreement exhibit(s) not extracted this run"
+def _unextracted_line(located: set[str], cited: set[str], outcomes_s: Any) -> str | None:
+    """The covenant block's line for the located exhibits not extracted, or None when there are
+    none. With the per-exhibit outcomes (STATE row 63) it states each one's own cause, listing
+    every EXHIBIT whose outcome is not `extracted`: matched by accession, one exhibit cited by the
+    term rows would hide another under the same accession (Codex, #1084 round 1). An uncited
+    accession with no outcome reads "no outcome recorded". Without the field (every page assembled
+    before it) it lists the uncited accessions and states no cause, exactly as #1073 left it."""
+    missing = sorted(located - cited)
     if outcomes_s is None or outcomes_s.status is not SourceStatus.PRESENT:
-        return (f"{head}; this page does not state why (the extraction's notes are QA flags in "
-                f"dossier.json) — see the pointer table: {', '.join(missing)}")
-    by_acc: dict[str, list[CovenantExhibitOutcome]] = {}
-    for o in outcomes_s.value or []:
-        by_acc.setdefault(o.accession, []).append(o)
+        if not missing:
+            return None
+        return (f"{len(missing)} located agreement exhibit(s) not extracted this run; this page "
+                f"does not state why (the extraction's notes are QA flags in dossier.json) — see "
+                f"the pointer table: {', '.join(missing)}")
+    outcomes: list[CovenantExhibitOutcome] = list(outcomes_s.value or [])
+    have = {o.accession for o in outcomes}
     # each exhibit carries its accession: two pointers may share one, each targeting its own file
-    items = [f"{acc} · {_exhibit_outcome_text(o)}" for acc in missing for o in by_acc.get(acc, [])]
-    items += [f"{acc} · no outcome recorded" for acc in missing if acc not in by_acc]
-    return f"{head}: " + "; ".join(sorted(items))
+    items = [f"{o.accession} · {_exhibit_outcome_text(o)}" for o in outcomes
+             if o.outcome != "extracted"]
+    items += [f"{acc} · no outcome recorded" for acc in missing if acc not in have]
+    if not items:
+        return None
+    return (f"{len(items)} located agreement exhibit(s) not extracted this run: "
+            + "; ".join(sorted(items)))
 
 
 def _covenant_term_lines(cs: Any) -> list[str]:
@@ -1928,10 +1937,11 @@ def _covenant_term_lines(cs: Any) -> list[str]:
         # digest says "extraction failed" for an exhibit E5 refused before any call. Without them
         # the digest prints as before.
         outcomes_s = getattr(cs, "covenant_exhibit_outcomes", None)
-        none_cited = sorted({p.accession for p in (ptrs.value if ptrs is not None and ptrs.value
-                                                    else []) if p.accession})
-        if outcomes_s is not None and outcomes_s.status is SourceStatus.PRESENT and none_cited:
-            return [f"- _{_unextracted_line(none_cited, outcomes_s)}_"]
+        none_cited = {p.accession for p in (ptrs.value if ptrs is not None and ptrs.value
+                                            else []) if p.accession}
+        if (outcomes_s is not None and outcomes_s.status is SourceStatus.PRESENT
+                and (line := _unextracted_line(none_cited, set(), outcomes_s)) is not None):
+            return [f"- _{line}_"]
         return [_fact("Covenant terms (from the filed agreement)", cs.covenant_terms)]
     gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
     if not gov:
@@ -2004,9 +2014,8 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     extracted = {m.group(1) for r in rows_s.value
                  if (m := re.search(r"\b(\d{10}-\d{2}-\d{6})\b",
                                  r.value.source_ref or r.value.note or ""))}
-    missing = sorted(located - extracted)
-    if missing:
-        line = _unextracted_line(missing, getattr(cs, "covenant_exhibit_outcomes", None))
+    line = _unextracted_line(located, extracted, getattr(cs, "covenant_exhibit_outcomes", None))
+    if line is not None:
         out.append(f"- _{line}_")
     return out
 

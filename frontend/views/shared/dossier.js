@@ -3105,17 +3105,25 @@ function exhibitOutcomeText(o) {
 // The line for located exhibits the term rows do not cite (py: render._unextracted_line), as HTML:
 // each one's own cause from covenant_exhibit_outcomes; without the field (a page assembled before
 // it) no cause, in the bytes #1073 left — the QA-flag strings are never parsed.
-function unextractedLineHtml(missing, outcomes) {
-  const head = `${missing.length} located agreement exhibit(s) not extracted this run`;
-  if (!outcomes || outcomes.status !== "present")
-    return `${head}; this page does not state why (the extraction's notes are QA flags in ` +
-      `dossier.json) — see the pointer table: ${escapeHtml(missing.join(", "))}`;
-  const byAcc = {};
-  (outcomes.value || []).forEach((o) => { (byAcc[o.accession] = byAcc[o.accession] || []).push(o); });
+// Matched by EXHIBIT, never by accession: one exhibit the term rows cite must not hide another
+// under the same accession (Codex, #1084 round 1). Returns null when nothing is unextracted.
+function unextractedLineHtml(located, cited, outcomes) {
+  const missing = [...located].filter((a) => !cited.has(a)).sort();
+  if (!outcomes || outcomes.status !== "present") {
+    if (!missing.length) return null;
+    return `${missing.length} located agreement exhibit(s) not extracted this run; this page does ` +
+      `not state why (the extraction's notes are QA flags in dossier.json) — see the pointer ` +
+      `table: ${escapeHtml(missing.join(", "))}`;
+  }
+  const outs = outcomes.value || [];
+  const have = new Set(outs.map((o) => o.accession));
   // each exhibit carries its accession: two pointers may share one, each targeting its own file
-  const items = missing.flatMap((acc) => (byAcc[acc] || []).map((o) => `${acc} · ${exhibitOutcomeText(o)}`))
-    .concat(missing.filter((acc) => !byAcc[acc]).map((acc) => `${acc} · no outcome recorded`));
-  return escapeHtml(`${head}: ` + items.sort().join("; "));
+  const items = outs.filter((o) => o.outcome !== "extracted")
+    .map((o) => `${o.accession} · ${exhibitOutcomeText(o)}`)
+    .concat(missing.filter((acc) => !have.has(acc)).map((acc) => `${acc} · no outcome recorded`));
+  if (!items.length) return null;
+  return escapeHtml(`${items.length} located agreement exhibit(s) not extracted this run: ` +
+    items.sort().join("; "));
 }
 
 // (P5/E5) fenced Tier-2 covenant terms, TERM-GOVERNED → ONE table per family, each term collapsed to
@@ -3129,10 +3137,10 @@ function covenantTerms(cs) {
     // located exhibit's own cause replaces the stored digest (#1084 review round 1); without them
     // the digest prints as before.
     const outcomes = cs.covenant_exhibit_outcomes;
-    const located = [...new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean))].sort();
-    if (outcomes && outcomes.status === "present" && located.length)
-      return `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>` +
-        `${unextractedLineHtml(located, outcomes)}</i></div>`;
+    const located = new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean));
+    const line = outcomes && outcomes.status === "present"
+      ? unextractedLineHtml(located, new Set(), outcomes) : null;
+    if (line) return `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${line}</i></div>`;
     return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   }
   const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
@@ -3190,11 +3198,8 @@ function covenantTerms(cs) {
   const located = new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean));
   const extracted = new Set(rs.value
     .map((r) => _accOf((r.value && (r.value.source_ref || r.value.note)) || "")).filter(Boolean));
-  const missing = [...located].filter((a) => !extracted.has(a)).sort();
-  const note = missing.length
-    ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>` +
-      `${unextractedLineHtml(missing, cs.covenant_exhibit_outcomes)}</i></div>`
-    : "";
+  const line = unextractedLineHtml(located, extracted, cs.covenant_exhibit_outcomes);
+  const note = line ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${line}</i></div>` : "";
   return tables + note;
 }
 

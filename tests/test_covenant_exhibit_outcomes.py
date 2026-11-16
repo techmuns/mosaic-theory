@@ -463,7 +463,7 @@ def test_two_exhibits_under_one_accession_each_carry_it(tmp_path: pathlib.Path) 
     md = _md_line(page)
     assert md.count("0001193125-26-116001 · ") == 2, md
     assert "0001193125-26-116001 · burl-ex10_40.htm — could not be fetched" in md, md
-    assert md.startswith("3 located agreement exhibit(s)"), "the count stays accessions"
+    assert md.startswith("4 located agreement exhibit(s)"), "the count is exhibits"
     assert _web_line(tmp_path, page) == md
 
 
@@ -588,4 +588,21 @@ def test_a_refusal_with_no_title_and_no_family_states_the_first_reading_alone_e2
     md = _md_line(page)
     assert _stated(md) == {_TECX_ACC: "refused: no agreement title was read from its head"}, md
     assert "located as" not in md
+    assert _web_line(tmp_path, page) == md
+
+
+def test_an_extracted_exhibit_never_hides_its_accessions_other_exhibit_e2e(
+        tmp_path: pathlib.Path) -> None:
+    """(−) Codex, round 1 (P2). Two exhibits under one accession: one gave term rows, so the rows
+    cite the accession, and the other was not extracted. Matched by ACCESSION, the cited one hid
+    the other's outcome on both renderers. The line lists every exhibit whose own outcome is not
+    `extracted`, so it prints. No committed page has such a pair at b64be6f1."""
+    frozen = _frozen_outcomes("BURL")
+    cited = next(o for o in frozen if o["outcome"] == "extracted")
+    sibling = {**cited, "filename": "d883886dex102.htm", "outcome": "fetch_failed"}
+    page = _hosted("BURL", [*frozen, sibling])
+    md = _md_line(page)
+    assert f"{cited['accession']} · d883886dex102.htm — could not be fetched" in md, md
+    assert f"{cited['accession']} · {cited['filename']}" not in md, "the extracted one is cited"
+    assert md.startswith("4 located agreement exhibit(s)"), "the count is exhibits"
     assert _web_line(tmp_path, page) == md
