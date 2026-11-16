@@ -256,7 +256,19 @@ form-shaped residues.
     that is a row's primary is still sent. That path is deliberately unchanged. BURL's 2020 security
     agreement is a sent primary on its committed page, and the brief was to widen, not to narrow.
   - 2 deferred as one (grouping by identity, under WHAT IT COSTS).
-- *Impact and suite:* (to fill).
+- *Cross-setup validation* (`python -m vinci.impact run --base origin/main --head HEAD`, head
+  `b5623e01`, the shared price store, the primary checkout's EDGAR cache, CIQ exports and `.env`;
+  `python -m vinci.impact verify`: VALID):
+  - fail first: 83 of 520 tests fail on main's code and pass on head's; 0 fail at head;
+  - pages: 25 of 26 built at $0, 0 move. PARR is not built at either side: its quarterly CIQ
+    export is mislabelled (an input matter, the same at main). 0 responses fetched live;
+  - synthesis requests: 0 of 25 differ, and the six frozen panel pages are byte-identical, so the
+    row-53 panel check is not owed;
+  - rendered surface: 0 of 26 committed pages re-render differently. The report names
+    `dossier.js` as browser-run source it does not run; the node `renderDossier` comparison above
+    (26 of 26 byte-identical) and the approved WLK preview cover it;
+  - downstream: no consumer reached (screens, ledger, scoring, monitor, theme desk, frontend build).
+- *Suite.* `bin/commit`'s gate green at `b5623e01`: ruff, `mypy --strict`, `pytest -m "not network"`.
 
 **BOUNDARY.**
 - Pages: the 26 committed `data/dossiers/*/dossier.json` at main `51784e53`. #1090 changes no page,
