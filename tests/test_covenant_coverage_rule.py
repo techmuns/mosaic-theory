@@ -337,9 +337,11 @@ def test_a_conditional_termination_displaces_nothing() -> None:
 
 def test_a_part_of_the_agreement_displaces_nothing() -> None:
     """(−) DERIVED from NKE's real clause: "Section 2.5.12 of the 2025 Credit Agreement has been …
-    terminated" ends a part, not the agreement, so the 2025 agreement is read (`_A_PART_OF`). No
-    committed or cached clause has this shape (0 of the 29 displacing reads over the 92 cached
-    documents the gate passes); the guard is pinned here."""
+    terminated" ends a part, not the agreement, so the 2025 agreement is read. The subject guard
+    (`_UNDER_THE`) holds it: a part reaches the term only through "of", "to", "in" or "under". The
+    separate part guard the rule first shipped was redundant and is removed (review round 2, F6).
+    No committed or cached clause has this shape (0 of the 29 displacing reads over the 92 cached
+    documents the gate passes)."""
     texts = _edited("NKE", "0000320187-26-000020 · a364-daycreditagreementxni.htm",
                     "the 2025 Credit Agreement has been",
                     "Section 2.5.12 of the 2025 Credit Agreement has been")
@@ -420,13 +422,10 @@ def test_an_unknown_instrument_panel_is_not_an_empty_one() -> None:
 
 
 def test_a_one_word_name_matches_only_itself() -> None:
-    """(+ / −) A NAME TAIL IS AT LEAST TWO WORDS. EPAM's restatement names "Credit Agreement, dated
-    as of May 24, 2017", which E5 titles by its cover, "REVOLVING CREDIT FACILITY CREDIT AGREEMENT":
-    one agreement. A bare "INDENTURE" is not a "FIRST SUPPLEMENTAL INDENTURE" of the same date,
-    often signed the same day (derived; review round 0)."""
+    """(+ / −) A bare "INDENTURE" is not a "FIRST SUPPLEMENTAL INDENTURE" of the same date, often
+    signed the same day (derived; review round 0). Since round 2 (F1) a name matches only itself:
+    `test_f1_a_name_must_be_the_same_name`."""
     day = ce.date(2017, 5, 24)
-    assert ce._same_agreement(ce.AgreementKey("CREDIT AGREEMENT", day),
-                              ce.AgreementKey("REVOLVING CREDIT FACILITY CREDIT AGREEMENT", day))
     assert not ce._same_agreement(ce.AgreementKey("INDENTURE", day),
                                   ce.AgreementKey("FIRST SUPPLEMENTAL INDENTURE", day))
     assert ce._same_agreement(ce.AgreementKey("INDENTURE", day), ce.AgreementKey("INDENTURE", day))
@@ -451,8 +450,10 @@ def test_a_later_document_must_be_filed_later(filed: str) -> None:
 
 @pytest.mark.parametrize("ticker", ["AMZN", "BURL", "CNXC", "NFLX", "NKE", "TJX", "VRRM"])
 def test_every_fixture_target_is_a_committed_pointer_target(ticker: str) -> None:
-    """(precondition) The fixture's layer is the committed page's, unmodified, so its targets are
-    the page's own. A page re-assembled since moves its pointers, and this pin names it."""
+    """(precondition) The fixture's layer is the committed page's, unmodified, so its exhibits are
+    the page's own: every target, and every other exhibit of a located filing, which the loop reads
+    for who it is (review round 2, F1). A page re-assembled since moves its pointers, and this pin
+    names it."""
     p = ROOT / "data" / "dossiers" / ticker / "dossier.json"
     if not p.exists():
         pytest.skip(f"no committed {ticker} dossier")
@@ -461,9 +462,10 @@ def test_every_fixture_target_is_a_committed_pointer_target(ticker: str) -> None
     assert fx["capital_structure"]["covenant_pointer_rows"] == committed["covenant_pointer_rows"]
     layer = CapitalStructure.model_validate(fx["capital_structure"])
     assert layer.covenant_pointer_rows is not None
-    targets = {f"{r.accession} · {f}" for r, f in ce._core_agreement_exhibits(
-        list(layer.covenant_pointer_rows.value or []))}
-    assert set(fx["texts"]) == targets
+    rows = list(layer.covenant_pointer_rows.value or [])
+    every = {f"{r.accession} · {f}" for r in rows if r.accession for f in r.exhibits}
+    targets = {f"{r.accession} · {f}" for r, f in ce._core_agreement_exhibits(rows)}
+    assert targets <= every and set(fx["texts"]) == every
 
 
 # --- the render: both renderers print each cause, with its evidence -------------------------------
@@ -499,3 +501,237 @@ def test_a_terminated_exhibit_prints_its_cause_on_both_renderers_e2e(
     md = _md_line(page)
     assert f"{NFLX_PA14} — not sent: terminated — its title states notes due 2024" in md, md
     assert _web_line(tmp_path, page) == md
+
+
+# --- independent review, round 2: on any doubt about identity, READ ------------------------------
+
+ROUND2 = FIX / "round2_heads.json"
+VRRM_EX102 = "0001193125-25-242530 · vrrm-ex10_2.htm"
+NKE_FIVE = "0000320187-25-000008 · nikefiveyearcreditagreemen.htm"
+NKE_2024 = "0000320187-24-000009 · nike-364xdaycreditagreemen.htm"
+NKE_2023 = "0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
+
+
+def _round2(key: str) -> str:
+    heads: dict[str, str] = json.loads(ROUND2.read_text())
+    return heads[key]
+
+
+def _with_rows(ticker: str, extra: list[tuple[str, str, str]]) -> CapitalStructure:
+    """``ticker``'s committed layer plus DERIVED pointer rows (accession, exhibit, filing date)."""
+    from vinci.dossier.schemas import CovenantPointer
+    cs = CapitalStructure.model_validate(_fixture(ticker)["capital_structure"])
+    assert cs.covenant_pointer_rows is not None
+    rows = list(cs.covenant_pointer_rows.value or [])
+    rows += [CovenantPointer(family=f"derived {acc}", filing="8-K", filing_date=filed,
+                             accession=acc, exhibits=[doc]) for acc, doc, filed in extra]
+    return cs.model_copy(update={"covenant_pointer_rows": cs.covenant_pointer_rows.model_copy(
+        update={"value": rows})})
+
+
+def test_f1_a_same_day_sibling_makes_the_displaced_name_ambiguous_vrrm() -> None:
+    """(−) F1, on VRRM's REAL `vrrm-ex10_2.htm` (its 2025-10-17 term-loan Amendment and
+    Restatement Agreement No. 2, which E5 titles CREDIT AGREEMENT), targeted as a widened selector
+    would. A DERIVED later revolver restatement (VRRM's real A&R recital re-dated) displaces the
+    "Revolving Credit Agreement" dated October 17, 2025. Two agreements share that date and the
+    tail cannot tell them apart, so the displaced name decides neither: both are READ. At the PR
+    head the live term-loan restatement read superseded (independent review, round 1)."""
+    later = "9999999999-27-000001 · later-ex10_1.htm"
+    texts = dict(_fixture("VRRM")["texts"])
+    ar = texts[VRRM_AR] or ""
+    for old, new in (("Dated as of October 17, 2025", "Dated as of June 1, 2027"),
+                     ("shall mean March 1, 2018", "shall mean October 17, 2025")):
+        assert old in ar, old
+        ar = ar.replace(old, new)
+    texts[later] = ar
+    texts[VRRM_EX102] = _round2(VRRM_EX102)
+    cs = _with_rows("VRRM", [("0001193125-25-242530", "vrrm-ex10_2.htm", "2025-10-17"),
+                             ("9999999999-27-000001", "later-ex10_1.htm", "2027-06-01")])
+    r = _run("VRRM", texts=texts, cs=cs)
+    assert r.by[VRRM_EX102].outcome != "superseded", r.by[VRRM_EX102]
+    assert r.by[VRRM_AR].outcome != "superseded", r.by[VRRM_AR]
+
+
+def test_f1_an_untargeted_same_filing_sibling_makes_the_name_ambiguous_vrrm() -> None:
+    """(−) F1, the SIBLING half. VRRM's real `vrrm-ex10_2.htm` stays where it is, the second exhibit
+    of the A&R revolver's filing, which the selector does not target. The loop reads it for who it
+    is: an agreement dated October 17, 2025, as the revolver is. So the DERIVED later restatement's
+    "Revolving Credit Agreement" of that date is ambiguous, and the A&R revolver is READ."""
+    later = "9999999999-27-000001 · later-ex10_1.htm"
+    texts = dict(_fixture("VRRM")["texts"])
+    assert VRRM_EX102 in texts, "the fixture carries the sibling's real head"
+    ar = texts[VRRM_AR] or ""
+    for old, new in (("Dated as of October 17, 2025", "Dated as of June 1, 2027"),
+                     ("shall mean March 1, 2018", "shall mean October 17, 2025")):
+        ar = ar.replace(old, new)
+    texts[later] = ar
+    cs = _with_rows("VRRM", [("9999999999-27-000001", "later-ex10_1.htm", "2027-06-01")])
+    r = _run("VRRM", texts=texts, cs=cs)
+    assert VRRM_EX102 not in r.by, "a sibling is read, never targeted"
+    assert r.by[VRRM_AR].outcome != "superseded", r.by[VRRM_AR]
+
+
+def test_f1_the_nke_shape_two_agreements_one_date_and_a_plain_amendment() -> None:
+    """(− / +) F1, the NKE SHAPE, DERIVED from NKE's real heads.
+    - Its 364-day CREDIT AGREEMENT and its FIVE YEAR CREDIT AGREEMENT both dated March 11, 2022.
+      NKE's 2023 agreement terminates its "2022 Credit Agreement": the name fits both, so neither
+      is superseded.
+    - A FIRST AMENDMENT to the five-year agreement dated March 8, 2024, the day of the 2024 364-day
+      agreement. A plain amendment's own date is not an agreement's: only what it amends identifies
+      it. So the 2025 agreement's displacement of the 2024 one supersedes the 2024 agreement and
+      never the five-year amendment."""
+    texts = dict(_fixture("NKE")["texts"])
+    c364 = (texts[NKE_2024] or "").replace("March 8, 2024", "March 11, 2022")
+    five = _round2(NKE_FIVE)
+    assert "March 7, 2025" in five and "March 8, 2024" in (texts[NKE_2024] or "")
+    texts["9999999999-22-000001 · c364-2022.htm"] = c364
+    texts["9999999999-22-000002 · five-2022.htm"] = five.replace("March 7, 2025", "March 11, 2022")
+    amd = five.replace("FIVE YEAR CREDIT AGREEMENT Dated as of March 7, 2025",
+                       "FIRST AMENDMENT TO FIVE YEAR CREDIT AGREEMENT dated as of March 8, 2024, "
+                       "to the Five Year Credit Agreement, dated as of March 11, 2022,")
+    assert amd != five
+    texts["9999999999-24-000003 · five-amd1.htm"] = amd
+    cs = _with_rows("NKE", [("9999999999-22-000001", "c364-2022.htm", "2022-03-14"),
+                            ("9999999999-22-000002", "five-2022.htm", "2022-03-14"),
+                            ("9999999999-24-000003", "five-amd1.htm", "2024-03-11")])
+    r = _run("NKE", texts=texts, cs=cs)
+    assert r.by["9999999999-22-000002 · five-2022.htm"].outcome != "superseded"
+    assert r.by["9999999999-22-000001 · c364-2022.htm"].outcome != "superseded"
+    assert r.by["9999999999-24-000003 · five-amd1.htm"].outcome != "superseded"
+    assert r.by[NKE_2024].outcome == "superseded", r.by[NKE_2024]
+
+
+def test_f1_a_name_must_be_the_same_name() -> None:
+    """(+ / −) F1. One agreement is the same NAME and the same date. EPAM's restatement names a
+    "Credit Agreement" of May 24, 2017, which E5 titles by its cover, "REVOLVING CREDIT FACILITY
+    CREDIT AGREEMENT": the names differ, so on that doubt it is read. The tail still makes two
+    namings CONFUSABLE, which is what makes a displaced name ambiguous."""
+    day = ce.date(2017, 5, 24)
+    generic, cover = ce.AgreementKey("CREDIT AGREEMENT", day), ce.AgreementKey(
+        "REVOLVING CREDIT FACILITY CREDIT AGREEMENT", day)
+    assert not ce._same_agreement(generic, cover) and ce._confusable(generic, cover)
+    assert ce._same_agreement(generic, ce.AgreementKey("CREDIT AGREEMENT", day))
+    assert not ce._confusable(ce.AgreementKey("CREDIT AGREEMENT", day),
+                              ce.AgreementKey("SECURITY AGREEMENT", day))
+
+
+def test_f2_an_amendments_base_is_read_from_its_heading_not_its_recitals_history() -> None:
+    """(+) F2, UBER's REAL head (`…21-000058`). Its heading names no date; its recital names
+    "that certain Term Loan Agreement, dated as of July 13, 2016 (as amended by that certain
+    Amendment No. 1 to the Term Loan Agreement, dated as of June 13, 2018 …". The base is the
+    2016 agreement, not Amendment No. 1's date."""
+    head = _round2("0001552781-21-000058 · e21071_ex10-1.htm")
+    title = ce.agreement_title(head)
+    assert title == "TERM LOAN AGREEMENT"
+    _own, base = ce.exhibit_identity(head, title, ce.is_amendment(head))
+    assert base == ce.AgreementKey("TERM LOAN AGREEMENT", ce.date(2016, 7, 13)), base
+
+
+NKE_2026 = "0000320187-26-000020 · a364-daycreditagreementxni.htm"
+NKE_DEFN = ("“ 2025 Credit Agreement ” means that certain 364-Day Credit Agreement, dated as of "
+            "March 7, 2025")
+
+
+def test_f3_a_second_agreement_binds_only_inside_its_own_collective_definition() -> None:
+    """(−) F3, DERIVED from NKE's real definition of its "2025 Credit Agreement", which has no
+    "(x)", followed by the NEXT definition naming "(y)" an agreement. That (y) is the next
+    definition's, never the 2025 Credit Agreement's."""
+    body = _fixture("NKE")["texts"][NKE_2026] or ""
+    assert NKE_DEFN in body
+    derived = body.replace(NKE_DEFN, NKE_DEFN + ". “ Other Facilities ” means, collectively, (x) "
+                           "the facilities listed in Schedule 1 and (y) that certain Five Year "
+                           "Credit Agreement, dated as of March 11, 2022", 1)
+    keys = {d.key for d in ce.displaced_agreements(derived)}
+    assert ce.AgreementKey("364-DAY CREDIT AGREEMENT", ce.date(2025, 3, 7)) in keys
+    assert ce.AgreementKey("FIVE YEAR CREDIT AGREEMENT", ce.date(2022, 3, 11)) not in keys, keys
+
+
+def test_f3_a_y_in_the_body_after_a_definition_without_x_binds_nothing() -> None:
+    """(−) F3, the "(x)" half, DERIVED from NKE's real definition (no "(x)") followed, with no
+    definition between, by body prose listing "(y) that certain Five Year Credit Agreement". A
+    "(y)" binds only inside a definition that has its "(x)"."""
+    body = _fixture("NKE")["texts"][NKE_2026] or ""
+    derived = body.replace(NKE_DEFN, NKE_DEFN + ", as amended. The Company has delivered (y) that "
+                           "certain Five Year Credit Agreement, dated as of March 11, 2022", 1)
+    keys = {d.key for d in ce.displaced_agreements(derived)}
+    assert ce.AgreementKey("FIVE YEAR CREDIT AGREEMENT", ce.date(2022, 3, 11)) not in keys, keys
+
+
+def test_f3_a_y_in_the_next_definition_is_that_definitions() -> None:
+    """(− / +) F3, the next-definition half, DERIVED from TJX's real collective definition, its
+    "(y)" moved into a definition of its own: the first definition has its "(x)", and the "(y)"
+    after the next definition begins is not the first's. TJX's real definition, (x) and (y) in
+    one, still binds both (`test_a_collective_definition_supersedes_both_its_agreements_tjx`)."""
+    key = "0001193125-21-202939 · d169110dex101.htm"
+    body = _fixture("TJX")["texts"][key] or ""
+    old = "; and (y) that certain 364 Day Revolving Credit Agreement"
+    assert old in body
+    derived = body.replace(old, ". “ Other Agreements ” means (y) that certain 364 Day Revolving "
+                           "Credit Agreement", 1)
+    keys = {d.key for d in ce.displaced_agreements(derived)}
+    assert ce.AgreementKey("2022 REVOLVING CREDIT AGREEMENT", ce.date(2016, 3, 11)) in keys
+    assert ce.AgreementKey("364 DAY REVOLVING CREDIT AGREEMENT", ce.date(2020, 8, 10)) not in keys
+
+
+def test_a_recital_never_binds_a_definitions_own_term() -> None:
+    """(−) Found writing F3's pin, DERIVED from the same real definition: a sentence naming "that
+    certain Five Year Credit Agreement, dated as of March 11, 2022" just before it. The recital
+    binder's gap reached across the sentence end to the definition's own term, “2025 Credit
+    Agreement”, and bound the five-year agreement to it."""
+    body = _fixture("NKE")["texts"][NKE_2026] or ""
+    derived = body.replace(NKE_DEFN, "The facilities include that certain Five Year Credit "
+                           "Agreement, dated as of March 11, 2022. " + NKE_DEFN, 1)
+    keys = {d.key for d in ce.displaced_agreements(derived)}
+    assert ce.AgreementKey("364-DAY CREDIT AGREEMENT", ce.date(2025, 3, 7)) in keys
+    assert ce.AgreementKey("FIVE YEAR CREDIT AGREEMENT", ce.date(2022, 3, 11)) not in keys, keys
+
+
+@pytest.mark.parametrize("old,new", [
+    ("all the principal, interest and fees outstanding under the Existing Credit Agreements",
+     "all the Revolving Loans outstanding under the Existing Credit Agreements"),
+    ("all the principal, interest and fees outstanding under the Existing Credit Agreements shall "
+     "have been paid in full and all commitments thereunder",
+     "all revolving commitments under the Existing Credit Agreements"),
+])
+def test_f4_a_tranche_ending_is_not_the_agreement_ending(old: str, new: str) -> None:
+    """(−) F4, DERIVED from AMZN's real condition precedent, edited to a tranche: "all the Revolving
+    Loans outstanding under the … shall have been paid in full" and "all revolving commitments
+    under the … shall have been terminated" end a tranche, and the agreement may live on, so its
+    2022 364-day agreement is read."""
+    key = "0001104659-23-113444 · tm2329405d1_ex10-1.htm"
+    texts = _edited("AMZN", key, old, new)
+    r = _run("AMZN", texts=texts)
+    assert r.by["0001193125-22-289041 · d413765dex101.htm"].outcome != "superseded"
+
+
+def test_f5_a_recital_binds_its_term_to_the_agreement_beside_it() -> None:
+    """(−) F5, DERIVED from VRRM's real recital with a second agreement before the term: "that
+    certain Credit Agreement, dated as of … and that certain Revolving Credit Agreement, dated as of
+    the Original Closing Date (… the “Original ABL Credit Agreement”)". The term binds to the
+    agreement beside it, never across the first."""
+    texts = _fixture("VRRM")["texts"]
+    body = texts[VRRM_AR] or ""
+    old = "that certain Revolving Credit Agreement, dated as of the Original Closing Date"
+    assert old in body
+    derived = body.replace(old, "that certain Term Loan Credit Agreement, dated as of June 1, 2016 "
+                           "and " + old, 1)
+    keys = {d.key for d in ce.displaced_agreements(derived)}
+    assert ce.AgreementKey("REVOLVING CREDIT AGREEMENT", ce.date(2018, 3, 1)) in keys
+    assert ce.AgreementKey("TERM LOAN CREDIT AGREEMENT", ce.date(2016, 6, 1)) not in keys, keys
+
+
+def test_codex_round2_an_undated_notes_row_is_not_an_absent_one() -> None:
+    """(−) Codex, PR #1090 round 2, DERIVED from NFLX's real panel: one more Bonds and Notes row
+    with principal and NO maturity date. It may be the 2024 notes, so the 2014 purchase agreement is
+    read. NFLX's own undated rows (commercial paper, a lease, a term loan) are not notes and do not
+    block it (`test_matured_notes_read_terminated_and_a_live_purchase_agreement_goes_last_nflx`)."""
+    fx = _fixture("NFLX")
+    cs = CapitalStructure.model_validate(fx["capital_structure"])
+    insts = list(cs.instruments.value or [])
+    notes = next(i for i in insts if i.type == "Bonds and Notes")
+    extra = notes.model_copy(update={"description": "5.750% Senior Notes", "maturity_date": None,
+                                     "ciq_maturity_date": None, "principal_musd": 400.0})
+    cs = cs.model_copy(update={"instruments": cs.instruments.model_copy(
+        update={"value": [*insts, extra]})})
+    r = _run("NFLX", cs=cs)
+    assert r.by[NFLX_PA14].outcome != "terminated" and NFLX_PA14 in r.sent

@@ -913,16 +913,33 @@ _AGREEMENT_TERM = r"[“\"]\s*(?P<term>[A-Z0-9][^”\"]{0,60}?(?:Agreements?|Ind
 #: A recital: "party to that certain <agreement>, dated as of <date> (… the “<term>”)", or with
 #: the term inside a parenthetical before the date (CNXC's 2021 amendment: "that certain Credit
 #: Agreement (as amended, … the “Existing Credit Agreement”), dated as of October 16, 2020").
+#: The gap between the agreement and its term never crosses a SECOND agreement (independent review,
+#: F5): "that certain Credit Agreement, dated … and that certain Term Loan Agreement, dated … (the
+#: “Existing Term Loan Agreement”)" binds the term to the Term Loan Agreement only. An AMENDMENT
+#: named in the gap is the agreement's own history and may stand there: EPAM's "Credit Agreement
+#: dated as of May 24, 2017, as amended by the First Amendment to Credit Agreement …, and the
+#: Second Amendment … (as so amended, the “Existing Credit Agreement”)", TJX's "(as amended by that
+#: certain First Amendment to 2026 Revolving Credit Agreement, …, the “2026 Revolving Credit
+#: Agreement”)" (`_second_agreement`).
+#: And the term a recital binds is never a DEFINITION's own ("“2025 Credit Agreement” means …"),
+#: which the gap would otherwise reach across a sentence end (found writing review F3's pin).
 _BIND_RECITAL = re.compile(
-    rf"\b(?:that\s+certain|the)\s+{_AGREEMENT_REF}[^“”\"]{{0,240}}?{_AGREEMENT_TERM}")
+    rf"\b(?:that\s+certain|the)\s+{_AGREEMENT_REF}(?P<gap>[^“”\"]{{0,240}}?){_AGREEMENT_TERM}"
+    rf"(?!\s*(?:means|shall\s+mean)\b)")
+#: An agreement named in a recital's gap: its name's words, then the noun.
+_GAP_AGREEMENT = re.compile(r"(?:\b[A-Z0-9][\w'\-]*\s+|\bof\s+|\bto\s+|\band\s+|\bthe\s+){0,8}?"
+                            r"\b(?:Agreement|AGREEMENT|Indenture|INDENTURE)\b")
 _BIND_RECITAL_PAREN = re.compile(
     rf"\b(?:that\s+certain|the)\s+{_REF_NAME}\s*{_NOT_OWN_PAREN}[^()]{{0,200}}?{_AGREEMENT_TERM}"
     rf"[^()]{{0,120}}\)\s*,?\s*{_REF_WHEN}")
 #: A definition: "“<term>” means [, collectively, (x)] that certain <agreement>, dated as of
-#: <date>"; a collective one's "(y) that certain <agreement>" follows within `_DEFN_SPAN` chars.
+#: <date>"; a collective one's "(y) that certain <agreement>" follows within `_DEFN_SPAN` chars,
+#: and only in a definition that has its "(x)", before the next definition begins (independent
+#: review, F3: a "(y)" in the NEXT definition is that definition's).
 _BIND_DEFINITION = re.compile(
-    rf"{_AGREEMENT_TERM}\s*(?:means|shall\s+mean)\s*,?\s*(?:collectively\s*,?\s*)?(?:\(x\)\s*)?"
-    rf"(?:that\s+certain\s+|the\s+)?{_AGREEMENT_REF}")
+    rf"{_AGREEMENT_TERM}\s*(?:means|shall\s+mean)\s*,?\s*(?:collectively\s*,?\s*)?"
+    rf"(?P<x>\(x\)\s*)?(?:that\s+certain\s+|the\s+)?{_AGREEMENT_REF}")
+_NEXT_DEFINITION = re.compile(r"[“\"]\s*[A-Z0-9][^”\"]{0,80}[”\"]\s*(?:means|shall\s+mean)\b")
 _BIND_SECOND = re.compile(rf"\(y\)\s*(?:that\s+certain\s+|the\s+)?{_AGREEMENT_REF}")
 _DEFN_SPAN = 600
 #: A term defined as two others: "“Existing Credit Agreements” means the Existing 3-Year Credit
@@ -953,23 +970,38 @@ _DISPLACING_VERBS: tuple[str, ...] = (
     r"will\s+be)\s+terminated",
     r"\bevidence\s+of\s+(?:the\s+)?termination\s+of\s+the\s+{t}",
 )
-#: A PART of the agreement, not the agreement: "Section 1.01 of the Existing Credit Agreement is
-#: hereby amended and restated" (BRBR's Amendment No. 2), "Exhibit A-1 to the Existing 2016 Loan
-#: Agreement is hereby amended and restated" (UBER). Read in the characters before the verb: a part
-#: word, its reference as written ("2.5.12", "1.01(a)", "A-1", dotted, so no sentence rule may cut
-#: it), then "of", "to", "in" or "under".
-_A_PART_OF = re.compile(
-    r"\b(?:Sections?|Articles?|Exhibits?|Schedules?|Annex(?:es)?|clauses?|paragraphs?)\s+"
-    r"[\w.()\-]+(?:\s*(?:,|and|or|through)\s*[\w.()\-]+)*\s+(?:of|to|in|under)\s+$", re.I)
-#: The term as the object of a preposition, read in the characters before a clause that opens on
-#: "the <term>": what the clause says is of something under the agreement, not the agreement.
+#: WHAT THE CLAUSE ENDS MUST BE THE AGREEMENT — its subject is checked on every form that has one.
+#: - A clause opening on "the <term>" after a preposition is about something of or under it: a part
+#:   ("Section 2.5.12 of the 2025 Credit Agreement has been … terminated"), a tranche ("the
+#:   Revolving Commitments under the …"). This guard subsumes the part guard `_A_PART_OF` the rule
+#:   first shipped, which every part reference reaches only through "of", "to", "in" or "under";
+#:   the independent review (F6) showed removing it moved no pin, so it is removed.
 _UNDER_THE = re.compile(r"\b(?:under|of|to|in|with|for)\s+$", re.I)
+#: - "… outstanding under the <term> shall have been paid in full": what was outstanding must be
+#:   ALL of it, in lower-case words ("all the principal, interest and fees outstanding", AMZN),
+#:   never a tranche's defined term ("all the Revolving Loans outstanding") (review F4).
+_ALL_OUTSTANDING = re.compile(
+    r"\ball\s+(?:the\s+)?(?:[a-z]+,?\s+(?:and\s+)?){0,6}outstanding\s+$")
+#: - "commitments under the <term> … terminated": all the commitments ("all", "the"), never a
+#:   tranche's, in any case ("revolving commitments under the …") (F4).
+_ALL_COMMITMENTS = re.compile(r"\b(?:all|the|and)\s+$", re.I)
 #: What an amendment amends: in its heading ("to Revolving Credit Agreement, dated as of March 1,
 #: 2018") or else the FIRST agreement its recital names ("party to that certain …", "pursuant to
 #: the Credit Agreement (…) dated as of February 11, 2022" (NCNO), "reference is hereby made to the
 #: (a) Credit Agreement, dated as of July 7, 2017" (SMPL), whose recital later names the acquired
 #: company's March 25, 2015 credit agreement, repaid).
 _AMENDS_HEADING = re.compile(rf"\b(?:to|of)\s+(?:the\s+|that\s+certain\s+)?{_AGREEMENT_REF}")
+#: Where an amendment's HEADING ends: its parties ("is made by and among", "is entered into") or its
+#: recitals ("W I T N E S S E T H", "WHEREAS"). The heading read stays before it, so a recital's
+#: history ("as amended by that certain Amendment No. 1 to the Term Loan Agreement, dated as of
+#: June 13, 2018", UBER) is never read as the base (independent review, F2).
+_HEADING_END = re.compile(r"\b(?:WHEREAS|RECITALS|W\s?I\s?T\s?N\s?E\s?S\s?S\s?E\s?T\s?H|"
+                          r"by\s+and\s+(?:among|between)|is\s+(?:made|entered\s+into))\b", re.I)
+#: An amendment that RESTATES its agreement is that agreement anew, dated as of its own date
+#: ("AMENDMENT AND RESTATEMENT AGREEMENT dated as of April 21, 2023", CNXC; VRRM's "Amendment AND
+#: RESTATEMENT AGREEMENT NO. 2"). A plain amendment's own date is no agreement's (F1: NKE's
+#: five-year First Amendment is dated as its 2024 364-day agreement).
+_RESTATEMENT_HEAD = re.compile(r"\bAMENDMENT\s+AND\s+RESTATEMENT\s+AGREEMENT\b", re.I)
 _AMENDS_RECITAL = re.compile(
     rf"\b(?:that\s+certain|to\s+the)\s+(?:\([a-z]\)\s+)?{_AGREEMENT_REF}")
 #: An agreement's own date in its head: "dated as of March 7, 2025", "entered into as of …".
@@ -980,6 +1012,8 @@ _OWN_DATE = re.compile(rf"\b(?:dated|entered\s+into|made(?:\s+and\s+entered\s+in
 #: of April 21, 2023", which E5 titles CREDIT AGREEMENT.
 _RESTATED_WORDS = re.compile(r"\b(?:(?:FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH)\s+)?AMENDED\s+AND\s+"
                              r"RESTATED\s+")
+#: A panel row that may be notes: its CIQ type or its description names notes, bonds or debentures.
+_NOTES_KIND = re.compile(r"\b(?:notes?|bonds?|debentures?)\b", re.I)
 #: A title that states its notes' maturity: "SENIOR NOTES DUE 2024 PURCHASE AGREEMENT".
 _NOTES_DUE = re.compile(r"\bNOTES\s+DUE\s+((?:19|20)\d\d)\b")
 #: The head an identity is read from, and the longest verbatim clause kept as evidence.
@@ -1042,31 +1076,36 @@ def exhibit_identity(text: str, title: str,
     """``(own, base)``: the agreement the exhibit is (its title and its own date) and, for an
     amendment, the agreement it amends — named in its heading ("to Revolving Credit Agreement,
     dated as of March 1, 2018") or, failing that, its recital's first "that certain <agreement>,
-    dated as of <date>". Either is None where its words do not read."""
+    dated as of <date>". A plain amendment has no ``own``: only an amendment AND RESTATEMENT is an
+    agreement dated as of its own date. Either is None where its words do not read."""
     flat = re.sub(r"\s+", " ", text)
     head = _flat_head(text)
     own_m = _OWN_DATE.search(head)
     own = _key(title, own_m.group(1), flat) if own_m else None
     base = None
     if amendment:
+        end = _HEADING_END.search(head)
+        heading = head[:end.start()] if end else head[:600]
         # The heading's "AMENDMENT TO <agreement> dated as of <date>" may date the AMENDMENT
         # ("FIRST AMENDMENT TO CREDIT AGREEMENT AND JOINDER AGREEMENT dated as of December 27,
         # 2021", CNXC): a base dated as the exhibit itself is not its base, and the recital is
         # read instead.
-        for rx in (_AMENDS_HEADING, _AMENDS_RECITAL):
-            m = rx.search(head)
+        for rx, where in ((_AMENDS_HEADING, heading), (_AMENDS_RECITAL, head)):
+            m = rx.search(where)
             key = _key(m.group("name"), m.group("when"), flat) if m is not None else None
             if key is not None and (own is None or key.dated != own.dated):
                 base = key
                 break
+        if not _RESTATEMENT_HEAD.search(head[:400]):
+            own = None  # a plain amendment is identified by what it amends (F1)
     return own, base
 
 
 def displaced_agreements(text: str) -> list[Displaced]:
     """Every agreement the exhibit says it restates, replaces or terminates WHOLE: a defined term
     bound to "<agreement>, dated as of <date>" by a recital or a definition, and a displacing verb
-    on that term (`_DISPLACING_VERBS`) that is not about a part of it (`_A_PART_OF`). In document
-    order, one entry per (term, agreement)."""
+    on that term (`_DISPLACING_VERBS`) whose subject is the whole agreement (`_displacing_words`).
+    In document order, one entry per (term, agreement)."""
     flat = re.sub(r"\s+", " ", text)
     binds: dict[str, list[AgreementKey]] = {}
 
@@ -1074,12 +1113,21 @@ def displaced_agreements(text: str) -> list[Displaced]:
         if key is not None and key not in binds.setdefault(term, []):
             binds[term].append(key)
 
-    for rx in (_BIND_RECITAL_PAREN, _BIND_RECITAL):
-        for m in rx.finditer(flat):
-            bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
+    for m in _BIND_RECITAL_PAREN.finditer(flat):
+        bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
+    # OVERLAPPING: a recital refused for a second agreement in its gap leaves that second
+    # agreement's own recital, which starts inside the refused span, still to be read
+    pos = 0
+    while (r := _BIND_RECITAL.search(flat, pos)) is not None:
+        pos = r.start() + 1
+        if not _second_agreement(r.group("gap")):
+            bind(r.group("term"), _key(r.group("name"), r.group("when"), flat))
     for m in _BIND_DEFINITION.finditer(flat):
         bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
-        y = _BIND_SECOND.search(flat, m.end(), m.end() + _DEFN_SPAN)
+        if m.group("x") is None:
+            continue
+        nxt = _NEXT_DEFINITION.search(flat, m.end(), m.end() + _DEFN_SPAN)
+        y = _BIND_SECOND.search(flat, m.end(), nxt.start() if nxt else m.end() + _DEFN_SPAN)
         if y is not None:
             bind(m.group("term"), _key(y.group("name"), y.group("when"), flat))
     for m in _BIND_PAIR.finditer(flat):
@@ -1095,18 +1143,26 @@ def displaced_agreements(text: str) -> list[Displaced]:
     return out
 
 
+def _second_agreement(gap: str) -> bool:
+    """Does a recital's gap name an agreement that is not an amendment (its history)?"""
+    return any(not re.search(r"\bAMENDMENT\b", g.group(0), re.I)
+               for g in _GAP_AGREEMENT.finditer(gap))
+
+
 def _displacing_words(flat: str, term: str) -> str | None:
     """The first clause in which the document displaces ``term`` whole, verbatim, or None."""
     t = re.escape(term) + r"\b(?![’']s\b)"
     for tpl in _DISPLACING_VERBS:
         for m in re.finditer(tpl.replace("{t}", t), flat):
-            before = flat[max(0, m.start() - 60):m.start()]
-            if _A_PART_OF.search(before):
-                continue
+            before = flat[max(0, m.start() - 120):m.start()]
             # "the Revolving Commitments under the Existing Credit Agreement shall have been
             # terminated": a clause that opens on the term, after a preposition, is about something
-            # under the agreement (a tranche, its commitments), not the agreement itself
+            # of or under the agreement (a part, a tranche, its commitments), not the agreement
             if m.group(0).startswith("the") and _UNDER_THE.search(before):
+                continue
+            if m.group(0).startswith("under") and not _ALL_OUTSTANDING.search(before):
+                continue
+            if m.group(0).startswith("commitments") and not _ALL_COMMITMENTS.search(before):
                 continue
             words = m.group(0).strip()
             return words if len(words) <= _EVIDENCE_CAP else words[:_EVIDENCE_CAP - 1] + "…"
@@ -1114,15 +1170,21 @@ def _displacing_words(flat: str, term: str) -> str | None:
 
 
 def _same_agreement(a: AgreementKey | None, b: AgreementKey | None) -> bool:
-    """One agreement under two namings: the same date, and the same name, or one name the other's
-    tail of at least two words ("CREDIT AGREEMENT" and EPAM's cover title "REVOLVING CREDIT
-    FACILITY CREDIT AGREEMENT"). A one-word name matches only itself: "INDENTURE" is not "FIRST
-    SUPPLEMENTAL INDENTURE", which is often dated the same day (review round 0)."""
-    if a is None or b is None or a.dated != b.dated:
+    """One agreement: the same NAME and the same date (independent review, F1). A name that is only
+    the other's tail is a doubt, and on any doubt about identity the exhibit is READ: EPAM's
+    restatement names a "Credit Agreement" of May 24, 2017, which E5 titles by its cover,
+    "REVOLVING CREDIT FACILITY CREDIT AGREEMENT", so that exhibit is read."""
+    return a is not None and b is not None and a.dated == b.dated and a.name == b.name
+
+
+def _confusable(a: AgreementKey, b: AgreementKey) -> bool:
+    """Could a document mean either? The same date, and one name the other's whole tail ("CREDIT
+    AGREEMENT" and "REVOLVING CREDIT AGREEMENT"; never "SECURITY AGREEMENT")."""
+    if a.dated != b.dated:
         return False
     x, y = a.name.split(), b.name.split()
     n = min(len(x), len(y))
-    return x == y or (n >= 2 and x[-n:] == y[-n:])
+    return x[-n:] == y[-n:]
 
 
 def _head_dates(text: str) -> set[date]:
@@ -1152,9 +1214,14 @@ def _matured_notes(title: str, reference: date | None,
     if not years or years[-1] >= reference.year:
         return None
     # the panel's own date (`ciq_maturity_date`, kept where a filing governs `maturity_date`) and
-    # the governed one both count; an UNKNOWN principal is not an absent one
-    if any(i.principal_musd != 0 and any((d or "")[:4] == str(y) for y in years
-                                         for d in (i.maturity_date, i.ciq_maturity_date))
+    # the governed one both count; an UNKNOWN principal is not an absent one, and neither is an
+    # UNKNOWN maturity on a notes row, which may be these notes (Codex, PR #1090 round 2). An
+    # undated row of another kind (commercial paper, a lease, a term loan) cannot be.
+    if any(i.principal_musd != 0
+           and (any((d or "")[:4] == str(y) for y in years
+                    for d in (i.maturity_date, i.ciq_maturity_date))
+                or (not i.maturity_date and not i.ciq_maturity_date
+                    and _NOTES_KIND.search(f"{i.type} {i.description}")))
            for i in instruments):
         return None
     due = " and ".join(str(y) for y in years)
@@ -1283,16 +1350,18 @@ _Verdict = tuple[Literal["live", "superseded", "terminated"], tuple[str, str] | 
 
 def _coverage(candidates: list[_Candidate], reference: date | None,
               instruments: list[CapitalInstrument] | None, *, all_read: bool = True,
-              unnamed_dates: frozenset[date] = frozenset()) -> list[_Verdict]:
+              unnamed_dates: frozenset[date] = frozenset(),
+              siblings: tuple[_Identity, ...] = ()) -> list[_Verdict]:
     """THE COVERAGE RULE — one ``(kind, superseded_by, evidence)`` per candidate, ``kind`` being
     ``live``, ``superseded`` or ``terminated``.
 
     SUPERSEDED: a candidate filed STRICTLY LATER displaces (`displaced_agreements`) the agreement
     this one is or amends (`exhibit_identity`, `_same_agreement`). The earliest such candidate is
     cited, with its own words. Two refusals keep a guess out:
-    - a displaced agreement that matches candidates under two different names is AMBIGUOUS, and
-      decides none of them ("Credit Agreement, dated as of March 1, 2018" would fit VRRM's revolver
-      and its term loan, both dated that day);
+    - a displaced agreement that could mean two agreements on the page is AMBIGUOUS, and decides
+      none of them (`_ambiguous`): "Credit Agreement, dated as of March 1, 2018" would fit VRRM's
+      revolver and its term loan, both dated that day. The page is every located exhibit and every
+      debt agreement in a located filing beside one (``siblings``), which the loop reads too;
     - an empty or tied filing date cannot order two documents (the (X-4) rule of
       `governing_terms`), so it supersedes nothing.
     - a displaced agreement dated as a date an UNTITLED refused exhibit's head states
@@ -1306,7 +1375,9 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
     whatever else on the page was read.
     Anything else is LIVE, and is read — whether the words show it live or show nothing."""
     displaced = [displaced_agreements(c.text) for c in candidates]
-    keys = [k for c in candidates for k in (c.own, c.base) if k is not None]
+    pool = [i for c in candidates for i in _identities((c.row.accession, c.filename), c.own,
+                                                        c.base)]
+    pool += siblings
     out: list[_Verdict] = []
     for x in candidates:
         verdict: _Verdict = ("live", None, "")
@@ -1317,7 +1388,7 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
         for j in later:
             hit = next((d for d in displaced[j]
                         if (_same_agreement(d.key, x.own) or _same_agreement(d.key, x.base))
-                        and not _ambiguous(d.key, keys)
+                        and not _ambiguous(d.key, pool)
                         and d.key.dated not in unnamed_dates), None)
             if hit is not None:
                 amends = _same_agreement(hit.key, x.base) and not _same_agreement(hit.key, x.own)
@@ -1333,12 +1404,31 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
     return out
 
 
-def _ambiguous(key: AgreementKey, keys: list[AgreementKey]) -> bool:
-    """Does ``key`` match the page's exhibits under two names that are not one agreement's (neither
-    a tail of the other)? Then it identifies none of them."""
-    names = sorted({k.name for k in keys if _same_agreement(key, k)})
-    return any(not _same_agreement(AgreementKey(a, key.dated), AgreementKey(b, key.dated))
-               for i, a in enumerate(names) for b in names[i + 1:])
+#: One identity on the page: the exhibit (accession, file), an agreement it names, and whether that
+#: is the agreement it IS (``own``) or the one it AMENDS (``base``).
+_Identity = tuple[tuple[str, str], AgreementKey, Literal["own", "base"]]
+
+
+def _identities(exhibit: tuple[str, str], own: AgreementKey | None,
+                base: AgreementKey | None) -> list[_Identity]:
+    """The identities one exhibit carries: the agreement it is, and the one it amends."""
+    out: list[_Identity] = []
+    if own is not None:
+        out.append((exhibit, own, "own"))
+    if base is not None:
+        out.append((exhibit, base, "base"))
+    return out
+
+
+def _ambiguous(key: AgreementKey, pool: list[_Identity]) -> bool:
+    """Could ``key`` mean two agreements on this page? Every identity CONFUSABLE with it is
+    counted, located or in a located filing beside one (F1), as distinct agreements: an amendment
+    and what it amends, or two amendments of one agreement, are one (the same base name); each
+    exhibit that IS an agreement is its own, unless some amendment names it as its base. Two or
+    more: ambiguous, so it decides nothing, and the exhibits are read."""
+    bases = {k.name for _ex, k, role in pool if role == "base" and _confusable(key, k)}
+    owns = {(ex, k.name) for ex, k, role in pool if role == "own" and _confusable(key, k)}
+    return len(bases) + sum(1 for _ex, name in owns if name not in bases) > 1
 
 
 #: The ``source_ref`` of the per-exhibit outcome list: the loop itself, since each outcome names
@@ -1453,17 +1543,42 @@ def extract_covenant_terms(
         own, base = exhibit_identity(text, title, is_amendment(text))
         candidates.append(_Candidate(i, row, filename, src, text, title, own, base))
 
+    # 1b. THE SAME-FILING SIBLINGS: every other exhibit of a located filing, which the selector
+    # does not target (one exhibit per pointer). None is sent, but each is read for WHO it is, so
+    # an agreement dated as a target cannot make a displaced name look unambiguous by being unseen
+    # (independent review, F1: VRRM's term-loan restatement is `vrrm-ex10_2.htm` beside its A&R
+    # revolver). One that cannot be read is an unread exhibit, as a target is.
+    targeted = {(row.accession, filename) for row, filename in targets}
+    siblings: list[_Identity] = []
+    unread_siblings = 0
+    for row in pointers.value:
+        for filename in row.exhibits if row.accession else []:
+            if (row.accession, filename) in targeted:
+                continue
+            targeted.add((row.accession, filename))
+            text = _fetch_exhibit(http, cik, row.accession, filename)
+            if text is None:
+                unread_siblings += 1
+                continue
+            title = agreement_title(text)
+            if not title:
+                unnamed.update(_head_dates(text))
+            elif is_debt_agreement(title):
+                own, base = exhibit_identity(text, title, is_amendment(text))
+                siblings += _identities((row.accession, filename), own, base)
+
     # 2. THE COVERAGE RULE: skip what a later located exhibit displaced, and notes that matured.
     reference = _reference_date(cs)
     instruments = (list(cs.instruments.value or [])
                    if cs.instruments.status is SourceStatus.PRESENT else None)
     live: list[_Candidate] = []
-    unread = sum(1 for o in slots if o is not None and o.outcome == "fetch_failed")
+    unread = (sum(1 for o in slots if o is not None and o.outcome == "fetch_failed")
+              + unread_siblings)
     if unread and len(candidates) > 1:
         flags.append(f"(E5) coverage: {unread} located exhibit(s) could not be read, so no exhibit "
                      f"on this page is found superseded; every debt contract read is sent")
     verdicts = _coverage(candidates, reference, instruments, all_read=not unread,
-                         unnamed_dates=frozenset(unnamed))
+                         unnamed_dates=frozenset(unnamed), siblings=tuple(siblings))
     for c, (kind, by, evidence) in zip(candidates, verdicts, strict=True):
         if kind == "live":
             live.append(c)

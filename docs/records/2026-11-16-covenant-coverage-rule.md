@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# The covenant phase reads every located exhibit before it sends any, and sends every debt contract a later located exhibit's own words do not show displaced, and whose notes have not matured. The four-exhibit cap becomes a runaway guard of 10 that flags loudly. VRRM's Amendment No. 4 now reads superseded by its amended and restated revolver; over the 24 pages with pointer rows a full paid rebuild makes 47 covenant calls, not 51. No committed page moves until its next paid re-assembly (STATE row 63)
+# The covenant phase reads every located exhibit before it sends any, and sends every debt contract a later located exhibit's own words do not show displaced, and whose notes have not matured. The four-exhibit cap becomes a runaway guard of 10 that flags loudly. VRRM's Amendment No. 4 now reads superseded by its amended and restated revolver; over the 24 pages with pointer rows a full paid rebuild makes 48 covenant calls, not 51. No committed page moves until its next paid re-assembly (STATE row 63)
 
 **WHAT.**
 - *The ruling.* Operator, 2026-11-16: "Order now, coverage next (Recommended)". #1088 built the
@@ -59,17 +59,23 @@ superseded-by:
      A bare "termination of" is not admitted: "upon termination of the Credit Agreement" is a
      condition, not a statement that it ended.
   4. **SUPERSEDED** (`_coverage`). A target is superseded when a target filed STRICTLY LATER
-     displaces the agreement it is or amends: the same date, and the same name or one name the
-     other's tail of at least two words ("CREDIT AGREEMENT" and EPAM's cover title "REVOLVING
-     CREDIT FACILITY CREDIT AGREEMENT"; a bare "INDENTURE" is not a "FIRST SUPPLEMENTAL
-     INDENTURE" of the same day, code-review round 0). Two refusals keep a guess out:
-     - a displaced agreement that matches the page's exhibits under two names neither of which is
-       the other's tail decides none of them. VRRM's revolver and its first-lien term loan are both
-       dated March 1, 2018;
+     displaces the agreement it is or amends: the SAME NAME and the same date (independent review,
+     round 2, F1; a name that is only the other's tail is a doubt, and the exhibit is read). What
+     an exhibit "is": a base agreement, or an amendment AND RESTATEMENT, is the agreement dated as
+     of its own date; a plain amendment is only what it amends. On any doubt about identity it is
+     READ, never skipped:
+     - a displaced agreement CONFUSABLE with two agreements on the page (the same date, and one name
+       the other's tail) decides none of them. The page is every located exhibit AND every debt
+       agreement in a located filing beside one, which the loop reads for who it is but never sends
+       (F1: VRRM's term-loan restatement `vrrm-ex10_2.htm` sits beside its A&R revolver, both
+       dated October 17, 2025). VRRM's revolver and its first-lien term loan are both dated March 1,
+       2018, and their names are not confusable;
      - a tied or empty filing date cannot order two documents (`governing_terms`' (X-4) rule);
-     - a page with a target that could not be fetched supersedes NOTHING, and a flag says so
-       (code-review round 0): the unread exhibit may be another agreement the displaced name
-       fits, so no name on the page can be shown unambiguous.
+     - a page with a target or a same-filing exhibit that could not be fetched supersedes
+       NOTHING, and a flag says so (code-review round 0): the unread exhibit may be another
+       agreement the displaced name fits, so no name on the page can be shown unambiguous;
+     - a displaced agreement dated as any date an UNTITLED refused exhibit's head states decides
+       nothing (Codex, round 1).
      The earliest such later exhibit is cited, with its own words.
   5. **TERMINATED** (`_matured_notes`). Every maturity year the title states, from its first
      "NOTES DUE", is before the page's reference date (`maturity_check.bound`), and the CIQ panel
@@ -130,7 +136,7 @@ whatever they are.
   - 5 are unreadable cache misses (MCK 4, WERN 1).
   - At main the loop's outcomes are 48 extracted, 3 no terms returned (51 sent), 25 refused,
     10 cost bound and 5 fetch failed.
-  - At head they are 40 extracted, 7 no terms returned (47 sent), 27 refused, 11 superseded,
+  - At head they are 41 extracted, 7 no terms returned (48 sent), 27 refused, 10 superseded,
     1 terminated and 5 fetch failed, with 0 cost bound. Two refusals are new, NFLX's
     January 2026 incremental-commitments letter and WLK's 2016 bridge commitment letter: both were
     cost bound and never read, and are now read and refused like the other bank commitment
@@ -138,11 +144,15 @@ whatever they are.
   - A stubbed model answers no rows for an exhibit no committed row cites, so "no terms returned"
     at head means "sent, with no committed answer to replay", not a model's answer.
 - *Hand verdicts on all 91* (the table below).
-  - **The 12 the rule skips: 12 agreed.** Each is superseded or matured by the later exhibit's
-    words, read by hand in the cached text. **0 false skips.**
-  - **The 47 it sends:** 29 live by the hand read; 18 read though the hand read suspects some are
-    dead, because nothing located says so:
+  - **The 11 the rule skips: 11 agreed.** Each is superseded or matured by the later exhibit's
+    words, read by hand in the cached text. **0 false skips.** (Before round 2 it skipped 12; EPAM's
+    2017 agreement, which its 2021 restatement does restate, is now read on a doubt about identity:
+    the restatement names a "Credit Agreement" and E5 titles the exhibit by its cover, "REVOLVING
+    CREDIT FACILITY CREDIT AGREEMENT".)
+  - **The 48 it sends:** 29 live by the hand read; 19 read though the hand read suspects some are
+    dead, because nothing located shows it without doubt:
     - AMZN's 2014 and 2020 agreements;
+    - EPAM's 2017 agreement (above);
     - BURL's 2020 security agreement;
     - NCNO's 2024 first amendment;
     - NFLX's 2009 agreement;
@@ -158,16 +168,26 @@ whatever they are.
   `html_to_text`, as `_fetch_exhibit` reads them; the gate passes 92.
   - 24 of those 92 displace an agreement, 29 displacements in all. Each is a whole-agreement
     restatement or termination by hand read.
-  - Within a CIK, those displacements link 15 cached documents to an earlier one. Every link is
-    a real supersession: 0 false links.
-  - The two guards refuse nothing in the corpus. So each is pinned on a clause DERIVED from a real
-    one, and the derived pin found a defect while being written: the part guard read `[^.;]`, so
-    a dotted section number ("Section 2.5.12 of the …") defeated it. It now reads a section's
-    reference as a token run.
-- *Pins* (`tests/test_covenant_coverage_rule.py`, 29 nodes, on
+  - Within a CIK, those displacements link 14 cached documents to an earlier one under the
+    same-name rule (round 2, F1). Every link is a real supersession: 0 false links. A 15th,
+    EPAM's, matches only by a name's tail and is read on that doubt.
+  - On the final round-2 reader the scan reads the same 29 displacements in the same 24
+    documents. F5's first draft, which stopped a recital's gap at any agreement noun, lost two of
+    them (EPAM's and TJX's 2030 agreement's), whose recitals name the agreement's own amendment
+    history before its term. The kept rule allows an AMENDMENT in the gap and stops only at
+    another agreement.
+  - The part and possessive guards refused nothing in the corpus. So each was pinned on a clause
+    DERIVED from a real one. Writing the part pin found that the part guard read `[^.;]`, so a
+    dotted section number defeated it. That was fixed, and the independent review (round 2, F6)
+    then showed the part guard REDUNDANT: every part reaches the term through "of", "to", "in" or
+    "under", which the round-0 subject guard (`_UNDER_THE`) already refuses, and turning the part
+    guard off moved no pin. It is removed; the part pin now holds the subject guard.
+- *Pins* (`tests/test_covenant_coverage_rule.py`, 44 nodes, on
   `tests/fixtures/covenant_coverage_rule/`).
-  - The fixtures are real: seven committed pages' layers, unmodified, and 43 cuts of the cached
-    exhibits. Each cut reads exactly as its full exhibit reads (its README).
+  - The fixtures are real: seven committed pages' layers, unmodified, and 61 cuts of the cached
+    exhibits: every target, and since round 2 every other exhibit of a located filing. Each cut
+    reads exactly as its full exhibit reads (its README). `round2_heads.json` holds three more real
+    heads (UBER, VRRM `vrrm-ex10_2.htm`, NKE's five-year agreement).
   - **The brief's five:**
     1. VRRM's Amendment No. 4 reads superseded, citing `0001193125-25-242530 · vrrm-ex10_1.htm`
        and its words.
@@ -199,7 +219,8 @@ whatever they are.
   The 13 that pass at base are the 7 preconditions and the 6 negatives, which hold trivially when
   nothing is ever superseded. So each negative was also shown live by a mutation of head's code,
   each removing one piece and each reddening at least one pin:
-  - no part guard;
+  - no part guard (since removed as redundant, round 2 F6: with the subject guard in place this
+    mutation reds nothing);
   - no possessive guard;
   - no ambiguity check;
   - any other exhibit counted as later;
@@ -222,7 +243,8 @@ whatever they are.
       why it was not read;
     - case-blind "DATED AS OF" in an all-caps heading, which fails closed (the exhibit is read);
     - repeated whole-text scans, a cost of seconds.
-  - The audit at the post-review code: 0 of 91 outcomes move, and 51 → 47 holds.
+  - The audit at the post-review code: 0 of 91 outcomes move, and 51 → 47 held then (48 since
+    round 2).
 - *Codex, round 1* (two P1 findings, both fixed behind pins that fail on the PR head):
   - an UNKNOWN CIQ panel was read as an empty one, so notes could read terminated on a missing
     panel. With no panel, no notes read terminated (`test_an_unknown_instrument_panel_is_not_an_empty_one`);
@@ -233,6 +255,44 @@ whatever they are.
     refusal's head states decides nothing (`test_an_untitled_exhibit_dated_as_the_displaced_agreement_blocks_the_supersession`,
     derived from VRRM's term-loan restatement with its heading removed).
   - The audit after the round: 0 of 91 outcomes move.
+- *Independent review, round 2* (the coordinator's, at head `e532bb0c`; "on any doubt about
+  identity, READ, never skip"), and *Codex, round 2*, in one commit. Each fix is behind a pin that
+  fails on the pushed head (`ea9c5c46`): 13 new nodes, 13 red there.
+  - **F1** (medium) same-date sibling agreements read as one. A name now matches only the same
+    name; the tail only makes two namings confusable, and two confusable agreements on a page make
+    the displaced name ambiguous. The page includes every debt agreement in a located filing that
+    the selector does not target, read for who it is. A plain amendment's own date is no identity.
+    Pins: VRRM's real `vrrm-ex10_2.htm` targeted and untargeted beside its A&R revolver against a
+    derived later restatement (both read); the NKE shape, derived from NKE's real heads (a 364-day
+    and a five-year agreement both of March 11, 2022, neither superseded; a five-year First
+    Amendment of March 8, 2024 never superseded, while the 2024 364-day agreement still is); the
+    name rule itself. EPAM's 2017 agreement moves from superseded to read.
+  - **F2** (low) UBER's three term loan amendments read their base as dated 2018-06-13, Amendment
+    No. 1's date in the recital. The heading read now stays in the heading (it ends at the parties
+    or the recitals), and they read 2016-07-13. The table below is corrected.
+  - **F3** (low) a "(y) that certain …" now binds only inside a definition with its "(x)", and
+    before the next definition begins. One derived pin per half.
+  - Found writing F3's pin: a recital's gap could reach across a sentence end to a definition's
+    own term ("… that certain Five Year Credit Agreement, dated as of March 11, 2022. “2025 Credit
+    Agreement” means …"). A recital never binds a term that heads a definition; pinned.
+  - **F4** (low) "… outstanding under the … shall have been paid in full" must say all of it, in
+    lower-case words, and "commitments under the … terminated" must say all or the commitments,
+    never a tranche's. Pinned on AMZN's real condition edited to each tranche form.
+  - **F5** (low) a recital's gap stops at a second agreement that is not an amendment of the first,
+    so the term binds to the agreement beside it; an amendment named there is the agreement's own
+    history (EPAM's "as amended by the First Amendment to Credit Agreement …", TJX's "(as amended by
+    that certain First Amendment to 2026 Revolving Credit Agreement …"). The recital search
+    overlaps, so the second agreement's own recital is still read. Derived pin on VRRM's real
+    recital.
+  - **F6** (test quality) the part guard was redundant (above); removed.
+  - **Codex round 2** (P1) an undated row of the panel could hide the notes. A notes-kind row
+    (its type or description names notes, bonds or debentures) with principal and no maturity
+    date now blocks `terminated`; NFLX's own undated rows (commercial paper, a lease, a term loan)
+    do not. Derived pin on NFLX's real panel.
+  - Each new guard, removed in turn, reds at least one pin; F3's two halves each red their own.
+  - After the round: the stubbed loop over all 26 pages moves EPAM's 2017 agreement only (to
+    read), so 11 skips remain; 51 → 48 calls; the corpus scan's numbers are under *The reader
+    over the whole cache*.
 - *Three existing pins move with the premise.*
   - The plan pin's kinds exclude the two new ones, which this file drives.
   - A cost-bound exhibit now carries its heading.
@@ -276,18 +336,17 @@ whatever they are.
   | AMZN | 4 → 4 | +0.00 | sends its June 2026 term loan agreement; skips its 2022 364-day agreement (terminated by the 2023 five-year) and its 2018 restatement (restated in 2020) |
   | BURL | 4 → 6 | +2.08 | sends its ABL agreement's fourth amendment (661,985 chars) and its term loan's 2014 Amendment No. 4 (478,924), live chains |
   | CNXC | 4 → 3 | −1.19 | skips its 2023 restatement (superseded by the 2025 one) and its 2021 amendment (of the agreement 2023 restated) |
-  | EPAM | 2 → 1 | −0.53 | skips its 2017 agreement (restated in 2021) |
   | NFLX | 4 → 5 | +0.22 | sends its 2018 notes purchase agreement, last; its 2014 one reads terminated |
   | NKE | 4 → 1 | −1.58 | skips its 2023, 2024 and 2025 agreements, each terminated by the next |
   | TJX | 4 → 2 | −0.72 | skips its 2020 amendment and its 2020 364-day agreement (the 2021 agreement requires their termination) |
   | VRRM | 3 → 2 | −1.30 | skips Amendment No. 4 (superseded by its A&R revolver) |
   | WLK | 4 → 5 | +0.12 | sends its 2009 amendment (38,623 chars), unclassifiable |
-  | 15 others | unchanged | 0 | |
-  | **all 24** | **51 → 47** | **−2.90** (about $33.14 → $30.24) | |
+  | 16 others | unchanged | 0 | |
+  | **all 24** | **51 → 48** | **−2.37** (about $33.14 → $30.77) | |
 
   The coordinator's estimate of about $0.33 per exhibit was re-derived as above: a call is
   $0.67 at the median, and its price follows its exhibit's size.
-- *A dead document the words cannot show dead is READ.* That is 18 of the 47 sends, est. $8.59 a
+- *A dead document the words cannot show dead is READ.* That is 19 of the 48 sends, est. $9.12 a
   fleet rebuild at the per-exhibit prices. The alternative, skipping on dates or tenor ("a
   364-day agreement from 2013 is dead"), would skip a live document wherever an extension was
   never filed. Precision first is the operator's rule ("an unclassifiable one is READ").
@@ -334,23 +393,23 @@ exhibit is / the one it amends, as the reader read it (name · date as of).
 | 4 | AMZN | 2014-09-05 | `0001018724-14-000042` · `amzn2014september5-ex101.htm` | Revolving Credit Facility | CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2014-09-05 / — | extracted | READ, unclassified: probably replaced by the May 2016 agreement the 2018 A&R restates, which no pointer locates |
 | 5 | AMZN | 2018-04-27 | `0001193125-18-139368` · `d574720dex101.htm` | Short-Term Credit Facilities | AMENDED AND RESTATED CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2018-04-27 / — | superseded by `0001193125-20-176528` | SUPERSEDED, agreed: the 2020 A&R is "an amendment and restatement of" it |
 | 6 | AMZN | 2026-06-10 | `0001104659-26-072140` · `tm2613616d4_ex10-1.htm` | Unsecured 364-Day Revolving Credit Facil | TERM LOAN AGREEMENT | no | TERM LOAN AGREEMENT · 2026-06-08 / — | no_terms_returned | LIVE: a new term loan filed after the panel |
-| 7 | BRBR | 2021-02-26 | `0001772016-21-000029` · `ex10-1_amend2creditagmt.htm` | Revolving Credit Facility | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2021-02-26 / CREDIT AGREEMENT · 2019-10-21 | extracted | LIVE chain: amends the 2019 agreement no later exhibit names |
+| 7 | BRBR | 2021-02-26 | `0001772016-21-000029` · `ex10-1_amend2creditagmt.htm` | Revolving Credit Facility | CREDIT AGREEMENT | yes | — / CREDIT AGREEMENT · 2019-10-21 | extracted | LIVE chain: amends the 2019 agreement no later exhibit names |
 | 8 | BRBR | 2019-10-21 | `0001193125-19-270862` · `d812149dex101.htm` | Revolving Credit Facility | AMENDED AND RESTATED LIMITED LIABILITY COMPANY AGREEMENT | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 9 | BURL | 2020-04-16 | `0001193125-20-109457` · `d883886dex101.htm` | Convertible Senior Notes 1.25% Mature on | SECURITY AGREEMENT | no | SECURITY AGREEMENT · 2020-04-16 / — | extracted | READ, unclassified: secures 2020 secured notes; whether they remain is not in any located exhibit |
-| 10 | BURL | 2025-07-29 | `0001193125-25-168007` · `d946952dex101.htm` | Convertible Senior Notes 2.25% Mature on | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2025-07-25 / — | extracted | LIVE chain: ABL second A&R, sixth amendment |
-| 11 | BURL | 2018-07-02 | `0001564590-18-016500` · `burl-ex101_6.htm` | Senior Secured Term Loan Facility Term B | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2018-06-29 / — | extracted | LIVE chain: ABL second A&R, second amendment |
+| 10 | BURL | 2025-07-29 | `0001193125-25-168007` · `d946952dex101.htm` | Convertible Senior Notes 2.25% Mature on | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | — | extracted | LIVE chain: ABL second A&R, sixth amendment |
+| 11 | BURL | 2018-07-02 | `0001564590-18-016500` · `burl-ex101_6.htm` | Senior Secured Term Loan Facility Term B | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | — | extracted | LIVE chain: ABL second A&R, second amendment |
 | 12 | BURL | 2026-03-19 | `0001193125-26-116001` · `burl-ex10_39.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
-| 13 | BURL | 2021-12-22 | `0001193125-21-364998` · `d275638dex101.htm` | Convertible Senior Notes 1.25% Mature on | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2021-12-22 / — | extracted | LIVE chain: ABL second A&R, third amendment |
-| 14 | BURL | 2022-07-22 | `0001193125-22-200058` · `d393601dex101.htm` | Convertible Senior Notes 2.25% Mature on | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2022-07-20 / — | no_terms_returned | LIVE chain: ABL second A&R, fourth amendment |
-| 15 | BURL | 2014-08-18 | `0001193125-14-313404` · `d772516dex101.htm` | Senior Secured Term Loan Facility Term B | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2014-08-13 / CREDIT AGREEMENT · 2011-02-24 | no_terms_returned | LIVE chain: term loan agreement of 2011-02-24 (Term B-7 on the panel) |
+| 13 | BURL | 2021-12-22 | `0001193125-21-364998` · `d275638dex101.htm` | Convertible Senior Notes 1.25% Mature on | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | — | extracted | LIVE chain: ABL second A&R, third amendment |
+| 14 | BURL | 2022-07-22 | `0001193125-22-200058` · `d393601dex101.htm` | Convertible Senior Notes 2.25% Mature on | SECOND AMENDED AND RESTATED CREDIT AGREEMENT | yes | — | no_terms_returned | LIVE chain: ABL second A&R, fourth amendment |
+| 15 | BURL | 2014-08-18 | `0001193125-14-313404` · `d772516dex101.htm` | Senior Secured Term Loan Facility Term B | CREDIT AGREEMENT | yes | — / CREDIT AGREEMENT · 2011-02-24 | no_terms_returned | LIVE chain: term loan agreement of 2011-02-24 (Term B-7 on the panel) |
 | 16 | CNXC | 2025-04-11 | `0001803599-25-000111` · `exhibit101041125.htm` | Credit Facility | AMENDED AND RESTATED CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2025-04-11 / CREDIT AGREEMENT · 2023-04-21 | extracted | LIVE: the 2025 amendment and restatement |
-| 17 | CNXC | 2024-04-26 | `0001803599-24-000117` · `exhibit101-thirdamendmentt.htm` | Other Loans | RECEIVABLES FINANCING AGREEMENT | yes | RECEIVABLES FINANCING AGREEMENT · 2024-04-25 / RECEIVABLES FINANCING AGREEMENT · 2020-10-30 | no_terms_returned | LIVE chain: receivables financing agreement, third amendment |
+| 17 | CNXC | 2024-04-26 | `0001803599-24-000117` · `exhibit101-thirdamendmentt.htm` | Other Loans | RECEIVABLES FINANCING AGREEMENT | yes | — / RECEIVABLES FINANCING AGREEMENT · 2020-10-30 | no_terms_returned | LIVE chain: receivables financing agreement, third amendment |
 | 18 | CNXC | 2023-04-26 | `0001803599-23-000107` · `form8-k04x26x23exhibit101.htm` | Senior Unsecured Revolving Credit Facili | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2023-04-21 / CREDIT AGREEMENT · 2020-10-16 | superseded by `0001803599-25-000111` | SUPERSEDED, agreed: the 2025 restatement supersedes it |
 | 19 | CNXC | 2026-01-28 | `0001803599-26-000027` · `exhibit1022-2025form10k.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 20 | CNXC | 2023-03-31 | `0001803599-23-000091` · `a033123exhibit101.htm` | Credit Facility | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
-| 21 | CNXC | 2025-01-21 | `0001803599-25-000014` · `exhibit101-fourthamendment.htm` | Other Loans | RECEIVABLES FINANCING AGREEMENT | yes | RECEIVABLES FINANCING AGREEMENT · 2025-01-14 / RECEIVABLES FINANCING AGREEMENT · 2020-10-30 | no_terms_returned | LIVE chain: receivables financing agreement, fourth amendment |
-| 22 | CNXC | 2021-12-30 | `0001803599-21-000215` · `exhibit101122721.htm` | Senior Unsecured Revolving Credit Facili | CREDIT AGREEMENT AND JOINDER AGREEMENT | yes | CREDIT AGREEMENT AND JOINDER AGREEMENT · 2021-12-27 / CREDIT AGREEMENT · 2020-10-16 | superseded by `0001803599-23-000107` | SUPERSEDED, agreed: amends the 2020 agreement the 2023 restatement supersedes |
-| 23 | EPAM | 2017-05-26 | `0001352010-17-000022` · `exhibit10-1epamcreditagree.htm` | Revolving Credit Facility | REVOLVING CREDIT FACILITY CREDIT AGREEMENT | no | REVOLVING CREDIT FACILITY CREDIT AGREEMENT · 2017-05-24 / — | superseded by `0001352010-21-000039` | SUPERSEDED, agreed: the 2021 A&R restates it |
+| 21 | CNXC | 2025-01-21 | `0001803599-25-000014` · `exhibit101-fourthamendment.htm` | Other Loans | RECEIVABLES FINANCING AGREEMENT | yes | — / RECEIVABLES FINANCING AGREEMENT · 2020-10-30 | no_terms_returned | LIVE chain: receivables financing agreement, fourth amendment |
+| 22 | CNXC | 2021-12-30 | `0001803599-21-000215` · `exhibit101122721.htm` | Senior Unsecured Revolving Credit Facili | CREDIT AGREEMENT AND JOINDER AGREEMENT | yes | — / CREDIT AGREEMENT · 2020-10-16 | superseded by `0001803599-23-000107` | SUPERSEDED, agreed: amends the 2020 agreement the 2023 restatement supersedes |
+| 23 | EPAM | 2017-05-26 | `0001352010-17-000022` · `exhibit10-1epamcreditagree.htm` | Revolving Credit Facility | REVOLVING CREDIT FACILITY CREDIT AGREEMENT | no | REVOLVING CREDIT FACILITY CREDIT AGREEMENT · 2017-05-24 / — | extracted | READ, on a doubt about identity (review round 2, F1): its 2021 A&R restates a "Credit Agreement" of the same date, and E5 titles this exhibit by its cover, "REVOLVING CREDIT FACILITY CREDIT AGREEMENT"; the names differ |
 | 24 | EPAM | 2026-02-26 | `0001352010-26-000015` · `exhibit1017-epamnonxempl.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 25 | EPAM | 2021-10-25 | `0001352010-21-000039` · `exhibit101-arcreditagreeme.htm` | Revolving Credit Facility | REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT | no | REVOLVING CREDIT FACILITY CREDIT AGREEMENT · 2021-10-21 / — | extracted | LIVE (or later restated by a document no pointer locates) |
 | 26 | FUBO | 2025-10-30 | `0001493152-25-020163` · `ex10-1.htm` | 2029 Convertible Notes | REGISTRATION RIGHTS AGREEMENT | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
@@ -363,17 +422,17 @@ exhibit is / the one it amends, as the reader read it (name · date as of).
 | 33 | MCK | 2026-06-12 | `0000927653-26-000167` · `mck_ex101termloanagreement.htm` | Syndicated Senior Unsecured Revolving Cr | — | — | — | fetch_failed | UNREADABLE at $0 (cache miss): read and classified at the paid build |
 | 34 | MCK | 2026-04-06 | `0000927653-26-000045` · `mck_ex101executedcreditagr.htm` | Senior Unsecured 364-Day Revolving Credi | — | — | — | fetch_failed | UNREADABLE at $0 (cache miss): read and classified at the paid build |
 | 35 | MCK | 2013-11-21 | `0001193125-13-450016` · `d629383dex101.htm` | Syndicated Senior Unsecured Revolving Cr | — | — | — | fetch_failed | UNREADABLE at $0 (cache miss): read and classified at the paid build |
-| 36 | NCNO | 2024-02-13 | `0001902733-24-000041` · `firstamendmenttocreditagre.htm` | Senior Secured Revolving Credit Facility | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2024-02-09 / CREDIT AGREEMENT · 2022-02-11 | extracted | READ, unclassified: amends a 2022 agreement the 2024 agreement probably replaced; the 2024 one does not say so |
+| 36 | NCNO | 2024-02-13 | `0001902733-24-000041` · `firstamendmenttocreditagre.htm` | Senior Secured Revolving Credit Facility | CREDIT AGREEMENT | yes | — / CREDIT AGREEMENT · 2022-02-11 | extracted | READ, unclassified: amends a 2022 agreement the 2024 agreement probably replaced; the 2024 one does not say so |
 | 37 | NCNO | 2026-03-31 | `0001902733-26-000022` · `exhibit1035secondamendment.htm` | material contracts (10-K exhibit index) | OFFICE LEASE | yes | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 38 | NCNO | 2024-10-30 | `0001902733-24-000171` · `exhibit101creditagreementb.htm` | Senior Secured Revolving Credit Facility | CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2024-10-28 / — | extracted | LIVE: the panel's revolver maturity (2029-10-28) is this agreement's |
 | 39 | NFLX | 2018-04-26 | `0001193125-18-134734` · `d567970dex101.htm` | Senior Unsecured Bridge Term Loan Facili | SENIOR NOTES DUE 2028 PURCHASE AGREEMENT | no | SENIOR NOTES DUE 2028 PURCHASE AGREEMENT · 2018-04-26 / — | no_terms_returned | LIVE notes (5.875% due 2028 on the panel); a purchase agreement, sent last |
 | 40 | NFLX | 2009-09-21 | `0001193125-09-194962` · `dex101.htm` | Senior Unsecured Revolving Credit Facili | CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2009-09-16 / — | extracted | READ, unclassified: a 2009 agreement; nothing located names it |
 | 41 | NFLX | 2025-12-05 | `0001193125-25-308651` · `d65144dex101.htm` | Unsecured Delayed Draw Term Loan Credit  | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read); a bank commitment letter |
-| 42 | NFLX | 2021-06-17 | `0001193125-21-193187` · `d552068dex101.htm` | Unsecured Revolving Credit Facility | REVOLVING CREDIT AGREEMENT | yes | REVOLVING CREDIT AGREEMENT · 2021-06-17 / REVOLVING CREDIT AGREEMENT · 2017-07-27 | extracted | LIVE chain: amends the 2017 revolving credit agreement |
+| 42 | NFLX | 2021-06-17 | `0001193125-21-193187` · `d552068dex101.htm` | Unsecured Revolving Credit Facility | REVOLVING CREDIT AGREEMENT | yes | — / REVOLVING CREDIT AGREEMENT · 2017-07-27 | extracted | LIVE chain: amends the 2017 revolving credit agreement |
 | 43 | NFLX | 2026-01-23 | `0001065280-26-000034` · `ex102_q425.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 44 | NFLX | 2014-02-05 | `0001193125-14-037000` · `d671121dex101.htm` | Senior Unsecured Bridge Term Loan Facili | SENIOR NOTES DUE 2024 PURCHASE AGREEMENT | no | SENIOR NOTES DUE 2024 PURCHASE AGREEMENT · 2014-02-19 / — | terminated | TERMINATED, agreed: notes due 2024; the panel carries none |
 | 45 | NFLX | 2025-12-22 | `0001193125-25-327462` · `d82688dex101.htm` | Senior Unsecured Revolving Credit Facili | SENIOR UNSECURED REVOLVING CREDIT AGREEMENT | no | SENIOR UNSECURED REVOLVING CREDIT AGREEMENT · 2025-12-19 / — | extracted | LIVE: the December 2025 revolver |
-| 46 | NFLX | 2019-04-01 | `0001193125-19-094705` · `d721020dex101.htm` | Unsecured Delayed Draw Term Loan Credit  | REVOLVING CREDIT AGREEMENT | yes | REVOLVING CREDIT AGREEMENT · 2019-03-29 / REVOLVING CREDIT AGREEMENT · 2017-07-27 | extracted | LIVE chain: amends the 2017 revolving credit agreement |
+| 46 | NFLX | 2019-04-01 | `0001193125-19-094705` · `d721020dex101.htm` | Unsecured Delayed Draw Term Loan Credit  | REVOLVING CREDIT AGREEMENT | yes | — / REVOLVING CREDIT AGREEMENT · 2017-07-27 | extracted | LIVE chain: amends the 2017 revolving credit agreement |
 | 47 | NFLX | 2026-01-20 | `0001193125-26-015951` · `d37713dex101.htm` | Unsecured Revolving Credit Facility | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read); a bank commitment letter |
 | 48 | NKE | 2025-03-10 | `0000320187-25-000008` · `nike-364xdaycreditagreemen.htm` | 364-day Committed Credit Facility | 364-DAY CREDIT AGREEMENT | no | 364-DAY CREDIT AGREEMENT · 2025-03-07 / — | superseded by `0000320187-26-000020` | SUPERSEDED, agreed: the 2026 364-day agreement terminates it |
 | 49 | NKE | 2024-03-11 | `0000320187-24-000009` · `nike-364xdaycreditagreemen.htm` | Committed Credit Facilities | CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2024-03-08 / — | superseded by `0000320187-25-000008` | SUPERSEDED, agreed: the 2025 364-day agreement terminates it |
@@ -382,40 +441,40 @@ exhibit is / the one it amends, as the reader read it (name · date as of).
 | 52 | NKE | 2023-03-13 | `0000320187-23-000006` · `nike-364xdaycreditagreemen.htm` | Committed Credit Facilities | CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2023-03-10 / — | superseded by `0000320187-24-000009` | SUPERSEDED, agreed: the 2024 agreement terminates it |
 | 53 | ORKA | 2026-03-12 | `0001213900-26-026929` · `ea027330001ex10-9_oruka.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 54 | PARR | 2015-04-02 | `0001193125-15-116573` · `d902717dex101.htm` | ABL Credit Facility Due 2028 | CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2015-04-01 / — | extracted | READ, unclassified: a 2015 Mid Pac agreement; nothing located names it |
-| 55 | PARR | 2017-07-05 | `0000821483-17-000034` · `ex102-midpacxhiekeybankxam.htm` | Term Loan Credit Agreement | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2017-02-15 / CREDIT AGREEMENT · 2015-12-17 | extracted | READ, unclassified: amends a 2015 agreement nothing located names |
+| 55 | PARR | 2017-07-05 | `0000821483-17-000034` · `ex102-midpacxhiekeybankxam.htm` | Term Loan Credit Agreement | CREDIT AGREEMENT | yes | — / CREDIT AGREEMENT · 2015-12-17 | extracted | READ, unclassified: amends a 2015 agreement nothing located names |
 | 56 | PARR | 2026-02-25 | `0000821483-26-000005` · `a20251231ex1010-formofawar.htm` | material contracts (10-K exhibit index) | INC. RESTRICTED STOCK AWARD AGREEMENT | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
-| 57 | PARR | 2014-10-31 | `0001193125-14-392228` · `d814202dex101.htm` | ABL Credit Facility Due 2028 | UNCOMMITTED CREDIT AGREEMENT | yes | UNCOMMITTED CREDIT AGREEMENT · 2014-10-31 / UNCOMMITTED CREDIT AGREEMENT · 2013-06-12 | extracted | READ, unclassified: amends a 2013 uncommitted agreement nothing located names |
-| 58 | PARR | 2023-06-01 | `0001193125-23-158690` · `d292719dex102.htm` | Term Loan Credit Agreement | ASSET-BASED REVOLVING CREDIT AGREEMENT | yes | ASSET-BASED REVOLVING CREDIT AGREEMENT · 2023-05-30 / ASSET-BASED REVOLVING CREDIT AGREEMENT · 2023-04-26 | extracted | LIVE chain: amends the 2023 ABL agreement |
-| 59 | SMPL | 2018-03-20 | `0001213900-18-003172` · `f8k032018ex10-1_simplygood.htm` | Credit Agreement | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2018-03-16 / CREDIT AGREEMENT · 2017-07-07 | extracted | LIVE chain: amends the 2017 credit agreement (the panel's Barclays facility) |
-| 60 | SMPL | 2019-11-07 | `0001104659-19-060856` · `a19-22146_1ex10d1.htm` | Credit Agreement | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2019-11-07 / CREDIT AGREEMENT · 2017-07-07 | extracted | LIVE chain: amends the 2017 credit agreement |
+| 57 | PARR | 2014-10-31 | `0001193125-14-392228` · `d814202dex101.htm` | ABL Credit Facility Due 2028 | UNCOMMITTED CREDIT AGREEMENT | yes | — / UNCOMMITTED CREDIT AGREEMENT · 2013-06-12 | extracted | READ, unclassified: amends a 2013 uncommitted agreement nothing located names |
+| 58 | PARR | 2023-06-01 | `0001193125-23-158690` · `d292719dex102.htm` | Term Loan Credit Agreement | ASSET-BASED REVOLVING CREDIT AGREEMENT | yes | — / ASSET-BASED REVOLVING CREDIT AGREEMENT · 2023-04-26 | extracted | LIVE chain: amends the 2023 ABL agreement |
+| 59 | SMPL | 2018-03-20 | `0001213900-18-003172` · `f8k032018ex10-1_simplygood.htm` | Credit Agreement | CREDIT AGREEMENT | yes | — / CREDIT AGREEMENT · 2017-07-07 | extracted | LIVE chain: amends the 2017 credit agreement (the panel's Barclays facility) |
+| 60 | SMPL | 2019-11-07 | `0001104659-19-060856` · `a19-22146_1ex10d1.htm` | Credit Agreement | CREDIT AGREEMENT | yes | — / CREDIT AGREEMENT · 2017-07-07 | extracted | LIVE chain: amends the 2017 credit agreement |
 | 61 | TECX | 2026-02-26 | `0001193125-26-076793` · `tecx-ex10_4.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 62 | TGT | 2026-08-14 | `0000027419-26-000032` · `five-yearcreditagreementex.htm` | 364-Day Unsecured Revolving Credit Facil | FIVE-YEAR CREDIT AGREEMENT | no | FIVE-YEAR CREDIT AGREEMENT · 2026-08-14 / — | extracted | LIVE: the 2026 five-year agreement |
 | 63 | TGT | 2026-03-11 | `0000027419-26-000016` · `tgt20260131-exhibit1018.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 64 | TGT | 2016-10-05 | `0000027419-16-000060` · `form8-k_creditagreement105.htm` | 364-Day Unsecured Revolving Credit Facil | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
-| 65 | TJX | 2020-05-21 | `0001157523-20-000793` · `a52222014ex10_1.htm` | Senior Unsecured Revolving Credit Facili | 2022 REVOLVING CREDIT AGREEMENT | yes | 2022 REVOLVING CREDIT AGREEMENT · 2020-05-15 / 2022 REVOLVING CREDIT AGREEMENT · 2016-03-11 | superseded by `0001193125-21-202939` | SUPERSEDED, agreed: the 2021 agreement requires evidence of termination of its base |
+| 65 | TJX | 2020-05-21 | `0001157523-20-000793` · `a52222014ex10_1.htm` | Senior Unsecured Revolving Credit Facili | 2022 REVOLVING CREDIT AGREEMENT | yes | — / 2022 REVOLVING CREDIT AGREEMENT · 2016-03-11 | superseded by `0001193125-21-202939` | SUPERSEDED, agreed: the 2021 agreement requires evidence of termination of its base |
 | 66 | TJX | 2020-08-11 | `0000109198-20-000015` · `exhibit101364dayrevolv.htm` | Senior Unsecured Revolving Credit Facili | 364 DAY REVOLVING CREDIT AGREEMENT | no | 364 DAY REVOLVING CREDIT AGREEMENT · 2020-08-10 / — | superseded by `0001193125-21-202939` | SUPERSEDED, agreed: the same condition names it |
 | 67 | TJX | 2026-03-31 | `0000109198-26-000008` · `tjx-20260131xexhibit1024.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 68 | TJX | 2021-06-29 | `0001193125-21-202939` · `d169110dex101.htm` | Senior Unsecured Revolving Credit Facili | 2026 REVOLVING CREDIT AGREEMENT | no | 2026 REVOLVING CREDIT AGREEMENT · 2021-06-25 / — | extracted | READ: a 2025 document in the same accession as TJX's 2025 amendment restates it, but no pointer targets that document |
-| 69 | TJX | 2025-05-09 | `0000109198-25-000033` · `exhibit101-firstamendmentt.htm` | Senior Unsecured Revolving Credit Facili | 2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT | yes | 2029 REVOLVING CREDIT AGREEMENT · 2025-05-09 / 2028 REVOLVING CREDIT AGREEMENT · 2023-05-08 | extracted | LIVE: amends and restates the 2028 agreement |
+| 69 | TJX | 2025-05-09 | `0000109198-25-000033` · `exhibit101-firstamendmentt.htm` | Senior Unsecured Revolving Credit Facili | 2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT | yes | — / 2028 REVOLVING CREDIT AGREEMENT · 2023-05-08 | extracted | LIVE: amends and restates the 2028 agreement |
 | 70 | UBER | 2023-11-24 | `0001552781-23-000469` · `e23472_ex10-1.htm` | 2025 Convertible Notes | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
-| 71 | UBER | 2021-03-01 | `0001552781-21-000058` · `e21071_ex10-1.htm` | 2028 Convertible Notes | TERM LOAN AGREEMENT | yes | TERM LOAN AGREEMENT · 2021-02-25 / TERM LOAN AGREEMENT · 2018-06-13 | extracted | READ, unclassified: the panel carries no term loan, but no located exhibit says the term loan ended |
-| 72 | UBER | 2022-04-05 | `0001552781-22-000307` · `e22228_ex10-1.htm` | Senior Unsecured Revolving Loans | REVOLVING CREDIT AGREEMENT | yes | REVOLVING CREDIT AGREEMENT · 2022-04-04 / REVOLVING CREDIT AGREEMENT · 2015-06-26 | extracted | LIVE chain: amends the 2015 revolving credit agreement |
-| 73 | UBER | 2023-03-03 | `0001552781-23-000080` · `e23085_ex10-1.htm` | 2025 Convertible Notes | TERM LOAN AGREEMENT | yes | TERM LOAN AGREEMENT · 2023-03-03 / TERM LOAN AGREEMENT · 2018-06-13 | extracted | READ, unclassified: as the 2021 term loan amendment |
-| 74 | UBER | 2023-03-14 | `0001552781-23-000109` · `e23109_ex10-1.htm` | 2028 Convertible Notes | TERM LOAN AGREEMENT | yes | TERM LOAN AGREEMENT · 2023-03-14 / TERM LOAN AGREEMENT · 2018-06-13 | extracted | READ, unclassified: as the 2021 term loan amendment |
+| 71 | UBER | 2021-03-01 | `0001552781-21-000058` · `e21071_ex10-1.htm` | 2028 Convertible Notes | TERM LOAN AGREEMENT | yes | — / TERM LOAN AGREEMENT · 2016-07-13 | extracted | READ, unclassified: the panel carries no term loan, but no located exhibit says the term loan ended |
+| 72 | UBER | 2022-04-05 | `0001552781-22-000307` · `e22228_ex10-1.htm` | Senior Unsecured Revolving Loans | REVOLVING CREDIT AGREEMENT | yes | — / REVOLVING CREDIT AGREEMENT · 2015-06-26 | extracted | LIVE chain: amends the 2015 revolving credit agreement |
+| 73 | UBER | 2023-03-03 | `0001552781-23-000080` · `e23085_ex10-1.htm` | 2025 Convertible Notes | TERM LOAN AGREEMENT | yes | — / TERM LOAN AGREEMENT · 2016-07-13 | extracted | READ, unclassified: as the 2021 term loan amendment |
+| 74 | UBER | 2023-03-14 | `0001552781-23-000109` · `e23109_ex10-1.htm` | 2028 Convertible Notes | TERM LOAN AGREEMENT | yes | — / TERM LOAN AGREEMENT · 2016-07-13 | extracted | READ, unclassified: as the 2021 term loan amendment |
 | 75 | V | 2013-01-31 | `0001193125-13-032823` · `d476341dex101.htm` | Unsecured Revolving Credit Facility | 364-DAY REVOLVING CREDIT AGREEMENT | no | 364-DAY REVOLVING CREDIT AGREEMENT · 2013-01-31 / — | extracted | READ, unclassified: a 2013 364-day agreement; nothing located names it |
 | 76 | V | 2016-05-10 | `0001403161-16-000027` · `exh22aroptionagreement.htm` | Unsecured Revolving Credit Facility | AMENDED AND RESTATED PUT-CALL OPTION AGREEMENT | yes | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 77 | VITL | 2026-02-26 | `0001193125-26-073423` · `vitl-ex10_10.htm` | material contracts (10-K exhibit index) | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 78 | VRRM | 2025-10-17 | `0001193125-25-242530` · `vrrm-ex10_1.htm` | 2021 Term Loan Due 2028 | AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT | no | REVOLVING CREDIT AGREEMENT · 2025-10-17 / — | extracted | LIVE: the A&R revolver |
 | 79 | VRRM | 2021-03-29 | `0001564590-21-015880` · `vrrm-ex101_62.htm` | Revolving Credit Facility | FIRST LIEN TERM LOAN CREDIT AGREEMENT | yes | FIRST LIEN TERM LOAN CREDIT AGREEMENT · 2021-03-26 / FIRST LIEN TERM LOAN CREDIT AGREEMENT · 2018-03-01 | extracted | LIVE chain: restates the 2018 first-lien term loan (2021 Term Loan on the panel) |
 | 80 | VRRM | 2018-06-21 | `0001104659-18-041476` · `a18-15692_1ex10d1.htm` | 2021 Term Loan Due 2028 | GORES II SUBSCRIPTION AGREEMENT | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
-| 81 | VRRM | 2025-05-15 | `0000950170-25-072679` · `vrrm-ex10_1.htm` | Revolving Credit Facility | REVOLVING CREDIT AGREEMENT | yes | REVOLVING CREDIT AGREEMENT · 2025-05-15 / REVOLVING CREDIT AGREEMENT · 2018-03-01 | superseded by `0001193125-25-242530` | SUPERSEDED, agreed: amends the revolver the A&R restates |
+| 81 | VRRM | 2025-05-15 | `0000950170-25-072679` · `vrrm-ex10_1.htm` | Revolving Credit Facility | REVOLVING CREDIT AGREEMENT | yes | — / REVOLVING CREDIT AGREEMENT · 2018-03-01 | superseded by `0001193125-25-242530` | SUPERSEDED, agreed: amends the revolver the A&R restates |
 | 82 | WERN | 2026-10-08 | `0000793074-26-000159` · `wern-20261005ex101.htm` | 22 Unsecured Credit Agreement | — | — | — | fetch_failed | UNREADABLE at $0 (cache miss): read and classified at the paid build |
-| 83 | WERN | 2026-06-10 | `0000793074-26-000120` · `wern-20260605ex101.htm` | Loan Security Agreement Facility | LOAN AND SECURITY AGREEMENT | yes | LOAN AND SECURITY AGREEMENT · 2026-06-05 / LOAN AND SECURITY AGREEMENT · 2025-03-27 | extracted | LIVE chain: amends the 2025 loan and security agreement |
+| 83 | WERN | 2026-06-10 | `0000793074-26-000120` · `wern-20260605ex101.htm` | Loan Security Agreement Facility | LOAN AND SECURITY AGREEMENT | yes | — / LOAN AND SECURITY AGREEMENT · 2025-03-27 | extracted | LIVE chain: amends the 2025 loan and security agreement |
 | 84 | WERN | 2026-04-14 | `0000793074-26-000090` · `wern-20260127ex101.htm` | 22 Unsecured Credit Agreement | STOCK PURCHASE AGREEMENT | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read) |
 | 85 | WERN | 2025-04-02 | `0000793074-25-000019` · `wern-2025327ex101.htm` | Loan Security Agreement Facility | LOAN AND SECURITY AGREEMENT | no | LOAN AND SECURITY AGREEMENT · 2025-03-27 / — | extracted | LIVE: the receivables facility (on the panel) |
 | 86 | WLK | 2010-07-08 | `0001193125-10-155766` · `dex101.htm` | Loan Related to Tax-Exempt Waste Disposa | AMENDED AND RESTATED LOAN AGREEMENT | no | LOAN AGREEMENT · 2010-07-02 / — | extracted | READ, unclassified: tax-exempt bond loan agreement |
 | 87 | WLK | 2016-08-24 | `0001193125-16-689964` · `d247458dex101.htm` | Revolving Credit Facility | CREDIT AGREEMENT | no | CREDIT AGREEMENT · 2016-08-23 / — | extracted | READ, unclassified: the 2016 revolver; an Item 1.02 after the panel may have ended it, but no located exhibit says so |
 | 88 | WLK | 2010-12-08 | `0001193125-10-276447` · `dex101.htm` | Term Loans Due 2026 | LOAN AGREEMENT | no | LOAN AGREEMENT · 2010-11-01 / — | extracted | READ, unclassified: GO Zone bond loan agreement |
 | 89 | WLK | 2007-12-18 | `0001193125-07-267027` · `dex101.htm` | Loan Related to Tax-Exempt Waste Disposa | LOAN AGREEMENT | no | LOAN AGREEMENT · 2007-11-01 / — | extracted | READ, unclassified: tax-exempt bond loan agreement |
-| 90 | WLK | 2009-02-09 | `0001193125-09-021484` · `dex101.htm` | Revolving Credit Facility | CREDIT AGREEMENT | yes | CREDIT AGREEMENT · 2009-02-05 / CREDIT AGREEMENT · 2008-09-08 | no_terms_returned | READ, unclassified: amends a 2008 agreement nothing located names |
+| 90 | WLK | 2009-02-09 | `0001193125-09-021484` · `dex101.htm` | Revolving Credit Facility | CREDIT AGREEMENT | yes | — / CREDIT AGREEMENT · 2008-09-08 | no_terms_returned | READ, unclassified: amends a 2008 agreement nothing located names |
 | 91 | WLK | 2016-06-14 | `0001193125-16-620795` · `d211826dex101.htm` | Term Loans Due 2026 | — | no | — | not_debt_agreement | REFUSED as before (not debt, or no title read); a bank commitment letter |
