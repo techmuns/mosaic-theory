@@ -37,7 +37,7 @@ import pytest
 
 from tests.test_covenant_exhibit_outcomes import _committed, _md_line, _web_line
 from vinci.dossier import covenant_extract as ce
-from vinci.dossier.schemas import CapitalStructure, CovenantExhibitOutcome
+from vinci.dossier.schemas import CapitalStructure, CovenantExhibitOutcome, Sourced
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 FIX = ROOT / "tests" / "fixtures" / "covenant_coverage_rule"
@@ -391,6 +391,32 @@ def test_a_page_with_an_unread_exhibit_supersedes_nothing() -> None:
     assert r.by[VRRM_AMD4].outcome != "superseded" and VRRM_AMD4 in r.sent
     assert any(f.startswith("(E5) coverage: 1 located exhibit(s) could not be read")
                for f in r.flags), r.flags
+
+
+def test_an_untitled_exhibit_dated_as_the_displaced_agreement_blocks_the_supersession() -> None:
+    """(−) FAIL CLOSED, DERIVED from VRRM's real term-loan restatement with its heading removed,
+    so E5 reads no title and refuses it ("This instrument (this “Restatement”) dated as of March
+    26, 2021 to the First Lien Term Loan Credit Agreement dated as of March 1, 2018"). Its name is
+    unread, and its head carries March 1, 2018, the date of the agreement the A&R displaces: it may
+    be that agreement, so Amendment No. 4 is read (Codex, PR #1090 round 1)."""
+    texts = _edited("VRRM", VRRM_TL,
+                    "AMENDMENT AND RESTATEMENT AGREEMENT NO. 1 This AMENDMENT AND RESTATEMENT "
+                    "AGREEMENT NO. 1 (this “ Restatement ”)",
+                    "This instrument (this “ Restatement ”)")
+    r = _run("VRRM", texts=texts)
+    assert (r.by[VRRM_TL].outcome, r.by[VRRM_TL].declared_title) == ("not_debt_agreement", None)
+    assert r.by[VRRM_AMD4].outcome != "superseded" and VRRM_AMD4 in r.sent
+
+
+def test_an_unknown_instrument_panel_is_not_an_empty_one() -> None:
+    """(−) DERIVED from NFLX's real layer with its CIQ panel UNKNOWN (an extraction failure). No
+    panel says nothing about which notes remain, so the 2014 purchase agreement is read, never
+    found terminated on a missing panel (Codex, PR #1090 round 1)."""
+    fx = _fixture("NFLX")
+    cs = CapitalStructure.model_validate(fx["capital_structure"])
+    cs = cs.model_copy(update={"instruments": Sourced.unknown(note="CIQ panel not read")})
+    r = _run("NFLX", cs=cs)
+    assert r.by[NFLX_PA14].outcome != "terminated" and NFLX_PA14 in r.sent
 
 
 def test_a_one_word_name_matches_only_itself() -> None:

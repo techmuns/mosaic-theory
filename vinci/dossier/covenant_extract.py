@@ -1125,13 +1125,26 @@ def _same_agreement(a: AgreementKey | None, b: AgreementKey | None) -> bool:
     return x == y or (n >= 2 and x[-n:] == y[-n:])
 
 
+def _head_dates(text: str) -> set[date]:
+    """Every whole date an exhibit's head states (`_flat_head`), as dates."""
+    out: set[date] = set()
+    for (y, mo, d), *_ in _dates(_flat_head(text)):
+        try:
+            out.add(date(y, mo, d))
+        except ValueError:
+            continue
+    return out
+
+
 def _matured_notes(title: str, reference: date | None,
-                   instruments: list[CapitalInstrument]) -> str | None:
+                   instruments: list[CapitalInstrument] | None) -> str | None:
     """Why a title's notes have ended, or None: its stated maturity year is before the page's
     reference year AND the CIQ panel carries no instrument with principal maturing that year
     (a panel that still carries one is a disagreement, and the exhibit is read)."""
     m = _NOTES_DUE.search(title)
-    if m is None or reference is None:
+    # no panel (``instruments`` None, the panel UNKNOWN) says nothing about which notes remain:
+    # missing data is never evidence of absence (Codex, PR #1090 round 1)
+    if m is None or reference is None or instruments is None:
         return None
     # EVERY year the title states from its first "NOTES DUE" on: a multi-tranche purchase
     # agreement ("NOTES DUE 2024 AND 3.000% NOTES DUE 2031") has ended only when all have
@@ -1269,7 +1282,8 @@ _Verdict = tuple[Literal["live", "superseded", "terminated"], tuple[str, str] | 
 
 
 def _coverage(candidates: list[_Candidate], reference: date | None,
-              instruments: list[CapitalInstrument], *, all_read: bool = True) -> list[_Verdict]:
+              instruments: list[CapitalInstrument] | None, *, all_read: bool = True,
+              unnamed_dates: frozenset[date] = frozenset()) -> list[_Verdict]:
     """THE COVERAGE RULE — one ``(kind, superseded_by, evidence)`` per candidate, ``kind`` being
     ``live``, ``superseded`` or ``terminated``.
 
@@ -1281,6 +1295,9 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
       and its term loan, both dated that day);
     - an empty or tied filing date cannot order two documents (the (X-4) rule of
       `governing_terms`), so it supersedes nothing.
+    - a displaced agreement dated as a date an UNTITLED refused exhibit's head states
+      (``unnamed_dates``) decides nothing: that exhibit's name was not read, so it may be the
+      agreement displaced (Codex, PR #1090 round 1);
     - a page with a target that could not be read (``all_read`` False) supersedes NOTHING: the
       unread exhibit may be another agreement the displaced name fits, so no name on the page can
       be shown unambiguous (review round 0). It fails toward reading.
@@ -1300,7 +1317,8 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
         for j in later:
             hit = next((d for d in displaced[j]
                         if (_same_agreement(d.key, x.own) or _same_agreement(d.key, x.base))
-                        and not _ambiguous(d.key, keys)), None)
+                        and not _ambiguous(d.key, keys)
+                        and d.key.dated not in unnamed_dates), None)
             if hit is not None:
                 amends = _same_agreement(hit.key, x.base) and not _same_agreement(hit.key, x.own)
                 y = candidates[j]
@@ -1398,6 +1416,7 @@ def extract_covenant_terms(
     # exhibit's own words say what it displaced), so each is fetched and identified before any is
     # sent. Fetching is not the cost the guard bounds: the model call is.
     candidates: list[_Candidate] = []
+    unnamed: set[date] = set()
     for i, (row, filename) in enumerate(targets):
         src = _source_ref(row, filename)
         text = _fetch_exhibit(http, cik, row.accession, filename)
@@ -1424,19 +1443,27 @@ def extract_covenant_terms(
                 f"no agreement title was read from the head of {src}"
             )
             slots[i] = _outcome(row, filename, "not_debt_agreement", title)
+            if not title:
+                # NO NAME WAS READ, so this exhibit may be the agreement a later exhibit displaces.
+                # Every date its head states is kept, and a displaced agreement of one of those
+                # dates decides nothing (Codex, PR #1090 round 1). A refusal whose title WAS read
+                # (an office lease, a stock purchase agreement) is known not to be one.
+                unnamed.update(_head_dates(text))
             continue
         own, base = exhibit_identity(text, title, is_amendment(text))
         candidates.append(_Candidate(i, row, filename, src, text, title, own, base))
 
     # 2. THE COVERAGE RULE: skip what a later located exhibit displaced, and notes that matured.
     reference = _reference_date(cs)
-    instruments = list(cs.instruments.value or [])
+    instruments = (list(cs.instruments.value or [])
+                   if cs.instruments.status is SourceStatus.PRESENT else None)
     live: list[_Candidate] = []
     unread = sum(1 for o in slots if o is not None and o.outcome == "fetch_failed")
     if unread and len(candidates) > 1:
         flags.append(f"(E5) coverage: {unread} located exhibit(s) could not be read, so no exhibit "
                      f"on this page is found superseded; every debt contract read is sent")
-    verdicts = _coverage(candidates, reference, instruments, all_read=not unread)
+    verdicts = _coverage(candidates, reference, instruments, all_read=not unread,
+                         unnamed_dates=frozenset(unnamed))
     for c, (kind, by, evidence) in zip(candidates, verdicts, strict=True):
         if kind == "live":
             live.append(c)

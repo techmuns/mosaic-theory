@@ -222,6 +222,16 @@ whatever they are.
     - case-blind "DATED AS OF" in an all-caps heading, which fails closed (the exhibit is read);
     - repeated whole-text scans, a cost of seconds.
   - The audit at the post-review code: 0 of 91 outcomes move, and 51 → 47 holds.
+- *Codex, round 1* (two P1 findings, both fixed behind pins that fail on the PR head):
+  - an UNKNOWN CIQ panel was read as an empty one, so notes could read terminated on a missing
+    panel. With no panel, no notes read terminated (`test_an_unknown_instrument_panel_is_not_an_empty_one`);
+  - a refused exhibit whose title was NOT read did not count in the ambiguity check. It may be the
+    displaced agreement under an unread name. Codex asked to count every such refusal as unread,
+    which would switch the rule off on CNXC, NKE, TJX and EPAM (each has an untitled offer letter
+    or plan). So the fix is narrower: a displaced agreement dated as any date an untitled
+    refusal's head states decides nothing (`test_an_untitled_exhibit_dated_as_the_displaced_agreement_blocks_the_supersession`,
+    derived from VRRM's term-loan restatement with its heading removed).
+  - The audit after the round: 0 of 91 outcomes move.
 - *Three existing pins move with the premise.*
   - The plan pin's kinds exclude the two new ones, which this file drives.
   - A cost-bound exhibit now carries its heading.
