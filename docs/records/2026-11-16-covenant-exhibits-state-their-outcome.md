@@ -116,7 +116,9 @@ follows the precedent of `concentration.customers_listed`.
   its summary only, before and after alike) and force-open. BURL was also printed through the
   "Full dossier" scope (`ds-print-full`, the print CSS opening every `<details>`): 26 pages both
   sides, the line on page 24, only its words changed. The images are in the coordinator's notes
-  folder, not in the repo.
+  folder, not in the repo. **Approved 2026-11-16** by the operator, relayed by the coordinator:
+  "approve the covenant wording", covering the seven-row wording table in #1084's body as shown.
+  The `(E5)` backfill stays unbuilt.
 
 **BOUNDARY.**
 - Every corpus count is at main `b64be6f1` (2026-11-16), over the 26 committed
