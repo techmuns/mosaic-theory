@@ -244,3 +244,69 @@ def test_r1_and_r4_templates_keep_their_shape_across_the_corpus() -> None:
         seen["r1"] += 1
     assert seen["r1"] >= 5 and seen["r4"] >= 1, (
         f"the corpus check ran over {seen} — it is not exercising both shapes")
+
+
+# --- review round 1 (#1083): three sentences this PR made false -----------------------------------
+
+def test_the_applicable_refusal_names_the_shape_the_page_would_get() -> None:
+    """(+) An R3 page refused on R1's `applicable` bit is told its OWN template's shape. Before the
+    R3 template existed, "This template is R1-shaped" was true of every page this guard refused;
+    on an R3 page it no longer is, so the refusal sent the operator to resolve a resolved recipe."""
+    doc = _r3_page()
+    doc["anchor"]["applicable"] = False
+    with pytest.raises(ProposalRefusedError) as exc:
+        build_template(doc)
+    msg = str(exc.value)
+    assert "R1-shaped" not in msg and "R3-shaped" in msg, msg
+
+
+def test_an_r1_page_refused_on_its_bit_still_reads_r1_shaped() -> None:
+    """(-) The R1 page the guard was written for keeps its sentence — V, applicable=False."""
+    doc = _page("V")
+    assert doc["anchor"]["applicable"] is False and doc["anchor"]["recipe_hint"] == sc.RECIPE_R1
+    with pytest.raises(ProposalRefusedError, match="R1-shaped"):
+        build_template(doc)
+
+
+@pytest.mark.parametrize("shape", ["committed", "no forward history"])
+def test_the_r3_multiple_reason_says_only_what_the_evidence_holds(shape: str) -> None:
+    """(+/-) The multiple's reason says the page's P/NTM EPS history is in the evidence ONLY when
+    the evidence carries it — read off the page, as `_r4_multiple_why` reads its band. GOOGL as
+    committed carries the band; GOOGL with its forward-multiple history removed in memory does
+    not, and the reason must then say it is absent."""
+    doc = _r3_page()
+    if shape == "no forward history":
+        doc.pop("forward_multiple_history")
+    tpl = build_template(doc)
+    in_evidence = any("P/NTM EPS" in ln for ln in tpl["_evidence"]["multiple"])
+    assert in_evidence is (shape == "committed")
+    for leg in LEGS:
+        why = tpl["scenarios"][leg]["_multiple_why_no_anchor"]
+        assert ("in the evidence" in why) is in_evidence, (shape, why)
+        if not in_evidence:
+            assert "no P/NTM EPS history" in why, why
+
+
+@pytest.mark.parametrize("note", ["committed", "no note"])
+def test_the_context_only_marker_prints_once(note: str) -> None:
+    """(+/-) GOOGL's P/NTM EPS band is flagged context only AND its note opens "CONTEXT ONLY —", so
+    the evidence line printed the marker twice. Once, from the note when it says so, from the flag
+    when it does not (the note removed in memory)."""
+    doc = _r3_page()
+    series = next(s for s in doc["forward_multiple_history"]["series"]
+                  if s["metric"] == "P/NTM EPS")
+    assert series["context_only"] is True
+    if note == "no note":
+        series["note"] = None
+    line = next(ln for ln in build_template(doc)["_evidence"]["multiple"] if "P/NTM EPS" in ln)
+    assert line.count("CONTEXT ONLY") == 1, line
+
+
+def test_the_r4_band_line_is_unmarked_where_its_band_is_admissible() -> None:
+    """(-) AMZN's EV/NTM EBIT band is not context only, so its R4 evidence line carries no marker —
+    the shared `_band_line` change moves no R4 output (measured byte-identical on AMZN)."""
+    doc = _page("AMZN")
+    assert doc["anchor"]["recipe_hint"] == sc.RECIPE_R4
+    line = next(ln for ln in build_template(doc)["_evidence"]["multiple"]
+                if ln.startswith("own history EV/NTM EBIT"))
+    assert "CONTEXT ONLY" not in line, line

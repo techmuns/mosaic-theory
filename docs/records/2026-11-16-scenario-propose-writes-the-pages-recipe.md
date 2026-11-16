@@ -115,6 +115,22 @@ whether R2 gets its own build.
   | the R3 evidence keyed by an axis R3 does not model | 1 |
   | R3 dispatched before the applicable refusal (R4's exception widened) | 1 |
 
+**REVIEW ROUND 1 (the coordinator's review of #1083).** No correctness bug was found. Three sentences
+this PR had made false were fixed in one commit, each behind a test that failed first on the unfixed
+code:
+
+| finding | fix | test that failed first |
+|---|---|---|
+| an R3 page refused on R1's bit was told "This template is R1-shaped" | the refusal names the R3 shape and the coupling; R1 pages keep their sentence | `test_the_applicable_refusal_names_the_shape_the_page_would_get` (V's R1 refusal pinned unchanged) |
+| the R3 multiple's reason said the P/NTM EPS history "is in the evidence" on any page | `_r3_multiple_why` reads the page, as `_r4_multiple_why` does, and says the history is absent when it is | `test_the_r3_multiple_reason_says_only_what_the_evidence_holds[no forward history]` (GOOGL with `forward_multiple_history` removed in memory; the committed case passes both sides) |
+| GOOGL's band line printed "· CONTEXT ONLY · CONTEXT ONLY —": the flag's marker beside the note that opens with it | `_band_line` adds the marker only where the note does not state it | `test_the_context_only_marker_prints_once[committed]` (with the note removed, the flag's marker still prints once) |
+
+After the fixes, 25 of 26 templates are still byte-identical to main, AMZN's R4 template and every
+refusal text included; GOOGL's P/NTM EPS line carries the marker once where it carried it twice.
+Two findings went to row 10 with no code: `validate_legs` citing R1's reasons on R3 and R4 cells
+(below), and the propose count reading 3 of 12 on an `R2_terminal_margin` recipe id, which no
+committed page carries.
+
 **BOUNDARY.**
 - **Population:** the 26 committed dossiers and 7 committed scenario records at main `b64be6f1`,
   measured 2026-11-16.
@@ -128,7 +144,7 @@ whether R2 gets its own build.
 - **R1's `applicable` bit still gates an R3 page. Unchanged, the other half of row 10.**
   - `check_tier_agreement` refuses an R3 record on a page whose R1 bit is False.
   - `_refuse_if_recipe_unresolved` refuses the template there before the R3 branch is reached.
-    Its message still calls the template "R1-shaped", which is now true of R1 pages only.
+    Its message names the R3 shape there since review round 1 (below), where it read "R1-shaped".
   - It is dormant on the corpus: 30 of GOOGL's 37 committed page versions are R3-tagged, and all
     30 read `applicable=True`. The 3 versions that read False are R1-tagged.
   - Pinned both sides: `test_an_r3_tag_keeps_the_applicable_coupling` (create) and

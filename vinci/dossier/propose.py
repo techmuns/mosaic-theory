@@ -108,13 +108,12 @@ R4_EBIT_WHY = ("NTM EBIT at exit is the recipe's whole leg driver — a pre-fill
 R3_EPS_WHY = ("EPS at exit is the recipe's whole leg driver — a pre-filled number would be the "
               "machine writing the underwrite")
 
-#: (R3) Why the forward P/E is never proposed. R1's base anchor is a trailing EV/EBITDA median, an
-#: ENTERPRISE multiple — `_anchors_on_basis` drops it from a P/E record for exactly that reason —
-#: and the page's own P/NTM EPS history is context only (its note says so, beside it in the
-#: evidence), so no committed statistic anchors this cell.
+#: (R3) Why the forward P/E is never proposed, before the page is read. R1's base anchor is a
+#: trailing EV/EBITDA median, an ENTERPRISE multiple — `_anchors_on_basis` drops it from a P/E
+#: record for exactly that reason. What the page's own P/NTM EPS history adds is read off the page
+#: by `_r3_multiple_why`, never asserted here.
 R3_MULTIPLE_WHY = ("no ruled anchor for a forward P/E — R1's own-history anchor is a trailing "
-                   "EV/EBITDA, an enterprise multiple, and the page's P/NTM EPS history is context "
-                   "only. That history, with its note, is in the evidence")
+                   "EV/EBITDA, an enterprise multiple")
 
 
 class ProposalRefusedError(RuntimeError):
@@ -703,12 +702,21 @@ def _refuse_if_recipe_unresolved(doc: dict[str, Any], ticker: str) -> None:
         if hint == "R2_NEEDED" else
         "Fix the condition the anchor names, or resolve the recipe, before underwriting this name."
     )
+    # THE SHAPE THE PAGE WOULD GET, never R1's by default (review of #1083). An R3 page is refused
+    # here on R1's bit — §5.0 row 10's open coupling — and its template is R3-shaped, so calling it
+    # R1-shaped sent the operator to resolve a recipe the page has already resolved.
+    shape = (
+        ". This page's template is R3-shaped (EPS and P/E), but `applicable` is R1's bit and this "
+        "guard still reads it as the R3 page's (STATE §5.0 row 10)"
+        if hint == RECIPE_R3 else
+        ". This template is R1-shaped (revenue/margin/multiple) and emitting it would invite an "
+        "underwrite on a recipe the dossier says does not apply"
+    )
     raise ProposalRefusedError(
         f"{ticker}: the dossier marks its anchor applicable=False"
         + (f" with hint {hint!r}" if hint else "")
         + (f" — {reason}" if reason else "")
-        + ". This template is R1-shaped (revenue/margin/multiple) and emitting it would invite an "
-        f"underwrite on a recipe the dossier says does not apply. {remedy}")
+        + f"{shape}. {remedy}")
 
 
 def build_template(doc: dict[str, Any]) -> dict[str, Any]:
@@ -967,17 +975,32 @@ def _ev_ntm_ebit_band(doc: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def _band_line(label: str, b: dict[str, Any]) -> str:
-    """One own-history band as an evidence line — the R3 and R4 multiples print it alike."""
+    """One own-history band as an evidence line — the R3 and R4 multiples print it alike.
+
+    THE CONTEXT-ONLY MARKER PRINTS ONCE (review of #1083): the series note the forward layer writes
+    opens "CONTEXT ONLY —" itself, so the flag adds the marker only where the note does not say it.
+    """
     pct = b.get("percentile")
     rank = (f"{float(pct) * 100:.1f}th pctile of its own range"
             if isinstance(pct, (int, float)) else "rank unknown")
+    note = str(b.get("note") or "")
     return (f"own history {label}: latest observed close "
             f"{b.get('latest_observed_close')} on {b.get('latest_close_date')} ({rank}; not in the "
             f"distribution) · low {b.get('low')} · median {b.get('median')} · high "
             f"{b.get('high')} · {b.get('n_closes')} earlier closes over "
             f"{b.get('window_span_years')}y"
-            + (" · CONTEXT ONLY" if b.get("context_only") else "")
-            + (f" · {b['note']}" if b.get("note") else ""))
+            + (" · CONTEXT ONLY" if b.get("context_only") and "CONTEXT ONLY" not in note else "")
+            + (f" · {note}" if note else ""))
+
+
+def _r3_multiple_why(doc: dict[str, Any]) -> str:
+    """Why the R3 multiple is not proposed — saying what the page's P/NTM EPS history adds only
+    when the page carries it, as `_r4_multiple_why` reads its band (review of #1083)."""
+    b = _forward_band(doc, "P/NTM EPS")
+    if b is None:
+        return R3_MULTIPLE_WHY + "; the page carries no P/NTM EPS history."
+    return (R3_MULTIPLE_WHY + "; the page's P/NTM EPS history is in the evidence"
+            + (", context only, with its note" if b.get("context_only") else "") + ".")
 
 
 def _r4_multiple_why(doc: dict[str, Any]) -> str:
@@ -1264,11 +1287,12 @@ def build_r3_template(doc: dict[str, Any]) -> dict[str, Any]:
     `eps` and `multiple` cells and no fact — GOOGL's committed R3 record carries none.
 
     NOTHING IS PRE-FILLED. EPS is the recipe's whole leg driver, and no committed statistic anchors
-    a forward P/E (`R3_MULTIPLE_WHY`), so all six cells arrive EMPTY with their reasons and
+    a forward P/E (`_r3_multiple_why`), so all six cells arrive EMPTY with their reasons and
     `scenario-create` requires a derivation for each. No share-count or lease-basis check runs:
     both guard the enterprise bridge this recipe does not have.
     """
     anchor_fy = _get(doc, "mechanical", "ev_gap", "anchor_fy")
+    multiple_why = _r3_multiple_why(doc)
     scenarios: dict[str, Any] = {}
     for leg in LEGS:
         cell: dict[str, Any] = {
@@ -1276,7 +1300,7 @@ def build_r3_template(doc: dict[str, Any]) -> dict[str, Any]:
             f"{COMMENTARY_PREFIX}eps_why_no_anchor": R3_EPS_WHY,
             "eps_derivation": "",                    # REQUIRED — where this number came from
             "multiple": None,
-            f"{COMMENTARY_PREFIX}multiple_why_no_anchor": R3_MULTIPLE_WHY,
+            f"{COMMENTARY_PREFIX}multiple_why_no_anchor": multiple_why,
             "multiple_derivation": "",               # REQUIRED
             "reason": "",
         }
