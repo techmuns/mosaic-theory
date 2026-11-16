@@ -572,8 +572,9 @@ _BOILER = re.compile(
     r"\d{4}-\d{2}-\d{2}|[\d]{4}-[\d\-]{4,})\b", re.I)
 _W = r"[A-Z][A-Z0-9&'\.\-]*"
 _NOUN = r"(?:AGREEMENT|INDENTURE|NOTES?|GUARANTY|GUARANTEE|DEBENTURE)"
-_TITLE = re.compile(
-    rf"\b((?:{_W}\s+|\d[\w\-]*\s+|NO\.\s+|OF\s+|TO\s+|AND\s+|THE\s+){{1,14}}{_NOUN})\b")
+#: The words a capitals title is built of, up to its noun — shared by `_HEADING_TITLE`.
+_TITLE_WORDS = rf"(?:{_W}\s+|\d[\w\-]*\s+|NO\.\s+|OF\s+|TO\s+|AND\s+|THE\s+){{1,14}}"
+_TITLE = re.compile(rf"\b({_TITLE_WORDS}{_NOUN})\b")
 _ORD = (r"FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH|ELEVENTH|TWELFTH|"
         r"THIRTEENTH|FOURTEENTH|FIFTEENTH|NO\.\s*\d+|\d+(?:ST|ND|RD|TH)?")
 #: "SIXTH AMENDMENT TO ..." / "AMENDMENT NO. 3 TO ..." — the instance, stripped to reach the base.
@@ -641,6 +642,58 @@ _AMEND_HEAD = re.compile(r"^(?:(?!OF\b)[A-Z][A-Z\-]*\s+){0,3}AMENDMENT\b")
 _RECITAL_REF = re.compile(
     r"\b(?:that\s+certain|the)\s+[\u201c\"]?\s*((?:(?:[A-Z][\w'\-]*|and|of)\s+){1,6}"
     r"(?:Agreement|Indenture|Lease|Notes?|Guarant(?:y|ee)|Plan|Letter))\b")
+#: A TITLE-CASED HEADING IS READ IN CAPITALS (STATE row 63, 2026-11-16). `_TITLE` reads a heading
+#: set in capitals, and five real debt contracts on committed pointer rows head themselves in title
+#: case: VRRM's "Amendment No. 4 to REVOLVING CREDIT Agreement", CNXC's "Third Amendment to
+#: Receivables Financing Agreement" and its Fourth, and NFLX's two "... Senior Notes due 2028
+#: Purchase Agreement" heads. Each read as no title, so E5 refused it before any model call. A
+#: heading's case is typography, not identity, so its words are upper-cased and read by `_TITLE`'s
+#: grammar, then normalised exactly as a capitals title is. Two limits keep this a heading reader:
+#: - THE HEADING RUN only: the words at the head's start, before its first prose word. That keeps
+#:   the body out, for `_IS_AMENDMENT`'s reason: a base contract's body says "No amendment to this
+#:   Agreement shall be effective ...", and that never starts a head. The run takes capitalised
+#:   words, numbers and amounts, and only the lowercase words a title carries: `_TITLE`'s own OF,
+#:   TO, AND and THE, and DUE, a note's maturity ("Senior Notes due 2028"). Any other lowercase
+#:   word, or a mark such as "(", ":", "–" or "“", ends it. A sentence that opens inside the run
+#:   ("... Agreement This Third Amendment ...") is cut where `_clean_title` cuts a capitals one.
+#: - A CONTRACT NOUN ends the title: AGREEMENT, INDENTURE, GUARANTY or GUARANTEE, never an
+#:   INSTRUMENT (NOTES, DEBENTURE). A press release headlines in title case too, and names the
+#:   instrument it announces: CNXC's 2026 release "Concentrix Prices $600 Million Senior Notes
+#:   Offering" read as "MILLION SENIOR NOTES" and passed the gate until this limit.
+#: Measured over the 3,575 EDGAR archive documents in the operator's cache (2026-11-16), with the
+#: guards below: 8 heads read as untitled gain a title. 6 are debt contracts: the five above, and
+#: CNXC's Fifth Amendment to its Receivables Financing Agreement, which no committed pointer
+#: targets. 2 are not, and the gate refuses both. One is an exchange agreement for convertible notes
+#: (BURL). The other is a reader cut from an award agreement (LLY), not that document's own name.
+#: Without the guards, a 9th read cut a VRRM press-release headline at "Termination of Agreement".
+#: No other read moves.
+_HEADING_RUN = re.compile(
+    r"^(?:(?:[A-Z][\w&'\.\-]*,?|\$?\d[\w,\.%\-]*|of|to|and|the|due)\s+)+")
+_HEADING_TITLE = re.compile(rf"\b({_TITLE_WORDS}(?:AGREEMENT|INDENTURE|GUARANTY|GUARANTEE))\b")
+#: A TITLE-CASED RUN THAT IS NOT A CONTRACT'S OWN HEADING (#1088 review, round 1). In capitals a
+#: heading is a contract's; in title case the same words may be a headline, an index, a contents
+#: page or a notice ABOUT one, and each would pass the gate under the contract it names. These
+#: hold the run to a contract's own heading, read in capitals:
+#: - not an INDEX, a table of CONTENTS or a NOTICE OF ... lead ("Exhibit Index Exhibit No.
+#:   Description 10.1 Credit Agreement", "Notice of Borrowing Under Credit Agreement");
+_NOT_A_HEADING_LEAD = re.compile(r"^(?:EXHIBIT\s+INDEX|INDEX|TABLE\s+OF\s+CONTENTS|CONTENTS|"
+                                 r"NOTICE\s+OF)\b")
+#: - no REPORTING VERB before the noun: a headline reports ("... Announces Amendment to Credit
+#:   Agreement", "... Closes $500 Million Revolving Credit Agreement"), a contract's name does not.
+#:   Present tense only, as headlines are set: a past form is often a title's adjective (SECURED,
+#:   EXTENDED, AMENDED AND RESTATED);
+_REPORTING_VERB = re.compile(
+    r"\b(?:ANNOUNCES|CLOSES|COMPLETES|ENTERS|PRICES|RECEIVES|REPORTS|SIGNS|SECURES|OBTAINS|"
+    r"EXTENDS|EXPANDS|AMENDS|LAUNCHES|ISSUES|FILES|PROVIDES|DECLARES|AGREES|REACHES|TERMINATES|"
+    r"UPSIZES|REFINANCES)\b")
+#: - no amount IN WORDS in the title: a contract states its amount in digits ahead of its name
+#:   ("$1,900,000,000 5.875% Senior Notes due 2028 Purchase Agreement"); "$500 Million" is a
+#:   headline's, and reads as "MILLION REVOLVING CREDIT AGREEMENT";
+#: - no ARTICLE heading in the title: "... Article I Definitions Article II The Guaranty" is a
+#:   contents listing, which can run without its "Table of Contents" lead.
+#: NOT A FIGURE RULE ON THE RUN: NFLX's own headings carry the issuer, the principal and the coupon
+#: ahead of the name, so a run with figures is refused only where its title is.
+_NOT_A_TITLE = re.compile(r"\b(?:MILLION|BILLION|THOUSAND)\b|\bARTICLE\s+[IVXLC\d]+\b")
 #: The capture ran past the heading into the body — a title, not a sentence.
 _PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
                     r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
@@ -692,7 +745,32 @@ def is_amendment(text: str) -> bool:
     # on that.
     if m is None and _AMEND_HEAD.match(h):
         return True
+    # A title-cased heading, read in capitals (`_HEADING_RUN`): CNXC's "Third Amendment to
+    # Receivables Financing Agreement" is an amendment by its own heading, as a capitals one is.
+    # Codes first, as `agreement_title` strips them: `_AMEND_PREFIX` is anchored at ^, so a filing
+    # id in front of the heading ("20260605EX101 1758963679 ...", WERN's shape) would hide it.
+    t = _heading_title(h) if m is None else None
+    if t is not None and _AMEND_PREFIX.search(
+            _LEAD_CODE.sub("", _clean_title(t.group(1))).strip(" .,-")):
+        return True
     return bool(_IS_AMENDMENT.search(h[:900]))
+
+
+def _heading_title(h: str) -> re.Match[str] | None:
+    """The cleaned head's title-cased heading read in capitals: `_HEADING_TITLE` over the heading
+    run (`_HEADING_RUN`) upper-cased. None when the head has no run, the run names no contract
+    noun, or the run is not a contract's own heading (`_NOT_A_HEADING_LEAD`, `_REPORTING_VERB`,
+    `_NOT_A_TITLE`)."""
+    run = _HEADING_RUN.match(h)
+    if run is None:
+        return None
+    words = run.group(0).upper()
+    if _NOT_A_HEADING_LEAD.match(words):
+        return None
+    m = _HEADING_TITLE.search(words)
+    if m is None or _REPORTING_VERB.search(words[:m.end()]) or _NOT_A_TITLE.search(m.group(1)):
+        return None
+    return m
 
 
 def _clean_title(t: str) -> str:
@@ -705,8 +783,9 @@ def _clean_title(t: str) -> str:
 
 
 def agreement_title(text: str) -> str | None:
-    """The agreement's SELF-DECLARED name, normalised to the BASE contract — or None when the head
-    declares no agreement at all (an offer letter, a dealer confirmation). Deterministic."""
+    """The agreement's SELF-DECLARED name, normalised to the BASE contract — or None when no
+    agreement title is read from the head (an offer letter, a dealer confirmation, and any head
+    whose title this reader does not parse). Deterministic."""
     h = re.sub(r"\s+", " ", text[:3000])
     h = re.sub(r"\s+", " ", _BOILER.sub(" ", _DOC_HDR.sub("", h))).strip()
     m = _TITLE.search(h[:1500])
@@ -724,9 +803,14 @@ def agreement_title(text: str) -> str | None:
         # `is_debt_agreement`'s call, not this function's: an amendment to a lease is named for
         # the lease, and refused for it.
         r = _RECITAL_REF.search(h) if _AMEND_HEAD.match(h) else None
-        if r is None:
+        if r is not None:
+            return _as_title(_LEAD_NOISE.sub("", _clean_title(r.group(1))))
+        # A title-cased heading, read in capitals (`_HEADING_RUN`) and normalised below exactly as
+        # a capitals title is. Tried last, so every head an earlier branch titles keeps its
+        # title.
+        m = _heading_title(h)
+        if m is None:
             return None
-        return _as_title(_LEAD_NOISE.sub("", _clean_title(r.group(1))))
     # CODES FIRST, THEN THE AMENDMENT PREFIX. `_AMEND_PREFIX` is anchored at ^, so while a filing
     # id still sits in front of the title it cannot match and the amendment INSTANCE survives
     # normalisation. WERN's Amendment No. 3 is the real case: its head begins
@@ -751,6 +835,24 @@ def _as_title(t: str) -> str | None:
     if _PROSE.search(t):
         return None
     return t if len(t.split()) >= 2 and len(t) >= 8 else None
+
+
+#: A PURCHASE CONTRACT: a debt contract the gate passes under which notes are SOLD TO INITIAL
+#: PURCHASERS, while an indenture governs them. NFLX's "SENIOR NOTES DUE 2028 PURCHASE AGREEMENT"
+#: names its notes and then "PURCHASE AGREEMENT". `extract_covenant_terms` gives one a cost-bound
+#: slot only after every other debt contract has had one (operator, 2026-11-16).
+#: TWO PURCHASE AGREEMENTS GOVERN, AND ARE NOT RANKED LAST (#1088 review, round 1):
+#: - a private placement's NOTE PURCHASE AGREEMENT, under which notes are sold to insurers with
+#:   their financial covenants and no indenture;
+#: - a PIPE convertible's SECURITIES PURCHASE AGREEMENT, the document `_DEBT` admits SECURITIES
+#:   PURCHASE for.
+#: Read from the title, so a non-debt purchase agreement (WERN's STOCK PURCHASE) is refused before
+#: this asks. Measured over the 3,575 cached EDGAR archive documents (2026-11-16): 3 titles the
+#: gate passes match. Those are NFLX's two notes purchase agreements and a 2020 CONVERTIBLE SENIOR
+#: NOTES DUE 2025 PURCHASE AGREEMENT (CIK 784199), which no committed page's pointer targets. That
+#: one is an initial purchasers' agreement and is ranked last. None reads NOTE PURCHASE or
+#: SECURITIES PURCHASE.
+_PURCHASE_CONTRACT = re.compile(r"(?<!\bNOTE\s)(?<!\bSECURITIES\s)\bPURCHASE\s+AGREEMENT\b")
 
 
 def is_debt_agreement(title: str | None) -> bool:
@@ -883,55 +985,92 @@ def extract_covenant_terms(
     rows: list[CovenantTerm] = []
     flags: list[str] = []
     logs: list[str] = []
-    outcomes: list[CovenantExhibitOutcome] = []
+    # one slot per target, in its order: a purchase contract decided in the second pass still lands
+    # in its own place, so the outcomes list equals the targets list (STATE row 63)
+    slots: list[CovenantExhibitOutcome | None] = [None] * len(targets)
+    #: purchase contracts that passed the gate, held for the slots the first pass leaves
+    held: list[tuple[int, CovenantPointer, str, str, str, str]] = []
     extracted = 0
-    for row, filename in targets:
-        if extracted >= _MAX_EXHIBITS:
-            flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename}")
-            outcomes.append(_outcome(row, filename, "cost_bound"))
-            continue
-        src = _source_ref(row, filename)
-        text = _fetch_exhibit(http, cik, row.accession, filename)
-        if text is None:
-            flags.append(f"(E5) covenant exhibit fetch failed — UNKNOWN: {src}")
-            outcomes.append(_outcome(row, filename, "fetch_failed"))
-            continue
-        title = agreement_title(text)
-        if not is_debt_agreement(title):
-            # IDENTIFY OR REFUSE. The pointer's family is a guess; the document's own heading is
-            # evidence. Without this, an executive offer letter (NKE, TGT), a stock purchase
-            # agreement (WERN) and a capped-call confirmation (UBER) were each handed to a covenant
-            # extractor and whatever it returned was labelled as that instrument's terms.
-            flags.append(
-                f"(E5) not a debt agreement — refused rather than extracted under the pointer's "
-                f"guess ({row.family}): {src} declares itself "
-                f"{('“' + title + '”') if title else 'no agreement at all'}"
-            )
-            outcomes.append(_outcome(row, filename, "not_debt_agreement", title))
-            continue
+
+    def send(i: int, row: CovenantPointer, filename: str, src: str, text: str,
+             title: str) -> int:
+        """One model call on an identified debt contract, or its refusal for size or an LLM error.
+        Returns the calls it spent against the bound."""
         if len(text) > _MAX_EXHIBIT_CHARS:
             flags.append(
                 f"(E5) covenant exhibit too large for single-pass extraction ({len(text)} chars) — "
                 f"extract by hand: {src}"
             )
-            outcomes.append(_outcome(row, filename, "too_large", title))
-            continue
+            slots[i] = _outcome(row, filename, "too_large", title)
+            return 0
         try:
             got, refused, log = _extract_from_exhibit(
                 llm, text, name=name, ticker=ticker, source_ref=src, title=title,
                 amendment=is_amendment(text))
         except LlmError as exc:
             flags.append(f"(E5) covenant extraction LLM error — UNKNOWN: {src}: {exc}")
-            outcomes.append(_outcome(row, filename, "llm_error", title))
-            continue
+            slots[i] = _outcome(row, filename, "llm_error", title)
+            return 0
         logs.append(f"=== COVENANT EXTRACT: {src} ===\n{log}")
         rows.extend(got)
         flags.extend(refused)
-        extracted += 1
         # a call that returned no term rows still spent one of the bound's calls, as before; it is
         # not an extraction, and no flag has ever said so
-        outcomes.append(_outcome(row, filename, "extracted" if got else "no_terms_returned",
-                                 title))
+        slots[i] = _outcome(row, filename, "extracted" if got else "no_terms_returned", title)
+        return 1
+
+    for i, (row, filename) in enumerate(targets):
+        if extracted >= _MAX_EXHIBITS:
+            flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename}")
+            slots[i] = _outcome(row, filename, "cost_bound")
+            continue
+        src = _source_ref(row, filename)
+        text = _fetch_exhibit(http, cik, row.accession, filename)
+        if text is None:
+            flags.append(f"(E5) covenant exhibit fetch failed — UNKNOWN: {src}")
+            slots[i] = _outcome(row, filename, "fetch_failed")
+            continue
+        title = agreement_title(text)
+        if not title or not is_debt_agreement(title):
+            # IDENTIFY OR REFUSE. The pointer's family is a guess; the document's own heading is
+            # evidence. Without this, an executive offer letter (NKE, TGT), a stock purchase
+            # agreement (WERN) and a capped-call confirmation (UBER) were each handed to a covenant
+            # extractor and whatever it returned was labelled as that instrument's terms.
+            # WHAT THE READER DID, NOT WHAT THE DOCUMENT IS. A title read is the document's own
+            # word, and the gate judged it. With none read, the reader knows only that: until
+            # 2026-11-16 this flag said the exhibit "declares itself no agreement at all", which
+            # VRRM's revolver amendment, a debt contract with a title-cased heading, did not
+            # (STATE row 63). The wording is the renderer's (`render._NO_TITLE_READ`).
+            flags.append(
+                f"(E5) not a debt agreement — refused rather than extracted under the pointer's "
+                f"guess ({row.family}): {src} declares itself “{title}”"
+                if title else
+                f"(E5) refused rather than extracted under the pointer's guess ({row.family}): "
+                f"no agreement title was read from the head of {src}"
+            )
+            slots[i] = _outcome(row, filename, "not_debt_agreement", title)
+            continue
+        if _PURCHASE_CONTRACT.search(title):
+            held.append((i, row, filename, src, text, title))
+            continue
+        extracted += send(i, row, filename, src, text, title)
+    # PURCHASE CONTRACTS LAST (operator, 2026-11-16: "Order now, coverage next (Recommended)").
+    # A notes purchase agreement is a debt contract, and the gate passes it, but it is the sale of
+    # notes, not the contract that governs them. NFLX's pointer files its 2018 and 2014 notes
+    # purchase agreements under a bridge-loan family, so in the round-robin they came first and
+    # pushed its December 2025 revolver and its 2019 amendment past the bound (#1088). Each takes
+    # a slot only after every other debt contract the first pass reached has taken one. The
+    # round-robin across families is unchanged, and so is `_MAX_EXHIBITS`.
+    for i, row, filename, src, text, title in held:
+        if extracted >= _MAX_EXHIBITS:
+            flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename} — a "
+                         f"purchase agreement (“{title}”), ranked after every other debt contract")
+            slots[i] = _outcome(row, filename, "cost_bound", title)
+            continue
+        extracted += send(i, row, filename, src, text, title)
+    outcomes = [o for o in slots if o is not None]
+    if len(outcomes) != len(targets):  # every branch above fills its slot; fail loud if not
+        raise RuntimeError(f"E5 wrote {len(outcomes)} outcomes for {len(targets)} targets")
 
     found = Sourced.present(outcomes, source_ref=OUTCOMES_SOURCE_REF)
     if not rows:
