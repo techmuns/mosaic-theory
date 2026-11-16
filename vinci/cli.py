@@ -2242,12 +2242,14 @@ def _cmd_scenario_propose(args: argparse.Namespace) -> int:
     out = Path(args.out) if args.out else Path(f"{t}-underwrite.json")
     out.write_text(json.dumps(tpl, indent=2, ensure_ascii=False) + "\n")
     scen: dict[str, Any] = tpl["scenarios"]
-    # THE CELLS THE TEMPLATE'S OWN RECIPE READS: an R4 template carries `ebit` and `multiple` and no
-    # revenue or margin, so counting R1's trio would report "0 of 9" against six real cells.
+    # THE CELLS THE TEMPLATE'S OWN RECIPE READS: an R4 template carries `ebit` and `multiple` and an
+    # R3 one `eps` and `multiple`, neither any revenue or margin, so counting R1's trio would report
+    # "0 of 9" against six real cells. Read off `axes_for`, the validator's own table; a hint no
+    # recipe maps (CNXC's `R1_NOT_ROBUST`) keeps the trio it always counted.
     import vinci.scenarios as sc
-    from vinci.dossier.propose import AXIS_LEG_FIELD
-    axes = (sc.axes_for(sc.RECIPE_R4, tpl.get("multiple_basis")) or ()
-            if tpl.get("recipe_id") == sc.RECIPE_R4 else ("revenue", "margin", "multiple"))
+    from vinci.dossier.propose import AXES, AXIS_LEG_FIELD
+    axes = (sc.axes_for(str(tpl.get("recipe_id") or ""), tpl.get("multiple_basis") or None)
+            or AXES)
     fields = [AXIS_LEG_FIELD.get(a, a) for a in axes]
     total = len(fields) * len(scen)
     filled = sum(1 for c in scen.values() for f in fields if c.get(f) is not None)
