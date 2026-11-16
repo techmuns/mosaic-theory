@@ -177,14 +177,16 @@ def test_a_cost_bound_exhibit_is_still_listed_and_its_reason_reachable_e2e(
 
 
 def test_no_committed_page_names_a_cause_on_the_line() -> None:
-    """(− · living corpus) Over every committed dossier.json with covenant term rows, the line THIS
-    renderer prints, where it prints one, names no cause. It reads the JSON, not the committed
-    dossier.md, so a page still carrying the old line until its re-render does not trip it.
-    Phrasing-independent: it asserts only that the cause words are absent."""
+    """(− · living corpus) Over every committed dossier.json with covenant term rows and NO
+    per-exhibit outcomes, the line THIS renderer prints, where it prints one, names no cause. It
+    reads the JSON, not the committed dossier.md, so a page still carrying the old line until its
+    re-render does not trip it. Phrasing-independent: it asserts only that the cause words are
+    absent. A page re-assembled with `covenant_exhibit_outcomes` states each exhibit's cause from
+    that field (`tests/test_covenant_exhibit_outcomes.py`), so it is out of this pin's scope."""
     checked = 0
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         cs_raw = json.loads(p.read_text()).get("mechanical", {}).get("capital_structure")
-        if not cs_raw:
+        if not cs_raw or cs_raw.get("covenant_exhibit_outcomes") is not None:
             continue
         lines = [ln for ln in _covenant_term_lines(CapitalStructure.model_validate(cs_raw))
                  if _HEAD in ln]

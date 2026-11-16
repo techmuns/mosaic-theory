@@ -1,0 +1,23 @@
+[
+  {
+    "accession": "0001902733-24-000041",
+    "filename": "firstamendmenttocreditagre.htm",
+    "family": "Senior Secured Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001902733-26-000022",
+    "filename": "exhibit1035secondamendment.htm",
+    "family": "material contracts (10-K exhibit index)",
+    "outcome": "not_debt_agreement",
+    "declared_title": "OFFICE LEASE"
+  },
+  {
+    "accession": "0001902733-24-000171",
+    "filename": "exhibit101creditagreementb.htm",
+    "family": "Senior Secured Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "CREDIT AGREEMENT"
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "accession": "0001352010-17-000022",
+    "filename": "exhibit10-1epamcreditagree.htm",
+    "family": "Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "REVOLVING CREDIT FACILITY CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001352010-26-000015",
+    "filename": "exhibit1017-epamnonxempl.htm",
+    "family": "material contracts (10-K exhibit index)",
+    "outcome": "not_debt_agreement",
+    "declared_title": null
+  },
+  {
+    "accession": "0001352010-21-000039",
+    "filename": "exhibit101-arcreditagreeme.htm",
+    "family": "Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT"
+  }
+]

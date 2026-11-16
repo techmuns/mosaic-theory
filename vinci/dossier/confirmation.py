@@ -121,14 +121,16 @@ class _Recording(LlmClient):
 
 
 def layer_as_synthesized(page: dict[str, Any]) -> MechanicalLayer:
-    """The committed mechanical layer as `synthesize` received it: the gap block and the covenant
-    term rows the synthesis never reads are cleared, as the replay harness clears them
-    (`evals.capture_child.pre_synthesis_mech`; pinned equal on every committed page)."""
+    """The committed mechanical layer as `synthesize` received it: the gap block, the covenant
+    term rows and the covenant exhibit outcomes the synthesis never reads are cleared, as the
+    replay harness clears them (`evals.capture_child.pre_synthesis_mech`; pinned equal on every
+    committed page)."""
     mech = MechanicalLayer.model_validate(page["mechanical"]).model_copy(update={"ev_gap": None})
     cs = mech.capital_structure
-    if cs is not None and cs.covenant_term_rows is not None:
-        mech = mech.model_copy(update={
-            "capital_structure": cs.model_copy(update={"covenant_term_rows": None})})
+    if cs is not None and (cs.covenant_term_rows is not None
+                           or cs.covenant_exhibit_outcomes is not None):
+        mech = mech.model_copy(update={"capital_structure": cs.model_copy(update={
+            "covenant_term_rows": None, "covenant_exhibit_outcomes": None})})
     return mech
 
 

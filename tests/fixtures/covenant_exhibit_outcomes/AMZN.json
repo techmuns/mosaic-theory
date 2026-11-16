@@ -1,0 +1,44 @@
+[
+  {
+    "accession": "0001104659-23-113444",
+    "filename": "tm2329405d1_ex10-1.htm",
+    "family": "Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "FIVE-YEAR REVOLVING CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001193125-22-289041",
+    "filename": "d413765dex101.htm",
+    "family": "Short-Term Credit Facilities",
+    "outcome": "extracted",
+    "declared_title": "364-DAY REVOLVING CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001193125-20-176528",
+    "filename": "d948849dex101.htm",
+    "family": "Unsecured 364-Day Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "AMENDED AND RESTATED CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001018724-14-000042",
+    "filename": "amzn2014september5-ex101.htm",
+    "family": "Revolving Credit Facility",
+    "outcome": "extracted",
+    "declared_title": "CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001193125-18-139368",
+    "filename": "d574720dex101.htm",
+    "family": "Short-Term Credit Facilities",
+    "outcome": "cost_bound",
+    "declared_title": null
+  },
+  {
+    "accession": "0001104659-26-072140",
+    "filename": "tm2613616d4_ex10-1.htm",
+    "family": "Unsecured 364-Day Revolving Credit Facility",
+    "outcome": "cost_bound",
+    "declared_title": null
+  }
+]

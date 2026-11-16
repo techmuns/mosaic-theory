@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-16.covenant-exhibits-state-their-outcome",
+  "follows": [
+    "2026-11-16.a-ciq-fact-dates-from-its-export"
+  ],
+  "names": "the covenant block's not-extracted line states each exhibit's own cause: the E5 loop writes one outcome per located agreement exhibit (capital_structure.covenant_exhibit_outcomes: extracted, cost_bound, fetch_failed, not_debt_agreement, too_large, llm_error or no_terms_returned, with the heading E5 read), and both renderers print it; a page assembled before the field keeps the neutral line (STATE row 63)"
+}

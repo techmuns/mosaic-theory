@@ -220,7 +220,7 @@ def test_a_non_debt_document_never_reaches_the_extractor(monkeypatch) -> None:  
         covenant_pointer_rows=Sourced.present([ptr], source_ref="EDGAR"),
         covenant_terms=Sourced.unknown(note="n/a"),
     )
-    rows, summary, flags, _log = covenant_extract.extract_covenant_terms(
+    rows, summary, flags, _log, _outcomes = covenant_extract.extract_covenant_terms(
         cs, llm=_Llm(), http=None, cik="0000320187", ticker="NKE", name="NIKE, Inc.")
 
     assert not seen, "an executive offer letter was sent to the covenant extractor"
@@ -677,7 +677,7 @@ def test_smpl_page_sends_both_credit_amendments_to_the_extractor() -> None:
     page = Dossier.model_validate_json((root / "SMPL" / "dossier.json").read_text())
     assert page.mechanical is not None and page.mechanical.capital_structure is not None
     llm = _RecordsExhibits()
-    _rows, _summary, flags, _log = covenant_extract.extract_covenant_terms(
+    _rows, _summary, flags, _log, _outcomes = covenant_extract.extract_covenant_terms(
         page.mechanical.capital_structure, llm=llm, http=_ServesHeads(),  # type: ignore[arg-type]
         cik=page.cik or "", ticker=page.ticker, name=page.name)
     assert llm.sent == ["8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",

@@ -30,6 +30,8 @@ from typing import Any, NamedTuple
 
 from vinci.dossier.schemas import (
     CapitalStructure,
+    CovenantExhibitOutcome,
+    CovenantExhibitOutcomeKind,
     CovenantPointer,
     CovenantTerm,
     Sourced,
@@ -838,40 +840,61 @@ def _extract_from_exhibit(
     return rows, flags, str(raw)
 
 
+def _outcome(row: CovenantPointer, filename: str, kind: CovenantExhibitOutcomeKind,
+             title: str | None = None) -> CovenantExhibitOutcome:
+    """What the loop did with ``row``'s targeted exhibit; ``title`` is the heading E5 read, None
+    where it read none."""
+    return CovenantExhibitOutcome(accession=row.accession, filename=filename, family=row.family,
+                                  outcome=kind, declared_title=title)
+
+
+#: The ``source_ref`` of the per-exhibit outcome list: the loop itself, since each outcome names
+#: its own exhibit (accession and filename).
+OUTCOMES_SOURCE_REF = "E5 extraction loop — one outcome per located agreement exhibit"
+
+
 def extract_covenant_terms(
     cs: CapitalStructure, *, llm: LlmClient, http: CachedHttp, cik: str, ticker: str, name: str
-) -> tuple[Sourced[list[CovenantTerm]] | None, Sourced[str], list[str], str]:
+) -> tuple[Sourced[list[CovenantTerm]] | None, Sourced[str], list[str], str,
+           Sourced[list[CovenantExhibitOutcome]] | None]:
     """Fenced Tier-2 covenant-term extraction over the mechanically-located exhibits.
 
-    Returns ``(term_rows, terms_summary, flags, log)``:
+    Returns ``(term_rows, terms_summary, flags, log, outcomes)``:
     - ``term_rows``: ``Sourced[list[CovenantTerm]]`` (PRESENT with the exhibit ref) or ``None`` when
       there is nothing to extract from (no located exhibit) — the caller leaves the field unset.
     - ``terms_summary``: the one-line ``covenant_terms`` string (present count, or UNKNOWN cause).
     - ``flags``: fail-loud markers (fetch fail, over-large exhibit, LLM error, not-extracted tail).
     - ``log``: the raw model output(s), appended to the dossier's ``llm_call.log``.
+    - ``outcomes``: what each located exhibit's branch of the loop did with it — one
+      :class:`CovenantExhibitOutcome` per exhibit `_core_agreement_exhibits` targets, in its order
+      (STATE row 63), or ``None`` when no exhibit is located. Written beside each branch's flag, so
+      a page states the cause from a structured field and never parses the flag.
 
     Fail-loud throughout: a fetch/LLM failure degrades a row set to UNKNOWN + a flag, never a blank
     or a fabricated value."""
     pointers = cs.covenant_pointer_rows
     if pointers is None or pointers.status is not SourceStatus.PRESENT or not pointers.value:
-        return None, cs.covenant_terms, [], ""
+        return None, cs.covenant_terms, [], "", None
     targets = _core_agreement_exhibits(list(pointers.value))
     if not targets:
         note = "(E5) located pointers carry no core agreement exhibit to extract terms from"
-        return None, Sourced.unknown(note=note), [], ""
+        return None, Sourced.unknown(note=note), [], "", None
 
     rows: list[CovenantTerm] = []
     flags: list[str] = []
     logs: list[str] = []
+    outcomes: list[CovenantExhibitOutcome] = []
     extracted = 0
     for row, filename in targets:
         if extracted >= _MAX_EXHIBITS:
             flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename}")
+            outcomes.append(_outcome(row, filename, "cost_bound"))
             continue
         src = _source_ref(row, filename)
         text = _fetch_exhibit(http, cik, row.accession, filename)
         if text is None:
             flags.append(f"(E5) covenant exhibit fetch failed — UNKNOWN: {src}")
+            outcomes.append(_outcome(row, filename, "fetch_failed"))
             continue
         title = agreement_title(text)
         if not is_debt_agreement(title):
@@ -884,12 +907,14 @@ def extract_covenant_terms(
                 f"guess ({row.family}): {src} declares itself "
                 f"{('“' + title + '”') if title else 'no agreement at all'}"
             )
+            outcomes.append(_outcome(row, filename, "not_debt_agreement", title))
             continue
         if len(text) > _MAX_EXHIBIT_CHARS:
             flags.append(
                 f"(E5) covenant exhibit too large for single-pass extraction ({len(text)} chars) — "
                 f"extract by hand: {src}"
             )
+            outcomes.append(_outcome(row, filename, "too_large", title))
             continue
         try:
             got, refused, log = _extract_from_exhibit(
@@ -897,15 +922,21 @@ def extract_covenant_terms(
                 amendment=is_amendment(text))
         except LlmError as exc:
             flags.append(f"(E5) covenant extraction LLM error — UNKNOWN: {src}: {exc}")
+            outcomes.append(_outcome(row, filename, "llm_error", title))
             continue
         logs.append(f"=== COVENANT EXTRACT: {src} ===\n{log}")
         rows.extend(got)
         flags.extend(refused)
         extracted += 1
+        # a call that returned no term rows still spent one of the bound's calls, as before; it is
+        # not an extraction, and no flag has ever said so
+        outcomes.append(_outcome(row, filename, "extracted" if got else "no_terms_returned",
+                                 title))
 
+    found = Sourced.present(outcomes, source_ref=OUTCOMES_SOURCE_REF)
     if not rows:
         note = "(E5) covenant exhibits located but no terms extracted (see flags)"
-        return None, Sourced.unknown(note=note), flags, "\n\n".join(logs)
+        return None, Sourced.unknown(note=note), flags, "\n\n".join(logs), found
     present = sum(1 for r in rows if r.value.status is SourceStatus.PRESENT)
     term_rows = Sourced.present(
         rows, source_ref="fenced Tier-2 extraction (verbatim, source-bound)")
@@ -914,7 +945,7 @@ def extract_covenant_terms(
         f"exhibit(s); see the covenant-terms table for each {{value, source_ref}}.",
         source_ref="fenced Tier-2 extraction",
     )
-    return term_rows, summary, flags, "\n\n".join(logs)
+    return term_rows, summary, flags, "\n\n".join(logs), found
 
 
 # --- (P5 core, shared by the P1 synthesis digest + the P5 render) term-governed collapse ----------

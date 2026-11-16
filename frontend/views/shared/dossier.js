@@ -3073,6 +3073,40 @@ function governingTerms(rows, pointers) {
   });
 }
 
+// (STATE row 63) What each E5 outcome says on the page — mirrors render._EXHIBIT_OUTCOME. An
+// "extracted" exhibit is cited by the term rows and so never listed.
+const _EXHIBIT_OUTCOME = {
+  extracted: "extracted",
+  cost_bound: "not sent: past the cost bound on exhibits per page",
+  fetch_failed: "could not be fetched",
+  not_debt_agreement: "refused: not a debt agreement",
+  too_large: "too large for single-pass extraction; extract by hand",
+  llm_error: "the extraction call failed (LLM error)",
+  no_terms_returned: "read, and the model returned no terms",
+};
+
+// One exhibit's cause, from its structured outcome (py: render._exhibit_outcome_text).
+function exhibitOutcomeText(o) {
+  let why = _EXHIBIT_OUTCOME[o.outcome] ?? String(o.outcome);
+  if (o.outcome === "not_debt_agreement")
+    why += o.declared_title ? ` (it declares itself “${o.declared_title}”)` : " (its head declares no agreement)";
+  return `${o.filename} — ${why}`;
+}
+
+// The line for located exhibits the term rows do not cite (py: render._unextracted_line), as HTML:
+// each one's own cause from covenant_exhibit_outcomes; without the field (a page assembled before
+// it) no cause, in the bytes #1073 left — the QA-flag strings are never parsed.
+function unextractedLineHtml(missing, outcomes) {
+  const head = `${missing.length} located agreement exhibit(s) not extracted this run`;
+  if (!outcomes || outcomes.status !== "present")
+    return `${head}; this page does not state why (the extraction's notes are QA flags in ` +
+      `dossier.json) — see the pointer table: ${escapeHtml(missing.join(", "))}`;
+  const byAcc = {};
+  (outcomes.value || []).forEach((o) => { (byAcc[o.accession] = byAcc[o.accession] || []).push(o); });
+  return escapeHtml(`${head}: ` + missing.map((acc) => `${acc} · ` +
+    (byAcc[acc] ? byAcc[acc].map(exhibitOutcomeText).join("; ") : "no outcome recorded")).join("; "));
+}
+
 // (P5/E5) fenced Tier-2 covenant terms, TERM-GOVERNED → ONE table per family, each term collapsed to
 // its GOVERNING value (amendment over base), source citing the base § + "amended by". No UNKNOWN row
 // above a present answer. Old JSON (no rows) → flat fact.
@@ -3130,18 +3164,16 @@ function covenantTerms(cs) {
   // (FIX-2 · D-1) mirror the Python transparency line — located pointer accessions minus the ones
   // the extraction actually read → "N located agreement exhibit(s) not extracted this run". Without
   // it the web view silently drops a covenant-completeness signal the .md/PDF shows (py↔js parity).
-  // It states NO cause (STATE row 63): the reason is only a QA-flag string, and on 12 of the 16
-  // committed pages carrying the old "(cost bound / fetch fail)" at main 6652a242, E5 had refused
-  // every exhibit it named.
+  // Its cause comes from covenant_exhibit_outcomes (STATE row 63): on 12 of the 16 committed pages
+  // carrying the old "(cost bound / fetch fail)" at main 6652a242, E5 had refused every exhibit it
+  // named. Without the field the line states no cause (unextractedLine).
   const located = new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean));
   const extracted = new Set(rs.value
     .map((r) => _accOf((r.value && (r.value.source_ref || r.value.note)) || "")).filter(Boolean));
   const missing = [...located].filter((a) => !extracted.has(a)).sort();
   const note = missing.length
-    ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${missing.length} located ` +
-      `agreement exhibit(s) not extracted this run; this page does not state why (the ` +
-      `extraction's notes are QA flags in dossier.json) — see the pointer ` +
-      `table: ${escapeHtml(missing.join(", "))}</i></div>`
+    ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>` +
+      `${unextractedLineHtml(missing, cs.covenant_exhibit_outcomes)}</i></div>`
     : "";
   return tables + note;
 }

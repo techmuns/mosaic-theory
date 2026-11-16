@@ -19,7 +19,7 @@ WHAT IT CANNOT SEE. A $0 build makes no LLM call, so:
 
 - the synthesis is LLM prose with no Sourced field in it, so it contributes nothing to compare
   (pinned on the committed corpus by ``test_the_synthesis_carries_no_sourced_field``);
-- the three ``capital_structure`` fields the paid build's Tier-2 phase writes (``LLM_WRITTEN``) are
+- the four ``capital_structure`` fields the paid build's Tier-2 phase writes (``LLM_WRITTEN``) are
   FORECAST, not read: each phase runs with a client that refuses every call (``_RefusingClient``).
   A phase that returns before calling the model is deterministic, so its result is what the paid
   build will write; a phase that reaches the model is listed as decided by the paid draw and is
@@ -124,7 +124,8 @@ BLOCKS = ("ev_bridge", "forward_consensus", "forward_multiple_history",
 
 #: The ``capital_structure`` fields only the paid build's Tier-2 phase writes
 #: (``assemble.assemble_one``) — forecast through the phase itself (`forecast_llm_fields`).
-LLM_WRITTEN = ("covenant_terms", "maturity_event", "covenant_term_rows")
+LLM_WRITTEN = ("covenant_terms", "maturity_event", "covenant_term_rows",
+               "covenant_exhibit_outcomes")
 
 #: The checks ``assemble.assemble_one`` runs only AFTER its LLM phases, each run here at $0
 #: (`post_spend_checks`). ``test_prespend.py`` pins this SET against ``assemble_one``'s source.
@@ -510,7 +511,8 @@ def forecast_llm_fields(doc: Dossier, *, http: Any) -> dict[str, Forecast]:
     out = {_CS + "covenant_terms": Forecast(
         _PRESENT, "the paid build writes the Tier-2 covenant digest here whatever it extracts")}
     probe = _RefusingClient()
-    _rows, _summary, flags, _log = extract_covenant_terms(cs, llm=probe, http=http, **who)
+    _rows, _summary, flags, _log, outcomes = extract_covenant_terms(cs, llm=probe, http=http,
+                                                                    **who)
     # Rows exist only after a model call, which this client never completes: with no call, the
     # paid build leaves the field as the mechanical layer has it.
     if probe.calls:
@@ -523,6 +525,13 @@ def forecast_llm_fields(doc: Dossier, *, http: Any) -> dict[str, Forecast]:
                               f" ({cs.covenant_terms.note or 'no located exhibit'})"))
         out[_CS + "covenant_term_rows"] = Forecast(
             kept.status.value if kept is not None else ABSENT, why)
+    # The outcomes are written whatever the model answers: one per located exhibit, the ones it
+    # reaches decided by its draw, so only the field's presence is forecast (STATE row 63).
+    out[_CS + "covenant_exhibit_outcomes"] = (
+        Forecast(_PRESENT, f"the covenant phase writes one outcome per located exhibit "
+                           f"({len(outcomes.value or [])})")
+        if outcomes is not None else
+        Forecast(ABSENT, "no located exhibit, so the covenant phase writes no outcome"))
     probe = _RefusingClient()
     event, _flags, _log = extract_maturity_event(cs, llm=probe, http=http, **who)
     if probe.calls:

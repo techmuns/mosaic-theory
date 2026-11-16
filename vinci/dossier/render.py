@@ -36,6 +36,7 @@ from vinci.dossier.extraction_version import (
 from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.schemas import (
     DRAWDOWN_ANCHOR_WORDS,
+    CovenantExhibitOutcome,
     Dossier,
     DrawdownCause,
     DrawdownWindow,
@@ -1864,6 +1865,45 @@ def _covenant_pointer_lines(cs: Any) -> list[str]:
                   rows_s.source_ref, cols, rows)
 
 
+#: What each E5 outcome says on the page (STATE row 63) — mirrored by ``dossier.js``
+#: ``_EXHIBIT_OUTCOME``. An ``extracted`` exhibit is cited by the term rows and so never listed.
+_EXHIBIT_OUTCOME = {
+    "extracted": "extracted",
+    "cost_bound": "not sent: past the cost bound on exhibits per page",
+    "fetch_failed": "could not be fetched",
+    "not_debt_agreement": "refused: not a debt agreement",
+    "too_large": "too large for single-pass extraction; extract by hand",
+    "llm_error": "the extraction call failed (LLM error)",
+    "no_terms_returned": "read, and the model returned no terms",
+}
+
+
+def _exhibit_outcome_text(o: CovenantExhibitOutcome) -> str:
+    """One exhibit's cause, from its structured outcome: the heading E5 read names a refusal."""
+    why = _EXHIBIT_OUTCOME[o.outcome]
+    if o.outcome == "not_debt_agreement":
+        why += (f" (it declares itself “{o.declared_title}”)" if o.declared_title
+                else " (its head declares no agreement)")
+    return f"{o.filename} — {why}"
+
+
+def _unextracted_line(missing: list[str], outcomes_s: Any) -> str:
+    """The covenant block's line for the located exhibits the term rows do not cite. With the
+    per-exhibit outcomes (STATE row 63) it states each one's own cause; without them — every page
+    assembled before the field — it states none, exactly as #1073 left it."""
+    head = f"{len(missing)} located agreement exhibit(s) not extracted this run"
+    if outcomes_s is None or outcomes_s.status is not SourceStatus.PRESENT:
+        return (f"{head}; this page does not state why (the extraction's notes are QA flags in "
+                f"dossier.json) — see the pointer table: {', '.join(missing)}")
+    by_acc: dict[str, list[CovenantExhibitOutcome]] = {}
+    for o in outcomes_s.value or []:
+        by_acc.setdefault(o.accession, []).append(o)
+    items = [f"{acc} · " + ("; ".join(_exhibit_outcome_text(o) for o in by_acc[acc])
+                            if acc in by_acc else "no outcome recorded")
+             for acc in missing]
+    return f"{head}: " + "; ".join(items)
+
+
 def _covenant_term_lines(cs: Any) -> list[str]:
     """(P5/E5) Fenced Tier-2 covenant terms, TERM-GOVERNED — ONE table per instrument family, each
     term collapsed to its GOVERNING value (an amendment overrides the base), the source citing
@@ -1934,13 +1974,12 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     # (FIX-2) ONE human line inside the covenant block for located agreement exhibits NOT extracted
     # this run — the per-exhibit machine detail is a QA flag, not a caveat. Derived: located
     # pointer accessions minus the accessions the extraction actually read.
-    # IT STATES NO CAUSE (STATE row 63, 2026-11-14). It said "(cost bound / fetch fail)" for every
-    # one; on 12 of the 16 committed pages carrying it at main 6652a242, E5 had REFUSED each exhibit
-    # it named as no debt agreement (22 of its 29 accessions refused, 7 cost bound, 0 fetch fail).
-    # The reason is only a QA-flag string (`covenant_extract.extract_covenant_terms`); no structured
-    # field carries it, and an exhibit the model returns no terms for (or a located pointer with no
-    # exhibit to target) gets no flag at all. So the line names where the extraction's notes are
-    # kept and claims none of them.
+    # IT STATED A FALSE CAUSE (STATE row 63, 2026-11-14). It said "(cost bound / fetch fail)" for
+    # every one; on 12 of the 16 committed pages carrying it at main 6652a242, E5 had REFUSED each
+    # exhibit it named as no debt agreement (22 of its 29 accessions refused, 7 cost bound, 0 fetch
+    # fail). The cause now comes from `covenant_exhibit_outcomes`, which the extraction loop writes
+    # at each branch (2026-11-16); a page assembled before it has none, and its line claims no cause
+    # — it never parses the QA-flag strings (`_unextracted_line`).
     located = {p.accession for p in (ptrs.value if ptrs is not None and ptrs.value else [])
                if p.accession}
     extracted = {m.group(1) for r in rows_s.value
@@ -1948,9 +1987,8 @@ def _covenant_term_lines(cs: Any) -> list[str]:
                                  r.value.source_ref or r.value.note or ""))}
     missing = sorted(located - extracted)
     if missing:
-        out.append(f"- _{len(missing)} located agreement exhibit(s) not extracted this run; this "
-                   f"page does not state why (the extraction's notes are QA flags in dossier.json)"
-                   f" — see the pointer table: {', '.join(missing)}_")
+        line = _unextracted_line(missing, getattr(cs, "covenant_exhibit_outcomes", None))
+        out.append(f"- _{line}_")
     return out
 
 
