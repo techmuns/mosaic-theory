@@ -1231,19 +1231,26 @@ class ExportDateStep:
     reported as plain "unchanged" (#1082's review): it read like a page with nothing to fill, and
     only the end-to-end pin caught a build-recorded page left undated. Now each such export is
     named by its page and the sha256 the page records. ``looked_for`` and ``skipped`` describe
-    the last page the step was applied to."""
+    the last page the step was applied to.
+
+    EACH LINE STATES WHAT WAS MEASURED, NEVER MORE (#1087 review, round 1). The search reads only
+    folders named for the ticker beneath each root (`inputs.candidates`), so a miss is "not found
+    in any <TICKER> folder under the roots", never "not on disk". A matched file the loader does
+    not kind as a comps export was never read, so it is "not read as a comps export", never
+    "states no export date". And no line names a local path: a resolved root can carry the
+    operator's account folder name, and these lines are pasted into records in a public repo, so
+    the roots are counted, and a file is named by its name alone."""
 
     ticker: str
     roots: tuple[Path, ...]
-    #: the sha256 of each export looked for, and one line per export no file matched or whose
-    #: matched file states no export date
+    #: the sha256 of each export looked for, and one line per export it could not date
     looked_for: list[str] = dataclasses.field(default_factory=list)
     skipped: list[str] = dataclasses.field(default_factory=list)
 
     @property
     def boundary(self) -> str:
-        return ("recorded comps export(s) with no export_date, matched by full sha256 under "
-                + ", ".join(str(r) for r in self.roots))
+        return ("recorded comps export(s) with no export_date, matched by full sha256 in every "
+                f"folder named for the page's ticker under {len(self.roots)} root(s)")
 
     def __call__(self, doc: dict[str, Any]) -> dict[str, Any]:
         from vinci.dossier import inputs as page_inputs
@@ -1269,17 +1276,21 @@ class ExportDateStep:
             same = sorted((c for c in found if c.sha256 == sha),
                           key=lambda c: (c.path.name != rows[i].get("file"), c.path.name))
             if not same:
-                # the export the page names is not on this machine: named, never "unchanged"
-                self.skipped.append(f"{self.ticker}: skipped: export {sha} not on disk")
+                # the export the page names is in no folder the search reads: named, never
+                # "unchanged", and never "not on disk", which the search did not look at
+                self.skipped.append(f"{self.ticker}: skipped: export {sha} not found in any "
+                                    f"{self.ticker} folder under the roots")
                 continue
             path = same[0].path
-            stamp = page_inputs.export_dates(CiqBundle.from_files(self.ticker, [path])).get(path)
+            bundle = CiqBundle.from_files(self.ticker, [path])
+            stamp = page_inputs.export_dates(bundle).get(path)
             if stamp is None:
-                # matched, but no export date read off it (no stated stamp, or the loader kinds
-                # the file as no comps export): named too, never "unchanged" — by the file's name,
-                # never its local path
-                self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) states "
-                                    "no export date")
+                # matched, but no export date read off it — for one of two causes, each named as
+                # itself: the loader kinds the file as no comps export, so it was never read; or
+                # it read as comps and states no stamp. By the file's name, never its local path
+                why = ("states no export date" if bundle.workbook("comps") is not None
+                       else "not read as a comps export")
+                self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) {why}")
                 continue
             filled[i] = rows[i] | {"export_date": stamp.isoformat()}
         return {} if filled == rows else {"inputs": record | {"ciq": filled}}

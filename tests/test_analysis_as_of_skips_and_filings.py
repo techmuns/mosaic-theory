@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -82,13 +83,69 @@ def test_an_export_not_on_disk_is_named_never_reported_unchanged(
     empty = tmp_path / "ciq"
     empty.mkdir()
     out = _run(tree, [empty], monkeypatch)
-    assert out["skipped"] == [f"IT: skipped: export {sha} not on disk"]
+    assert out["skipped"] == [
+        f"IT: skipped: export {sha} not found in any IT folder under the roots"]
     assert "IT" not in out["unchanged"] and "IT" not in out["moved"]
     assert out["unchanged"] == ["NKE"]
     # the count, with its boundary: how many of how many, on how many pages, searched where
     (count,) = out["skip_count"]
     assert count.startswith("1 skipped of 1 recorded comps export(s) with no export_date"), count
-    assert "1 of 2 pages" in count and str(empty) in count and "full sha256" in count, count
+    assert "1 of 2 pages" in count and "full sha256" in count, count
+    assert "in every folder named for the page's ticker under 1 root(s)" in count, count
+    _no_local_path(out, tmp_path)
+
+
+#: an absolute path in printed output: a `/` opening a word (POSIX), or a drive letter (Windows)
+_ABS_PATH = re.compile(r"(?:^|[\s(\[\"'])(?:/|[A-Za-z]:\\)")
+
+
+def _no_local_path(out: dict[str, list[str]], tmp_path: Path) -> None:
+    """No line the pass prints names a local path: a resolved CIQ root can carry the operator's
+    account folder name, and these lines are pasted into records and PR bodies in a public repo
+    (#1087 review, round 1)."""
+    for key, lines in out.items():
+        for line in lines:
+            assert str(tmp_path) not in line and not _ABS_PATH.search(line), (key, line)
+
+
+def test_the_skip_names_what_was_searched_never_the_whole_disk(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE SEARCH IS THE TICKER'S FOLDERS, NOT THE ROOT (#1087 review, round 1, F1). The exact bytes
+    the record names, held under a root but in no folder named for the ticker, are not found, and
+    the line says where it looked. It never says "not on disk": the file is on disk."""
+    page = _undated("IT")
+    (row,) = [r for r in page["inputs"]["ciq"] if r["kind"] == "comps"]
+    root = tmp_path / "ciq"
+    (root / "elsewhere" / "Gartner").mkdir(parents=True)
+    export = root / "elsewhere" / "Gartner" / row["file"]
+    export.write_bytes(b"one comps export's bytes")
+    row["sha256"], row["bytes"] = provenance.file_sha256(export)
+    out = _run(_fleet(tmp_path / "repo", {"IT": page}), [root], monkeypatch)
+    assert out["skipped"] == [
+        f"IT: skipped: export {row['sha256']} not found in any IT folder under the roots"]
+    assert "not on disk" not in out["skipped"][0]
+    _no_local_path(out, tmp_path)
+
+
+def test_a_file_the_loader_does_not_read_as_comps_is_named_as_that(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """TWO CAUSES, TWO LINES (#1087 review, round 1, F2). The record's exact bytes in IT's folder,
+    under a name the loader kinds as no comps export: the export was never read, so it is "not
+    read as a comps export", never "states no export date", a cause nothing measured. The stamp
+    reader is NOT patched here; the file is turned away before it."""
+    page = _undated("IT")
+    (row,) = [r for r in page["inputs"]["ciq"] if r["kind"] == "comps"]
+    root = tmp_path / "ciq"
+    (root / "IT").mkdir(parents=True)
+    export = root / "IT" / "Gartner export.xls"
+    export.write_bytes(b"one comps export's bytes")
+    row["file"] = export.name
+    row["sha256"], row["bytes"] = provenance.file_sha256(export)
+    out = _run(_fleet(tmp_path / "repo", {"IT": page}), [root], monkeypatch)
+    assert out["skipped"] == [
+        f"IT: skipped: export {row['sha256']} (Gartner export.xls) not read as a comps export"]
+    assert out["unchanged"] == [] and out["moved"] == []
+    _no_local_path(out, tmp_path)
 
 
 def test_a_matched_export_is_filled_and_names_no_skip(
@@ -118,8 +175,9 @@ def test_a_matched_export_is_filled_and_names_no_skip(
 
 def test_a_matched_export_stating_no_date_is_named_never_reported_unchanged(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """The export the record names IS on disk, but no export date is read off it (the reader
-    returns none): the page is named with that sha256 and the file, and is not "unchanged"."""
+    """The export the record names IS on disk and is read as a comps export, but no export date is
+    read off it (the reader returns none): the page is named with that sha256 and the file, and is
+    not "unchanged". The other cause, a file not read as comps at all, has its own line (F2)."""
     from vinci.dossier import ciq_sheets
 
     page = _undated("IT")
@@ -134,9 +192,9 @@ def test_a_matched_export_stating_no_date_is_named_never_reported_unchanged(
     out = _run(tree, [root], monkeypatch)
     assert out["skipped"] == [
         f"IT: skipped: export {row['sha256']} ({export.name}) states no export date"]
-    assert str(tmp_path) not in out["skipped"][0]          # a file name, never a local path
     assert out["moved"] == [] and out["unchanged"] == []
     assert out["skip_count"][0].startswith("1 skipped of 1 recorded comps export(s)")
+    _no_local_path(out, tmp_path)                           # a file name, never a local path
 
 
 def test_the_count_is_over_the_pages_the_step_ran_on(

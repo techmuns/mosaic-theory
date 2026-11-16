@@ -3,5 +3,5 @@
   "follows": [
     "2026-11-16.a-ciq-fact-dates-from-its-export"
   ],
-  "names": "a CIQ column's own stated filing date that a page carries as a structured value (today only the capital-structure panel's, mechanical.capital_structure.maturity_check.panel_filed) counts toward analysis_as_of where it is later than every other date, and the rule then names it; a page where it is not later keeps its block word for word. The export-date refresh pass names each recorded comps export it cannot match on disk, or from which it reads no export date, where it reported the page unchanged"
+  "names": "a CIQ column's own stated filing date that a page carries as a structured value (today only the capital-structure panel's, mechanical.capital_structure.maturity_check.panel_filed) counts toward analysis_as_of where it is later than every other date, and the rule then names it; a page where it is not later keeps its block word for word. The export-date refresh pass names each recorded comps export it cannot date (found in no folder named for the page's ticker under its roots, not read as a comps export, or stating no export date), where it reported the page unchanged"
 }

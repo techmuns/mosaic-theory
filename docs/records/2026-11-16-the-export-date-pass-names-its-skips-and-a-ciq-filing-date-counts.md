@@ -13,10 +13,12 @@ superseded-by:
 - **(2) The pass names its skips.**
   - *The defect:* `refresh.export_date_transform` passed over a recorded comps export that no file under its roots matched by sha256, and `refresh_fleet` reported that page as plain "unchanged". A page left undated read like a page with nothing to fill. Only `test_no_committed_page_is_dated_before_a_ciq_export_it_records` caught a build-recorded page left undated, and the pass's own output did not.
   - *The fix:* the step is now an `ExportDateStep`. It records the sha256 of each export it looked for and names each one it could not date:
-    - `"<TICKER>: skipped: export <sha256> not on disk"`, with the full sha256 the page records, where no file matches;
-    - `"<TICKER>: skipped: export <sha256> (<file name>) states no export date"`, where a file matches but no date is read off it (code review, round 0). The file is named, never its local path.
+    - `"<TICKER>: skipped: export <sha256> not found in any <TICKER> folder under the roots"`, with the full sha256 the page records, where no file in the folders the search reads matches. The search reads only folders named for the ticker beneath each root (`inputs.candidates`), so the line never says "not on disk" (coordinator's review, round 1, F1);
+    - `"<TICKER>: skipped: export <sha256> (<file name>) not read as a comps export"`, where a file matches but the loader kinds it as no comps export, so no date was ever read (round 1, F2);
+    - `"<TICKER>: skipped: export <sha256> (<file name>) states no export date"`, where a file matches, is read as comps, and states no stamp (code review, round 0).
+    - No line names a local path: a file by its name alone, and the roots by their count (round 1, F3). A resolved CIQ root can carry the operator's account folder name, and these lines are pasted into records and PR bodies here.
   - `refresh_fleet` reports each of those under a new `skipped` key, and a page with a skip is never listed "unchanged". A step that names its skips is any step meeting `refresh.NamesSkips`.
-  - A `skip_count` line then states the count with its boundary: how many were skipped, of how many looked for, which exports (recorded comps exports with no `export_date`, matched by full sha256), under which roots, and on how many of the pages refreshed. A refused page never reaches the step, so it is not counted (code review, round 0).
+  - A `skip_count` line then states the count with its boundary: how many were skipped, of how many looked for, which exports (recorded comps exports with no `export_date`, matched by full sha256), where it looked (every folder named for the page's ticker under N roots), and on how many of the pages refreshed. A refused page never reaches the step, so it is not counted (code review, round 0).
   - A pass with no such step prints no count.
 - **(1) A CIQ column's stated filing date counts, where the page carries it structured.**
   - A CIQ fact is knowable from its export date or from its column's own stated filing date, never from its period end (CLAUDE.md, PUBLISHED DATA).
@@ -51,9 +53,11 @@ superseded-by:
 - **(2) on real data, before and after.**
   - The tree: the 26 pages as committed at `c58d5b2f`, before #1082 dated any, in a scratch tree. The CIQ root holds 25 links, one to each page's Drive folder except IT's.
   - *Base code:* 15 moved, **11 unchanged, IT among them**, no skip named.
-  - *Head code:* 15 moved, 10 unchanged (the backfill-record pages), and `skipped: ['IT: skipped: export a3eeb41a2dde46a56659613c26168c7fe4804b7b38601edd4a6616560b025e5f not on disk']`.
-  - The count line reads `1 skipped of 16 recorded comps export(s) with no export_date, matched by full sha256 under <root> — on 16 of 26 pages refreshed`.
+  - *Head code:* 15 moved, 10 unchanged (the backfill-record pages), and IT under neither: `skipped: ['IT: skipped: export a3eeb41a2dde46a56659613c26168c7fe4804b7b38601edd4a6616560b025e5f not found in any IT folder under the roots']`.
+  - The count line reads `1 skipped of 16 recorded comps export(s) with no export_date, matched by full sha256 in every folder named for the page's ticker under 1 root(s) — on 16 of 26 pages refreshed`.
   - The 15 that moved are #1082's 16 less IT.
+  - The same run with each page's `dossier.md` beside its JSON gives the same counts. That run used head (`6c374b62` plus this round's fix) and main `032d2fde`.
+  - **A skipped page can also be "moved".** A skip is reported whether or not the page moved. Where another layer of the page moves, such as a markdown re-render on today's renderer, the page is listed under "moved" and its skip is still named. The coordinator's review run (round 1) shows this: on today's renderer IT landed under "moved", with its skip named. So the defect is the "unchanged" line on a page whose skip went unsaid; a "moved" page never claimed it had nothing to fill.
 - **(2) pins**, each on a living page written through the one serializer:
   - IT with its comps `export_date` taken off is named by its own sha256, and NKE (a backfill record naming no comps export) is "unchanged" (negative).
   - An export that IS on disk is filled, and no skip is named (negative).
@@ -72,7 +76,7 @@ superseded-by:
   - At main `ee9c4635`, 200 CIQ-context `filed <date>` reads on the 26 pages; 0 are later than their page's `analysis_as_of`. That is #1082's figure, unchanged.
   - Structured: `panel_filed` is on 26 of 26 pages and later than the as-of on 0. The closest is V, filed 2026-11-05 against 2026-11-09.
 - **The Financials `Filing Date` probe ($0, count only, fills nothing).** For each page, the Financials export its `ev_bridge.source_sha256` names was matched under the Drive folder, and the latest date its Balance Sheet `Filing Date` row states was read.
-  - 23 pages were read. FUBO has no bridge stamp, and ORKA's and PARR's exports are not on disk.
+  - 23 pages were read. FUBO has no bridge stamp, and ORKA's and PARR's exports are in no folder named for their ticker under the Drive CIQ folder (the search `inputs.candidates` makes).
   - 0 of 23 are later than `analysis_as_of`.
   - The nearest: MCK filed 2026-11-04 against 2026-11-05, WERN 2026-11-09 against 11-12, UBER 2026-11-04 against 11-06.
 
@@ -85,6 +89,12 @@ superseded-by:
   - **Dismissed:**
     - (4) the skip report is step state read after the call, not a return value. `TopLevelTransform` returns the keys to write and is the contract of six other steps in `refresh.py`, so a return channel would change all of them. `refresh_dossier` calls the step once per page, after every refusal check. The step resets on each call, pinned by `test_the_step_reports_only_its_last_page`.
     - (6) a comps row with no sha256 would be named "export None". `CiqExport.sha256` is a required field, and every committed page is written through the validating serializer, so no page can carry one.
+
+- **Coordinator's independent review, round 1**, 3 findings, all in `refresh.py`'s skip output. Each is fixed behind a test that failed on head `6c374b62`:
+  - **F1:** "not on disk" overstated the search. The reviewer held IT's exact export under `<root>/elsewhere/Gartner/`, under a passed root, and head printed "not on disk". The line now says "not found in any IT folder under the roots", and the count says where it looked (`test_the_skip_names_what_was_searched_never_the_whole_disk`).
+  - **F2:** a false cause. The same bytes held as `IT/Gartner export.xls`, which the loader kinds as no comps export, were reported as "states no export date". They are now "not read as a comps export", and "states no export date" is kept for a file read as comps with no stamp (`test_a_file_the_loader_does_not_read_as_comps_is_named_as_that`). It is the same false-cause shape as row 63.
+  - **F3:** the count printed each root's local path. Roots are now counted, and every skip pin checks that no output line holds an absolute path (`_no_local_path`).
+  - The vintage's `names` text is corrected to match. `refresh.py` is re-pinned.
 
 **BOUNDARY.**
 - **Pages:** the 26 committed `data/dossiers/*/dossier.json` at main `ee9c4635` (2026-11-16), except the skip demonstration, which read the same 26 as committed at `c58d5b2f`.
