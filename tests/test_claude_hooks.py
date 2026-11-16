@@ -217,10 +217,6 @@ def _venv_without(tmp_path: pathlib.Path, stderr: str) -> str:
     return str(stand_in)
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "RH-D2: the operator approved the fix on 2026-11-11, but this session's permission check "
-    "refused the edit to .claude/hooks/fast_gate.py; the patch is in the PR body. Applying it "
-    "turns this into an XPASS, which fails until this marker is removed."))
 def test_fast_gate_warns_and_lets_a_clean_change_finish_when_a_tool_is_missing(
         tmp_path: pathlib.Path) -> None:
     """RH-D2 (= H-D1; operator ruling 2026-11-11, "Approve the fix"). The hook's own rule is that

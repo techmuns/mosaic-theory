@@ -122,6 +122,9 @@ def run(py: str, root: Path, args: list[str]) -> tuple[int, list[str]]:
                              timeout=TIMEOUT_S, env=env)
     except subprocess.TimeoutExpired:
         return -1, [f"timed out after {TIMEOUT_S}s"]
+    last = out.stderr.strip().splitlines()[-1:] if out.returncode else []
+    if last and last[0].endswith(f"No module named {args[0]}"):
+        return -1, [f"{args[0]} is not installed in {py}"]
     return out.returncode, (out.stdout + out.stderr).splitlines()
 
 
