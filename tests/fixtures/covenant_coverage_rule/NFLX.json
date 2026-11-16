@@ -1,0 +1,1323 @@
+{
+ "ticker": "NFLX",
+ "cik": "0001065280",
+ "name": "NETFLIX INC",
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "3.000% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": null,
+     "coupon": "3.000%",
+     "floating_rate": "NA",
+     "maturity_date": "2025-06-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "3.625% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1526.0,
+     "coupon": "3.625%",
+     "floating_rate": "NA",
+     "maturity_date": "2027-05-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "3.625% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1292.0,
+     "coupon": "3.625%",
+     "floating_rate": "NA",
+     "maturity_date": "2030-06-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "3.625% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": null,
+     "coupon": "3.625%",
+     "floating_rate": "NA",
+     "maturity_date": "2025-06-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.875% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1409.0,
+     "coupon": "3.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2029-11-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "4.375% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1000.0,
+     "coupon": "4.375%",
+     "floating_rate": "NA",
+     "maturity_date": "2026-11-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "4.625% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1292.0,
+     "coupon": "4.625%",
+     "floating_rate": "NA",
+     "maturity_date": "2029-05-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "4.875% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1600.0,
+     "coupon": "4.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2028-04-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "4.875% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1000.0,
+     "coupon": "4.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2030-06-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "4.900% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1000.0,
+     "coupon": "4.900%",
+     "floating_rate": "NA",
+     "maturity_date": "2034-08-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "5.375% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 900.0,
+     "coupon": "5.375%",
+     "floating_rate": "NA",
+     "maturity_date": "2029-11-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "5.400% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 800.0,
+     "coupon": "5.400%",
+     "floating_rate": "NA",
+     "maturity_date": "2054-08-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "5.875% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": null,
+     "coupon": "5.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2025-02-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "5.875% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 1900.0,
+     "coupon": "5.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2028-11-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "6.375% Senior Notes",
+     "type": "Bonds and Notes",
+     "principal_musd": 800.0,
+     "coupon": "6.375%",
+     "floating_rate": "NA",
+     "maturity_date": "2029-05-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Commercial Paper",
+     "type": "Commercial Paper",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease Liabilities",
+     "type": "Capital Lease",
+     "principal_musd": 2513.0,
+     "coupon": "3.800%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Unsecured Bridge Term Loan Facility",
+     "type": "Term Loans",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Unsecured Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2030-12-19",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Delayed Draw Term Loan Credit Facility - 2Y DDTL Facility",
+     "type": "Term Loans",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2027-12-19",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Delayed Draw Term Loan Credit Facility - 3Y DDTL Facility",
+     "type": "Term Loans",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2028-12-19",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Unsecured Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2029-04-12",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Jan-23-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "senior bonds 15,337.0; leases 2,252.2; total principal 17,589.2; total debt 17,529.8 (3 months Q3 Sep-30-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2025 filed Jan-23-2026",
+  "maturity_filings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no trailing-12m instrument maturity to anchor an 8-K"
+  },
+  "covenant_pointers": {
+   "value": "material contracts (10-K exhibit i [0001065280-26-000034]; Senior Unsecured Bridge Term Loan  [0001193125-18-134734]; Senior Unsecured Bridge Term Loan  [0001193125-14-037000]; Senior Unsecured Revolving Credit  [0001193125-09-194962]; Senior Unsecured Revolving Credit  [0001193125-25-327462]; Unsecured Delayed Draw Term Loan C [0001193125-25-308651]; Unsecured Delayed Draw Term Loan C [0001193125-19-094705]; Unsecured Revolving Credit Facilit [0001193125-21-193187]; Unsecured Revolving Credit Facilit [0001193125-26-015951]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "material contracts (10-K exhibit index)",
+     "filing": "latest 10-K",
+     "filing_date": "2026-01-23",
+     "accession": "0001065280-26-000034",
+     "exhibits": [
+      "ex102_q425.htm",
+      "ex103_q425.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Bridge Term Loan Facility",
+     "filing": "8-K",
+     "filing_date": "2018-04-26",
+     "accession": "0001193125-18-134734",
+     "exhibits": [
+      "d567970dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Bridge Term Loan Facility",
+     "filing": "8-K",
+     "filing_date": "2014-02-05",
+     "accession": "0001193125-14-037000",
+     "exhibits": [
+      "d671121dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2009-09-21",
+     "accession": "0001193125-09-194962",
+     "exhibits": [
+      "dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2025-12-22",
+     "accession": "0001193125-25-327462",
+     "exhibits": [
+      "d82688dex101.htm",
+      "d82688dex102.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Unsecured Delayed Draw Term Loan Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2025-12-05",
+     "accession": "0001193125-25-308651",
+     "exhibits": [
+      "d65144dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Unsecured Delayed Draw Term Loan Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2019-04-01",
+     "accession": "0001193125-19-094705",
+     "exhibits": [
+      "d721020dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Unsecured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2021-06-17",
+     "accession": "0001193125-21-193187",
+     "exhibits": [
+      "d552068dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Unsecured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2026-01-20",
+     "accession": "0001193125-26-015951",
+     "exhibits": [
+      "d37713dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "3.000% Senior Notes",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "3.625% Senior Notes",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "3.875% Senior Notes",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "4.375% Senior Notes",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "9 more aggregate lines",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "showing 4 of 13 aggregate lines — the full instrument panel lists every one"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[CREDIT AGREEMENT · 0001193125-09-194962]\n  Principal / commitment amount: One Hundred Million Dollars ($100,000,000)\n  Interest / coupon rate: Base Rate plus the Applicable Margin (for Base Rate Loans) / LIBOR Rate plus the…\n  Maturity date: September 16, 2012\n  Financial-maintenance covenants: Total Leverage Ratio not greater than 2.25:1.00; Minimum EBITDA (four-quarter):…\n[REVOLVING CREDIT AGREEMENT · 0001193125-21-193187 · amended by 0001193125-21-193187]\n  Principal / commitment amount: $1,000,000,000 (aggregate Revolving Commitments as of the Second Amendment Effective…\n  Interest / coupon rate: ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Eurodollar Borrowing:…\n  Maturity date: June 17, 2026 (amended from March 29, 2024)\n  Financial-maintenance covenants: Aggregate Debt basket (incurrence-based, used in Sections 6.01 Subsidiary…\n[SENIOR UNSECURED REVOLVING CREDIT AGREEMENT · 0001193125-25-327462]\n  Interest / coupon rate: ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Term SOFR Borrowing:…\n  Maturity date: (i) the earliest of (a) the date that is the third anniversary of the Acquisition…\n  Financial-maintenance covenants: Consolidated EBITDA to Consolidated Interest Expense, determined as of the end of…",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-09-194962 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "One Hundred Million Dollars ($100,000,000)",
+      "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Total Commitment ” shall mean, at any time, One Hundred Million Dollars ($100,000,000) or, if such amount is reduced pursuant to Section 2.04(a) or (b) , the amount to which so reduced and in effect at such time or, if such amount is increased pursuant to Section 2.01(b) , the amount to which it is increased and in effect at such time.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Base Rate plus the Applicable Margin (for Base Rate Loans) / LIBOR Rate plus the Applicable Margin (for LIBOR Loans)",
+      "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(i) During such periods as such Borrowing consists of Base Rate Loans, at a rate per annum equal to the Base Rate plus the Applicable Margin therefor, such rate to change from time to time as the Applicable Margin or Base Rate shall change; and (ii) During such periods as such Borrowing consists of LIBOR Loans, at a rate per annum equal at all times during each Interest Period for such LIBOR Loans to the LIBOR Rate for such Interest Period plus the Applicable Margin therefor, such rate to change from time to time during such Interest Period as the Applicable Margin shall change.”"
+     },
+     "base_rate_label": "LIBOR Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "withheld_components": {
+      "margin_pct": "margin 3% withheld — its own quote does not state it"
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "September 16, 2012",
+      "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” shall mean September 16, 2012.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Total Leverage Ratio not greater than 2.25:1.00; Minimum EBITDA (four-quarter): $125,000,000 (Sept 30, 2009 – Dec 31, 2009); $150,000,000 (Mar 31, 2010 – Jun 30, 2010); $175,000,000 (Sept 30, 2010 – Jun 30, 2011); $200,0000,000 (Sept 30, 2011 and thereafter)",
+      "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) Total Leverage Ratio . The Borrower shall not permit the Total Leverage Ratio at any time to be greater than 2.25:1.00. (b) Minimum EBITDA . The Borrower shall not permit, as of the last day of any fiscal quarter, the EBITDA of the Loan Parties for the four (4) quarter period ending thereon, to be less than the amount set opposite the applicable period below: Period EBITDA September 30, 2009 through December 31, 2009 $125,000,000 March 31, 2010 through June 30, 2010 $150,000,000 September 30, 2010 through June 30, 2011 $175,000,000 September 30, 2011 and thereafter $200,0000,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Secured by Liens granted by the Borrower and Guarantors under the Security Documents (Pledge Agreement and other Security Documents); Guaranty by each direct or indirect Domestic Subsidiary (other than Excluded Subsidiaries) party to the Guaranty",
+      "source_ref": "8-K 0001193125-09-194962 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) Security Documents . The Loans, together with all other Obligations, shall be secured by the Liens granted by the Borrower under the Security Documents. All obligations of a Guarantor under the Credit Documents shall be secured by the Liens granted by such Guarantor under the Security Documents.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $10,000,000, $40,000,000, $15,000,000, $5,000,000, which the model's quote does not — 8-K 0001193125-09-194962 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-21-193187 · d552068dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$1,000,000,000 (aggregate Revolving Commitments as of the Second Amendment Effective Date; amended from $750,000,000)",
+      "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The aggregate amount of the Lenders' Revolving Commitments as of the First Second Amendment Effective Date is $ 750,000,000. 1,000,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Eurodollar Borrowing: Adjusted LIBO Rate plus the Applicable Rate",
+      "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
+     },
+     "base_rate_label": "Adjusted LIBO Rate",
+     "margin_pct": 0.75,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true,
+     "component_quotes": {
+      "margin_pct": "“ Applicable Rate ” means, for any day, (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan.",
+      "floor_pct": "provided that in no event shall the Adjusted LIBO Rate be less than 0.00%."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "June 17, 2026 (amended from March 29, 2024)",
+      "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means March 29, 2024 . June 17, 2026.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Aggregate Debt basket (incurrence-based, used in Sections 6.01 Subsidiary Indebtedness, 6.02 Liens and 6.04 Sale and Lease-back): not to exceed the greater of (a) $6,000,000,000 and (b) 3.50 times Consolidated EBITDA for the Measurement Period",
+      "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
+      "status": "present",
+      "note": "verbatim: “Notwithstanding Sections 6.01(a) and (b) , any Domestic Restricted Subsidiary may create, incur, issue or assume Subsidiary Debt that would otherwise be subject to the restrictions set forth in Section 6.01(a) , without Guaranteeing the payment of the Obligations, if after giving effect thereto, Aggregate Debt does not exceed an amount equal to the greater of (a) $ 3,750,000,000, 6,000,000,000, and (b) 2.75 3.50 times Consolidated EBITDA of the Borrower for the Measurement Period immediately preceding the date of the creation or incurrence of the Subsidiary Debt.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Springing/conditional: Guarantors and Collateral only required upon triggering events (Section 5.10). Domestic Restricted Subsidiary must Guarantee Obligations if required under Section 6.01; collateral granted upon a Collateral Trigger Event under Section 6.02. “The Borrower will not permit any of its Domestic Restricted Subsidiaries to create, assume, incur, Guarantee or otherwise become liable for any Indebtedness... without Guaranteeing the payment of the Obligations on an unsecured unsubordinated basis” (Section 6.01(a))",
+      "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) If any Domestic Restricted Subsidiary is required to Guarantee the Obligations pursuant to Section 6.01 , then the Borrower shall (i) concurrently with the incurrence of the Subsidiary Debt triggering such requirement, cause such Domestic Restricted Subsidiary to enter into a Guaranty... (b) If the Borrower or any Domestic Restricted Subsidiary is required to grant a Lien on any Principal Property to secure the Obligations pursuant to Section 6.02 (a “ Collateral Trigger Event ”), then the Borrower shall, and shall cause any such Domestic Restricted Subsidiary to... take such actions necessary to grant to the Administrative Agent for its benefit and the benefit of the Lenders a valid pari passu security interest”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $250,000,000, which the model's quote does not — 8-K 0001193125-21-193187 · d552068dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-25-327462 · d82688dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $200,000,000, which the model's quote does not — 8-K 0001193125-25-327462 · d82688dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Term SOFR Borrowing: Term SOFR Rate plus the Applicable Rate",
+      "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Term SOFR Borrowing shall bear interest at the Term SOFR Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
+     },
+     "base_rate_label": "Term SOFR Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "component_quotes": {
+      "floor_pct": "“Floor” means a rate of interest equal to 0.00%."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "(i) the earliest of (a) the date that is the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Agreement and (c) the date that is the fifth anniversary of the Signing Date, or (ii) such later date to which the Maturity Date may be extended pursuant to Section 2.22",
+      "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means (i) the earliest of (a) the date that is the third anniversary of the Acquisition Closing Date, (b) the date of termination of the Merger Agreement and (c) the date that is the fifth anniversary of the Signing Date, or (ii) such later date to which the Maturity Date may be extended pursuant to Section 2.22 ; provided that, if any such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Consolidated EBITDA to Consolidated Interest Expense, determined as of the end of each fiscal quarter ending after the Signing Date, not less than 3.00:1.00",
+      "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
+      "status": "present",
+      "note": "verbatim: “Section 6.03 Financial Covenant . The Borrower will not permit the ratio, determined as of the end of each of its fiscal quarters ending after the Signing Date, of (x) Consolidated EBITDA to (y) Consolidated Interest Expense, for any Measurement Period ended on such date, to be less than 3.00:1.00.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Senior Unsecured Revolving Credit Agreement (unsecured); negative pledge under Section 6.01 Liens with equal-and-ratable securing requirement; no separate guarantors stated. Cash Collateral provisions apply only to L/C Obligations and Defaulting Lenders.",
+      "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
+      "status": "present",
+      "note": "verbatim: “SENIOR UNSECURED REVOLVING CREDIT AGREEMENT”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $250,000,000, which the model's quote does not — 8-K 0001193125-25-327462 · d82688dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-19-094705 · d721020dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $100,000,000, $50,000,000, $150,000,000, which the model's quote does not — 8-K 0001193125-19-094705 · d721020dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Eurodollar Borrowing: Adjusted LIBO Rate plus Applicable Rate (0.75% per annum); ABR Borrowing: Alternate Base Rate plus Applicable Rate (0.00% per annum)",
+      "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
+     },
+     "base_rate_label": "Adjusted LIBO Rate",
+     "margin_pct": 0.75,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true,
+     "component_quotes": {
+      "margin_pct": "“ Applicable Rate ” means, for any day, (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan.",
+      "floor_pct": "provided that in no event shall the Adjusted LIBO Rate be less than 0.00%."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "March 29, 2024 (as amended from July 27, 2022)",
+      "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means July 27, 2022. March 29 , 2024.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Aggregate Debt not to exceed the greater of (a) $3,750,000,000 (as amended from $2,500,000,000) and (b) 2.75 times (as amended from 2.50 times) Consolidated EBITDA for the Measurement Period immediately preceding — used as the incurrence threshold under Sections 6.01, 6.02 and 6.04",
+      "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
+      "status": "present",
+      "note": "verbatim: “Notwithstanding Sections 6.01(a) and (b) , any Domestic Restricted Subsidiary may create, incur, issue or assume Subsidiary Debt that would otherwise be subject to the restrictions set forth in Section 6.01(a) , without Guaranteeing the payment of the Obligations, if after giving effect thereto, Aggregate Debt does not exceed an amount equal to the greater of (a) $ 2,500,000,000 , 3,750,000,000, and (b) 2.50 2.75 times Consolidated EBITDA of the Borrower for the Measurement Period immediately preceding the date of the creation or incurrence of the Subsidiary Debt.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "No standing guarantors or collateral at closing; springing guaranty/collateral — Guarantors required only if a Domestic Restricted Subsidiary is required to Guarantee the Obligations under Section 6.01, and collateral required only upon a Collateral Trigger Event under Section 6.02 (equal and ratable securing)",
+      "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) If any Domestic Restricted Subsidiary is required to Guarantee the Obligations pursuant to Section 6.01 , then the Borrower shall (i) concurrently with the incurrence of the Subsidiary Debt triggering such requirement, cause such Domestic Restricted Subsidiary to enter into a Guaranty... (b) If the Borrower or any Domestic Restricted Subsidiary is required to grant a Lien on any Principal Property to secure the Obligations pursuant to Section 6.02 (a “ Collateral Trigger Event ”), then the Borrower shall... take such actions necessary to grant to the Administrative Agent for its benefit and the benefit of the Lenders a valid pari passu security interest in the property or assets subject to the applicable Initial Lien”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $250,000,000, which the model's quote does not — 8-K 0001193125-19-094705 · d721020dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": null,
+  "panel_vintage": {
+   "value": "the debt schedule is 266d old (source filed 2026-01-23) AND an Item 1.02 — termination of a material definitive agreement — was filed 2026-02-27, accession 0001193125-26-082247. The panel predates it and cannot reflect it: an instrument listed below may already have been terminated. Verify before relying on this schedule.",
+   "source_ref": "CIQ Capital Structure Details — A 2025 filed Jan-23-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-01-23",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001065280-26-000212",
+     "filed": "2026-07-17",
+     "read_as": "the latest periodic report",
+     "statements": 2,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-26-015951",
+     "filed": "2026-01-20",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-25-327462",
+     "filed": "2025-12-22",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-25-308651",
+     "filed": "2025-12-05",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.000% Senior Notes' · not checked against a filing",
+     "instrument": 0,
+     "description": "3.000% Senior Notes",
+     "ciq_maturity_date": "2025-06-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.625% Senior Notes' · not checked against a filing",
+     "instrument": 1,
+     "description": "3.625% Senior Notes",
+     "ciq_maturity_date": "2027-05-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.625% Senior Notes' · not checked against a filing",
+     "instrument": 2,
+     "description": "3.625% Senior Notes",
+     "ciq_maturity_date": "2030-06-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.625% Senior Notes' · not checked against a filing",
+     "instrument": 3,
+     "description": "3.625% Senior Notes",
+     "ciq_maturity_date": "2025-06-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.875% Senior Notes' · not checked against a filing",
+     "instrument": 4,
+     "description": "3.875% Senior Notes",
+     "ciq_maturity_date": "2029-11-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '4.375% Senior Notes' · not checked against a filing",
+     "instrument": 5,
+     "description": "4.375% Senior Notes",
+     "ciq_maturity_date": "2026-11-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '4.625% Senior Notes' · not checked against a filing",
+     "instrument": 6,
+     "description": "4.625% Senior Notes",
+     "ciq_maturity_date": "2029-05-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '4.875% Senior Notes' · not checked against a filing",
+     "instrument": 7,
+     "description": "4.875% Senior Notes",
+     "ciq_maturity_date": "2028-04-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '4.875% Senior Notes' · not checked against a filing",
+     "instrument": 8,
+     "description": "4.875% Senior Notes",
+     "ciq_maturity_date": "2030-06-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '4.900% Senior Notes' · not checked against a filing",
+     "instrument": 9,
+     "description": "4.900% Senior Notes",
+     "ciq_maturity_date": "2034-08-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '5.375% Senior Notes' · not checked against a filing",
+     "instrument": 10,
+     "description": "5.375% Senior Notes",
+     "ciq_maturity_date": "2029-11-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '5.400% Senior Notes' · not checked against a filing",
+     "instrument": 11,
+     "description": "5.400% Senior Notes",
+     "ciq_maturity_date": "2054-08-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '5.875% Senior Notes' · not checked against a filing",
+     "instrument": 12,
+     "description": "5.875% Senior Notes",
+     "ciq_maturity_date": "2025-02-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '5.875% Senior Notes' · not checked against a filing",
+     "instrument": 13,
+     "description": "5.875% Senior Notes",
+     "ciq_maturity_date": "2028-11-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '6.375% Senior Notes' · not checked against a filing",
+     "instrument": 14,
+     "description": "6.375% Senior Notes",
+     "ciq_maturity_date": "2029-05-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Commercial Paper' · not checked against a filing",
+     "instrument": 15,
+     "description": "Commercial Paper",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Operating Lease Liabilities' · not checked against a filing",
+     "instrument": 16,
+     "description": "Operating Lease Liabilities",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Senior Unsecured Bridge Term Loan Facility' · not checked against a filing",
+     "instrument": 17,
+     "description": "Senior Unsecured Bridge Term Loan Facility",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the panel states no maturity",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Senior Unsecured Revolving Credit Facility' · checked against the 10-Q 0001065280-26-000212 (filed 2026-07-17)",
+     "instrument": 18,
+     "description": "Senior Unsecured Revolving Credit Facility",
+     "ciq_maturity_date": "2030-12-19",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001065280-26-000212 (filed 2026-07-17)",
+     "source_filed": "2026-07-17",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current revolver maturity and the page lists 2",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Unsecured Delayed Draw Term Loan Credit Facility - 2Y DDTL Facility' · not checked against a filing",
+     "instrument": 19,
+     "description": "Unsecured Delayed Draw Term Loan Credit Facility - 2Y DDTL Facility",
+     "ciq_maturity_date": "2027-12-19",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Unsecured Delayed Draw Term Loan Credit Facility - 3Y DDTL Facility' · not checked against a filing",
+     "instrument": 20,
+     "description": "Unsecured Delayed Draw Term Loan Credit Facility - 3Y DDTL Facility",
+     "ciq_maturity_date": "2028-12-19",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Unsecured Revolving Credit Facility' · checked against the 10-Q 0001065280-26-000212 (filed 2026-07-17)",
+     "instrument": 21,
+     "description": "Unsecured Revolving Credit Facility",
+     "ciq_maturity_date": "2029-04-12",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001065280-26-000212 (filed 2026-07-17)",
+     "source_filed": "2026-07-17",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current revolver maturity and the page lists 2",
+     "excluded": false
+    }
+   ]
+  }
+ },
+ "texts": {
+  "0001193125-18-134734 · d567970dex101.htm": "EX-10.1 3 d567970dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 EXECUTION VERSION NETFLIX, INC. $1,900,000,000\n5.875% Senior Notes due 2028 Purchase Agreement April 23, 2018 Morgan Stanley & Co.\nLLC As Representative of the several Initial Purchasers\nlisted in Schedule 1 hereto c/o Morgan Stanley &\nCo. LLC 1585 Broadway New York, New York 10036 Ladies and Gentlemen: Netflix, Inc., a Delaware\ncorporation (the “ Company ”), proposes to issue and sell to the several initial purchasers listed in Schedule 1 hereto (the “ Initial Purchasers ”), for whom you are acting as representative (the\n“ Representative ”), $1,900,000,000 principal amount of its 5.875% Senior Notes due 2028 (the “ Securities ”). The Securities will be issued pursuant to an Indenture to be dated as of April 26, 2018 (the\n“ Indenture",
+  "0001193125-09-194962 · dex101.htm": "EX-10.1 2 dex101.htm CREDIT AGREEMENT Credit Agreement Exhibit 10.1 CREDIT AGREEMENT among NETFLIX, INC., THE LENDERS NAMED HEREIN, and WELLS FARGO BANK,\nNATIONAL ASSOCIATION, as Administrative Agent and L/C Issuer, and WELLS FARGO SECURITIES, LLC, as Lead Arranger and Sole Bookrunner Dated as of September 16, 2009 TABLE OF CONTENTS Page ARTICLE I.",
+  "0001193125-25-308651 · d65144dex101.htm": "EX-10.1 3 d65144dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 Execution Version WELLS FARGO BANK, NATIONAL ASSOCIATION WELLS FARGO\nSTRATEGIC CAPITAL, INC. WELLS\nFARGO SECURITIES, LLC 550 South\nTryon Street Charlotte, North Carolina 28202 BNP PARIBAS BNP PARIBAS SECURITIES CORP. 787 Seventh Avenue New York, New\nYork 10019 HSBC BANK USA, NATIONAL ASSOCIATION HSBC\nCONTINENTAL EUROPE HSBC BANK\nPLC HSBC BANK MIDDLE EAST LIMITED HSBC SECURITIES (USA) INC. 66 Hudson Blvd. E, New York, New\nYork 10001 December 4, 2025 Project Noble Bridge\nCommitment Letter Ne",
+  "0001193125-21-193187 · d552068dex101.htm": "EX-10.1 2 d552068dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 Execution Version SECOND\nAMENDMENT AGREEMENT SECOND AMENDMENT AGREEMENT, dated as of June 17, 2021 (this “ Amendment ”), to the Revolving\nCredit Agreement, dated as of July 27, 2017, among Netflix, Inc., a Delaware corporation (the “ Borrower ",
+  "0001065280-26-000034 · ex102_q425.htm": "EX-10.2 3 ex102_q425.htm EX-10.2 Document EXHIBIT 10.2 NETFLIX, INC. 2011 STOCK PLAN 1. Purposes of the Plan .  The purposes of this Plan are: ● to attract and retain the best available personnel for positions of substantial responsibility, ● to provide additional incentive to Employees, Directors a",
+  "0001193125-14-037000 · d671121dex101.htm": "EX-10.1 2 d671121dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 $400,000,000 NETFLIX, INC. 5.750% Senior Notes due 2024 Purchase Agreement February 4, 2014 Morgan Stanley &\nCo. LLC As Representative of the several Initial\nPurchasers listed in Schedule 1 hereto c/o Morgan\nStanley & Co. LLC 1585 Broadway New York, New York\n10036 Ladies and Gentlemen: Netflix,\nInc., a Delaware corporation (the “Company”), proposes to issue and sell to the several initial purchasers listed in Schedule 1 hereto (the “Initial Purchasers”), for whom you are acting as representative (the\n“Representative”), $400,000,000 principal amount of its 5.750% Senior Notes due 2024 (the “Securities”). The Securities will be issued pursuant to an Indenture to be dated as of February 19, 2014 (the “Indenture”)\namong the Company, the ",
+  "0001193125-25-327462 · d82688dex101.htm": "EX-10.1 2 d82688dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 SENIOR UNSECURED REVOLVING CREDIT AGREEMENT dated as of December 19,\n2025, among NETFLIX, INC., as the Borrower, the\nLenders party hereto, and WELLS FARGO BANK, NATIONAL ASSOCIATION as the Administrative Agent WELLS FARGO SECURITIES, LLC, BNP\nP",
+  "0001193125-19-094705 · d721020dex101.htm": "EX-10.1 2 d721020dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 EXECUTION VERSION FIRST AMENDMENT AGREEMENT FIRST AMENDMENT AGREEMENT, dated as of March 29, 2019 (this “ Amendment ”), to the Revolving Credit Agreement, dated as of\nJuly 27, 2017, among Netflix, Inc., a Delaware corporation (the “ Borrower ”",
+  "0001193125-26-015951 · d37713dex101.htm": "EX-10.1 3 d37713dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 WELLS FARGO BANK, NATIONAL ASSOCIATION WELLS FARGO SECURITIES, LLC 550 South Tryon Street Charlotte, North Carolina 28202 BNP PARIBAS BNP PARIBAS SECURITIES CORP. 787 Seventh Avenue New York, New\nYork 10019 HSBC BANK PLC HSBC SECURITIES (USA) INC. 66 Hudson Blvd. E, New York, New\nYork 10001 January 19, 2026 Project Noble Bridge\nFacility Incremental Commitments Agreement Netflix, Inc. 121 Albright Way Los Gatos, CA 95032 Attention: Spencer Neumann Ladies and Gentlemen: Reference is made to that certain Bridge Commitment Letter, dated as of December 4, 2025 (the “ Original Commitment\nLetter ”), among Netflix, Inc., a Delaware corporation (the “ Borrower ” or “ you ”), and (i) Wells Fargo Bank, National Association (“ WFBNA ”) and Wells Fargo Strategic Capital, Inc.\n(“ WFSCI ” and, together with WFBNA, collectively, “ Wells Fargo Lender ”) and Wells Fargo Securities, LLC (“ Wells Fargo Securities ” and, together with Wells Fargo Lender, “ Wells\nFargo ”), (ii) BNP Paribas (“ BNPP ”), BNP Paribas Securities Corp. (“ BNPPSC ” and, together with BNPP, “ BNP ”) and (iii) HSBC Bank USA, National Association (“ HSBC\nUSA ”), HSBC Continental Europe (“ HSBC Europe ”), HSBC Bank plc (“ HSBC Bank ”), HSBC Bank Middle East Limited (“ HSBC Middle East ” and, together with HSBC USA, HSBC Europe, HSBC Bank and\nHSBC Middle East, “ HSBC Lender ”) and HSBC Securities (USA) Inc. (“ HSI ” and, together with HSBC Lender, “ HSBC ” and, together with Wells Fargo and BNP, the “ Original Commitment\nParties ”), regarding a senior unsecured bridge facility in an aggregate principal amount of $59.0 billion, which as of December 19, 2025 was reduce",
+  "0001065280-26-000034 · ex103_q425.htm": "EX-10.3 4 ex103_q425.htm EX-10.3 Document EXHIBIT 10.3 NETFLIX, INC. 2020 STOCK PLAN 1. Purposes of the Plan . The purposes of this Plan are: ● to attract and retain the best available personnel for positions of substantial responsibility, ● to provide additional incentive to Employees, Directors an",
+  "0001193125-25-327462 · d82688dex102.htm": "EX-10.2 3 d82688dex102.htm EX-10.2 EX-10.2 Exhibit 10.2 SENIOR UNSECURED DELAYED DRAW TERM LOAN CREDIT AGREEMENT dated as of December 19,\n2025, among NETFLIX, INC., as the Borrower, the\nLenders party hereto, and WELLS FARGO BANK, NATIONAL ASSOCIATION as the Administrative Agent WELLS FARGO SECURITIE"
+ }
+}

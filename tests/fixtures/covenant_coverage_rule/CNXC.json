@@ -1,0 +1,848 @@
+{
+ "ticker": "CNXC",
+ "cik": "0001803599",
+ "name": "Concentrix Corp",
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "6.600% Senior Notes Due 2028",
+     "type": "Bonds and Notes",
+     "principal_musd": 800.0,
+     "coupon": "6.600%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "6.650% Senior Notes Due 2026",
+     "type": "Bonds and Notes",
+     "principal_musd": 800.0,
+     "coupon": "6.650%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "6.850% Senior Notes Due 2033",
+     "type": "Bonds and Notes",
+     "principal_musd": 550.0,
+     "coupon": "6.850%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Credit Facility - Term Loan Component",
+     "type": "Term Loans",
+     "principal_musd": 1965.6,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease",
+     "type": "Capital Lease",
+     "principal_musd": 898.2,
+     "coupon": "7.350%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Other Loans",
+     "type": "Term Loans",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Securitization Facility",
+     "type": "Other Borrowings",
+     "principal_musd": 537.0,
+     "coupon": "NA",
+     "floating_rate": "Various Benchmarks",
+     "maturity_date": "2028-03-20",
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Sellers Note",
+     "type": "Bonds and Notes",
+     "principal_musd": null,
+     "coupon": "2.000%",
+     "floating_rate": "NA",
+     "maturity_date": "2025-09-25",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "Senior Unsecured Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2030-04-11",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Jan-28-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "term loans 1,818.8 (3 months Q2 May-31-2026 1,837.5 → 3 months Q3 Aug-31-2026 1,818.8); senior bonds 1,950.0; leases 905.6; total principal 5,294.9; total debt 5,281.0 (3 months Q3 Aug-31-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2025 filed Jan-28-2026",
+  "maturity_filings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no trailing-12m instrument maturity to anchor an 8-K"
+  },
+  "covenant_pointers": {
+   "value": "material contracts (10-K exhibit i [0001803599-26-000027]; Credit Facility [0001803599-25-000111]; Credit Facility [0001803599-23-000091]; Other Loans [0001803599-24-000117]; Other Loans [0001803599-25-000014]; Senior Unsecured Revolving Credit  [0001803599-23-000107]; Senior Unsecured Revolving Credit  [0001803599-21-000215]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "material contracts (10-K exhibit index)",
+     "filing": "latest 10-K",
+     "filing_date": "2026-01-28",
+     "accession": "0001803599-26-000027",
+     "exhibits": [
+      "exhibit1022-2025form10k.htm",
+      "exhibit1023-202510xk.htm",
+      "exhibit1024-2025form10xk.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2025-04-11",
+     "accession": "0001803599-25-000111",
+     "exhibits": [
+      "exhibit101041125.htm",
+      "exhibit102041125.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2023-03-31",
+     "accession": "0001803599-23-000091",
+     "exhibits": [
+      "a033123exhibit101.htm",
+      "a033123exhibit102.htm",
+      "a033123exhibit103.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Other Loans",
+     "filing": "8-K",
+     "filing_date": "2024-04-26",
+     "accession": "0001803599-24-000117",
+     "exhibits": [
+      "exhibit101-thirdamendmentt.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Other Loans",
+     "filing": "8-K",
+     "filing_date": "2025-01-21",
+     "accession": "0001803599-25-000014",
+     "exhibits": [
+      "exhibit101-fourthamendment.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2023-04-26",
+     "accession": "0001803599-23-000107",
+     "exhibits": [
+      "form8-k04x26x23exhibit101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2021-12-30",
+     "accession": "0001803599-21-000215",
+     "exhibits": [
+      "exhibit101122721.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "6.600% Senior Notes Due 2028",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "6.650% Senior Notes Due 2026",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "6.850% Senior Notes Due 2033",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Operating Lease",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[AMENDED AND RESTATED CREDIT AGREEMENT · 0001803599-25-000111]\n  Principal / commitment amount: Revolving Facility $1,100,000,000; Term A-1 Commitments $750,000,000; Term A-2…\n  Interest / coupon rate: Term SOFR Loan: Term SOFR + Applicable Rate; Base Rate Loan: Base Rate + Applicable…\n  Maturity date: Revolving Maturity Date: April 11, 2030; Term A-1 Facility Maturity Date: September…\n  Financial-maintenance covenants: Consolidated Leverage Ratio not greater than 3.75:1.00 (steps up to 4.25:1.00 upon a…\n[CREDIT AGREEMENT · 0001803599-23-000107]\n  Principal / commitment amount: The Aggregate Revolving Commitments in effect on the Restatement Effective Date is…\n  Interest / coupon rate: each Term SOFR Loan shall bear interest ... equal to the Adjusted Term SOFR for such…\n  Maturity date: December 27, 2026 (Revolving Loans and Term A Loans)\n  Financial-maintenance covenants: Consolidated Leverage Ratio not greater than 3.75:1.00 (increasable to 4.25:1.00…\n[CREDIT AGREEMENT AND JOINDER AGREEMENT · 0001803599-21-000215]\n  Principal / commitment amount: Aggregate Revolving Commitments: ONE BILLION DOLLARS ($1,000,000,000); Term A Loan…\n  Interest / coupon rate: Term SOFR plus the Applicable Rate (Term SOFR Loans); Base Rate plus the Applicable…\n  Maturity date: December 27, 2026 (Revolving Loans, Swing Line Loans, Letters of Credit and Term A…\n… (+1 lower-priority terms in the table)",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001803599-25-000111 · exhibit101041125.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "Revolving Facility $1,100,000,000; Term A-1 Commitments $750,000,000; Term A-2 Commitments $750,000,000; 3-Year Delayed Draw Term Commitments $250,000,000; 5-Year Delayed Draw Term Commitments $500,000,000; Letter of Credit Sublimit $75,000,000; Swing Line Sublimit $75,000,000",
+      "source_ref": "8-K 0001803599-25-000111 · exhibit101041125.htm",
+      "status": "present",
+      "note": "verbatim: “The Aggregate Revolving Commitments in effect on the Restatement Effective Date is $1,100,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Term SOFR Loan: Term SOFR + Applicable Rate; Base Rate Loan: Base Rate + Applicable Rate; Daily SOFR Loan: Daily SOFR + Applicable Rate. Applicable Rate set by ratings-based pricing grid (e.g., Term SOFR Loans under Revolving Facility range 0.875% to 1.500%). SOFR Adjustment 0.10%. Term SOFR floor 0.00%.",
+      "source_ref": "8-K 0001803599-25-000111 · exhibit101041125.htm",
+      "status": "present",
+      "note": "verbatim: “each Term SOFR Loan under a Facility shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Term SOFR for such Interest Period plus the Applicable Rate for such Facility, (ii) each Base Rate Loan ... shall bear interest ... at a rate per annum equal to the Base Rate plus the Applicable Rate for such Facility and (iii) each Daily SOFR Loan shall bear interest ... at a rate per annum equal to Daily SOFR plus the Applicable Rate for the Revolving Facility.”"
+     },
+     "base_rate_label": "Term SOFR",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": true,
+     "component_quotes": {
+      "floor_pct": "provided that if Term SOFR determined in accordance with either of the foregoing clause (a) or clause (b) of this definition would otherwise be less than 0.00% per annum, Term SOFR shall be deemed 0.00% per annum for purposes of this Agreement."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "Revolving Maturity Date: April 11, 2030; Term A-1 Facility Maturity Date: September 30, 2028; Term A-2 Facility Maturity Date: December 27, 2026; 3-Year Delayed Draw Term Facility Maturity Date: September 30, 2028; 5-Year Delayed Draw Term Facility Maturity Date: April 11, 2030",
+      "source_ref": "8-K 0001803599-25-000111 · exhibit101041125.htm",
+      "status": "present",
+      "note": "verbatim: ““Revolving Maturity Date” means April 11, 2030, as such date may be extended pursuant to Section 2.17 ; provided that if such date is not a Business Day, the Revolving Maturity Date shall be the immediately preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Consolidated Leverage Ratio not greater than 3.75:1.00 (steps up to 4.25:1.00 upon a Qualified Acquisition, max two Leverage Increase Elections); Consolidated Interest Coverage Ratio not less than 3.00:1.00",
+      "source_ref": "8-K 0001803599-25-000111 · exhibit101041125.htm",
+      "status": "present",
+      "note": "verbatim: “(a) Consolidated Leverage Ratio . The Borrower will not permit the Consolidated Leverage Ratio as of the last day of any Test Period to be greater than 3.75:1.00; provided that, upon the consummation of a Qualified Acquisition ... the maximum permitted Leverage Ratio set forth above shall, at the election of the Borrower ... be increased to 4.25:1.00 ... (b) Consolidated Interest Coverage Ratio . The Borrower will not permit the Consolidated Interest Coverage Ratio for any Test Period to be less than 3.00:1.00.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "As of the Restatement Effective Date, there are no Subsidiary Guarantors. The Borrower may (but is not required to) cause Domestic Subsidiaries to become Subsidiary Guarantors (Section 11.22). The Borrower provides a guaranty of certain Subsidiary obligations (Cash Management/Hedge) under Article XII. No collateral/security interest securing the Obligations is stated (facilities are unsecured).",
+      "source_ref": "8-K 0001803599-25-000111 · exhibit101041125.htm",
+      "status": "present",
+      "note": "verbatim: ““Subsidiary Guarantor” means any Domestic Subsidiary that shall have become a party to the Subsidiary Guarantee Agreement as a guarantor thereunder pursuant to Section 11.22 ... As of the Restatement Effective Date, there are no Subsidiary Guarantors.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory prepayment: Section 2.05(b)(i) — pay down to the extent Aggregate Revolving Credit Exposure exceeds Aggregate Revolving Commitments. Events of Default (Section 9.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Default ($250,000,000 Material Indebtedness threshold; Swap Termination Value $250,000,000); (f) Insolvency Proceedings; (g) Inability to Pay Debts; Attachment; (h) Judgments ($250,000,000); (i) ERISA ($250,000,000); (j) Invalidity of Loan Documents; (k) Change of Control (40%).",
+      "source_ref": "8-K 0001803599-25-000111 · exhibit101041125.htm",
+      "status": "present",
+      "note": "verbatim: “If for any reason the Aggregate Revolving Credit Exposure at any time exceeds the Aggregate Revolving Commitments then in effect, the Borrower shall immediately prepay Revolving Loans and/or Swing Line Loans and/or Cash Collateralize the L/C Exposure in an aggregate amount equal to such excess”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "The Aggregate Revolving Commitments in effect on the Restatement Effective Date is $1,042,500,000.00. ... The aggregate amount of the Lenders' Delayed Draw Term A Loan Commitments as of the Restatement Effective Date is $294,702,380.98.",
+      "source_ref": "8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Aggregate Revolving Commitments ” means, at any time, the aggregate amount of the Revolving Commitments of all the Lenders at such time. The Aggregate Revolving Commitments in effect on the Restatement Effective Date is $1,042,500,000.00.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "each Term SOFR Loan shall bear interest ... equal to the Adjusted Term SOFR for such Interest Period plus the Applicable Rate",
+      "source_ref": "8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Adjusted Term SOFR for such Interest Period plus the Applicable Rate, (ii) each Base Rate Loan ... shall bear interest ... at a rate per annum equal to the Base Rate plus the Applicable Rate and (iii) each Daily Simple SOFR Loan ... shall bear interest ... at a rate per annum equal to Adjusted Daily Simple SOFR plus the Applicable Rate.”"
+     },
+     "base_rate_label": "Adjusted Term SOFR",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "December 27, 2026 (Revolving Loans and Term A Loans)",
+      "source_ref": "8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means (a) as to the Revolving Loans, the Revolving Commitments, the Swing Line Loans and the Letters of Credit, December 27, 2026, as such date may be extended pursuant to Section 2.17 (the “ Revolving Maturity Date ”), (b) as to the Term A Loans, December 27, 2026 and (c) as to any other Class of Loans established hereunder, the scheduled final maturity date set forth in the applicable Loan Document establishing such Class of Loans”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Consolidated Leverage Ratio not greater than 3.75:1.00 (increasable to 4.25:1.00 upon a Qualified Acquisition via Leverage Increase Election); Consolidated Interest Coverage Ratio not less than 3.00:1.00",
+      "source_ref": "8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) Consolidated Leverage Ratio . The Borrower will not permit the Consolidated Leverage Ratio as of the last day of any Test Period to be greater than 3.75:1.00; provided that, upon the consummation of a Qualified Acquisition ... the maximum permitted Leverage Ratio set forth above shall, at the election of the Borrower ... be increased to 4.25:1.00 ... (b) Consolidated Interest Coverage Ratio . The Borrower will not permit the Consolidated Interest Coverage Ratio for any Test Period to be less than 3.00:1.00.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Existing collateral and guarantees released; facility is unsecured. Subsidiary guarantees optional: “The Borrower may (but is not required to) cause any of its Domestic Subsidiaries to become a Subsidiary Guarantor”; “As of the Restatement Effective Date, there are no Subsidiary Guarantors.”",
+      "source_ref": "8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
+      "status": "present",
+      "note": "verbatim: “Concurrently with the effectiveness of this Agreement, in each case automatically and with no further action required, (i) each Loan Party (as defined in the Existing Credit Agreement) shall be released from its obligations under the Collateral Documents ... and all Collateral Documents shall be terminated ... (ii) each Guarantor (as defined in the Existing Credit Agreement) shall be released from its obligations under Article IV of the Existing Credit Agreement, and the Guarantee created under such Article shall be terminated and released, and (iii) all Liens created in favor of the Existing Administrative Agent ... shall be released and terminated.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory prepayment on Aggregate Revolving Credit Exposure exceeding Aggregate Revolving Commitments (Section 2.05(b)); Events of Default enumerated in Section 9.01 (Non-Payment, Specific Covenants, Other Defaults, Representations and Warranties, Cross-Default, Insolvency Proceedings, Inability to Pay Debts/Attachment, Judgments, ERISA, Invalidity of Loan Documents, Change of Control)",
+      "source_ref": "8-K 0001803599-23-000107 · form8-k04x26x23exhibit101.htm",
+      "status": "present",
+      "note": "verbatim: “(b) Mandatory Prepayments of Loans . (i) Revolving Commitments . If for any reason the Aggregate Revolving Credit Exposure at any time exceeds the Aggregate Revolving Commitments then in effect, the Borrower shall immediately prepay Revolving Loans and/or Swing Line Loans and/or Cash Collateralize the L/C Exposure in an aggregate amount equal to such excess”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001803599-21-000215 · exhibit101122721.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "Aggregate Revolving Commitments: ONE BILLION DOLLARS ($1,000,000,000); Term A Loan Commitments: TWO BILLION ONE HUNDRED MILLION DOLLARS ($2,100,000,000)",
+      "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+      "status": "present",
+      "note": "verbatim: “The amount of the Aggregate Revolving Commitments in effect on the First Amendment Effective Date is ONE BILLION DOLLARS ($1,000,000,000).”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Term SOFR plus the Applicable Rate (Term SOFR Loans); Base Rate plus the Applicable Rate (Base Rate Loans); Daily Simple SOFR plus the Applicable Rate for Term SOFR Loans (Swing Line Loans)",
+      "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Term SOFR for such Interest Period plus the Applicable Rate, (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate and (iii) each Swing Line Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to Daily Simple SOFR plus the Applicable Rate for Term SOFR Loans.”"
+     },
+     "base_rate_label": "Term SOFR",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+     "agreement_is_amendment": true,
+     "component_quotes": {
+      "floor_pct": "provided , that , if the Term SOFR determined in accordance with either of the foregoing clauses (a) or (b) of this definition would otherwise be less than zero, the Term SOFR shall be deemed zero for purposes of this Agreement."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "December 27, 2026 (Revolving Loans, Swing Line Loans, Letters of Credit and Term A Loan); Incremental Term Loan: as specified in the applicable Incremental Amendment",
+      "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+      "status": "present",
+      "note": "verbatim: “\"Maturity Date\" means (a) as to the Revolving Loans, Swing Line Loans, Letters of Credit (and the related L/C Obligations) and the Term A Loan, December 27, 2026 and (b) as to an Incremental Term Loan, the final maturity date applicable thereto as specified in the applicable Incremental Amendment”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Consolidated Leverage Ratio not greater than 3.75:1.0 (increased to 4.25:1.0 during a Leverage Increase Period following a Qualified Acquisition); Consolidated Interest Coverage Ratio not less than 3.00:1.0",
+      "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+      "status": "present",
+      "note": "verbatim: “8.11 Financial Covenants . (a) Consolidated Leverage Ratio . Permit the Consolidated Leverage Ratio as of the end of any fiscal quarter of the Borrower to be greater than 3.75:1.0; provided , that , upon the consummation of a Qualified Acquisition ... the ratio set forth above shall be increased to 4.25:1.0 ... (b) Consolidated Interest Charge Coverage Ratio . Permit the Consolidated Interest Coverage Ratio as of the end of any fiscal quarter of the Borrower to be less than 3.00:1.0.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Secured by a security interest in Collateral pursuant to the Security Agreement; guaranteed jointly and severally by the Guarantors (including New Loan Parties ProKarma Holdings Inc. and ProKarma, Inc.) pursuant to Article IV; Pledged Equity includes 100% of Equity Interests of each Domestic Subsidiary and 65% of voting / 100% of non-voting Equity Interests of each Foreign Subsidiary (other than Immaterial Foreign Subsidiaries)",
+      "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+      "status": "present",
+      "note": "verbatim: “to secure the prompt payment and performance in full when due ... of the Secured Obligations (as defined in the Security Agreement), such New Loan Party hereby grants, pledges and assigns to the Administrative Agent, for the benefit of the holders of the Secured Obligations, a continuing security interest in, and a right of set off against any and all right, title and interest of such New Loan Party in and to the Collateral”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory prepayments: (i) Total Revolving Outstandings exceeding Aggregate Revolving Commitments; (ii) 100% of Net Cash Proceeds from Material Dispositions / Material Recovery Events (subject to 365-day reinvestment); (iii) 100% of Net Cash Proceeds of Debt Issuances. Events of Default set forth in Section 9.01 include Non-Payment, breach of Specific Covenants, Other Defaults, Representations and Warranties, Cross-Default (Material Indebtedness), Insolvency Proceedings, Inability to Pay Debts/Attachment, Judgments, ERISA, Invalidity of Loan Documents, Change of Control, Invalidity of Subordination Provisions",
+      "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+      "status": "present",
+      "note": "verbatim: “(b) Mandatory Prepayments of Loans . (i) Revolving Commitments . If for any reason the Total Revolving Outstandings at any time exceed the Aggregate Revolving Commitments then in effect, the Borrower shall immediately prepay ... (ii) Dispositions and Recovery Events . The Borrower shall prepay the Loans ... in an aggregate amount equal to 100% of the Net Cash Proceeds received by any Loan Party from any Material Disposition or Material Recovery Event ... (iii) Debt Issuances . Immediately upon receipt by any Loan Party of the Net Cash Proceeds of any Debt Issuance by any Loan Party, the Borrower shall prepay the Loans ... in an aggregate amount equal to 100% of such Net Cash Proceeds.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+     "agreement_is_amendment": true
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": null,
+  "panel_vintage": {
+   "value": "the debt schedule is 261d old (source filed 2026-01-28); no Item 1.02 (termination of a material agreement) has been filed since",
+   "source_ref": "CIQ Capital Structure Details — A 2025 filed Jan-28-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-01-28",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001803599-26-000155",
+     "filed": "2026-10-07",
+     "read_as": "the latest periodic report",
+     "statements": 26,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-26-000080",
+     "filed": "2026-03-23",
+     "read_as": "an 8-K after the panel",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-26-000074",
+     "filed": "2026-02-24",
+     "read_as": "an 8-K after the panel",
+     "statements": 3,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-25-000111",
+     "filed": "2025-04-11",
+     "read_as": "an 8-K the page links",
+     "statements": 4,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-25-000014",
+     "filed": "2025-01-21",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-24-000117",
+     "filed": "2024-04-26",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-23-000107",
+     "filed": "2023-04-26",
+     "read_as": "an 8-K the page links",
+     "statements": 1,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-23-000091",
+     "filed": "2023-03-31",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001803599-21-000215",
+     "filed": "2021-12-30",
+     "read_as": "an 8-K the page links",
+     "statements": 1,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "instrument": 0,
+     "description": "6.600% Senior Notes Due 2028",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the panel states no maturity",
+     "excluded": true
+    },
+    {
+     "instrument": 1,
+     "description": "6.650% Senior Notes Due 2026",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the panel states no maturity",
+     "excluded": true
+    },
+    {
+     "instrument": 2,
+     "description": "6.850% Senior Notes Due 2033",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the panel states no maturity",
+     "excluded": true
+    },
+    {
+     "instrument": 3,
+     "description": "Credit Facility - Term Loan Component",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the panel states no maturity",
+     "excluded": true
+    },
+    {
+     "instrument": 4,
+     "description": "Operating Lease",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 5,
+     "description": "Other Loans",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the panel states no maturity",
+     "excluded": true
+    },
+    {
+     "instrument": 6,
+     "description": "Securitization Facility",
+     "ciq_maturity_date": "2028-03-20",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "instrument": 7,
+     "description": "Sellers Note",
+     "ciq_maturity_date": "2025-09-25",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no filing read states a maturity for it",
+     "excluded": false
+    },
+    {
+     "instrument": 8,
+     "description": "Senior Unsecured Revolving Credit Facility",
+     "ciq_maturity_date": "2030-04-11",
+     "check": "agree",
+     "filing_maturity": "2030-04-11",
+     "source": "10-Q 0001803599-26-000155 (filed 2026-10-07)",
+     "source_filed": "2026-10-07",
+     "governs": false,
+     "also_stated_by": [
+      "8-K 0001803599-25-000111 (filed 2025-04-11)"
+     ],
+     "quote": "The maturity date of the 5-Year DD Term Loan Facility and the Revolving Credit Facility is April 11, 2030",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    }
+   ]
+  }
+ },
+ "texts": {
+  "0001803599-25-000111 · exhibit101041125.htm": "EX-10.1 2 exhibit101041125.htm EX-10.1 Document Exhibit 10.1 EXECUTION VERSION AMENDMENT AND RESTATEMENT AGREEMENT (this “ Agreement ”), dated as of April 11, 2025 (the “ Restatement Effective Date ”), among CONCENTRIX CORPORATION, a Delaware corporation (the “ Borrower ”), the LENDERS party hereto, the L/C ISSUER party hereto, the SWING LINE LENDER party hereto, BANK OF AMERICA, N.A., as successor administrative agent (in such capacity, the “ Administrative Agent ”), and JPMORGAN CHASE BANK, N.A., as the Existing Administrative Agent (as defined below), the Existing L/C Issuer (as defined below) and the Existing Swing Line Lender (as defined below). WHEREAS, reference is made to that certain Amended and Restated Credit Agreement dated as o … that certain Amended and Restated Credit Agreement dated as of April 21, 2023 (as amended, supplemented or otherwise modified from time to time prior to the Restatement Effective Date, the “ Existing Credit Agreement ” … of the Borrower under the Restated Credit Agreement and the provisions of the Existing Credit Agreement shall be superseded",
+  "0001803599-24-000117 · exhibit101-thirdamendmentt.htm": "EX-10.1 2 exhibit101-thirdamendmentt.htm EX-10.1 Document Exhibit 10.1 Execution Version Third Amendment to Receivables Financing Agreement This Third Amendment to Receivables Financing Agreement (this “ Amendment ”), dated as of April 25, 2024, is by and among Concentrix Receivables, Inc. (the “ Borrower ”), Concentrix Corporation (“ Concentrix ” or the “ Servicer ”), PNC Bank, National Association (“ PNC ”), as Administrative Agent (in such capacity, the “ Administrative Agent ”) and as Group Agent for the PNC Group (in such capacity, “ PNC Group Agent ”), The Toronto Dominion Bank, as Group Agent for the TD Bank Group (in such capacity, “ TD Bank Group Agent ”) and as a Committed Lender in the TD Bank Group (“ TD Bank ”), Wells Fargo Bank, National Association, as Group Agent for the Wells Fargo Group (“ Wells Fargo ”), MUFG Bank, LTD., as Group Agent for the MUFG Lender Group (“ MUFG ”, and together with PNC Group Agent, TD Bank Group Agent and Wells Fargo, each a “ Group Agent ” and considered together, the “ Group Agents ”), Reliant Bank, as a Conduit Lender in the TD Bank Group (“ Reliant ”), GTA Funding LLC, and Cabot Trail Funding LLC(together with GTA Funding LLC, the “New Conduit Lenders”). W I T N E S S E T H : Whereas, the Borrower, the Servicer, the Administrative Agent, the Lenders and Group Agents from time to time party thereto, and PNC Capital Markets LLC, as Structuring Agent, have entered into that certain Receivables Financing Agreement, dated as of October 30, 2020 (as amended, restated, supplemented or",
+  "0001803599-23-000107 · form8-k04x26x23exhibit101.htm": "EX-10.1 2 form8-k04x26x23exhibit101.htm EX-10.1 Document Exhibit 10.1 EXECUTION VERSION AMENDMENT AND RESTATEMENT AGREEMENT dated as of April 21, 2023 (this “ Agreement ”), among CONCENTRIX CORPORATION, a Delaware corporation (the “ Borrower ”), the LENDERS party hereto, the L/C ISSUERS party hereto, JPMORGAN CHASE BANK, N.A., as successor administrative agent (in such capacity, the “ Administrative Agent ”), and BANK OF AMERICA, N.A., as the Existing Administrative Agent, the Existing L/C Issuer and the Existing Swing Line Lender. WHEREAS, reference is made to that certain Credit Agreement dated as of October 16, 2020 (as amended, supplement … that certain Credit Agreement dated as of October 16, 2020 (as amended, supplemented or otherwise modified from time to time prior to the Restatement Effective Date (as defined below), the “ Existing Credit Agreement ” … of the Borrower under the Restated Credit Agreement and the provisions of the Existing Credit Agreement shall be superseded",
+  "0001803599-26-000027 · exhibit1022-2025form10k.htm": "EX-10.22 3 exhibit1022-2025form10k.htm EX-10.22 Document Exhibit 10.22 Performance Restricted Stock Unit CONCENTRIX CORPORATION 2020 STOCK INCENTIVE PLAN NOTICE OF PERFORMANCE RESTRICTED STOCK UNIT AWARD You have been granted performance-based Restricted Stock Units (the “RSUs”) representing Common ",
+  "0001803599-23-000091 · a033123exhibit101.htm": "EX-10.1 2 a033123exhibit101.htm EX-10.1 Document Exhibit 10.1 Strictly confidential CONCENTRIX CORPORATION 39899 Balentine Drive, Suite 235 Newark, CA 94560 To: Marnix Lux SA (the “ Company ”) To: The Company’s shareholders listed in Schedule 1 (the “ Beneficiaries ”) To: Sandrine Asseraf (the “ PoA Seller Representative ”) On March 29 2023 STRICTL",
+  "0001803599-25-000014 · exhibit101-fourthamendment.htm": "EX-10.1 2 exhibit101-fourthamendment.htm EX-10.1 Document Exhibit 10.1 Execution Version Fourth Amendment to Receivables Financing Agreement This Fourth Amendment to Receivables Financing Agreement (this “ Amendment ”), dated as of January 14, 2025, is by and among Concentrix Receivables, Inc. (the “ Borrower ”), Concentrix Corporation (“ Concentrix ” or the “ Servicer ”), PNC Bank, National Association (“ PNC ”), as Administrative Agent (in such capacity, the “ Administrative Agent ”) and as Committed Lender and Group Agent for the PNC Group (in such capacity, “ PNC Group Agent ”), The Toronto Dominion Bank, as Group Agent for the TD Bank Group (in such capacity, “ TD Bank Group Agent ”) and as a Committed Lender in the TD Bank Group (“ TD Bank ”), Wells Fargo Bank, National Association, as Committed Lender and Group Agent for the Wells Fargo Group (“ Wells Fargo ”), MUFG Bank, LTD., as Committed Lender and Group Agent for the MUFG Lender Group (“ MUFG ”, and together with PNC Group Agent, TD Bank Group Agent and Wells Fargo, each a “ Group Agent ” and considered together, the “ Group Agents ”), Reliant Trust, as a Conduit Lender in the TD Bank Group (“ Reliant ”), GTA Funding LLC, as a Conduit Lender in the TD Bank Group (“ GTA ”), and Cabot Trail Funding LLC, as a Conduit Lender in the TD Bank Group (“ Cabot ”), Gotham Funding Corporation, as a Conduit Lender in the MUFG Lender Group (“ Gotham ”), and PNC Capital Markets, LLC, as Structuring Agent . W I T N E S S E T H : Whereas, the Borrower, the Servicer, the Administrative Agent, the Lenders and Group Agents from time to time party thereto, and PNC Capital Markets LLC, as Structuring Agent, have entered into that certain Receivables Financing Agreement, dated as of October 30, 2020 (as amended, restated, supplemen",
+  "0001803599-21-000215 · exhibit101122721.htm": "EX-10.1 2 exhibit101122721.htm EX-10.1 Document Exhibit 10.1 FIRST AMENDMENT TO CREDIT AGREEMENT AND JOINDER AGREEMENT dated as of December 27, 2021 by and among CONCENTRIX CORPORATION, as the Borrower, THE GUARANTORS PARTY HERETO, PROKARMA HOLDINGS INC. and PROKARMA, INC., as the New Loan Parties, BANK OF AMERICA, N.A., as the Administrative Agent, an L/C Issuer and the Swing Line Lender, MUFG BANK, LTD., PNC BANK, NATIONAL ASSOCIATION, SUMITOMO MITSUI BANKING CORPORATION, THE BANK OF NOVA SCOTIA, THE TORONTO-DOMINION BANK, NEW YORK BRANCH, TRUIST BANK, U.S. BANK NATIONAL ASSOCIATION and WELLS FARGO BANK, NATIONAL ASSOCIATION, as Co-Syndication Agents, BNP PARIBAS, CAPITAL ONE BANK, N.A., CITIZENS BANK, N.A., FIFTH THIRD BANK, NATIONAL ASSOCIATION, HSBC BANK USA, NATIONAL ASSOCIATION and KEYBANK NATIONAL ASSOCIATION, as Co-Documentation Agents, and THE OTHER LENDERS PARTY HERETO BOFA SECURITIES, INC., MUFG BANK, LTD., PNC CAPITAL MARKETS LLC, SUMITOMO MITSUI BANKING CORPORATION, THE BANK OF NOVA SCOTIA, THE TORONTO-DOMINION BANK, NEW YORK BRANCH, TRUIST SECURITIES, INC. and U.S. BANK NATIONAL ASSOCIATION, as Joint Lead Arrangers and Joint Bookrunners FIRST AMENDMENT TO CREDIT AGREEMENT AND JOINDER AGREEMENT THIS FIRST AMENDMENT TO CREDIT AGREEMENT AND JOINDER AGREEMENT (this “ Amendment ”), dated as of December 27, 2021 (the “ First Amendment Effective Date ”), to the Existing Credit Agreement referenced below is by and among CONCENTRIX CORPORATION, a Delaware corporation (the “ Borrower ”), the Guarantors party hereto, PROKARMA HOLDINGS INC., a Delaware corporation (“ ProKarma Holdings ”), PROKARMA, INC., a Delaware corporation (“ ProKarma ”; each of ProKarma and ProKarma Holdings, a “ New Loan Party ”), the Lenders (including each New Lender (as defined below)) party hereto, and BANK OF AMERICA, N.A., as the Administrative Agent, an L/C Issuer and the Swing Line Lender. W I T N E S S E T H WHEREAS, credit facilities have been extended to the Borrower pursuant to that certain Credit Agreement (as amended, modified, supplemented, increased and extended from time to time prior to the date hereof, the “ Existing Credit Agreement ”), dated as of October 16, 2020, ",
+  "0001803599-26-000027 · exhibit1023-202510xk.htm": "EX-10.23 4 exhibit1023-202510xk.htm EX-10.23 Document Exhibit 10.23 Performance Restricted Stock Unit Award CONCENTRIX CORPORATION 2020 STOCK INCENTIVE PLAN NOTICE OF PERFORMANCE RESTRICTED STOCK UNIT AWARD You have been granted performance-based Restricted Stock Units (“RSUs”) representing Common S",
+  "0001803599-26-000027 · exhibit1024-2025form10xk.htm": "EX-10.24 5 exhibit1024-2025form10xk.htm EX-10.24 Document Exhibit 10.24 CONCENTRIX CORPORATION 2020 EMPLOYEE STOCK PURCHASE PLAN (as adopted by the Board of Directors on November 12, 2020) (Effective on December 1, 2020) (Amended on March 22, 2022, September 19, 2024, and September 23, 2025) Table of Contents 2020 EMPLOYEE STOCK PURCHASE PLAN 1 SECTION 1 Purpose of the Plan. 1 SECTION 2 Definitions. 1 (a) “Board” 1 (b) “Code” 1 (c) “Committee” 1 (d) “Common Stock” 1 (e) “Company” 1 (f) “Compensation” 1 (g) “Corporate Reorganization” 1 (h) “Eligible Employee” 2 (i) “Exchange Act” 2 (j) “Fair Market Value” 2 (k) “Offering” 2 (l) “Offering Date” 2 (m) “Offering Period” 2 (n) “Participant” 2 (o) “Participating Company” 2 (p) “Plan” 3 (q) “Plan Account” 3 (r) “Purchase Date” 3 (s) “Purchase Period” 3 (t) “Purchase Price” 3 (u) “Subsidiary” 3 (v) “Trading Day” 3 SECTION 3 Administration of the Plan. 3 (a) Administrative Powers and Responsibilities 3 (b) International Administration 4 SECTION 4 Enrollment and Participation. 4 (a) Offering Periods 4 (b) Enrollment 4 (c) Duration of Participation 5 SECTION 5 Employee Contributions. 5 (a) Frequency of Payroll Deductions 5 (b) Amount of Payroll Deductions 5 (c) Changing Withholding Rate 5 (d) Discontinuing Payroll Deductions 5 SECTION 6 Withdrawal from the Plan. 6 (a) Withdrawal 6 (b) Re-enrollment After Withdrawal 6 SECTION 7 Change in Employment Status. 6 (a) Termination of Employment 6 (b) Leave of Absence 6 (c) Death 6 SECTION 8 Plan Accounts and Purchase of Shares. 6 (a) Plan Accounts 6 (b) Purchase Price 6 (c) Number of Shares Purchased 7 (d) Available Shares Insufficient 7 (e) Issuance of Common Stock 7 (f) Unused Cash Balances 7 (g) Stockholder Approval 7 SECTION 9 Limitations on Stock Ownership. 8 (a) Five Percent Limit 8 (b) Dollar Limit 8 SECTION 10 Rights Not Transferable. 8 SECTION 11 No Rights as an Employee 9 SECTION 12 No Rights as a Stockholder. 9 SECTION 13 Securities Law Requirements. 9 SECTION 14 Stock Offered under the Plan. 9 (a) Authorized Shares 9 (b) Anti-dilution Adjustments 9 (c) Reorganizations 9 SECTION 15 Amendment or Discontinuance. 10 SECTION 16 Execution. 10 INTERNATIONAL EMPLOYEE STOCK PURCHASE PLAN 11 SECTION 1 Purpose of the Sub-Plan. 11 SECTION 2 Definitions. 11 (a) “Eligible Employee” 11 (b) “Invitation” 11 (c) “Participant” 11 (d) “Section” 11 SECTION 3 Enrollment and Participation. 12 (a) Offering Periods 12 (b) Enrollment 12 (c) Duration of Participation 12 (d) Dollar Limit 13 SECTION 4 Employee Contributions. 3 (a) Frequency of Payroll Deductions 3 (b) Amount of Payroll Deductions 3 (c) Changing Withholding Rate 3 (d) Discontinuing Payroll Deductions 4 (e) Plan Account 4 SECTION 5 Conversion of Plan Account into U.S. Currency. 4 (a) Conversion to U.S. Dollars 4 (b) Conversion to Local Currency 4 SECTION 6 Miscellaneous 4 (a) Effect of Addenda 4 (b) Effect of Certain Plan Terms 4 (c) No Retention Rights 5 (d) No Guaranty of Gain 5 (e) Waiver 5 (f) Severability 5 SECTION 7 Execution. 5 CONCENTRIX CORPORATION 2020 EMPLOYEE STOCK PURCHASE PLAN SECTION 1 Purpose of the Plan. The Plan was adopted by the Board on November 12, 2020 and subsequently approved by the Company’s stockholders on November 24, 2020.  The purpo",
+  "0001803599-25-000111 · exhibit102041125.htm": "EX-10.2 3 exhibit102041125.htm EX-10.2 Document Exhibit 10.2 Fifth Amendment to Receivables Financing Agreement This Fifth Amendment to Receivables Financing Agreement (this “ Amendment ”), dated as of April 11, 2025, is by and among Concentrix Receivables, Inc. (the “ Borrower ”), Concentrix Corporation (“ Concentrix ” or the “ Servicer ”), PNC Bank, National Association (“ PNC ”), as Administrative Agent (in such capacity, the “ Administrative Agent ”) and as Committed Lender and Group Agent for the PNC Group (in such capacity, “ PNC Group Agent ”), The Toronto Dominion Bank, as Group Agent for the TD Bank Group (in such capacity, “ TD Bank Group Agent ”) and as a Committed Lender in the TD Bank Group (“ TD Bank ”), Wells Fargo Bank, National Association, as Committed Lender and Group Agent for the Wells Fargo Group (“ Wells Fargo ”), MUFG Bank, LTD., as Committed Lender and Group Agent for the MUFG Lender Group (“ MUFG ”, and together with PNC Group Agent, TD Bank Group Agent and Wells Fargo, each a “ Group Agent ” and considered together, the “ Group Agents ”), Reliant Trust, as a Conduit Lender in the TD Bank Group (“ Reliant ”), GTA Funding LLC, as a Conduit Lender in the TD Bank Group (“ GTA ”), and Cabot Trail Funding LLC, as a Conduit Lender in the TD Bank Group (“ Cabot ”), Gotham Funding Corporation, as a Conduit Lender in the MUFG Lender Group (“ Gotham ”), and PNC Capital Markets LLC, as Structuring Agent. W I T N E S S E T H : Whereas, the Borrower, the Servicer, the Administrative Agent, the Lenders and Group Agents from time to time party thereto, and PNC Capital Markets LLC, as Structuring Agent, have entered into that certain Receivables Financing Agreement, dated as of October 30, 2020 (as amended, res",
+  "0001803599-23-000091 · a033123exhibit102.htm": "EX-10.2 3 a033123exhibit102.htm EX-10.2 Document Exhibit 10.2 EXECUTION VERSION INVESTOR RIGHTS AGREEMENT by and among CONCENTRIX CORPORATION and THE MAJOR WEBHELP STOCKHOLDERS named herein _____________________ Dated as of March 29, 2023 Contents Section 1 Definitions; Interpretation 3 Section 2 Bo",
+  "0001803599-23-000091 · a033123exhibit103.htm": "EX-10.3 4 a033123exhibit103.htm EX-10.3 Document Exhibit 10.3 EXECUTION VERSION JPMORGAN CHASE BANK, N.A. 383 Madison Avenue New York, NY 10179 CONFIDENTIAL March 29, 2023 Concentrix Corporation 39899 Balentine Drive Newark, CA 94560 Attention of    Andre S. Valentine, Chief Financial Officer Projec"
+ }
+}

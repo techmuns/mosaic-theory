@@ -133,7 +133,10 @@ def test_the_plan_is_the_order_the_loop_takes_burls_exhibits() -> None:
     assert cs.covenant_pointer_rows is not None and cs.covenant_pointer_rows.value
     got = [(r.accession, f) for r, f in ce._core_agreement_exhibits(cs.covenant_pointer_rows.value)]
     assert got == [(a, f) for a, f, _ in _PLAN]
-    assert {k for _, _, k in _PLAN} == _ALL_KINDS, "the plan drives every branch once"
+    # the coverage rule's two kinds are driven on real pages' exhibits, in
+    # tests/test_covenant_coverage_rule.py (BURL's planned texts name no agreement they displace)
+    assert {k for _, _, k in _PLAN} == _ALL_KINDS - {"superseded", "terminated"}, \
+        "the plan drives every branch of the send loop once"
 
 
 def test_every_branch_of_the_loop_writes_its_outcome(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -149,10 +152,11 @@ def test_every_branch_of_the_loop_writes_its_outcome(monkeypatch: pytest.MonkeyP
     assert all(o.family == family[o.accession] for o in got)
     title = {o.outcome: o.declared_title for o in got}
     # never read: no heading
-    assert title["cost_bound"] is None and title["fetch_failed"] is None
-    # read: the heading `agreement_title` takes from it
+    assert title["fetch_failed"] is None
+    # read: the heading `agreement_title` takes from it. Since the coverage rule every target is
+    # read before any is sent, so an exhibit past the guard carries its heading too.
     assert title["not_debt_agreement"] == ce.agreement_title(_LEASE) == "LEASE AGREEMENT"
-    for k in ("extracted", "too_large", "llm_error", "no_terms_returned"):
+    for k in ("extracted", "too_large", "llm_error", "no_terms_returned", "cost_bound"):
         assert title[k] == ce.agreement_title(_DEBT) == "CREDIT AGREEMENT", k
 
 

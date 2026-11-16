@@ -1875,6 +1875,9 @@ _EXHIBIT_OUTCOME = {
     "too_large": "too large for single-pass extraction; extract by hand",
     "llm_error": "the extraction call failed (LLM error)",
     "no_terms_returned": "read, and the model returned no terms",
+    # the coverage rule (2026-11-16): each prints its own evidence after the label
+    "superseded": "not sent: superseded by",
+    "terminated": "not sent: terminated",
 }
 
 
@@ -1894,6 +1897,14 @@ def _exhibit_outcome_text(o: CovenantExhibitOutcome) -> str:
         why = _EXHIBIT_OUTCOME[o.outcome]
         if o.outcome == "not_debt_agreement":
             why += f" (it declares itself “{o.declared_title}”)"
+        elif o.outcome == "superseded":
+            # the later exhibit, then its own words (the coverage rule): which document, and why
+            by = " · ".join(x for x in (o.superseded_by, o.superseded_by_filename) if x)
+            why += f" {by or 'an exhibit not recorded'}"
+            if o.evidence:
+                why += f" — {o.evidence}"
+        elif o.outcome == "terminated" and o.evidence:
+            why += f" — {o.evidence}"
     return f"{o.filename} — {why}"
 
 

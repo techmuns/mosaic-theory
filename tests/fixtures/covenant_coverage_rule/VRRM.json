@@ -1,0 +1,596 @@
+{
+ "ticker": "VRRM",
+ "cik": "0001682745",
+ "name": "VERRA MOBILITY Corp",
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "2021 Term Loan Due 2028",
+     "type": "Term Loans",
+     "principal_musd": 687.1,
+     "coupon": "5.700%",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2032-10-15",
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD",
+     "ciq_maturity_date": "2028-03-24",
+     "maturity_source": "10-Q 0001193125-26-335490 (filed 2026-08-05)"
+    },
+    {
+     "description": "Operating Lease",
+     "type": "Capital Lease",
+     "principal_musd": 38.1,
+     "coupon": "6.500%",
+     "floating_rate": "NA",
+     "maturity_date": "2037-01-01",
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2030-10-17",
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Notes Due 2029",
+     "type": "Bonds and Notes",
+     "principal_musd": 350.0,
+     "coupon": "5.500%",
+     "floating_rate": "NA",
+     "maturity_date": "2029-04-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-24-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "term loans 681.9 (3 months Q2 Jun-30-2026 683.6 → 3 months Q3 Sep-30-2026 681.9); senior bonds 350.0; leases 52.5; total principal 1,092.8; total debt 1,085.1 (3 months Q3 Sep-30-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2025 filed Feb-24-2026",
+  "maturity_filings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no trailing-12m instrument maturity to anchor an 8-K"
+  },
+  "covenant_pointers": {
+   "value": "2021 Term Loan Due 2028 [0001193125-25-242530]; 2021 Term Loan Due 2028 [0001104659-18-041476]; Revolving Credit Facility [0001564590-21-015880]; Revolving Credit Facility [0000950170-25-072679]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "2021 Term Loan Due 2028",
+     "filing": "8-K",
+     "filing_date": "2025-10-17",
+     "accession": "0001193125-25-242530",
+     "exhibits": [
+      "vrrm-ex10_1.htm",
+      "vrrm-ex10_2.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "2021 Term Loan Due 2028",
+     "filing": "8-K",
+     "filing_date": "2018-06-21",
+     "accession": "0001104659-18-041476",
+     "exhibits": [
+      "a18-15692_1ex10d1.htm",
+      "a18-15692_1ex10d2.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2021-03-29",
+     "accession": "0001564590-21-015880",
+     "exhibits": [
+      "vrrm-ex101_62.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2025-05-15",
+     "accession": "0000950170-25-072679",
+     "exhibits": [
+      "vrrm-ex10_1.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Operating Lease",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "Senior Notes Due 2029",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT · 0001193125-25-242530]\n  Principal / commitment amount: Revolving Loans aggregate principal amount not to exceed $150,000,000; Letters of…\n  Interest / coupon rate: Base Rate Loans: Base Rate plus Applicable Margin; Term SOFR Rate Loans: Term SOFR…\n  Financial-maintenance covenants: Springing financial covenant: Consolidated Fixed Charge Coverage Ratio of at least…\n[FIRST LIEN TERM LOAN CREDIT AGREEMENT · 0001564590-21-015880]\n  Principal / commitment amount: $650,000,000\n  Interest / coupon rate: in the case of Initial Term Loans maintained as (a) Base Rate Term Loans, 2.25% and…\n  Maturity date: the date that is seven years after the First Restatement Effective Date, or if such…\n  Default interest: 2.00% per annum in excess of the Applicable Margin plus the Base Rate / LIBO Rate…",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-25-242530 · vrrm-ex10_1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "Revolving Loans aggregate principal amount not to exceed $150,000,000; Letters of Credit aggregate stated amount not to exceed $35,000,000; Swingline Loans aggregate principal amount not to exceed $15,000,000. \"The Aggregate Commitments as of the Closing Date are $150,000,000.\"",
+      "source_ref": "8-K 0001193125-25-242530 · vrrm-ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “(a) the Borrowers have requested that the Lenders extend credit in the form of Revolving Loans in an aggregate principal amount at any time outstanding not to exceed $150,000,000, (b) the Borrowers have requested that the Issuing Bank issue Letters of Credit in an aggregate stated amount at any time outstanding not to exceed $35,000,000 and (c) the Borrowers have requested that the Swingline Lender extend credit in the form of Swingline Loans in an aggregate principal amount at any time outstanding not to exceed $15,000,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Base Rate Loans: Base Rate plus Applicable Margin; Term SOFR Rate Loans: Term SOFR Rate plus Applicable Margin; Alternative Currency Term Rate Loans: Alternative Currency Term Rate plus Applicable Margin",
+      "source_ref": "8-K 0001193125-25-242530 · vrrm-ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “the Loans comprising each Borrowing of Term SOFR Rate Loans shall bear interest at a rate per annum equal to the Term SOFR Rate for the Interest Period in effect for such Borrowing plus the Applicable Margin in effect from time to time.”"
+     },
+     "base_rate_label": "Term SOFR Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states 2025, which the model's quote does not — 8-K 0001193125-25-242530 · vrrm-ex10_1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Springing financial covenant: Consolidated Fixed Charge Coverage Ratio of at least 1.0 to 1.0, triggered when Availability is less than the greater of (a) 10.0% of the Aggregate Commitments and (b) $15,000,000",
+      "source_ref": "8-K 0001193125-25-242530 · vrrm-ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “Lead Borrower and the Restricted Subsidiaries shall, on any date when Availability is less than the greater of (a) 10.0% of the Aggregate Commitments, and (b) $15,000,000 ... have a Consolidated Fixed Charge Coverage Ratio of at least 1.0 to 1.0, tested for the four fiscal quarter period ending on the last day of the most recently ended fiscal quarter ... until the date on which Availability has exceeded the greater of (a) 10.0% of the Aggregate Commitments, and (b) $15,000,000 ... for 30 consecutive days.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Secured by Collateral (U.S. Collateral and Canadian Collateral, excluding Real Property and Excluded Collateral) pursuant to Security Documents; Guaranteed by Holdings, each Borrower and each Subsidiary Guarantor pursuant to the Guaranty Agreement; Bank of America, N.A. as Collateral Agent; subject to Intercreditor Agreement with First Lien Term Loan",
+      "source_ref": "8-K 0001193125-25-242530 · vrrm-ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “On the Closing Date, each U.S. Credit Party shall have executed and delivered the Initial U.S. Security Agreement substantially in the form of Exhibit G covering all of such U.S. Credit Party’s present and future Collateral referred to therein ... On the Closing Date, each U.S. Guarantor shall have executed and delivered the Guaranty Agreement substantially in the form of Exhibit H”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states $75,000,000, which the model's quote does not — 8-K 0001193125-25-242530 · vrrm-ex10_1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001564590-21-015880 · vrrm-ex101_62.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$650,000,000",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: “the Lead Borrower has requested that on the First Restatement Effective Date, (i) the Initial Term Loan Lenders (including the Refinancing Term Loan Lenders and the Rollover Initial Term Lenders) make the Initial Term Loans in the aggregate principal amount of $650,000,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "in the case of Initial Term Loans maintained as (a) Base Rate Term Loans, 2.25% and (b) LIBO Rate Term Loans, 3.25%",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: ““ Applicable Margin ” shall mean a percentage per annum equal to,  in the case of Initial Term Loans maintained as (a) Base Rate Term Loans, 2.25% and (b) LIBO Rate Term Loans, 3.25%.”"
+     },
+     "base_rate_label": "LIBO Rate",
+     "margin_pct": 3.25,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true,
+     "component_quotes": {
+      "floor_pct": "Notwithstanding any of the foregoing, the LIBO Rate shall not at any time be less than 0.00% per annum ."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the date that is seven years after the First Restatement Effective Date, or if such date is not a Business Day, the next preceding Business Day",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: ““ Initial Maturity Date for Initial Term Loans ” shall mean the date that is seven years after the First Restatement Effective Date, or if such date is not a Business Day, the next preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001564590-21-015880 · vrrm-ex101_62.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the model's quote is not in 8-K 0001564590-21-015880 · vrrm-ex101_62.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory Repayments (Section 5.02) including Net Debt Proceeds (100%), Asset Sale/Recovery Event (Applicable Asset Sale/Recovery Event Prepayment Percentage), and Excess Cash Flow (Applicable ECF Prepayment Percentage); Events of Default enumerated in Section 11 (11.01 Payments through 11.10 Change of Control)",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: “Section 5. Prepayments; Payments; Taxes . ... 5.02 Mandatory Repayments . (a) In addition to any other mandatory repayments pursuant to this Section 5.02 ... Section 11. Events of Default . Upon the occurrence of any of the following specified events (each, an “Event of Default”): 11.01 Payments ... 11.10 Change of Control . A Change of Control shall occur”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Scheduled amortization",
+     "value": {
+      "value": "on the last Business Day of each March, June, September and December, commencing with June 30, 2021, an aggregate principal amount equal to $1,625,000",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: “the Borrowers shall be required to repay to the Administrative Agent for the ratable account of the Lenders (i) on the last Business Day of each March, June, September and December,  commencing with June 30, 2021, an aggregate principal amount equal to $1,625,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Default interest",
+     "value": {
+      "value": "2.00% per annum in excess of the Applicable Margin plus the Base Rate / LIBO Rate (as applicable)",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: “Upon the occurrence and during the continuance of any Event of Default under Section 11.01 or 11.05 (x) overdue principal and, to the extent permitted by law, overdue interest in respect of each Term Loan shall bear interest at a rate per annum equal to (i) for Base Rate Term Loans and associated interest, 2.00% per annum in excess of the Applicable Margin for Base Rate Term Loans plus the Base Rate, (ii) for LIBO Rate Term Loans and associated interest, 2.00% per annum in excess of the Applicable Margin for LIBO Rate Term Loans plus the LIBO Rate”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Prepayment premium / repricing fee",
+     "value": {
+      "value": "1.00% of the aggregate principal amount of Initial Term Loans prepaid/converted or subject to effective reduction, for a Repricing Transaction consummated prior to the date that is six months after the First Restatement Effective Date",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: “At the time of the effectiveness of any Repricing Transaction that is consummated prior to the date that is six (6) months after the First Restatement Effective Date, the Borrowers agree, jointly and severally, to pay to the Administrative Agent, for the ratable account of each Lender with outstanding Initial Term Loans that are repaid or prepaid (and/or converted) pursuant to such Repricing Transaction ... a fee in an amount equal to 1.00%”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Unsecured Notes",
+     "value": {
+      "value": "$350,000,000 aggregate principal amount of 5.50% senior notes due 2029",
+      "source_ref": "8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
+      "status": "present",
+      "note": "verbatim: ““ Unsecured Notes Indenture ” shall mean that certain Indenture, dated as of March 26, 2021 ... pursuant to which $350,000,000 aggregate principal amount of 5.50% senior notes due 2029 were issued.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "FIRST LIEN TERM LOAN CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": null,
+  "panel_vintage": {
+   "value": "the debt schedule is 234d old (source filed 2026-02-24); no Item 1.02 (termination of a material agreement) has been filed since",
+   "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-24-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-02-24",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001193125-26-335490",
+     "filed": "2026-08-05",
+     "read_as": "the latest periodic report",
+     "statements": 8,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-25-242530",
+     "filed": "2025-10-17",
+     "read_as": "an 8-K the page links",
+     "statements": 6,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0000950170-25-072679",
+     "filed": "2025-05-15",
+     "read_as": "an 8-K the page links",
+     "statements": 1,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001564590-21-015880",
+     "filed": "2021-03-29",
+     "read_as": "an 8-K the page links",
+     "statements": 3,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001104659-18-041476",
+     "filed": "2018-06-21",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '2021 Term Loan Due 2028' · checked against the 10-Q 0001193125-26-335490 (filed 2026-08-05)",
+     "instrument": 0,
+     "description": "2021 Term Loan Due 2028",
+     "ciq_maturity_date": "2028-03-24",
+     "check": "differ",
+     "filing_maturity": "2032-10-15",
+     "source": "10-Q 0001193125-26-335490 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": true,
+     "also_stated_by": [
+      "8-K 0001193125-25-242530 (filed 2025-10-17)"
+     ],
+     "quote": "refinance the existing senior secured term loans in an aggregate outstanding principal amount of approximately $ 688.8 million with a new senior secured term loan of the same principal amount maturing on October 15, 2032",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Operating Lease' · not checked against a filing",
+     "instrument": 1,
+     "description": "Operating Lease",
+     "ciq_maturity_date": "2037-01-01",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Revolving Credit Facility' · checked against the 10-Q 0001193125-26-335490 (filed 2026-08-05)",
+     "instrument": 2,
+     "description": "Revolving Credit Facility",
+     "ciq_maturity_date": "2030-10-17",
+     "check": "agree",
+     "filing_maturity": "2030-10-17",
+     "source": "10-Q 0001193125-26-335490 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [
+      "8-K 0001193125-25-242530 (filed 2025-10-17)"
+     ],
+     "quote": "secured asset-based revolving credit facility with a $ 35.0 million sublimit for the issuance of letters of credit, and matures on October 17, 2030",
+     "springing": [
+      {
+       "clause": "subject to an earlier maturity date in certain circumstances",
+       "springs_to": null,
+       "source": "10-Q 0001193125-26-335490 (filed 2026-08-05)"
+      },
+      {
+       "clause": "subject to an earlier maturity date of 91 days prior to the April 15, 2029 maturity date of VM Consolidated’s $350 million 5.50% Senior Notes due 2029 in the event that such senior notes remain outstanding as of such earlier maturity date",
+       "springs_to": "2029-01-14",
+       "source": "8-K 0001193125-25-242530 (filed 2025-10-17)"
+      }
+     ],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Senior Notes Due 2029' · checked against the 8-K 0001193125-25-242530 (filed 2025-10-17)",
+     "instrument": 3,
+     "description": "Senior Notes Due 2029",
+     "ciq_maturity_date": "2029-04-15",
+     "check": "agree",
+     "filing_maturity": "2029-04-15",
+     "source": "8-K 0001193125-25-242530 (filed 2025-10-17)",
+     "source_filed": "2025-10-17",
+     "governs": false,
+     "also_stated_by": [
+      "8-K 0001564590-21-015880 (filed 2021-03-29)"
+     ],
+     "quote": "April 15, 2029 maturity date of VM Consolidated’s $350 million 5.50% Senior Notes",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    }
+   ]
+  }
+ },
+ "texts": {
+  "0001193125-25-242530 · vrrm-ex10_1.htm": "EX-10.1 2 vrrm-ex10_1.htm EX-10.1 EX-10.1 Exhibit 10.1 Execution Version AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT among GREENLIGHT ACQUISITION CORPORATION, as HOLDINGS, VM CONSOLIDATED, INC. as LEAD BORROWER, the other Parties listed as a Borrower on the signature pages hereto, as BORROWERS, VARIOUS LENDERS and BANK OF AMERICA, N.A., as ADMINISTRATIVE AGENT, COLLATERAL AGENT, ISSUING BANK AND SWINGLINE LENDER _______________________________________ Dated as of October 17, 2025 BANK OF AME … that certain Revolving Credit Agreement, dated as of the Original Closing Date (as amended, restated, amended and restated, supplemented or otherwise modified prior to the Closing Date, the “ Original ABL Credit Agreement ” … parties to the Original ABL Credit Agreement have agreed to amend and restate the Original ABL Credit Agreement … “ Original Closing Date ” shall mean March 1, 2018",
+  "0001564590-21-015880 · vrrm-ex101_62.htm": "EX-10.1 3 vrrm-ex101_62.htm EX-10.1 vrrm-ex101_62.htm Exhibit 10.1 Execution Version AMENDMENT AND RESTATEMENT AGREEMENT NO. 1 This AMENDMENT AND RESTATEMENT AGREEMENT NO. 1 (this “ Restatement ”) dated as of March 26, 2021 to the First Lien Term Loan Credit Agreement dated as of March 1, 2018 (as a",
+  "0001104659-18-041476 · a18-15692_1ex10d1.htm": "EX-10.1 3 a18-15692_1ex10d1.htm EX-10.1 Exhibit 10.1 GORES II SUBSCRIPTION AGREEMENT This SUBSCRIPTION AGREEMENT is entered into this           day of June, 2018 (this “ Subscription Agreement ”), by and between Gores Holdings II, Inc., a Delaware corporation (the “ Company ”), and the undersigned (",
+  "0000950170-25-072679 · vrrm-ex10_1.htm": "EX-10.1 2 vrrm-ex10_1.htm EX-10.1 EX-10.1 Exhibit 10.1 Amendment No. 4 to REVOLVING CREDIT Agreement This AMENDMENT NO. 4 (this “ Amendment ”), dated as of May 15, 2025, to  Revolving Credit Agreement, dated as of March 1, 2018 (as amended, restated, amended and restated, supplemented or otherwise m",
+  "0001193125-25-242530 · vrrm-ex10_2.htm": "EX-10.2 3 vrrm-ex10_2.htm EX-10.2 EX-10.2 Exhibit 10.2 Execution Version Amendment AND RESTATEMENT AGREEMENT NO. 2 This AMENDMENT AND RESTATEMENT AGREEMENT NO. 2 (this “ Restatement ”) dated as of October 17, 2025 to the Amended and Restated First Lien Term Loan Credit Agreement dated as of March 26, 2021 (as amended by that certain Amendment No. 1, dated as of December 7, 2021, as amended by that certain Amendment No. 2, dated as of March 29, 2023, as amended by that certain Amendment No. 3, dated as of February 8, 2024, as amended by that certain Amendment No. 4, dated as of October 3, 2024 and as further amended, restated, amended and restated, supplemented or otherwise modified prior to the Second Restatement Effective Date (as defined below), the “ Existing Credit Agreement ”), among GREENLIGHT ACQUISITION CORPORATION (“ Holdings ”), VM CONSOLIDATED, INC. (the “ Lead Borrower ”), AMERICAN TRAFFIC SOLUTIONS, INC., a Kansas corporation (“ AT Solutions ”), and LASERCRAFT, INC., a Georgia corporation (together with the Lead Borrower and AT Solutions, the “ Borrowers ”), the lenders party thereto from time to time and BANK OF AMERICA, N.A., as the Administrative Agent (the “ Administrative Agent ”) and as Collateral Agent, is entered into by and among Holdings, the Borrowers, the Subsidiary Guarantors, the Administrative Agent and the Additional Refinancing Term Loan Lenders party hereto. WHEREAS, the Existing Credit Agreement",
+  "0001104659-18-041476 · a18-15692_1ex10d2.htm": "EX-10.2 4 a18-15692_1ex10d2.htm EX-10.2 Exhibit 10.2 TAX RECEIVABLE AGREEMENT by and among VERRA MOBILITY CORPORATION, THE STOCKHOLDERS IDENTIFIED HEREIN, and PE GREENLIGHT HOLDINGS, LLC, IN ITS CAPACITY AS THE STOCKHOLDER REPRESENTATIVE Dated as of [ · ], 2018 TABLE OF CONTENTS Page ARTICLE I.   DE"
+ }
+}
