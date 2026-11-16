@@ -1740,12 +1740,14 @@ class CovenantTerm(BaseModel):
 #: `covenant_extract.extract_covenant_terms`, which writes it where that branch writes its flag.
 CovenantExhibitOutcomeKind = Literal[
     "extracted",           # sent to the model, and it returned at least one term row
-    "cost_bound",          # not fetched: the page's extraction cap was already spent
+    "cost_bound",          # not sent: past the runaway guard on exhibits per page, which flags
     "fetch_failed",        # the exhibit could not be fetched or parsed
     "not_debt_agreement",  # E5 read its heading and refused it: not a debt contract
     "too_large",           # a debt contract over the single-pass size limit: extract by hand
     "llm_error",           # sent to the model, and the call failed
     "no_terms_returned",   # sent to the model, and it returned no term rows
+    "superseded",          # not sent: a later located exhibit restates or replaces its agreement
+    "terminated",          # not sent: its notes matured before the page's date (coverage rule)
 ]
 
 
@@ -1759,11 +1761,29 @@ class CovenantExhibitOutcome(BaseModel):
     filename: str  # the exhibit the loop targeted for this pointer
     family: str  # the pointer's instrument family: the SEARCH's guess, which E5 checks
     outcome: CovenantExhibitOutcomeKind
-    #: The heading E5 read (`agreement_title`) — None where the exhibit was never read (cost
-    #: bound, fetch failed) or its head declares no agreement at all.
+    #: The heading E5 read (`agreement_title`) — None where the exhibit could not be read (fetch
+    #: failed) or no agreement title was read from its head.
     declared_title: str | None = None
+    #: (coverage rule, 2026-11-16) For `superseded`: the later located exhibit that restates or
+    #: replaces the agreement this one is or amends, "<accession> · <filename>". None otherwise.
+    superseded_by: str | None = None
+    #: (coverage rule) Why a `superseded` or `terminated` exhibit was not sent: the later
+    #: exhibit's own words, verbatim in quotes, and the agreement they name; or the maturity the
+    #: title states against the page's reference date. Display only: no parser reads it.
+    evidence: str | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _omit_unset_evidence(self, nxt: Any) -> Any:
+        """Drop the coverage rule's two fields when unset, so an outcome the rule did not decide
+        dumps exactly as it did before the fields existed (the frozen fixtures compare bytes)."""
+        d = nxt(self)
+        if self.superseded_by is None:
+            d.pop("superseded_by", None)
+        if self.evidence is None:
+            d.pop("evidence", None)
+        return d
 
 
 class SpringingMaturity(BaseModel):

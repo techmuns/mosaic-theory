@@ -25,10 +25,12 @@ from __future__ import annotations
 
 import math
 import re
+from datetime import date
 from decimal import Decimal
-from typing import Any, NamedTuple
+from typing import Any, Literal, NamedTuple
 
 from vinci.dossier.schemas import (
+    CapitalInstrument,
     CapitalStructure,
     CovenantExhibitOutcome,
     CovenantExhibitOutcomeKind,
@@ -72,10 +74,20 @@ VALUE_REFUSED_NOTE_PREFIX = f"{REFUSED_NOTE_PREFIX} the value states"
 # prompt, the tool schema and a 16K-token answer. The largest exhibit seen is 745K chars, so
 # this clears it by 60% and stays far from the wall. Exceeding it still FLAGS, never truncates.
 _MAX_EXHIBIT_CHARS = 1_200_000
-# (P4) at most this many exhibits extracted per capital structure (depth-stage cost bound). Raised
-# 2→4 so every DISTINCT live-wall instrument family's primary exhibit extracts (round-robin), room
-# for one amendment — MVST needs the convertible original + the syndicated facility + the amendment.
-_MAX_EXHIBITS = 4
+# A RUNAWAY GUARD, NOT A SELECTOR (coverage rule, STATE row 63, 2026-11-16; operator: "Order now,
+# coverage next (Recommended)"). Until then this was 4 and it CHOSE the exhibits: the first four
+# debt contracts the round-robin reached were sent, so a page spent slots on documents that govern
+# nothing (VRRM's revolver amendment, which its own amended-and-restated revolver replaced) and
+# dropped live ones past them (AMZN's June 2026 term loan agreement). Now every debt contract the
+# coverage rule (`_coverage`) does not find superseded or terminated is sent, and this only stops a
+# runaway: a page with more live contracts than this sends the first ones in the loop's order and
+# flags the rest loudly, as `cost_bound`.
+# WHY 10. The busiest committed page sends 6 under the rule (BURL: its ABL agreement's four
+# amendments, its term loan's 2014 amendment and a 2020 security agreement; 26 pages, main
+# 51784e53, cache-only). The locator can return at most 13 targets per page: one 10-K row and two
+# 8-Ks for each of the six families it searches (`mechanical._COVENANT_QUERY_CAP`). At the $0.69
+# mean list price of a covenant call (107 calls in the committed run lines), 10 calls are about $7.
+_MAX_EXHIBITS = 10
 # the agreement documents worth extracting from — the loan/credit/security/indenture agreement (and
 # a convertible's warrant), NOT the ancillary guaranty/pledge (which restate terms defined in the
 # core agreement). Matched on the exhibit filename.
@@ -863,6 +875,263 @@ def is_debt_agreement(title: str | None) -> bool:
     return bool(_DEBT.search(title)) and not _NOT_DEBT.search(title)
 
 
+# --- the coverage rule (STATE row 63, 2026-11-16): which located debt contracts still govern ------
+#
+# A credit analyst reads every document that governs debt still outstanding: each live instrument's
+# governing agreement and its amendment chain. They skip a document a later one displaced, and one
+# whose debt has ended. Everything here is read from the DOCUMENTS' OWN WORDS, deterministically:
+# - an exhibit's IDENTITY, the agreement it is (its title and its own date) and, for an amendment,
+#   the agreement it amends ("to Revolving Credit Agreement, dated as of March 1, 2018");
+# - what a later exhibit DISPLACES: an agreement it names by title and date and binds to a defined
+#   term ("that certain Revolving Credit Agreement, dated as of the Original Closing Date (... the
+#   “Original ABL Credit Agreement”)"), and then amends and restates, substitutes for, supersedes,
+#   or states terminated ("the 2025 Credit Agreement has been, or concurrently ... will be,
+#   terminated").
+# An exhibit is SUPERSEDED when a located exhibit filed strictly later displaces the agreement it is
+# or amends. Its notes are TERMINATED when its title states a maturity year before the page's
+# reference date and the CIQ panel carries no instrument maturing that year. Anything else is
+# READ, however old: a dead document the words cannot show dead costs a call, while a live one
+# skipped would cost the page its terms.
+
+#: A date as an agreement states it.
+_REF_DATE = rf"{_MON}\s+\d{{1,2}}(?:st|nd|rd|th)?\s*,\s*(?:19|20)\d\d"
+#: A word of an agreement's name in a recital or a definition: capitalised, a number ("364-Day",
+#: "2025"), or the small words a name carries.
+_REF_WORD = r"(?:[A-Z][\w'&\.\-]*|\d[\w\-]*|of|and|the)"
+#: "<Name> Agreement, dated as of <date>" — the date may be a defined one ("the Original Closing
+#: Date"), resolved by its own definition. A parenthetical between the two is skipped, except the
+#: document's own ("(this “Amendment”)"), which dates the document itself, not what it names.
+_REF_NAME = rf"(?P<name>(?:{_REF_WORD}\s+){{0,9}}?(?:Agreement|AGREEMENT|Indenture|INDENTURE))"
+_REF_WHEN = (rf"dated\s+as\s+of\s+"
+             rf"(?P<when>{_REF_DATE}|the\s+(?:[A-Z][\w\-]*\s+){{0,4}}Date)")
+_NOT_OWN_PAREN = r"\((?!\s*this\b)"
+_AGREEMENT_REF = rf"{_REF_NAME}\s*,?\s*(?:{_NOT_OWN_PAREN}[^()]{{0,200}}\)\s*,?\s*)?{_REF_WHEN}"
+#: A defined term that names an AGREEMENT ("Existing Credit Agreement", "2025 Credit Agreement",
+#: "Original ABL Credit Agreement"). Only such a term is bound: a recital's next quoted term may be
+#: a party ("the “Administrative Agent”"), and nothing it says displaces an agreement.
+_AGREEMENT_TERM = r"[“\"]\s*(?P<term>[A-Z0-9][^”\"]{0,60}?(?:Agreements?|Indenture))\s*[”\"]"
+#: A recital: "party to that certain <agreement>, dated as of <date> (… the “<term>”)", or with
+#: the term inside a parenthetical before the date (CNXC's 2021 amendment: "that certain Credit
+#: Agreement (as amended, … the “Existing Credit Agreement”), dated as of October 16, 2020").
+_BIND_RECITAL = re.compile(
+    rf"\b(?:that\s+certain|the)\s+{_AGREEMENT_REF}[^“”\"]{{0,240}}?{_AGREEMENT_TERM}")
+_BIND_RECITAL_PAREN = re.compile(
+    rf"\b(?:that\s+certain|the)\s+{_REF_NAME}\s*{_NOT_OWN_PAREN}[^()]{{0,200}}?{_AGREEMENT_TERM}"
+    rf"[^()]{{0,120}}\)\s*,?\s*{_REF_WHEN}")
+#: A definition: "“<term>” means [, collectively, (x)] that certain <agreement>, dated as of
+#: <date>"; a collective one's "(y) that certain <agreement>" follows within `_DEFN_SPAN` chars.
+_BIND_DEFINITION = re.compile(
+    rf"{_AGREEMENT_TERM}\s*(?:means|shall\s+mean)\s*,?\s*(?:collectively\s*,?\s*)?(?:\(x\)\s*)?"
+    rf"(?:that\s+certain\s+|the\s+)?{_AGREEMENT_REF}")
+_BIND_SECOND = re.compile(rf"\(y\)\s*(?:that\s+certain\s+|the\s+)?{_AGREEMENT_REF}")
+_DEFN_SPAN = 600
+#: A term defined as two others: "“Existing Credit Agreements” means the Existing 3-Year Credit
+#: Agreement and the Existing 364-Day Credit Agreement" (AMZN's 2023 five-year agreement).
+_BIND_PAIR = re.compile(
+    rf"{_AGREEMENT_TERM}\s*(?:means|shall\s+mean)\s*,?\s*(?:collectively\s*,?\s*)?the\s+"
+    rf"(?P<a>[A-Z][^.;“”\"]{{3,60}}?)\s+and\s+the\s+(?P<b>[A-Z][^.;,“”\"]{{3,60}}?)\s*[.;]")
+#: What the later document DOES to the bound agreement — the whole of it. Each was read on a
+#: committed page's exhibit: amend and restate (VRRM, AMZN, EPAM, WLK, TJX), "an amendment and
+#: restatement of" (AMZN 2020), "substituted for" (AMZN 2020), "provisions of … shall be superseded"
+#: (CNXC), "has been … terminated" (NKE), "shall be terminated" (V), "commitments thereunder shall
+#: have been terminated" (AMZN 2023), "evidence of termination of the" (TJX, a condition precedent;
+#: a bare "termination of the" is also a conditional, "upon termination of the Credit Agreement").
+#: "{t}" is the bound term. Over the 92 cached documents the gate passes, these read 29 displaced
+#: agreements in 24 documents, each a whole-agreement restatement or termination by hand read.
+_DISPLACING_VERBS: tuple[str, ...] = (
+    r"\bamend(?:s|ed|ing)?\s+and\s+restate(?:s|d|ing)?\s+(?:in\s+(?:its|their)\s+entirety\s+)?"
+    r"(?:the\s+)?{t}",
+    r"\ban\s+amendment\s+and\s+restatement\s+of\s+the\s+{t}",
+    r"\bsubstituted\s+for\s+(?:\([^)]{0,60}\)\s+)?(?:the\s+)?{t}",
+    r"\bprovisions\s+of\s+the\s+{t}\s+shall\s+be\s+superseded",
+    r"\bthe\s+{t}\s+(?:has|have)\s+been\s*,?\s+(?:or\s+[^.;]{0,80}?\s+will\s+be\s*,?\s+)?"
+    r"terminated",
+    r"\bthe\s+{t}\s+shall\s+(?:have\s+been|be)\s+terminated",
+    r"\bunder\s+the\s+{t}\s+shall\s+have\s+been\s+paid\s+in\s+full\s+and\s+(?:all\s+)?(?:the\s+)?"
+    r"commitments\s+thereunder\s+shall\s+have\s+been\s+terminated",
+    r"\bcommitments\s+under\s+the\s+{t}\s+(?:shall\s+have\s+been|have\s+been|are\s+hereby|"
+    r"will\s+be)\s+terminated",
+    r"\bevidence\s+of\s+(?:the\s+)?termination\s+of\s+the\s+{t}",
+)
+#: A PART of the agreement, not the agreement: "Section 1.01 of the Existing Credit Agreement is
+#: hereby amended and restated" (BRBR's Amendment No. 2), "Exhibit A-1 to the Existing 2016 Loan
+#: Agreement is hereby amended and restated" (UBER). Read in the characters before the verb: a part
+#: word, its reference as written ("2.5.12", "1.01(a)", "A-1", dotted, so no sentence rule may cut
+#: it), then "of", "to", "in" or "under".
+_A_PART_OF = re.compile(
+    r"\b(?:Sections?|Articles?|Exhibits?|Schedules?|Annex(?:es)?|clauses?|paragraphs?)\s+"
+    r"[\w.()\-]+(?:\s*(?:,|and|or|through)\s*[\w.()\-]+)*\s+(?:of|to|in|under)\s+$", re.I)
+#: What an amendment amends: in its heading ("to Revolving Credit Agreement, dated as of March 1,
+#: 2018") or else the FIRST agreement its recital names ("party to that certain …", "pursuant to
+#: the Credit Agreement (…) dated as of February 11, 2022" (NCNO), "reference is hereby made to the
+#: (a) Credit Agreement, dated as of July 7, 2017" (SMPL), whose recital later names the acquired
+#: company's March 25, 2015 credit agreement, repaid).
+_AMENDS_HEADING = re.compile(rf"\b(?:to|of)\s+(?:the\s+|that\s+certain\s+)?{_AGREEMENT_REF}")
+_AMENDS_RECITAL = re.compile(
+    rf"\b(?:that\s+certain|to\s+the)\s+(?:\([a-z]\)\s+)?{_AGREEMENT_REF}")
+#: An agreement's own date in its head: "dated as of March 7, 2025", "entered into as of …".
+_OWN_DATE = re.compile(rf"\b(?:dated|entered\s+into|made(?:\s+and\s+entered\s+into)?)\s*,?\s+"
+                       rf"(?:as\s+of\s+|on\s+)?(?:the\s+)?({_REF_DATE})", re.I)
+#: "AMENDED AND RESTATED" (with its ordinal) is a version of an agreement, not another agreement:
+#: CNXC's 2025 restatement names its predecessor "Amended and Restated Credit Agreement, dated as
+#: of April 21, 2023", which E5 titles CREDIT AGREEMENT.
+_RESTATED_WORDS = re.compile(r"\b(?:(?:FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH)\s+)?AMENDED\s+AND\s+"
+                             r"RESTATED\s+")
+#: A title that states its notes' maturity: "SENIOR NOTES DUE 2024 PURCHASE AGREEMENT".
+_NOTES_DUE = re.compile(r"\bNOTES\s+DUE\s+((?:19|20)\d\d)\b")
+#: The head an identity is read from, and the longest verbatim clause kept as evidence.
+_IDENTITY_HEAD = 6000
+_EVIDENCE_CAP = 240
+
+
+class AgreementKey(NamedTuple):
+    """One agreement as documents name it: its name without the restatement words, upper-cased,
+    and the date it is dated as of."""
+
+    name: str
+    dated: date
+
+
+class Displaced(NamedTuple):
+    """An agreement a document displaces, and the document's own words that say so."""
+
+    key: AgreementKey
+    words: str  # verbatim, single-spaced, ≤ `_EVIDENCE_CAP`
+
+
+def _agreement_name(name: str) -> str:
+    t = re.sub(r"\s+", " ", name).strip().upper()
+    t = re.sub(r"^(?:THE|THAT CERTAIN|A)\s+", "", t)
+    return _RESTATED_WORDS.sub("", t).strip()
+
+
+def _ref_date(when: str, flat: str) -> date | None:
+    """A reference's date: a date as written, or a defined one ("the Original Closing Date")
+    resolved by its own definition in the same document ("“Original Closing Date” shall mean
+    March 1, 2018"). None when neither reads."""
+    got = _dates(when)
+    if not got:
+        name = re.sub(r"^the\s+", "", when.strip())
+        m = re.search(rf"[“\"]\s*{re.escape(name)}\s*[”\"]\s+(?:means|shall\s+mean)\s+(?:the\s+)?"
+                      rf"({_REF_DATE})", flat)
+        got = _dates(m.group(1)) if m else []
+    if not got:
+        return None
+    (y, mo, d), *_ = got[0]
+    try:
+        return date(y, mo, d)
+    except ValueError:
+        return None
+
+
+def _key(name: str, when: str, flat: str) -> AgreementKey | None:
+    dated = _ref_date(when, flat)
+    return AgreementKey(_agreement_name(name), dated) if dated is not None else None
+
+
+def _flat_head(text: str) -> str:
+    h = re.sub(r"\s+", " ", text[:_IDENTITY_HEAD * 2])
+    return re.sub(r"\s+", " ", _BOILER.sub(" ", _DOC_HDR.sub("", h))).strip()[:_IDENTITY_HEAD]
+
+
+def exhibit_identity(text: str, title: str,
+                     amendment: bool) -> tuple[AgreementKey | None, AgreementKey | None]:
+    """``(own, base)``: the agreement the exhibit is (its title and its own date) and, for an
+    amendment, the agreement it amends — named in its heading ("to Revolving Credit Agreement,
+    dated as of March 1, 2018") or, failing that, its recital's first "that certain <agreement>,
+    dated as of <date>". Either is None where its words do not read."""
+    flat = re.sub(r"\s+", " ", text)
+    head = _flat_head(text)
+    own_m = _OWN_DATE.search(head)
+    own = _key(title, own_m.group(1), flat) if own_m else None
+    base = None
+    if amendment:
+        # The heading's "AMENDMENT TO <agreement> dated as of <date>" may date the AMENDMENT
+        # ("FIRST AMENDMENT TO CREDIT AGREEMENT AND JOINDER AGREEMENT dated as of December 27,
+        # 2021", CNXC): a base dated as the exhibit itself is not its base, and the recital is
+        # read instead.
+        for rx in (_AMENDS_HEADING, _AMENDS_RECITAL):
+            m = rx.search(head)
+            key = _key(m.group("name"), m.group("when"), flat) if m is not None else None
+            if key is not None and (own is None or key.dated != own.dated):
+                base = key
+                break
+    return own, base
+
+
+def displaced_agreements(text: str) -> list[Displaced]:
+    """Every agreement the exhibit says it restates, replaces or terminates WHOLE: a defined term
+    bound to "<agreement>, dated as of <date>" by a recital or a definition, and a displacing verb
+    on that term (`_DISPLACING_VERBS`) that is not about a part of it (`_A_PART_OF`). In document
+    order, one entry per (term, agreement)."""
+    flat = re.sub(r"\s+", " ", text)
+    binds: dict[str, list[AgreementKey]] = {}
+
+    def bind(term: str, key: AgreementKey | None) -> None:
+        if key is not None and key not in binds.setdefault(term, []):
+            binds[term].append(key)
+
+    for rx in (_BIND_RECITAL_PAREN, _BIND_RECITAL):
+        for m in rx.finditer(flat):
+            bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
+    for m in _BIND_DEFINITION.finditer(flat):
+        bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
+        y = _BIND_SECOND.search(flat, m.end(), m.end() + _DEFN_SPAN)
+        if y is not None:
+            bind(m.group("term"), _key(y.group("name"), y.group("when"), flat))
+    for m in _BIND_PAIR.finditer(flat):
+        a, b = binds.get(m.group("a").strip(), []), binds.get(m.group("b").strip(), [])
+        if a and b:
+            for k in a + b:
+                bind(m.group("term"), k)
+    out: list[Displaced] = []
+    for term, keys in binds.items():
+        words = _displacing_words(flat, term)
+        if words is not None:
+            out.extend(Displaced(k, words) for k in keys)
+    return out
+
+
+def _displacing_words(flat: str, term: str) -> str | None:
+    """The first clause in which the document displaces ``term`` whole, verbatim, or None."""
+    t = re.escape(term) + r"\b(?![’']s\b)"
+    for tpl in _DISPLACING_VERBS:
+        for m in re.finditer(tpl.replace("{t}", t), flat):
+            if _A_PART_OF.search(flat[max(0, m.start() - 60):m.start()]):
+                continue
+            words = m.group(0).strip()
+            return words if len(words) <= _EVIDENCE_CAP else words[:_EVIDENCE_CAP - 1] + "…"
+    return None
+
+
+def _same_agreement(a: AgreementKey | None, b: AgreementKey | None) -> bool:
+    """One agreement under two namings: the same date, and the same name, or one name the other's
+    tail ("CREDIT AGREEMENT" and EPAM's cover title "REVOLVING CREDIT FACILITY CREDIT
+    AGREEMENT")."""
+    if a is None or b is None or a.dated != b.dated:
+        return False
+    x, y = a.name.split(), b.name.split()
+    n = min(len(x), len(y))
+    return n > 0 and x[-n:] == y[-n:]
+
+
+def _matured_notes(title: str, reference: date | None,
+                   instruments: list[CapitalInstrument]) -> str | None:
+    """Why a title's notes have ended, or None: its stated maturity year is before the page's
+    reference year AND the CIQ panel carries no instrument with principal maturing that year
+    (a panel that still carries one is a disagreement, and the exhibit is read)."""
+    m = _NOTES_DUE.search(title)
+    if m is None or reference is None or int(m.group(1)) >= reference.year:
+        return None
+    year = int(m.group(1))
+    if any(i.maturity_date and i.maturity_date[:4] == str(year) and i.principal_musd
+           for i in instruments):
+        return None
+    return (f"its title states notes due {year}, before the page's reference date "
+            f"({reference.isoformat()}), and the CIQ panel carries no instrument maturing in "
+            f"{year}")
+
+
 def _extract_from_exhibit(
     llm: LlmClient, text: str, *, name: str, ticker: str, source_ref: str,
     title: str | None = None, amendment: bool | None = None,
@@ -943,11 +1212,92 @@ def _extract_from_exhibit(
 
 
 def _outcome(row: CovenantPointer, filename: str, kind: CovenantExhibitOutcomeKind,
-             title: str | None = None) -> CovenantExhibitOutcome:
+             title: str | None = None, *, superseded_by: str | None = None,
+             evidence: str | None = None) -> CovenantExhibitOutcome:
     """What the loop did with ``row``'s targeted exhibit; ``title`` is the heading E5 read, None
     where it read none."""
     return CovenantExhibitOutcome(accession=row.accession, filename=filename, family=row.family,
-                                  outcome=kind, declared_title=title)
+                                  outcome=kind, declared_title=title, superseded_by=superseded_by,
+                                  evidence=evidence)
+
+
+class _Candidate(NamedTuple):
+    """A located exhibit E5 identified as a debt contract: where it is, its text, and who it is."""
+
+    i: int  # its index in the targets, and so in the outcomes
+    row: CovenantPointer
+    filename: str
+    src: str
+    text: str
+    title: str
+    own: AgreementKey | None
+    base: AgreementKey | None
+
+
+def _reference_date(cs: CapitalStructure) -> date | None:
+    """The page's reference date, as the maturity check bounded its filings by it; None when the
+    layer carries no check (then no notes are found matured, and every exhibit is read)."""
+    if cs.maturity_check is None:
+        return None
+    try:
+        return date.fromisoformat(cs.maturity_check.bound)
+    except ValueError:
+        return None
+
+
+#: A candidate's verdict: its kind, the exhibit that superseded it, and the evidence.
+_Verdict = tuple[Literal["live", "superseded", "terminated"], str | None, str]
+
+
+def _coverage(candidates: list[_Candidate], reference: date | None,
+              instruments: list[CapitalInstrument]) -> list[_Verdict]:
+    """THE COVERAGE RULE — one ``(kind, superseded_by, evidence)`` per candidate, ``kind`` being
+    ``live``, ``superseded`` or ``terminated``.
+
+    SUPERSEDED: a candidate filed STRICTLY LATER displaces (`displaced_agreements`) the agreement
+    this one is or amends (`exhibit_identity`, `_same_agreement`). The earliest such candidate is
+    cited, with its own words. Two refusals keep a guess out:
+    - a displaced agreement that matches candidates under two different names is AMBIGUOUS, and
+      decides none of them ("Credit Agreement, dated as of March 1, 2018" would fit VRRM's revolver
+      and its term loan, both dated that day);
+    - an empty or tied filing date cannot order two documents (the (X-4) rule of
+      `governing_terms`), so it supersedes nothing.
+    TERMINATED: the title states notes whose maturity year is past, and the CIQ panel carries none
+    maturing then (`_matured_notes`).
+    Anything else is LIVE, and is read — whether the words show it live or show nothing."""
+    displaced = [displaced_agreements(c.text) for c in candidates]
+    keys = [k for c in candidates for k in (c.own, c.base) if k is not None]
+    out: list[_Verdict] = []
+    for x in candidates:
+        verdict: _Verdict = ("live", None, "")
+        later = sorted((j for j, y in enumerate(candidates)
+                        if y is not x and x.row.filing_date and y.row.filing_date
+                        and y.row.filing_date > x.row.filing_date),
+                       key=lambda j: candidates[j].row.filing_date)
+        for j in later:
+            hit = next((d for d in displaced[j]
+                        if (_same_agreement(d.key, x.own) or _same_agreement(d.key, x.base))
+                        and not _ambiguous(d.key, keys)), None)
+            if hit is not None:
+                amends = _same_agreement(hit.key, x.base) and not _same_agreement(hit.key, x.own)
+                y = candidates[j]
+                verdict = ("superseded", f"{y.row.accession} · {y.filename}",
+                           f"“{hit.words}”, which names the {hit.key.name} dated "
+                           f"{hit.key.dated.isoformat()} that this exhibit "
+                           f"{'amends' if amends else 'is'}")
+                break
+        if verdict[0] == "live" and (why := _matured_notes(x.title, reference, instruments)):
+            verdict = ("terminated", None, why)
+        out.append(verdict)
+    return out
+
+
+def _ambiguous(key: AgreementKey, keys: list[AgreementKey]) -> bool:
+    """Does ``key`` match the page's exhibits under two names that are not one agreement's (neither
+    a tail of the other)? Then it identifies none of them."""
+    names = sorted({k.name for k in keys if _same_agreement(key, k)})
+    return any(not _same_agreement(AgreementKey(a, key.dated), AgreementKey(b, key.dated))
+               for i, a in enumerate(names) for b in names[i + 1:])
 
 
 #: The ``source_ref`` of the per-exhibit outcome list: the loop itself, since each outcome names
@@ -972,6 +1322,10 @@ def extract_covenant_terms(
       (STATE row 63), or ``None`` when no exhibit is located. Written beside each branch's flag, so
       a page states the cause from a structured field and never parses the flag.
 
+    WHICH EXHIBITS ARE SENT is the coverage rule's (2026-11-16): every target is read first; every
+    debt contract it does not find superseded or terminated (`_coverage`) is sent, purchase
+    contracts last; and `_MAX_EXHIBITS` stops only a runaway, loudly.
+
     Fail-loud throughout: a fetch/LLM failure degrades a row set to UNKNOWN + a flag, never a blank
     or a fabricated value."""
     pointers = cs.covenant_pointer_rows
@@ -985,17 +1339,15 @@ def extract_covenant_terms(
     rows: list[CovenantTerm] = []
     flags: list[str] = []
     logs: list[str] = []
-    # one slot per target, in its order: a purchase contract decided in the second pass still lands
-    # in its own place, so the outcomes list equals the targets list (STATE row 63)
+    # one slot per target, in its order: every branch below writes its target's slot, so the
+    # outcomes list equals the targets list whatever order the exhibits are sent in (STATE row 63)
     slots: list[CovenantExhibitOutcome | None] = [None] * len(targets)
-    #: purchase contracts that passed the gate, held for the slots the first pass leaves
-    held: list[tuple[int, CovenantPointer, str, str, str, str]] = []
     extracted = 0
 
     def send(i: int, row: CovenantPointer, filename: str, src: str, text: str,
              title: str) -> int:
         """One model call on an identified debt contract, or its refusal for size or an LLM error.
-        Returns the calls it spent against the bound."""
+        Returns the calls it spent against the guard."""
         if len(text) > _MAX_EXHIBIT_CHARS:
             flags.append(
                 f"(E5) covenant exhibit too large for single-pass extraction ({len(text)} chars) — "
@@ -1014,16 +1366,16 @@ def extract_covenant_terms(
         logs.append(f"=== COVENANT EXTRACT: {src} ===\n{log}")
         rows.extend(got)
         flags.extend(refused)
-        # a call that returned no term rows still spent one of the bound's calls, as before; it is
+        # a call that returned no term rows still spent one of the guard's calls, as before; it is
         # not an extraction, and no flag has ever said so
         slots[i] = _outcome(row, filename, "extracted" if got else "no_terms_returned", title)
         return 1
 
+    # 1. READ EVERY TARGET FIRST. Which documents govern is decided across all of them (a later
+    # exhibit's own words say what it displaced), so each is fetched and identified before any is
+    # sent. Fetching is not the cost the guard bounds: the model call is.
+    candidates: list[_Candidate] = []
     for i, (row, filename) in enumerate(targets):
-        if extracted >= _MAX_EXHIBITS:
-            flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename}")
-            slots[i] = _outcome(row, filename, "cost_bound")
-            continue
         src = _source_ref(row, filename)
         text = _fetch_exhibit(http, cik, row.accession, filename)
         if text is None:
@@ -1050,24 +1402,42 @@ def extract_covenant_terms(
             )
             slots[i] = _outcome(row, filename, "not_debt_agreement", title)
             continue
-        if _PURCHASE_CONTRACT.search(title):
-            held.append((i, row, filename, src, text, title))
+        own, base = exhibit_identity(text, title, is_amendment(text))
+        candidates.append(_Candidate(i, row, filename, src, text, title, own, base))
+
+    # 2. THE COVERAGE RULE: skip what a later located exhibit displaced, and notes that matured.
+    reference = _reference_date(cs)
+    instruments = list(cs.instruments.value or [])
+    live: list[_Candidate] = []
+    verdicts = _coverage(candidates, reference, instruments)
+    for c, (kind, by, evidence) in zip(candidates, verdicts, strict=True):
+        if kind == "live":
+            live.append(c)
             continue
-        extracted += send(i, row, filename, src, text, title)
-    # PURCHASE CONTRACTS LAST (operator, 2026-11-16: "Order now, coverage next (Recommended)").
-    # A notes purchase agreement is a debt contract, and the gate passes it, but it is the sale of
-    # notes, not the contract that governs them. NFLX's pointer files its 2018 and 2014 notes
-    # purchase agreements under a bridge-loan family, so in the round-robin they came first and
-    # pushed its December 2025 revolver and its 2019 amendment past the bound (#1088). Each takes
-    # a slot only after every other debt contract the first pass reached has taken one. The
-    # round-robin across families is unchanged, and so is `_MAX_EXHIBITS`.
-    for i, row, filename, src, text, title in held:
+        flags.append(f"(E5) exhibit not sent — {kind}: {c.src}"
+                     + (f"; superseded by {by}" if by else "") + f" — {evidence}")
+        slots[c.i] = _outcome(c.row, c.filename, kind, c.title, superseded_by=by,
+                              evidence=evidence)
+
+    # 3. SEND EVERY LIVE DEBT CONTRACT, in the targets' order, PURCHASE CONTRACTS LAST (operator,
+    # 2026-11-16: "Order now, coverage next (Recommended)"). A notes purchase agreement is a debt
+    # contract, and the gate passes it, but it is the sale of notes, not the contract that governs
+    # them. NFLX's pointer files its 2018 and 2014 notes purchase agreements under a bridge-loan
+    # family, so in the round-robin they came first (#1088). The guard stops only a runaway.
+    ordered = ([c for c in live if not _PURCHASE_CONTRACT.search(c.title)]
+               + [c for c in live if _PURCHASE_CONTRACT.search(c.title)])
+    for c in ordered:
         if extracted >= _MAX_EXHIBITS:
-            flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename} — a "
-                         f"purchase agreement (“{title}”), ranked after every other debt contract")
-            slots[i] = _outcome(row, filename, "cost_bound", title)
+            # LOUD, never quiet: the guard is not how exhibits are chosen, so hitting it means a
+            # page located more live debt contracts than any committed page has
+            flags.append(f"(E5) RUNAWAY GUARD: this page has {len(ordered)} live debt contracts "
+                         f"and the guard is {_MAX_EXHIBITS} calls, so this one is not sent (cost "
+                         f"bound): {c.row.family}·{c.filename}"
+                         + (f" — a purchase agreement (“{c.title}”), ranked after every other "
+                            f"debt contract" if _PURCHASE_CONTRACT.search(c.title) else ""))
+            slots[c.i] = _outcome(c.row, c.filename, "cost_bound", c.title)
             continue
-        extracted += send(i, row, filename, src, text, title)
+        extracted += send(c.i, c.row, c.filename, c.src, c.text, c.title)
     outcomes = [o for o in slots if o is not None]
     if len(outcomes) != len(targets):  # every branch above fills its slot; fail loud if not
         raise RuntimeError(f"E5 wrote {len(outcomes)} outcomes for {len(targets)} targets")

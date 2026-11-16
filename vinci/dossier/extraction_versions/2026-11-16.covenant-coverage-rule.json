@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-16.covenant-coverage-rule",
+  "follows": [
+    "2026-11-16.a-ciq-filing-date-counts-and-skips-are-named",
+    "2026-11-16.title-cased-covenant-headings-are-read"
+  ],
+  "names": "the covenant phase reads every located exhibit before it sends any, and sends every debt contract the coverage rule does not find superseded or terminated, instead of the first four the round-robin reached: an exhibit is superseded when a located exhibit filed later names the agreement it is or amends (by name and date, in a recital or a definition) and amends and restates it, substitutes for it, supersedes it or states it terminated, and it then reads superseded, citing that exhibit and its words; notes whose title states a maturity year before the page's reference date, which the CIQ panel no longer carries, read terminated; anything else is read; an initial purchasers' notes purchase agreement is still sent after every other debt contract; and a guard of 10 calls per page stops only a runaway, flagging each exhibit past it as cost bound (STATE row 63)"
+}

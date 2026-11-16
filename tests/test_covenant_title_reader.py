@@ -321,15 +321,20 @@ def test_a_purchase_agreement_fills_a_slot_only_after_the_credit_agreements() ->
     two notes purchase agreements under a bridge-loan family, so the round-robin reached them first,
     and they took two of the four slots (#1088 as first built). That pushed its December 2025
     revolver and its 2019 amendment past the bound. Ruled: a purchase agreement is admitted, but
-    it takes a slot only after every other debt contract the loop reached. NFLX sends the same four
-    exhibits as at base, and both purchase agreements read cost_bound, under the titles E5 read."""
+    it takes a slot only after every other debt contract the loop reached.
+    MOVED WITH THE COVERAGE RULE (2026-11-16): the cap of four no longer chooses, so both purchase
+    agreements are now sent, and still only after NFLX's four credit agreements, under the titles E5
+    read. (This layer carries no maturity check, so no reference date says the 2014 notes matured;
+    NFLX's page does, in tests/test_covenant_coverage_rule.py.) No flag names them, because none is
+    past the guard."""
     sent, outcomes, flags = _nflx_run()
-    assert sent == NFLX_BASE_FOUR, sent
+    assert sent == [*NFLX_BASE_FOUR, "8-K 0001193125-18-134734 · d567970dex101.htm",
+                    "8-K 0001193125-14-037000 · d671121dex101.htm"], sent
     by = {o.accession: o for o in outcomes}
     assert [(by[a].outcome, by[a].declared_title) for a in NFLX_PAS] == [
-        ("cost_bound", "SENIOR NOTES DUE 2028 PURCHASE AGREEMENT"),
-        ("cost_bound", "SENIOR NOTES DUE 2024 PURCHASE AGREEMENT")]
-    assert sum("ranked after every other debt contract" in f for f in flags) == 2, flags
+        ("no_terms_returned", "SENIOR NOTES DUE 2028 PURCHASE AGREEMENT"),
+        ("no_terms_returned", "SENIOR NOTES DUE 2024 PURCHASE AGREEMENT")]
+    assert not any("ranked after every other debt contract" in f for f in flags), flags
 
 
 def test_a_purchase_agreement_still_reaches_the_model_when_a_slot_is_free() -> None:

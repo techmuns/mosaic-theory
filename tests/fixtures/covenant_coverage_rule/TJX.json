@@ -1,0 +1,1090 @@
+{
+ "ticker": "TJX",
+ "cik": "0000109198",
+ "name": "TJX COMPANIES INC /DE/",
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "1.150% Senior Unsecured Notes, Maturing May 15, 2028",
+     "type": "Bonds and Notes",
+     "principal_musd": 500.0,
+     "coupon": "1.150%",
+     "floating_rate": "NA",
+     "maturity_date": "2028-05-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "1.600% Senior Unsecured Notes, Maturing May 15, 2031",
+     "type": "Bonds and Notes",
+     "principal_musd": 500.0,
+     "coupon": "1.600%",
+     "floating_rate": "NA",
+     "maturity_date": "2031-05-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "2.250% Senior Unsecured Notes, Maturing September 15, 2026",
+     "type": "Bonds and Notes",
+     "principal_musd": 999.0,
+     "coupon": "2.250%",
+     "floating_rate": "NA",
+     "maturity_date": "2026-09-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.875% Senior Unsecured Notes, Maturing April 15, 2030",
+     "type": "Bonds and Notes",
+     "principal_musd": 496.0,
+     "coupon": "3.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2030-04-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "4.500% Senior Unsecured Notes, Maturing April 15, 2050",
+     "type": "Bonds and Notes",
+     "principal_musd": 383.0,
+     "coupon": "4.500%",
+     "floating_rate": "NA",
+     "maturity_date": "2050-04-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease Liabilities",
+     "type": "Capital Lease",
+     "principal_musd": 10620.0,
+     "coupon": "3.900%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "SOFR + 0.875%",
+     "maturity_date": "2029-05-09",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "SOFR + 0.875%",
+     "maturity_date": "2030-05-09",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2026 filed Mar-31-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "senior bonds 2,879.0; leases 11,446.0; total principal 14,325.0; total debt 14,317.0 (3 months Q2 Aug-01-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2026 filed Mar-31-2026",
+  "maturity_filings": {
+   "value": "8-K at maturity 2026-09-15: filed 2026-09-17 [0000109198-26-000051] 5.02 Departure/Election of Directors or Certain Officers — read for resolution",
+   "source_ref": "EDGAR 8-K submissions (±10d of instrument maturities)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointers": {
+   "value": "material contracts (10-K exhibit i [0000109198-26-000008]; Senior Unsecured Revolving Credit  [0001157523-20-000793]; Senior Unsecured Revolving Credit  [0001193125-21-202939]; Senior Unsecured Revolving Credit  [0000109198-20-000015]; Senior Unsecured Revolving Credit  [0000109198-25-000033]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "material contracts (10-K exhibit index)",
+     "filing": "latest 10-K",
+     "filing_date": "2026-03-31",
+     "accession": "0000109198-26-000008",
+     "exhibits": [
+      "tjx-20260131xexhibit1024.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+     "filing": "8-K",
+     "filing_date": "2020-05-21",
+     "accession": "0001157523-20-000793",
+     "exhibits": [
+      "a52222014ex10_1.htm",
+      "a52222014ex10_2.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+     "filing": "8-K",
+     "filing_date": "2021-06-29",
+     "accession": "0001193125-21-202939",
+     "exhibits": [
+      "d169110dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+     "filing": "8-K",
+     "filing_date": "2020-08-11",
+     "accession": "0000109198-20-000015",
+     "exhibits": [
+      "exhibit101364dayrevolv.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+     "filing": "8-K",
+     "filing_date": "2025-05-09",
+     "accession": "0000109198-25-000033",
+     "exhibits": [
+      "exhibit101-firstamendmentt.htm",
+      "exhibit102-secondamendment.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "1.150% Senior Unsecured Notes, Maturing May 15, 2028",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "1.600% Senior Unsecured Notes, Maturing May 15, 2031",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "2.250% Senior Unsecured Notes, Maturing September 15, 2026",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "3.875% Senior Unsecured Notes, Maturing April 15, 2030",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "2 more aggregate lines",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "showing 4 of 6 aggregate lines — the full instrument panel lists every one"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[2022 REVOLVING CREDIT AGREEMENT · 0001157523-20-000793]\n  Interest / coupon rate: Eurodollar Base Rate equal to LIBOR; provided that, if the Eurodollar Base Rate…\n  Financial-maintenance covenants: Maximum Leverage Ratio: not greater than 3.25:1.00 for any Test Period ending on or…\n  Minimum EBITDAR covenant: EBITDAR for fiscal quarter ending January 30, 2021 not less than $650,000,000\n  Minimum Liquidity covenant: Liquidity not less than $1,500,000,000 from Second Amendment Effective Date through…\n  Negative covenant - Liens basket: Liens securing Indebtedness not exceeding 7.5% of Consolidated Total Assets; during…\n[364 DAY REVOLVING CREDIT AGREEMENT · 0000109198-20-000015]\n  Principal / commitment amount: Five Hundred Million and 00/100 Dollars ($500,000,000)\n  Interest / coupon rate: Eurodollar Rate plus the Applicable Margin (Eurodollar Rate Loans); Base Rate plus…\n  Maturity date: August 9, 2021\n  Financial-maintenance covenants: Maximum Leverage Ratio: not greater than 5.00 to 1.00 (Test Period ending May 1,…\n[2026 REVOLVING CREDIT AGREEMENT · 0001193125-21-202939]\n  Principal / commitment amount: One Billion and 00/100 Dollars ($1,000,000,000)\n  Interest / coupon rate: Eurodollar Rate plus the Applicable Margin (for Eurodollar Rate Loans); Base Rate…\n… (+7 lower-priority terms in the table)",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001157523-20-000793 · a52222014ex10_1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001157523-20-000793 · a52222014ex10_1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Eurodollar Base Rate equal to LIBOR; provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75%",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: ““ Eurodollar Base Rate ” means, for any Interest Period, the rate per annum equal to LIBOR as administered by ICE Benchmark Administration ... provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement.”"
+     },
+     "base_rate_label": "LIBOR",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.75,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001157523-20-000793 · a52222014ex10_1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Maximum Leverage Ratio: not greater than 3.25:1.00 for any Test Period ending on or before February 1, 2020; (a) 5.00:1.00 for Test Period ending May 1, 2021; (b) 4.50:1.00 for Test Period ending July 31, 2021; (c) 4.00:1.00 for Test Period ending October 30, 2021; (d) 3.50:1.00 for each Test Period thereafter",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “7.04 . Maximum Leverage Ratio . The Borrower shall not permit its Leverage Ratio to be greater than 3.25 to 1.00 as of the last day of any Test Period ending on or before February 1, 2020, and shall not permit its Leverage Ratio to exceed (a) 5.00 to 1.00 for the Test Period ending May 1, 2021, (b) 4.50 to 1.00 for the Test Period ending July 31, 2021, (c) 4.00 to 1.00 for the Test Period ending October 30, 2021, and (d) 3.50 to 1.00 for each Test Period ending thereafter”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001157523-20-000793 · a52222014ex10_1.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "as of the date hereof, no Default or Event of Default has occurred and is continuing (representation; underlying Events of Default defined in the unamended Credit Agreement, not stated herein)",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “as of the date hereof, no Default or Event of Default has occurred and is continuing.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Minimum EBITDAR covenant",
+     "value": {
+      "value": "EBITDAR for fiscal quarter ending January 30, 2021 not less than $650,000,000",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “7.05. Minimum EBITDAR. The Borrower shall not permit EBITDAR for the fiscal quarter ending January 30, 2021 to be less than $650,000,000 for such fiscal quarter, tested as of the last day of such fiscal quarter.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Minimum Liquidity covenant",
+     "value": {
+      "value": "Liquidity not less than $1,500,000,000 from Second Amendment Effective Date through April 30, 2021",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “7.06. Minimum Liquidity . The Borrower shall not permit Liquidity at any time from the Second Amendment Effective Date through April 30, 2021, to be less than $1,500,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Usage Fee",
+     "value": {
+      "value": "(a) 12.5 basis points per annum when sum of Total Outstandings exceeds $333,333,333.00 but is less than $666,666,666.00; (b) 25.0 basis points per annum when sum equals or exceeds $666,666,666.00",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: ““ Usage Fee ” means (a) for each day on which the sum of Total Outstandings ... exceeds $333,333,333.00, but is less than $666,666,666.00, a fee at a rate of 12.5 basis points per annum, to be paid on the Total Outstandings, and (b) for each day on which the sum of Total Outstandings ... equals or exceeds $666,666,666.00, a fee at a rate of 25.0 basis points per annum, to be paid on the Total Outstandings.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Benchmark Replacement (LIBOR replacement) floor",
+     "value": {
+      "value": "Benchmark Replacement deemed to be 0.75% if determined to be less than 0.75%",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: ““ Benchmark Replacement ” means the sum of: (a) an alternate benchmark rate ... and (b) the Benchmark Replacement Adjustment; provided that, if the Benchmark Replacement as so determined would be less than 0.75%, the Benchmark Replacement will be deemed to be 0.75% for the purposes of this Agreement.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Negative covenant - Liens basket",
+     "value": {
+      "value": "Liens securing Indebtedness not exceeding 7.5% of Consolidated Total Assets; during Second Amendment Effective Date through April 30, 2021, not to exceed $100,000,000",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “(i) other Liens securing Indebtedness or other obligations outstanding at any time not exceeding an amount equal to 7.5% of Consolidated Total Assets; provided , that during the period from the Second Amendment Effective Date through April 30, 2021, the aggregate amount of Indebtedness and other obligations outstanding at any time secured by Liens permitted under this clause (i) shall not exceed $100,000,000;”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Governing law",
+     "value": {
+      "value": "Law of the State of New York",
+      "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+      "status": "present",
+      "note": "verbatim: “THIS AMENDMENT SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "Five Hundred Million and 00/100 Dollars ($500,000,000)",
+      "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+      "status": "present",
+      "note": "verbatim: ““ Aggregate Commitments ” means the Commitments of all the Lenders.  The initial Aggregate Commitments hereunder are Five Hundred Million and 00/100 Dollars ($500,000,000).”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Eurodollar Rate plus the Applicable Margin (Eurodollar Rate Loans); Base Rate plus the Applicable Margin (Base Rate Loans)",
+      "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Eurodollar Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurodollar Rate for such Interest Period plus the Applicable Margin; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”"
+     },
+     "base_rate_label": "Eurodollar Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": 0.75,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "component_quotes": {
+      "floor_pct": "provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "August 9, 2021",
+      "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means August 9, 2021; provided , that if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Maximum Leverage Ratio: not greater than 5.00 to 1.00 (Test Period ending May 1, 2021) and not greater than 4.50 to 1.00 (Test Period ending July 31, 2021); Minimum EBITDAR: not less than $650,000,000 for fiscal quarter ending January 30, 2021; Minimum Liquidity: not less than $1,500,000,000 at any time from the Closing Date through April 30, 2021",
+      "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+      "status": "present",
+      "note": "verbatim: “7.04. Maximum Leverage Ratio .  The Borrower shall not permit its Leverage Ratio to be greater than 5.00 to 1.00 as of the last day of the Test Period ending May 1, 2021, and shall not permit its Leverage Ratio to be greater than 4.50 to 1.00 as of the last day of the Test Period ending July 31, 2021 ... 7.05. Minimum EBITDAR. The Borrower shall not permit EBITDAR for the fiscal quarter ending January 30, 2021 to be less than $650,000,000 for such fiscal quarter ... 7.06. Minimum Liquidity. The Borrower shall not permit Liquidity at any time from the Closing Date through April 30, 2021, to be less than $1,500,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory prepayment: if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay Revolving Loans in an amount equal to such excess (Section 2.06(b)). Events of Default (Section 8.01): (a) Breach of Representation or Warranty; (b) Payment Default; (c) Breach of Certain Covenants; (d) Breach of Other Provisions; (e) Default on Material Indebtedness; (f) Voluntary Insolvency Proceedings; (g) Involuntary Insolvency Proceedings; (h) Judgments; (i) ERISA; (j) Change of Control; (k) Failure of Loan Documents to Remain in Effect",
+      "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+      "status": "present",
+      "note": "verbatim: “(b) If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Revolving Loans in an aggregate amount equal to such excess. ... 8.01. Events of Default .  Any of the following shall constitute an Event of Default: (a) Breach of Representation or Warranty ... (b) Payment Default ... (c) Breach of Certain Covenants ... (d) Breach of Other Provisions ... (e) Default on Material Indebtedness ... (f) Voluntary Insolvency Proceedings ... (g) Involuntary Insolvency Proceedings ... (h) Judgments ... (i) ERISA ... (j) Change of Control ... (k) Failure of Loan Documents to Remain in Effect”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Facility Fee / Applicable Facility Fee Rate",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states 0.15%, 0.20%, 0.25%, 0.30%, 0.35%, which the model's quote does not — 8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Default Rate",
+     "value": {
+      "value": "Base Rate plus Applicable Margin (for Base Rate Loans) plus 2% per annum; for Eurodollar Rate Loans, the otherwise applicable rate plus 2% per annum",
+      "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+      "status": "present",
+      "note": "verbatim: ““ Default Rate ” means an interest rate equal to (i) the Base Rate plus (ii) the Applicable Margin, if any, applicable to Base Rate Loans plus (iii) 2% per annum; provided , however , that with respect to a Eurodollar Rate Loan, the Default Rate shall be an interest rate equal to the interest rate (including the Applicable Margin) otherwise applicable to such Revolving Loan plus 2% per annum.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-21-202939 · d169110dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2026 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "One Billion and 00/100 Dollars ($1,000,000,000)",
+      "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Aggregate Commitments ” means the Commitments of all the Lenders. The initial Aggregate Commitments hereunder are One Billion and 00/100 Dollars ($1,000,000,000).”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2026 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Eurodollar Rate plus the Applicable Margin (for Eurodollar Rate Loans); Base Rate plus the Applicable Margin (for Base Rate Revolving Loans and Swing Line Loans)",
+      "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Eurodollar Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurodollar Rate for such Interest Period plus the Applicable Margin; (ii) each Base Rate Revolving Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin; and (iii) each Swing Line Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”"
+     },
+     "base_rate_label": "Eurodollar Rate",
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2026 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date",
+      "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means the later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section 2.19 , such extended maturity date as determined pursuant to such Section; provided , however , in each case, that if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2026 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Maximum Leverage Ratio: (a) 4.50 to 1.00 for the Test Period ending July 31, 2021, (b) 4.00 to 1.00 for the Test Period ending October 30, 2021, and (c) 3.50 to 1.00 for the Test Period ending January 29, 2022 and for each Test Period ending thereafter",
+      "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
+      "status": "present",
+      "note": "verbatim: “7.04. Maximum Leverage Ratio . The Borrower shall not permit its Leverage Ratio to be greater than (a) 4.50 to 1.00 for the Test Period ending July 31, 2021, (b) 4.00 to 1.00 for the Test Period ending October 30, 2021, and (c) 3.50 to 1.00 for the Test Period ending January 29, 2022 and for each Test Period ending thereafter”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2026 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "first priority security interest in Cash Collateral (cash, deposit accounts and balances therein) under Section 2.17; no general security interest or guarantors stated",
+      "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Borrower, and to the extent provided by any Lender, such Lender, hereby grants to (and subjects to the control of) the Administrative Agent, for the benefit of the Administrative Agent, the L/C Issuers and the Lenders (including the Swing Line Lender), and agrees to maintain, a first priority security interest in all such cash, deposit accounts and all balances therein, and all other property so provided as collateral pursuant hereto, and in all proceeds of the foregoing, all as security for the obligations to which such Cash Collateral may be applied pursuant to Section 2.17(c) .”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2026 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory prepayment (Section 2.06(c)): prepay Loans/Cash Collateralize L/C Obligations to the extent Total Outstandings exceed Aggregate Commitments. Events of Default enumerated in Section 8.01 (breach of representation, payment default, breach of covenants, cross-default on Material Indebtedness, insolvency, judgments, ERISA, Change of Control, etc.)",
+      "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
+      "status": "present",
+      "note": "verbatim: “If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Loans and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2026 REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "Seven Hundred Fifty Million and 00/100 Dollars ($750,000,000)",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: ““ Aggregate Commitments ” means the Commitments of all the Lenders.  The Aggregate Commitments hereunder as of the First Amendment Effective Date are Seven Hundred Fifty Million and 00/100 Dollars ($750,000,000).”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Adjusted Term SOFR for such Interest Period plus the Applicable Margin (Term SOFR Loans); Base Rate plus the Applicable Margin (Base Rate Loans)",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Adjusted Term SOFR for such Interest Period plus the Applicable Margin; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”"
+     },
+     "base_rate_label": "Adjusted Term SOFR",
+     "margin_pct": 0.68,
+     "margin_bps": null,
+     "floor_pct": 0.0,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true,
+     "component_quotes": {
+      "margin_pct": "Adjusted Term SOFR + 0.45% 0.565% 0.68% 0.785% 0.875% ... On the First Amendment Effective Date, the Applicable Margin shall be set at Level III.",
+      "floor_pct": "“ Floor ” means 0.00%."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the later of (a) May 9, 2029 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means the later of (a) May 9, 2029 and (b) if maturity is extended pursuant to Section 2.19 , such extended maturity date as determined pursuant to such Section; provided , however , in each case, that if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Leverage Ratio not greater than 3.50 to 1.00 as of the last day of any Test Period",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: “7.04 Maximum Leverage Ratio .  The Borrower shall not permit its Leverage Ratio to be greater than 3.50 to 1.00 as of the last day of any Test Period”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory prepayment: if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay the excess (Section 2.06(b)). Events of Default enumerated in Section 8.01 (a)-(k).",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: “(b) If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Revolving Loans in an aggregate amount equal to such excess.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Facility Fee",
+     "value": {
+      "value": "Applicable Facility Fee Rate; on First Amendment Effective Date set at Level III (0.07%)",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: “In consideration of the Commitments made available by the Lenders hereunder, the Borrower agrees to pay to the Administrative Agent for the account of each Lender a fee (the “ Facility Fee ”) on such Lender’s Commitment amount computed at a per annum rate for each day during the applicable Facility Fee Calculation Period (hereinafter defined) equal to the Applicable Facility Fee Rate.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": 0.07,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true,
+     "component_quotes": {
+      "margin_pct": "Facility Fee 0.05% 0.06% 0.07% 0.09% 0.125% ... On the First Amendment Effective Date, the Applicable Facility Fee Rate shall be set at Level III."
+     }
+    },
+    {
+     "name": "Default Rate",
+     "value": {
+      "value": "Base Rate or Adjusted Term SOFR plus the Applicable Margin plus 2% per annum",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: ““ Default Rate ” means an interest rate equal to for (a) Base Rate Loans, the sum of (i) the Base Rate plus (ii) the Applicable Margin, if any, applicable to such Base Rate Loans plus (iii) 2% per annum, and (b) Term SOFR Loans, the sum of (i) Adjusted Term SOFR plus (ii) the Applicable Margin applicable to such Term SOFR Loans plus (iii) 2% per annum.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Term SOFR Adjustment",
+     "value": {
+      "value": "0.10% per annum",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: ““ Term SOFR Adjustment ” means 0.10% per annum.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Increase in Commitments (accordion)",
+     "value": {
+      "value": "Aggregate Commitments may be increased, not to exceed $1,125,000,000",
+      "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+      "status": "present",
+      "note": "verbatim: “the Aggregate Commitments hereunder at no time shall exceed $1,125,000,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": true
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "(P3) 8-K body at 8-K 0000109198-26-000051 (2026-09-17) states no maturity-resolution event"
+  },
+  "panel_vintage": {
+   "value": "the debt schedule is 199d old (source filed 2026-03-31); no Item 1.02 (termination of a material agreement) has been filed since",
+   "source_ref": "CIQ Capital Structure Details — A 2026 filed Mar-31-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-03-31",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0000109198-26-000048",
+     "filed": "2026-08-28",
+     "read_as": "the latest periodic report",
+     "statements": 9,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0000109198-25-000033",
+     "filed": "2025-05-09",
+     "read_as": "an 8-K the page links",
+     "statements": 2,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-21-202939",
+     "filed": "2021-06-29",
+     "read_as": "an 8-K the page links",
+     "statements": 5,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0000109198-20-000015",
+     "filed": "2020-08-11",
+     "read_as": "an 8-K the page links",
+     "statements": 1,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001157523-20-000793",
+     "filed": "2020-05-21",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '1.150% Senior Unsecured Notes, Maturing May 15, 2028' · checked against the 10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "instrument": 0,
+     "description": "1.150% Senior Unsecured Notes, Maturing May 15, 2028",
+     "ciq_maturity_date": "2028-05-15",
+     "check": "agree",
+     "filing_maturity": "2028-05-15",
+     "source": "10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "source_filed": "2026-08-28",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "1.150 % senior unsecured notes, maturing May 15, 2028",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '1.600% Senior Unsecured Notes, Maturing May 15, 2031' · checked against the 10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "instrument": 1,
+     "description": "1.600% Senior Unsecured Notes, Maturing May 15, 2031",
+     "ciq_maturity_date": "2031-05-15",
+     "check": "agree",
+     "filing_maturity": "2031-05-15",
+     "source": "10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "source_filed": "2026-08-28",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "1.600 % senior unsecured notes, maturing May 15, 2031",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '2.250% Senior Unsecured Notes, Maturing September 15, 2026' · checked against the 10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "instrument": 2,
+     "description": "2.250% Senior Unsecured Notes, Maturing September 15, 2026",
+     "ciq_maturity_date": "2026-09-15",
+     "check": "agree",
+     "filing_maturity": "2026-09-15",
+     "source": "10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "source_filed": "2026-08-28",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "2.250 % senior unsecured notes, maturing September 15, 2026",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.875% Senior Unsecured Notes, Maturing April 15, 2030' · checked against the 10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "instrument": 3,
+     "description": "3.875% Senior Unsecured Notes, Maturing April 15, 2030",
+     "ciq_maturity_date": "2030-04-15",
+     "check": "agree",
+     "filing_maturity": "2030-04-15",
+     "source": "10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "source_filed": "2026-08-28",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "3.875 % senior unsecured notes, maturing April 15, 2030",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '4.500% Senior Unsecured Notes, Maturing April 15, 2050' · checked against the 10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "instrument": 4,
+     "description": "4.500% Senior Unsecured Notes, Maturing April 15, 2050",
+     "ciq_maturity_date": "2050-04-15",
+     "check": "agree",
+     "filing_maturity": "2050-04-15",
+     "source": "10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "source_filed": "2026-08-28",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "4.500 % senior unsecured notes, maturing April 15, 2050",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Operating Lease Liabilities' · not checked against a filing",
+     "instrument": 5,
+     "description": "Operating Lease Liabilities",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Senior Unsecured Revolving Credit Facility Maturing in May 2029' · checked against the 10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "instrument": 6,
+     "description": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+     "ciq_maturity_date": "2029-05-09",
+     "check": "agree",
+     "filing_maturity": "2029-05",
+     "source": "10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "source_filed": "2026-08-28",
+     "governs": false,
+     "also_stated_by": [
+      "8-K 0000109198-25-000033 (filed 2025-05-09)"
+     ],
+     "quote": "st 1, 2026, the Company has two revolving credit facilities, a $ 750 million senior unsecured revolving credit facility maturing in May 2029",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Senior Unsecured Revolving Credit Facility Maturing in May 2030' · checked against the 10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "instrument": 7,
+     "description": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+     "ciq_maturity_date": "2030-05-09",
+     "check": "agree",
+     "filing_maturity": "2030-05",
+     "source": "10-Q 0000109198-26-000048 (filed 2026-08-28)",
+     "source_filed": "2026-08-28",
+     "governs": false,
+     "also_stated_by": [
+      "8-K 0000109198-25-000033 (filed 2025-05-09)"
+     ],
+     "quote": "unsecured revolving credit facility maturing in May 2029 and a $ 750 million senior unsecured revolving credit facility maturing in May 2030",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    }
+   ]
+  }
+ },
+ "texts": {
+  "0001157523-20-000793 · a52222014ex10_1.htm": "EX-10.1 2 a52222014ex10_1.htm EXHIBIT 10.1 Exhibit 10.1 SECOND AMENDMENT TO 2022 REVOLVING CREDIT AGREEMENT This SECOND\n        AMENDMENT TO 2022 REVOLVING CREDIT AGREEMENT (this “ Amendment ”), dated as of May 15, 2020, is entered into by and among (a) THE TJX COMPANIES, INC. , a Delaware corporation (the “ Borrower ”), (b) U.S. BANK NATIONAL ASSOCIATION , as\n      administrative agent (the “ Administrative Agent ”), and (c) each of the Lenders party hereto. WHEREAS , the\n      Borrower, the Lenders and the Administrative Agent are parties to that certain 2022 Revolving Credit Agreement, dated as of March 11, 2016 (as amended by the First Am",
+  "0000109198-20-000015 · exhibit101364dayrevolv.htm": "EX-10.1 2 exhibit101364dayrevolv.htm EX-10.1 Document Exhibit 10.1 364 DAY REVOLVING CREDIT AGREEMENT Dated as of August 10, 2020, among THE TJX COMPANIES, INC., as the Borrower, THE FINANCIAL INSTITUTIONS NAMED HEREIN, as the Lenders, BANK OF AMERICA, N.A., as Syndication Agent, U.S. BANK NATIONAL ",
+  "0000109198-26-000008 · tjx-20260131xexhibit1024.htm": "EX-10.24 2 tjx-20260131xexhibit1024.htm EX-10.24 Document Exhibit 10.24 THE TJX COMPANIES, INC. STOCK INCENTIVE PLAN (2022 Restatement) First Amendment Pursuant to Section 10 of The TJX Companies, Inc. Stock Incentive Plan (2022 Restatement) (the “Plan”), The TJX Companies, Inc. (the “Company”), by ",
+  "0001193125-21-202939 · d169110dex101.htm": "EX-10.1 2 d169110dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 Execution Version Published CUSIP Numbers: 88873CAS1 88873CAT9 2026 REVOLVING CREDIT\nAGREEMENT Dated as of June 25, 2021, among THE TJX COMPANIES,\nINC., as the Borrower, THE FINANCIAL INSTITUTIONS NAMED HEREIN, as the Lenders, U.S. BANK\nNATION … “ Existing Credit Agreements ” means, collectively, (x) that certain 2022 Revolving Credit Agreement, dated as of March 11, 2016 (as amended, restated, amended and restated, modified, supplemented or otherwise in effect from time to time) by and among the Borrower, the lenders party thereto from time to time and U.S. Bank, as administrative agent; and (y) that certain 364 Day Revolving Credit Agreement, dated as of August 10, 2020 …  reasonably satisfactory to the Administrative Agent; (iii) evidence of termination of the Existing Credit Agreements",
+  "0000109198-25-000033 · exhibit101-firstamendmentt.htm": "EX-10.1 2 exhibit101-firstamendmentt.htm EX-10.1 Document Exhibit 10.1 FIRST AMENDMENT TO 2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT This FIRST AMENDMENT TO 2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT (this “ Amendment ”), dated as of May 9, 2025, is entered into by and among (a)  … that certain 2028 Amended and Restated Revolving Credit Agreement, dated as of May 8, 2023 (the “ 2028 Revolving Credit Agreement ” … and the Lenders and the Administrative Agent are willing to amend and restate the 2028 Revolving Credit Agreement"
+ }
+}
