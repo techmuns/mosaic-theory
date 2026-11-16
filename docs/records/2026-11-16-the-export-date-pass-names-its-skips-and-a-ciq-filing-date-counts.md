@@ -28,7 +28,7 @@ superseded-by:
 - **Still open: the CIQ Financials `Filing Date` row.**
   - CIQ's Financials sheets (Balance Sheet, Income Statement, Cash Flow) state a `Filing Date` row for each period column, as an Excel serial. No reader reads it and no page carries it.
   - So the filing date behind `balance_sheet_date`, the period end of the latest balance-sheet column, is not counted.
-  - Counting it needs a new field: on `inputs_schema.CiqExport`, plus a drop-when-None rule in `schemas.dossier_json`, or on `DateSemantics`. Either way `vinci/dossier/schemas.py` changes, and #1084 has that file open, so this PR stopped short of it and asked the coordinator.
+  - Counting it needs a new field: on `inputs_schema.CiqExport`, plus a drop-when-None rule in `schemas.dossier_json`, or on `DateSemantics`. Either way `vinci/dossier/schemas.py` changes, and #1084 has that file open, so this PR stopped short of it and asked the coordinator. The coordinator ruled (2026-11-16): defer it to its own PR after #1084 merges, and leave `schemas.py` untouched here.
   - A $0 probe says it would move no page today (HOW VERIFIED).
 
 **WHY.**
