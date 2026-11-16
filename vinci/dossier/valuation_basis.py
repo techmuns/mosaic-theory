@@ -488,6 +488,34 @@ RULE_KNOWABLE = (
     "Financials or Estimates export date, so those count at the dates named above")
 
 
+#: (2026-11-16, STATE row 64(a)(1)) Each CIQ column's own stated FILING date that a page carries as
+#: a STRUCTURED value. A CIQ fact is knowable from its export date or from its column's stated
+#: filing date, never from the period the column describes (CLAUDE.md, PUBLISHED DATA). Only one
+#: reaches a page today: the capital-structure panel's source filing date, parsed ONCE off the
+#: panel's `Source` note by `ciq_sheets._cs_panel_filed` and carried as ISO. The CIQ Financials
+#: sheets state a `Filing Date` row per column too, but no page carries it, so it is not counted
+#: here (STATE row 64(a)).
+CIQ_FILED_DATES: tuple[tuple[str, ...], ...] = (
+    ("mechanical", "capital_structure", "maturity_check", "panel_filed"),
+)
+#: The clause a page's rule gains where such a date is later than every date the rule names, and so
+#: sets `analysis_as_of`. Where none is later, the latest-of the rule states IS the page's date and
+#: the rule is kept word for word, so the page's bytes do not move (0 of the 26 committed pages
+#: had a later one at main `ee9c4635`).
+RULE_FILED_CLAUSE = (
+    "; later than every date named above, a CIQ column's own stated filing date, which dates "
+    "its facts from the day they were filed, never from the period they describe: {where}")
+
+
+def _ciq_filed(d: dict[str, Any]) -> list[tuple[str, date]]:
+    """``(path, day)`` for each CIQ column filing date in `CIQ_FILED_DATES` the page carries."""
+    out = []
+    for path in CIQ_FILED_DATES:
+        if (x := _day(_get(d, *path))) is not None:
+            out.append((".".join(path), x))
+    return out
+
+
 def _ciq_exported_as_of(d: dict[str, Any]) -> date | None:
     """The latest export date the page's CIQ inputs STATE of themselves, read off the input record
     (`inputs.ciq[].export_date`) — a structured field, never a `source_ref`'s text."""
@@ -512,13 +540,20 @@ def date_semantics(d: dict[str, Any]) -> DateSemantics:
     exported = _ciq_exported_as_of(d)
     if exported is not None:
         days.append(exported)
+    rule = RULE_KNOWABLE if exported is not None else RULE_DATA_DATES
+    # a stated filing date counts where it is later than every date above; it is named in the rule
+    # then, because it sets the page's date
+    if later := [(p, x) for p, x in _ciq_filed(d) if not days or x > max(days)]:
+        top = max(x for _p, x in later)
+        days.append(top)
+        rule += RULE_FILED_CLAUSE.format(where=", ".join(p for p, x in later if x == top))
     return DateSemantics.model_validate({
         "screen_reference_date": str(d.get("reference_date"))[:10],
         "reference_date_semantics": (
             "the screening/reference date the page was assembled against — NOT the freshness "
             "date of its inputs; each input's own date is named in this block"),
         "analysis_as_of": max(days).isoformat() if days else None,
-        "analysis_as_of_rule": RULE_KNOWABLE if exported is not None else RULE_DATA_DATES,
+        "analysis_as_of_rule": rule,
         "ciq_exported_as_of": exported.isoformat() if exported is not None else None,
         **named,
         "historical_multiple_history_through": _get(d, "forward_multiple_history",
