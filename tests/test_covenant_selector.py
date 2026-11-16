@@ -39,6 +39,7 @@ import typing
 import pytest
 
 from tests.test_covenant_coverage_rule import (
+    NKE_FIVE,
     VRRM_AMD4,
     VRRM_AR,
     VRRM_EX102,
@@ -422,3 +423,96 @@ def test_no_committed_page_splits_a_group() -> None:
         gov = ce.governing_terms(rows, list((cs.covenant_pointer_rows.value or [])
                                             if cs.covenant_pointer_rows else []))
         assert not any(g.family.endswith(f" · {f}") for g in gov for f in files), p.parent.name
+
+
+# --- #1090 verification's N1 and N3, deferred to this PR ------------------------------------------
+
+#: UBER's REAL recital (`0001552781-21-000058 · e21071_ex10-1.htm`, EDGAR cache).
+UBER_RECITAL = ("that certain Term Loan Agreement, dated as of July 13, 2016 (as amended by that "
+                "certain Amendment No. 1 to the Term Loan Agreement, dated as of June 13, 2018 and "
+                "as further amended, restated, extended, supplemented or otherwise modified from "
+                "time to time prior to the date hereof, the “ Existing 2016 Loan Agreement ”)")
+#: A DERIVED displacing clause, so the bind reaches `displaced_agreements` (the review's own).
+UBER_ENDS = "On the Effective Date the Existing 2016 Loan Agreement shall be terminated."
+
+
+def test_n1_a_recital_binds_the_agreement_not_its_amendments_date_uber() -> None:
+    """(+ / −) N1, UBER's real recital. "Existing 2016 Loan Agreement" is the Term Loan Agreement of
+    July 13, 2016. "Amendment No. 1 to the Term Loan Agreement, dated as of June 13, 2018" is its
+    history: an amendment named in the gap, never a second agreement, and the June 13, 2018 date
+    is the amendment's. At #1090's head the term bound to 2018-06-13 only: the gap's chain broke at
+    "No." and refused the true bind, and a recital restarting inside the amendment's name bound
+    the amendment's date."""
+    keys = [d.key for d in ce.displaced_agreements(f"{UBER_RECITAL} … {UBER_ENDS}")]
+    assert keys == [ce.AgreementKey("TERM LOAN AGREEMENT", ce.date(2016, 7, 13))], keys
+    assert not ce._second_agreement("as amended by that certain Amendment No. 1 to the Term Loan "
+                                    "Agreement, dated as of June 13, 2018 and as further amended")
+
+
+NKE_RECITALS = (
+    "(as amended by the First Amendment to the Credit Agreement, dated as of March 8, 2024, the “ "
+    "2022 Credit Agreement ”)",
+    "(as amended by that certain Amendment No. 1 to the Credit Agreement, dated as of March 8, "
+    "2024, the “ 2022 Credit Agreement ”)",
+)
+
+
+@pytest.mark.parametrize("history", NKE_RECITALS, ids=["first-amendment", "amendment-no-1"])
+def test_n1_an_amendments_date_never_displaces_a_live_agreement_of_that_day_nke(
+        history: str) -> None:
+    """(−) N1, DERIVED from NKE's real five-year agreement, which defines its "2022 Credit
+    Agreement" and requires it "has been, or concurrently … will be, terminated". A recital is
+    added carrying the 2022 agreement's amendment history in two common forms. That amendment is
+    dated March 8, 2024, the day of NKE's 2024 364-day CREDIT AGREEMENT. Only the 2022 agreement is
+    displaced, never an agreement of the amendment's date: at #1090's head the 2024 agreement, live
+    then, read superseded."""
+    five = _fixture("NKE")["texts"][NKE_FIVE] or ""
+    recital = ("WHEREAS, the Company is party to that certain Credit Agreement, dated as of "
+               f"March 11, 2022 {history}; ")
+    keys = {d.key for d in ce.displaced_agreements(f"{recital} … {five}")}
+    assert ce.AgreementKey("CREDIT AGREEMENT", ce.date(2022, 3, 11)) in keys, keys
+    assert ce.AgreementKey("CREDIT AGREEMENT", ce.date(2024, 3, 8)) not in keys, keys
+
+
+class _Records:
+    """An SEC stub that records every URL read and serves nothing (each read fails)."""
+
+    def __init__(self) -> None:
+        self.urls: list[str] = []
+
+    def get_text(self, url: str, **_: typing.Any) -> str:
+        self.urls.append(url)
+        raise OSError("stub: nothing served")
+
+
+def test_n3_an_image_is_never_read_or_targeted_epam() -> None:
+    """(−) N3, EPAM's committed pointer rows: its 2026 10-K row lists six page images (`.jpg`)
+    beside the exhibit it targets. An image holds no text: it is never fetched and never a target,
+    so one that cannot be fetched never switches the page to "supersedes nothing". At #1090's head
+    all six were fetched as siblings."""
+    page = _committed("EPAM")
+    cs = CapitalStructure.model_validate(page["mechanical"]["capital_structure"])
+    assert cs.covenant_pointer_rows is not None
+    rows = list(cs.covenant_pointer_rows.value or [])
+    images = [f for r in rows for f in r.exhibits if f.lower().endswith(".jpg")]
+    assert len(images) == 6, images
+    http = _Records()
+    *_, outcomes = ce.extract_covenant_terms(cs, llm=typing.cast(typing.Any, None),
+                                             http=typing.cast(typing.Any, http), cik=page["cik"],
+                                             ticker="EPAM", name=page["name"])
+    assert http.urls and not any(u.lower().endswith(".jpg") for u in http.urls), http.urls
+    assert outcomes is not None
+    assert not any(o.filename.lower().endswith(".jpg") for o in outcomes.value or [])
+    assert not any(f.lower().endswith(".jpg") for _r, f, _p in ce._located_exhibits(rows))
+
+
+def test_n3_an_image_listed_first_is_never_the_primary() -> None:
+    """(−) N3, DERIVED from EPAM's real 10-K row with its images moved ahead of its document: the
+    primary is still the document, never a page image."""
+    cs = CapitalStructure.model_validate(_committed("EPAM")["mechanical"]["capital_structure"])
+    assert cs.covenant_pointer_rows is not None
+    rows = [r.model_copy(update={"exhibits": sorted(r.exhibits,
+                                                    key=lambda f: not f.endswith(".jpg"))})
+            for r in cs.covenant_pointer_rows.value or []]
+    assert any(r.exhibits and r.exhibits[0].endswith(".jpg") for r in rows)
+    assert not any(f.endswith(".jpg") for _r, f in ce._core_agreement_exhibits(rows))

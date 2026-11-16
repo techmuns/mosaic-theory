@@ -213,10 +213,11 @@ def _core_agreement_exhibits(rows: list[CovenantPointer]) -> list[tuple[Covenant
 
     per_family: dict[str, list[tuple[CovenantPointer, str]]] = {}
     for r in sorted((r for r in rows if r.accession), key=lambda r: fam_rank(r.family)):
-        core = [n for n in r.exhibits if any(k in n.lower() for k in _CORE_AGREEMENT)]
+        docs = [n for n in r.exhibits if _DOCUMENT.search(n)]  # never an image (N3)
+        core = [n for n in docs if any(k in n.lower() for k in _CORE_AGREEMENT)]
         # each pointer's PRIMARY target; the filing's other exhibits are read in the loop, and the
         # ones that govern debt are targeted too (`_located_exhibits`, `_governs`)
-        for name in (core or r.exhibits)[:1]:
+        for name in (core or docs)[:1]:
             per_family.setdefault(r.family, []).append((r, name))
     fams = sorted(per_family, key=lambda f: fam_rank(f))  # stable: debt families first
     picked: list[tuple[CovenantPointer, str]] = []
@@ -232,19 +233,27 @@ def _core_agreement_exhibits(rows: list[CovenantPointer]) -> list[tuple[Covenant
 #: A located exhibit in the loop's order: its pointer, its filename, and whether it is its
 #: pointer's PRIMARY target (`_core_agreement_exhibits`) or another exhibit of the same filing.
 _Located = tuple[CovenantPointer, str, bool]
+#: ONLY A DOCUMENT IS READ (#1090 verification, N3, deferred to the selector): a file E5 can read
+#: as text, .htm, .html or .txt, as the locator reads only documents among a 20-F's exhibits
+#: (`mechanical._EX4_20F_RE`). A filing also lists its page images: EPAM's 10-K row lists six
+#: `.jpg`. An image holds no text, so it is never read and never a target, and one that cannot be
+#: fetched never switches a page to "supersedes nothing". Measured over the 26 committed pages'
+#: pointer rows (main 51784e53): 145 exhibits are `.htm` and 6 `.jpg`; no primary is an image.
+_DOCUMENT = re.compile(r"\.(?:htm|html|txt)$", re.I)
 
 
 def _located_exhibits(rows: list[CovenantPointer]) -> list[_Located]:
-    """EVERY EXHIBIT OF EVERY LOCATED FILING, in the loop's order: each pointer's primary target in
-    `_core_agreement_exhibits`' order, followed at once by the other exhibits of its filing, in the
-    filing's own order. An exhibit is listed once, however many pointers carry its filing."""
+    """EVERY DOCUMENT OF EVERY LOCATED FILING, in the loop's order: each pointer's primary target in
+    `_core_agreement_exhibits`' order, followed at once by the other documents of its filing, in the
+    filing's own order (never a page image, `_DOCUMENT`). An exhibit is listed once, however many
+    pointers carry its filing."""
     primaries = _core_agreement_exhibits(rows)
     primary = {(row.accession, filename) for row, filename in primaries}
     out: list[_Located] = []
     seen: set[tuple[str, str]] = set()
     for row, first in primaries:
         for filename in [first, *row.exhibits]:
-            if (row.accession, filename) in seen:
+            if (row.accession, filename) in seen or not _DOCUMENT.search(filename):
                 continue
             seen.add((row.accession, filename))
             # a primary of ANY pointer stays a primary, whichever pointer's filing lists it first
@@ -971,9 +980,21 @@ _AGREEMENT_TERM = r"[“\"]\s*(?P<term>[A-Z0-9][^”\"]{0,60}?(?:Agreements?|Ind
 _BIND_RECITAL = re.compile(
     rf"\b(?:that\s+certain|the)\s+{_AGREEMENT_REF}(?P<gap>[^“”\"]{{0,240}}?){_AGREEMENT_TERM}"
     rf"(?!\s*(?:means|shall\s+mean)\b)")
-#: An agreement named in a recital's gap: its name's words, then the noun.
-_GAP_AGREEMENT = re.compile(r"(?:\b[A-Z0-9][\w'\-]*\s+|\bof\s+|\bto\s+|\band\s+|\bthe\s+){0,8}?"
-                            r"\b(?:Agreement|AGREEMENT|Indenture|INDENTURE)\b")
+#: An agreement named in a recital's gap: its name's words, then the noun. "No. 1" is a word of an
+#: amendment's name (#1090 verification, N1, deferred to the selector): without it the chain broke
+#: at "No.", so UBER's "Amendment No. 1 to the Term Loan Agreement" read as "1 to the Term Loan
+#: Agreement", a second agreement with no AMENDMENT in it, and the recital's true bind was refused.
+_GAP_AGREEMENT = re.compile(r"(?:\b[A-Z0-9][\w'\-]*\s+|\bN[Oo]\.\s*|\bof\s+|\bto\s+|\band\s+|"
+                            r"\bthe\s+){0,8}?\b(?:Agreement|AGREEMENT|Indenture|INDENTURE)\b")
+#: AN AGREEMENT THAT IS THE OBJECT OF "AMENDMENT … TO" IS NAMED AS PART OF THE AMENDMENT (N1): in
+#: "Amendment No. 1 to the Term Loan Agreement, dated as of June 13, 2018" the date is the
+#: amendment's. A recital starting at that "the Term Loan Agreement" would bind its term to the
+#: amendment's date: UBER's "Existing 2016 Loan Agreement" read as of 2018-06-13, not 2016-07-13,
+#: and a recital of NKE's shape, "(as amended by the First Amendment to the Credit Agreement, dated
+#: as of March 8, 2024, the “2022 Credit Agreement”)", displaced a live agreement of that date.
+#: Read in the characters before the recital's start; such a recital binds nothing.
+_OBJECT_OF_AMENDMENT = re.compile(r"\bAMENDMENT\b(?:\s+NO\.\s*\d+)?[^.;()“”\"]{0,40}?\bto\s+$",
+                                  re.I)
 _BIND_RECITAL_PAREN = re.compile(
     rf"\b(?:that\s+certain|the)\s+{_REF_NAME}\s*{_NOT_OWN_PAREN}[^()]{{0,200}}?{_AGREEMENT_TERM}"
     rf"[^()]{{0,120}}\)\s*,?\s*{_REF_WHEN}")
@@ -1177,20 +1198,26 @@ def displaced_agreements(text: str) -> list[Displaced]:
         if key is not None and key not in binds.setdefault(term, []):
             binds[term].append(key)
 
+    def amended(start: int) -> bool:
+        """Is the recital at ``start`` the object of "Amendment … to" (`_OBJECT_OF_AMENDMENT`)?"""
+        return bool(_OBJECT_OF_AMENDMENT.search(flat[max(0, start - 80):start]))
+
     for m in _BIND_RECITAL_PAREN.finditer(flat):
-        bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
+        if not amended(m.start()):
+            bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
     # OVERLAPPING: a recital refused for a second agreement in its gap leaves that second
-    # agreement's own recital, which starts inside the refused span, still to be read
+    # agreement's own recital, which starts inside the refused span, still to be read, unless that
+    # agreement is the object of an amendment's name (N1)
     pos = 0
     while (r := _BIND_RECITAL.search(flat, pos)) is not None:
         pos = r.start() + 1
-        if not _second_agreement(r.group("gap")):
+        if not _second_agreement(r.group("gap")) and not amended(r.start()):
             bind(r.group("term"), _key(r.group("name"), r.group("when"), flat))
     # and the term the parenthetical at the agreement's date defines, read the same way
     pos = 0
     while (r := _BIND_RECITAL_AFTER.search(flat, pos)) is not None:
         pos = r.start() + 1
-        if not _second_agreement(r.group("gap")):
+        if not _second_agreement(r.group("gap")) and not amended(r.start()):
             bind(r.group("term"), _key(r.group("name"), r.group("when"), flat))
     for m in _BIND_DEFINITION.finditer(flat):
         bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
