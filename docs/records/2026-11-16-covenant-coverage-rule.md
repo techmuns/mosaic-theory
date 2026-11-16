@@ -93,7 +93,8 @@ superseded-by:
 
   A cost-bound exhibit now carries the heading E5 read, because every target is read first.
 - *The render.* Both renderers print the new causes. The approved wording table gains two rows,
-  for the operator's approval (PREVIEW RULE):
+  **approved 2026-11-16** by the operator, relayed by the coordinator: "Approve as shown
+  (Recommended)" (PREVIEW RULE):
 
   | outcome | printed |
   |---|---|
@@ -246,8 +247,9 @@ whatever they are.
   - through the production `renderDossier`, collapsed and force-open;
   - VRRM and NFLX printed in the "Full dossier" scope.
 
-  The images are in the coordinator's notes folder, not in the repo. STOPPED for the operator's
-  approval of the two new rows.
+  The images are in the coordinator's notes folder, not in the repo. **Approved 2026-11-16** by
+  the operator, relayed by the coordinator: "Approve as shown (Recommended)", covering the
+  `superseded` and `terminated` rows as `coverage-rule-preview/README.md` shows them.
 
 **BOUNDARY.**
 - Every page count is at main `51784e53` (2026-11-16), over the 26 committed
