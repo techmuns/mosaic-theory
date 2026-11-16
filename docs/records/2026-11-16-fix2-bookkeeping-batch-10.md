@@ -28,6 +28,7 @@ superseded-by:
     - A script launched the way the `vinci` console entry point is (`pyproject.toml` `[project.scripts]`) imports `vinci` from that checkout, even when run from a worktree at main.
     - `python -c` run from the worktree imports the worktree's `vinci`.
     - The shared venv still has no pytest-xdist, so it does not match the whole lock, as batch 9's record found.
+  - **The paid builds were not reached** (the coordinator's check, added in review round 1 and re-run here). Each of the 11 run lines dated 2026-11-14 records an `extraction_version`. Its components appear nowhere under `vinci/` at `9708fbc0` or at `481e82f7`, and all of them appear at `ee9c4635`. So those 11 builds ran newer code than either stale checkout. The hazard is the `vinci` console script on any future run.
   - **Carried from row 62.** Row 62 was the only STATE site stating that agents may not reinstall a shared venv, and the only one giving the re-sync's conditions. Row 65 now states both:
     - the venv's own interpreter, `pip install --require-hashes -r` the lock, and no `-e .` step;
     - while no build runs;
@@ -80,6 +81,16 @@ superseded-by:
   - Both venvs' `_editable_impl_vinci.pth` name the operator's primary checkout. Their anthropic reads 2.6.0. That checkout's `main` is at `9708fbc0` (#1024, 2026-11-12).
   - At `9708fbc0` there is no `requirements.lock` and no `sdk_version` in `vinci/`. `git rev-list --first-parent --count 9708fbc0..origin/main` gives 59.
   - A two-line script in this session's scratchpad, run by the shared venv's interpreter from this batch's worktree (at main `ee9c4635`), printed the primary checkout's `vinci` folder. `python -c` from the same worktree printed the worktree's.
+- **The builds were not reached.** Each 2026-11-14 run line's `extraction_version` is a `+`-joined set of versions. Across the 11 lines there are 7 distinct ones:
+  - `2026-11-11.guide-periods-read-where-stated-and-one-off-periods`;
+  - `2026-11-13.bare-sales-and-profit-name-their-rows`;
+  - `2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings`;
+  - `2026-11-14.form4-price-its-filing-contradicts-is-refused`;
+  - `2026-11-14.a-price-is-the-close-of-a-date-only-near-it`;
+  - `2026-11-14.a-release-quote-keeps-the-figure-it-backs`;
+  - `2026-11-14.a-passage-is-filed-as-the-call-prints-it`.
+
+  `git grep -F <version> <commit> -- vinci/` finds each one at `ee9c4635`, and none at `9708fbc0` or `481e82f7`. Each of the 11 lines carries at least one version dated 2026-11-13 or 2026-11-14. The coordinator's check named only those two dates; the 2026-11-11 version is also absent at both stale commits, because #1027 merged it on 2026-11-13. Code at either commit could not have written any of these versions.
 - **Follow-up (a):** `grep -n 'or {}'` at main `ee9c4635` finds line 552 as stated. The frozen fixture's `mechanical.valuation.ev_ebitda_basis` was read: a dict of 12 keys with no `source_ref`. `git log -L548,552` names #1078 and #903 as the commits that wrote those lines.
 - **Follow-up (b):** GOOGL's committed `dossier.json` and `dossier.md` at main `ee9c4635` were read.
   - The `caveats` list holds 13 "Untraceable figure" entries: 13, 1, 2, 1 and 1 (bull points), 10.9, 25.8, 129109, 3 and 40 (bear points), 3 and 40 (decisive-against), and 129109 (a key unknown).
@@ -92,6 +103,7 @@ superseded-by:
 
 **BOUNDARY.**
 - **The run lines:** every line of every file in `data/snapshots/assembly_runs/` at main `ee9c4635`, read 2026-11-16. The unit is one run line.
+- **The not-reached check:** the 11 run lines dated 2026-11-14 at main `ee9c4635`, and the 7 distinct extraction versions they record. Each version was searched under `vinci/` at `9708fbc0`, `481e82f7` and `ee9c4635`, on 2026-11-16.
 - **Commit distances:** first-parent commits on `origin/main`, from each named commit up to `ee9c4635`.
 - **B's machine:** B's comment of 2026-11-16 08:15Z only. Nothing on B's Mac was read by this batch.
 - **The operator's Mac:** two venvs (the shared venv and the primary checkout's `.venv`) and one checkout, read 2026-11-16.
