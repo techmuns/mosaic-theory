@@ -3103,7 +3103,8 @@ function exhibitOutcomeText(o) {
     if (o.outcome === "not_debt_agreement") why += ` (it declares itself “${o.declared_title}”)`;
     else if (o.outcome === "superseded") {
       // the later exhibit, then its own words (the coverage rule): which document, and why
-      why += ` ${o.superseded_by || "an exhibit not recorded"}`;
+      const by = [o.superseded_by, o.superseded_by_filename].filter(Boolean).join(" · ");
+      why += ` ${by || "an exhibit not recorded"}`;
       if (o.evidence) why += ` — ${o.evidence}`;
     } else if (o.outcome === "terminated" && o.evidence) why += ` — ${o.evidence}`;
   }

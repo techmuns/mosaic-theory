@@ -961,6 +961,9 @@ _DISPLACING_VERBS: tuple[str, ...] = (
 _A_PART_OF = re.compile(
     r"\b(?:Sections?|Articles?|Exhibits?|Schedules?|Annex(?:es)?|clauses?|paragraphs?)\s+"
     r"[\w.()\-]+(?:\s*(?:,|and|or|through)\s*[\w.()\-]+)*\s+(?:of|to|in|under)\s+$", re.I)
+#: The term as the object of a preposition, read in the characters before a clause that opens on
+#: "the <term>": what the clause says is of something under the agreement, not the agreement.
+_UNDER_THE = re.compile(r"\b(?:under|of|to|in|with|for)\s+$", re.I)
 #: What an amendment amends: in its heading ("to Revolving Credit Agreement, dated as of March 1,
 #: 2018") or else the FIRST agreement its recital names ("party to that certain …", "pursuant to
 #: the Credit Agreement (…) dated as of February 11, 2022" (NCNO), "reference is hereby made to the
@@ -1097,7 +1100,13 @@ def _displacing_words(flat: str, term: str) -> str | None:
     t = re.escape(term) + r"\b(?![’']s\b)"
     for tpl in _DISPLACING_VERBS:
         for m in re.finditer(tpl.replace("{t}", t), flat):
-            if _A_PART_OF.search(flat[max(0, m.start() - 60):m.start()]):
+            before = flat[max(0, m.start() - 60):m.start()]
+            if _A_PART_OF.search(before):
+                continue
+            # "the Revolving Commitments under the Existing Credit Agreement shall have been
+            # terminated": a clause that opens on the term, after a preposition, is about something
+            # under the agreement (a tranche, its commitments), not the agreement itself
+            if m.group(0).startswith("the") and _UNDER_THE.search(before):
                 continue
             words = m.group(0).strip()
             return words if len(words) <= _EVIDENCE_CAP else words[:_EVIDENCE_CAP - 1] + "…"
@@ -1106,13 +1115,14 @@ def _displacing_words(flat: str, term: str) -> str | None:
 
 def _same_agreement(a: AgreementKey | None, b: AgreementKey | None) -> bool:
     """One agreement under two namings: the same date, and the same name, or one name the other's
-    tail ("CREDIT AGREEMENT" and EPAM's cover title "REVOLVING CREDIT FACILITY CREDIT
-    AGREEMENT")."""
+    tail of at least two words ("CREDIT AGREEMENT" and EPAM's cover title "REVOLVING CREDIT
+    FACILITY CREDIT AGREEMENT"). A one-word name matches only itself: "INDENTURE" is not "FIRST
+    SUPPLEMENTAL INDENTURE", which is often dated the same day (review round 0)."""
     if a is None or b is None or a.dated != b.dated:
         return False
     x, y = a.name.split(), b.name.split()
     n = min(len(x), len(y))
-    return n > 0 and x[-n:] == y[-n:]
+    return x == y or (n >= 2 and x[-n:] == y[-n:])
 
 
 def _matured_notes(title: str, reference: date | None,
@@ -1121,15 +1131,23 @@ def _matured_notes(title: str, reference: date | None,
     reference year AND the CIQ panel carries no instrument with principal maturing that year
     (a panel that still carries one is a disagreement, and the exhibit is read)."""
     m = _NOTES_DUE.search(title)
-    if m is None or reference is None or int(m.group(1)) >= reference.year:
+    if m is None or reference is None:
         return None
-    year = int(m.group(1))
-    if any(i.maturity_date and i.maturity_date[:4] == str(year) and i.principal_musd
+    # EVERY year the title states from its first "NOTES DUE" on: a multi-tranche purchase
+    # agreement ("NOTES DUE 2024 AND 3.000% NOTES DUE 2031") has ended only when all have
+    years = sorted({int(y) for y in re.findall(r"\b(?:19|20)\d\d\b", title[m.start():])})
+    if not years or years[-1] >= reference.year:
+        return None
+    # the panel's own date (`ciq_maturity_date`, kept where a filing governs `maturity_date`) and
+    # the governed one both count; an UNKNOWN principal is not an absent one
+    if any(i.principal_musd != 0 and any((d or "")[:4] == str(y) for y in years
+                                         for d in (i.maturity_date, i.ciq_maturity_date))
            for i in instruments):
         return None
-    return (f"its title states notes due {year}, before the page's reference date "
+    due = " and ".join(str(y) for y in years)
+    return (f"its title states notes due {due}, before the page's reference date "
             f"({reference.isoformat()}), and the CIQ panel carries no instrument maturing in "
-            f"{year}")
+            f"{due}")
 
 
 def _extract_from_exhibit(
@@ -1212,13 +1230,14 @@ def _extract_from_exhibit(
 
 
 def _outcome(row: CovenantPointer, filename: str, kind: CovenantExhibitOutcomeKind,
-             title: str | None = None, *, superseded_by: str | None = None,
+             title: str | None = None, *, superseded_by: tuple[str, str] | None = None,
              evidence: str | None = None) -> CovenantExhibitOutcome:
     """What the loop did with ``row``'s targeted exhibit; ``title`` is the heading E5 read, None
-    where it read none."""
+    where it read none; ``superseded_by`` is the later exhibit's (accession, filename)."""
+    acc, doc = superseded_by if superseded_by is not None else (None, None)
     return CovenantExhibitOutcome(accession=row.accession, filename=filename, family=row.family,
-                                  outcome=kind, declared_title=title, superseded_by=superseded_by,
-                                  evidence=evidence)
+                                  outcome=kind, declared_title=title, superseded_by=acc,
+                                  superseded_by_filename=doc, evidence=evidence)
 
 
 class _Candidate(NamedTuple):
@@ -1246,11 +1265,11 @@ def _reference_date(cs: CapitalStructure) -> date | None:
 
 
 #: A candidate's verdict: its kind, the exhibit that superseded it, and the evidence.
-_Verdict = tuple[Literal["live", "superseded", "terminated"], str | None, str]
+_Verdict = tuple[Literal["live", "superseded", "terminated"], tuple[str, str] | None, str]
 
 
 def _coverage(candidates: list[_Candidate], reference: date | None,
-              instruments: list[CapitalInstrument]) -> list[_Verdict]:
+              instruments: list[CapitalInstrument], *, all_read: bool = True) -> list[_Verdict]:
     """THE COVERAGE RULE — one ``(kind, superseded_by, evidence)`` per candidate, ``kind`` being
     ``live``, ``superseded`` or ``terminated``.
 
@@ -1262,8 +1281,12 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
       and its term loan, both dated that day);
     - an empty or tied filing date cannot order two documents (the (X-4) rule of
       `governing_terms`), so it supersedes nothing.
-    TERMINATED: the title states notes whose maturity year is past, and the CIQ panel carries none
-    maturing then (`_matured_notes`).
+    - a page with a target that could not be read (``all_read`` False) supersedes NOTHING: the
+      unread exhibit may be another agreement the displaced name fits, so no name on the page can
+      be shown unambiguous (review round 0). It fails toward reading.
+    TERMINATED: the title states notes whose maturity years are all past, and the CIQ panel carries
+    none maturing then (`_matured_notes`). It reads only the exhibit's own title, so it applies
+    whatever else on the page was read.
     Anything else is LIVE, and is read — whether the words show it live or show nothing."""
     displaced = [displaced_agreements(c.text) for c in candidates]
     keys = [k for c in candidates for k in (c.own, c.base) if k is not None]
@@ -1271,7 +1294,7 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
     for x in candidates:
         verdict: _Verdict = ("live", None, "")
         later = sorted((j for j, y in enumerate(candidates)
-                        if y is not x and x.row.filing_date and y.row.filing_date
+                        if all_read and y is not x and x.row.filing_date and y.row.filing_date
                         and y.row.filing_date > x.row.filing_date),
                        key=lambda j: candidates[j].row.filing_date)
         for j in later:
@@ -1281,7 +1304,7 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
             if hit is not None:
                 amends = _same_agreement(hit.key, x.base) and not _same_agreement(hit.key, x.own)
                 y = candidates[j]
-                verdict = ("superseded", f"{y.row.accession} · {y.filename}",
+                verdict = ("superseded", (y.row.accession, y.filename),
                            f"“{hit.words}”, which names the {hit.key.name} dated "
                            f"{hit.key.dated.isoformat()} that this exhibit "
                            f"{'amends' if amends else 'is'}")
@@ -1409,13 +1432,17 @@ def extract_covenant_terms(
     reference = _reference_date(cs)
     instruments = list(cs.instruments.value or [])
     live: list[_Candidate] = []
-    verdicts = _coverage(candidates, reference, instruments)
+    unread = sum(1 for o in slots if o is not None and o.outcome == "fetch_failed")
+    if unread and len(candidates) > 1:
+        flags.append(f"(E5) coverage: {unread} located exhibit(s) could not be read, so no exhibit "
+                     f"on this page is found superseded; every debt contract read is sent")
+    verdicts = _coverage(candidates, reference, instruments, all_read=not unread)
     for c, (kind, by, evidence) in zip(candidates, verdicts, strict=True):
         if kind == "live":
             live.append(c)
             continue
         flags.append(f"(E5) exhibit not sent — {kind}: {c.src}"
-                     + (f"; superseded by {by}" if by else "") + f" — {evidence}")
+                     + (f"; superseded by {by[0]} · {by[1]}" if by else "") + f" — {evidence}")
         slots[c.i] = _outcome(c.row, c.filename, kind, c.title, superseded_by=by,
                               evidence=evidence)
 

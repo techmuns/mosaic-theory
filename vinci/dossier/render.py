@@ -1899,7 +1899,8 @@ def _exhibit_outcome_text(o: CovenantExhibitOutcome) -> str:
             why += f" (it declares itself “{o.declared_title}”)"
         elif o.outcome == "superseded":
             # the later exhibit, then its own words (the coverage rule): which document, and why
-            why += f" {o.superseded_by or 'an exhibit not recorded'}"
+            by = " · ".join(x for x in (o.superseded_by, o.superseded_by_filename) if x)
+            why += f" {by or 'an exhibit not recorded'}"
             if o.evidence:
                 why += f" — {o.evidence}"
         elif o.outcome == "terminated" and o.evidence:

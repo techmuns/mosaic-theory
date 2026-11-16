@@ -1765,8 +1765,11 @@ class CovenantExhibitOutcome(BaseModel):
     #: failed) or no agreement title was read from its head.
     declared_title: str | None = None
     #: (coverage rule, 2026-11-16) For `superseded`: the later located exhibit that restates or
-    #: replaces the agreement this one is or amends, "<accession> · <filename>". None otherwise.
+    #: replaces the agreement this one is or amends — its accession, and its file. Two structured
+    #: values, never one display string (CLAUDE.md: parsers consume structured values; review
+    #: round 0). None otherwise.
     superseded_by: str | None = None
+    superseded_by_filename: str | None = None
     #: (coverage rule) Why a `superseded` or `terminated` exhibit was not sent: the later
     #: exhibit's own words, verbatim in quotes, and the agreement they name; or the maturity the
     #: title states against the page's reference date. Display only: no parser reads it.
@@ -1776,13 +1779,12 @@ class CovenantExhibitOutcome(BaseModel):
 
     @model_serializer(mode="wrap")
     def _omit_unset_evidence(self, nxt: Any) -> Any:
-        """Drop the coverage rule's two fields when unset, so an outcome the rule did not decide
-        dumps exactly as it did before the fields existed (the frozen fixtures compare bytes)."""
+        """Drop the coverage rule's fields when unset, so an outcome the rule did not decide dumps
+        exactly as it did before the fields existed (the frozen fixtures compare bytes)."""
         d = nxt(self)
-        if self.superseded_by is None:
-            d.pop("superseded_by", None)
-        if self.evidence is None:
-            d.pop("evidence", None)
+        for key in ("superseded_by", "superseded_by_filename", "evidence"):
+            if getattr(self, key) is None:
+                d.pop(key, None)
         return d
 
 

@@ -101,6 +101,11 @@ def _run(ticker: str, *, texts: dict[str, str | None] | None = None,
     return _Run(llm.sent, {f"{o.accession} · {o.filename}": o for o in got}, flags, got)
 
 
+def _by(o: CovenantExhibitOutcome) -> str:
+    """The superseding exhibit, as the line prints it, from its two structured values."""
+    return f"{o.superseded_by} · {o.superseded_by_filename}"
+
+
 def _edited(ticker: str, key: str, old: str, new: str) -> dict[str, str | None]:
     """The fixture's texts with one real clause of one exhibit replaced (a DERIVED negative)."""
     texts = dict(_fixture(ticker)["texts"])
@@ -129,7 +134,7 @@ def test_vrrm_amendment_no_4_is_superseded_by_its_amended_and_restated_revolver(
     r = _run("VRRM")
     o = r.by[VRRM_AMD4]
     assert o.outcome == "superseded", o
-    assert o.superseded_by == VRRM_AR
+    assert (o.superseded_by, o.superseded_by_filename) == tuple(VRRM_AR.split(" · "))
     assert o.evidence is not None
     assert "“amend and restate the Original ABL Credit Agreement”" in o.evidence
     assert "REVOLVING CREDIT AGREEMENT dated 2018-03-01 that this exhibit amends" in o.evidence
@@ -150,8 +155,8 @@ def test_a_live_amendment_chain_stays_sent_cnxc_receivables_financing() -> None:
     ar23 = "0001803599-23-000107 · form8-k04x26x23exhibit101.htm"
     am21 = "0001803599-21-000215 · exhibit101122721.htm"
     assert r.sent == [ar25, rfa3, rfa4], r.sent
-    assert (r.by[ar23].outcome, r.by[ar23].superseded_by) == ("superseded", ar25)
-    assert (r.by[am21].outcome, r.by[am21].superseded_by) == ("superseded", ar23)
+    assert (r.by[ar23].outcome, _by(r.by[ar23])) == ("superseded", ar25)
+    assert (r.by[am21].outcome, _by(r.by[am21])) == ("superseded", ar23)
     assert "CREDIT AGREEMENT dated 2020-10-16 that this exhibit amends" in (r.by[am21].evidence
                                                                           or "")
 
@@ -211,11 +216,11 @@ def test_an_exhibit_the_words_cannot_classify_is_read_amzn() -> None:
                       "0001018724-14-000042 · amzn2014september5-ex101.htm",
                       "0001104659-26-072140 · tm2613616d4_ex10-1.htm"], r.sent
     o22 = r.by["0001193125-22-289041 · d413765dex101.htm"]
-    assert (o22.outcome, o22.superseded_by) == (
+    assert (o22.outcome, _by(o22)) == (
         "superseded", "0001104659-23-113444 · tm2329405d1_ex10-1.htm")
     assert "364-DAY REVOLVING CREDIT AGREEMENT dated 2022-11-18 that this exhibit is" in (
         o22.evidence or "")
-    assert r.by["0001193125-18-139368 · d574720dex101.htm"].superseded_by == \
+    assert _by(r.by["0001193125-18-139368 · d574720dex101.htm"]) == \
         "0001193125-20-176528 · d948849dex101.htm"
 
 
@@ -233,6 +238,7 @@ def test_matured_notes_read_terminated_and_a_live_purchase_agreement_goes_last_n
     r = _run("NFLX")
     o = r.by[NFLX_PA14]
     assert o.outcome == "terminated" and o.superseded_by is None
+    assert o.superseded_by_filename is None
     assert o.evidence is not None and "notes due 2024" in o.evidence
     assert "the CIQ panel carries no instrument maturing in 2024" in o.evidence
     assert r.sent[-1] == NFLX_PA18 and NFLX_PA14 not in r.sent
@@ -254,6 +260,35 @@ def test_a_panel_that_still_carries_the_year_disagrees_and_the_notes_are_read() 
     assert NFLX_PA14 in r.sent
 
 
+def test_a_panel_row_of_unknown_principal_in_the_year_is_not_an_absent_one() -> None:
+    """(−) DERIVED from NFLX's real panel: one more instrument maturing in 2024 whose principal the
+    panel does not state. Unknown is not absent, so the 2014 purchase agreement is read (review of
+    the coverage rule: `principal_musd` None read as "the panel carries no instrument")."""
+    fx = _fixture("NFLX")
+    cs = CapitalStructure.model_validate(fx["capital_structure"])
+    insts = list(cs.instruments.value or [])
+    extra = insts[0].model_copy(update={"description": "5.750% Senior Notes",
+                                        "maturity_date": "2024-03-01", "principal_musd": None})
+    cs = cs.model_copy(update={"instruments": cs.instruments.model_copy(
+        update={"value": [*insts, extra]})})
+    r = _run("NFLX", cs=cs)
+    assert r.by[NFLX_PA14].outcome != "terminated"
+    assert NFLX_PA14 in r.sent
+
+
+def test_a_title_with_a_live_tranche_is_not_terminated() -> None:
+    """(−) DERIVED from NFLX's real 2014 purchase agreement head, given a second tranche due 2028
+    (a year NFLX's panel carries). Only one of its notes has matured, so the agreement is read
+    (review of the coverage rule: only the title's FIRST "NOTES DUE" year was checked)."""
+    texts = _edited("NFLX", NFLX_PA14, "5.750% Senior Notes due 2024 Purchase Agreement",
+                    "5.750% Senior Notes due 2024 and 2028 Purchase Agreement")
+    title = ce.agreement_title(texts[NFLX_PA14] or "")
+    assert title == "SENIOR NOTES DUE 2024 AND 2028 PURCHASE AGREEMENT", title
+    r = _run("NFLX", texts=texts)
+    assert r.by[NFLX_PA14].outcome != "terminated", r.by[NFLX_PA14]
+    assert NFLX_PA14 in r.sent
+
+
 # --- the chains the reader reads ------------------------------------------------------------------
 
 
@@ -268,7 +303,7 @@ def test_each_years_364_day_agreement_terminates_the_last_nke() -> None:
              ("0000320187-23-000006", "0000320187-24-000009")]
     for old, new in chain:
         [o] = [o for k, o in r.by.items() if k.startswith(old)]
-        assert o.outcome == "superseded" and (o.superseded_by or "").startswith(new), o
+        assert o.outcome == "superseded" and o.superseded_by == new, o
 
 
 def test_a_collective_definition_supersedes_both_its_agreements_tjx() -> None:
@@ -281,7 +316,7 @@ def test_a_collective_definition_supersedes_both_its_agreements_tjx() -> None:
     for key in ("0001157523-20-000793 · a52222014ex10_1.htm",
                 "0000109198-20-000015 · exhibit101364dayrevolv.htm"):
         assert r.by[key].outcome == "superseded", r.by[key]
-        assert r.by[key].superseded_by == "0001193125-21-202939 · d169110dex101.htm"
+        assert _by(r.by[key]) == "0001193125-21-202939 · d169110dex101.htm"
     assert len(r.sent) == 2, r.sent
 
 
@@ -312,6 +347,18 @@ def test_a_part_of_the_agreement_displaces_nothing() -> None:
     assert r.by["0000320187-25-000008 · nike-364xdaycreditagreemen.htm"].outcome != "superseded"
 
 
+def test_something_under_the_agreement_terminated_displaces_nothing() -> None:
+    """(−) DERIVED from NKE's real clause: "the Revolving Commitments under the 2025 Credit
+    Agreement has been … terminated" ends a tranche's commitments, not the agreement (its other
+    loans may stay outstanding), so the 2025 agreement is read (review of the coverage rule: the
+    clause's subject was never checked, only `_A_PART_OF`'s part words)."""
+    texts = _edited("NKE", "0000320187-26-000020 · a364-daycreditagreementxni.htm",
+                    "the 2025 Credit Agreement has been",
+                    "the Revolving Commitments under the 2025 Credit Agreement has been")
+    r = _run("NKE", texts=texts)
+    assert r.by["0000320187-25-000008 · nike-364xdaycreditagreemen.htm"].outcome != "superseded"
+
+
 def test_a_possessive_displaces_nothing() -> None:
     """(−) DERIVED from VRRM's real recital: "amend and restate the Original ABL Credit Agreement’s
     Schedule 1.1" restates a schedule of it, not it, so Amendment No. 4 is read. No committed or
@@ -331,6 +378,32 @@ def test_an_agreement_named_two_ways_on_the_page_decides_neither() -> None:
     r = _run("VRRM", texts=texts)
     assert r.by[VRRM_AMD4].outcome != "superseded" and r.by[VRRM_TL].outcome != "superseded"
     assert VRRM_AMD4 in r.sent and VRRM_TL in r.sent
+
+
+def test_a_page_with_an_unread_exhibit_supersedes_nothing() -> None:
+    """(−) FAIL CLOSED, DERIVED from VRRM's real fixture with its term loan restatement unreadable
+    (a failed fetch). That exhibit may be another agreement the A&R's words fit, so no name on the
+    page can be shown unambiguous: Amendment No. 4 is read, and a flag says why (review round 0)."""
+    texts = dict(_fixture("VRRM")["texts"])
+    texts[VRRM_TL] = None
+    r = _run("VRRM", texts=texts)
+    assert r.by[VRRM_TL].outcome == "fetch_failed"
+    assert r.by[VRRM_AMD4].outcome != "superseded" and VRRM_AMD4 in r.sent
+    assert any(f.startswith("(E5) coverage: 1 located exhibit(s) could not be read")
+               for f in r.flags), r.flags
+
+
+def test_a_one_word_name_matches_only_itself() -> None:
+    """(+ / −) A NAME TAIL IS AT LEAST TWO WORDS. EPAM's restatement names "Credit Agreement, dated
+    as of May 24, 2017", which E5 titles by its cover, "REVOLVING CREDIT FACILITY CREDIT AGREEMENT":
+    one agreement. A bare "INDENTURE" is not a "FIRST SUPPLEMENTAL INDENTURE" of the same date,
+    often signed the same day (derived; review round 0)."""
+    day = ce.date(2017, 5, 24)
+    assert ce._same_agreement(ce.AgreementKey("CREDIT AGREEMENT", day),
+                              ce.AgreementKey("REVOLVING CREDIT FACILITY CREDIT AGREEMENT", day))
+    assert not ce._same_agreement(ce.AgreementKey("INDENTURE", day),
+                                  ce.AgreementKey("FIRST SUPPLEMENTAL INDENTURE", day))
+    assert ce._same_agreement(ce.AgreementKey("INDENTURE", day), ce.AgreementKey("INDENTURE", day))
 
 
 @pytest.mark.parametrize("filed", ["2025-05-15", ""])

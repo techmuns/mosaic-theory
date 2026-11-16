@@ -52,22 +52,31 @@ superseded-by:
      "commitments under … terminated", and "evidence of termination of" (TJX). Two guards:
      - a PART of the agreement is not the agreement ("Section 2.5.12 of the 2025 Credit
        Agreement has been … terminated");
-     - neither is a possessive ("the Original ABL Credit Agreement’s Schedule 1.1").
+     - neither is a possessive ("the Original ABL Credit Agreement’s Schedule 1.1");
+     - nor something under it (code-review round 0): "the Revolving Commitments under the
+       Existing Credit Agreement shall have been terminated" ends a tranche's commitments, and
+       its other loans may stay outstanding.
      A bare "termination of" is not admitted: "upon termination of the Credit Agreement" is a
      condition, not a statement that it ended.
   4. **SUPERSEDED** (`_coverage`). A target is superseded when a target filed STRICTLY LATER
      displaces the agreement it is or amends: the same date, and the same name or one name the
-     other's tail ("CREDIT AGREEMENT" and EPAM's cover title "REVOLVING CREDIT FACILITY CREDIT
-     AGREEMENT"). Two refusals keep a guess out:
+     other's tail of at least two words ("CREDIT AGREEMENT" and EPAM's cover title "REVOLVING
+     CREDIT FACILITY CREDIT AGREEMENT"; a bare "INDENTURE" is not a "FIRST SUPPLEMENTAL
+     INDENTURE" of the same day, code-review round 0). Two refusals keep a guess out:
      - a displaced agreement that matches the page's exhibits under two names neither of which is
        the other's tail decides none of them. VRRM's revolver and its first-lien term loan are both
        dated March 1, 2018;
-     - a tied or empty filing date cannot order two documents (`governing_terms`' (X-4) rule).
+     - a tied or empty filing date cannot order two documents (`governing_terms`' (X-4) rule);
+     - a page with a target that could not be fetched supersedes NOTHING, and a flag says so
+       (code-review round 0): the unread exhibit may be another agreement the displaced name
+       fits, so no name on the page can be shown unambiguous.
      The earliest such later exhibit is cited, with its own words.
-  5. **TERMINATED** (`_matured_notes`). The title states notes whose maturity year is before the
-     page's reference date (`maturity_check.bound`), and the CIQ panel carries no instrument with
-     principal maturing that year. A panel that still carries one disagrees, and the exhibit is
-     read.
+  5. **TERMINATED** (`_matured_notes`). Every maturity year the title states, from its first
+     "NOTES DUE", is before the page's reference date (`maturity_check.bound`), and the CIQ panel
+     carries no instrument maturing in any of them, by its own date or a governed one. A row of
+     UNSTATED principal counts as carried, since unknown is not absent. A panel that still carries
+     one disagrees, and the exhibit is read. (The years and the unstated principal are code-review
+     round 0.)
   6. **Everything else is READ**, however old it looks. A purchase agreement is still sent after
      every other debt contract (#1088). `_MAX_EXHIBITS` becomes **10**, a runaway guard: a page
      with more live debt contracts sends the first 10 in that order. Each one past it reads
@@ -77,7 +86,8 @@ superseded-by:
      searches. At the $0.69 mean list price of a covenant call, 10 calls are about $7.
 - *The field.* `CovenantExhibitOutcome` gains two kinds, `superseded` and `terminated`, and two
   optional fields, dropped from the JSON when unset:
-  - `superseded_by`, the later exhibit ("<accession> · <file>");
+  - `superseded_by` and `superseded_by_filename`, the later exhibit's accession and file: two
+    structured values, never one display string (code-review round 0);
   - `evidence`, its words in quotes and the agreement they name, or the maturity against the
     reference date. Display only: no parser reads it.
 
@@ -153,7 +163,7 @@ whatever they are.
     one, and the derived pin found a defect while being written: the part guard read `[^.;]`, so
     a dotted section number ("Section 2.5.12 of the …") defeated it. It now reads a section's
     reference as a token run.
-- *Pins* (`tests/test_covenant_coverage_rule.py`, 24 nodes, on
+- *Pins* (`tests/test_covenant_coverage_rule.py`, 29 nodes, on
   `tests/fixtures/covenant_coverage_rule/`).
   - The fixtures are real: seven committed pages' layers, unmodified, and 43 cuts of the cached
     exhibits. Each cut reads exactly as its full exhibit reads (its README).
@@ -173,7 +183,12 @@ whatever they are.
     - TJX's collective definition supersedes both of its agreements.
   - **Negatives, each derived from a real clause:** a conditional termination; a part of the
     agreement; a possessive; an agreement named two ways on the page; a tied or empty filing date
-    (2 nodes).
+    (2 nodes). Code-review round 0 added five more:
+    - a panel row of unstated principal in the year;
+    - a title with a live tranche;
+    - "the Revolving Commitments under the …" terminated;
+    - a page with an unread exhibit (VRRM with its term-loan restatement unreadable);
+    - a one-word name.
   - **End to end,** VRRM's and NFLX's committed pages with the real loop's outcomes, through
     `render_markdown` and the production `renderDossier` in node: each line names its cause, and
     the web line equals the Markdown.
@@ -191,6 +206,22 @@ whatever they are.
   - no panel check;
   - names ignored, so dates alone match. That last one reds VRRM's own pin, because the term
     loan's restatement would also be skipped.
+- *Code-review round 0* (`/code-review high --fix`) found ten things; six are fixed.
+  - Fixed, each behind a pin that fails on the pre-review code (5 of 5 red there):
+    1. the matured-notes test read only the first year;
+    2. it read an unstated principal as absent;
+    3. a clause about something "under the" agreement read as ending it;
+    4. `superseded_by` was a display string;
+    5. a page with an unread exhibit could pass the ambiguity check on a guess;
+    6. a one-word name matched any name ending in it.
+  - Deferred, each with its reason in the PR's dispositions:
+    - a conditional "shall be terminated if …", unobserved in the 29 corpus displacements;
+    - an exhibit skipped as superseded when its superseder is itself not sent (too large, an LLM
+      error, past the guard). Its terms are still not in force, and the superseder's line says
+      why it was not read;
+    - case-blind "DATED AS OF" in an all-caps heading, which fails closed (the exhibit is read);
+    - repeated whole-text scans, a cost of seconds.
+  - The audit at the post-review code: 0 of 91 outcomes move, and 51 → 47 holds.
 - *Three existing pins move with the premise.*
   - The plan pin's kinds exclude the two new ones, which this file drives.
   - A cost-bound exhibit now carries its heading.
