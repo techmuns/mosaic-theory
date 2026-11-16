@@ -83,11 +83,11 @@ def test_every_field_the_r4_recipe_reads_is_settable_from_the_template() -> None
             "ebit_derivation", "multiple_derivation"} <= settable
 
 
-@pytest.mark.parametrize("ticker", ["SMPL", "GOOGL"])
-def test_a_page_not_tagged_r4_keeps_its_template(ticker: str) -> None:
-    """The dispatch keys on the R4 tag alone: an R1 page (SMPL) and an R3 page (GOOGL) keep the
-    template they had — measured byte-identical on all 26 committed pages before this shipped."""
-    tpl = build_template(_page(ticker, tag=None))
+def test_a_page_not_tagged_r4_keeps_its_template() -> None:
+    """The dispatch keys on the R4 tag: an R1 page (SMPL) keeps the template it had — measured
+    byte-identical on all 26 committed pages before this shipped. An R3 page (GOOGL) shared that
+    R1 shape until it got its own (§5.0 row 10), pinned in `test_r3_template`."""
+    tpl = build_template(_page("SMPL", tag=None))
     assert tpl["multiple_basis"] == "EV/EBITDA" and "revenue" in tpl["scenarios"]["base"]
 
 
