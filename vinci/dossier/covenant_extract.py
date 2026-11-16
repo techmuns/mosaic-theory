@@ -82,10 +82,14 @@ _MAX_EXHIBIT_CHARS = 1_200_000
 # coverage rule (`_coverage`) does not find superseded or terminated is sent, and this only stops a
 # runaway: a page with more live contracts than this sends the first ones in the loop's order and
 # flags the rest loudly, as `cost_bound`.
-# WHY 10. The busiest committed page sends 6 under the rule (BURL: its ABL agreement's four
-# amendments, its term loan's 2014 amendment and a 2020 security agreement; 26 pages, main
-# 51784e53, cache-only). The locator can return at most 13 targets per page: one 10-K row and two
-# 8-Ks for each of the six families it searches (`mechanical._COVENANT_QUERY_CAP`). At the $0.69
+# WHY 10. Before the selector the busiest committed page sent 6 under the rule (BURL: its ABL
+# agreement's four amendments, its term loan's 2014 amendment and a 2020 security agreement; 26
+# pages, main 51784e53, cache-only); since the selector (2026-11-16) it is PARR at 8 and BURL at 7
+# (docs/records/2026-11-16-covenant-selector-reads-governing-exhibits.md, estimated, cache-only).
+# The locator returns at most 13 pointer ROWS per page: one 10-K row and two 8-Ks for each of the
+# six families it searches (`mechanical._COVENANT_QUERY_CAP`). Since the selector targets every
+# exhibit a row lists that governs debt, that no longer bounds the targets (BRBR's 2019 row lists
+# nine exhibits), so only this guard does. At the $0.69
 # mean list price of a covenant call (107 calls in the committed run lines), 10 calls are about $7.
 _MAX_EXHIBITS = 10
 # the agreement documents worth extracting from — the loan/credit/security/indenture agreement (and
@@ -1256,7 +1260,8 @@ def _displacing_words(flat: str, term: str) -> str | None:
             # "the Revolving Commitments under the Existing Credit Agreement shall have been
             # terminated": a clause that opens on the term, after a preposition, is about something
             # of or under the agreement (a part, a tranche, its commitments), not the agreement
-            if m.group(0).startswith("the") and _UNDER_THE.search(before):
+            # either case: the passive form's subject may open "The" (selector code review)
+            if m.group(0)[:3].lower() == "the" and _UNDER_THE.search(before):
                 continue
             if m.group(0).startswith("under") and not _ALL_OUTSTANDING.search(before):
                 continue
@@ -1429,6 +1434,7 @@ class _Candidate(NamedTuple):
     title: str
     own: AgreementKey | None
     base: AgreementKey | None
+    primary: bool = True  # its pointer's primary exhibit, or another its row lists (the selector)
 
 
 def _reference_date(cs: CapitalStructure) -> date | None:
@@ -1563,8 +1569,8 @@ def extract_covenant_terms(
     pointers = cs.covenant_pointer_rows
     if pointers is None or pointers.status is not SourceStatus.PRESENT or not pointers.value:
         return None, cs.covenant_terms, [], "", None
-    targets = _core_agreement_exhibits(list(pointers.value))
-    if not targets:
+    located = _located_exhibits(list(pointers.value))  # empty exactly when no pointer has a primary
+    if not located:
         note = "(E5) located pointers carry no core agreement exhibit to extract terms from"
         return None, Sourced.unknown(note=note), [], "", None
 
@@ -1625,7 +1631,7 @@ def extract_covenant_terms(
     candidates: list[_Candidate] = []
     unnamed: set[date] = set()
     siblings: list[_Identity] = []
-    for row, filename, primary in _located_exhibits(list(pointers.value)):
+    for row, filename, primary in located:
         src = _source_ref(row, filename)
         text = _fetch_exhibit(http, cik, row.accession, filename)
         if text is None:
@@ -1671,7 +1677,7 @@ def extract_covenant_terms(
                 unnamed.update(_head_dates(text))
             continue
         own, base = exhibit_identity(text, title, is_amendment(text))
-        candidates.append(_Candidate(i, row, filename, src, text, title, own, base))
+        candidates.append(_Candidate(i, row, filename, src, text, title, own, base, primary))
 
     # 2. THE COVERAGE RULE: skip what a later located exhibit displaced, and notes that matured.
     reference = _reference_date(cs)
@@ -1698,8 +1704,11 @@ def extract_covenant_terms(
     # contract, and the gate passes it, but it is the sale of notes, not the contract that governs
     # them. NFLX's pointer files its 2018 and 2014 notes purchase agreements under a bridge-loan
     # family, so in the round-robin they came first (#1088). The guard stops only a runaway.
-    ordered = ([c for c in live if not _PURCHASE_CONTRACT.search(c.title)]
-               + [c for c in live if _PURCHASE_CONTRACT.search(c.title)])
+    # EVERY PRIMARY BEFORE ANY OTHER EXHIBIT A ROW LISTS (the selector's code review): the
+    # round-robin sends each family's primary before any family's second, so a row listing many
+    # exhibits that govern debt never spends the guard on one facility while another facility's
+    # primary goes unsent. The outcomes stay in the located order; only the sending order is this.
+    ordered = sorted(live, key=lambda c: (bool(_PURCHASE_CONTRACT.search(c.title)), not c.primary))
     for c in ordered:
         if extracted >= _MAX_EXHIBITS:
             # LOUD, never quiet: the guard is not how exhibits are chosen, so hitting it means a

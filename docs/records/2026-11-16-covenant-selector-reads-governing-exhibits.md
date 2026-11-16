@@ -72,7 +72,10 @@ superseded-by:
        Second Restatement Effective Date and immediately after giving effect to the incurrence of
        the Initial Term Loans, hereby amended and restated". Only the present "is … hereby" form
        counts; "was amended and restated" is history.
-  6. Outcomes are in the located order: a target follows its row's primary.
+  6. Outcomes are in the located order: a target follows its row's primary. Sending is in another
+     order (code review, round 0): every primary before any other exhibit a row lists, purchase
+     agreements last. So the round-robin's purpose holds: a row listing many exhibits that govern
+     debt never spends the guard on one facility while another facility's primary goes unsent.
 - *The same-filing tie* (coordinator's ruling (a), 2026-11-16).
   - A filing's exhibits share its filing date. `governing_terms` groups rows by the agreement's
     title, or by the pointer family when the title is ambiguous, and lets the latest PRESENT row
@@ -185,7 +188,7 @@ form-shaped residues.
   - The one value still not shown at head is BURL's 2014 ABL first amendment. Four later-dated
     amendments of the same agreement (2018–2025) govern ahead of it, which is the chain behaving
     as it should.
-- *Pins* (`tests/test_covenant_selector.py`, 50 nodes, on `tests/fixtures/covenant_coverage_rule/`'s
+- *Pins* (`tests/test_covenant_selector.py`, 52 nodes, on `tests/fixtures/covenant_coverage_rule/`'s
   real cuts).
   - The brief's: VRRM's ex10_2 targeted right after the revolver and sent, and its 2021
     restatement superseded citing ex10_2's words, on both renderers end to end.
@@ -204,9 +207,10 @@ form-shaped residues.
   - The tie: WLK's real pair (one derived row: the IKE principal, quoting `dex102.htm`'s own
     cached clause), as a unit pin and end to end on both renderers (web row equals Markdown row);
     and, over the living corpus, no committed page splits a group.
-- *Fail first.* With base `995e3f21`'s `covenant_extract.py` and `dossier.js`, 48 of the 50 new
-  nodes fail. The 2 that pass at base are negatives, which hold trivially when nothing is
-  widened. Each negative was also shown live by a mutation of head's code that removes one piece,
+- *Fail first.* With main `71f9d9bb`'s `covenant_extract.py` and `dossier.js` (#1090 merged;
+  its code is `995e3f21`'s), 49 of the 52 new nodes fail. The 3 that pass there are negatives,
+  which hold trivially when nothing is widened; the capital-"The" one was red on this branch
+  before the review's fix. Each negative was also shown live by a mutation of head's code that removes one piece,
   each reddening its pin:
   - `_governs` admitting credit support;
   - any titled sibling promoted;
@@ -234,7 +238,25 @@ form-shaped residues.
     `data/` byte-identical.
   - Each committed `dossier.json` rendered through base and head `render_markdown` and
     `renderDossier` (node): 26 of 26 byte-identical on each.
-- *Code review, impact and suite:* (to fill).
+- *Code review, round 0* (`/code-review high --fix`, on the branch after main `71f9d9bb` was
+  merged in): 7 findings.
+  - 4 fixed, each behind a pin that fails on the code before the fix where it changes behaviour:
+    1. the subject guard read only a lowercase "the", while the passive form admits "The": "Section
+       6.01(d) of The Credit Agreement is hereby amended and restated" displaced the agreement
+       (`test_a_restated_part_displaces_nothing_whatever_the_case_of_its_the`, derived from PARR's
+       real clause);
+    2. past the guard, a row's siblings were sent before other families' primaries
+       (`test_past_the_guard_every_primary_is_sent_before_any_sibling_amzn`, AMZN's real fixture
+       with the guard at 2). The send order is now every primary first. No page reaches the guard,
+       so no outcome moves;
+    3. the `_MAX_EXHIBITS` comment's "WHY 10" stated the old busiest page and a target bound the
+       selector removed;
+    4. the located list was computed twice.
+  - 1 dismissed: the primary is still gated by `is_debt_agreement`, not `_governs`, so a guaranty
+    that is a row's primary is still sent. That path is deliberately unchanged. BURL's 2020 security
+    agreement is a sent primary on its committed page, and the brief was to widen, not to narrow.
+  - 2 deferred as one (grouping by identity, under WHAT IT COSTS).
+- *Impact and suite:* (to fill).
 
 **BOUNDARY.**
 - Pages: the 26 committed `data/dossiers/*/dossier.json` at main `51784e53`. #1090 changes no page,
@@ -291,6 +313,19 @@ form-shaped residues.
   UNKNOWN while a located credit-support document beside its credit agreement states it.
 - *An unreadable sibling now prints a line* ("could not be fetched") at a build whose fetch fails.
   It may be a governing document, so the page says so rather than dropping it silently.
+- *A later amendment under a split label stands in a group of its own* (code review, round 0,
+  DEFERRED). If one filing carries two exhibits under one label and a LATER filing amends one of
+  them under the same label, that amendment cannot join either split group: each original shows
+  its own value as governing, and the amendment shows its own, with no "amended by" between them.
+  - Measured exposure: 0 labels. On the 24 pages' head sends, the two split labels (WLK's "Term
+    Loans Due 2026", PARR's "CREDIT AGREEMENT") are reached by no other filing.
+  - The cheap fix is unavailable. A term row carries its exhibit's title and an amendment bit, not
+    which agreement it is or amends, so `governing_terms` cannot tell which original a later
+    amendment amends. The fix is to group by identity: store E5's `AgreementKey` (own and base) on
+    each term row, and group by it in `governing_terms` and `dossier.js`. That is a schema change of
+    its own.
+  - Falsifier: a re-assembled page with a group labelled `<label> · <file>` and a bare `<label>`
+    group from another filing.
 - *Split groups repeat a label with a file.* On WLK and PARR at their next paid build, the reader
   sees one table per exhibit, named by file. Two amendments of one agreement in one filing (PARR's
   2017 pair) show as two groups, because the filing date cannot say which governs.

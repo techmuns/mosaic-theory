@@ -171,7 +171,7 @@ def test_a_live_amendment_chain_stays_sent_cnxc_receivables_financing() -> None:
     ar23 = "0001803599-23-000107 · form8-k04x26x23exhibit101.htm"
     am21 = "0001803599-21-000215 · exhibit101122721.htm"
     rfa5 = "0001803599-25-000111 · exhibit102041125.htm"
-    assert r.sent == [ar25, rfa5, rfa3, rfa4], r.sent
+    assert r.sent == [ar25, rfa3, rfa4, rfa5], r.sent  # every primary before any sibling
     assert (r.by[ar23].outcome, _by(r.by[ar23])) == ("superseded", ar25)
     assert (r.by[am21].outcome, _by(r.by[am21])) == ("superseded", ar23)
     assert "CREDIT AGREEMENT dated 2020-10-16 that this exhibit amends" in (r.by[am21].evidence
@@ -239,10 +239,10 @@ def test_an_exhibit_the_words_cannot_classify_is_read_amzn() -> None:
     its filing, is sent too. Nothing located shows it displaced, so it is read."""
     r = _run("AMZN")
     assert r.sent == ["0001104659-23-113444 · tm2329405d1_ex10-1.htm",
-                      "0001104659-23-113444 · tm2329405d1_ex10-2.htm",
                       "0001193125-20-176528 · d948849dex101.htm",
                       "0001018724-14-000042 · amzn2014september5-ex101.htm",
-                      "0001104659-26-072140 · tm2613616d4_ex10-1.htm"], r.sent
+                      "0001104659-26-072140 · tm2613616d4_ex10-1.htm",
+                      "0001104659-23-113444 · tm2329405d1_ex10-2.htm"], r.sent  # primaries first
     o22 = r.by["0001193125-22-289041 · d413765dex101.htm"]
     assert (o22.outcome, _by(o22)) == (
         "superseded", "0001104659-23-113444 · tm2329405d1_ex10-1.htm")
@@ -330,7 +330,7 @@ def test_each_years_364_day_agreement_terminates_the_last_nke() -> None:
     to 2030-03-07), beside the 2025 364-day agreement in its filing, is sent too: no 364-day
     agreement names it."""
     r = _run("NKE")
-    assert r.sent == [NKE_FIVE, "0000320187-26-000020 · a364-daycreditagreementxni.htm"], r.sent
+    assert r.sent == ["0000320187-26-000020 · a364-daycreditagreementxni.htm", NKE_FIVE], r.sent
     chain = [("0000320187-25-000008", "0000320187-26-000020"),
              ("0000320187-24-000009", "0000320187-25-000008"),
              ("0000320187-23-000006", "0000320187-24-000009")]

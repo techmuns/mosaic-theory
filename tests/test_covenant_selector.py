@@ -276,6 +276,17 @@ def test_a_restated_part_displaces_nothing() -> None:
         ce.date(2015, 12, 17)], "the control: the same binding, the whole agreement"
 
 
+def test_a_restated_part_displaces_nothing_whatever_the_case_of_its_the() -> None:
+    """(−) DERIVED from PARR's real part clause above (code review of the selector): the passive
+    form admits "The" as well as "the", and the subject guard must read both. "Section 6.01(d) of
+    The Credit Agreement" is still a part, so it displaces nothing; red before the guard folded
+    the case."""
+    recital = ("the Credit Agreement, dated as of December 17, 2015 (as the same may from time to "
+               "time be amended, restated or otherwise modified, the “ Credit Agreement ”)")
+    part = "2.2 Section 6.01(d) of The Credit Agreement is hereby amended and restated"
+    assert ce.displaced_agreements(f"{recital} … {part}") == []
+
+
 def test_a_past_restatement_is_history_not_the_operative_clause() -> None:
     """(−) DERIVED from VRRM's real recital and its own conformed copy's history ("the Original
     Credit Agreement was amended and restated on the First Restatement Effective Date"): a clause
@@ -516,3 +527,19 @@ def test_n3_an_image_listed_first_is_never_the_primary() -> None:
             for r in cs.covenant_pointer_rows.value or []]
     assert any(r.exhibits and r.exhibits[0].endswith(".jpg") for r in rows)
     assert not any(f.endswith(".jpg") for _r, f in ce._core_agreement_exhibits(rows))
+
+
+def test_past_the_guard_every_primary_is_sent_before_any_sibling_amzn(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) The round-robin's purpose survives the selector (code review): every family's primary is
+    sent before any filing's second exhibit, so a row listing many exhibits that govern debt cannot
+    spend the guard on one facility while other facilities' primaries go unsent. AMZN's real
+    fixture with the guard lowered to 2 calls: its 2023 five-year agreement and its next family's
+    primary are sent, and the 364-day agreement beside the five-year one is the one past the guard.
+    Outcomes stay in the located order."""
+    monkeypatch.setattr(ce, "_MAX_EXHIBITS", 2)
+    r = _run("AMZN")
+    sibling = "0001104659-23-113444 · tm2329405d1_ex10-2.htm"
+    assert r.sent[0] == "0001104659-23-113444 · tm2329405d1_ex10-1.htm", r.sent
+    assert sibling not in r.sent and r.by[sibling].outcome == "cost_bound", r.sent
+    assert len(r.sent) == 2
