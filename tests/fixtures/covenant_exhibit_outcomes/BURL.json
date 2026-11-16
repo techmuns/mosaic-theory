@@ -1,0 +1,51 @@
+[
+  {
+    "accession": "0001193125-20-109457",
+    "filename": "d883886dex101.htm",
+    "family": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+    "outcome": "extracted",
+    "declared_title": "SECURITY AGREEMENT"
+  },
+  {
+    "accession": "0001193125-25-168007",
+    "filename": "d946952dex101.htm",
+    "family": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+    "outcome": "extracted",
+    "declared_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001564590-18-016500",
+    "filename": "burl-ex101_6.htm",
+    "family": "Senior Secured Term Loan Facility Term B-7 Loans",
+    "outcome": "extracted",
+    "declared_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001193125-26-116001",
+    "filename": "burl-ex10_39.htm",
+    "family": "material contracts (10-K exhibit index)",
+    "outcome": "not_debt_agreement",
+    "declared_title": null
+  },
+  {
+    "accession": "0001193125-21-364998",
+    "filename": "d275638dex101.htm",
+    "family": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+    "outcome": "extracted",
+    "declared_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT"
+  },
+  {
+    "accession": "0001193125-22-200058",
+    "filename": "d393601dex101.htm",
+    "family": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+    "outcome": "cost_bound",
+    "declared_title": null
+  },
+  {
+    "accession": "0001193125-14-313404",
+    "filename": "d772516dex101.htm",
+    "family": "Senior Secured Term Loan Facility Term B-7 Loans",
+    "outcome": "cost_bound",
+    "declared_title": null
+  }
+]

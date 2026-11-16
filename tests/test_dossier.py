@@ -1467,7 +1467,7 @@ def test_covenant_extract_present_is_verbatim_source_bound_and_absent_is_unknown
     exhibit = ("LOAN AND SECURITY AGREEMENT … “Conversion Price” means, as of any date of "
                "determination, an amount equal to $1.00 divided by the applicable Conversion Rate "
                "at such time.")
-    term_rows, summary, flags, log = ce.extract_covenant_terms(
+    term_rows, summary, flags, log, _outcomes = ce.extract_covenant_terms(
         cs_in, llm=_FakeLlm(payload), http=typing.cast(typing.Any, _FakeExhibitHttp(text=exhibit)),
         cik="0001760689", ticker="MVST", name="Microvast")
     assert term_rows is not None and term_rows.status is ds.SourceStatus.PRESENT
@@ -1487,7 +1487,7 @@ def test_covenant_extract_fetch_failure_fails_loud_unknown_never_blank() -> None
     """(E5) A fetch failure degrades to UNKNOWN + a flag — the row set is never a silent blank and
     never a fabricated value."""
     cs_in = _cs_with_pointers([_pointer_rows()[0]])
-    term_rows, summary, flags, _ = ce.extract_covenant_terms(
+    term_rows, summary, flags, _, _outcomes = ce.extract_covenant_terms(
         cs_in, llm=_FakeLlm({"terms": []}),
         http=typing.cast(typing.Any, _FakeExhibitHttp(fail=True)),
         cik="0001760689", ticker="MVST", name="Microvast")
@@ -1504,7 +1504,7 @@ def test_covenant_extract_no_located_pointer_is_a_noop() -> None:
         instruments=ds.Sourced.unknown(note="n/a"), summary=u, detail_as_of="2026-07-03",
         maturity_filings=u, covenant_pointers=u, covenant_pointer_rows=None,
         covenant_terms=ds.Sourced.unknown(note="(E5) no covenant exhibit located"))
-    term_rows, summary, flags, log = ce.extract_covenant_terms(
+    term_rows, summary, flags, log, _outcomes = ce.extract_covenant_terms(
         cs_in, llm=_FakeLlm({"terms": []}), http=typing.cast(typing.Any, _FakeExhibitHttp()),
         cik="0001760689", ticker="MVST", name="Microvast")
     assert term_rows is None and not flags and log == ""

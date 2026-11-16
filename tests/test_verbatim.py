@@ -247,7 +247,7 @@ def test_covenant_terms_keep_a_span_and_refuse_the_rest_end_to_end() -> None:
         {"name": "Maturity date", "present": True, "value": "June 2029", "quote": ""},
         {"name": "Conversion price / mechanics", "present": False, "value": "", "quote": ""},
     ]}
-    rows, summary, flags, _ = ce.extract_covenant_terms(
+    rows, summary, flags, _, _outcomes = ce.extract_covenant_terms(
         _tjx_capital_structure(), llm=_FakeLlm(payload),
         http=typing.cast(typing.Any, _FakeSecHttp(exhibit)),
         cik="0000109198", ticker="TJX", name="TJX Companies")
@@ -296,7 +296,7 @@ def test_a_covenant_quote_joining_two_figures_is_refused_end_to_end() -> None:
          "quote": row, "margin_pct": 1.25},
     ]}
     http = typing.cast(typing.Any, _FakeSecHttp(f"{_IT_HEAD} … {_IT_GRID}"))
-    rows, _, flags, _ = ce.extract_covenant_terms(
+    rows, _, flags, _, _outcomes = ce.extract_covenant_terms(
         cs, llm=_FakeLlm(payload), http=http, cik="0000749251", ticker="IT", name="Gartner")
     assert rows is not None
     by = {r.name: r for r in rows.value}

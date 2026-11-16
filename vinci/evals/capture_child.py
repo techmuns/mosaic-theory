@@ -12,7 +12,8 @@ recorder that keeps each ``messages.create`` call's kwargs and raises ``LlmError
 logs an error draw and moves on. Every byte of the request is built by production code and nothing
 is sent. The mechanical layer is the committed page's with the post-synthesis attachments undone
 (read off ``assemble.py``): ``ev_gap`` is recomputed after synthesis, and
-``capital_structure.covenant_term_rows`` is attached after it. A THIRD depends on the code version:
+``capital_structure.covenant_term_rows`` is attached after it, and so, since 2026-11-16, is
+``capital_structure.covenant_exhibit_outcomes``. A THIRD depends on the code version:
 before #865 (``a15a2abf``, 2026-10-30) ``_mark_material`` ran AFTER ``synthesize``, so a page built
 on older code carries marks its synthesis never read — ``unmark_material`` clears them (the annual
 table's rows, the only ones ``_mark_material`` marks).
@@ -81,6 +82,12 @@ def pre_synthesis_mech(page: dict[str, Any], *, unmark_material: bool = False) -
     if cs is not None and cs.covenant_term_rows is not None:
         mech = mech.model_copy(update={
             "capital_structure": cs.model_copy(update={"covenant_term_rows": None})})
+    # attached beside the rows since 2026-11-16 (STATE row 63); read by name, since code from
+    # before it has no such field
+    cs = mech.capital_structure
+    if cs is not None and getattr(cs, "covenant_exhibit_outcomes", None) is not None:
+        mech = mech.model_copy(update={
+            "capital_structure": cs.model_copy(update={"covenant_exhibit_outcomes": None})})
     return mech
 
 

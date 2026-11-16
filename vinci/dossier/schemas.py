@@ -1736,6 +1736,36 @@ class CovenantTerm(BaseModel):
         return d
 
 
+#: What the E5 loop did with one located agreement exhibit — one value per branch of
+#: `covenant_extract.extract_covenant_terms`, which writes it where that branch writes its flag.
+CovenantExhibitOutcomeKind = Literal[
+    "extracted",           # sent to the model, and it returned at least one term row
+    "cost_bound",          # not fetched: the page's extraction cap was already spent
+    "fetch_failed",        # the exhibit could not be fetched or parsed
+    "not_debt_agreement",  # E5 read its heading and refused it: not a debt contract
+    "too_large",           # a debt contract over the single-pass size limit: extract by hand
+    "llm_error",           # sent to the model, and the call failed
+    "no_terms_returned",   # sent to the model, and it returned no term rows
+]
+
+
+class CovenantExhibitOutcome(BaseModel):
+    """(E5, STATE row 63) What happened to ONE located agreement exhibit this run: the exhibit
+    `_core_agreement_exhibits` targeted for one pointer, and the one branch of the extraction loop
+    it took. Until 2026-11-16 this lived only in an `(E5)` QA-flag string, which a page may not
+    parse, so the covenant block's not-extracted line could state no cause."""
+
+    accession: str
+    filename: str  # the exhibit the loop targeted for this pointer
+    family: str  # the pointer's instrument family: the SEARCH's guess, which E5 checks
+    outcome: CovenantExhibitOutcomeKind
+    #: The heading E5 read (`agreement_title`) — None where the exhibit was never read (cost
+    #: bound, fetch failed) or its head declares no agreement at all.
+    declared_title: str | None = None
+
+    model_config = {"frozen": True}
+
+
 class SpringingMaturity(BaseModel):
     """A maturity that moves EARLIER on a condition, as a filing states it — verbatim, and dated
     only where the filing fixes the date ("91 days prior to the April 15, 2029 maturity date …")."""
@@ -1816,6 +1846,11 @@ class CapitalStructure(BaseModel):
     # (H1d/E5) the structured per-term rows the fenced LLM extracted from the located exhibit(s),
     # each a {value, source_ref} or UNKNOWN (rendered as a table); optional for pre-H1d JSON.
     covenant_term_rows: Sourced[list[CovenantTerm]] | None = None
+    # (E5, STATE row 63, 2026-11-16) one outcome per located agreement exhibit, written by the
+    # extraction loop at each branch, so the page can state why an exhibit was not extracted from
+    # a structured field rather than from a QA-flag string. Attached beside the term rows, after
+    # synthesis (which never reads it). ABSENT until a page is re-assembled (`DROP_WHEN_NONE`).
+    covenant_exhibit_outcomes: Sourced[list[CovenantExhibitOutcome]] | None = None
     # (P3/FIX-3) the fenced VERBATIM resolution event at a maturity 8-K — Item 8.01/1.01/3.02
     # (e.g. the 2026-05-28 Notice-of-Conversion: full principal → common stock). value = verbatim
     # (≤400c), source_ref = "8-K <accession> (<date>)". Optional so a pre-P3 dossier.json validates.
@@ -3488,6 +3523,8 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("", "ciq_currency"),
     # each panel maturity against the filings (`MaturityCheck`, 2026-10-27)
     ("capital_structure", "maturity_check"),
+    # what the E5 loop did with each located exhibit (`CovenantExhibitOutcome`, 2026-11-16)
+    ("capital_structure", "covenant_exhibit_outcomes"),
     # a depositary line's ADS ratio (`StockInfo.ads_ratio`, FPI4, 2026-10-28)
     ("stock_info", "ads_ratio"),
     # a ≤12m wall stated on a basis other than principal (`MaturityWall.basis`, audit E2-D15)
