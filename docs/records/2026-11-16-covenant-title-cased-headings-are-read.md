@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# E5 reads a title-cased debt-agreement heading as it reads a capitals one. Five real debt contracts it refused before any model call now reach the model at their pages' next paid build: VRRM's revolver amendment, CNXC's two receivables-facility amendments and NFLX's two notes purchase agreements. On NFLX they take two of the four call slots, which pushes its December 2025 revolver past the cost bound. A refusal with no title read now says so, not that the exhibit "declares itself no agreement at all" (STATE row 63)
+# E5 reads a title-cased debt-agreement heading as it reads a capitals one. Five real debt contracts it refused before any model call now reach the model at their pages' next paid build: VRRM's revolver amendment, CNXC's two receivables-facility amendments and NFLX's two notes purchase agreements. By the operator's ruling, a notes purchase agreement takes a cost-bound slot only after every other debt contract, so NFLX still sends the four exhibits it sends today. A refusal with no title read now says so, not that the exhibit "declares itself no agreement at all" (STATE row 63)
 
 **WHAT.**
 - *The defect.* `covenant_extract.agreement_title` read only a heading set in capitals: `_TITLE`'s
@@ -85,6 +85,17 @@ superseded-by:
   pointer's guess (FAMILY): no agreement title was read from the head of SRC". These are the
   renderer's words (`render._NO_TITLE_READ`, #1084), and the flag claims neither that the
   document is no agreement nor that it is not debt. No render file is touched.
+- *Purchase contracts last* (operator, 2026-11-16: "Order now, coverage next (Recommended)").
+  As first built, this PR let NFLX's two notes purchase agreements take two of its four call
+  slots. That pushed its December 2025 revolver and its 2019 amendment past the cost bound (see
+  WHAT IT COSTS). Now a debt contract whose title the gate passes and that names a PURCHASE
+  AGREEMENT (`_PURCHASE_CONTRACT`) is held in the loop's first pass and offered the slots left
+  after it. It is still admitted, never refused. `_core_agreement_exhibits`' round-robin across
+  families is unchanged, `_MAX_EXHIBITS` stays 4, and the outcomes list keeps the targets'
+  order. A purchase agreement held past the bound reads `cost_bound` under the title E5 read, and
+  its flag says it was ranked after every other debt contract. Over the cache corpus, 3 titles the
+  gate passes are purchase contracts: NFLX's two, and a 2020 convertible-notes purchase agreement
+  under CIK 784199 that no committed pointer targets.
 - *Vintage.* `2026-11-16.title-cased-covenant-headings-are-read`, with `covenant_extract.py`
   re-pinned to it.
 
@@ -120,9 +131,14 @@ exhibit.
   |---|---|---|---|
   | VRRM | `0000950170-25-072679` · `vrrm-ex10_1.htm`, Amendment No. 4 to the Revolving Credit Agreement (720,280 chars) | none | 2 → 3 |
   | CNXC | `0001803599-24-000117` and `0001803599-25-000014`, the third and fourth amendments to its Receivables Financing Agreement (445,616 and 453,029 chars) | `0001803599-21-000215` · `exhibit101122721.htm`, the 2021 First Amendment to its Credit Agreement and Joinder Agreement (586,261 chars), which its page extracted | 3 → 4 |
-  | NFLX | `0001193125-18-134734` and `0001193125-14-037000`, the purchase agreements for its 5.875% notes due 2028 and its 5.750% notes due 2024 (100,502 and 111,691 chars) | `0001193125-25-327462` · `d82688dex101.htm`, its SENIOR UNSECURED REVOLVING CREDIT AGREEMENT of December 2025 (406,266 chars), and `0001193125-19-094705` · `d721020dex101.htm`, the 2019 FIRST AMENDMENT AGREEMENT to its revolver (346,410 chars). Its page extracted both | 4 → 4 |
+  | NFLX | nothing new: the same four as at base (the 2009 credit agreement `0001193125-09-194962`, the 2021 second amendment `0001193125-21-193187`, the December 2025 revolver `0001193125-25-327462`, the 2019 amendment `0001193125-19-094705`) | its 2018 and 2014 notes purchase agreements (`0001193125-18-134734`, `0001193125-14-037000`, 100,502 and 111,691 chars), refused at base and now `cost_bound`, and its January 2026 incremental commitments (`0001193125-26-015951`), past the bound at base too | 4 → 4 |
 
-  No other page's sent set moves.
+  No other page's sent set moves. *Three ways, all 26 pages* (GOOGL and ROST have no pointer
+  rows), each side on its own code:
+  - base against this PR: CNXC and VRRM send new exhibits, and NFLX's two purchase agreements go
+    from refused to `cost_bound`, with its sent set identical;
+  - (a), the PR as first built, against this PR: only NFLX differs;
+  - base against (a): CNXC, NFLX and VRRM.
 - *The reader over the whole cache.* The cache holds 3,575 EDGAR archive documents (htm or txt,
   index pages excluded). Each was read through `html_to_text`, as `_fetch_exhibit` reads it, by
   base and head. 9 reads change, and no other.
@@ -132,7 +148,7 @@ exhibit.
     award agreement, and a VRRM press release whose headline ends "Termination of Agreement".
 
   Titled heads go 137 → 146, gate passes 86 → 92, and amendments 46 → 49 (CNXC's three).
-- *Pins* (`tests/test_covenant_title_reader.py`, 19 nodes, on
+- *Pins* (`tests/test_covenant_title_reader.py`, 21 nodes, on
   `tests/fixtures/covenant_title_reader/heads.json`). The fixture holds 33 real heads cut from the
   cache through `_fetch_exhibit`: the audit's 30 and 3 corpus heads. Each cut is the shortest at
   which base and head read it exactly as they read the full head (its README).
@@ -150,11 +166,19 @@ exhibit.
   - End to end on VRRM's frozen block (#1084): the amendment is sent to the model, named
     REVOLVING CREDIT AGREEMENT, and GORES II is still refused with its title. On TECX's frozen
     block, the untitled flag reads "no agreement title was read from the head of".
+  - Purchase contracts last, on NFLX's real pointer rows (frozen at main 8d0c562c, with its five
+    other heads, in `tests/fixtures/covenant_title_reader/NFLX.json`). NFLX sends the same four
+    exhibits as at base, both purchase agreements read `cost_bound` under their titles, and the
+    outcomes keep the targets' order. The negative is derived from the same rows with its December
+    2025 revolver and 2019 amendment dropped. Two slots are then free, and both purchase
+    agreements are sent, after the credit agreements.
   - Two existing pins move with the premise. `test_a_title_cased_heading_is_not_renamed_by_its_recital`
     now pins the title VRRM's heading gives, and the NKE end-to-end pin now pins the new flag
     words.
-- *Fail first.* Run with base code, 9 of the 19 new nodes fail: every positive, the filing-id
-  derivation, the audit count, VRRM end to end and the flag. So do both edited pins. The 10 that pass at base pin behaviour that
+- *Fail first.* Run with base code, 11 of the 21 new nodes fail: every positive, the filing-id
+  derivation, the audit count, VRRM end to end, the flag, and both purchase-contract pins (at base
+  NFLX's purchase agreements are refused). So do both edited pins. With (a)'s code, both
+  purchase-contract pins fail, because the sent order puts the purchase agreements first. The 10 that pass at base pin behaviour that
   must not change. Five mutations of the new code each red at least one pin:
   - NOTES may end a title-cased title: the press-release pins red.
   - No "due": NFLX ×2 and the audit count red.
@@ -181,33 +205,29 @@ exhibit.
   characters.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- *NFLX's next paid build loses its current revolver.* Its page carries terms from its December
-  2025 SENIOR UNSECURED REVOLVING CREDIT AGREEMENT and its 2019 first amendment. At head, two notes
-  purchase agreements take those two slots, and the 2014 one is for notes that matured in 2024.
-  The reader is right to read them, since each is the contract under which NFLX sold its notes,
-  and the gate passes NOTES as it always has. What drops the revolver is the selector:
-  `_core_agreement_exhibits` orders by the pointer's family and round-robins, and NFLX's pointer
-  files both purchase agreements under a debt family ("Senior Unsecured Bridge Term Loan
-  Facility"). **This is the operator's decision, and none of the options is built.** Each was
-  simulated at $0 with the same stubbed loop over all 24 pages, the option patched in scratch
-  only:
-  - **(a) Admit the notes purchase agreements, as built.** NFLX sends the 2018 and 2014 purchase
-    agreements, the 2009 credit agreement (`0001193125-09-194962`) and the 2021 second amendment
-    (`0001193125-21-193187`). Its December 2025 revolver, its 2019 amendment and its January 2026
-    incremental commitments (`0001193125-26-015951`) are past the bound.
-  - **(b) Rank notes purchase agreements below every other target in the bound's order** (a
-    selector change). NFLX sends the 2009 credit agreement, the 2021 second amendment, the
-    December 2025 revolver and the 2019 amendment, the four it sends at base. Both purchase
-    agreements and the January 2026 commitments are past the bound.
-  - **(c) Keep notes purchase agreements refused** (a gate vocabulary change). NFLX sends the
-    same four as under (b), and both purchase agreements are refused, under their titles.
-  - Under (b) and (c), only NFLX differs from (a) among the 24 pages, because no other page
-    targets a notes purchase agreement. VRRM and CNXC gain the same under all three.
+- *NFLX's cost bound: RULED (b).* As first built, NFLX's next paid build would have lost its
+  December 2025 SENIOR UNSECURED REVOLVING CREDIT AGREEMENT and its 2019 first amendment, both of
+  which its page carries. Its two notes purchase agreements would have taken those slots, and the
+  2014 one is for notes that matured in 2024. The reader was right to read them, since each is
+  the contract under which NFLX sold its notes. What dropped the revolver was the order:
+  `_core_agreement_exhibits` round-robins by the pointer's family, and NFLX's pointer files both
+  purchase agreements under a debt family ("Senior Unsecured Bridge Term Loan Facility").
+  Three options were measured at $0, as recorded above:
+  - (a) admit them as built;
+  - (b) rank them below every other debt contract;
+  - (c) refuse them.
 
-  CNXC's 2021 first amendment drops the same way under every option. CNXC still sends its 2023 amendment and
-  restatement and its 2025 amended and restated credit agreement.
+  Under (b) and (c), NFLX sends its base four, and only NFLX differs from (a). **The operator
+  ruled (b) on 2026-11-16: "Order now, coverage next (Recommended)"**, and this PR builds it.
+- *Next, not built: the coverage rule.* The cost bound still takes the first four debt contracts
+  the round-robin reaches, so a live instrument's agreement can still fall past it behind a
+  superseded one. The ruling's second half is a separate PR after this one merges. It would
+  extract every live instrument's agreement and amendment chain, skip superseded ones, and keep a
+  high cap only as a runaway guard. CNXC's 2021 first amendment drops past the bound here. CNXC
+  still sends its 2023 amendment and restatement and its 2025 amended and restated credit
+  agreement.
 - *Spend at the next paid builds.* VRRM makes 1 more call (720,280 chars) and CNXC 1 more, a net
-  +312,384 chars. NFLX makes the same number of calls with 540,483 fewer chars.
+  +312,384 chars. NFLX sends the same four exhibits as at base, so its spend does not move.
 - *VRRM's amendment may not merge with its base.* It is titled REVOLVING CREDIT AGREEMENT, and the
   A&R agreement VRRM's page extracts is titled AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT.
   `governing_terms` groups by title, so the two may print as separate groups. This normalisation

@@ -1,0 +1,170 @@
+{
+ "ticker": "NFLX",
+ "cik": "0001065280",
+ "covenant_pointer_rows": [
+  {
+   "family": "material contracts (10-K exhibit index)",
+   "filing": "latest 10-K",
+   "filing_date": "2026-01-23",
+   "accession": "0001065280-26-000034",
+   "exhibits": [
+    "ex102_q425.htm",
+    "ex103_q425.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Senior Unsecured Bridge Term Loan Facility",
+   "filing": "8-K",
+   "filing_date": "2018-04-26",
+   "accession": "0001193125-18-134734",
+   "exhibits": [
+    "d567970dex101.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Senior Unsecured Bridge Term Loan Facility",
+   "filing": "8-K",
+   "filing_date": "2014-02-05",
+   "accession": "0001193125-14-037000",
+   "exhibits": [
+    "d671121dex101.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Senior Unsecured Revolving Credit Facility",
+   "filing": "8-K",
+   "filing_date": "2009-09-21",
+   "accession": "0001193125-09-194962",
+   "exhibits": [
+    "dex101.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Senior Unsecured Revolving Credit Facility",
+   "filing": "8-K",
+   "filing_date": "2025-12-22",
+   "accession": "0001193125-25-327462",
+   "exhibits": [
+    "d82688dex101.htm",
+    "d82688dex102.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Unsecured Delayed Draw Term Loan Credit Facility",
+   "filing": "8-K",
+   "filing_date": "2025-12-05",
+   "accession": "0001193125-25-308651",
+   "exhibits": [
+    "d65144dex101.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Unsecured Delayed Draw Term Loan Credit Facility",
+   "filing": "8-K",
+   "filing_date": "2019-04-01",
+   "accession": "0001193125-19-094705",
+   "exhibits": [
+    "d721020dex101.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Unsecured Revolving Credit Facility",
+   "filing": "8-K",
+   "filing_date": "2021-06-17",
+   "accession": "0001193125-21-193187",
+   "exhibits": [
+    "d552068dex101.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "Unsecured Revolving Credit Facility",
+   "filing": "8-K",
+   "filing_date": "2026-01-20",
+   "accession": "0001193125-26-015951",
+   "exhibits": [
+    "d37713dex101.htm"
+   ],
+   "note": ""
+  },
+  {
+   "family": "3.000% Senior Notes",
+   "filing": "—",
+   "filing_date": "",
+   "accession": "",
+   "exhibits": [],
+   "note": "no contract-level filing expected (aggregate line item)"
+  },
+  {
+   "family": "3.625% Senior Notes",
+   "filing": "—",
+   "filing_date": "",
+   "accession": "",
+   "exhibits": [],
+   "note": "no contract-level filing expected (aggregate line item)"
+  },
+  {
+   "family": "3.875% Senior Notes",
+   "filing": "—",
+   "filing_date": "",
+   "accession": "",
+   "exhibits": [],
+   "note": "no contract-level filing expected (aggregate line item)"
+  },
+  {
+   "family": "4.375% Senior Notes",
+   "filing": "—",
+   "filing_date": "",
+   "accession": "",
+   "exhibits": [],
+   "note": "no contract-level filing expected (aggregate line item)"
+  },
+  {
+   "family": "9 more aggregate lines",
+   "filing": "—",
+   "filing_date": "",
+   "accession": "",
+   "exhibits": [],
+   "note": "showing 4 of 13 aggregate lines — the full instrument panel lists every one"
+  }
+ ],
+ "heads": [
+  {
+   "filing": "8-K 0001193125-09-194962",
+   "exhibit": "dex101.htm",
+   "title": "CREDIT AGREEMENT",
+   "head": "EX-10.1 2 dex101.htm CREDIT AGREEMENT Credit Agreement Exhibit 10.1 CREDIT AGREEMENT among NETFLIX, INC., THE LENDERS NAMED HEREIN, and WELLS FARGO BANK,\nNATIONAL ASSOCIATION, as Administrative Agent and L/C Issuer, and WELLS FARGO SECURITIES, LLC, as Lead Arranger and Sole Bookrunner Dated as of Se"
+  },
+  {
+   "filing": "8-K 0001193125-21-193187",
+   "exhibit": "d552068dex101.htm",
+   "title": "REVOLVING CREDIT AGREEMENT",
+   "head": "EX-10.1 2 d552068dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 Execution Version SECOND\nAMENDMENT AGREEMENT SECOND AMENDMENT AGREEMENT, dated as of June 17, 2021 (this “ Amendment ”), to the Revolving\nCredit Agreement, dated as of July 27, 2017, among Netflix, Inc., a Delaware corporation (the “ Borrower "
+  },
+  {
+   "filing": "8-K 0001193125-25-327462",
+   "exhibit": "d82688dex101.htm",
+   "title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+   "head": "EX-10.1 2 d82688dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 SENIOR UNSECURED REVOLVING CREDIT AGREEMENT dated as of December 19,\n2025, among NETFLIX, INC., as the Borrower, the\nLenders party hereto, and WELLS FARGO BANK, NATIONAL ASSOCIATION as the Administrative Agent WELLS FARGO SECURITIES, LLC, BNP\nP"
+  },
+  {
+   "filing": "8-K 0001193125-19-094705",
+   "exhibit": "d721020dex101.htm",
+   "title": "REVOLVING CREDIT AGREEMENT",
+   "head": "EX-10.1 2 d721020dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 EXECUTION VERSION FIRST AMENDMENT AGREEMENT FIRST AMENDMENT AGREEMENT, dated as of March 29, 2019 (this “ Amendment ”), to the Revolving Credit Agreement, dated as of\nJuly 27, 2017, among Netflix, Inc., a Delaware corporation (the “ Borrower ”"
+  },
+  {
+   "filing": "8-K 0001193125-26-015951",
+   "exhibit": "d37713dex101.htm",
+   "title": null,
+   "head": "EX-10.1 3 d37713dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 WELLS FARGO BANK, NATIONAL ASSOCIATION WELLS FARGO SECURITIES, LLC 550 South Tryon Street Charlotte, North Carolina 28202 BNP PARIBAS BNP PARIBAS SECURITIES CORP. 787 Seventh Avenue New York, New\nYork 10019 HSBC BANK PLC HSBC SECURITIES (USA) I"
+  }
+ ]
+}

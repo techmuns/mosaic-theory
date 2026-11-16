@@ -3,5 +3,5 @@
   "follows": [
     "2026-11-16.covenant-exhibits-state-their-outcome"
   ],
-  "names": "the covenant phase reads a title-cased debt-agreement heading as it reads a capitals one (\"Amendment No. 4 to REVOLVING CREDIT Agreement\", \"Third Amendment to Receivables Financing Agreement\", \"... Senior Notes due 2028 Purchase Agreement\"), so E5 sends such an exhibit to the model instead of refusing it as no debt agreement, and a refusal with no title read says so (\"no agreement title was read from the head of\") instead of that the exhibit declares itself no agreement at all (STATE row 63)"
+  "names": "the covenant phase reads a title-cased debt-agreement heading as it reads a capitals one (\"Amendment No. 4 to REVOLVING CREDIT Agreement\", \"Third Amendment to Receivables Financing Agreement\", \"... Senior Notes due 2028 Purchase Agreement\"), so E5 sends such an exhibit to the model instead of refusing it as no debt agreement, and a refusal with no title read says so (\"no agreement title was read from the head of\") instead of that the exhibit declares itself no agreement at all; and a notes purchase agreement the gate passes takes a cost-bound slot only after every other debt contract the loop reached, so NFLX's two no longer push its December 2025 revolver past the bound (operator: \"Order now, coverage next\") (STATE row 63)"
 }

@@ -36,5 +36,13 @@ the base reader (main `032d2fde`) and this PR's reader. So every pin reads the c
 loop reads the whole exhibit, before and after the change. 32 heads are 300 characters long.
 NCNO's office lease is 550, because its recital names the lease.
 
+**`NFLX.json`** holds NFLX's committed `covenant_pointer_rows` (14 rows, frozen from
+`data/dossiers/NFLX/dossier.json` at main `8d0c562c`). It also holds the heads of the five targets
+of those rows that `heads.json` lacks: its 2009 credit agreement, its 2021 second amendment, its
+December 2025 revolver, its 2019 amendment and its January 2026 incremental commitments. They are
+cut by the same rule, with main `8d0c562c` as base. Each head carries the title it reads. The
+purchase-contracts-last pins run the real loop over these rows (operator, 2026-11-16: "Order now,
+coverage next (Recommended)").
+
 To re-fetch one, call `_fetch_exhibit(build_sec_http(), cik, accession, exhibit)`, where `cik` is
 the page's own CIK. Cut it as above, and re-fetch an entry only together with the pins that read it.

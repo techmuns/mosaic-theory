@@ -265,3 +265,75 @@ def test_an_untitled_refusal_says_no_title_was_read_not_what_the_document_is() -
     assert outcomes is not None
     assert [(o.outcome, o.declared_title) for o in outcomes.value or []] == [
         ("not_debt_agreement", None)]
+
+
+# --- purchase contracts last (operator, 2026-11-16: "Order now, coverage next (Recommended)") -----
+
+NFLX_FIXTURE = ROOT / "fixtures" / "covenant_title_reader" / "NFLX.json"
+NFLX_PAS = ("0001193125-18-134734", "0001193125-14-037000")
+#: what NFLX's committed page sends at base, and what the ruling keeps it sending
+NFLX_BASE_FOUR = ["8-K 0001193125-09-194962 · dex101.htm",
+                  "8-K 0001193125-21-193187 · d552068dex101.htm",
+                  "8-K 0001193125-25-327462 · d82688dex101.htm",
+                  "8-K 0001193125-19-094705 · d721020dex101.htm"]
+
+
+class _ServesNflx(_ServesHeads):
+    """The fixture's heads plus NFLX's own (its credit agreements and amendments)."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        nflx = json.loads(NFLX_FIXTURE.read_text())
+        self.heads.update({(h["filing"].split()[-1].replace("-", ""), h["exhibit"]): h["head"]
+                           for h in nflx["heads"]})
+
+
+def _nflx_run(drop: tuple[str, ...] = ()) -> tuple[list[str], list[Any], list[str]]:
+    from vinci.dossier.schemas import CovenantPointer, Sourced
+    nflx = json.loads(NFLX_FIXTURE.read_text())
+    rows = [CovenantPointer.model_validate(r) for r in nflx["covenant_pointer_rows"]
+            if r["accession"] not in drop]
+    cs = CapitalStructure(
+        instruments=Sourced.unknown(note="n/a"), summary=Sourced.unknown(note="n/a"),
+        detail_as_of="n/a", maturity_filings=Sourced.unknown(note="n/a"),
+        covenant_pointers=Sourced.present(f"{len(rows)} pointers", source_ref="EDGAR"),
+        covenant_pointer_rows=Sourced.present(rows, source_ref="EDGAR"),
+        covenant_terms=Sourced.unknown(note="n/a"))
+    llm = _RecordsExhibits()
+    _rows, _summary, flags, _log, outcomes = covenant_extract.extract_covenant_terms(
+        cs, llm=llm, http=_ServesNflx(),  # type: ignore[arg-type]
+        cik=nflx["cik"], ticker="NFLX", name="Netflix, Inc.")
+    assert outcomes is not None
+    got = list(outcomes.value or [])
+    targets = covenant_extract._core_agreement_exhibits(rows)
+    assert [(o.accession, o.filename) for o in got] == [(r.accession, f) for r, f in targets], \
+        "one outcome per target, in the targets' order"
+    return llm.sent, got, flags
+
+
+def test_a_purchase_agreement_fills_a_slot_only_after_the_credit_agreements() -> None:
+    """(+) NFLX'S REAL POINTER SET (its committed rows, frozen at main 8d0c562c). Its pointer files
+    two notes purchase agreements under a bridge-loan family, so the round-robin reached them first,
+    and they took two of the four slots (#1088 as first built). That pushed its December 2025
+    revolver and its 2019 amendment past the bound. Ruled: a purchase agreement is admitted, but
+    it takes a slot only after every other debt contract the loop reached. NFLX sends the same four
+    exhibits as at base, and both purchase agreements read cost_bound, under the titles E5 read."""
+    sent, outcomes, flags = _nflx_run()
+    assert sent == NFLX_BASE_FOUR, sent
+    by = {o.accession: o for o in outcomes}
+    assert [(by[a].outcome, by[a].declared_title) for a in NFLX_PAS] == [
+        ("cost_bound", "SENIOR NOTES DUE 2028 PURCHASE AGREEMENT"),
+        ("cost_bound", "SENIOR NOTES DUE 2024 PURCHASE AGREEMENT")]
+    assert sum("ranked after every other debt contract" in f for f in flags) == 2, flags
+
+
+def test_a_purchase_agreement_still_reaches_the_model_when_a_slot_is_free() -> None:
+    """(-) LAST, NOT REFUSED. DERIVED from NFLX's real pointer set without its December 2025
+    revolver and its 2019 amendment, which frees two slots: both notes purchase agreements are
+    sent, after the credit agreements, in the targets' order (2018, then 2014)."""
+    sent, outcomes, _flags = _nflx_run(drop=("0001193125-25-327462", "0001193125-19-094705"))
+    assert sent == [NFLX_BASE_FOUR[0], NFLX_BASE_FOUR[1],
+                    "8-K 0001193125-18-134734 · d567970dex101.htm",
+                    "8-K 0001193125-14-037000 · d671121dex101.htm"], sent
+    by = {o.accession: o for o in outcomes}
+    assert all(by[a].outcome == "no_terms_returned" for a in NFLX_PAS)

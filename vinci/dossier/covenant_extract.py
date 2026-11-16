@@ -802,6 +802,17 @@ def _as_title(t: str) -> str | None:
     return t if len(t.split()) >= 2 and len(t) >= 8 else None
 
 
+#: A PURCHASE CONTRACT: a debt contract the gate passes that SELLS a debt instrument rather than
+#: governs it — NFLX's "SENIOR NOTES DUE 2028 PURCHASE AGREEMENT", and any other "... PURCHASE
+#: AGREEMENT" the gate admits (a note or securities purchase agreement). `extract_covenant_terms`
+#: gives one a cost-bound slot only after every other debt contract has had one (operator,
+#: 2026-11-16). Read from the title, so a non-debt purchase agreement (WERN's STOCK PURCHASE) is
+#: refused before this asks. Measured over the 3,575 cached EDGAR archive documents (2026-11-16):
+#: 3 titles the gate passes match, NFLX's two notes purchase agreements and a 2020 convertible-notes
+#: purchase agreement (CIK 784199) that no committed page's pointer targets.
+_PURCHASE_CONTRACT = re.compile(r"\bPURCHASE\s+AGREEMENT\b")
+
+
 def is_debt_agreement(title: str | None) -> bool:
     """Should a COVENANT extractor see this document? Only a debt contract — never an equity award,
     an offer letter or a purchase agreement, whatever instrument the pointer guessed."""
@@ -932,21 +943,53 @@ def extract_covenant_terms(
     rows: list[CovenantTerm] = []
     flags: list[str] = []
     logs: list[str] = []
-    outcomes: list[CovenantExhibitOutcome] = []
+    # one slot per target, in its order: a purchase contract decided in the second pass still lands
+    # in its own place, so the outcomes list equals the targets list (STATE row 63)
+    slots: list[CovenantExhibitOutcome | None] = [None] * len(targets)
+    #: purchase contracts that passed the gate, held for the slots the first pass leaves
+    held: list[tuple[int, CovenantPointer, str, str, str, str]] = []
     extracted = 0
-    for row, filename in targets:
+
+    def send(i: int, row: CovenantPointer, filename: str, src: str, text: str,
+             title: str) -> int:
+        """One model call on an identified debt contract, or its refusal for size or an LLM error.
+        Returns the calls it spent against the bound."""
+        if len(text) > _MAX_EXHIBIT_CHARS:
+            flags.append(
+                f"(E5) covenant exhibit too large for single-pass extraction ({len(text)} chars) — "
+                f"extract by hand: {src}"
+            )
+            slots[i] = _outcome(row, filename, "too_large", title)
+            return 0
+        try:
+            got, refused, log = _extract_from_exhibit(
+                llm, text, name=name, ticker=ticker, source_ref=src, title=title,
+                amendment=is_amendment(text))
+        except LlmError as exc:
+            flags.append(f"(E5) covenant extraction LLM error — UNKNOWN: {src}: {exc}")
+            slots[i] = _outcome(row, filename, "llm_error", title)
+            return 0
+        logs.append(f"=== COVENANT EXTRACT: {src} ===\n{log}")
+        rows.extend(got)
+        flags.extend(refused)
+        # a call that returned no term rows still spent one of the bound's calls, as before; it is
+        # not an extraction, and no flag has ever said so
+        slots[i] = _outcome(row, filename, "extracted" if got else "no_terms_returned", title)
+        return 1
+
+    for i, (row, filename) in enumerate(targets):
         if extracted >= _MAX_EXHIBITS:
             flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename}")
-            outcomes.append(_outcome(row, filename, "cost_bound"))
+            slots[i] = _outcome(row, filename, "cost_bound")
             continue
         src = _source_ref(row, filename)
         text = _fetch_exhibit(http, cik, row.accession, filename)
         if text is None:
             flags.append(f"(E5) covenant exhibit fetch failed — UNKNOWN: {src}")
-            outcomes.append(_outcome(row, filename, "fetch_failed"))
+            slots[i] = _outcome(row, filename, "fetch_failed")
             continue
         title = agreement_title(text)
-        if not is_debt_agreement(title):
+        if not title or not is_debt_agreement(title):
             # IDENTIFY OR REFUSE. The pointer's family is a guess; the document's own heading is
             # evidence. Without this, an executive offer letter (NKE, TGT), a stock purchase
             # agreement (WERN) and a capped-call confirmation (UBER) were each handed to a covenant
@@ -963,31 +1006,29 @@ def extract_covenant_terms(
                 f"(E5) refused rather than extracted under the pointer's guess ({row.family}): "
                 f"no agreement title was read from the head of {src}"
             )
-            outcomes.append(_outcome(row, filename, "not_debt_agreement", title))
+            slots[i] = _outcome(row, filename, "not_debt_agreement", title)
             continue
-        if len(text) > _MAX_EXHIBIT_CHARS:
-            flags.append(
-                f"(E5) covenant exhibit too large for single-pass extraction ({len(text)} chars) — "
-                f"extract by hand: {src}"
-            )
-            outcomes.append(_outcome(row, filename, "too_large", title))
+        if _PURCHASE_CONTRACT.search(title):
+            held.append((i, row, filename, src, text, title))
             continue
-        try:
-            got, refused, log = _extract_from_exhibit(
-                llm, text, name=name, ticker=ticker, source_ref=src, title=title,
-                amendment=is_amendment(text))
-        except LlmError as exc:
-            flags.append(f"(E5) covenant extraction LLM error — UNKNOWN: {src}: {exc}")
-            outcomes.append(_outcome(row, filename, "llm_error", title))
+        extracted += send(i, row, filename, src, text, title)
+    # PURCHASE CONTRACTS LAST (operator, 2026-11-16: "Order now, coverage next (Recommended)").
+    # A notes purchase agreement is a debt contract, and the gate passes it, but it is the sale of
+    # notes, not the contract that governs them. NFLX's pointer files its 2018 and 2014 notes
+    # purchase agreements under a bridge-loan family, so in the round-robin they came first and
+    # pushed its December 2025 revolver and its 2019 amendment past the bound (#1088). Each takes
+    # a slot only after every other debt contract the first pass reached has taken one. The
+    # round-robin across families is unchanged, and so is `_MAX_EXHIBITS`.
+    for i, row, filename, src, text, title in held:
+        if extracted >= _MAX_EXHIBITS:
+            flags.append(f"(E5) exhibit not extracted (cost bound): {row.family}·{filename} — a "
+                         f"purchase agreement (“{title}”), ranked after every other debt contract")
+            slots[i] = _outcome(row, filename, "cost_bound", title)
             continue
-        logs.append(f"=== COVENANT EXTRACT: {src} ===\n{log}")
-        rows.extend(got)
-        flags.extend(refused)
-        extracted += 1
-        # a call that returned no term rows still spent one of the bound's calls, as before; it is
-        # not an extraction, and no flag has ever said so
-        outcomes.append(_outcome(row, filename, "extracted" if got else "no_terms_returned",
-                                 title))
+        extracted += send(i, row, filename, src, text, title)
+    outcomes = [o for o in slots if o is not None]
+    if len(outcomes) != len(targets):  # every branch above fills its slot; fail loud if not
+        raise RuntimeError(f"E5 wrote {len(outcomes)} outcomes for {len(targets)} targets")
 
     found = Sourced.present(outcomes, source_ref=OUTCOMES_SOURCE_REF)
     if not rows:
