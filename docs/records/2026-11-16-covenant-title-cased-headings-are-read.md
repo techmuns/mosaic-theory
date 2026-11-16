@@ -93,9 +93,33 @@ superseded-by:
   after it. It is still admitted, never refused. `_core_agreement_exhibits`' round-robin across
   families is unchanged, `_MAX_EXHIBITS` stays 4, and the outcomes list keeps the targets'
   order. A purchase agreement held past the bound reads `cost_bound` under the title E5 read, and
-  its flag says it was ranked after every other debt contract. Over the cache corpus, 3 titles the
-  gate passes are purchase contracts: NFLX's two, and a 2020 convertible-notes purchase agreement
-  under CIK 784199 that no committed pointer targets.
+  its flag says it was ranked after every other debt contract. **Narrowed in review round 1:** two
+  purchase agreements govern, so they keep their round-robin place: a private placement's NOTE
+  PURCHASE AGREEMENT, which carries its notes' financial covenants with no indenture, and a PIPE
+  convertible's SECURITIES PURCHASE AGREEMENT. Only the initial purchasers' kind is ranked last:
+  it names its notes and then "PURCHASE AGREEMENT", and an indenture governs those notes. Over the
+  cache corpus, 3 titles the gate passes are ranked last. Two are NFLX's. The third is a 2020
+  CONVERTIBLE SENIOR NOTES DUE 2025 PURCHASE AGREEMENT under CIK 784199, which no committed pointer
+  targets and which falls on the ranked-last side, being an initial purchasers' agreement. None in
+  the corpus reads NOTE PURCHASE or SECURITIES PURCHASE.
+- *A title-cased run about a contract is not its heading* (review round 1). In title case, the
+  words that head a contract can also be a headline, an index, a contents page or a notice that
+  names one. In capitals, each passed the gate under the contract it names. `_heading_title` now
+  refuses four kinds of run:
+  - one with an index, contents or "Notice of" lead (`_NOT_A_HEADING_LEAD`);
+  - one with a present-tense reporting verb ahead of the noun (`_REPORTING_VERB`: Announces,
+    Closes, Prices, Receives …), never a past form, which is often a title's adjective (SECURED,
+    AMENDED AND RESTATED);
+  - one whose title carries an amount in words or an ARTICLE heading (`_NOT_A_TITLE`).
+
+  None of these shapes is in the corpus. A press release quoting a facility's terms would have
+  passed the quote checks and printed as that facility's terms.
+  - **The figure rule is on the title, not the run.** NFLX's own headings carry the issuer, the
+    principal and the coupon ahead of the name. A figure rule on the run would refuse both of
+    them, and those are real reads.
+  - **"The run must start at the head" already holds.** `_HEADING_RUN` is anchored at the cleaned
+    head's start. The title inside the run cannot be required to start there too, for the same
+    NFLX reason.
 - *Vintage.* `2026-11-16.title-cased-covenant-headings-are-read`, with `covenant_extract.py`
   re-pinned to it.
 
@@ -141,14 +165,20 @@ exhibit.
   - base against (a): CNXC, NFLX and VRRM.
 - *The reader over the whole cache.* The cache holds 3,575 EDGAR archive documents (htm or txt,
   index pages excluded). Each was read through `html_to_text`, as `_fetch_exhibit` reads it, by
-  base and head. 9 reads change, and no other.
+  base and head. With round 1's guards, 8 reads change, and no other.
   - 6 are debt contracts: the five above, and CNXC's Fifth Amendment to the same receivables
     facility, which no committed pointer targets.
-  - 3 are not, and the gate refuses each: BURL's exchange agreement for convertible notes, an LLY
-    award agreement, and a VRRM press release whose headline ends "Termination of Agreement".
+  - 2 are not, and the gate refuses both: BURL's exchange agreement for convertible notes, and an
+    LLY award agreement. LLY's title ("AWARD UNDER THE 2002 LILLY STOCK PLAN … AWARD AGREEMENT")
+    is a reader cut, not that document's own name.
+  - Before round 1, a 9th read titled a VRRM press release (`d123116dex991.htm`). The reader cut
+    its headline at "Termination of Agreement", where the headline itself runs on to "Notice From
+    Avis Budget Group". That is a cut, not the document's name. Round 1's reporting-verb guard
+    ("Receives") stops it, so it reads no title, and the gate refused it either way. Between this
+    PR's head before round 1 (`cf242e3c`) and after it, that is the only read that moves.
 
-  Titled heads go 137 → 146, gate passes 86 → 92, and amendments 46 → 49 (CNXC's three).
-- *Pins* (`tests/test_covenant_title_reader.py`, 21 nodes, on
+  Titled heads go 137 → 145, gate passes 86 → 92, and amendments 46 → 49 (CNXC's three).
+- *Pins* (`tests/test_covenant_title_reader.py`, 29 nodes, on
   `tests/fixtures/covenant_title_reader/heads.json`). The fixture holds 33 real heads cut from the
   cache through `_fetch_exhibit`: the audit's 30 and 3 corpus heads. Each cut is the shortest at
   which base and head read it exactly as they read the full head (its README).
@@ -172,6 +202,14 @@ exhibit.
     outcomes keep the targets' order. The negative is derived from the same rows with its December
     2025 revolver and 2019 amendment dropped. Two slots are then free, and both purchase
     agreements are sent, after the credit agreements.
+  - Review round 1, all derived from real heads, since no such head is in the corpus:
+    - NOTE PURCHASE and SECURITIES PURCHASE headings swapped into NFLX's real 2018 head: each
+      keeps its place and is sent first.
+    - Five headlines and leads swapped into CNXC's real press-release head: a reporting verb, a
+      verb with an amount in words, an amount in words alone, an exhibit index, a notice. Each
+      reads no title.
+    - A contents listing ending in THE GUARANTY, from FUBO's real exchange agreement, with its
+      "Table of Contents" lead and without it: no title.
   - Two existing pins move with the premise. `test_a_title_cased_heading_is_not_renamed_by_its_recital`
     now pins the title VRRM's heading gives, and the NKE end-to-end pin now pins the new flag
     words.
@@ -179,12 +217,23 @@ exhibit.
   derivation, the audit count, VRRM end to end, the flag, and both purchase-contract pins (at base
   NFLX's purchase agreements are refused). So do both edited pins. With (a)'s code, both
   purchase-contract pins fail, because the sent order puts the purchase agreements first. The 10 that pass at base pin behaviour that
-  must not change. Five mutations of the new code each red at least one pin:
+  must not change. Round 1's 8 new nodes all fail on `cf242e3c`'s code. Mutations of the new code each red at least one pin:
   - NOTES may end a title-cased title: the press-release pins red.
   - No "due": NFLX ×2 and the audit count red.
   - Any lowercase word continues the run: the TECX derivation reds.
   - No comma after a capitalised word: NFLX ×2 and the audit count red.
   - `is_amendment` ignores the run: CNXC ×2 and the filing-id derivation red.
+  - Round 1, each guard removed in turn:
+    - no lead guard: the index and the notice red;
+    - no verb guard: the reporting verb reds;
+    - no amount-in-words half: the amount alone reds;
+    - no ARTICLE half: the contents listing reds;
+    - every purchase agreement ranked last: both governing kinds red.
+- *Each fixture cut still reads as its full head.* With round 1's reader, all 38 committed cuts
+  (`heads.json`'s 33 and `NFLX.json`'s 5) give the same title, gate result and amendment read as
+  the full 3,000-character head they were cut from.
+- *Round 1 moves no committed page's selection.* On the stubbed loop over all 24 pages with
+  pointer rows, round 1's code against `cf242e3c`'s differs on none.
 - *No committed page moves.* `refresh.refresh_fleet` re-rendered all 26 pages: 26 unchanged,
   0 moved and 0 refused, and `git status` showed nothing under `data/` or `frontend/`. Each page
   gains the change only at its next paid re-assembly.
@@ -228,11 +277,24 @@ exhibit.
   agreement.
 - *Spend at the next paid builds.* VRRM makes 1 more call (720,280 chars) and CNXC 1 more, a net
   +312,384 chars. NFLX sends the same four exhibits as at base, so its spend does not move.
-- *VRRM's amendment may not merge with its base.* It is titled REVOLVING CREDIT AGREEMENT, and the
-  A&R agreement VRRM's page extracts is titled AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT.
-  `governing_terms` groups by title, so the two may print as separate groups. This normalisation
-  gap predates the fix (CNXC's "CREDIT AGREEMENT" and "AMENDED AND RESTATED CREDIT AGREEMENT"
-  split the same way). It is found here and not fixed.
+- **VRRM's amendment is a SUPERSEDED document** (review round 1, confirmed with
+  `governing_terms`).
+  - **What it amends.** Amendment No. 4 (filed 2025-05-15) amends a Revolving Credit Agreement
+    that VRRM's AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT (filed 2025-10-17) later replaced,
+    and VRRM's page already extracts that A&R. VRRM's live revolver terms are already on its page
+    and are not lost: this PR adds a superseded document; it does not recover a live one. (The
+    task brief said VRRM's amendment "loses its terms at every paid build"; that was true of the
+    amendment, not of the revolver in force.)
+  - **What prints until the coverage rule lands.** `governing_terms` groups by title, and the
+    amendment is titled REVOLVING CREDIT AGREEMENT while the A&R is titled AMENDED AND RESTATED
+    REVOLVING CREDIT AGREEMENT. So VRRM's next paid build prints any term returned from Amendment
+    No. 4 as a separate, stale "REVOLVING CREDIT AGREEMENT" group.
+  - **So the coverage rule must land before VRRM's next paid build** (its re-rehearsal is around
+    2026-12-07; it is scored 2026-12-16). That rule skips superseded and terminated documents.
+    The grouping is not fixed here.
+  - **NFLX's 2014 purchase agreement is the same case,** for notes that matured in 2024. Under
+    the ruled order it falls past NFLX's bound, so it does not print. It would on a page with a
+    free slot.
 - *Bank commitment letters stay refused.* That is 2 refused (IT, NFLX) and 2 more cost-bound
   targets (NFLX January 2026, WLK 2016). Each is a debt commitment whose head is an address block
   and a code name. This is the gate's open question, not this reader's.

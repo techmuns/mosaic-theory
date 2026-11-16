@@ -2,7 +2,8 @@
 
 `agreement_title` read only capitals headings, so five real debt contracts on committed pointer
 rows read as no title and were refused before any model call:
-- VRRM's Amendment No. 4 to its Revolving Credit Agreement, scored 2026-12-16;
+- VRRM's Amendment No. 4 to its Revolving Credit Agreement (a revolver VRRM amended and restated
+  on 2025-10-17, so this amendment is superseded; see the record);
 - CNXC's Third and Fourth Amendments to its Receivables Financing Agreement;
 - NFLX's two senior-notes purchase agreements.
 
@@ -23,6 +24,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 from collections import Counter
 from typing import Any
 
@@ -288,7 +290,8 @@ class _ServesNflx(_ServesHeads):
                            for h in nflx["heads"]})
 
 
-def _nflx_run(drop: tuple[str, ...] = ()) -> tuple[list[str], list[Any], list[str]]:
+def _nflx_run(drop: tuple[str, ...] = (), heads: dict[tuple[str, str], str] | None = None
+              ) -> tuple[list[str], list[Any], list[str]]:
     from vinci.dossier.schemas import CovenantPointer, Sourced
     nflx = json.loads(NFLX_FIXTURE.read_text())
     rows = [CovenantPointer.model_validate(r) for r in nflx["covenant_pointer_rows"]
@@ -300,8 +303,10 @@ def _nflx_run(drop: tuple[str, ...] = ()) -> tuple[list[str], list[Any], list[st
         covenant_pointer_rows=Sourced.present(rows, source_ref="EDGAR"),
         covenant_terms=Sourced.unknown(note="n/a"))
     llm = _RecordsExhibits()
+    http = _ServesNflx()
+    http.heads.update(heads or {})
     _rows, _summary, flags, _log, outcomes = covenant_extract.extract_covenant_terms(
-        cs, llm=llm, http=_ServesNflx(),  # type: ignore[arg-type]
+        cs, llm=llm, http=http,  # type: ignore[arg-type]
         cik=nflx["cik"], ticker="NFLX", name="Netflix, Inc.")
     assert outcomes is not None
     got = list(outcomes.value or [])
@@ -337,3 +342,62 @@ def test_a_purchase_agreement_still_reaches_the_model_when_a_slot_is_free() -> N
                     "8-K 0001193125-14-037000 · d671121dex101.htm"], sent
     by = {o.accession: o for o in outcomes}
     assert all(by[a].outcome == "no_terms_returned" for a in NFLX_PAS)
+
+
+@pytest.mark.parametrize("heading", ["Note Purchase Agreement", "Securities Purchase Agreement"])
+def test_a_governing_purchase_agreement_keeps_its_place_in_the_order(heading: str) -> None:
+    """(-) ONLY THE INITIAL PURCHASERS' KIND IS RANKED LAST (#1088 review, round 1). A private
+    placement's NOTE PURCHASE AGREEMENT carries its notes' financial covenants with no indenture
+    behind it, and a PIPE convertible's SECURITIES PURCHASE AGREEMENT is the document `_DEBT`
+    admits SECURITIES PURCHASE for: each governs, so each keeps its round-robin place. DERIVED from
+    NFLX's real 2018 head with its heading's name swapped. It is sent first, where (a) sent the
+    purchase agreement, and not held behind the credit agreements."""
+    acc, doc = "0001193125-18-134734", "d567970dex101.htm"
+    real = re.sub(r"\s+", " ", _head("NFLX", acc))
+    name = "Senior Notes due 2028 Purchase Agreement"
+    assert name in real, "the derivation must apply"
+    sent, outcomes, _flags = _nflx_run(heads={(acc.replace("-", ""), doc):
+                                              real.replace(name, heading, 1)})
+    assert sent[0] == f"8-K {acc} · {doc}", sent
+    [got] = [o for o in outcomes if o.accession == acc]
+    assert (got.outcome, got.declared_title) == ("no_terms_returned", heading.upper())
+
+
+# --- a title-cased run ABOUT a contract is not its heading (#1088 review, round 1) ----------------
+
+PR_HEADLINE = "Concentrix Prices $600 Million Senior Notes Offering"
+
+
+@pytest.mark.parametrize(("shape", "headline"), [
+    ("a reporting verb", "Concentrix Announces Amendment to Credit Agreement"),
+    ("a reporting verb and an amount in words",
+     "Concentrix Closes $500 Million Revolving Credit Agreement"),
+    ("an amount in words", "Concentrix $500 Million Revolving Credit Agreement"),
+    ("an exhibit index", "Exhibit Index Exhibit No. Description 10.1 Credit Agreement"),
+    ("a notice", "Notice of Borrowing Under Credit Agreement"),
+], ids=lambda v: str(v)[:24])
+def test_a_title_cased_run_about_a_contract_is_not_its_heading(shape: str, headline: str) -> None:
+    """(-) A HEADLINE, AN INDEX OR A NOTICE NAMES A CONTRACT WITHOUT BEING ONE. Read in capitals,
+    each of these passed the gate under the contract it names, and a press release quoting a
+    facility's terms would pass the quote checks and print as those terms. DERIVED from CNXC's real
+    press-release head with its headline swapped; no such head is in the corpus."""
+    real = re.sub(r"\s+", " ", _head("CNXC", "0001803599-26-000068"))
+    assert PR_HEADLINE in real, "the derivation must apply"
+    head = real.replace(PR_HEADLINE, headline, 1)
+    got = agreement_title(head)
+    assert got is None, (shape, got)
+    assert not is_amendment(head), shape
+
+
+def test_a_contents_listing_is_not_a_heading() -> None:
+    """(-) A TABLE OF CONTENTS, WITH ITS LEAD OR WITHOUT IT. DERIVED from FUBO's real exchange
+    agreement, its cover cut so the head opens at its contents, and its first two entries made
+    "Article I Definitions Article II The Guaranty": read in capitals, that is a GUARANTY."""
+    real = re.sub(r"\s+", " ", _head("FUBO", "0001493152-24-000126"))
+    entries = "Section 1. Definitions 1 Section 2. Rules of Construction"
+    assert "Table of Contents" in real and entries in real, "the derivation must apply"
+    toc = (real[:real.index("fuboTV")]
+           + real[real.index("Table of Contents"):].replace(
+               entries, "Article I Definitions Article II The Guaranty", 1))
+    for head in (toc, toc.replace("Table of Contents Page ", "", 1)):
+        assert agreement_title(head) is None, head[:120]

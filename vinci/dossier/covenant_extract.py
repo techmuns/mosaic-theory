@@ -660,14 +660,40 @@ _RECITAL_REF = re.compile(
 #:   INSTRUMENT (NOTES, DEBENTURE). A press release headlines in title case too, and names the
 #:   instrument it announces: CNXC's 2026 release "Concentrix Prices $600 Million Senior Notes
 #:   Offering" read as "MILLION SENIOR NOTES" and passed the gate until this limit.
-#: Measured over the 3,575 EDGAR archive documents in the operator's cache (2026-11-16): 9 heads
-#: read as untitled gain a title. 6 are debt contracts: the five above and CNXC's Fifth Amendment to
-#: its Receivables Financing Agreement, which no committed pointer targets. 3 are not, and the gate
-#: refuses each: an exchange agreement for convertible notes (BURL), an award agreement (LLY) and a
-#: press release whose headline ends "Termination of Agreement" (VRRM). No other read moves.
+#: Measured over the 3,575 EDGAR archive documents in the operator's cache (2026-11-16), with the
+#: guards below: 8 heads read as untitled gain a title. 6 are debt contracts: the five above, and
+#: CNXC's Fifth Amendment to its Receivables Financing Agreement, which no committed pointer
+#: targets. 2 are not, and the gate refuses both. One is an exchange agreement for convertible notes
+#: (BURL). The other is a reader cut from an award agreement (LLY), not that document's own name.
+#: Without the guards, a 9th read cut a VRRM press-release headline at "Termination of Agreement".
+#: No other read moves.
 _HEADING_RUN = re.compile(
     r"^(?:(?:[A-Z][\w&'\.\-]*,?|\$?\d[\w,\.%\-]*|of|to|and|the|due)\s+)+")
 _HEADING_TITLE = re.compile(rf"\b({_TITLE_WORDS}(?:AGREEMENT|INDENTURE|GUARANTY|GUARANTEE))\b")
+#: A TITLE-CASED RUN THAT IS NOT A CONTRACT'S OWN HEADING (#1088 review, round 1). In capitals a
+#: heading is a contract's; in title case the same words may be a headline, an index, a contents
+#: page or a notice ABOUT one, and each would pass the gate under the contract it names. These
+#: hold the run to a contract's own heading, read in capitals:
+#: - not an INDEX, a table of CONTENTS or a NOTICE OF ... lead ("Exhibit Index Exhibit No.
+#:   Description 10.1 Credit Agreement", "Notice of Borrowing Under Credit Agreement");
+_NOT_A_HEADING_LEAD = re.compile(r"^(?:EXHIBIT\s+INDEX|INDEX|TABLE\s+OF\s+CONTENTS|CONTENTS|"
+                                 r"NOTICE\s+OF)\b")
+#: - no REPORTING VERB before the noun: a headline reports ("... Announces Amendment to Credit
+#:   Agreement", "... Closes $500 Million Revolving Credit Agreement"), a contract's name does not.
+#:   Present tense only, as headlines are set: a past form is often a title's adjective (SECURED,
+#:   EXTENDED, AMENDED AND RESTATED);
+_REPORTING_VERB = re.compile(
+    r"\b(?:ANNOUNCES|CLOSES|COMPLETES|ENTERS|PRICES|RECEIVES|REPORTS|SIGNS|SECURES|OBTAINS|"
+    r"EXTENDS|EXPANDS|AMENDS|LAUNCHES|ISSUES|FILES|PROVIDES|DECLARES|AGREES|REACHES|TERMINATES|"
+    r"UPSIZES|REFINANCES)\b")
+#: - no amount IN WORDS in the title: a contract states its amount in digits ahead of its name
+#:   ("$1,900,000,000 5.875% Senior Notes due 2028 Purchase Agreement"); "$500 Million" is a
+#:   headline's, and reads as "MILLION REVOLVING CREDIT AGREEMENT";
+#: - no ARTICLE heading in the title: "... Article I Definitions Article II The Guaranty" is a
+#:   contents listing, which can run without its "Table of Contents" lead.
+#: NOT A FIGURE RULE ON THE RUN: NFLX's own headings carry the issuer, the principal and the coupon
+#: ahead of the name, so a run with figures is refused only where its title is.
+_NOT_A_TITLE = re.compile(r"\b(?:MILLION|BILLION|THOUSAND)\b|\bARTICLE\s+[IVXLC\d]+\b")
 #: The capture ran past the heading into the body — a title, not a sentence.
 _PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
                     r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
@@ -732,10 +758,19 @@ def is_amendment(text: str) -> bool:
 
 def _heading_title(h: str) -> re.Match[str] | None:
     """The cleaned head's title-cased heading read in capitals: `_HEADING_TITLE` over the heading
-    run (`_HEADING_RUN`) upper-cased. None when the head has no run or the run names no contract
-    noun."""
+    run (`_HEADING_RUN`) upper-cased. None when the head has no run, the run names no contract
+    noun, or the run is not a contract's own heading (`_NOT_A_HEADING_LEAD`, `_REPORTING_VERB`,
+    `_NOT_A_TITLE`)."""
     run = _HEADING_RUN.match(h)
-    return _HEADING_TITLE.search(run.group(0).upper()) if run else None
+    if run is None:
+        return None
+    words = run.group(0).upper()
+    if _NOT_A_HEADING_LEAD.match(words):
+        return None
+    m = _HEADING_TITLE.search(words)
+    if m is None or _REPORTING_VERB.search(words[:m.end()]) or _NOT_A_TITLE.search(m.group(1)):
+        return None
+    return m
 
 
 def _clean_title(t: str) -> str:
@@ -802,15 +837,22 @@ def _as_title(t: str) -> str | None:
     return t if len(t.split()) >= 2 and len(t) >= 8 else None
 
 
-#: A PURCHASE CONTRACT: a debt contract the gate passes that SELLS a debt instrument rather than
-#: governs it — NFLX's "SENIOR NOTES DUE 2028 PURCHASE AGREEMENT", and any other "... PURCHASE
-#: AGREEMENT" the gate admits (a note or securities purchase agreement). `extract_covenant_terms`
-#: gives one a cost-bound slot only after every other debt contract has had one (operator,
-#: 2026-11-16). Read from the title, so a non-debt purchase agreement (WERN's STOCK PURCHASE) is
-#: refused before this asks. Measured over the 3,575 cached EDGAR archive documents (2026-11-16):
-#: 3 titles the gate passes match, NFLX's two notes purchase agreements and a 2020 convertible-notes
-#: purchase agreement (CIK 784199) that no committed page's pointer targets.
-_PURCHASE_CONTRACT = re.compile(r"\bPURCHASE\s+AGREEMENT\b")
+#: A PURCHASE CONTRACT: a debt contract the gate passes under which notes are SOLD TO INITIAL
+#: PURCHASERS, while an indenture governs them. NFLX's "SENIOR NOTES DUE 2028 PURCHASE AGREEMENT"
+#: names its notes and then "PURCHASE AGREEMENT". `extract_covenant_terms` gives one a cost-bound
+#: slot only after every other debt contract has had one (operator, 2026-11-16).
+#: TWO PURCHASE AGREEMENTS GOVERN, AND ARE NOT RANKED LAST (#1088 review, round 1):
+#: - a private placement's NOTE PURCHASE AGREEMENT, under which notes are sold to insurers with
+#:   their financial covenants and no indenture;
+#: - a PIPE convertible's SECURITIES PURCHASE AGREEMENT, the document `_DEBT` admits SECURITIES
+#:   PURCHASE for.
+#: Read from the title, so a non-debt purchase agreement (WERN's STOCK PURCHASE) is refused before
+#: this asks. Measured over the 3,575 cached EDGAR archive documents (2026-11-16): 3 titles the
+#: gate passes match. Those are NFLX's two notes purchase agreements and a 2020 CONVERTIBLE SENIOR
+#: NOTES DUE 2025 PURCHASE AGREEMENT (CIK 784199), which no committed page's pointer targets. That
+#: one is an initial purchasers' agreement and is ranked last. None reads NOTE PURCHASE or
+#: SECURITIES PURCHASE.
+_PURCHASE_CONTRACT = re.compile(r"(?<!\bNOTE\s)(?<!\bSECURITIES\s)\bPURCHASE\s+AGREEMENT\b")
 
 
 def is_debt_agreement(title: str | None) -> bool:

@@ -35,6 +35,8 @@ shortest length, at least 300 characters in steps of 50, at which two readers gi
 the base reader (main `032d2fde`) and this PR's reader. So every pin reads the cut exactly as the
 loop reads the whole exhibit, before and after the change. 32 heads are 300 characters long.
 NCNO's office lease is 550, because its recital names the lease.
+Re-checked after review round 1's reader (2026-11-16): every cut, here and in `NFLX.json`, still
+reads exactly as its full head.
 
 **`NFLX.json`** holds NFLX's committed `covenant_pointer_rows` (14 rows, frozen from
 `data/dossiers/NFLX/dossier.json` at main `8d0c562c`). It also holds the heads of the five targets
