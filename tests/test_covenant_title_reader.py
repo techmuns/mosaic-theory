@@ -74,6 +74,20 @@ def test_a_title_cased_amendment_heading_names_its_contract(ticker: str, accessi
     assert is_amendment(head)
 
 
+def test_a_filing_id_before_a_title_cased_amendment_heading_does_not_hide_it() -> None:
+    """(+) CODES FIRST, AS `agreement_title` STRIPS THEM. DERIVED from CNXC's real Third Amendment
+    head with WERN's real filing-id lead ("20260605EX101 1758963679 24780046", the shape
+    `_LEAD_CODE` exists for) put where its "Execution Version" stands. `agreement_title` strips
+    the code and names the contract; `is_amendment` tested `_AMEND_PREFIX`, anchored at ^, on the
+    unstripped heading and called the amendment a base contract (review round 0)."""
+    real = _head("CNXC", "0001803599-24-000117")
+    head = real.replace("Execution Version Third Amendment",
+                        "20260605EX101 1758963679 24780046 Third Amendment", 1)
+    assert head != real, "the derivation must apply"
+    assert agreement_title(head) == "RECEIVABLES FINANCING AGREEMENT"
+    assert is_amendment(head)
+
+
 @pytest.mark.parametrize(("ticker", "accession", "title"), SHAPE_B, ids=lambda v: str(v))
 def test_a_title_cased_heading_led_by_issuer_and_amount_is_read(ticker: str, accession: str,
                                                                 title: str) -> None:

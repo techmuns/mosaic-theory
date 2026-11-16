@@ -572,8 +572,9 @@ _BOILER = re.compile(
     r"\d{4}-\d{2}-\d{2}|[\d]{4}-[\d\-]{4,})\b", re.I)
 _W = r"[A-Z][A-Z0-9&'\.\-]*"
 _NOUN = r"(?:AGREEMENT|INDENTURE|NOTES?|GUARANTY|GUARANTEE|DEBENTURE)"
-_TITLE = re.compile(
-    rf"\b((?:{_W}\s+|\d[\w\-]*\s+|NO\.\s+|OF\s+|TO\s+|AND\s+|THE\s+){{1,14}}{_NOUN})\b")
+#: The words a capitals title is built of, up to its noun — shared by `_HEADING_TITLE`.
+_TITLE_WORDS = rf"(?:{_W}\s+|\d[\w\-]*\s+|NO\.\s+|OF\s+|TO\s+|AND\s+|THE\s+){{1,14}}"
+_TITLE = re.compile(rf"\b({_TITLE_WORDS}{_NOUN})\b")
 _ORD = (r"FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH|ELEVENTH|TWELFTH|"
         r"THIRTEENTH|FOURTEENTH|FIFTEENTH|NO\.\s*\d+|\d+(?:ST|ND|RD|TH)?")
 #: "SIXTH AMENDMENT TO ..." / "AMENDMENT NO. 3 TO ..." — the instance, stripped to reach the base.
@@ -666,9 +667,7 @@ _RECITAL_REF = re.compile(
 #: press release whose headline ends "Termination of Agreement" (VRRM). No other read moves.
 _HEADING_RUN = re.compile(
     r"^(?:(?:[A-Z][\w&'\.\-]*,?|\$?\d[\w,\.%\-]*|of|to|and|the|due)\s+)+")
-_HEADING_TITLE = re.compile(
-    rf"\b((?:{_W}\s+|\d[\w\-]*\s+|NO\.\s+|OF\s+|TO\s+|AND\s+|THE\s+){{1,14}}"
-    rf"(?:AGREEMENT|INDENTURE|GUARANTY|GUARANTEE))\b")
+_HEADING_TITLE = re.compile(rf"\b({_TITLE_WORDS}(?:AGREEMENT|INDENTURE|GUARANTY|GUARANTEE))\b")
 #: The capture ran past the heading into the body — a title, not a sentence.
 _PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
                     r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
@@ -722,8 +721,11 @@ def is_amendment(text: str) -> bool:
         return True
     # A title-cased heading, read in capitals (`_HEADING_RUN`): CNXC's "Third Amendment to
     # Receivables Financing Agreement" is an amendment by its own heading, as a capitals one is.
+    # Codes first, as `agreement_title` strips them: `_AMEND_PREFIX` is anchored at ^, so a filing
+    # id in front of the heading ("20260605EX101 1758963679 ...", WERN's shape) would hide it.
     t = _heading_title(h) if m is None else None
-    if t is not None and _AMEND_PREFIX.search(_clean_title(t.group(1))):
+    if t is not None and _AMEND_PREFIX.search(
+            _LEAD_CODE.sub("", _clean_title(t.group(1))).strip(" .,-")):
         return True
     return bool(_IS_AMENDMENT.search(h[:900]))
 

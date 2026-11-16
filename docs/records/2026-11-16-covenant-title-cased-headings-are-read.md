@@ -132,11 +132,16 @@ exhibit.
     award agreement, and a VRRM press release whose headline ends "Termination of Agreement".
 
   Titled heads go 137 → 146, gate passes 86 → 92, and amendments 46 → 49 (CNXC's three).
-- *Pins* (`tests/test_covenant_title_reader.py`, 18 nodes, on
+- *Pins* (`tests/test_covenant_title_reader.py`, 19 nodes, on
   `tests/fixtures/covenant_title_reader/heads.json`). The fixture holds 33 real heads cut from the
   cache through `_fetch_exhibit`: the audit's 30 and 3 corpus heads. Each cut is the shortest at
   which base and head read it exactly as they read the full head (its README).
   - Positive, per shape: A on VRRM and CNXC ×2, and B on NFLX ×2.
+  - Code-review round 0 found that `is_amendment`'s new branch tested `_AMEND_PREFIX`, anchored
+    at ^, before stripping a filing id, which `agreement_title` strips first. A derived pin holds
+    it: CNXC's real head with WERN's real filing-id lead in front still reads as an amendment.
+    The same review built `_HEADING_TITLE` and `_TITLE` from one shared word grammar
+    (`_TITLE_WORDS`), and `_TITLE`'s pattern is byte-identical.
   - Negative, per class of correct refusal (7 classes): every head is refused. The 7 titled
     refusals keep their exact titles. The press release is not titled. A derived TECX head with a
     contract name after its first prose word is not titled.
@@ -148,14 +153,14 @@ exhibit.
   - Two existing pins move with the premise. `test_a_title_cased_heading_is_not_renamed_by_its_recital`
     now pins the title VRRM's heading gives, and the NKE end-to-end pin now pins the new flag
     words.
-- *Fail first.* Run with base code, 8 of the 18 new nodes fail: every positive, the audit count,
-  VRRM end to end and the flag. So do both edited pins. The 10 that pass at base pin behaviour that
+- *Fail first.* Run with base code, 9 of the 19 new nodes fail: every positive, the filing-id
+  derivation, the audit count, VRRM end to end and the flag. So do both edited pins. The 10 that pass at base pin behaviour that
   must not change. Five mutations of the new code each red at least one pin:
   - NOTES may end a title-cased title: the press-release pins red.
   - No "due": NFLX ×2 and the audit count red.
   - Any lowercase word continues the run: the TECX derivation reds.
   - No comma after a capitalised word: NFLX ×2 and the audit count red.
-  - `is_amendment` ignores the run: CNXC ×2 red.
+  - `is_amendment` ignores the run: CNXC ×2 and the filing-id derivation red.
 - *No committed page moves.* `refresh.refresh_fleet` re-rendered all 26 pages: 26 unchanged,
   0 moved and 0 refused, and `git status` showed nothing under `data/` or `frontend/`. Each page
   gains the change only at its next paid re-assembly.
