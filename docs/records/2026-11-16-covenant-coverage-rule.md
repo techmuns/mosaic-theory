@@ -214,7 +214,7 @@ whatever they are.
     4. `superseded_by` was a display string;
     5. a page with an unread exhibit could pass the ambiguity check on a guess;
     6. a one-word name matched any name ending in it.
-  - Deferred, each with its reason in the PR's dispositions:
+  - Not fixed (one DEFER, three DISMISS), each with its reason in the PR's dispositions:
     - a conditional "shall be terminated if …", unobserved in the 29 corpus displacements;
     - an exhibit skipped as superseded when its superseder is itself not sent (too large, an LLM
       error, past the guard). Its terms are still not in force, and the superseder's line says
