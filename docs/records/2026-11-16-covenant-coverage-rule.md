@@ -194,7 +194,7 @@ whatever they are.
     the web line equals the Markdown.
   - Seven preconditions hold each fixture to its committed page.
 - *Fail first.* With base's `covenant_extract.py` (main `51784e53`) and head's schema and
-  renderers (so the file imports), 11 of the 24 new nodes fail: every positive and both renders.
+  renderers (so the file imports), 11 of the first 24 new nodes fail: every positive and both renders.
   The 13 that pass at base are the 7 preconditions and the 6 negatives, which hold trivially when
   nothing is ever superseded. So each negative was also shown live by a mutation of head's code,
   each removing one piece and each reddening at least one pin:
