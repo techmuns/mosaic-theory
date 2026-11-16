@@ -36,6 +36,16 @@ exhibit at this PR's code and gave the base the review found at the head it revi
 `vrrm-ex10_2.htm` and NKE's five-year agreement (each the shortest head that reads its title,
 amendment and identity as the full exhibit does).
 
+**Re-cut for the selector (STATE row 63, 2026-11-16, $0, cache only).** The selector's reader binds a
+term defined in the parenthetical at an agreement's date (`_BIND_RECITAL_AFTER`) and reads the
+passive operative clause ("The Existing Credit Agreement is, …, hereby amended and restated"). At
+that code every cut was checked against its full exhibit again, by the same six reads. Two no longer
+read as their exhibit: VRRM's term-loan restatements `…21-015880 · vrrm-ex101_62.htm` and
+`…25-242530 · vrrm-ex10_2.htm`. Only those two were re-cut, by the method above, with the new binder
+among the clauses and 120 characters kept before each displacing clause. `vrrm-ex101_62.htm` keeps a
+real head of 3,050 characters, so its clauses sit past `agreement_title`'s 3,000-character window: a
+pin removes its heading, and the clauses must not supply it a title. The other 59 cuts are unchanged.
+
 To re-cut one, read the exhibit with `_fetch_exhibit(build_sec_http(), cik, accession, exhibit)`,
 where `cik` is the page's own, and cut it as above. Re-cut a fixture only together with the pins
 that read it.

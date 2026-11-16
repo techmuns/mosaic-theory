@@ -95,10 +95,20 @@ def _run(ticker: str, *, texts: dict[str, str | None] | None = None,
     assert outcomes is not None
     got = list(outcomes.value or [])
     assert layer.covenant_pointer_rows is not None
-    targets = ce._core_agreement_exhibits(list(layer.covenant_pointer_rows.value or []))
-    assert [(o.accession, o.filename) for o in got] == [(r.accession, f) for r, f in targets], \
-        "one outcome per target, in the targets' order"
+    _one_outcome_per_target(list(layer.covenant_pointer_rows.value or []), got)
     return _Run(llm.sent, {f"{o.accession} · {o.filename}": o for o in got}, flags, got)
+
+
+def _one_outcome_per_target(rows: list[typing.Any], got: list[CovenantExhibitOutcome]) -> None:
+    """The outcomes are the TARGETS, each once, in the located order (`_located_exhibits`): every
+    pointer's primary exhibit, and each other exhibit of its filing that governs debt or could not
+    be read (the selector, STATE row 63, 2026-11-16)."""
+    keys = [(o.accession, o.filename) for o in got]
+    located = [(r.accession, f) for r, f, _ in ce._located_exhibits(rows)]
+    assert len(set(keys)) == len(keys), "one outcome per target"
+    assert keys == [k for k in located if k in set(keys)], "in the located order"
+    assert {(r.accession, f) for r, f in ce._core_agreement_exhibits(rows)} <= set(keys), \
+        "every pointer's primary exhibit has its outcome"
 
 
 def _by(o: CovenantExhibitOutcome) -> str:
@@ -118,6 +128,8 @@ def _edited(ticker: str, key: str, old: str, new: str) -> dict[str, str | None]:
 VRRM_AR = "0001193125-25-242530 · vrrm-ex10_1.htm"
 VRRM_AMD4 = "0000950170-25-072679 · vrrm-ex10_1.htm"
 VRRM_TL = "0001564590-21-015880 · vrrm-ex101_62.htm"
+VRRM_EX102 = "0001193125-25-242530 · vrrm-ex10_2.htm"
+NKE_FIVE = "0000320187-25-000008 · nikefiveyearcreditagreemen.htm"
 
 
 # --- the brief's five pins ------------------------------------------------------------------------
@@ -130,7 +142,9 @@ def test_vrrm_amendment_no_4_is_superseded_by_its_amended_and_restated_revolver(
     resolved by its own definition, "“Original Closing Date” shall mean March 1, 2018") and agrees
     "to amend and restate the Original ABL Credit Agreement". So the amendment is not sent, and its
     outcome cites the A&R and its words. At main it was sent, and any term it returned would have
-    printed as a stale, separate group."""
+    printed as a stale, separate group.
+    MOVED WITH THE SELECTOR (2026-11-16): the term loan's 2025 restatement (`vrrm-ex10_2.htm`,
+    beside the A&R in its filing) is now sent in place of the 2021 restatement it restates."""
     r = _run("VRRM")
     o = r.by[VRRM_AMD4]
     assert o.outcome == "superseded", o
@@ -139,7 +153,7 @@ def test_vrrm_amendment_no_4_is_superseded_by_its_amended_and_restated_revolver(
     assert "“amend and restate the Original ABL Credit Agreement”" in o.evidence
     assert "REVOLVING CREDIT AGREEMENT dated 2018-03-01 that this exhibit amends" in o.evidence
     assert VRRM_AMD4 not in r.sent
-    assert r.sent == [VRRM_AR, VRRM_TL], "the A&R revolver and the term loan's restatement"
+    assert r.sent == [VRRM_AR, VRRM_EX102], "the A&R revolver and the term loan's restatement"
 
 
 def test_a_live_amendment_chain_stays_sent_cnxc_receivables_financing() -> None:
@@ -147,14 +161,17 @@ def test_a_live_amendment_chain_stays_sent_cnxc_receivables_financing() -> None:
     the Existing Credit Agreement shall be superseded"), which superseded the 2020 credit agreement
     its 2021 first amendment amends. Its receivables financing agreement's third and fourth
     amendments amend an agreement no later exhibit names, so that chain stays sent: a rule reading
-    "a later restatement supersedes every earlier amendment" would drop it."""
+    "a later restatement supersedes every earlier amendment" would drop it.
+    MOVED WITH THE SELECTOR (2026-11-16): its fifth amendment, beside the 2025 restatement in its
+    filing, is sent too, right after it."""
     r = _run("CNXC")
     rfa3 = "0001803599-24-000117 · exhibit101-thirdamendmentt.htm"
     rfa4 = "0001803599-25-000014 · exhibit101-fourthamendment.htm"
     ar25 = "0001803599-25-000111 · exhibit101041125.htm"
     ar23 = "0001803599-23-000107 · form8-k04x26x23exhibit101.htm"
     am21 = "0001803599-21-000215 · exhibit101122721.htm"
-    assert r.sent == [ar25, rfa3, rfa4], r.sent
+    rfa5 = "0001803599-25-000111 · exhibit102041125.htm"
+    assert r.sent == [ar25, rfa5, rfa3, rfa4], r.sent
     assert (r.by[ar23].outcome, _by(r.by[ar23])) == ("superseded", ar25)
     assert (r.by[am21].outcome, _by(r.by[am21])) == ("superseded", ar23)
     assert "CREDIT AGREEMENT dated 2020-10-16 that this exhibit amends" in (r.by[am21].evidence
@@ -165,9 +182,15 @@ def test_a_page_with_more_than_four_live_contracts_sends_them_all_burl() -> None
     """(+) BURL. Six debt contracts, none displaced by a later located exhibit's words: its ABL
     agreement's four amendments, its term loan's 2014 Amendment No. 4 and a 2020 security
     agreement. All six are sent, where main sent four and left two past the bound. The guard is
-    not reached, so no exhibit is cost bound and no flag says so."""
+    not reached, so no exhibit is cost bound and no flag says so.
+    MOVED WITH THE SELECTOR (2026-11-16): seven: the ABL agreement's 2014 first amendment, beside
+    the term loan's Amendment No. 4 in its filing, is sent too. Its 2020 filing's intellectual
+    property security agreement and pledge agreement are credit support, and are not."""
     r = _run("BURL")
-    assert len(r.sent) == 6 > 4, r.sent
+    assert len(r.sent) == 7 > 4, r.sent
+    assert "0001193125-14-313404 · d772516dex102.htm" in r.sent
+    assert not {"0001193125-20-109457 · d883886dex102.htm",
+                "0001193125-20-109457 · d883886dex103.htm"} & set(r.by)
     assert "0001193125-22-200058 · d393601dex101.htm" in r.sent
     assert "0001193125-14-313404 · d772516dex101.htm" in r.sent
     assert not any(o.outcome == "cost_bound" for o in r.outcomes)
@@ -178,7 +201,9 @@ def test_the_runaway_guard_fires_loudly_on_an_overflow() -> None:
     """(+) SYNTHETIC OVERFLOW from BURL's real exhibits: its pointer rows twice over, the copies
     under synthetic accessions serving the same real texts, so 12 live debt contracts. The guard
     sends 10 and marks the 2 past it cost bound, each with a RUNAWAY GUARD flag that names the
-    count and the guard. At main the cap of four chose, quietly."""
+    count and the guard. At main the cap of four chose, quietly.
+    MOVED WITH THE SELECTOR (2026-11-16): BURL has seven live contracts, so the doubled page has 14
+    and the guard marks 4."""
     fx = _fixture("BURL")
     cs = CapitalStructure.model_validate(fx["capital_structure"])
     rows = list(cs.covenant_pointer_rows.value or []) if cs.covenant_pointer_rows else []
@@ -196,10 +221,10 @@ def test_the_runaway_guard_fires_loudly_on_an_overflow() -> None:
     r = _run("BURL", texts=texts, cs=doubled)
     assert len(r.sent) == ce._MAX_EXHIBITS == 10
     past = [o for o in r.outcomes if o.outcome == "cost_bound"]
-    assert len(past) == 2, past
+    assert len(past) == 4, past
     guard = [f for f in r.flags if f.startswith("(E5) RUNAWAY GUARD")]
-    assert len(guard) == 2, r.flags
-    assert all("12 live debt contracts" in f and "the guard is 10 calls" in f for f in guard)
+    assert len(guard) == 4, r.flags
+    assert all("14 live debt contracts" in f and "the guard is 10 calls" in f for f in guard)
 
 
 def test_an_exhibit_the_words_cannot_classify_is_read_amzn() -> None:
@@ -209,9 +234,12 @@ def test_an_exhibit_the_words_cannot_classify_is_read_amzn() -> None:
     agreement, whose definitions bind it ("“Existing 364-Day Credit Agreement” means that certain
     364-Day Revolving Credit Agreement dated as of November 18, 2022") and whose conditions say
     "all commitments thereunder shall have been terminated". Its 2018 restatement is superseded by
-    the 2020 one. So its June 2026 term loan agreement, past the bound at main, is sent."""
+    the 2020 one. So its June 2026 term loan agreement, past the bound at main, is sent.
+    MOVED WITH THE SELECTOR (2026-11-16): its 2023 364-day agreement, beside the five-year one in
+    its filing, is sent too. Nothing located shows it displaced, so it is read."""
     r = _run("AMZN")
     assert r.sent == ["0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+                      "0001104659-23-113444 · tm2329405d1_ex10-2.htm",
                       "0001193125-20-176528 · d948849dex101.htm",
                       "0001018724-14-000042 · amzn2014september5-ex101.htm",
                       "0001104659-26-072140 · tm2613616d4_ex10-1.htm"], r.sent
@@ -234,7 +262,9 @@ def test_matured_notes_read_terminated_and_a_live_purchase_agreement_goes_last_n
     """(+) NFLX. Its 2014 purchase agreement's title states notes due 2024, before the page's
     reference date, and its CIQ panel carries no instrument maturing in 2024: terminated, not sent.
     Its 2018 purchase agreement (notes due 2028, on the panel) is sent, after every other debt
-    contract (operator, 2026-11-16)."""
+    contract (operator, 2026-11-16).
+    MOVED WITH THE SELECTOR (2026-11-16): six sends: its December 2025 delayed-draw term loan
+    agreement, beside its revolver in its filing, is sent too."""
     r = _run("NFLX")
     o = r.by[NFLX_PA14]
     assert o.outcome == "terminated" and o.superseded_by is None
@@ -242,7 +272,7 @@ def test_matured_notes_read_terminated_and_a_live_purchase_agreement_goes_last_n
     assert o.evidence is not None and "notes due 2024" in o.evidence
     assert "the CIQ panel carries no instrument maturing in 2024" in o.evidence
     assert r.sent[-1] == NFLX_PA18 and NFLX_PA14 not in r.sent
-    assert len(r.sent) == 5, r.sent
+    assert len(r.sent) == 6 and "0001193125-25-327462 · d82688dex102.htm" in r.sent, r.sent
 
 
 def test_a_panel_that_still_carries_the_year_disagrees_and_the_notes_are_read() -> None:
@@ -295,14 +325,17 @@ def test_a_title_with_a_live_tranche_is_not_terminated() -> None:
 def test_each_years_364_day_agreement_terminates_the_last_nke() -> None:
     """(+) NKE. Each March, a new 364-day agreement states the last one "has been, or concurrently
     with the effectiveness of this Agreement will be, terminated", naming it by its date. Only the
-    2026 agreement is sent; the 2023, 2024 and 2025 ones are each superseded by the next."""
+    2026 agreement is sent; the 2023, 2024 and 2025 ones are each superseded by the next.
+    MOVED WITH THE SELECTOR (2026-11-16): its 2025 FIVE YEAR CREDIT AGREEMENT (the panel's facility
+    to 2030-03-07), beside the 2025 364-day agreement in its filing, is sent too: no 364-day
+    agreement names it."""
     r = _run("NKE")
-    assert r.sent == ["0000320187-26-000020 · a364-daycreditagreementxni.htm"], r.sent
+    assert r.sent == [NKE_FIVE, "0000320187-26-000020 · a364-daycreditagreementxni.htm"], r.sent
     chain = [("0000320187-25-000008", "0000320187-26-000020"),
              ("0000320187-24-000009", "0000320187-25-000008"),
              ("0000320187-23-000006", "0000320187-24-000009")]
     for old, new in chain:
-        [o] = [o for k, o in r.by.items() if k.startswith(old)]
+        [o] = [o for k, o in r.by.items() if k.startswith(old) and k != NKE_FIVE]
         assert o.outcome == "superseded" and o.superseded_by == new, o
 
 
@@ -311,13 +344,17 @@ def test_a_collective_definition_supersedes_both_its_agreements_tjx() -> None:
     2022 Revolving Credit Agreement, dated as of March 11, 2016 … and (y) that certain 364 Day
     Revolving Credit Agreement" and requires "evidence of termination of the Existing Credit
     Agreements". So the 2020 second amendment to the first and the 2020 364-day agreement are
-    superseded."""
+    superseded.
+    MOVED WITH THE SELECTOR (2026-11-16): three sends: its 2025 second amendment ("2030 REVOLVING
+    CREDIT AGREEMENT", beside the first amendment in its filing) and its 2020 second amendment to
+    the 2024 agreement (beside the first 2020 exhibit) are sent, and the 2021 agreement, which the
+    2025 one amends and restates, reads superseded."""
     r = _run("TJX")
     for key in ("0001157523-20-000793 · a52222014ex10_1.htm",
                 "0000109198-20-000015 · exhibit101364dayrevolv.htm"):
         assert r.by[key].outcome == "superseded", r.by[key]
         assert _by(r.by[key]) == "0001193125-21-202939 · d169110dex101.htm"
-    assert len(r.sent) == 2, r.sent
+    assert len(r.sent) == 3, r.sent
 
 
 # --- what the reader refuses: each guard on a real clause, derived ------------------------------
@@ -326,13 +363,23 @@ def test_a_collective_definition_supersedes_both_its_agreements_tjx() -> None:
 def test_a_conditional_termination_displaces_nothing() -> None:
     """(−) DERIVED from TJX's real condition precedent. "upon termination of the Existing Credit
     Agreements" is a condition, not a statement that they ended, so neither 2020 exhibit is
-    superseded and both are read."""
-    texts = _edited("TJX", "0001193125-21-202939 · d169110dex101.htm",
-                    "evidence of termination of the Existing Credit Agreements",
-                    "upon termination of the Existing Credit Agreements")
+    superseded and both are read.
+    MOVED WITH THE SELECTOR (2026-11-16): the 2025 second amendment is now read too, and it carries
+    the same real condition (it restates the 2021 agreement), so the derivation is made in both. The
+    2021 agreement still reads superseded, by the 2025 one's "amend and restate", which no condition
+    touches."""
+    old, new = ("evidence of termination of the Existing Credit Agreements",
+                "upon termination of the Existing Credit Agreements")
+    texts = _edited("TJX", "0001193125-21-202939 · d169110dex101.htm", old, new)
+    k25 = "0000109198-25-000033 · exhibit102-secondamendment.htm"
+    assert old in (texts[k25] or "")
+    texts[k25] = (texts[k25] or "").replace(old, new, 1)
     r = _run("TJX", texts=texts)
-    assert not any(o.outcome == "superseded" for o in r.outcomes)
-    assert len(r.sent) == 4
+    for key in ("0001157523-20-000793 · a52222014ex10_1.htm",
+                "0000109198-20-000015 · exhibit101364dayrevolv.htm"):
+        assert r.by[key].outcome != "superseded" and key in r.sent, r.by[key]
+    assert [_by(o) for o in r.outcomes if o.outcome == "superseded"] == [k25]
+    assert len(r.sent) == 5
 
 
 def test_a_part_of_the_agreement_displaces_nothing() -> None:
@@ -374,12 +421,14 @@ def test_an_agreement_named_two_ways_on_the_page_decides_neither() -> None:
     """(−) AMBIGUITY, DERIVED from VRRM's real recital with its name cut to "Credit Agreement".
     VRRM's revolver and its first-lien term loan agreement are both dated March 1, 2018, so
     "Credit Agreement, dated as of the Original Closing Date" fits both: it identifies neither,
-    and both the revolver amendment and the term loan restatement are read."""
+    and both the revolver amendment and the term loan restatement are read.
+    MOVED WITH THE SELECTOR (2026-11-16): the term loan's 2021 restatement now reads superseded, by
+    its 2025 restatement's own words, never by the A&R revolver's ambiguous name."""
     texts = _edited("VRRM", VRRM_AR, "that certain Revolving Credit Agreement, dated as of",
                     "that certain Credit Agreement, dated as of")
     r = _run("VRRM", texts=texts)
-    assert r.by[VRRM_AMD4].outcome != "superseded" and r.by[VRRM_TL].outcome != "superseded"
-    assert VRRM_AMD4 in r.sent and VRRM_TL in r.sent
+    assert r.by[VRRM_AMD4].outcome != "superseded" and VRRM_AMD4 in r.sent
+    assert _by(r.by[VRRM_TL]) == VRRM_EX102, r.by[VRRM_TL]
 
 
 def test_a_page_with_an_unread_exhibit_supersedes_nothing() -> None:
@@ -506,8 +555,6 @@ def test_a_terminated_exhibit_prints_its_cause_on_both_renderers_e2e(
 # --- independent review, round 2: on any doubt about identity, READ ------------------------------
 
 ROUND2 = FIX / "round2_heads.json"
-VRRM_EX102 = "0001193125-25-242530 · vrrm-ex10_2.htm"
-NKE_FIVE = "0000320187-25-000008 · nikefiveyearcreditagreemen.htm"
 NKE_2024 = "0000320187-24-000009 · nike-364xdaycreditagreemen.htm"
 NKE_2023 = "0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
 
@@ -552,23 +599,53 @@ def test_f1_a_same_day_sibling_makes_the_displaced_name_ambiguous_vrrm() -> None
     assert r.by[VRRM_AR].outcome != "superseded", r.by[VRRM_AR]
 
 
-def test_f1_an_untargeted_same_filing_sibling_makes_the_name_ambiguous_vrrm() -> None:
-    """(−) F1, the SIBLING half. VRRM's real `vrrm-ex10_2.htm` stays where it is, the second exhibit
-    of the A&R revolver's filing, which the selector does not target. The loop reads it for who it
-    is: an agreement dated October 17, 2025, as the revolver is. So the DERIVED later restatement's
-    "Revolving Credit Agreement" of that date is ambiguous, and the A&R revolver is READ."""
-    later = "9999999999-27-000001 · later-ex10_1.htm"
-    texts = dict(_fixture("VRRM")["texts"])
-    assert VRRM_EX102 in texts, "the fixture carries the sibling's real head"
-    ar = texts[VRRM_AR] or ""
-    for old, new in (("Dated as of October 17, 2025", "Dated as of June 1, 2027"),
-                     ("shall mean March 1, 2018", "shall mean October 17, 2025")):
-        ar = ar.replace(old, new)
-    texts[later] = ar
-    cs = _with_rows("VRRM", [("9999999999-27-000001", "later-ex10_1.htm", "2027-06-01")])
-    r = _run("VRRM", texts=texts, cs=cs)
-    assert VRRM_EX102 not in r.by, "a sibling is read, never targeted"
-    assert r.by[VRRM_AR].outcome != "superseded", r.by[VRRM_AR]
+#: BURL's real clause naming its 2020 security agreement (`…21-364998 · d275638dex101.htm`, the ABL
+#: agreement's third amendment), and VRRM's real operative clause restating its security agreement
+#: (`…25-242530 · vrrm-ex10_2.htm`), its term renamed: the derived later exhibit's two clauses.
+BURL_SA_RECITAL = ("the Security Agreement, dated as of April 16, 2020 (the “Security Agreement”), "
+                   "by and among the Grantors party thereto and the Additional Pari Passu "
+                   "Collateral Agent")
+VRRM_SA_RESTATED = ("The Existing Security Agreement is, effective as of the Second Restatement "
+                    "Effective Date and immediately after giving effect to the incurrence of the "
+                    "Initial Term Loans, hereby amended and restated")
+BURL_SA = "0001193125-20-109457 · d883886dex101.htm"
+BURL_IPSA = "0001193125-20-109457 · d883886dex102.htm"
+
+
+def test_f1_an_untargeted_same_filing_sibling_makes_the_name_ambiguous_burl() -> None:
+    """(− / +) F1, the SIBLING half: an exhibit of a located filing that the selector does not
+    target is still read for WHO it is. BURL's 2020 filing carries its SECURITY AGREEMENT (the
+    target) and, beside it, its INTELLECTUAL PROPERTY SECURITY AGREEMENT of the same date, which is
+    credit support and never sent. A DERIVED later exhibit (BURL's real head and clause naming "the
+    Security Agreement, dated as of April 16, 2020", and VRRM's real operative restatement, its
+    term renamed) restates "the Security Agreement" of that date. The name fits both agreements of
+    that day, so it decides neither, and the security agreement is READ. With the sibling gone
+    from the filing, the same words supersede it: the sibling is what blocks.
+    MOVED WITH THE SELECTOR (2026-11-16): this pin first stood on VRRM's `vrrm-ex10_2.htm`, which
+    governs debt and is now a target
+    (`test_f1_a_same_day_sibling_makes_the_displaced_name_ambiguous_vrrm` keeps that half)."""
+    fx = _fixture("BURL")
+    texts = dict(fx["texts"])
+    third = texts["0001193125-21-364998 · d275638dex101.htm"] or ""
+    assert ce._governs(ce.agreement_title(third))
+    assert ce.agreement_title(texts[BURL_IPSA] or "") == "INTELLECTUAL PROPERTY SECURITY AGREEMENT"
+    assert not ce._governs("INTELLECTUAL PROPERTY SECURITY AGREEMENT")
+    clause = VRRM_SA_RESTATED.replace("Existing Security Agreement", "Security Agreement")
+    texts["9999999999-26-000009 · later-ex10_1.htm"] = f"{third} … {BURL_SA_RECITAL} … {clause}"
+    cs = _with_rows("BURL", [("9999999999-26-000009", "later-ex10_1.htm", "2026-06-01")])
+    r = _run("BURL", texts=texts, cs=cs)
+    assert BURL_IPSA not in r.by, "credit support is read for who it is, never targeted"
+    assert r.by[BURL_SA].outcome != "superseded" and BURL_SA in r.sent, r.by[BURL_SA]
+    # the control: the same page with the sibling dropped from its filing
+    assert cs.covenant_pointer_rows is not None
+    rows = [row.model_copy(update={"exhibits": [f for f in row.exhibits
+                                                if f != BURL_IPSA.split(" · ")[1]]})
+            for row in cs.covenant_pointer_rows.value or []]
+    alone = cs.model_copy(update={"covenant_pointer_rows": cs.covenant_pointer_rows.model_copy(
+        update={"value": rows})})
+    r = _run("BURL", texts=texts, cs=alone)
+    assert (r.by[BURL_SA].outcome, _by(r.by[BURL_SA])) == (
+        "superseded", "9999999999-26-000009 · later-ex10_1.htm"), r.by[BURL_SA]
 
 
 def test_f1_the_nke_shape_two_agreements_one_date_and_a_plain_amendment() -> None:
@@ -697,9 +774,14 @@ def test_f4_a_tranche_ending_is_not_the_agreement_ending(old: str, new: str) -> 
     """(−) F4, DERIVED from AMZN's real condition precedent, edited to a tranche: "all the Revolving
     Loans outstanding under the … shall have been paid in full" and "all revolving commitments
     under the … shall have been terminated" end a tranche, and the agreement may live on, so its
-    2022 364-day agreement is read."""
+    2022 364-day agreement is read.
+    MOVED WITH THE SELECTOR (2026-11-16): the 2023 364-day agreement beside the five-year one is now
+    read too, and states the same real condition, so the derivation is made in both."""
     key = "0001104659-23-113444 · tm2329405d1_ex10-1.htm"
     texts = _edited("AMZN", key, old, new)
+    k364 = "0001104659-23-113444 · tm2329405d1_ex10-2.htm"
+    assert old in (texts[k364] or "")
+    texts[k364] = (texts[k364] or "").replace(old, new, 1)
     r = _run("AMZN", texts=texts)
     assert r.by["0001193125-22-289041 · d413765dex101.htm"].outcome != "superseded"
 

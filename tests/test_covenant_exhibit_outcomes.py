@@ -76,16 +76,20 @@ _TEXT: dict[str, str | None] = {
 
 
 class _Http:
-    """Serves each exhibit's planned text; a planned None is a failed fetch."""
+    """Serves each exhibit's planned text; a planned None is a failed fetch. Any other exhibit is
+    served ``default``. Since the selector widened (STATE row 63, 2026-11-16) every other exhibit of
+    a located filing is read, and one whose heading governs debt is a target too: a plan that
+    drives only the pointers' primary exhibits serves the rest a heading that is not debt."""
 
-    def __init__(self, text: dict[str, str | None]) -> None:
+    def __init__(self, text: dict[str, str | None], default: str = _DEBT) -> None:
         self.text = text
+        self.default = default
         self.got: list[str] = []
 
     def get_text(self, url: str, **_: typing.Any) -> str:
         name = url.rsplit("/", 1)[1]
         self.got.append(name)
-        body = self.text.get(name, _DEBT)
+        body = self.text.get(name, self.default)
         if body is None:
             raise OSError(f"stub: {url} unavailable")
         return body
@@ -119,7 +123,8 @@ def _run_burl(monkeypatch: pytest.MonkeyPatch) -> tuple[typing.Any, ...]:
     monkeypatch.setattr(ce, "_MAX_EXHIBIT_CHARS", 400)
     llm = _Llm(error=frozenset({"d275638dex101.htm"}), empty=frozenset({"d393601dex101.htm"}))
     return ce.extract_covenant_terms(
-        _burl(), llm=llm, http=_Http(_TEXT), cik="0001579298",  # type: ignore[arg-type]
+        _burl(), llm=llm, http=_Http(_TEXT, default=_LEASE),  # type: ignore[arg-type]
+        cik="0001579298",
         ticker="BURL", name="Burlington Stores, Inc.")
 
 
@@ -183,8 +188,9 @@ def test_a_no_terms_answer_is_not_an_extraction(monkeypatch: pytest.MonkeyPatch)
 def test_every_committed_page_gets_one_outcome_per_located_exhibit() -> None:
     """(+ · living corpus) Over every committed page with pointer rows, the real loop writes one
     outcome per exhibit it targets, in order, and every located pointer accession has one. The stub
-    serves a debt heading for each exhibit and the model one row, so a page with more than four
-    exhibits also runs the cost bound."""
+    serves a debt heading for each exhibit and the model one row, so every exhibit of every located
+    filing governs debt and is a target (the selector, 2026-11-16), and a page with more than ten
+    exhibits also runs the guard."""
     pages = exhibits = 0
     for p in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
         raw = json.loads(p.read_text()).get("mechanical", {}).get("capital_structure")
@@ -195,7 +201,7 @@ def test_every_committed_page_gets_one_outcome_per_located_exhibit() -> None:
         *_, outcomes = ce.extract_covenant_terms(
             cs, llm=_Llm(), http=_Http({}), cik="0000000001",  # type: ignore[arg-type]
             ticker=p.parent.name, name=p.parent.name)
-        targets = [(r.accession, f) for r, f in ce._core_agreement_exhibits(ptrs)]
+        targets = [(r.accession, f) for r, f, _ in ce._located_exhibits(ptrs)]
         got = [(o.accession, o.filename) for o in (outcomes.value if outcomes else [])]
         assert got == targets, p.parent.name
         assert {a for a, _ in got} == {r.accession for r in ptrs if r.accession}, p.parent.name
@@ -300,7 +306,7 @@ def test_the_pre_spend_forecast_says_the_field_is_written_where_an_exhibit_is_lo
         pytest.skip("no committed BURL dossier")
     page = Dossier.model_validate(json.loads(p.read_text()))
     path = "mechanical.capital_structure.covenant_exhibit_outcomes"
-    fc = forecast_llm_fields(page, http=_Http(dict.fromkeys(_TEXT)))
+    fc = forecast_llm_fields(page, http=_Http(dict.fromkeys(_TEXT), default=_LEASE))
     assert fc[path].status == SourceStatus.PRESENT.value and "(7)" in fc[path].why
     assert page.mechanical is not None and page.mechanical.capital_structure is not None
     none = page.model_copy(update={"mechanical": page.mechanical.model_copy(update={

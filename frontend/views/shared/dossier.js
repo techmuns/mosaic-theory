@@ -2997,6 +2997,17 @@ function covenantPointers(cs) {
 // "amended by" chain; grouped by family via the pointers' accession→(family, date) map. A strictly
 // LATER refused row (#804) withholds the value: it reads UNKNOWN, the older one moves to lastVerified.
 const _accOf = (s) => { const m = (s || "").match(/\b(\d{10}-\d{2}-\d{6})\b/); return m ? m[1] : ""; };
+// (mirrors covenant_extract._exhibit_of) the file of the exhibit a term row cites, "<accession> ·
+// <file>" in its source_ref or note as `_source_ref` writes it; "" when neither names one, or it is
+// another accession's.
+const _exhibitFileOf = (r, acc) => {
+  const v = r.value || {};
+  for (const s of [v.source_ref, v.note]) {
+    const m = (s || "").match(/\b(\d{10}-\d{2}-\d{6}) · (\S+)/);
+    if (m) return m[1] === acc ? m[2] : "";
+  }
+  return "";
+};
 const _REFUSED_NOTE_PREFIX = "(E5) refused:";  // mirrors covenant_extract.REFUSED_NOTE_PREFIX
 const _VALUE_REFUSED_NOTE_PREFIX = `${_REFUSED_NOTE_PREFIX} the value states`;  // ...VALUE_REFUSED_NOTE_PREFIX
 // (mirrors covenant_extract._ambiguous_titles, #653) titles that cover MORE THAN ONE BASE document
@@ -3023,12 +3034,29 @@ function governingTerms(rows, pointers) {
   (pointers || []).forEach((p) => { if (p.accession) meta[p.accession] = [p.family, p.filing_date || ""]; });
   const ambiguous = _ambiguousTitles(rows, meta);
   const grouped = new Map(), order = [];
-  (rows || []).forEach((r) => {
+  const labelled = (rows || []).map((r) => {
     const v = r.value || {};
-    const [ptrFam, dt] = meta[_accOf(v.source_ref) || _accOf(v.note)] || ["(unmapped)", ""];
+    const acc = _accOf(v.source_ref) || _accOf(v.note);
+    const [ptrFam] = meta[acc] || ["(unmapped)", ""];
     // (#652/#653, py parity) THE DOCUMENT OUTRANKS THE POINTER: the exhibit's own title names the
     // group, so an amendment groups with what it amends; an ambiguous title falls back to the pointer.
     const fam = (r.agreement_title && !ambiguous.has(r.agreement_title)) ? r.agreement_title : ptrFam;
+    return [fam, acc, _exhibitFileOf(r, acc), r];
+  });
+  // (STATE row 63, py parity) TWO EXHIBITS OF ONE FILING NEVER SHARE A GROUP: they share its
+  // filing date, so the collapse could not order them. Where two files of one accession share a
+  // label, each file's rows form their own group, labelled with the file (WLK's GO Zone and IKE
+  // Zone loan agreements).
+  const files = new Map();
+  labelled.forEach(([fam, acc, doc]) => {
+    if (!acc || !doc) return;
+    const k = fam + "\x00" + acc;
+    if (!files.has(k)) files.set(k, new Set());
+    files.get(k).add(doc);
+  });
+  labelled.forEach(([label, acc, doc, r]) => {
+    const dt = (meta[acc] || ["", ""])[1];
+    const fam = (acc && doc && files.get(label + "\x00" + acc).size > 1) ? `${label} · ${doc}` : label;
     const key = fam + "\x00" + r.name;
     if (!grouped.has(key)) { grouped.set(key, { fam, term: r.name, list: [] }); order.push(key); }
     grouped.get(key).list.push([dt, r]);  // (RC-1.5d) store the whole row — components ride along
