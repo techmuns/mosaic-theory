@@ -150,7 +150,10 @@ follows the precedent of `concentration.customers_listed`.
   - *Round 1.* The independent review found the untitled refusal's label false. The operator
     ruled on 2026-11-16: "State both readings (Recommended)". The review also asked for the
     no-rows path. The preview adds LLY, ORKA, TECX and VITL, and VRRM's new line, each collapsed
-    and force-open. That preview is with the operator.
+    and force-open. A Codex finding (by exhibit, not accession) joined that set. **Approved
+    2026-11-16** by the operator, relayed by the coordinator: "Approve as shown
+    (Recommended)". It covers the "located as <family>" readings, the four no-rows pages
+    printing each cause, and the by-exhibit line.
 
   The wording, as approved and then ruled:
 
