@@ -331,7 +331,11 @@ def test_every_page_names_its_dates_from_its_layers() -> None:
         stamps = [r["export_date"] for r in (doc.get("inputs") or {}).get("ciq") or []
                   if r.get("export_date")]
         assert ds.get("ciq_exported_as_of") == (max(stamps) if stamps else None), t
-        assert ds["analysis_as_of"] == (max(days + stamps) if days + stamps else None), t
+        # (2026-11-16) and a CIQ column's own stated filing date the page carries structured
+        filed = [x for x in [((m.get("capital_structure") or {}).get("maturity_check") or {})
+                             .get("panel_filed")] if x]
+        known = days + stamps + filed
+        assert ds["analysis_as_of"] == (max(known) if known else None), t
 
 
 # --- (2026-10-10) the four folded fixes -----------------------------------------------------------

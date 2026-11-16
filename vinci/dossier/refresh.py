@@ -30,13 +30,14 @@ it would only ever run here.
 """
 from __future__ import annotations
 
+import dataclasses
 import json
 import math
 import re
 from collections.abc import Callable, Sequence
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from vinci.dossier.anchor import check_decision_write, committed_anchor_block, price_as_of
 from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, EvBridge, dossier_json
@@ -1209,23 +1210,53 @@ def forward_multiple_history_transform(ticker: str) -> TopLevelTransform:
     return _apply
 
 
-def export_date_transform(ticker: str, roots: Sequence[Path]) -> TopLevelTransform:
-    """A `refresh_dossier` top-level step writing `inputs.ciq[].export_date` — the export date a
-    CIQ export STATES of itself — onto a page built before the field, so `date_semantics` counts it
-    (2026-11-15, the Codex P1 on #1070).
+@runtime_checkable
+class NamesSkips(Protocol):
+    """A top-level step that names what it looked for on the page it was last applied to, and which
+    of those it could not read (2026-11-16, STATE row 64(a)(2)). `refresh_fleet` reports each skip,
+    and never reports its page as "unchanged". ``boundary`` says what was looked for, and where."""
 
-    ONLY FROM THE EXPORT THE PAGE RECORDS, BY ITS FULL SHA256. A row is filled only when a file
-    under ``roots`` hashes to the sha256 the page's own input record names (`inputs.candidates`,
-    the backfill's identity rule), and its stamp is read off that file by the build's own reader
-    (`inputs.export_dates`) — never off a `source_ref`'s text. A page whose record names no such
-    export (a BACKFILLED record names none for comps), or names one no file on this machine
-    matches, is left alone and gains the field on its next assembly. Nothing else in the record
-    moves (`_only_export_dates`, enforced by `refresh_dossier`). The write is recorded in
-    `layer_refreshes` beside the `date_semantics` it moves."""
-    from vinci.dossier import inputs as page_inputs
-    from vinci.dossier.ciq import CiqBundle
+    looked_for: list[str]
+    skipped: list[str]
 
-    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+    @property
+    def boundary(self) -> str: ...
+
+
+@dataclasses.dataclass
+class ExportDateStep:
+    """`export_date_transform`'s step, which names every recorded export it cannot match.
+
+    A page whose recorded comps export no file under ``roots`` matches was left undated and
+    reported as plain "unchanged" (#1082's review): it read like a page with nothing to fill, and
+    only the end-to-end pin caught a build-recorded page left undated. Now each such export is
+    named by its page and the sha256 the page records. ``looked_for`` and ``skipped`` describe
+    the last page the step was applied to.
+
+    EACH LINE STATES WHAT WAS MEASURED, NEVER MORE (#1087 review, round 1). The search reads only
+    folders named for the ticker beneath each root (`inputs.candidates`), so a miss is "not found
+    in any <TICKER> folder under the roots", never "not on disk". A matched file the loader does
+    not kind as a comps export was never read, so it is "not read as a comps export", never
+    "states no export date". And no line names a local path: a resolved root can carry the
+    operator's account folder name, and these lines are pasted into records in a public repo, so
+    the roots are counted, and a file is named by its name alone."""
+
+    ticker: str
+    roots: tuple[Path, ...]
+    #: the sha256 of each export looked for, and one line per export it could not date
+    looked_for: list[str] = dataclasses.field(default_factory=list)
+    skipped: list[str] = dataclasses.field(default_factory=list)
+
+    @property
+    def boundary(self) -> str:
+        return ("recorded comps export(s) with no export_date, matched by full sha256 in every "
+                f"folder named for the page's ticker under {len(self.roots)} root(s)")
+
+    def __call__(self, doc: dict[str, Any]) -> dict[str, Any]:
+        from vinci.dossier import inputs as page_inputs
+        from vinci.dossier.ciq import CiqBundle
+
+        self.looked_for, self.skipped = [], []
         record = doc.get("inputs")
         if not isinstance(record, dict):
             return {}
@@ -1234,23 +1265,53 @@ def export_date_transform(ticker: str, roots: Sequence[Path]) -> TopLevelTransfo
                 if isinstance(r, dict) and r.get("kind") == "comps" and not r.get("export_date")]
         if not todo:
             return {}
-        found = page_inputs.candidates(ticker, roots)
+        found = page_inputs.candidates(self.ticker, self.roots)
         filled = list(rows)
         for i in todo:
+            sha = str(rows[i].get("sha256"))
+            self.looked_for.append(sha)
             # a file held under several names is read under the name the record gives it, else
             # the least of them: the loader kinds a workbook by its NAME, so a copy held under
             # another name can read as no comps export at all
-            same = sorted((c for c in found if c.sha256 == str(rows[i].get("sha256"))),
+            same = sorted((c for c in found if c.sha256 == sha),
                           key=lambda c: (c.path.name != rows[i].get("file"), c.path.name))
             if not same:
-                continue        # the export the page names is not on this machine
+                # the export the page names is in no folder the search reads: named, never
+                # "unchanged", and never "not on disk", which the search did not look at
+                self.skipped.append(f"{self.ticker}: skipped: export {sha} not found in any "
+                                    f"{self.ticker} folder under the roots")
+                continue
             path = same[0].path
-            stamp = page_inputs.export_dates(CiqBundle.from_files(ticker, [path])).get(path)
-            if stamp is not None:
-                filled[i] = rows[i] | {"export_date": stamp.isoformat()}
+            bundle = CiqBundle.from_files(self.ticker, [path])
+            stamp = page_inputs.export_dates(bundle).get(path)
+            if stamp is None:
+                # matched, but no export date read off it — for one of two causes, each named as
+                # itself: the loader kinds the file as no comps export, so it was never read; or
+                # it read as comps and states no stamp. By the file's name, never its local path
+                why = ("states no export date" if bundle.workbook("comps") is not None
+                       else "not read as a comps export")
+                self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) {why}")
+                continue
+            filled[i] = rows[i] | {"export_date": stamp.isoformat()}
         return {} if filled == rows else {"inputs": record | {"ciq": filled}}
 
-    return _apply
+
+def export_date_transform(ticker: str, roots: Sequence[Path]) -> ExportDateStep:
+    """A `refresh_dossier` top-level step writing `inputs.ciq[].export_date` — the export date a
+    CIQ export STATES of itself — onto a page built before the field, so `date_semantics` counts it
+    (2026-11-15, the Codex P1 on #1070).
+
+    ONLY FROM THE EXPORT THE PAGE RECORDS, BY ITS FULL SHA256. A row is filled only when a file
+    under ``roots`` hashes to the sha256 the page's own input record names (`inputs.candidates`,
+    the backfill's identity rule), and its stamp is read off that file by the build's own reader
+    (`inputs.export_dates`) — never off a `source_ref`'s text. A page whose record names no such
+    export (a BACKFILLED record names none for comps) is left alone and gains the field on its next
+    assembly. One whose record names an export no file on this machine matches is left alone too,
+    and the step NAMES it (`ExportDateStep.skipped`, reported by `refresh_fleet`), as it names a
+    matched file from which no export date is read. Nothing else in
+    the record moves (`_only_export_dates`, enforced by `refresh_dossier`). The write is recorded
+    in `layer_refreshes` beside the `date_semantics` it moves."""
+    return ExportDateStep(ticker, tuple(roots))
 
 
 def ev_bridge_transform(ticker: str) -> TopLevelTransform:
@@ -2293,21 +2354,46 @@ def refresh_fleet(
     SEALED NAMES ARE REPORTED, NOT SWALLOWED. `refresh_dossier` refuses a record carrying a
     `known_wrong.json`; that refusal is a RESULT of the pass, so it comes back in the summary
     rather than vanishing into a log line.
+
+    SO ARE SKIPS (2026-11-16, STATE row 64(a)(2)). A top-level step that names what it could not
+    read (`NamesSkips`) has each skip reported under ``skipped``, and its page is never
+    "unchanged". ``skip_count`` then states how many it skipped of how many it looked for, on how
+    many of the pages refreshed (a refused page never reaches the step), and where it looked.
     """
     base = (root or Path.cwd()) / "data" / "dossiers"
-    out: dict[str, list[str]] = {"moved": [], "unchanged": [], "refused": []}
+    out: dict[str, list[str]] = {"moved": [], "unchanged": [], "refused": [], "skipped": []}
+    # per boundary: [exports skipped, exports looked for, pages that looked for one]
+    tally: dict[str, list[int]] = {}
+    refreshed = 0
     for folder in sorted(base.iterdir()) if base.is_dir() else []:
         path = folder / "dossier.json"
         if not path.exists():
             continue
+        top = top_level_for(folder.name) if top_level_for else None
         try:
             changed = refresh_dossier(
                 path, transform=transform_for(folder.name) if transform_for else None,
-                top_level=top_level_for(folder.name) if top_level_for else None)
+                top_level=top)
         except RefreshRefusedError:
             out["refused"].append(folder.name)
             continue
-        out["moved" if changed else "unchanged"].append(folder.name)
+        refreshed += 1
+        skips: list[str] = []
+        if isinstance(top, NamesSkips):
+            skips = list(top.skipped)
+            seen = tally.setdefault(top.boundary, [0, 0, 0])
+            seen[0] += len(skips)
+            seen[1] += len(top.looked_for)
+            seen[2] += bool(top.looked_for)
+        out["skipped"] += skips
+        if changed:
+            out["moved"].append(folder.name)
+        elif not skips:
+            out["unchanged"].append(folder.name)
+    if tally:
+        out["skip_count"] = [
+            f"{n} skipped of {looked} {where} — on {pages} of {refreshed} pages refreshed"
+            for where, (n, looked, pages) in tally.items()]
     # UNCONDITIONAL. Even a pass that moved nothing re-mirrors: the mirror can be stale from a
     # PREVIOUS pass that forgot, and refusing to fix that because this pass was a no-op would make
     # the guarantee depend on which run you happened to notice it in.
