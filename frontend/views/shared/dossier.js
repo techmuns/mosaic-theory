@@ -3107,8 +3107,8 @@ function exhibitOutcomeText(o) {
 // it) no cause, in the bytes #1073 left — the QA-flag strings are never parsed.
 // Matched by EXHIBIT, never by accession: one exhibit the term rows cite must not hide another
 // under the same accession (Codex, #1084 round 1). Returns null when nothing is unextracted.
-function unextractedLineHtml(located, cited, outcomes) {
-  const missing = [...located].filter((a) => !cited.has(a)).sort();
+function unextractedLineHtml(located, extracted, outcomes) {
+  const missing = [...located].filter((a) => !extracted.has(a)).sort();
   if (!outcomes || outcomes.status !== "present") {
     if (!missing.length) return null;
     return `${missing.length} located agreement exhibit(s) not extracted this run; this page does ` +
