@@ -310,9 +310,8 @@ def _nflx_run(drop: tuple[str, ...] = (), heads: dict[tuple[str, str], str] | No
         cik=nflx["cik"], ticker="NFLX", name="Netflix, Inc.")
     assert outcomes is not None
     got = list(outcomes.value or [])
-    targets = covenant_extract._core_agreement_exhibits(rows)
-    assert [(o.accession, o.filename) for o in got] == [(r.accession, f) for r, f in targets], \
-        "one outcome per target, in the targets' order"
+    from tests.test_covenant_coverage_rule import _one_outcome_per_target
+    _one_outcome_per_target(rows, got)
     return llm.sent, got, flags
 
 

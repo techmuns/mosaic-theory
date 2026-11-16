@@ -1403,15 +1403,32 @@ def test_capital_structure_covenant_terms_note_is_opacity_as_signal() -> None:
 
 
 class _FakeExhibitHttp:
-    """A fake SEC http whose get_text returns fixed exhibit text (or raises, for fail-loud)."""
+    """A fake SEC http whose get_text returns fixed exhibit text (or raises, for fail-loud).
+    ``by_file`` serves a named exhibit its own text instead: since the selector (STATE row 63,
+    2026-11-16) every exhibit a located pointer row lists is read, and one whose heading governs
+    debt is sent, so a fake that serves one debt text for every file would send them all."""
 
-    def __init__(self, *, fail: bool = False, text: str = "LOAN AND SECURITY AGREEMENT …") -> None:
-        self._fail, self._text = fail, text
+    def __init__(self, *, fail: bool = False, text: str = "LOAN AND SECURITY AGREEMENT …",
+                 by_file: dict[str, str] | None = None) -> None:
+        self._fail, self._text, self._by_file = fail, text, by_file or {}
 
     def get_text(self, url: str, ttl_seconds: float | None = None) -> str:
         if self._fail:
             raise RuntimeError("simulated fetch failure")
-        return self._text
+        return self._by_file.get(url.rsplit("/", 1)[1], self._text)
+
+
+#: MVST's REAL heads (EDGAR cache, `0001760689-24-000021`): the 8-K's own cover document and the
+#: guaranty filed beside the loan and security agreement. Neither is a contract that governs debt.
+_MVST_SIBLINGS = {
+    "mvst-20240603.htm": ("UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. "
+                          "20549 FORM 8-K CURRENT REPORT Pursuant to Section 13 or 15(d) of the "
+                          "Securities Exchange Act of 1934 Date of Report (Date of earliest event "
+                          "reported): June 3, 2024 (May 28, 2024)"),
+    "wu_microvast-guarantyagree.htm": "EX-10.3 5 wu_microvast-guarantyagree.htm EX-10.3 Document "
+                                      "Exhibit 10.3 GUARANTY AGREEMENT This GUARANTY AGREEMENT , "
+                                      "dated as of May 28, 2024",
+}
 
 
 def _pointer_rows() -> list[ds.CovenantPointer]:
@@ -1454,7 +1471,9 @@ def test_covenant_extract_present_is_verbatim_source_bound_and_absent_is_unknown
     """(E5/H1d, cond. b) The fenced extraction renders each term as {value, source_ref} or UNKNOWN:
     a stated conversion price is the VERBATIM formula bound to the exhibit it was read from (the
     source_ref is MACHINE-set, not the model's), and a term the exhibit omits is a visible UNKNOWN —
-    never a fabricated $/share."""
+    never a fabricated $/share. The filing's two other exhibits are served their real heads
+    (`_MVST_SIBLINGS`): the 8-K cover is no agreement and the guaranty is credit support, so the
+    loan and security agreement is still the one exhibit sent (the selector, STATE row 63)."""
     payload = {"terms": [
         {"name": "Conversion price / mechanics", "present": True,
          "value": "$1.00 divided by the applicable Conversion Rate",
@@ -1468,7 +1487,8 @@ def test_covenant_extract_present_is_verbatim_source_bound_and_absent_is_unknown
                "determination, an amount equal to $1.00 divided by the applicable Conversion Rate "
                "at such time.")
     term_rows, summary, flags, log, _outcomes = ce.extract_covenant_terms(
-        cs_in, llm=_FakeLlm(payload), http=typing.cast(typing.Any, _FakeExhibitHttp(text=exhibit)),
+        cs_in, llm=_FakeLlm(payload),
+        http=typing.cast(typing.Any, _FakeExhibitHttp(text=exhibit, by_file=_MVST_SIBLINGS)),
         cik="0001760689", ticker="MVST", name="Microvast")
     assert term_rows is not None and term_rows.status is ds.SourceStatus.PRESENT
     conv = next(r for r in term_rows.value if r.name.startswith("Conversion"))

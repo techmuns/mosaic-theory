@@ -1,0 +1,1313 @@
+{
+ "ticker": "WLK",
+ "capital_structure": {
+  "instruments": {
+   "value": [
+    {
+     "description": "1.625% 700 Million Senior Notes Due 2029",
+     "type": "Bonds and Notes",
+     "principal_musd": 822.0,
+     "coupon": "1.625%",
+     "floating_rate": "NA",
+     "maturity_date": "2029-07-17",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "EUR"
+    },
+    {
+     "description": "2.875% Senior Notes Due 2041",
+     "type": "Bonds and Notes",
+     "principal_musd": 350.0,
+     "coupon": "2.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2041-08-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.125% Senior Notes Due 2051",
+     "type": "Bonds and Notes",
+     "principal_musd": 600.0,
+     "coupon": "3.125%",
+     "floating_rate": "NA",
+     "maturity_date": "2051-08-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.375% Senior Notes Due 2030",
+     "type": "Bonds and Notes",
+     "principal_musd": 300.0,
+     "coupon": "3.375%",
+     "floating_rate": "NA",
+     "maturity_date": "2030-06-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.375% Senior Notes Due 2061",
+     "type": "Bonds and Notes",
+     "principal_musd": 450.0,
+     "coupon": "3.375%",
+     "floating_rate": "NA",
+     "maturity_date": "2061-08-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.50% Senior Notes Due 2032",
+     "type": "Bonds and Notes",
+     "principal_musd": 250.0,
+     "coupon": "3.500%",
+     "floating_rate": "NA",
+     "maturity_date": "2032-11-01",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.60% Senior Notes Due 2026",
+     "type": "Bonds and Notes",
+     "principal_musd": 496.0,
+     "coupon": "3.600%",
+     "floating_rate": "NA",
+     "maturity_date": "2026-08-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "4.375% Senior Notes Due 2047",
+     "type": "Bonds and Notes",
+     "principal_musd": 500.0,
+     "coupon": "4.375%",
+     "floating_rate": "NA",
+     "maturity_date": "2047-11-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "5.00% Senior Notes Due 2046",
+     "type": "Bonds and Notes",
+     "principal_musd": 700.0,
+     "coupon": "5.000%",
+     "floating_rate": "NA",
+     "maturity_date": "2046-08-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "5.550% Senior Notes Due November 2035",
+     "type": "Bonds and Notes",
+     "principal_musd": 600.0,
+     "coupon": "5.550%",
+     "floating_rate": "NA",
+     "maturity_date": "2035-11-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "6.375% Senior Notes Due November 2055",
+     "type": "Bonds and Notes",
+     "principal_musd": 600.0,
+     "coupon": "6.375%",
+     "floating_rate": "NA",
+     "maturity_date": "2055-11-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027",
+     "type": "Bonds and Notes",
+     "principal_musd": 11.0,
+     "coupon": "3.500%",
+     "floating_rate": "NA",
+     "maturity_date": "2027-12-01",
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Notes Payable",
+     "type": "Bonds and Notes",
+     "principal_musd": 28.0,
+     "coupon": "NA",
+     "floating_rate": "NA",
+     "maturity_date": "2027-09-30",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease",
+     "type": "Capital Lease",
+     "principal_musd": 826.0,
+     "coupon": "4.400%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Revolving Credit Facility",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "Benchmark",
+     "maturity_date": "2026-04-02",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Term Loans Due 2026",
+     "type": "Term Loans",
+     "principal_musd": 1.0,
+     "coupon": "1.080%",
+     "floating_rate": "NA",
+     "maturity_date": "2026-03-01",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ],
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)",
+   "status": "present",
+   "note": null
+  },
+  "summary": {
+   "value": "term loans 0.0 (3 months Q2 Jun-30-2026 0.0 → 3 months Q3 Sep-30-2026 0.0); senior bonds 5,168.0; leases 791.0; total principal 5,959.0; total debt 5,855.0 (3 months Q3 Sep-30-2026) ($M)",
+   "source_ref": "CIQ Financials→Capital Structure Summary",
+   "status": "present",
+   "note": null
+  },
+  "detail_as_of": "A 2025 filed Feb-26-2026",
+  "maturity_filings": {
+   "value": "8-K at maturity 2026-03-01: filed 2026-02-24 [0001262823-26-000008] 2.02 Results of Operations and Financial Condition, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits — read for resolution; 8-K at maturity 2026-03-01: filed 2026-02-23 [0001193125-26-064221] 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits — read for resolution; 8-K at maturity 2026-04-02: filed 2026-04-02 [0001193125-26-139007] 5.02 Departure/Election of Directors or Certain Officers — read for resolution; 8-K at maturity 2026-04-02: filed 2026-04-06 [0001193125-26-142822] 1.01 Entry into a Material Definitive Agreement, 1.02 Termination of a Material Definitive Agreement, 2.03 Item 2.03, 9.01 Financial Statements and Exhibits — read for resolution",
+   "source_ref": "EDGAR 8-K submissions (±10d of instrument maturities)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointers": {
+   "value": "Loan Related to Tax-Exempt Waste D [0001193125-10-155766]; Loan Related to Tax-Exempt Waste D [0001193125-07-267027]; Revolving Credit Facility [0001193125-16-689964]; Revolving Credit Facility [0001193125-09-021484]; Term Loans Due 2026 [0001193125-10-276447]; Term Loans Due 2026 [0001193125-16-620795]",
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_pointer_rows": {
+   "value": [
+    {
+     "family": "Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027",
+     "filing": "8-K",
+     "filing_date": "2010-07-08",
+     "accession": "0001193125-10-155766",
+     "exhibits": [
+      "dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027",
+     "filing": "8-K",
+     "filing_date": "2007-12-18",
+     "accession": "0001193125-07-267027",
+     "exhibits": [
+      "dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2016-08-24",
+     "accession": "0001193125-16-689964",
+     "exhibits": [
+      "d247458dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Revolving Credit Facility",
+     "filing": "8-K",
+     "filing_date": "2009-02-09",
+     "accession": "0001193125-09-021484",
+     "exhibits": [
+      "dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Term Loans Due 2026",
+     "filing": "8-K",
+     "filing_date": "2010-12-08",
+     "accession": "0001193125-10-276447",
+     "exhibits": [
+      "dex101.htm",
+      "dex102.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Term Loans Due 2026",
+     "filing": "8-K",
+     "filing_date": "2016-06-14",
+     "accession": "0001193125-16-620795",
+     "exhibits": [
+      "d211826dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "1.625% 700 Million Senior Notes Due 2029",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "2.875% Senior Notes Due 2041",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "3.125% Senior Notes Due 2051",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "3.375% Senior Notes Due 2030",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "9 more aggregate lines",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "showing 4 of 13 aggregate lines — the full instrument panel lists every one"
+    }
+   ],
+   "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_terms": {
+   "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[AMENDED AND RESTATED LOAN AGREEMENT · 0001193125-10-155766]\n  Principal / commitment amount: $100,000,000\n  Interest / coupon rate: an interest rate at all times equal to the interest rate borne by the Bonds…\n  Maturity date: the stated maturity or such earlier date as the Bonds shall be redeemed\n  Interest Payment Date: each February 1 and August 1, commencing August 1, 2010\n[CREDIT AGREEMENT · 0001193125-16-689964]\n  Principal / commitment amount: $1,000,000,000\n  Interest / coupon rate: Eurodollar Borrowings: Adjusted LIBO Rate plus the Applicable Rate; ABR Borrowings:…\n  Maturity date: the fifth anniversary of the Effective Date\n  Financial-maintenance covenants: Total Leverage Ratio not to exceed: (a) 3.00 to 1.00 to Changeover Date; (b) 3.50 to…\n  Default interest: 2% per annum plus the otherwise applicable rate\n[Term Loans Due 2026 · 0001193125-10-276447]\n  Principal / commitment amount: $89,000,000\n  Interest / coupon rate: the Note ... (ii) bearing interest at an interest rate at all times equal to the…\n  Interest Payment Dates: each May 1 and November 1, commencing May 1, 2011\n[Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027 · 0001193125-07-267027]\n  Principal / commitment amount: $250,000,000\n  Interest / coupon rate: The Loan Agreement does not state a numeric interest rate; the Notes bear \"interest…\n… (+1 lower-priority terms in the table)",
+   "source_ref": "fenced Tier-2 digest (P1)",
+   "status": "present",
+   "note": null
+  },
+  "covenant_term_rows": {
+   "value": [
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-10-155766 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$100,000,000",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “To provide funds for the Projects, the Authority agrees that it will sell, issue and deliver the Bonds in the aggregate principal amount of $100,000,000 and make the proceeds of sale of the Bonds available to the Borrower pursuant to this Agreement for the acquisition, construction and installation of the Projects and paying the costs of issuance of the Bonds. The aggregate principal amount of the Bonds issued under the Indenture shall not exceed $100,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "an interest rate at all times equal to the interest rate borne by the Bonds (converted to a Term Rate to the Maturity Date); specific rate not stated in this Agreement",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture (i) maturing on the same date and in the same principal amount as the Bonds, (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds, payable on the dates on which interest is payable on the Bonds”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the stated maturity or such earlier date as the Bonds shall be redeemed",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““Maturity Date” means the stated maturity or such earlier date as the Bonds shall be redeemed.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-10-155766 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower. In order to secure, on behalf of the Authority, the obligation of the Borrower to make Payments, concurrently with the reoffering of the Bonds, the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Events of Default (Section 10.1): (a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b) default in timely payment of any Payment (30-day grace for Term Rate interest); (c) failure to perform any other covenant for 30 days after notice; (d) bankruptcy decree/order unstayed 90 consecutive days; (e) voluntary bankruptcy/insolvency. Mandatory prepayment (Section 7.1): Borrower shall prepay if (a) Agreement becomes void/unenforceable; (b) a Determination of Taxability occurs; (c) Bond proceeds remain after completion of the Projects.",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The terms “Event of Default” and “Default” shall mean any one or more of the following events: (a) An Event of Default shall exist under the Indenture, the Notes or the Senior Notes Indenture; (b) The Borrower shall default in the timely payment of any Payment pursuant to Article IV of this Agreement; provided that such default with respect to an interest payment in the case of a Bond bearing interest at a Term Rate shall be deemed to occur upon the continuance of any such failure of payment for a period of 30 days after the applicable Interest Payment Date”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Change of Control Payment",
+     "value": {
+      "value": "The Borrower agrees to pay to the Trustee amounts sufficient for the payment in full in satisfaction of a Change of Control Offer",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Borrower agrees to pay to the Trustee amounts sufficient for the payment in full in satisfaction of a Change of Control Offer (“Change of Control Payment”). The Change of Control Payment with respect to the Bonds shall be payable directly to the Trustee for the account of the Borrower Designee on the Change of Control Payment Date.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Asset Sale Payment",
+     "value": {
+      "value": "payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture)",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Borrower agrees to pay to the Trustee amounts sufficient for the payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture) (“Asset Sale Payment”). The Asset Sale Payment with respect to the Bonds shall be payable directly to the Trustee for the account of the Borrower on the completion of the Asset Sale Offer.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest Payment Date",
+     "value": {
+      "value": "each February 1 and August 1, commencing August 1, 2010",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““Interest Payment Date” or “interest payment date”, when used with respect to the Bonds, means each February 1 and August 1, commencing August 1, 2010; provided however, with respect to the Company Bonds (Series 2009A-1) held on the Final Drawing Date only, Interest Payment Date shall mean July 2, 2010.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Governing law",
+     "value": {
+      "value": "State of Louisiana",
+      "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “This Agreement shall be deemed to be a contract made under the laws of the State of Louisiana and for all purposes shall be governed exclusively by and construed in accordance with the laws of the State of Louisiana.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-16-689964 · d247458dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$1,000,000,000",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The initial aggregate amount of the Lenders' Commitments is $1,000,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "Eurodollar Borrowings: Adjusted LIBO Rate plus the Applicable Rate; ABR Borrowings: Alternate Base Rate plus the Applicable Rate",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “(a) The Loans comprising each ABR Borrowing (including each Swingline Loan) shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Loans comprising each Eurodollar Borrowing (including all Alternate Currency Loans) shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
+     },
+     "base_rate_label": "Adjusted LIBO Rate",
+     "margin_pct": null,
+     "margin_bps": 125.0,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false,
+     "component_quotes": {
+      "margin_bps": "Eurodollar Revolving Loans 100.0 bps 112.5 bps 125.0 bps 150.0 bps 175.0 bps ... As of the date hereof, Pricing Level III is in effect."
+     }
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "the fifth anniversary of the Effective Date",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Maturity Date ” means the fifth anniversary of the Effective Date (or, if such date is not a Business Day, the immediately preceding date that is a Business Day).”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": "Total Leverage Ratio not to exceed: (a) 3.00 to 1.00 to Changeover Date; (b) 3.50 to 1.00 from Changeover Date to December 31, 2017; (c) 3.00 to 1.00 thereafter",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “SECTION 6.09. Financial Covenant . The Company will not permit the Total Leverage Ratio as of the last day of any fiscal quarter of the Company to exceed: (a) from the Effective Date to the date the Company delivers a certificate to the Administrative Agent certifying that the commitments under the Bridge Facility have been terminated in full (the “ Changeover Date ”), 3.00 to 1.00 ... (b) from the Changeover Date to December 31, 2017, 3.50 to 1.00; and (c) thereafter, 3.00 to 1.00.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "Guaranteed by the Company and each Subsidiary Guarantor (each Subsidiary that is not an Excluded Subsidiary); unsecured (opinions cover 'an unsecured bank loan financing')",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Guarantors ” means the Company and each Subsidiary Guarantor. ... SECTION 11.01. The Guaranty . (a) The Company hereby unconditionally guarantees ... (b) Each Subsidiary Guarantor hereby unconditionally guarantees to the Administrative Agent, for the benefit of the Lenders, the full and punctual payment ... of the principal of, and interest and fees on, each Loan made to and each LC Disbursement incurred by any Borrower”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Events of Default per Section 7.01 (clauses (a)-(n)) including payment defaults, covenant breaches, cross-default on Material Indebtedness, bankruptcy, judgments above Threshold Amount, ERISA Event, Change in Control, guarantee termination. Mandatory repayments per Section 2.09(d): if Total Revolving Credit Exposure exceeds Commitments or Total Alternate Currency Revolving Credit Exposure exceeds Alternate Currency Sublimit, Borrowers shall within five Business Days prepay outstanding Loans",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “SECTION 7.01. Events of Default . If any of the following events (“ Events of Default ”) shall occur and be continuing: (a) any Borrower shall fail to pay any principal of any Loan ... (m) a Change in Control shall occur; or (n) ... the guarantee of any Guarantor under Article XI shall ... be terminated”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Threshold Amount",
+     "value": {
+      "value": "$75,000,000",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Threshold Amount ” means $75,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Alternate Currency Sublimit",
+     "value": {
+      "value": "$250,000,000",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““ Alternate Currency Sublimit ” means $250,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Letter of Credit Commitment",
+     "value": {
+      "value": "$150,000,000",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The initial aggregate amount of the Issuing Banks' Letter of Credit Commitments is $150,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Swingline Commitment",
+     "value": {
+      "value": "$50,000,000",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “Swingline Lender Swingline Commitment JPMorgan Chase Bank, N.A. $ 50,000,000 TOTAL $ 50,000,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Default interest",
+     "value": {
+      "value": "2% per annum plus the otherwise applicable rate",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “such overdue amount shall bear interest, after as well as before judgment, at a rate per annum equal to (i) in the case of overdue principal of any Loan, 2% per annum plus the rate otherwise applicable to such Loan ... or (ii) in the case of any other amount, 2% per annum plus the rate applicable to ABR Loans”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Accordion / incremental facility",
+     "value": {
+      "value": "Increased Commitments up to an aggregate of $500,000,000",
+      "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+      "status": "present",
+      "note": "verbatim: “the Company may, upon at least three (3) days' notice to the Administrative Agent ... increase the aggregate amount of the Commitments by an amount not less than $25,000,000 (the amount of any such increase, the “ Increased Commitments ”) ... after giving effect to such increase, the aggregate amount of all increases in Commitments made pursuant to this Section 2.21 shall not exceed $500,000,000.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-10-276447 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$89,000,000",
+      "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “To provide funds for paying the Costs of the Projects, the Authority agrees, as soon as practicable after the execution of this Agreement, that it will issue, sell and deliver the Bonds in the aggregate principal amount of $89,000,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "the Note ... (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds, payable on the dates on which interest is payable on the Bonds; the corresponding Notes are the 6.50% Senior Notes due 2035",
+      "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““Notes” means the 6.50% Senior Notes due 2035 issued by the Company to the Trustee under the Company’s Senior Notes Indenture.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "(E5) refused: the value states 2035, which the model's quote does not — 8-K 0001193125-10-276447 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-10-276447 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower. (Payments secured by the Note issued under the Senior Notes Indenture)",
+      "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "The Borrower shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds; Events of Default defined in Section 9.1: (a) an Event of Default under the Indenture, the Note or the Senior Notes Indenture; (b) default in timely payment of any Payment (Interest Payment default after 30 days); (c) failure to perform any other covenant for 30 days after notice; (d) bankruptcy/insolvency decree unstayed 90 days; (e) voluntary bankruptcy/insolvency proceedings",
+      "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Borrower hereby agrees that it shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Special Payments — Change of Control / Asset Sale",
+     "value": {
+      "value": "Change of Control Payment (satisfaction of a Change of Control Offer) and Asset Sale Payment (satisfaction of an Asset Sale Offer)",
+      "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““Change of Control Payment” being the an amount sufficient for the payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture). ... “Asset Sale Payment” being an amount sufficient for the payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture).”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Acceleration remedy",
+     "value": {
+      "value": "Upon an Event of Default, the Authority or the Trustee may declare all Payments under Section 4.2 immediately due and payable",
+      "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Authority or the Trustee may declare all Payments under Section 4.2 hereof to be immediately due and payable, whereupon the same shall become immediately due and payable;”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest Payment Dates",
+     "value": {
+      "value": "each May 1 and November 1, commencing May 1, 2011",
+      "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: ““Interest Payment Date” or “interest payment date”, when used with respect to the Bonds, means each May 1 and November 1, commencing May 1, 2011.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Conversion price / mechanics",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-07-267027 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Principal / commitment amount",
+     "value": {
+      "value": "$250,000,000",
+      "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “\"Bonds\" means the Louisiana Local Government Environmental Facilities and Community Development Authority Revenue Bonds (Westlake Chemical Corporation Projects), Series 2007, authorized to be issued by the Authority in the aggregate principal amount of $250,000,000, including such Bonds issued in exchange for other such Bonds pursuant to this Indenture, or in replacement for mutilated, destroyed, lost or stolen Bonds pursuant to this Indenture.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Interest / coupon rate",
+     "value": {
+      "value": "The Loan Agreement does not state a numeric interest rate; the Notes bear \"interest at an interest rate at all times equal to the interest rate borne by the Bonds, payable on the dates on which interest is payable on the Bonds\" (Section 4.6(a)(ii)), and Interest Payments are \"an amount sufficient for the payment in full of the total interest due and payable ... on the Bonds\" (Section 4.2(a)(i)); the rate itself is set in the Indenture/Bonds, not stated in this exhibit.",
+      "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “\"Interest Payments\" being an amount sufficient for the payment in full of the total interest due and payable to the date of payment thereof on the Bonds from time to time issued under the Indenture and then outstanding.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Maturity date",
+     "value": {
+      "value": "\"the stated maturity or such earlier date as the Bonds shall be redeemed\" (no calendar date stated in this exhibit; Notes mature \"on the same date ... as the Bonds\" per Section 4.6(a)(i))",
+      "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “\"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be redeemed.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Financial-maintenance covenants",
+     "value": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "not stated in 8-K 0001193125-07-267027 · dex101.htm"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Security / collateral / guarantors",
+     "value": {
+      "value": "The Borrower's obligations under this Agreement are \"unsecured, general obligations of the Borrower\" (Section 10.11). To secure the Payments, the Borrower issues Notes under the Senior Notes Indenture (Section 4.6(a)); no collateral or guarantor is otherwise stated in this exhibit.",
+      "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    },
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Section 4.5: Borrower shall prepay as necessary to accomplish the extraordinary mandatory redemption of the Bonds; Special Payments include Change of Control Payment and Asset Sale Payment (Section 4.2(b)). Events of Default are defined in Section 9.1 (including (a) an Event of Default under the Indenture, Notes or Senior Notes Indenture; (b) payment default with 30-day cure for Interest Payments; (c) covenant default with 30-day cure; (d)-(e) bankruptcy/insolvency), with remedies in Section 9.2 including acceleration of all Payments.",
+      "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
+      "status": "present",
+      "note": "verbatim: “The Borrower hereby agrees that it shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "LOAN AGREEMENT",
+     "agreement_is_amendment": false
+    }
+   ],
+   "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+   "status": "present",
+   "note": null
+  },
+  "maturity_event": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "(P3) 8-K body at 8-K 0001262823-26-000008 (2026-02-24) states no maturity-resolution event"
+  },
+  "panel_vintage": {
+   "value": "the debt schedule is 232d old (source filed 2026-02-26) AND an Item 1.02 — termination of a material definitive agreement — was filed 2026-04-06, accession 0001193125-26-142822. The panel predates it and cannot reflect it: an instrument listed below may already have been terminated. Verify before relying on this schedule.",
+   "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
+   "status": "present",
+   "note": null
+  },
+  "maturity_check": {
+   "panel_filed": "2026-02-26",
+   "bound": "2026-10-16",
+   "sources": [
+    {
+     "form": "10-Q",
+     "accession": "0001262823-26-000032",
+     "filed": "2026-08-05",
+     "read_as": "the latest periodic report",
+     "statements": 25,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-26-142822",
+     "filed": "2026-04-06",
+     "read_as": "an 8-K after the panel",
+     "statements": 2,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-16-689964",
+     "filed": "2016-08-24",
+     "read_as": "an 8-K the page links",
+     "statements": 1,
+     "error": null
+    },
+    {
+     "form": "8-K",
+     "accession": "0001193125-16-620795",
+     "filed": "2016-06-14",
+     "read_as": "an 8-K the page links",
+     "statements": 0,
+     "error": null
+    }
+   ],
+   "rows": [
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '1.625% 700 Million Senior Notes Due 2029' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 0,
+     "description": "1.625% 700 Million Senior Notes Due 2029",
+     "ciq_maturity_date": "2029-07-17",
+     "check": "agree",
+     "filing_maturity": "2029-07",
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [
+      "8-K 0001193125-26-142822 (filed 2026-04-06)"
+     ],
+     "quote": "1.625 % € 700 million senior notes due July 2029",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '2.875% Senior Notes Due 2041' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 1,
+     "description": "2.875% Senior Notes Due 2041",
+     "ciq_maturity_date": "2041-08-15",
+     "check": "agree",
+     "filing_maturity": "2041-08",
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "2.875 % senior notes due August 2041",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.125% Senior Notes Due 2051' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 2,
+     "description": "3.125% Senior Notes Due 2051",
+     "ciq_maturity_date": "2051-08-15",
+     "check": "agree",
+     "filing_maturity": "2051-08",
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "3.125 % senior notes due August 2051",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.375% Senior Notes Due 2030' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 3,
+     "description": "3.375% Senior Notes Due 2030",
+     "ciq_maturity_date": "2030-06-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 3 current 3.375% notes maturities and the page lists 2",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.375% Senior Notes Due 2061' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 4,
+     "description": "3.375% Senior Notes Due 2061",
+     "ciq_maturity_date": "2061-08-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 3 current 3.375% notes maturities and the page lists 2",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.50% Senior Notes Due 2032' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 5,
+     "description": "3.50% Senior Notes Due 2032",
+     "ciq_maturity_date": "2032-11-01",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current 3.5% notes maturity and the page lists 2",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '3.60% Senior Notes Due 2026' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 6,
+     "description": "3.60% Senior Notes Due 2026",
+     "ciq_maturity_date": "2026-08-15",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 2 current 3.6% notes maturities and the page lists 1",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '4.375% Senior Notes Due 2047' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 7,
+     "description": "4.375% Senior Notes Due 2047",
+     "ciq_maturity_date": "2047-11-15",
+     "check": "agree",
+     "filing_maturity": "2047-11",
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "4.375 % senior notes due November 2047",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '5.00% Senior Notes Due 2046' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 8,
+     "description": "5.00% Senior Notes Due 2046",
+     "ciq_maturity_date": "2046-08-15",
+     "check": "agree",
+     "filing_maturity": "2046-08",
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "5.00 % senior notes due August 2046",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '5.550% Senior Notes Due November 2035' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 9,
+     "description": "5.550% Senior Notes Due November 2035",
+     "ciq_maturity_date": "2035-11-15",
+     "check": "agree",
+     "filing_maturity": "2035-11",
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "5.550 % senior notes due November 2035",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of '6.375% Senior Notes Due November 2055' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 10,
+     "description": "6.375% Senior Notes Due November 2055",
+     "ciq_maturity_date": "2055-11-15",
+     "check": "agree",
+     "filing_maturity": "2055-11",
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": "6.375 % senior notes due November 2055",
+     "springing": [],
+     "note": "",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 11,
+     "description": "Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027",
+     "ciq_maturity_date": "2027-12-01",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current 3.5% notes maturity and the page lists 2",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Notes Payable' · not checked against a filing",
+     "instrument": 12,
+     "description": "Notes Payable",
+     "ciq_maturity_date": "2027-09-30",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "no single coupon to key the notes on",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Operating Lease' · not checked against a filing",
+     "instrument": 13,
+     "description": "Operating Lease",
+     "ciq_maturity_date": null,
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": null,
+     "source_filed": null,
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+     "excluded": true
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Revolving Credit Facility' · checked against the 8-K 0001193125-26-142822 (filed 2026-04-06)",
+     "instrument": 14,
+     "description": "Revolving Credit Facility",
+     "ciq_maturity_date": "2026-04-02",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "8-K 0001193125-26-142822 (filed 2026-04-06)",
+     "source_filed": "2026-04-06",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current credit-facility maturity and the page lists 2",
+     "excluded": false
+    },
+    {
+     "source_ref": "CIQ capital-structure panel — maturity of 'Term Loans Due 2026' · checked against the 10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "instrument": 15,
+     "description": "Term Loans Due 2026",
+     "ciq_maturity_date": "2026-03-01",
+     "check": "not_run",
+     "filing_maturity": null,
+     "source": "10-Q 0001262823-26-000032 (filed 2026-08-05)",
+     "source_filed": "2026-08-05",
+     "governs": false,
+     "also_stated_by": [],
+     "quote": null,
+     "springing": [],
+     "note": "the filing states 1 current credit-facility maturity and the page lists 1, and a credit-facility statement can confirm a date, never move one",
+     "excluded": false
+    }
+   ]
+  }
+ }
+}

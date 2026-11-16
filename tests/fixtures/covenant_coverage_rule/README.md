@@ -6,8 +6,9 @@
   `data/dossiers/<T>/dossier.json` at main `51784e53` (2026-11-16). That covers its pointer rows,
   its CIQ panel instruments and its maturity check, whose `bound` is the page's reference date.
 - `texts` maps `"<accession> · <exhibit>"` to the text of every exhibit the loop reads: every
-  target (`covenant_extract._core_agreement_exhibits`) and, since review round 2, every other
-  exhibit of a located filing, which the loop reads for who it is but never sends. Each is a CUT
+  target (`covenant_extract._core_agreement_exhibits`) and, since review round 2, the exhibits a
+  pointer row lists, which the loop reads (since the selector, it sends those that govern debt).
+  Each is a CUT
   of the real document.
 
 Pages: AMZN, BURL, CNXC, NFLX, NKE, TJX and VRRM, the seven whose sends the rule moves or whose
@@ -35,6 +36,16 @@ base read from its heading, not its recital's history; 1,050 characters, which r
 exhibit at this PR's code and gave the base the review found at the head it reviewed), VRRM's
 `vrrm-ex10_2.htm` and NKE's five-year agreement (each the shortest head that reads its title,
 amendment and identity as the full exhibit does).
+
+**Re-cut for the selector (STATE row 63, 2026-11-16, $0, cache only).** The selector's reader binds a
+term defined in the parenthetical at an agreement's date (`_BIND_RECITAL_AFTER`) and reads the
+passive operative clause ("The Existing Credit Agreement is, …, hereby amended and restated"). At
+that code every cut was checked against its full exhibit again, by the same six reads. Two no longer
+read as their exhibit: VRRM's term-loan restatements `…21-015880 · vrrm-ex101_62.htm` and
+`…25-242530 · vrrm-ex10_2.htm`. Only those two were re-cut, by the method above, with the new binder
+among the clauses and 120 characters kept before each displacing clause. `vrrm-ex101_62.htm` keeps a
+real head of 3,050 characters, so its clauses sit past `agreement_title`'s 3,000-character window: a
+pin removes its heading, and the clauses must not supply it a title. The other 59 cuts are unchanged.
 
 To re-cut one, read the exhibit with `_fetch_exhibit(build_sec_http(), cik, accession, exhibit)`,
 where `cik` is the page's own, and cut it as above. Re-cut a fixture only together with the pins

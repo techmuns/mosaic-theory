@@ -82,10 +82,14 @@ _MAX_EXHIBIT_CHARS = 1_200_000
 # coverage rule (`_coverage`) does not find superseded or terminated is sent, and this only stops a
 # runaway: a page with more live contracts than this sends the first ones in the loop's order and
 # flags the rest loudly, as `cost_bound`.
-# WHY 10. The busiest committed page sends 6 under the rule (BURL: its ABL agreement's four
-# amendments, its term loan's 2014 amendment and a 2020 security agreement; 26 pages, main
-# 51784e53, cache-only). The locator can return at most 13 targets per page: one 10-K row and two
-# 8-Ks for each of the six families it searches (`mechanical._COVENANT_QUERY_CAP`). At the $0.69
+# WHY 10. Before the selector the busiest committed page sent 6 under the rule (BURL: its ABL
+# agreement's four amendments, its term loan's 2014 amendment and a 2020 security agreement; 26
+# pages, main 51784e53, cache-only); since the selector (2026-11-16) it is PARR at 8 and BURL at 7
+# (docs/records/2026-11-16-covenant-selector-reads-governing-exhibits.md, estimated, cache-only).
+# The locator returns at most 13 pointer ROWS per page: one 10-K row and two 8-Ks for each of the
+# six families it searches (`mechanical._COVENANT_QUERY_CAP`). Since the selector targets every
+# exhibit a row lists that governs debt, that no longer bounds the targets (BRBR's 2019 row lists
+# nine exhibits), so only this guard does. At the $0.69
 # mean list price of a covenant call (107 calls in the committed run lines), 10 calls are about $7.
 _MAX_EXHIBITS = 10
 # the agreement documents worth extracting from — the loan/credit/security/indenture agreement (and
@@ -213,8 +217,11 @@ def _core_agreement_exhibits(rows: list[CovenantPointer]) -> list[tuple[Covenant
 
     per_family: dict[str, list[tuple[CovenantPointer, str]]] = {}
     for r in sorted((r for r in rows if r.accession), key=lambda r: fam_rank(r.family)):
-        core = [n for n in r.exhibits if any(k in n.lower() for k in _CORE_AGREEMENT)]
-        for name in (core or r.exhibits)[:1]:  # the ONE core exhibit for this pointer
+        docs = [n for n in r.exhibits if _DOCUMENT.search(n)]  # never an image (N3)
+        core = [n for n in docs if any(k in n.lower() for k in _CORE_AGREEMENT)]
+        # each pointer's PRIMARY target; the filing's other exhibits are read in the loop, and the
+        # ones that govern debt are targeted too (`_located_exhibits`, `_governs`)
+        for name in (core or docs)[:1]:
             per_family.setdefault(r.family, []).append((r, name))
     fams = sorted(per_family, key=lambda f: fam_rank(f))  # stable: debt families first
     picked: list[tuple[CovenantPointer, str]] = []
@@ -225,6 +232,58 @@ def _core_agreement_exhibits(rows: list[CovenantPointer]) -> list[tuple[Covenant
                 picked.append(per_family[f][depth])
         depth += 1
     return picked
+
+
+#: A located exhibit in the loop's order: its pointer, its filename, and whether it is its
+#: pointer's PRIMARY target (`_core_agreement_exhibits`) or another exhibit of the same filing.
+_Located = tuple[CovenantPointer, str, bool]
+#: ONLY A DOCUMENT IS READ (#1090 verification, N3, deferred to the selector): a file E5 can read
+#: as text, .htm, .html or .txt, as the locator reads only documents among a 20-F's exhibits
+#: (`mechanical._EX4_20F_RE`). A filing also lists its page images: EPAM's 10-K row lists six
+#: `.jpg`. An image holds no text, so it is never read and never a target, and one that cannot be
+#: fetched never switches a page to "supersedes nothing". Measured over the 26 committed pages'
+#: pointer rows (main 51784e53): 145 exhibits are `.htm` and 6 `.jpg`; no primary is an image.
+_DOCUMENT = re.compile(r"\.(?:htm|html|txt)$", re.I)
+
+
+def _located_exhibits(rows: list[CovenantPointer]) -> list[_Located]:
+    """EVERY DOCUMENT A LOCATED POINTER ROW LISTS, in the loop's order: each pointer's primary
+    target in `_core_agreement_exhibits`' order, followed at once by the other documents its row
+    lists, in the row's own order (never a page image, `_DOCUMENT`). The row lists the filing's
+    exhibits the locator kept, not every document of the filing. An exhibit is listed once, however
+    many pointers carry its filing."""
+    primaries = _core_agreement_exhibits(rows)
+    primary = {(row.accession, filename) for row, filename in primaries}
+    out: list[_Located] = []
+    seen: set[tuple[str, str]] = set()
+    for row, first in primaries:
+        for filename in [first, *row.exhibits]:
+            if (row.accession, filename) in seen or not _DOCUMENT.search(filename):
+                continue
+            seen.add((row.accession, filename))
+            # a primary of ANY pointer stays a primary, whichever pointer's filing lists it first
+            out.append((row, filename, (row.accession, filename) in primary))
+    return out
+
+
+#: A word for which the gate admits a CREDIT-SUPPORT document (`_DEBT`): a guaranty, a pledge, a
+#: security or collateral agreement. It secures or guarantees debt that another agreement creates.
+_CREDIT_SUPPORT = re.compile(r"(?:SECURITY|PLEDGE|GUARANTY|GUARANTEE)", re.I)
+
+
+def _governs(title: str | None) -> bool:
+    """IS THIS A CONTRACT THAT GOVERNS DEBT, by its own title? A debt agreement
+    (`is_debt_agreement`) that the gate admits for at least one word that is not credit support
+    (`_CREDIT_SUPPORT`): a credit, loan, financing or receivables agreement, an indenture, notes, a
+    facility, and an amendment of any of them. One admitted ONLY for credit-support words ("PLEDGE
+    AGREEMENT",
+    "LIMITED RECOURSE GUARANTY", "RESTATED GUARANTEE AND COLLATERAL AGREEMENT") secures or
+    guarantees obligations another agreement defines, so it is left to that agreement, as
+    `_CORE_AGREEMENT` always left it; a title with both ("LOAN AND SECURITY AGREEMENT", "CREDIT AND
+    GUARANTY AGREEMENT") governs."""
+    if title is None or not is_debt_agreement(title):
+        return False
+    return any(not _CREDIT_SUPPORT.fullmatch(m.group(1)) for m in _DEBT.finditer(title))
 
 
 def _source_ref(row: CovenantPointer, filename: str) -> str:
@@ -926,12 +985,50 @@ _AGREEMENT_TERM = r"[“\"]\s*(?P<term>[A-Z0-9][^”\"]{0,60}?(?:Agreements?|Ind
 _BIND_RECITAL = re.compile(
     rf"\b(?:that\s+certain|the)\s+{_AGREEMENT_REF}(?P<gap>[^“”\"]{{0,240}}?){_AGREEMENT_TERM}"
     rf"(?!\s*(?:means|shall\s+mean)\b)")
-#: An agreement named in a recital's gap: its name's words, then the noun.
-_GAP_AGREEMENT = re.compile(r"(?:\b[A-Z0-9][\w'\-]*\s+|\bof\s+|\bto\s+|\band\s+|\bthe\s+){0,8}?"
-                            r"\b(?:Agreement|AGREEMENT|Indenture|INDENTURE)\b")
+#: An agreement named in a recital's gap: its name's words, then the noun. "No. 1" is a word of an
+#: amendment's name (#1090 verification, N1, deferred to the selector): without it the chain broke
+#: at "No.", so UBER's "Amendment No. 1 to the Term Loan Agreement" read as "1 to the Term Loan
+#: Agreement", a second agreement with no AMENDMENT in it, and the recital's true bind was refused.
+_GAP_AGREEMENT = re.compile(r"(?:\b[A-Z0-9][\w'\-]*\s+|\bN[Oo]\.\s*|\bof\s+|\bto\s+|\band\s+|"
+                            r"\bthe\s+){0,8}?\b(?:Agreement|AGREEMENT|Indenture|INDENTURE)\b")
+#: AN AGREEMENT THAT IS THE OBJECT OF "AMENDMENT … TO" IS NAMED AS PART OF THE AMENDMENT (N1): in
+#: "Amendment No. 1 to the Term Loan Agreement, dated as of June 13, 2018" the date is the
+#: amendment's. A recital starting at that "the Term Loan Agreement" would bind its term to the
+#: amendment's date: UBER's "Existing 2016 Loan Agreement" read as of 2018-06-13, not 2016-07-13,
+#: and a recital of NKE's shape, "(as amended by the First Amendment to the Credit Agreement, dated
+#: as of March 8, 2024, the “2022 Credit Agreement”)", displaced a live agreement of that date.
+#: Read in the characters before the recital's start; such a recital binds nothing.
+_OBJECT_OF_AMENDMENT = re.compile(r"\bAMENDMENT\b(?:\s+NO\.\s*\d+)?[^.;()“”\"]{0,40}?\bto\s+$",
+                                  re.I)
+#: AN INSTRUMENT TO AN AGREEMENT IS THAT AGREEMENT'S HISTORY, WHATEVER THE INSTRUMENT (round 1 of
+#: #1091's review, extending N1 past "Amendment … to"): "the Joinder Agreement to the Security
+#: Agreement, dated as of December 7, 2021" in VRRM's 2025 restatement, a waiver, a consent, a
+#: supplement, an incremental assumption agreement. Its name is capitalised words (and "No. N"),
+#: then "to", then the agreement it is to; the date that follows is the instrument's.
+#: - In a recital's gap the whole span is the agreement's history, never a second agreement
+#:   (`_second_agreement`): VRRM's "Existing Security Agreement" binds the First Lien Security
+#:   Agreement of March 1, 2018, which the joinder read as a second agreement had refused.
+#: - A recital starting at the agreement it is TO binds nothing (`_OBJECT_OF_INSTRUMENT`, read
+#:   before the recital's start): VRRM's bound "Security Agreement" to the joinder's 2021-12-07.
+#: CASE-SENSITIVE: the instrument's name is capitalised, so "pursuant to the Credit Agreement" and
+#: "party to that certain Credit Agreement" are neither.
+_INSTRUMENT_TO = re.compile(
+    r"(?:\b[A-Z][\w'\-]*\s+(?:N[Oo]\.\s*\d+\s+)?){1,6}to\s+(?:the\s+|that\s+certain\s+)?"
+    r"(?:[A-Z0-9][\w'\-]*\s+|of\s+|and\s+){0,8}?(?:Agreement|AGREEMENT|Indenture|INDENTURE)\b")
+_OBJECT_OF_INSTRUMENT = re.compile(r"\b[A-Z][\w'\-]*(?:\s+N[Oo]\.\s*\d+)?\s+to\s+$")
 _BIND_RECITAL_PAREN = re.compile(
     rf"\b(?:that\s+certain|the)\s+{_REF_NAME}\s*{_NOT_OWN_PAREN}[^()]{{0,200}}?{_AGREEMENT_TERM}"
     rf"[^()]{{0,120}}\)\s*,?\s*{_REF_WHEN}")
+#: THE TERM DEFINED IN THE PARENTHETICAL THAT OPENS AT THE AGREEMENT'S DATE, however long its
+#: history (STATE row 63, the selector, 2026-11-16): "the Amended and Restated First Lien Term Loan
+#: Credit Agreement dated as of March 26, 2021 (as amended by that certain Amendment No. 1, …, as
+#: amended by that certain Amendment No. 4, … prior to the Second Restatement Effective Date (as
+#: defined below), the “Existing Credit Agreement”)" (VRRM's 2025 term-loan restatement: 454
+#: characters, past `_BIND_RECITAL`'s 240). The parenthetical is read whole, one nested level deep,
+#: and the term closes it; an agreement named inside it binds nothing (`_second_agreement`).
+_BIND_RECITAL_AFTER = re.compile(
+    rf"\b(?:that\s+certain|the)\s+{_REF_NAME}\s*,?\s*{_REF_WHEN}\s*\("
+    rf"(?P<gap>(?:[^()]|\([^()]{{0,120}}\)){{0,900}}?){_AGREEMENT_TERM}\s*\)")
 #: A definition: "“<term>” means [, collectively, (x)] that certain <agreement>, dated as of
 #: <date>"; a collective one's "(y) that certain <agreement>" follows within `_DEFN_SPAN` chars,
 #: and only in a definition that has its "(x)", before the next definition begins (independent
@@ -969,6 +1066,15 @@ _DISPLACING_VERBS: tuple[str, ...] = (
     r"\bcommitments\s+under\s+the\s+{t}\s+(?:shall\s+have\s+been|have\s+been|are\s+hereby|"
     r"will\s+be)\s+terminated",
     r"\bevidence\s+of\s+(?:the\s+)?termination\s+of\s+the\s+{t}",
+    # the operative clause in the passive (the selector, 2026-11-16): "The Existing Credit
+    # Agreement is, effective as of the Second Restatement Effective Date and immediately after
+    # giving effect to the incurrence of the Initial Term Loans, hereby amended and restated in the
+    # form attached as Exhibit B" (VRRM's 2025 and 2021 term-loan restatements). Over the 92 cached
+    # gate passes it reads 49 times; the subject guard below refuses the 46 that restate a PART
+    # ("Section 6.01(d) of the Credit Agreement is hereby amended and restated"), and the 3 it
+    # admits are VRRM's two whole-agreement restatements (the second also restates its security
+    # agreement)
+    r"\b[Tt]he\s+{t}\s+is\s*,?\s*(?:[^.;()“”\"]{0,200}?,\s*)?hereby\s+amended\s+and\s+restated\b",
 )
 #: WHAT THE CLAUSE ENDS MUST BE THE AGREEMENT — its subject is checked on every form that has one.
 #: - A clause opening on "the <term>" after a preposition is about something of or under it: a part
@@ -1113,14 +1219,28 @@ def displaced_agreements(text: str) -> list[Displaced]:
         if key is not None and key not in binds.setdefault(term, []):
             binds[term].append(key)
 
+    def amended(start: int) -> bool:
+        """Is the recital at ``start`` the object of "Amendment … to" (`_OBJECT_OF_AMENDMENT`) or
+        of any other instrument's "<Name> to" (`_OBJECT_OF_INSTRUMENT`)?"""
+        before = flat[max(0, start - 80):start]
+        return bool(_OBJECT_OF_AMENDMENT.search(before) or _OBJECT_OF_INSTRUMENT.search(before))
+
     for m in _BIND_RECITAL_PAREN.finditer(flat):
-        bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
+        if not amended(m.start()):
+            bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
     # OVERLAPPING: a recital refused for a second agreement in its gap leaves that second
-    # agreement's own recital, which starts inside the refused span, still to be read
+    # agreement's own recital, which starts inside the refused span, still to be read, unless that
+    # agreement is the object of an amendment's name (N1)
     pos = 0
     while (r := _BIND_RECITAL.search(flat, pos)) is not None:
         pos = r.start() + 1
-        if not _second_agreement(r.group("gap")):
+        if not _second_agreement(r.group("gap")) and not amended(r.start()):
+            bind(r.group("term"), _key(r.group("name"), r.group("when"), flat))
+    # and the term the parenthetical at the agreement's date defines, read the same way
+    pos = 0
+    while (r := _BIND_RECITAL_AFTER.search(flat, pos)) is not None:
+        pos = r.start() + 1
+        if not _second_agreement(r.group("gap")) and not amended(r.start()):
             bind(r.group("term"), _key(r.group("name"), r.group("when"), flat))
     for m in _BIND_DEFINITION.finditer(flat):
         bind(m.group("term"), _key(m.group("name"), m.group("when"), flat))
@@ -1144,9 +1264,11 @@ def displaced_agreements(text: str) -> list[Displaced]:
 
 
 def _second_agreement(gap: str) -> bool:
-    """Does a recital's gap name an agreement that is not an amendment (its history)?"""
+    """Does a recital's gap name an agreement that is not its history: not an amendment, and not
+    an instrument TO an agreement (`_INSTRUMENT_TO`: a joinder, waiver, consent, supplement)?"""
+    rest = _INSTRUMENT_TO.sub(" ", gap)
     return any(not re.search(r"\bAMENDMENT\b", g.group(0), re.I)
-               for g in _GAP_AGREEMENT.finditer(gap))
+               for g in _GAP_AGREEMENT.finditer(rest))
 
 
 def _displacing_words(flat: str, term: str) -> str | None:
@@ -1158,7 +1280,8 @@ def _displacing_words(flat: str, term: str) -> str | None:
             # "the Revolving Commitments under the Existing Credit Agreement shall have been
             # terminated": a clause that opens on the term, after a preposition, is about something
             # of or under the agreement (a part, a tranche, its commitments), not the agreement
-            if m.group(0).startswith("the") and _UNDER_THE.search(before):
+            # either case: the passive form's subject may open "The" (selector code review)
+            if m.group(0)[:3].lower() == "the" and _UNDER_THE.search(before):
                 continue
             if m.group(0).startswith("under") and not _ALL_OUTSTANDING.search(before):
                 continue
@@ -1331,6 +1454,7 @@ class _Candidate(NamedTuple):
     title: str
     own: AgreementKey | None
     base: AgreementKey | None
+    primary: bool = True  # its pointer's primary exhibit, or another its row lists (the selector)
 
 
 def _reference_date(cs: CapitalStructure) -> date | None:
@@ -1360,8 +1484,9 @@ def _coverage(candidates: list[_Candidate], reference: date | None,
     cited, with its own words. Two refusals keep a guess out:
     - a displaced agreement that could mean two agreements on the page is AMBIGUOUS, and decides
       none of them (`_ambiguous`): "Credit Agreement, dated as of March 1, 2018" would fit VRRM's
-      revolver and its term loan, both dated that day. The page is every located exhibit and every
-      debt agreement in a located filing beside one (``siblings``), which the loop reads too;
+      revolver and its term loan, both dated that day. The page is every target and every other
+      debt agreement a located pointer row lists (``siblings``: credit support since the selector,
+      which the loop reads for who it is but never sends);
     - an empty or tied filing date cannot order two documents (the (X-4) rule of
       `governing_terms`), so it supersedes nothing.
     - a displaced agreement dated as a date an UNTITLED refused exhibit's head states
@@ -1422,9 +1547,9 @@ def _identities(exhibit: tuple[str, str], own: AgreementKey | None,
 
 def _ambiguous(key: AgreementKey, pool: list[_Identity]) -> bool:
     """Could ``key`` mean two agreements on this page? Every identity CONFUSABLE with it is
-    counted, located or in a located filing beside one (F1), as distinct agreements: an amendment
-    and what it amends, or two amendments of one agreement, are one (the same base name); each
-    exhibit that IS an agreement is its own, unless some amendment names it as its base. Two or
+    counted, targeted or listed beside one by a located pointer row (F1), as distinct agreements: an
+    amendment and what it amends, or two amendments of one agreement, are one (the same base name);
+    each exhibit that IS an agreement is its own, unless some amendment names it as its base. Two or
     more: ambiguous, so it decides nothing, and the exhibits are read."""
     bases = {k.name for _ex, k, role in pool if role == "base" and _confusable(key, k)}
     owns = {(ex, k.name) for ex, k, role in pool if role == "own" and _confusable(key, k)}
@@ -1449,30 +1574,34 @@ def extract_covenant_terms(
     - ``flags``: fail-loud markers (fetch fail, over-large exhibit, LLM error, not-extracted tail).
     - ``log``: the raw model output(s), appended to the dossier's ``llm_call.log``.
     - ``outcomes``: what each located exhibit's branch of the loop did with it — one
-      :class:`CovenantExhibitOutcome` per exhibit `_core_agreement_exhibits` targets, in its order
-      (STATE row 63), or ``None`` when no exhibit is located. Written beside each branch's flag, so
-      a page states the cause from a structured field and never parses the flag.
+      :class:`CovenantExhibitOutcome` per target, in the located order (`_located_exhibits`; STATE
+      row 63), or ``None`` when no exhibit is located. A target is each pointer's primary exhibit
+      (`_core_agreement_exhibits`) and every other exhibit its pointer row lists that governs debt
+      (`_governs`) or could not be read. Written beside each branch's flag, so a page states the
+      cause from a structured field and never parses the flag.
 
-    WHICH EXHIBITS ARE SENT is the coverage rule's (2026-11-16): every target is read first; every
-    debt contract it does not find superseded or terminated (`_coverage`) is sent, purchase
-    contracts last; and `_MAX_EXHIBITS` stops only a runaway, loudly.
+    WHICH EXHIBITS ARE SENT is the coverage rule's (2026-11-16): every located exhibit is read
+    first; every debt contract it does not find superseded or terminated (`_coverage`) is sent,
+    purchase contracts last; and `_MAX_EXHIBITS` stops only a runaway, loudly.
 
     Fail-loud throughout: a fetch/LLM failure degrades a row set to UNKNOWN + a flag, never a blank
     or a fabricated value."""
     pointers = cs.covenant_pointer_rows
     if pointers is None or pointers.status is not SourceStatus.PRESENT or not pointers.value:
         return None, cs.covenant_terms, [], "", None
-    targets = _core_agreement_exhibits(list(pointers.value))
-    if not targets:
+    located = _located_exhibits(list(pointers.value))  # empty exactly when no pointer has a primary
+    if not located:
         note = "(E5) located pointers carry no core agreement exhibit to extract terms from"
         return None, Sourced.unknown(note=note), [], "", None
 
     rows: list[CovenantTerm] = []
     flags: list[str] = []
     logs: list[str] = []
-    # one slot per target, in its order: every branch below writes its target's slot, so the
-    # outcomes list equals the targets list whatever order the exhibits are sent in (STATE row 63)
-    slots: list[CovenantExhibitOutcome | None] = [None] * len(targets)
+    # one slot per target, in the located order: every branch below writes its target's slot, so
+    # the outcomes list follows the targets whatever order the exhibits are sent in (STATE row 63).
+    # A target is a pointer's primary exhibit, or another exhibit its row lists that governs debt
+    # or could not be read; each gets its slot when step 1 reaches it.
+    slots: list[CovenantExhibitOutcome | None] = []
     extracted = 0
 
     def send(i: int, row: CovenantPointer, filename: str, src: str, text: str,
@@ -1502,19 +1631,46 @@ def extract_covenant_terms(
         slots[i] = _outcome(row, filename, "extracted" if got else "no_terms_returned", title)
         return 1
 
-    # 1. READ EVERY TARGET FIRST. Which documents govern is decided across all of them (a later
-    # exhibit's own words say what it displaced), so each is fetched and identified before any is
-    # sent. Fetching is not the cost the guard bounds: the model call is.
+    # 1. READ EVERY LOCATED EXHIBIT FIRST. Which documents govern is decided across all of them (a
+    # later exhibit's own words say what it displaced), so each is fetched and identified before
+    # any is sent. Fetching is not the cost the guard bounds: the model call is.
+    # EVERY EXHIBIT A LOCATED POINTER ROW LISTS THAT GOVERNS DEBT IS A TARGET (STATE row 63, the
+    # selector, 2026-11-16). Until then each pointer targeted ONE exhibit, chosen by its file name
+    # (`_core_agreement_exhibits`), and the rest its row listed were never sent, so live governing
+    # documents were dropped: VRRM's 2025 term-loan restatement (`vrrm-ex10_2.htm`) beside its A&R
+    # revolver, NKE's five-year agreement beside a 364-day one, NFLX's delayed-draw term loan
+    # agreement beside its revolver, TJX's 2030 revolving credit agreement. The primary is still
+    # targeted as before, and refused as before. Each OTHER document its row lists
+    # (`_located_exhibits`) is a target when its own title names a contract that governs debt
+    # (`_governs`), and is then read by the coverage rule like any target: a 2025 restatement
+    # supersedes the 2021 one it restates. One that cannot be read is a target too: it may be such a
+    # contract, so it is flagged and its outcome says so. The rest are read for who they are (below)
+    # and never sent, and no outcome is written for them: an offer letter, a press release, a stock
+    # plan, and a guaranty, pledge or security agreement, which secures what its credit agreement
+    # defines.
     candidates: list[_Candidate] = []
     unnamed: set[date] = set()
-    for i, (row, filename) in enumerate(targets):
+    siblings: list[_Identity] = []
+    for row, filename, primary in located:
         src = _source_ref(row, filename)
         text = _fetch_exhibit(http, cik, row.accession, filename)
         if text is None:
             flags.append(f"(E5) covenant exhibit fetch failed — UNKNOWN: {src}")
-            slots[i] = _outcome(row, filename, "fetch_failed")
+            slots.append(_outcome(row, filename, "fetch_failed"))
             continue
         title = agreement_title(text)
+        if not primary and not _governs(title):
+            # THE FILING'S OTHER EXHIBITS THAT GOVERN NOTHING: never sent, but each is read for WHO
+            # it is, so an agreement dated as a target cannot make a displaced name look
+            # unambiguous by being unseen (#1090 review, F1)
+            if not title:
+                unnamed.update(_head_dates(text))
+            elif is_debt_agreement(title):
+                own, base = exhibit_identity(text, title, is_amendment(text))
+                siblings += _identities((row.accession, filename), own, base)
+            continue
+        i = len(slots)
+        slots.append(None)
         if not title or not is_debt_agreement(title):
             # IDENTIFY OR REFUSE. The pointer's family is a guess; the document's own heading is
             # evidence. Without this, an executive offer letter (NKE, TGT), a stock purchase
@@ -1541,39 +1697,14 @@ def extract_covenant_terms(
                 unnamed.update(_head_dates(text))
             continue
         own, base = exhibit_identity(text, title, is_amendment(text))
-        candidates.append(_Candidate(i, row, filename, src, text, title, own, base))
-
-    # 1b. THE SAME-FILING SIBLINGS: every other exhibit of a located filing, which the selector
-    # does not target (one exhibit per pointer). None is sent, but each is read for WHO it is, so
-    # an agreement dated as a target cannot make a displaced name look unambiguous by being unseen
-    # (independent review, F1: VRRM's term-loan restatement is `vrrm-ex10_2.htm` beside its A&R
-    # revolver). One that cannot be read is an unread exhibit, as a target is.
-    targeted = {(row.accession, filename) for row, filename in targets}
-    siblings: list[_Identity] = []
-    unread_siblings = 0
-    for row in pointers.value:
-        for filename in row.exhibits if row.accession else []:
-            if (row.accession, filename) in targeted:
-                continue
-            targeted.add((row.accession, filename))
-            text = _fetch_exhibit(http, cik, row.accession, filename)
-            if text is None:
-                unread_siblings += 1
-                continue
-            title = agreement_title(text)
-            if not title:
-                unnamed.update(_head_dates(text))
-            elif is_debt_agreement(title):
-                own, base = exhibit_identity(text, title, is_amendment(text))
-                siblings += _identities((row.accession, filename), own, base)
+        candidates.append(_Candidate(i, row, filename, src, text, title, own, base, primary))
 
     # 2. THE COVERAGE RULE: skip what a later located exhibit displaced, and notes that matured.
     reference = _reference_date(cs)
     instruments = (list(cs.instruments.value or [])
                    if cs.instruments.status is SourceStatus.PRESENT else None)
     live: list[_Candidate] = []
-    unread = (sum(1 for o in slots if o is not None and o.outcome == "fetch_failed")
-              + unread_siblings)
+    unread = sum(1 for o in slots if o is not None and o.outcome == "fetch_failed")
     if unread and len(candidates) > 1:
         flags.append(f"(E5) coverage: {unread} located exhibit(s) could not be read, so no exhibit "
                      f"on this page is found superseded; every debt contract read is sent")
@@ -1593,8 +1724,11 @@ def extract_covenant_terms(
     # contract, and the gate passes it, but it is the sale of notes, not the contract that governs
     # them. NFLX's pointer files its 2018 and 2014 notes purchase agreements under a bridge-loan
     # family, so in the round-robin they came first (#1088). The guard stops only a runaway.
-    ordered = ([c for c in live if not _PURCHASE_CONTRACT.search(c.title)]
-               + [c for c in live if _PURCHASE_CONTRACT.search(c.title)])
+    # EVERY PRIMARY BEFORE ANY OTHER EXHIBIT A ROW LISTS (the selector's code review): the
+    # round-robin sends each family's primary before any family's second, so a row listing many
+    # exhibits that govern debt never spends the guard on one facility while another facility's
+    # primary goes unsent. The outcomes stay in the located order; only the sending order is this.
+    ordered = sorted(live, key=lambda c: (bool(_PURCHASE_CONTRACT.search(c.title)), not c.primary))
     for c in ordered:
         if extracted >= _MAX_EXHIBITS:
             # LOUD, never quiet: the guard is not how exhibits are chosen, so hitting it means a
@@ -1608,8 +1742,8 @@ def extract_covenant_terms(
             continue
         extracted += send(c.i, c.row, c.filename, c.src, c.text, c.title)
     outcomes = [o for o in slots if o is not None]
-    if len(outcomes) != len(targets):  # every branch above fills its slot; fail loud if not
-        raise RuntimeError(f"E5 wrote {len(outcomes)} outcomes for {len(targets)} targets")
+    if len(outcomes) != len(slots):  # every branch above fills its slot; fail loud if not
+        raise RuntimeError(f"E5 wrote {len(outcomes)} outcomes for {len(slots)} targets")
 
     found = Sourced.present(outcomes, source_ref=OUTCOMES_SOURCE_REF)
     if not rows:
@@ -1634,6 +1768,21 @@ _ACC_RE = re.compile(r"\b(\d{10}-\d{2}-\d{6})\b")
 def _acc_of(text: str | None) -> str:
     m = _ACC_RE.search(text or "")
     return m.group(1) if m else ""
+
+
+#: The exhibit a term row cites: "<accession> · <file>", as `_source_ref` writes it into the row's
+#: ``source_ref`` and every note that names the exhibit. This code sets that string, never a model.
+_EXHIBIT_RE = re.compile(r"\b(\d{10}-\d{2}-\d{6}) · (\S+)")
+
+
+def _exhibit_of(row: CovenantTerm) -> tuple[str, str]:
+    """(accession, file) of the exhibit a term row was extracted from; ("", "") when neither its
+    ``source_ref`` nor its note names one (a row written before the file was cited)."""
+    for text in (row.value.source_ref, row.value.note):
+        m = _EXHIBIT_RE.search(text or "")
+        if m:
+            return m.group(1), m.group(2)
+    return "", ""
 
 
 class GoverningTerm(NamedTuple):
@@ -1715,6 +1864,7 @@ def governing_terms(
     ambiguous = _ambiguous_titles(term_rows, meta)
     grouped: dict[tuple[str, str], list[tuple[str, CovenantTerm]]] = {}
     order: list[tuple[str, str]] = []
+    labelled: list[tuple[str, str, str, CovenantTerm]] = []  # (label, accession, file, row)
     for row in term_rows:
         acc = _acc_of(row.value.source_ref) or _acc_of(row.value.note)
         fam, dt = meta.get(acc, ("(unmapped)", ""))
@@ -1727,6 +1877,25 @@ def governing_terms(
         # title was read.
         fam = (row.agreement_title
                if row.agreement_title and row.agreement_title not in ambiguous else fam)
+        ex_acc, doc = _exhibit_of(row)
+        labelled.append((fam, acc, doc if ex_acc == acc else "", row))
+    # TWO EXHIBITS OF ONE FILING NEVER SHARE A GROUP (STATE row 63, the selector, 2026-11-16;
+    # coordinator's ruling). A filing's exhibits share its filing date, so in one group the
+    # collapse could not order them: the later in the list would govern every term and the earlier
+    # one's base would be cited for it. Since the selector sends every exhibit a pointer row lists
+    # that governs debt, WLK's `0001193125-10-276447` sends its GO Zone (`dex101.htm`) and IKE Zone
+    # (`dex102.htm`) bond loan agreements, both "LOAN AGREEMENT" of November 1, 2010, two
+    # different contracts. So where two files of one accession share a label, each file's rows
+    # form their own group, labelled with the file. A label one file per filing reaches is
+    # unchanged, so a page with no such pair collapses exactly as before.
+    files: dict[tuple[str, str], set[str]] = {}
+    for fam, acc, doc, _row in labelled:
+        if acc and doc:
+            files.setdefault((fam, acc), set()).add(doc)
+    for fam, acc, doc, row in labelled:
+        dt = meta.get(acc, ("", ""))[1]
+        if acc and doc and len(files[(fam, acc)]) > 1:
+            fam = f"{fam} · {doc}"
         key = (fam, row.name)
         if key not in grouped:
             grouped[key] = []
