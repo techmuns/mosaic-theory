@@ -172,13 +172,20 @@ def test_a_record_with_no_horizon_still_computes_and_says_why_it_cannot_be_grade
 
 
 def test_the_write_paths_refuse_a_missing_or_nonsensical_horizon() -> None:
-    """NO GRANDFATHERING, where it actually binds: nothing NEW lands without a realisation date."""
-    assert sc.horizon_problems(_smpl_at()) == []
-    absent = sc.horizon_problems(_smpl_at(years=None))
+    """NO GRANDFATHERING, where it actually binds: no CALL OF RECORD lands without a realisation
+    date. Since recipe 3b (2) (operator 2026-11-16: "yes, exempt watch") the write paths owe one
+    only on a `confirmed` or `overridden` record; SMPL's committed status is `watch`, so it is read
+    here as the call it would become."""
+    def called(r: sc.ScenarioRecord) -> sc.ScenarioRecord:
+        called_v = r.verdict.model_copy(update={"status": "confirmed"})
+        return r.model_copy(update={"verdict": called_v})
+    assert sc.horizon_problems(called(_smpl_at())) == []
+    absent = sc.horizon_problems(called(_smpl_at(years=None)))
     assert len(absent) == 1 and "years_to_terminal is required" in absent[0]
     assert "never defaulted" in absent[0].lower() or "not defaulted" in absent[0].lower()
-    assert sc.horizon_problems(_smpl_at(years=0.0)), (
+    assert sc.horizon_problems(called(_smpl_at(years=0.0))), (
         "a zero horizon must be refused, not divided by")
+    assert sc.horizon_problems(_smpl_at(years=None)) == [], "a watch owes no horizon (3b (2))"
 
 
 def test_every_committed_record_passes_the_supersede_guard_it_will_now_face() -> None:

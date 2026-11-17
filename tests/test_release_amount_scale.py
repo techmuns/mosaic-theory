@@ -24,7 +24,7 @@ from typing import Any
 
 import pytest
 
-from tests.frozen_support import covered_pages, frozen_page
+from tests.frozen_support import frozen_page
 from vinci.dossier import mechanical as dm
 from vinci.dossier import refresh as rf
 from vinci.edgar import release_parse as rp
@@ -638,14 +638,15 @@ console.log(JSON.stringify(out));
 def test_vrrms_card_never_shows_the_range_made_figures_md_and_web_e2e() -> None:
     """VRRM's card, both renderers: the strings the range-made actuals printed never return. An
     ABSENCE of the observed defect — a correct re-read can never produce it, so this cannot rot.
-    It walks every covered card (the roster), so the absence holds on VRRM's living card while VRRM
-    is covered, and a retirement edits nothing here."""
-    tickers = covered_pages()
+    The banned strings are VRRM's own wrong figures, so the pin is VRRM's card, read as frozen at
+    the cut (`tests/frozen_support.py`). A walk over every covered card (round 0) went vacuous, with
+    no floor, the day VRRM left coverage, and a legitimate "$1.10" on another card would have turned
+    it red (review round 1 of #1098, item 1)."""
+    page = frozen_page("VRRM")
+    md = (page / "dossier.md").read_text()
     bad = ("adj EBITDA 2026 $38.0M", "adj EPS 2026 $1.10", "adj EPS 2025 $1.30",
            "adj EPS Q1 2026 $1.30")
-    for t in tickers:
-        md = Path(f"data/dossiers/{t}/dossier.md").read_text()
-        assert not [b for b in bad if b in md]
+    assert not [b for b in bad if b in md]
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
@@ -655,14 +656,10 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync, existsSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
-const hits = [];
-for (const t of {json.dumps(tickers)}) {{
-  const d = JSON.parse(readFileSync(`frontend/dossiers/${{t}}.json`));
-  const cp = `frontend/scenarios/${{t}}.json`;
-  const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
-  hits.push(...{json.dumps(list(bad))}.filter((b) => h.includes(b)).map((b) => `${{t}}: ${{b}}`));
-}}
-console.log(JSON.stringify(hits));
+const d = JSON.parse(readFileSync({json.dumps(str(page / "dossier.json"))}));
+const cp = "frontend/scenarios/VRRM.json";
+const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
+console.log(JSON.stringify({json.dumps(list(bad))}.filter((b) => h.includes(b))));
 """
     res = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
                                     capture_output=True, text=True, check=True).stdout)

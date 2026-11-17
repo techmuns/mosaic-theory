@@ -15,7 +15,7 @@ from __future__ import annotations
 import typing
 from datetime import date
 
-from tests.frozen_support import frozen_doc
+from tests.frozen_support import covered_where
 from tests.test_dossier import _facts, _min_record, _StubEdgar
 from tests.test_guidance_opener_period import _TJX
 from vinci.dossier import mechanical as dm
@@ -64,19 +64,24 @@ def test_burlington_s_committed_release_reaches_the_valuation_e2e() -> None:
     """THE COMMITTED PAGE, read as the assembler will read it: Burlington's stored releases already
     carry its guide, and nothing carried it to the field. Asserts the field equals the newest
     release's annual adjusted-EPS range, whatever it reads after a re-pull — a value pin on a living
-    page would rot. The page is read as frozen at the cut (`tests/frozen_support.py`): its record
-    (P/E 27.0 at $256.85) is BURL's own, so the pin is that one page's."""
-    doc = frozen_doc("BURL")
-    ps = PrimarySource.model_validate(doc["mechanical"]["primary_source"])
-    newest = max((r for r in ps.releases if r.filed), key=lambda r: r.filed or date.min)
-    annual = [g for g in newest.guidance if g.metric == "adjusted eps" and g.low and g.high
-              and dm.primary_source.period_scope(g.period) == "annual"]
-    out = dm._release_adjusted_eps(ps.releases, _min_record(pe=27.0, price=256.85), _ABSENT)
-    if not annual:
-        assert out.status is SourceStatus.UNKNOWN
-        return
-    lo, hi = dm._guide_bounds(annual[0].low or 0.0, annual[0].high or 0.0, "$/sh")
-    assert out.status is SourceStatus.PRESENT and f"${lo}–${hi}" in (out.value or ""), out
+    page would rot. A living invariant, so it walks every covered page with a filed release (the
+    roster; review round 1 of #1098, item 8), never the one named page: at the cut all 26 hold
+    it, and 5 take the stronger branch, a range to print. The record (P/E 27.0 at $256.85) feeds no
+    assertion."""
+    def filed(_t: str, d: dict[str, typing.Any]) -> bool:
+        return any(r.get("filed") for r in d["mechanical"]["primary_source"].get("releases") or [])
+
+    for _t, doc in covered_where(filed, "carries a filed release"):
+        ps = PrimarySource.model_validate(doc["mechanical"]["primary_source"])
+        newest = max((r for r in ps.releases if r.filed), key=lambda r: r.filed or date.min)
+        annual = [g for g in newest.guidance if g.metric == "adjusted eps" and g.low and g.high
+                  and dm.primary_source.period_scope(g.period) == "annual"]
+        out = dm._release_adjusted_eps(ps.releases, _min_record(pe=27.0, price=256.85), _ABSENT)
+        if not annual:
+            assert out.status is SourceStatus.UNKNOWN
+            continue
+        lo, hi = dm._guide_bounds(annual[0].low or 0.0, annual[0].high or 0.0, "$/sh")
+        assert out.status is SourceStatus.PRESENT and f"${lo}–${hi}" in (out.value or ""), out
 
 
 def test_a_newer_release_without_a_guide_is_never_reached_past() -> None:

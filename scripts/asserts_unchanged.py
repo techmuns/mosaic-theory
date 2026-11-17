@@ -1,20 +1,35 @@
-"""Show that moving a pin off a living page changed no assertion (W27 follow-up, STATE row 41 (a)).
+"""Show that moving a pin off a living page changed no assertion and disabled no test (W27
+follow-up, STATE row 41 (a)).
 
 A pin moved to a frozen copy, or an invariant moved to a roster walk, must assert exactly what it
-asserted before; only the line that READS the page may change. This compares, for each changed
-`tests/**/*.py` file, every function at BASE with the same function in the working tree, by the
-AST of its assertions, in order:
-- every `assert` statement;
-- every `with pytest.raises(...)` / `pytest.warns(...)` item, `match=` included;
-- every `pytest.fail(...)` call.
+asserted before, and still run; only the line that READS the page may change. This compares, for
+each changed `tests/**/*.py` file, every function at BASE with the same function in the working
+tree. It classifies each difference:
 
-`ast.dump` carries no line numbers, so a move that shifts lines compares equal, and a renamed
-variable, a changed literal or a dropped assert does not.
+- **CHANGED** (fails the check): the function's assertions, in source order, differ. An assertion
+  is an `assert` statement, a `with pytest.raises(...)` / `pytest.warns(...)` item (`match=`
+  included), or a `pytest.fail(...)` call. `ast.dump` carries no line numbers, so a move that
+  shifts lines compares equal, and a renamed variable, a changed literal or a dropped assert does
+  not.
+- **DISABLED** (fails): the test can now stop running. Either a skip, skipif, xfail or
+  importorskip decorator appears or changes, or a `pytest.skip` / `pytest.xfail` /
+  `pytest.importorskip` call appears where BASE had fewer.
+- **CONTROL** (fails): an assertion's enclosing conditions differ, or the function gains an early
+  exit. A condition is each enclosing `if` (its test), `while` or `try`. An early exit is a new
+  `return`, `continue`, `break` or `raise`. A wrapped or bypassable assert reads like an unchanged
+  one, so it is never silent.
+- **READER-ONLY** (listed, passes): the assertions differ only in which page reader they call, as
+  in `_page("BRBR")[…]` → `frozen_doc("BRBR")[…]`. The readers are `tests/frozen_support.py`'s and
+  every function of the module whose source names `dossier`.
+- **POPULATION** (listed, passes): what an assertion runs over changed: a `parametrize` decorator,
+  or the iterable of an enclosing `for`, including an assert newly put in a loop. That is what a
+  roster walk is. The walk's own floor (`covered_where`) is what keeps it from walking nothing, and
+  each slice's record lists every population it changes.
+- **VANISHED** (fails): a test, or a helper that asserts, is gone. A helper that asserts nothing
+  may go.
 
-It prints each function whose assertions changed, each test or asserting helper that vanished
-(a helper that asserts nothing may go), and each new function (a new helper is expected; a new
-test is listed for the reader). It exits 1 when any assertion changed or any such function
-vanished.
+A new function is listed for the reader. The exit code is 1 when anything is CHANGED, DISABLED,
+CONTROL or VANISHED.
 
 Usage: python scripts/asserts_unchanged.py BASE [FILE ...]
 With no FILE, it takes every `tests/**/*.py` that differs from BASE in the working tree (less
@@ -23,8 +38,10 @@ With no FILE, it takes every `tests/**/*.py` that differs from BASE in the worki
 from __future__ import annotations
 
 import ast
+import copy
 import subprocess
 import sys
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -32,35 +49,120 @@ def _git(*args: str) -> str:
     return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
 
 
-#: every path below is the repository's (`git diff --name-only` and `git show BASE:path` both
-#: speak root-relative paths), so the working-tree side is read from the root, never the cwd
-ROOT = Path(_git("rev-parse", "--show-toplevel").strip())
+#: The page readers a move swaps one for another inside an assert: `tests/frozen_support.py`'s, plus
+#: every function of the module whose source names `dossier` (found per file). They are normalized
+#: to one name only for the READER-ONLY test.
+SUPPORT_READERS = frozenset({"frozen_doc", "frozen_page", "living_doc"})
+SKIP_CALLS = frozenset({"skip", "xfail", "importorskip"})
+SKIP_MARKS = frozenset({"skip", "skipif", "xfail"})
+FAILING = ("CHANGED", "DISABLED", "CONTROL", "VANISHED")
 
 
-def _is_pytest_call(node: ast.AST, names: tuple[str, ...]) -> bool:
+def readers(source: str) -> frozenset[str]:
+    """The module's own page readers: its functions whose source names `dossier`."""
+    tree = ast.parse(source)
+    return SUPPORT_READERS | {n.name for n in ast.walk(tree)
+                              if isinstance(n, ast.FunctionDef) and "dossier" in ast.unparse(n)}
+
+
+class _Reader(ast.NodeTransformer):
+    def __init__(self, names: frozenset[str]) -> None:
+        self.names = names
+
+    def visit_Call(self, node: ast.Call) -> ast.AST:
+        self.generic_visit(node)
+        if isinstance(node.func, ast.Name) and node.func.id in self.names:
+            node.func = ast.Name(id="READ", ctx=ast.Load())
+        return node
+
+
+def _is_pytest_call(node: ast.AST, names: frozenset[str] | tuple[str, ...]) -> bool:
     return isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
         and node.func.attr in names and isinstance(node.func.value, ast.Name) \
         and node.func.value.id == "pytest"
 
 
-def assertions(fn: ast.AST) -> list[str]:
-    """The function's assertions in SOURCE order (an assert moved into a loop keeps its place;
-    `ast.walk` alone is breadth-first, and would reorder it)."""
-    out: list[tuple[int, int, str]] = []
+def _parents(fn: ast.AST) -> dict[ast.AST, ast.AST]:
+    return {child: node for node in ast.walk(fn) for child in ast.iter_child_nodes(node)}
+
+
+@dataclass
+class Facts:
+    """What the comparison reads off one function."""
+    asserts: list[str]
+    reader_asserts: list[str]
+    conditions: list[str]                    # per assertion: its enclosing conditions
+    loops: list[str]                         # per assertion: its enclosing loops' iterables
+    marks: list[str] = field(default_factory=list)       # skip/skipif/xfail decorators
+    params: list[str] = field(default_factory=list)      # parametrize decorators
+    skip_calls: int = 0
+    exits: int = 0
+
+
+def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[str]) -> Facts:
+    parent = _parents(fn)
+    norm = _Reader(reader_names)
+    found: list[tuple[int, int, ast.AST]] = []
     for n in ast.walk(fn):
         if isinstance(n, ast.Assert):
-            out.append((n.lineno, n.col_offset, ast.dump(n)))
+            found.append((n.lineno, n.col_offset, n))
         elif isinstance(n, ast.With | ast.AsyncWith):
-            out += [(i.context_expr.lineno, i.context_expr.col_offset, ast.dump(i.context_expr))
-                    for i in n.items if _is_pytest_call(i.context_expr, ("raises", "warns"))]
+            found += [(i.context_expr.lineno, i.context_expr.col_offset, i.context_expr)
+                      for i in n.items if _is_pytest_call(i.context_expr, ("raises", "warns"))]
         elif isinstance(n, ast.Expr) and _is_pytest_call(n.value, ("fail",)):
-            out.append((n.lineno, n.col_offset, ast.dump(n)))
-    return [d for *_, d in sorted(out)]
+            found.append((n.lineno, n.col_offset, n))
+    found.sort(key=lambda x: (x[0], x[1]))
+    out = Facts([], [], [], [])
+    for *_, node in found:
+        out.asserts.append(ast.dump(node))
+        out.reader_asserts.append(ast.dump(norm.visit(copy.deepcopy(node))))
+        conds: list[str] = []
+        loops: list[str] = []
+        cur: ast.AST = node
+        while cur is not fn:
+            up = parent[cur]
+            if isinstance(up, ast.If | ast.While) and cur is not up.test:
+                conds.append(f"{type(up).__name__}:{ast.dump(up.test)}"
+                             f":{'else' if cur in up.orelse else 'body'}")
+            elif isinstance(up, ast.Try):
+                conds.append("Try")
+            elif isinstance(up, ast.For | ast.AsyncFor | ast.comprehension):
+                loops.append(ast.dump(up.iter))
+            cur = up
+        out.conditions.append(repr(conds))
+        out.loops.append(repr(loops))
+    for d in fn.decorator_list:
+        call = d.func if isinstance(d, ast.Call) else d
+        name = call.attr if isinstance(call, ast.Attribute) else getattr(call, "id", "")
+        if name in SKIP_MARKS:
+            out.marks.append(ast.dump(d))
+        elif name == "parametrize":
+            out.params.append(ast.dump(d))
+    for n in _own_nodes(fn):
+        if isinstance(n, ast.Call) and _is_pytest_call(n, SKIP_CALLS):
+            out.skip_calls += 1
+        elif isinstance(n, ast.Return | ast.Continue | ast.Break | ast.Raise):
+            out.exits += 1
+    return out
 
 
-def functions(source: str) -> dict[str, ast.AST]:
+def _own_nodes(fn: ast.AST) -> list[ast.AST]:
+    """The function's own nodes: a helper `def` or `lambda` nested in it exits ITSELF, never the
+    test, so its body is not counted."""
+    out: list[ast.AST] = []
+    todo = list(ast.iter_child_nodes(fn))
+    while todo:
+        n = todo.pop()
+        if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef | ast.Lambda | ast.ClassDef):
+            continue
+        out.append(n)
+        todo.extend(ast.iter_child_nodes(n))
+    return out
+
+
+def functions(source: str) -> dict[str, ast.FunctionDef | ast.AsyncFunctionDef]:
     tree = ast.parse(source)
-    out: dict[str, ast.AST] = {}
+    out: dict[str, ast.FunctionDef | ast.AsyncFunctionDef] = {}
     for n in tree.body:
         if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef):
             out[n.name] = n
@@ -70,48 +172,70 @@ def functions(source: str) -> dict[str, ast.AST]:
     return out
 
 
-def compare(base: str, path: str) -> tuple[list[str], list[str], list[str], int]:
-    """(changed, vanished, new, functions compared) for one file."""
-    try:
-        before = functions(_git("show", f"{base}:{path}"))
-    except subprocess.CalledProcessError:
-        before = {}
-    after = functions((ROOT / path).read_text()) if (ROOT / path).exists() else {}
-    changed = [f"{path}::{k}" for k in sorted(before.keys() & after.keys())
-               if assertions(before[k]) != assertions(after[k])]
-    vanished = [f"{path}::{k}" for k in sorted(before.keys() - after.keys())
-                if k.rsplit(".", 1)[-1].startswith("test") or assertions(before[k])]
-    new = [f"{path}::{k}" for k in sorted(after.keys() - before.keys())]
-    return changed, vanished, new, len(before.keys() & after.keys())
+def assertions(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
+    """The function's assertions in source order."""
+    return facts(fn, frozenset()).asserts
+
+
+def compare_sources(before_src: str, after_src: str, path: str) -> dict[str, list[str]]:
+    """Every difference between BASE's and the working tree's functions in one file, by category
+    (the module docstring). Pure: it reads no file and runs no git."""
+    before = functions(before_src) if before_src else {}
+    after = functions(after_src) if after_src else {}
+    names = (readers(before_src) if before_src else SUPPORT_READERS) | (
+        readers(after_src) if after_src else SUPPORT_READERS)
+    out: dict[str, list[str]] = {k: [] for k in (*FAILING, "READER", "POPULATION", "new")}
+    for k in sorted(before.keys() & after.keys()):
+        b, a = facts(before[k], names), facts(after[k], names)
+        row = f"{path}::{k}"
+        if b.asserts != a.asserts:
+            out["READER" if b.reader_asserts == a.reader_asserts else "CHANGED"].append(row)
+        if b.marks != a.marks or a.skip_calls > b.skip_calls:
+            out["DISABLED"].append(row)
+        same = b.reader_asserts == a.reader_asserts
+        if (same and b.conditions != a.conditions) or a.exits > b.exits:
+            out["CONTROL"].append(row)
+        if b.params != a.params or (same and b.loops != a.loops):
+            out["POPULATION"].append(row)
+    out["VANISHED"] = [f"{path}::{k}" for k in sorted(before.keys() - after.keys())
+                       if k.rsplit(".", 1)[-1].startswith("test") or assertions(before[k])]
+    out["new"] = [f"{path}::{k}" for k in sorted(after.keys() - before.keys())]
+    return out
 
 
 def main(argv: list[str]) -> int:
     if not argv:
         print(__doc__)
         return 2
+    root = Path(_git("rev-parse", "--show-toplevel").strip())
     base = argv[0]
-    files = [Path(f).resolve().relative_to(ROOT).as_posix() for f in argv[1:]]
+    files = [Path(f).resolve().relative_to(root).as_posix() for f in argv[1:]]
     if not files:
         diffed = _git("diff", "--name-only", base, "--", ":(top)tests").splitlines()
         files = sorted(p for p in diffed
                        if p.endswith(".py") and not p.startswith("tests/fixtures/"))
-    changed: list[str] = []
-    vanished: list[str] = []
-    new: list[str] = []
+    total: dict[str, list[str]] = {}
     compared = asserts = 0
     for path in files:
-        c, v, n, k = compare(base, path)
-        changed, vanished, new, compared = changed + c, vanished + v, new + n, compared + k
-        if (ROOT / path).exists():
-            asserts += sum(len(assertions(f))
-                           for f in functions((ROOT / path).read_text()).values())
+        try:
+            src_before = _git("show", f"{base}:{path}")
+        except subprocess.CalledProcessError:
+            src_before = ""
+        src_after = (root / path).read_text() if (root / path).exists() else ""
+        for k, rows in compare_sources(src_before, src_after, path).items():
+            total.setdefault(k, []).extend(rows)
+        if src_before and src_after:
+            compared += len(functions(src_before).keys() & functions(src_after).keys())
+        if src_after:
+            asserts += sum(len(assertions(f)) for f in functions(src_after).values())
     print(f"=== assertions at {base[:8]} vs the working tree: {len(files)} file(s), {compared} "
           f"function(s) in both, {asserts} assertion node(s) in the working tree ===")
-    for label, rows in (("CHANGED", changed), ("VANISHED", vanished), ("new", new)):
-        for r in rows:
-            print(f"  {label:8} {r}")
-    print(f"--- changed {len(changed)}, vanished {len(vanished)}, new {len(new)}")
-    return 1 if changed or vanished else 0
+    for label in (*FAILING, "READER", "POPULATION", "new"):
+        for r in total.get(label, []):
+            print(f"  {label:10} {r}")
+    print("--- " + ", ".join(f"{k.lower()} {len(total.get(k, []))}"
+                             for k in (*FAILING, "READER", "POPULATION", "new")))
+    return 1 if any(total.get(k) for k in FAILING) else 0
 
 
 if __name__ == "__main__":

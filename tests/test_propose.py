@@ -59,14 +59,16 @@ def _legs(**over) -> dict[str, dict]:
 
 
 @pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
-def test_exactly_three_axes_are_proposed_and_all_three_are_medians() -> None:
+def test_exactly_three_axes_are_proposed_two_medians_and_the_current_multiple() -> None:
     """THE COUNT IS THE FINDING, and it is three — not six, which the first cut of the derivability
-    read claimed. The safe anchors are exactly the MEDIANS: a median absorbs one bad year, while a
-    min/max/band-low IS the statistic one observation defines."""
+    read claimed. Revenue and margin are MEDIANS: a median absorbs one bad year, while a
+    min/max/band-low IS the statistic one observation defines. The multiple is TODAY'S (recipe 3a,
+    2026-11-17): the median sat 2.4x-3.9x above the current on the de-rated pages."""
     ancs = propose_anchors(_doc("SMPL"))
     assert {(a.axis, a.leg) for a in ancs} == set(ANCHORED)
     assert all(a.leg == "base" for a in ancs), "a non-base leg acquired a default"
-    assert {a.role for a in ancs} <= {"median", "consensus"}, [a.role for a in ancs]
+    assert {a.axis: a.role for a in ancs} == {"revenue": "consensus", "margin": "median",
+                                              "multiple": "current"}, [a.role for a in ancs]
     assert len(ancs) == 3 and 9 - len(ancs) == 6
 
 
@@ -356,10 +358,15 @@ def test_the_anchors_reach_the_record_as_sourced_vintaged_references() -> None:
     for axis, a in asm.items():
         assert a["method"].strip(), axis
         refs = a["references"]
-        assert len(refs) == 1, (axis, refs)               # one anchored (base) cell per axis
-        r = refs[0]
+        anchored = [r for r in refs if r["leg"] is not None]
+        assert len(anchored) == 1, (axis, refs)           # one anchored (base) cell per axis
+        r = anchored[0]
         assert r["source"].strip() and r["vintage"] and r["leg"] == "base", (axis, r)
-        assert r["role"] in {"median", "consensus"}, r
+        # the multiple base is the CURRENT multiple since recipe 3a (2026-11-17), the other two
+        # stay medians; the median beside the current is FRAME-level (leg None), never an anchor
+        assert r["role"] in {"median", "consensus", "current"}, r
+        context = [x for x in refs if x["leg"] is None]
+        assert [x["role"] for x in context] == (["median"] if axis == "multiple" else []), refs
 
 
 @pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
@@ -372,7 +379,9 @@ def test_the_composed_method_names_the_statistic_not_the_house_label() -> None:
     asm = assumptions_from(doc, legs_from_template(build_template(doc)))
     for axis, a in asm.items():
         assert "computed anchor" not in a["method"], (axis, a["method"])
-        assert "median" in a["method"], (axis, a["method"])
+        # the statistic named in words: the multiple's is the CURRENT multiple since recipe 3a
+        assert ("current multiple" if axis == "multiple" else "median") in a["method"], (
+            axis, a["method"])
 
 
 @pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
