@@ -109,7 +109,9 @@ def roster_names(status: str, data_dir: Path = DATA) -> list[str]:
 
 
 def living_doc(ticker: str, data_dir: Path = DATA) -> dict[str, Any]:
-    """A covered name's LIVING page, parsed. Use it only on a name a roster walk handed back."""
+    """A covered name's LIVING page, parsed. Use it only on a name a roster walk handed back, or
+    in a test `tests/test_named_page_pins.RESIDUE` names: a page read beside its living record,
+    or one that watches the living page by design."""
     doc: dict[str, Any] = json.loads(
         (data_dir / "dossiers" / ticker / "dossier.json").read_text())
     return doc

@@ -198,3 +198,31 @@ def test_a_skip_swapped_for_another_is_disabled_and_the_same_one_is_not() -> Non
     assert not cmp(_SWAP_BASE, kept, "tests/test_x.py")["DISABLED"]
     removed = _SWAP_BASE.replace('    _bundle("BRBR")\n', "")
     assert not cmp(_SWAP_BASE, removed, "tests/test_x.py")["DISABLED"]
+
+
+def test_a_skip_whose_guard_is_dropped_is_disabled() -> None:
+    """(−) The same skip call with its guard dropped skips the test every time: DISABLED, though it
+    calls what it called before; (+) the same guarded skip, moved, is not."""
+    guarded = BASE.replace('    doc = _page("BRBR")\n',
+                           '    if not DOSS.is_dir():\n        pytest.skip("no pages")\n'
+                           '    doc = _page("BRBR")\n')
+    cmp = _checker().compare_sources
+    bare = guarded.replace('    if not DOSS.is_dir():\n        pytest.skip("no pages")\n',
+                           '    pytest.skip("no pages")\n')
+    assert cmp(guarded, bare, "tests/test_x.py")["DISABLED"] == ["tests/test_x.py::test_the_count"]
+    moved = guarded.replace('    doc = _page("BRBR")\n', '    doc = _page("BRBR")  # moved\n')
+    assert not cmp(guarded, moved, "tests/test_x.py")["DISABLED"]
+
+
+def test_an_imported_skip_helper_without_the_prefix_is_disabled() -> None:
+    """(−) `ciq_export_support.retired_checkout` skips when the machine holds no folder, and its
+    name carries no `skip_unless` prefix: a new call to it is DISABLED once the checker reads the
+    support module it is imported from; (+) the real support modules name it a skip helper."""
+    chk = _checker()
+    support = chk.support_skippers(ROOT)
+    assert "retired_checkout" in support["tests.ciq_export_support"], support
+    imp = "from tests.ciq_export_support import retired_checkout\n"
+    read = '    doc = _page("BRBR")\n'
+    after = (imp + BASE).replace(read, '    retired_checkout("BRBR", Path("x"))\n' + read)
+    got = chk.compare_sources(imp + BASE, after, "tests/test_x.py", support)
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], got

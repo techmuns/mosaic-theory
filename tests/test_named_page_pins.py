@@ -74,6 +74,17 @@ def test_a_named_read_is_counted_and_a_tmp_tree_is_not() -> None:
                     '    data = tmp_path / "data"\n    (data / "dossiers" / "BBB").mkdir()\n')
 
 
+def test_a_tmp_name_in_one_function_is_not_another_functions() -> None:
+    """(+) `root` assigned from `tmp_path` in one test does not make another test's own `root`,
+    bound to the repository, a scratch tree: that test's read still counts; (−) the first test's
+    tmp-rooted path is still not a read."""
+    src = HEAD + ('def test_a(tmp_path):\n    root = tmp_path / "x"\n'
+                  '    (root / "data" / "dossiers" / "BBB").mkdir(parents=True)\n\n\n'
+                  'def test_b():\n    root = Path(".")\n'
+                  '    (root / "data" / "dossiers" / "AAA" / "dossier.json").read_text()\n')
+    assert _one(src) == {("tests/test_x.py::test_b", "AAA")}
+
+
 def test_a_helper_every_call_hands_a_tmp_directory_is_a_scratch_writer() -> None:
     """(−) `_copy(t, root)` called only with `tmp_path` writes a scratch tree; (+) the same helper
     called once with the repository's own root reads the living page, so it still counts."""
@@ -91,6 +102,15 @@ def test_a_git_object_path_and_a_docstring_are_not_reads() -> None:
                     '    run(["git", "show", f"{rev}:data/dossiers/AAA/dossier.json"])\n')
     assert _one(HEAD + 'def test_a():\n    Path("data/dossiers/AAA/dossier.json").read_text()\n') \
         == {("tests/test_x.py::test_a", "AAA")}
+
+
+def test_heads_own_object_is_the_living_page() -> None:
+    """(+) `git show HEAD:data/dossiers/AAA/…` reads the page as committed at HEAD, which IS the
+    living page, so it counts (code review of slice 5); (−) another revision's object does not."""
+    assert _one(HEAD + 'def test_a():\n'
+                '    run(["git", "show", "HEAD:data/dossiers/AAA/dossier.json"])\n'
+                '    run(["git", "show", "4889ddba:data/dossiers/BBB/dossier.json"])\n') == {
+        ("tests/test_x.py::test_a", "AAA")}
 
 
 def test_a_web_mirror_and_a_javascript_template_are_reads() -> None:

@@ -125,6 +125,37 @@ def skippers(source: str) -> frozenset[str]:
         found |= more
 
 
+def imported_skippers(source: str, support: dict[str, frozenset[str]]) -> frozenset[str]:
+    """The skip helpers ``source`` imports from a `tests` support module, by the name it calls
+    them: ``support`` maps a module (`tests.ciq_export_support`) to its `skippers`. An imported
+    helper whose name carries no `skip_unless` prefix (`retired_checkout`) is known only so."""
+    out: set[str] = set()
+    for n in ast.walk(ast.parse(source)):
+        if isinstance(n, ast.ImportFrom) and n.module and n.module.split(".")[0] == "tests":
+            for a in n.names:
+                if n.module == "tests":
+                    out |= support.get(f"tests.{a.name}", frozenset())
+                elif a.name in support.get(n.module, frozenset()):
+                    out.add(a.asname or a.name)
+        elif isinstance(n, ast.Import):
+            for a in n.names:
+                if a.name.split(".")[0] == "tests":
+                    out |= support.get(a.name, frozenset())
+    return frozenset(out)
+
+
+def support_skippers(root: Path) -> dict[str, frozenset[str]]:
+    """Every `tests` support module (not `test_*`, not under `tests/fixtures/`) in the working
+    tree at ``root``, mapped to its `skippers`."""
+    out: dict[str, frozenset[str]] = {}
+    for p in sorted((root / "tests").rglob("*.py")):
+        rel = p.relative_to(root)
+        if p.name.startswith("test_") or "fixtures" in rel.parts:
+            continue
+        out[rel.with_suffix("").as_posix().replace("/", ".")] = skippers(p.read_text())
+    return out
+
+
 def _callee(node: ast.Call) -> str:
     f = node.func
     if isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name) and f.value.id == "pytest":
@@ -158,19 +189,7 @@ def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[st
     for *_, node in found:
         out.asserts.append(ast.dump(node))
         out.reader_asserts.append(ast.dump(norm.visit(copy.deepcopy(node))))
-        conds: list[str] = []
-        loops: list[str] = []
-        cur: ast.AST = node
-        while cur is not fn:
-            up = parent[cur]
-            if isinstance(up, ast.If | ast.While) and cur is not up.test:
-                conds.append(f"{type(up).__name__}:{ast.dump(up.test)}"
-                             f":{'else' if cur in up.orelse else 'body'}")
-            elif isinstance(up, ast.Try):
-                conds.append("Try")
-            elif isinstance(up, ast.For | ast.AsyncFor | ast.comprehension):
-                loops.append(ast.dump(up.iter))
-            cur = up
+        conds, loops = _enclosing(node, fn, parent)
         out.conditions.append(repr(conds))
         out.loops.append(repr(loops))
     for d in fn.decorator_list:
@@ -183,10 +202,32 @@ def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[st
     for n in _own_nodes(fn):
         if isinstance(n, ast.Call) and (_is_pytest_call(n, SKIP_CALLS)
                                         or _is_skip_helper_call(n, helpers)):
-            out.skips.append(_callee(n))
+            # WHAT it calls and UNDER WHAT conditions: a skip whose guard is dropped or widened
+            # (`if not p.exists(): pytest.skip(…)` → `pytest.skip(…)`) is a new skip
+            out.skips.append(f"{_callee(n)} {_enclosing(n, fn, parent)[0]!r}")
         elif isinstance(n, ast.Return | ast.Continue | ast.Break | ast.Raise):
             out.exits += 1
     return out
+
+
+def _enclosing(node: ast.AST, fn: ast.AST,
+               parent: dict[ast.AST, ast.AST]) -> tuple[list[str], list[str]]:
+    """(the conditions enclosing ``node`` in ``fn``: each `if`/`while` test and its branch, and
+    each `try`; the iterables of its enclosing loops), innermost first."""
+    conds: list[str] = []
+    loops: list[str] = []
+    cur: ast.AST = node
+    while cur is not fn:
+        up = parent[cur]
+        if isinstance(up, ast.If | ast.While) and cur is not up.test:
+            conds.append(f"{type(up).__name__}:{ast.dump(up.test)}"
+                         f":{'else' if cur in up.orelse else 'body'}")
+        elif isinstance(up, ast.Try):
+            conds.append("Try")
+        elif isinstance(up, ast.For | ast.AsyncFor | ast.comprehension):
+            loops.append(ast.dump(up.iter))
+        cur = up
+    return conds, loops
 
 
 def _own_nodes(fn: ast.AST) -> list[ast.AST]:
@@ -220,15 +261,17 @@ def assertions(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
     return facts(fn, frozenset()).asserts
 
 
-def compare_sources(before_src: str, after_src: str, path: str) -> dict[str, list[str]]:
+def compare_sources(before_src: str, after_src: str, path: str,
+                    support: dict[str, frozenset[str]] | None = None) -> dict[str, list[str]]:
     """Every difference between BASE's and the working tree's functions in one file, by category
-    (the module docstring). Pure: it reads no file and runs no git."""
+    (the module docstring). ``support`` is `support_skippers`, for the skip helpers the file
+    imports. Pure: it reads no file and runs no git."""
     before = functions(before_src) if before_src else {}
     after = functions(after_src) if after_src else {}
     names = (readers(before_src) if before_src else SUPPORT_READERS) | (
         readers(after_src) if after_src else SUPPORT_READERS)
-    helpers = (skippers(before_src) if before_src else frozenset()) | (
-        skippers(after_src) if after_src else frozenset())
+    helpers = frozenset[str]().union(*(skippers(src) | imported_skippers(src, support or {})
+                                       for src in (before_src, after_src) if src))
     out: dict[str, list[str]] = {k: [] for k in (*FAILING, "READER", "POPULATION", "new")}
     for k in sorted(before.keys() & after.keys()):
         b, a = facts(before[k], names, helpers), facts(after[k], names, helpers)
@@ -260,6 +303,7 @@ def main(argv: list[str]) -> int:
         files = sorted(p for p in diffed
                        if p.endswith(".py") and not p.startswith("tests/fixtures/"))
     total: dict[str, list[str]] = {}
+    support = support_skippers(root)
     compared = asserts = 0
     for path in files:
         try:
@@ -267,7 +311,7 @@ def main(argv: list[str]) -> int:
         except subprocess.CalledProcessError:
             src_before = ""
         src_after = (root / path).read_text() if (root / path).exists() else ""
-        for k, rows in compare_sources(src_before, src_after, path).items():
+        for k, rows in compare_sources(src_before, src_after, path, support).items():
             total.setdefault(k, []).extend(rows)
         if src_before and src_after:
             compared += len(functions(src_before).keys() & functions(src_after).keys())

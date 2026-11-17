@@ -30,14 +30,17 @@ WHAT COUNTS AS A READ, by the AST of each `tests/**/*.py` at REF (never `tests/f
 WHAT DOES NOT COUNT (each was a false positive of the first scan, slices 1–4 of W27):
 - a path rooted in a pytest tmp directory (`tmp_path / "data" / "dossiers" / "AMZN"`, or a name
   assigned from one): a scratch tree the test writes, never the committed page;
-- a git object path (`f"{rev}:data/dossiers/NFLX/dossier.json"`): a page as it was at a commit;
+- a git object path (`f"{rev}:data/dossiers/NFLX/dossier.json"`): a page as it was at a commit,
+  other than `HEAD:`, whose object is the living page;
 - a name bound to a dossiers folder in ANOTHER function: bindings are read per function first.
 
 A read inside a helper or at module level is charged to each test function that calls the helper
-or names the module-level binding, and takes that test's kind. A read the AST cannot see (a
-ticker built at run time, a page reached through a non-`tests` module) is not counted, so every
-count is a LOWER BOUND: `tests/test_named_page_pins.py`'s ratchet holds it, and a retirement
-replayed with the whole suite is the proof.
+or names the module-level binding, and takes that test's kind. A read the AST cannot see is not
+counted, so every count is a LOWER BOUND: `tests/test_named_page_pins.py`'s ratchet holds it, and
+a retirement replayed with the whole suite is the proof. Not seen today (code review of slice 5):
+a ticker built at run time; a page reached through a module outside `tests/`
+(`frontend/build.py`); a test method in a class, or an `async` test; a support helper that reads a
+fixed ticker rather than a parameter; and a ticker passed to a helper by keyword.
 
 Usage: python scripts/named_page_pins.py [REF] [--names T,U] [--list] [--worktree]
 REF defaults to HEAD. Read only: it reads git objects at REF (or the working tree with
@@ -145,7 +148,8 @@ def _tmp_closure(scope: ast.AST, start: set[str]) -> set[str]:
 def _string_tickers(s: str, names: set[str]) -> set[str]:
     """The page tickers a string literal reads: its path segments and mirror files, less any git
     object path, plus every quoted ticker of a JavaScript template over a ticker variable."""
-    s = GITREV.sub("", s)
+    # HEAD's own object IS the committed living page, so only another revision's is dropped
+    s = GITREV.sub(lambda m: m.group() if m.group().startswith("HEAD:") else "", s)
     out = {m for m in SEG.findall(s) if m in names}
     if JS_TEMPLATE.search(s):
         out |= {m for m in JS_QUOTED.findall(s) if m in names}
@@ -159,7 +163,11 @@ class Module:
         self.funcs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
         self._tmp_cache: dict[int, set[str]] = {}
         self._known_cache: dict[int, set[str]] = {}
-        self.tmp_names = _tmp_closure(tree, set(TMP_ROOTS))
+        # the MODULE's own tmp names only: a name one function assigns from `tmp_path` is that
+        # function's, never another's (`tmp_in` adds each function's own), as for `doss_names`
+        top = ast.Module(body=[n for n in tree.body if not isinstance(
+            n, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef)], type_ignores=[])
+        self.tmp_names = _tmp_closure(top, set(TMP_ROOTS))
         self.tmp_params = self._tmp_params()
         self.doss_names = self._dossiers_names(tree, set())
 
@@ -373,11 +381,13 @@ def _helpers(tree: ast.Module, mod: Module, ext: dict[str, dict[str, set[int]]]
         lits, vars_ = mod.direct(fn)
         seg_vars[name] = vars_
         own[name] = lits | {t for v in vars_ for t in mod.bound(fn, v)}
-        # rule 4: a literal ticker keying a name the function filled from page reads
-        pv = mod.page_vars(fn)
-        own[name] |= {k for n in ast.walk(fn) if isinstance(n, ast.Subscript)
-                      and isinstance(n.value, ast.Name) and n.value.id in pv
-                      if (k := _const_str(n.slice)) in mod.names}
+        # rule 4: a literal ticker keying a name the function filled from page reads (the fill
+        # is traced only where a name is keyed by a literal ticker at all)
+        keyed = [(n.value.id, k) for n in ast.walk(fn) if isinstance(n, ast.Subscript)
+                 and isinstance(n.value, ast.Name) if (k := _const_str(n.slice)) in mod.names]
+        if keyed:
+            pv = mod.page_vars(fn)
+            own[name] |= {k for v, k in keyed if v in pv}
     imp_funcs, imp_mods = _imports(tree)
     imported: dict[str, set[int]] = {}
     for local, (m, f) in imp_funcs.items():
