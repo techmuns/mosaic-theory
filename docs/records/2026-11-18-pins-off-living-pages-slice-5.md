@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# PINS OFF LIVING PAGES, SLICE 5 OF 5 (W27 follow-up, STATE row 41 (a) CLOSED): the propose, template, trigger and recipe pins read the cut or walk the roster; the scan's false positives are fixed and three blind spots added; a ratchet holds the 69 (test, page) pairs that remain, each with its reason; retiring AMZN touches {{REPLAY}} test files, from 31 at the cut ($0)
+# PINS OFF LIVING PAGES, SLICE 5 OF 5 (W27 follow-up, STATE row 41 (a) CLOSED): the propose, template, trigger and recipe pins read the cut or walk the roster; the scan's false positives are fixed and three blind spots added; a ratchet holds the 69 (test, page) pairs that remain, each with its reason; retiring AMZN with the whole suite touches 1 test file, from 31 at the cut, and that one is a corpus floor failing loud by A's ruling, not a named read ($0)
 
 **WHAT.**
 - **Slice 5 of the plan A approved on 2026-11-17**, the last (slice 1:
@@ -132,8 +132,25 @@ plan.
   `2b442c8a`, as slice 1 did: 1 appended roster line, its 2 page files, its 2 web mirrors and
   `index.json`, 6 files. The whole offline suite ran in it and in an unretired worktree of the
   same commit, both with the CIQ link. A test counts only if the unretired run passed it.
-  {{REPLAY_DETAIL}}
-- **The impact check.** {{IMPACT}}
+  - **Unretired:** 12,770 tests, 12,593 passed, 54 failed, 123 skipped (27.8 min). **Retired:**
+    12,732 tests, 12,556 passed, 55 failed, 121 skipped (26.7 min).
+  - **38 tests are collected only unretired**, every one an AMZN case of a corpus parametrization
+    and every one passing there: `test_ev_gap_persistence` ×5, `test_ev_gap_render` ×4,
+    `test_prespend` ×4, `test_forward_layers_basis` ×4, and 21 more in 15 files. They leave with the
+    page and edit nothing.
+  - **One test passes unretired and fails retired, and none newly skips:**
+    `test_r3_template::test_r1_and_r4_templates_keep_their_shape_across_the_corpus`. That is
+    **1 file**, against 31 at `4889ddba` and 25 after slice 1, net of named noise. None of the
+    noise slice 1 named appeared in either run this time.
+  - **It is not a named read.** It walks the corpus, and its floor needs one R4 page that builds a
+    template. AMZN is the only one, since UBER's template step refuses. Retired, the floor fails
+    loud: "the corpus check ran over {'r1': 14, 'r4': 0}". That is A's ruling on floors, the
+    nearest case slices 3 and 4 named (cost 9, below).
+  - **The ratchet passes in the retired tree.** AMZN's 7 named pairs are false positives, and
+    with no living AMZN page none is read as stale.
+- **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` at
+  `f79bf681` (main `6110795d` merged): 0 of 677 tests fail on base code and pass on head code
+  (672 pass at both, 5 skipped), and `verify` reads VALID. The PR body carries the report.
 
 **BOUNDARY.**
 - **Counts:** at this slice's commit, against main `6110795d` (slices 1–4 merged), unless another
@@ -176,4 +193,11 @@ plan.
    a module that is missing always skips and reads unchanged. Falsifier: a moved test gains a
    skip that way and no record names it.
 7. **The ratchet scans every test file on each run**, about 8 s of CPU.
-8. **$0.** No model call, no vendor call, and no page rebuilt or re-rendered.
+8. **The R4 template floor fails loud when AMZN retires** (the replay, above). AMZN is the only
+   covered page whose R4 template builds. This is the floor working as A ruled: a check that walks
+   nothing fails. It is the one test an AMZN retirement still edits, and the floor's message says
+   what to do then: pin the R4 shape on AMZN's frozen copy. Not changed here, since a moved test
+   must assert what it asserted. Falsifier: AMZN retires and the corpus check stays green with no
+   R4 page in it.
+9. **#1109's `test_dossier` changes are not in this replay.** It ran on `2b442c8a`, before #1109.
+10. **$0.** No model call, no vendor call, and no page rebuilt or re-rendered.
