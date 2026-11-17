@@ -15,16 +15,24 @@ A pin covering several pages is split one page to a test, so each flips on its o
 whose page has landed the fix carries no marker and stays as an ordinary end-to-end pin.
 
 Facts only: every pin is a value a filing states, read by deterministic code — no LLM text.
+
+SINCE W27 (2026-11-17) every pin here has landed and carries no marker, so each is an ordinary
+value pin and reads its page as frozen at the cut (`tests/frozen_support.py`): a re-assembly or a
+retirement of the living page moves nothing. A NEW awaiting pin watches a living page by design (its
+strict xfail flips on that page's rebuild), so it must read `tests.frozen_support.living_doc`
+directly: `_ps`, `_release` and `_filing` below read the cut, whose state never changes, and a pin
+reading them would stay an expected failure for good.
 """
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from typing import Any
 
 import pytest
 
-_PAGES = Path(__file__).resolve().parent.parent / "data" / "dossiers"
+from tests.frozen_support import CUT
+
+_PAGES = CUT   # every landed pin reads the cut (the module docstring)
 
 
 def _ps(ticker: str) -> dict[str, Any]:

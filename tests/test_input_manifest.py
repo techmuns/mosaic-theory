@@ -22,6 +22,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from tests.roster_support import write_roster
 from tests.sec_offline_support import no_network, seed_sec_cache
 from vinci import provenance
@@ -308,7 +309,7 @@ def test_a_refused_build_still_records_what_it_read(
     seed_sec_cache(cfg)
     url = "https://www.sec.gov/files/company_tickers.json"
     page = Dossier.model_validate_json(
-        (ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+        (frozen_page("NFLX") / "dossier.json").read_text())
 
     def fake_one(fin: Any, **kw: Any) -> Dossier:
         with build_sec_http(cfg) as h:
@@ -397,7 +398,7 @@ def test_the_backfill_writes_only_the_block_and_keeps_a_record_it_finds(
         tmp_path: pathlib.Path) -> None:
     """END TO END on a committed page (NFLX), its block stripped: the write adds ``inputs`` and
     moves nothing else; a second run keeps the record; an excluded page is never read."""
-    page = json.loads((ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+    page = json.loads((frozen_page("NFLX") / "dossier.json").read_text())
     page.pop("inputs", None)
     cfg = Config(data_dir=tmp_path / "data")
     folder = cfg.data_dir / "dossiers" / "NFLX"
@@ -545,7 +546,7 @@ def test_a_record_that_cannot_be_built_leaves_the_run_record_standing(
 
     rec = load_candidates_from_snapshot(ROOT / "data" / "snapshots" / "candidate_records.jsonl")[0]
     page = Dossier.model_validate_json(
-        (ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+        (frozen_page("NFLX") / "dossier.json").read_text())
     monkeypatch.setattr(asm, "assemble_one", lambda fin, **kw: page)
 
     def broken(*a: Any, **k: Any) -> Any:
@@ -723,7 +724,7 @@ def test_a_backfill_that_would_move_more_than_its_block_writes_nothing(
         tmp_path: pathlib.Path) -> None:
     """NEGATIVE PIN for the pre-write refusal: a page whose re-serialisation would drop a key the
     schema does not know is refused, and its file is not touched."""
-    page = json.loads((ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+    page = json.loads((frozen_page("NFLX") / "dossier.json").read_text())
     page.pop("inputs", None)
     page["zzz_not_in_the_schema"] = 1
     cfg = Config(data_dir=tmp_path / "data")
@@ -741,7 +742,7 @@ def test_a_whole_corpus_backfill_runs_without_exclude(tmp_path: pathlib.Path) ->
     """``--all`` names no page to leave out: mosaic-theory holds back no name (operator ruling
     2026-11-05, `docs/records/2026-11-05-mosaic-theory-holds-back-no-name.md`). With no
     ``--exclude`` every committed page is backfilled; ``--exclude`` stays an ordinary skip."""
-    page = json.loads((ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+    page = json.loads((frozen_page("NFLX") / "dossier.json").read_text())
     page.pop("inputs", None)
     cfg = Config(data_dir=tmp_path / "data")
     for t in ("BURL", "NFLX"):
