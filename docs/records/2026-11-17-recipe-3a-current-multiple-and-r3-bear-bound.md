@@ -82,7 +82,7 @@ superseded-by:
 - **Ratios:** median ÷ current is per page, on the band `_r1_proposal_band` selects.
   Record base ÷ page median is per R1 record, on today's committed page, not the page the record
   was struck against.
-- **Mutants:** 13, run at `d8e22efe`.
+- **Mutants:** 13 — M1–M10 run at `d0f91758`, M11–M12 at `d8e22efe`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **The EPS line is not compared** (deferred to the operator). A record states no structured EPS
