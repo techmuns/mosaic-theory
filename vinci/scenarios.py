@@ -1752,6 +1752,9 @@ def bear_consensus_problems(rec: ScenarioRecord) -> list[str]:
             out.append(f"{name}.miss_case is read only on an R3 bear leg — on {rec.recipe_id} "
                        f"{name} it bounds nothing, so it is refused rather than carried")
     if rec.recipe_id != RECIPE_R3:
+        if rec.ntm_consensus_eps is not None:
+            out.append(f"ntm_consensus_eps is read only on an R3 record — on {rec.recipe_id} it "
+                       "bounds no leg, so it is refused rather than carried")
         return out
     bear = (rec.scenarios or {}).get("bear")
     if bear is None or bear.eps is None:

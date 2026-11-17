@@ -93,6 +93,11 @@ superseded-by:
 - **The page anchor still prices on the median.** `anchor.multiple` (the screening R1 anchor,
   `vinci/dossier/anchor.py`) diverges from the proposal on the same page: SMPL's anchor reads
   18.2256x while the template proposes 5.1351x. Moving it moves 26 pages and is out of 3a's scope.
+- **A stale consensus is not bounded** (review round 1, DEFER). The bound refuses a stamp newer
+  than `spot_as_of`, but nothing limits how much OLDER it may be: a months-old CIQ Estimates
+  export would bound a bear struck today. A staleness limit is a number no one has ruled, so none
+  is set here. Falsifier: a create whose page's `forward_consensus.as_of` floor is more than a
+  quarter before its spot.
 - **The current can be a percentile extreme.** SMPL's current is the 0th percentile of its own
   range. RUNBOOKS §m class (c) still applies: the analyst states the current is undistorted, and
   the rank prints beside it in the evidence. No threshold is added.

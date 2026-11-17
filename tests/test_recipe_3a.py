@@ -360,3 +360,16 @@ def test_create_through_the_cli_refuses_the_committed_bear_and_stamps_the_page(
     assert rc == 0, capsys.readouterr().out
     rec = json.loads((tmp_path / "scenarios" / "GOOGL.json").read_text())
     assert rec["ntm_consensus_eps"] == stamp
+
+
+def test_a_stamp_on_a_non_r3_record_is_refused() -> None:
+    """(−, review round 1) The stamp bounds only an R3 bear, as `miss_case` does: an R1 or R2
+    record carrying one (a payload copied from an R3 record) is refused, not written carrying a
+    bound no rule reads. SMPL's committed R1 record, with GOOGL's page stamp put on it."""
+    rec = sc.read_record("SMPL", root=ROOT)
+    assert rec.recipe_id != sc.RECIPE_R3
+    stamp, _ = ntm_consensus_eps(_doc("GOOGL"))
+    assert stamp is not None
+    probs = sc.bear_consensus_problems(
+        rec.model_copy(update={"ntm_consensus_eps": sc.ConsensusEps(**stamp)}))
+    assert any(p.startswith("ntm_consensus_eps is read only on an R3 record") for p in probs), probs
