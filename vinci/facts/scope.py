@@ -52,7 +52,9 @@ def page_path(dossiers_dir: Path, ticker: str) -> Path:
 
 def scope_names(dossiers_dir: Path, followed_path: Path, cache_dir: Path, *,
                 exclude: frozenset[str] = frozenset()) -> tuple[list[ScopeName], int]:
-    """The names the rule selects, minus ``exclude``; and how many the exclusion removed."""
+    """The names the rule selects, minus ``exclude``; and how many the exclusion removed. The
+    coverage roster is read beside ``dossiers_dir``, in its parent (the data directory), as the
+    committed tree lays them out."""
     # THE COVERED NAMES ARE THE ROSTER'S (W27), the pages checked against it: this rule was where
     # "a covered name" was written down before the roster existed, as "whatever page is committed"
     pages = set(roster.covered_pages(dossiers_dir.parent))

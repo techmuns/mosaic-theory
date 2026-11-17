@@ -354,20 +354,23 @@ def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: st
 
 def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> None:
     """THE MONITOR'S FRESHNESS SET HOLDS NO RETIRED NAME (2026-11-12, MVST). A monitor day writes
-    a freshness row for each live ledger decision and each `watch` / `pending_analyst` record.
-    Since W27 the COVERAGE ROSTER takes a retired name's record out of that set, whether or not the
-    record is archived yet: on a scratch copy of the book with MVST's archived record put back
-    live, MVST stays out while the roster retires it, and comes back the moment the roster's MVST
-    move is gone (the NEGATIVE). Before W27 only the archive took it out, so the first scratch read
-    saw MVST. The sealed archive is only read."""
+    a freshness row for each live ledger decision and each `watch` / `pending_analyst` record, and
+    both doors need `scenarios/<T>.json`: `_watch_tickers` globs the live records, and the day
+    skips a name with none. Archiving a retired name's record is what takes it out, and the
+    archive guard above refuses a name the COVERAGE ROSTER retires that still has a live record
+    (W27). The monitor reads no roster: it marks decisions and records, which coverage is kept
+    apart from, and a live decision on a retired name is still scored to its horizon. So the set
+    is pinned against the roster's retired names on the committed book. NEGATIVE: the same check
+    on a scratch copy of the book with MVST's archived record put back live sees MVST. The sealed
+    archive is only read."""
     from vinci.cli import _watch_tickers
 
     archived = sc.all_archived(root=ROOT)
     retired = {archived[key].ticker.upper(): key for key in _retired_archives(archived)}
-    assert {"AORT", "MVST"} <= set(retired)
+    assert {"AORT", "MVST"} <= set(retired) <= set(roster.retired(ROOT / "data"))
     book = _watch_tickers(ROOT)
     assert book, "the committed book carries a watch name, so the check is not vacuous"
-    assert book & set(retired) == set(), sorted(book & set(retired))
+    assert book & set(roster.retired(ROOT / "data")) == set(), sorted(book & set(retired))
     scratch = tmp_path / "scenarios"
     scratch.mkdir()
     for p in (ROOT / "scenarios").glob("*.json"):
@@ -375,12 +378,6 @@ def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> Non
             (scratch / p.name).write_bytes(p.read_bytes())
     restored = ROOT / "scenarios" / "archive" / f"{retired['MVST']}.json"
     (scratch / "MVST.json").write_bytes(restored.read_bytes())
-    (tmp_path / "data").mkdir()
-    lines = (ROOT / "data" / roster.ROSTER_NAME).read_text("utf-8").splitlines(keepends=True)
-    (tmp_path / "data" / roster.ROSTER_NAME).write_text("".join(lines), encoding="utf-8")
-    assert _watch_tickers(tmp_path) & set(retired) == set(), "the roster no longer takes MVST out"
-    (tmp_path / "data" / roster.ROSTER_NAME).write_text(
-        "".join(ln for ln in lines if '"ticker": "MVST"' not in ln), encoding="utf-8")
     assert _watch_tickers(tmp_path) & set(retired) == {"MVST"}
 
 

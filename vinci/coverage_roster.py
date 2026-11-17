@@ -22,7 +22,7 @@ THREE STATUSES (the operator's marking, 2026-11-13, "go ahead", issue #1004):
   goes active. NOT the scenario record's ``watch`` verdict status (``vinci/scenarios.py``), which
   is a standing-trigger record that is not a position: IT's record is a ``watch`` and IT is
   coverage-``active``.
-- ``retired`` — out of coverage: no page, no assembly, and no freshness row for its record.
+- ``retired`` — out of coverage: no page, no assembly, and its underwrite record archived.
 
 COVERAGE IS NOT A VERDICT. A status decides the work a name gets; it is never a scored call. A
 retired name's live ledger decision is still scored to its horizon (otherwise retiring would be
@@ -182,12 +182,6 @@ def current(data_dir: Path) -> dict[str, Move]:
     for move in read_moves(data_dir):
         out[move.ticker] = move
     return out
-
-
-def covered(data_dir: Path) -> list[str]:
-    """The names whose latest move is ``active`` or ``watch``, sorted. The roster alone: use
-    ``covered_pages`` wherever the pages are read."""
-    return sorted(t for t, m in current(data_dir).items() if m.status in COVERED)
 
 
 def retired(data_dir: Path) -> dict[str, Move]:

@@ -281,7 +281,6 @@ def test_freshness_panel_includes_pending_analyst_records(tmp_path: Path) -> Non
     """A record at status=pending_analyst is exactly the one that must not go stale unnoticed: the
     underwrite is RUN and the verdict is still owed, so the next print can move the decision before
     it is ever made. Previously the panel only picked up `watch`, so EPAM was invisible."""
-    from tests.roster_support import write_roster
     from vinci.cli import _FRESHNESS_STATUSES, _STATUS_LABEL, _watch_tickers
 
     d = tmp_path / "scenarios"
@@ -294,8 +293,6 @@ def test_freshness_panel_includes_pending_analyst_records(tmp_path: Path) -> Non
     (d / "CONF.json").write_text(json.dumps(
         {"ticker": "CONF", "underwrite_date": "2026-07-01", "verdict": {"status": "confirmed"}}))
 
-    # the freshness set reads the coverage roster for the retired names it leaves out (W27)
-    write_roster(tmp_path / "data", {"CONF": "active", "PEND": "active", "WCH": "active"})
     picked = _watch_tickers(tmp_path)
     assert "PEND" in picked, "a pending_analyst record must reach the freshness panel"
     assert "WCH" in picked, "watch names must still be picked up"

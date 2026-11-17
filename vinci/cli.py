@@ -3465,16 +3465,7 @@ _STATUS_LABEL = {"pending_analyst": "verdict pending"}
 
 def _watch_tickers(root: Path) -> set[str]:
     """Scenario records that are NOT ledger positions but must appear in the freshness panel —
-    standing-trigger `watch` names and `pending_analyst` records whose verdict is still owed.
-
-    A RETIRED NAME'S RECORD IS LEFT OUT (W27, the coverage roster under `root/data`): the operator
-    has ruled the name out of coverage, so no verdict is owed on it and no trigger is watched,
-    whether or not its record has been archived yet. Only this record door reads the roster: a
-    live LEDGER decision on a retired name stays in the book through `live_verdicts`, scored to
-    its horizon, because retiring a name is never a quiet void."""
-    from vinci import coverage_roster as roster
-
-    gone = set(roster.retired(root / "data"))
+    standing-trigger `watch` names and `pending_analyst` records whose verdict is still owed."""
     out: set[str] = set()
     d = root / "scenarios"
     if not d.is_dir():
@@ -3483,8 +3474,7 @@ def _watch_tickers(root: Path) -> set[str]:
         if p.name.startswith("_"):
             continue
         rec = json.loads(p.read_text())
-        if ((rec.get("verdict") or {}).get("status") in _FRESHNESS_STATUSES
-                and str(rec["ticker"]) not in gone):
+        if (rec.get("verdict") or {}).get("status") in _FRESHNESS_STATUSES:
             out.add(str(rec["ticker"]))
     return out
 

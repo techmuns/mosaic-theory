@@ -51,10 +51,17 @@ superseded-by:
   retired name has no page, and a name with no line was never taken into coverage. The check runs
   before any model client exists, so a refusal costs nothing, and one refused name refuses the
   run.
-- **The monitor's freshness set leaves out a retired name's record** (`vinci/cli.py`
-  `_watch_tickers`), whether or not the record is archived yet. A live ledger decision on a
-  retired name stays in the book and is scored to its horizon, because retiring a name is never a
-  quiet void.
+- **The monitor reads no roster, and agrees with it by a pin.** The monitor marks decisions and
+  records: its freshness set is the live ledger decisions plus the `watch` and `pending_analyst`
+  records. B's design keeps coverage apart from verdicts and positions, and a live decision on a
+  retired name is still scored to its horizon. So coverage must not be what takes a name out of
+  the monitor. The one door coverage could close, a retired name's watch record, is closed by
+  the retirement archiving that record, and the suite now refuses a roster-retired name that
+  still has a live record. The freshness pin checks the committed book against the roster's
+  retired names. A first cut read the roster in `_watch_tickers`. `/code-review` found that a
+  re-cut of a past day then applied a retirement dated after it, and that 32 synthetic-book
+  monitor tests in 11 files would need a roster. That cut is reverted, and `vinci/cli.py`'s
+  monitor code is main's.
 - **The test-side lists a retirement used to edit now derive:**
   - `test_record_legibility`'s hand list of retired archives comes from the roster;
   - eight record-count pins compare their walk with the seal manifest's live records
@@ -93,7 +100,7 @@ No roster existed.
 | `vinci/cli.py` `_cmd_transcript_run_cut` (no `--tickers`) | `data/dossiers/` folders | `roster.covered_pages` |
 | `vinci/dossier/inputs_backfill.py` `run` (`--all`) | `data/dossiers/*/dossier.json` | `roster.covered_pages` |
 | `vinci/facts/scope.py` `scope_names` | `data/dossiers/*/dossier.json` ∪ followed names | the roster's covered names ∪ followed names; `RULE` restated |
-| `vinci/cli.py` `_watch_tickers` (the monitor's freshness set) | `scenarios/*.json` at `watch` / `pending_analyst` | the same, less the roster's retired names |
+| `vinci/cli.py` `_watch_tickers` (the monitor's freshness set) | `scenarios/*.json` at `watch` / `pending_analyst` | unchanged; pinned against the roster's retired names, with the record guard refusing a retired name's live record |
 | `vinci/cli.py` `_cmd_dossier` (assembly, the rebuild) | the ranked queue or `--ticker`, with no coverage check | refuses a name not `active`, before any model client |
 | `tests/test_record_legibility.py` `RETIRED_ARCHIVES` | a hand list of retired archive keys | derived from the roster |
 
@@ -204,7 +211,7 @@ neither retired name has a page. So nothing was stopped for.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 1. **The value pins on living pages are not moved.** Moving 178 lines in 72 test files would
-   collide with every open PR that edits those tests, so it is a follow-up (STATE row 66). Until
+   collide with every open PR that edits those tests, so it is a follow-up (STATE row 41, open item (a)). Until
    then, retiring a name with value pins on its page still re-points them, as #1044 did.
    Falsifier: a retirement after this PR edits a test that reads the retired page by name.
 2. **A paid or `--no-llm` build of a watch or unlisted name is refused.** That includes a `--top N`
@@ -227,5 +234,13 @@ neither retired name has a page. So nothing was stopped for.
    assembly of MVST started without the operator asking".
 6. **A watch page carries no dated "frozen" line.** B's design gave each one such a line, naming
    its known defects. That is a render change, under the PREVIEW RULE, and is not built here
-   (STATE row 66).
-7. **$0.** No model call and no vendor call, and no page is rebuilt or re-rendered.
+   (STATE row 41, open item (b)).
+7. **A new name's line and its first page land together.** An `active` line with no page is
+   refused by every reader, as the brief's pin requires, and `vinci dossier` builds only an
+   active name. So between appending a new name's line and committing its first page, the mirror
+   and the fleet passes refuse loud. If that first assembly fails after its spend inside a
+   `--top` cohort that wrote another page, the closing mirror raises naming the name. The written
+   pages stay on disk and a $0 re-run of the mirror publishes them (found by `/code-review`).
+   Falsifier: a new name's line and page are committed apart, or an operator is blocked from a
+   first build.
+8. **$0.** No model call and no vendor call, and no page is rebuilt or re-rendered.
