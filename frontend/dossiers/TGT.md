@@ -2,6 +2,8 @@
 
 _October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.driver-text-filed_
 
+> **Frozen since 2026-11-13: TGT is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until TGT goes active.
+
 # Brief — first cut
 
 ## At a glance

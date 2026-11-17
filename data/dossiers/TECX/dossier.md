@@ -2,6 +2,8 @@
 
 _November 10, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
 
+> **Frozen since 2026-11-13: TECX is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until TECX goes active.
+
 # Brief — first cut
 
 ## At a glance

@@ -2,6 +2,8 @@
 
 _November 3, 2026 · extraction 2026-11-03.ex-lease-share-cut · layers refreshed to 2026-11-10.driver-text-filed_
 
+> **Frozen since 2026-11-13: AMZN is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until AMZN goes active.
+
 # Brief — first cut
 
 ## At a glance

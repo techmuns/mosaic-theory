@@ -2,6 +2,12 @@
 
 _October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.dated-headroom_
 
+> **Frozen since 2026-11-13: ORKA is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until ORKA goes active.
+>
+> **Known defects it keeps until then:**
+>
+> 1. Its insider line counts a sale made after the page's 2026-10-16 reference date (its last sale is dated 2026-10-20): it reads 98 sells and $335.55M where a read bounded at that date gives 93 and $334.85M, and a bear point quotes the 98 (STATE row 35; docs/records/2026-10-28-insider-line-own-issuer-to-its-date.md).
+
 # Brief — first cut
 
 ## At a glance

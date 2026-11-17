@@ -2,6 +2,12 @@
 
 _November 9, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
 
+> **Frozen since 2026-11-13: UBER is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until UBER goes active.
+>
+> **Known defects it keeps until then:**
+>
+> 1. Its R4 valuation is not priceable: its Financials and comps exports sit on different balance sheets, so the comps are owed a re-export (STATE row 28; docs/records/2026-11-12-rebuild-prep-prechecks-on-all-27-pages.md).
+
 # Brief — first cut
 
 ## At a glance
