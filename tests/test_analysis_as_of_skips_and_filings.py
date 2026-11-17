@@ -29,6 +29,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from tests.roster_support import write_roster
 from tests.test_analysis_as_of_knowable import FIXTURE, _frozen
 from vinci import provenance
@@ -42,13 +43,14 @@ PANEL_FILED = ("mechanical", "capital_structure", "maturity_check", "panel_filed
 
 
 def _living(t: str) -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((DOSS / t / "dossier.json").read_text())
-    return page
+    """``t``'s page as frozen at the cut (`tests/frozen_support.py`): the pages these pins build
+    their fleets from are real, and none is the living one, so a retirement moves nothing."""
+    return frozen_doc(t)
 
 
 def _undated(t: str) -> dict[str, Any]:
-    """The living page with its comps export's `export_date` taken off its record: the page as a
-    build wrote it before #1082, which the pass exists to date."""
+    """The page (frozen at the cut) with its comps export's `export_date` taken off its record:
+    the page as a build wrote it before #1082, which the pass exists to date."""
     page = _living(t)
     (row,) = [r for r in page["inputs"]["ciq"] if r["kind"] == "comps"]
     row.pop("export_date", None)
