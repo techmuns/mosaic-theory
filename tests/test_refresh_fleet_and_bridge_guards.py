@@ -18,6 +18,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import covered_pages, frozen_doc, frozen_page
 from vinci.dossier import render as dr
 from vinci.dossier import schemas as ds
 from vinci.dossier.ev_gap import build_ev_gap
@@ -30,7 +31,9 @@ FROZEN_AORT = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AOR
 
 
 def _folder(ticker: str) -> Path:
-    return FROZEN_AORT if ticker == "AORT" else ROOT / "data" / "dossiers" / ticker
+    """AORT's last committed page, every other name's page as frozen at the cut
+    (`tests/frozen_support.py`), never a living one."""
+    return FROZEN_AORT if ticker == "AORT" else frozen_page(ticker)
 
 
 # --- 1. the mirror is actually wired -----------------------------------------------------------
@@ -61,8 +64,12 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     # in its own text (a non-operating read whose window ends before the latest filed quarter), so
     # a correctly rebuilt mirror read as stale.
     sentinel = "MIRROR-NOT-REBUILT-SENTINEL-3f9c1e"
-    mirror = tmp_path / "frontend" / "dossiers" / "SMPL.md"
-    mirror.write_text(f"{sentinel} — this must be overwritten by the pass\n")
+    # every covered page's mirror, walked by the roster, never a named one (W27)
+    names = covered_pages()
+    assert names, "no covered page to mirror — the walk would check nothing (W27)"
+    for t in names:
+        mirror = tmp_path / "frontend" / "dossiers" / f"{t}.md"
+        mirror.write_text(f"{sentinel} — this must be overwritten by the pass\n")
 
     cwd = Path.cwd()
     try:
@@ -72,9 +79,13 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     finally:
         os.chdir(cwd)
 
-    assert sentinel not in mirror.read_text(), (
-        "a fleet refresh left the web mirror stale — mirror_to_frontend is not wired into the pass")
-    assert mirror.read_text() == (tmp_path / "data/dossiers/SMPL/dossier.md").read_text()
+    for t in names:
+        mirror = tmp_path / "frontend" / "dossiers" / f"{t}.md"
+        assert sentinel not in mirror.read_text(), (
+            f"{t}: a fleet refresh left the web mirror stale — mirror_to_frontend is not wired "
+            f"into the pass")
+        assert mirror.read_text() == (tmp_path / f"data/dossiers/{t}/dossier.md").read_text(), (
+            f"{t}: the web mirror is not its page's markdown after a fleet refresh")
 
 
 def test_the_mirror_is_called_from_the_orchestrator_not_merely_defined() -> None:
@@ -156,7 +167,7 @@ def test_a_legacy_bridge_with_zero_shares_omits_the_line_instead_of_killing_the_
     """THE SECOND LINE OF DEFENCE. An artifact written BEFORE the guard can still carry
     `shares: 0`; the renderer must drop the bridge line, not raise ZeroDivisionError and take the
     whole dossier with it."""
-    doc = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    doc = frozen_doc("SMPL")   # the host page, as frozen at the cut
     doc["mechanical"]["ev_gap"]["bridge"]["shares"] = 0.0
     d = ds.Dossier.model_validate(doc)
     md = dr.render_markdown(d, card=None)          # must not raise

@@ -24,6 +24,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import Dossier
 
@@ -100,7 +101,7 @@ def test_a_non_r1_tag_never_carries_the_bare_verdict(tmp_path: pathlib.Path) -> 
     "applicable"/"NOT applicable" beside it."""
     docs = {}
     for applicable in (False, True):
-        doc = _page("UBER")
+        doc = frozen_doc("UBER")   # the host page, as frozen at the cut
         doc["anchor"].update(recipe_hint="R4_forward_ev_ebit", applicable=applicable)
         docs[f"R4-{applicable}"] = doc
     web = _web_notes(docs, tmp_path)

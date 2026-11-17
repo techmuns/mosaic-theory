@@ -18,6 +18,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.schemas import Dossier, dossier_json
 
@@ -246,7 +247,7 @@ def test_a_failure_in_the_annotation_does_not_cost_the_layer(
 def test_a_page_without_the_field_writes_no_null() -> None:
     """ABSENT, never null, until a page is rebuilt with it (`TOP_DROP_WHEN_NONE`). Built in the
     test from a committed page with the key removed, so this does not lapse once pages carry it."""
-    doc = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    doc = frozen_doc("AMZN")   # the page as frozen at the cut
     doc["forward_consensus"].pop("pe_eps_basis", None)
     out = dossier_json(Dossier.model_validate(doc))
     assert '"pe_eps_basis"' not in out
@@ -283,7 +284,7 @@ def test_a_path_without_its_current_point_leaves_that_row_untested() -> None:
     removed: that row must leave the test, never be filled from an older vintage."""
     from vinci.dossier.schemas import ForwardConsensus
 
-    page = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    page = frozen_doc("AMZN")   # AMZN's page, as frozen at the cut
     fc = ForwardConsensus.model_validate(page["forward_consensus"])
     paths = [p.model_copy(update={"points": [x for x in p.points if x.months_ago != 0]})
              if (p.metric, p.period) == ("EPS (GAAP)", "FY 2026") else p for p in fc.paths]

@@ -19,6 +19,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import layer_refresh as lr
 from vinci.dossier.extraction_version import EXTRACTION_VERSION, declares
 from vinci.dossier.schemas import Dossier, dossier_json
@@ -32,7 +33,7 @@ def _copy(ticker: str, root: pathlib.Path) -> pathlib.Path:
     dst = root / "data" / "dossiers" / ticker
     dst.mkdir(parents=True)
     for f in ("dossier.json", "dossier.md"):
-        shutil.copy(DOSS / ticker / f, dst / f)
+        shutil.copy(frozen_page(ticker) / f, dst / f)   # the page as frozen at the cut
     return dst / "dossier.json"
 
 
@@ -63,7 +64,7 @@ def test_a_refresh_that_moves_a_layer_records_it(
     assert rec["extraction_version"] == EXTRACTION_VERSION
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", rec["date"])
     assert doc["extraction_version"] == json.loads(
-        (DOSS / "UBER" / "dossier.json").read_text())["extraction_version"], (
+        (frozen_page("UBER") / "dossier.json").read_text())["extraction_version"], (
         "the stamp still names the ASSEMBLY — re-stamping is the ruled-out fix")
     assert list(doc)[-2:] == ["layer_refreshes", "anchor"]
     assert dossier_json(Dossier.model_validate(doc)) == path.read_text()
@@ -91,7 +92,7 @@ def test_a_no_op_refresh_records_nothing(
 
 
 def test_moved_layers_names_the_mechanical_section() -> None:
-    old = json.loads((DOSS / "AMZN" / "dossier.json").read_text())
+    old = json.loads((frozen_page("AMZN") / "dossier.json").read_text())
     new = json.loads(json.dumps(old))
     new["mechanical"]["valuation"]["pe_ltm_current"] = {"value": 1.0}
     new["ev_bridge"] = {**new["ev_bridge"], "note": "x"}
@@ -123,7 +124,7 @@ def test_the_text_splice_round_trips_on_every_committed_page() -> None:
 def test_the_splice_refuses_a_layout_it_cannot_see() -> None:
     """NEGATIVE PIN — the field must sit immediately before `anchor`; a page where it does not is
     refused rather than spliced into the wrong place (CONSTRUCTED)."""
-    text = (DOSS / "AMZN" / "dossier.json").read_text()
+    text = (frozen_page("AMZN") / "dossier.json").read_text()
     with_rec = lr.upsert_text(text, lr.entry("anchor-backfill", ["anchor"]))
     block = re.search(r'\n  "layer_refreshes": \[.*?\n  \],', with_rec, re.S)
     assert block
@@ -182,7 +183,7 @@ def test_every_recorded_refresh_names_a_declared_version() -> None:
 # --- the render: both twins, beside the stamp ----------------------------------------------------
 
 def _two_refreshes(ticker: str) -> dict[str, Any]:
-    doc: dict[str, Any] = json.loads((DOSS / ticker / "dossier.json").read_text())
+    doc: dict[str, Any] = json.loads((frozen_page(ticker) / "dossier.json").read_text())
     doc["layer_refreshes"] = [
         {"date": "2026-10-08", "extraction_version": "2026-10-08.3", "writer": "refresh",
          "layers": ["forward_consensus"]},
@@ -243,7 +244,7 @@ def test_a_page_without_a_record_prints_none(tmp_path: pathlib.Path) -> None:
         doc.pop("layer_refreshes", None)
         md = render_markdown(Dossier.model_validate(doc))
         assert "layers refreshed to" not in md and "Refreshed since assembly" not in md, t
-    amzn = json.loads((DOSS / "AMZN" / "dossier.json").read_text())
+    amzn = json.loads((frozen_page("AMZN") / "dossier.json").read_text())
     amzn.pop("layer_refreshes", None)
     web = _web(amzn, tmp_path)
     assert "layers refreshed to" not in web and "Refreshed since assembly" not in web

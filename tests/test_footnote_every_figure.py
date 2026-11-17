@@ -29,6 +29,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel, ValidationError
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import flags as dflags
 from vinci.dossier import schemas as ds
 from vinci.dossier import synthesis as syn
@@ -502,7 +503,7 @@ def test_a_page_carrying_the_gap_test_states_no_figure_no_point_could_cite(ticke
     dates of its reads in its `basis` — the gap test's own words, exempt by FIELD. On main's page
     with the gaps the name's rebuild wrote, nothing is uncitable; a number in a gap's `fields` is
     still flagged, so the exemption is per field, never the class."""
-    raw = json.loads((ROOT / f"data/dossiers/{ticker}/dossier.json").read_text())
+    raw = frozen_doc(ticker)   # the host page, as frozen at the cut
     gaps: list[dict[str, Any]] = json.loads(_GAPS_2026_11_09.read_text())[ticker]
     assert any("source_ref" not in g for g in gaps), "no ref-less gap — the shape this pins"
     raw["mechanical"]["disclosure_gaps"] = gaps
@@ -560,7 +561,7 @@ def test_the_ebitda_bases_and_the_ex_lease_multiple_carry_their_computation_ref(
     from vinci.dossier.ebitda_basis import EBITDA_BASIS_REF, read_basis
     from vinci.dossier.ev_ebitda_basis import ex_lease_at_price, headline_basis
 
-    raw = json.loads((ROOT / "data/dossiers/GOOGL/dossier.json").read_text())
+    raw = frozen_doc("GOOGL")   # GOOGL's page, as frozen at the cut
     mech = ds.MechanicalLayer.model_validate(raw["mechanical"])
     hb = headline_basis(mech)
     assert hb is not None and hb.source_ref and hb.source_ref.startswith("Assembler: ")

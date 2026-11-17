@@ -35,6 +35,7 @@ from datetime import date
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from tests.test_price_date_bounds import END, _bars, _googl_idio
 from vinci.dossier import mechanical as dm
 from vinci.dossier.render import COHORT_NO_RETURN, render_markdown
@@ -53,9 +54,9 @@ _OLD_STRIP = "benchmark bars unavailable — relative read UNKNOWN"
 
 
 def _host(ticker: str, idio: IdiosyncraticVsShared) -> dict[str, typing.Any]:
-    """The committed dossier of ``ticker`` with its idiosyncratic-vs-shared block swapped."""
-    d: dict[str, typing.Any] = json.loads(
-        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
+    """The committed dossier of ``ticker`` (frozen at the cut, `tests/frozen_support.py`) with its
+    idiosyncratic-vs-shared block swapped."""
+    d = frozen_doc(ticker)
     d["mechanical"]["idiosyncratic_vs_shared"] = idio.model_dump(mode="json")
     return d
 
@@ -227,8 +228,7 @@ _LEGS = _legs()
 def _amzn_with(leg: _Leg) -> tuple[dict[str, typing.Any], str]:
     """The committed AMZN page with its market legs re-drawn by production `_market_legs` over the
     real AMZN bars and ``leg``'s SPY series at the 11-11 end; and that market leg's own note."""
-    committed = Dossier.model_validate_json(
-        (ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    committed = Dossier.model_validate(frozen_doc("AMZN"))   # AMZN's page, frozen at the cut
     io = committed.mechanical.idiosyncratic_vs_shared
     assert io.benchmark_symbol == "SPY"
     name, mkt, rel, _ = dm._market_legs(_bars("AMZN"), leg.spy, END, sym="AMZN", bsym="SPY",

@@ -26,6 +26,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import lease_basis as lbm
 from vinci.dossier import render as rend
 from vinci.dossier import valuation_basis as vb
@@ -49,7 +50,10 @@ NOW = datetime(2026, 10, 19, tzinfo=UTC)
 
 
 def _doc(t: str) -> dict[str, Any]:
-    return json.loads((CORPUS / t / "dossier.json").read_text())
+    """``t``'s page as frozen at the cut (`tests/frozen_support.py`): the lease-basis fixtures
+    here are frozen, so the page they sit on is too, and a retirement or a re-assembly of the
+    living page moves no pin."""
+    return frozen_doc(t)
 
 
 def _lb(t: str) -> dict[str, Any]:
@@ -614,7 +618,7 @@ def test_the_screening_table_names_the_ex_lease_basis_in_both_renderers() -> Non
 def test_a_valuation_field_newer_than_the_page_is_added_only_when_named() -> None:
     """(+/-) `own-history-refresh` adds `lease_basis` to a page that predates it; any other absent
     field still refuses, as before."""
-    text = (CORPUS / "LLY" / "dossier.json").read_text()
+    text = (frozen_page("LLY") / "dossier.json").read_text()
     if "lease_basis" in json.loads(text)["mechanical"]["valuation"]:
         doc = json.loads(text)
         doc["mechanical"]["valuation"].pop("lease_basis")
@@ -859,7 +863,7 @@ def test_own_history_refresh_writes_the_lease_basis_or_skips_on_a_failed_fetch(
                    facts=HttpError("EDGAR 503") if fetch_fails else None)
     page = tmp_path / "dossiers" / "LLY" / "dossier.json"
     page.parent.mkdir(parents=True)
-    text = (CORPUS / "LLY" / "dossier.json").read_text()
+    text = (frozen_page("LLY") / "dossier.json").read_text()
     doc = json.loads(text)
     doc["mechanical"]["valuation"].pop("lease_basis", None)
     text = json.dumps(doc, indent=2, ensure_ascii=False) + "\n"

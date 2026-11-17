@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_copies
 from vinci.evals import panel as pn
 from vinci.evals import replay as rp
 from vinci.evals import stats as sx
@@ -39,25 +40,26 @@ _AORT_PASSED_BLOB = "983a4b92eee87723dde2b254e6f83dd375dcbe73"
 
 
 def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
+    """An unmoved page is one whose blob is the panel's, and it is read wherever a FROZEN copy
+    holds it (`tests/frozen_support.frozen_copies`), never off the living tree: a page that moved
+    after the panel froze is not checked, and a name leaving coverage moves nothing (W27). At the
+    cut two copies hold a panel blob: AORT's 2026-10-26 (its RG-D19 pass blob, above) and TECX's
+    2026-09-28. No living page holds one."""
     checked = 0
     for row in FROZEN["rows"]:
         t = row["ticker"]
-        path = ROOT / f"data/dossiers/{t}/dossier.json"
-        if t == "AORT":  # retired 2026-11-09: its page as committed on 2026-10-26, frozen
-            path = ROOT / "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json"
-        if t == "MVST":  # retired 2026-11-12. Its page moved after the panel froze, so its row
-            # was skipped on main and still is
-            path = ROOT / "tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json"
-        blob = subprocess.run(["git", "hash-object", str(path)], capture_output=True, text=True,
-                              check=True).stdout.strip()
         unmoved = {FROZEN["pages"][t]["dossier_blob"]} | ({_AORT_PASSED_BLOB} if t == "AORT"
                                                            else set())
-        if blob not in unmoved:
-            continue
-        page = json.loads(path.read_text(encoding="utf-8"))
-        got = pn.page_row(page, transcripts=row["transcripts"], motivated=row["motivated"])
-        assert pn.rows_json([got])[0] == row, t
-        checked += 1
+        for _when, folder in frozen_copies(t):
+            path = folder / "dossier.json"
+            blob = subprocess.run(["git", "hash-object", str(path)], capture_output=True,
+                                  text=True, check=True).stdout.strip()
+            if blob not in unmoved:
+                continue
+            page = json.loads(path.read_text(encoding="utf-8"))
+            got = pn.page_row(page, transcripts=row["transcripts"], motivated=row["motivated"])
+            assert pn.rows_json([got])[0] == row, t
+            checked += 1
     assert checked > 0
 
 

@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier.mechanical import _SHARES_MAX_AGE_DAYS, _edgar_shares_outstanding
 from vinci.edgar.concepts import extract_points, latest_instant
 
@@ -240,9 +241,7 @@ def test_the_bridged_name_reconciles_cap_shares_and_price_exactly() -> None:
     the SAME ROW as the cap, so cap ÷ shares reproduces that row's own close — the coherence
     `reconcile_cap` tests holds by construction rather than by luck. Mixing an EDGAR count with a
     CIQ cap is precisely what produced the 3.91x that started this."""
-    doc = DOSSIERS / "V" / "dossier.json"
-    if not doc.is_file():
-        pytest.skip("no committed V dossier")
+    doc = frozen_page("V") / "dossier.json"   # V's page, as frozen at the cut
     # AGAINST THE PANEL'S OWN CLOSE, NOT THE PAGE'S CMP (#466 artifact pass). The docstring
     # above says "that ROW's own close" and the check compared `stock_info.price` — the LIVE
     # CMP from the store, a DIFFERENT number that merely sat near the panel while the market

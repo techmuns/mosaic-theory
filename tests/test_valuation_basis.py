@@ -21,6 +21,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import covered_where, frozen_doc, frozen_page
 from vinci.dossier import midcycle
 from vinci.dossier import valuation_basis as vb
 from vinci.dossier.anchor import R1_VALUE_FIELDS
@@ -40,12 +41,13 @@ def _page(t: str) -> dict[str, Any]:
 
 #: UBER's page as committed on 2026-10-26, frozen (tests/fixtures/frozen_pages/README.md). Its
 #: 2026-11-09 re-assembly is not priceable on R4 — the bridge reads the 2026-09-30 balance sheet,
-#: CIQ's comps TEV does not yet — so the two R4 value pins below read the page that was.
+#: CIQ's comps TEV does not yet — so the two R4 value pins below read the page that was. Every
+#: other name reads its page as frozen at the cut (`tests/frozen_support.py`), never the living one.
 _FROZEN_R4 = {"UBER": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "UBER"}
 
 
 def _r4_page(t: str) -> dict[str, Any]:
-    folder = _FROZEN_R4.get(t, DOSS / t)
+    folder = _FROZEN_R4[t] if t in _FROZEN_R4 else frozen_page(t)
     doc: dict[str, Any] = json.loads((folder / "dossier.json").read_text())
     return doc
 
@@ -71,7 +73,7 @@ def test_the_serializer_re_derives_on_every_write() -> None:
     keep-the-committed-recipe step swaps the anchor that way. The blocks written must describe the
     page written, not the page loaded. (A round-trip of an unchanged page cannot see this: the
     stored blocks are already right. A mutant skipping the re-derive survived until this pin.)"""
-    model = Dossier.model_validate(_page("AMZN"))
+    model = Dossier.model_validate(frozen_doc("AMZN"))
     assert model.anchor is not None and model.valuation_basis is not None
     swapped = model.model_copy(update={
         "anchor": model.anchor.model_copy(update={"recipe_hint": sc.RECIPE_R1}),
@@ -100,7 +102,7 @@ def test_the_anchors_r1_fields_are_tagged_by_the_scenario_gates_own_rule() -> No
         assert doc["valuation_basis"]["anchor_fields_eligible"] is accepts, t
         seen[accepts] += 1
     assert seen[True] >= 10 and seen[False] >= 5, seen
-    amzn = _page("AMZN")["anchor"]["scenario_eligibility"]
+    amzn = frozen_doc("AMZN")["anchor"]["scenario_eligibility"]
     assert amzn["eligible_for_scenario_valuation"] is False
 
 
@@ -108,7 +110,7 @@ def test_the_tag_is_computed_so_a_hand_re_tag_cannot_leave_it_wrong() -> None:
     """Edit only the recipe, as a hand re-tag does, and the serialised tag follows."""
     from vinci.dossier.anchor import Anchor
 
-    a = Anchor.model_validate(_page("BRBR")["anchor"])
+    a = Anchor.model_validate(frozen_doc("BRBR")["anchor"])
     assert a.scenario_eligibility.eligible_for_scenario_valuation is True
     r4 = a.model_copy(update={"recipe_hint": sc.RECIPE_R4})
     assert json.loads(r4.model_dump_json())["scenario_eligibility"][
@@ -160,7 +162,7 @@ def test_an_r4_page_states_r4s_basis_from_its_own_layers(t: str) -> None:
 def test_held_and_consensus_exits_are_named_for_what_they_are() -> None:
     """`held` → HOLD_CURRENT_SAME_BASIS, an assumption; a same-basis consensus → a forecast. A mix
     is said to be one. CONSTRUCTED: no committed page carries a consensus exit."""
-    doc = _page("AMZN")
+    doc = frozen_doc("AMZN")
     ex = vb.derive(doc).exit_claims
     assert ex is not None and (ex.method, ex.forecast_status) == (
         "HOLD_CURRENT_SAME_BASIS", "assumption")
@@ -174,7 +176,7 @@ def test_held_and_consensus_exits_are_named_for_what_they_are() -> None:
 def test_the_r4_template_reads_no_r1_field_from_the_anchor() -> None:
     """No active EV/EBITDA field is consumed by R4: scramble the anchor's R1 inputs and the R4
     template is unchanged — its net debt is the bridge's, its shares the point-in-time count."""
-    doc = _page("AMZN")
+    doc = frozen_doc("AMZN")
     before = build_r4_template(copy.deepcopy(doc))
     a = doc["anchor"]
     a["multiple"]["value"], a["net_debt"]["value"] = 999.0, -1.0
@@ -196,7 +198,7 @@ def _r4_conflicts(doc: dict[str, Any]) -> list[str]:
 
 
 def test_no_bridge_is_a_conflict_and_edgar_is_not_substituted() -> None:
-    doc = _page("AMZN")
+    doc = frozen_doc("AMZN")
     del doc["ev_bridge"]
     b = vb.derive(doc)
     assert any("no CIQ TEV bridge" in c for c in b.conflicts) and b.priceable is False
@@ -204,7 +206,7 @@ def test_no_bridge_is_a_conflict_and_edgar_is_not_substituted() -> None:
 
 
 def test_a_bridge_off_ciqs_tev_is_a_conflict_on_both_sides_of_the_tolerance() -> None:
-    doc = _page("AMZN")
+    doc = frozen_doc("AMZN")
     doc["ev_bridge"]["claims"] = doc["ev_bridge"]["ciq_tev_claims"] + EV_BRIDGE_CIQ_TOL * 0.8
     assert not _r4_conflicts(doc)
     doc["ev_bridge"]["claims"] = doc["ev_bridge"]["ciq_tev_claims"] + EV_BRIDGE_CIQ_TOL * 2
@@ -224,14 +226,14 @@ def test_a_bridge_off_ciqs_tev_is_a_conflict_on_both_sides_of_the_tolerance() ->
      "stock_info.shares_out is absent"),
 ])
 def test_each_missing_r4_input_is_a_named_conflict(break_it: Any, needle: str) -> None:
-    doc = _page("AMZN")
+    doc = frozen_doc("AMZN")
     assert not _r4_conflicts(doc)
     break_it(doc)
     assert any(needle in c for c in _r4_conflicts(doc)), _r4_conflicts(doc)
 
 
 def test_a_conflict_reaches_qa_flags_once_and_leaves_when_resolved() -> None:
-    doc = _page("AMZN")
+    doc = frozen_doc("AMZN")
     clean = Dossier.model_validate(doc)
     del doc["ev_bridge"]
     broken = vb.with_derived(vb.with_derived(Dossier.model_validate(doc)))
@@ -265,7 +267,7 @@ def test_the_ids_and_formulas_are_the_engines() -> None:
     assert (vb.RECIPE_R1, vb.RECIPE_R3, vb.RECIPE_R4) == (sc.RECIPE_R1, sc.RECIPE_R3, sc.RECIPE_R4)
     assert (vb.BASIS_PE, vb.BASIS_EV_NTM_EBIT) == (sc.BASIS_PE, sc.BASIS_EV_NTM_EBIT)
     assert (vb.R3_FORMULA, vb.R4_FORMULA) == (sc.R3_FORMULA, sc.R4_FORMULA)
-    assert _page("BRBR")["valuation_basis"]["formula_steps"] == list(midcycle.R1_FORMULA)
+    assert frozen_doc("BRBR")["valuation_basis"]["formula_steps"] == list(midcycle.R1_FORMULA)
 
 
 # --- the forward history's latest close is an observation, not today's multiple ------------------
@@ -294,7 +296,7 @@ def test_no_forward_band_calls_its_latest_close_current() -> None:
 def test_a_band_written_with_current_still_reads() -> None:
     from vinci.dossier.schemas import ForwardHistoryBand
 
-    raw = next(s for s in _page("AMZN")["forward_multiple_history"]["series"]
+    raw = next(s for s in frozen_doc("AMZN")["forward_multiple_history"]["series"]
                if s["metric"] == "EV/NTM EBIT")["band"]
     old = {("current" if k == "latest_observed_close" else k): v for k, v in raw.items()
            if k not in ("latest_close_date", "latest_observed_close_in_distribution")}
@@ -304,7 +306,7 @@ def test_a_band_written_with_current_still_reads() -> None:
 
 def test_the_r4_template_names_the_history_close_as_an_observation() -> None:
     """The template called the 2026-09-16 close "today's"; it now names it, with its date."""
-    t = build_r4_template(_page("AMZN"))
+    t = build_r4_template(frozen_doc("AMZN"))
     ev = next(x for x in t["_evidence"]["multiple"] if x.startswith("own history EV/NTM EBIT"))
     assert "latest observed close" in ev and "current" not in ev and "today" not in ev
     why = t["scenarios"]["base"]["_multiple_why_no_anchor"]
@@ -399,7 +401,7 @@ def test_a_spliced_anchor_is_written_with_blocks_that_describe_it(tmp_path: path
     from vinci.dossier import layer_refresh
 
     path = tmp_path / "dossier.json"
-    d0 = Dossier.model_validate_json((DOSS / "NFLX" / "dossier.json").read_text())
+    d0 = Dossier.model_validate_json((frozen_page("NFLX") / "dossier.json").read_text())
     assert d0.anchor is not None
     original = dossier_json(d0.model_copy(update={"anchor": d0.anchor.model_copy(
         update={"applicable": False})}))
@@ -455,9 +457,10 @@ def test_the_gate_applies_the_templates_own_share_guard() -> None:
 def test_todays_multiple_names_its_snapshot_and_its_value_at_the_page_price() -> None:
     """Struck at CIQ's market cap on its own date, measured: every FY TEV/EBIT × that year's EBIT
     consensus equals market cap + CIQ claims. At the page's price it is the entry multiple an R4
-    record carries, on the record's own share basis."""
-    for t in ("AMZN", "UBER"):
-        doc = _page(t)
+    record carries, on the record's own share basis. It walks every covered page tagged R4 (the
+    roster), never a named one."""
+    for _t, doc in covered_where(lambda _t, d: (d.get("anchor") or {}).get("recipe_hint")
+                                 == sc.RECIPE_R4, "is tagged R4"):
         cm, si = doc["valuation_basis"]["current_multiple"], doc["mechanical"]["stock_info"]
         eb = doc["ev_bridge"]
         assert (cm["snapshot_as_of"], cm["snapshot_market_cap"]) == (
@@ -476,7 +479,7 @@ def test_a_multiple_off_its_snapshot_is_not_carried_to_the_page_price() -> None:
     """CONSTRUCTED from AMZN (VRRM, NCNO and CNXC carry the real shape, on pages no EV recipe
     prices): an FY row struck at another TEV breaks the reconciliation, the scaling is withheld,
     and on R4 it is a conflict."""
-    doc = _page("AMZN")
+    doc = frozen_doc("AMZN")
     fy = next(m for m in doc["forward_consensus"]["current_multiples"]
               if m["metric"] == "TEV/EBIT" and m["period"] == "FY 2027")
     fy["value"] *= 1.01
@@ -487,8 +490,10 @@ def test_a_multiple_off_its_snapshot_is_not_carried_to_the_page_price() -> None:
 
 
 def test_the_share_count_says_it_is_the_basic_count() -> None:
-    for t in ("AMZN", "UBER", "BRBR"):
-        sh = _page(t)["valuation_basis"]["exit_share_count"]
+    """On every covered page that states an exit share count (the roster), never a named one."""
+    for _t, doc in covered_where(lambda _t, d: bool((d.get("valuation_basis") or {}).get(
+            "exit_share_count")), "states an exit share count"):
+        sh = doc["valuation_basis"]["exit_share_count"]
         assert sh["count_basis"].startswith("BASIC") and sh["includes_dilutive_increment"] is False
         assert "dilutive increment" in sh["override_rule"]
         assert "never the diluted weighted average" in sh["override_rule"]

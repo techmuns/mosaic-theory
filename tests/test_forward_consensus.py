@@ -21,6 +21,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.anchor import replace_anchor_block
 from vinci.dossier.ciq import CiqBundle, clean_num
@@ -166,9 +167,7 @@ def test_the_layer_is_never_synthesis_input() -> None:
 def test_absent_until_built_and_the_anchor_stays_the_last_field() -> None:
     """A page without the layer round-trips byte-identically — absent, never `null`. With it, the
     block sits before `anchor`, so the byte-preserving anchor writer still finds the anchor last."""
-    path = ROOT / "data" / "dossiers" / "AMZN" / "dossier.json"
-    if not path.exists():
-        pytest.skip("no committed AMZN dossier")
+    path = frozen_page("AMZN") / "dossier.json"   # the page as frozen at the cut
     text = path.read_text()
     doc = Dossier.model_validate_json(text)
     if doc.forward_consensus is None:
@@ -187,9 +186,7 @@ def test_a_top_level_refresh_may_set_only_its_allowlisted_key(tmp_path: Path) ->
     the mechanical layer each have their own guarded path, and this one must not go around them."""
     from vinci.dossier.refresh import RefreshRefusedError, refresh_dossier
 
-    src = ROOT / "data" / "dossiers" / "AMZN"
-    if not (src / "dossier.json").exists():
-        pytest.skip("no committed AMZN dossier")
+    src = frozen_page("AMZN")   # the host page, as frozen at the cut
     folder = tmp_path / "AMZN"
     folder.mkdir()
     for name in ("dossier.json", "dossier.md"):

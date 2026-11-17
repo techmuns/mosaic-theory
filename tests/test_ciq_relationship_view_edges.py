@@ -21,6 +21,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, CiqParseError, read_text
@@ -232,8 +233,7 @@ def test_rbc_d3_the_count_writer_refuses_a_cut_roster_rather_than_crash(tmp_path
     path = _rtf(ciq, [_HEADER, "Acme Corp|Customer|Industrials|10-K"])
     roster, n = cs.customer_roster(CiqBundle.from_files("AMZN", [path]))
     assert roster.status is SourceStatus.PRESENT and n is None
-    root = Path(__file__).resolve().parents[1]
-    page = json.loads((root / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    page = frozen_doc("AMZN")   # the host page, as frozen at the cut
     page["mechanical"]["concentration"]["customers"] = json.loads(roster.model_dump_json())
     page["mechanical"]["concentration"].pop("customers_listed", None)
     jp = tmp_path / "dossiers" / "AMZN" / "dossier.json"

@@ -32,6 +32,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.config import get_config
 from vinci.dossier.driver_extract import _following_paragraph, quote_key
 
@@ -42,8 +43,11 @@ _MAX_QUOTE_CHARS = 900
 
 
 def committed_page(ticker: str) -> dict[str, Any]:
-    page: dict[str, Any] = json.loads((ROOT / f"data/dossiers/{ticker}/dossier.json").read_text())
-    return page
+    """``ticker``'s committed page AS FROZEN AT THE CUT (`tests/frozen_support.py`), never the
+    living one (W27): every caller names its page, as a host for invented rows or a replay, so a
+    re-assembly or a retirement of the living page moves no pin. `committed_pages()` below is the
+    corpus walk, and reads the living pages."""
+    return frozen_doc(ticker)
 
 
 def replayable(page: dict[str, Any]) -> dict[str, Any]:

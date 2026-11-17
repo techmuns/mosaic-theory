@@ -15,6 +15,7 @@ import typing
 from datetime import date
 from pathlib import Path
 
+from tests.frozen_support import frozen_doc
 from tests.test_band_guards import _now, _synth_facts, _synth_mech
 from vinci.dossier import band_guards as bg
 from vinci.dossier.anchor import compute_anchor
@@ -93,7 +94,7 @@ def test_an_anchor_that_never_reaches_the_guards_carries_no_block() -> None:
     mech["valuation"]["own_history"]["value"] = []
     a = compute_anchor(mech, facts=_synth_facts(), computed_at=_now())
     assert a.band_checks is None
-    page = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    page = frozen_doc("AMZN")   # the host page, as frozen at the cut
     page["anchor"] = json.loads(a.model_dump_json())
     page["anchor"].pop("band_checks", None)
     out = json.loads(dossier_json(Dossier.model_validate(page)))

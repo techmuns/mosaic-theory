@@ -36,6 +36,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import roster_names
 from vinci import coverage_roster as roster
 from vinci.dossier import refresh
 from vinci.dossier.assemble import _read_scenario_card
@@ -367,6 +368,30 @@ def test_a_refresh_that_moves_a_bound_value_saves_nothing(tmp_path: Path,
     out = refresh.refresh_fleet(tmp_path, transform_for=lambda _t: _mover(0))
     assert out["refused"] == [SUBJECT] and out["moved"] == []
     assert {p.name: p.read_bytes() for p in path.parent.iterdir()} == before
+
+
+def test_a_refresh_keeps_every_watch_pages_line_and_its_defects_e2e(tmp_path: Path) -> None:
+    """THE LINE THROUGH THE REFRESH PATH, ON EVERY LIVING WATCH PAGE (W27; A's review of #1107).
+    Each watch page, copied with its folder into a tmp data tree that carries the real roster and
+    defect file, and refreshed (`refresh_dossier`, the $0 round trip), still prints its line once,
+    above the Brief, with every defect bound to it printed once. A roster walk that fails loud when
+    no name is on watch (`tests/frozen_support.roster_names`). The forward-multiple refresh pin read
+    AMZN from a tmp copy with no roster beside it, so its re-render dropped the line and the pin
+    went red on main once #1100 landed; a scratch tree that forgets the roster reds here."""
+    data = tmp_path / "data"
+    data.mkdir()
+    for name in (roster.ROSTER_NAME, roster.DEFECTS_NAME):
+        shutil.copy(DATA / name, data / name)
+    for t in roster_names("watch"):
+        folder = data / "dossiers" / t
+        shutil.copytree(DOSS / t, folder)
+        refresh.refresh_dossier(folder / "dossier.json")
+        md, n = (folder / "dossier.md").read_text(), _notice(t)
+        head = f"> **{n.head()}** {n.ruling()} {n.kept()}"
+        assert md.count(head) == 1, f"{t}: a refresh dropped the watch line, or printed it twice"
+        assert md.index(head) < md.index(BRIEF), f"{t}: the watch line is below the Brief"
+        for x in n.defects:
+            assert md.count(x.sentence()) == 1, f"{t}: a refresh dropped a defect bound to it"
 
 
 def test_a_defect_listed_for_a_retired_or_unlisted_name_is_named_and_breaks_no_other_page(

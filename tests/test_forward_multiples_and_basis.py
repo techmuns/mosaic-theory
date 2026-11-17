@@ -19,9 +19,9 @@ guard and never reaches here.
 
 from __future__ import annotations
 
-import json
 import pathlib
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import render as rend
 from vinci.dossier.ciq_sheets import forward_multiples
 from vinci.dossier.schemas import Dossier, FinRow, FinTable, SourceStatus
@@ -109,7 +109,8 @@ def test_a_dossier_predating_the_field_renders_unchanged() -> None:
 # --- fix 2: the multiple's own basis, disclosed not disqualified --------------------------------
 
 def _dossier(t: str) -> Dossier:
-    return Dossier.model_validate(json.loads((CORPUS / t / "dossier.json").read_text()))
+    """``t``'s page as frozen at the cut (`tests/frozen_support.py`), never the living one."""
+    return Dossier.model_validate(frozen_doc(t))
 
 
 def test_burl_states_that_its_ev_ebitda_is_not_reported_ebitda() -> None:
