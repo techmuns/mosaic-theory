@@ -882,7 +882,12 @@ inputs, at $0 (no model call). Code: `vinci/impact/`; record:
 4. **Read it, part by part:**
    1. **Fail first** — head's changed tests on base's `vinci/` and on head's. A fix needs ≥ 1 node
       that fails at base; ANY failure at head is a red PR. A name the tests import that base lacks
-      is stood in by a placeholder, so each node fails at the line that uses it.
+      is stood in by a placeholder, so each node fails at the line that uses it. Each side runs in
+      its own clone of the repository at head's commit (`git clone --shared`, the repository's
+      `origin/*`, pushes refused; base's with its `vinci/` swapped in, index too), so a test that
+      asks git runs as it does in a checkout and nothing it writes reaches the repository. The
+      clones are removed when the tests end; a killed run leaves them as folders under `--out`.
+      Base's checkout is head's commit, so a test asserting a clean checkout fails at base alone.
    2. **Pages** — every committed page built at $0 (`prespend.mechanical_build`) at both refs:
       "N of M pages move" and every moved field with its `source_ref`. The moves must be the ones
       the PR claims; a page whose inputs differ between the sides is named (not a code effect).
