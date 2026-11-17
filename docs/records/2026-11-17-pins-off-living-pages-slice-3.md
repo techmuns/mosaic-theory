@@ -107,8 +107,9 @@ row 41 (a)). This slice moves that cost off the valuation group, which had the m
     pass, 104 of 104, on this tree and on main. The run took 55 minutes, against main's 15,
     while another session's suite and this slice's review ran beside it.
 - **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` at
-  `3b4e7c08`: 0 of 761 tests fail on base code and pass on head code (502 pass at both, 259
-  skipped), and `verify` reads VALID. The PR body carries the report.
+  `e6bdc5b3` (after both reviews and the merge of #1100): 0 of 761 tests fail on base code and
+  pass on head code (502 pass at both, 259 skipped), and `verify` reads VALID. The PR body
+  carries the report.
 
 **BOUNDARY.**
 - **Counts:** at this slice's commit, against main at `8a71a383` (slice 1 merged as #1098).
