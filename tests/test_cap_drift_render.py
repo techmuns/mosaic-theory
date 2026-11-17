@@ -21,12 +21,11 @@ THESE PINS READ THE COMMITTED ARTIFACTS, so they hold what a human actually rece
 """
 from __future__ import annotations
 
-import json
 import pathlib
 
 import pytest
 
-from tests.frozen_support import covered_pages
+from tests.frozen_support import covered_where
 from vinci.dossier import render as render_mod
 from vinci.dossier.schemas import Dossier
 
@@ -226,7 +225,7 @@ def test_the_committed_json_still_carries_the_inputs_to_reproduce_it() -> None:
     """The mark is DERIVED at render, not stored — so the JSON must keep the three inputs it is
     derived from, or the machine-complete tier stops being able to reproduce the page: on every
     covered page (the roster), never a named one."""
-    for t in covered_pages():
-        si = json.loads((DOSSIERS / t / "dossier.json").read_text())["mechanical"]["stock_info"]
+    for _t, doc in covered_where(lambda _t, _d: True, "to reproduce"):
+        si = doc["mechanical"]["stock_info"]
         for field in ("market_cap", "shares_out", "price"):
             assert si[field]["value"] is not None, f"{field} must remain in the JSON"
