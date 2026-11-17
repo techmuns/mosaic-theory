@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-17.ifrs-statements-date-the-filers-fiscal-year",
+  "follows": [
+    "2026-11-17.a-paid-build-reads-every-call"
+  ],
+  "names": "the filer's newest fiscal year, against which every annual reader judges an annual (the screen's snapshot, the anchor's FCF and D&A, the CIQ-empty FCF fallback), is also dated by its ifrs-full statements (eight flow lines by meaning, the period only, never a value): a us-gaap annual more than one fiscal year behind a filer's IFRS year is withheld as UNKNOWN naming that year, where it was served as current"
+}

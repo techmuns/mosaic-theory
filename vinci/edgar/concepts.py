@@ -371,11 +371,11 @@ def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
     stale value is to be withheld where it is read: an annual by :func:`current_annual` and
     :func:`current_pair`, a share count by the dossier's age bound (180 days, 540 for a filer
     that reports only annually), a debt line by net debt reading every leg at the cash instant.
-    Two readers do not withhold yet (STATE.md §5.0 row 11): a filer that moved its statements to
-    IFRS keeps a frozen us-gaap fiscal year, so :func:`behind_filer` passes its last us-gaap
-    annual, and net debt's cash instant has no age bound. Nor is this a reader's check. Its clock
-    is the filer's frontier of ANY tag, which one forward-dated context moves years ahead, and it
-    does not see a substitute :func:`annual_line` accepts. Why:
+    One reader does not withhold yet (STATE.md §5.0 row 11 (b)): net debt's cash instant has no
+    age bound. (A filer that moved its statements to IFRS kept a frozen us-gaap fiscal year until
+    :func:`filer_fiscal_year` read its ifrs-full years, 2026-11-17.) Nor is this a reader's
+    check. Its clock is the filer's frontier of ANY tag, which one forward-dated context moves
+    years ahead, and it does not see a substitute :func:`annual_line` accepts. Why:
     docs/records/2026-11-17-the-monitors-stale-tag-row-is-retired.md
     """
     frontier = filer_frontier(facts)
@@ -728,23 +728,61 @@ FLOW_CONCEPTS = ("revenue", "operating_income", "pretax_income", "net_income", "
 FILER_STALE_DAYS = 2 * ANNUAL_STALE_DAYS
 
 
+#: The namespace a filer reporting under IFRS tags its statements in.
+IFRS_NAMESPACE = "ifrs-full"
+
+#: The ifrs-full tags carrying the same eight lines as :data:`FLOW_CONCEPTS`, chosen by MEANING:
+#: the whole line, never a component of it. They DATE the filer's fiscal year
+#: (:func:`filer_fiscal_year`) and nothing else: no reader serves an IFRS figure, so none is ever
+#: read as a value, converted or not (FPI1b's, STATE.md §5.0 row 4).
+IFRS_FLOW_TAGS: dict[str, tuple[str, ...]] = {
+    "revenue": ("Revenue", "RevenueFromContractsWithCustomers"),
+    "operating_income": ("ProfitLossFromOperatingActivities",),
+    "pretax_income": ("ProfitLossBeforeTax",),
+    "net_income": ("ProfitLoss", "ProfitLossAttributableToOwnersOfParent"),
+    "eps_diluted": ("DilutedEarningsLossPerShare",),
+    "operating_cash_flow": ("CashFlowsFromUsedInOperatingActivities",),
+    "capex": ("PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",),
+    "dep_amort": ("DepreciationAndAmortisationExpense",),
+}
+
+
+def _ifrs_flow_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
+    """``concept``'s :data:`IFRS_FLOW_TAGS` points, every unit, each tag stamped with its
+    namespace (``ifrs-full:Revenue``) so a note that names it says where it was read."""
+    ifrs = (facts.get("facts") or {}).get(IFRS_NAMESPACE) or {}
+    return [p for tag in IFRS_FLOW_TAGS[concept] if (node := ifrs.get(tag))
+            for p in _node_points(facts, node, f"{IFRS_NAMESPACE}:{tag}", concept=concept,
+                                  currency=EVERY, as_of=None)]
+
+
 def filer_fiscal_year(facts: dict[str, Any]) -> ConceptPoint | None:
     """The point with the newest ANNUAL period any alias of any :data:`FLOW_CONCEPTS` carries —
-    the filer's newest reported fiscal year. A tie goes to the concept, then alias, first in order.
+    the filer's newest reported fiscal year. A tie goes to the concept, then alias, first in order,
+    and a us-gaap alias before an IFRS tag.
 
     Its annual periods only, never the filer's frontier of any tag (``filer_frontier``), which
     counts quarters, instants and contexts dated years ahead (Innodata's reaches 2034). A period
     ending after its own filing date is skipped, as in :func:`concept_frontier`. A 10-Q's
     trailing-twelve-month column counts, as it does for every annual reader here (Amazon tags
-    one); :data:`FILER_STALE_DAYS` leaves room for it."""
+    one); :data:`FILER_STALE_DAYS` leaves room for it.
+
+    THE FILER'S IFRS STATEMENTS DATE ITS YEAR TOO (:data:`IFRS_FLOW_TAGS`, STATE.md §5.0 row 11
+    (a)). A filer that moved its statements to IFRS stops tagging us-gaap, so its last us-gaap year
+    read as its newest and :func:`behind_filer` passed it: the screen's snapshot served National
+    Steel's operating-income sign for FY2009 and Himax's for FY2017, both with 20-Fs to 2024 and
+    2025 in ifrs-full. MEASURED 2026-11-17 on the primary's 1,078 cached companyfacts: 122 carry
+    ifrs-full, and on 121 of them these tags date the same newest year as any annual ifrs-full fact
+    does (the 122nd tags no IFRS flow annual, and its us-gaap year is that day's). Only the period
+    is read; every unit counts, since a period's dates carry no currency."""
     newest: ConceptPoint | None = None
-    for concept in FLOW_CONCEPTS:
-        for tag in CONCEPT_ALIASES[concept]:
-            for p in points_for_tag(facts, tag, concept=concept):
-                if not p.is_annual or p.period_end > p.filed:
-                    continue
-                if newest is None or p.period_end > newest.period_end:
-                    newest = p
+    for p in [*(p for concept in FLOW_CONCEPTS for tag in CONCEPT_ALIASES[concept]
+                for p in points_for_tag(facts, tag, concept=concept)),
+              *(p for concept in FLOW_CONCEPTS for p in _ifrs_flow_points(facts, concept))]:
+        if not p.is_annual or p.period_end > p.filed:
+            continue
+        if newest is None or p.period_end > newest.period_end:
+            newest = p
     return newest
 
 
