@@ -137,17 +137,20 @@ def _checkout(tmp_path: Path, *, venv: bool = True) -> Path:
     subprocess.run(["git", "-C", str(repo), "add", "-A"], check=True)
     subprocess.run(["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t", "commit",
                     "-qm", "base"], check=True)
+    # the base bin/commit's protected-file check reads the branch against (2026-11-17)
+    subprocess.run(["git", "-C", str(repo), "update-ref", "refs/remotes/origin/main", "HEAD"],
+                   check=True)
     (repo / "change.txt").write_text("a change\n")
     subprocess.run(["git", "-C", str(repo), "add", "change.txt"], check=True)
     return repo
 
 
-def _commit(repo: Path, **env: str) -> subprocess.CompletedProcess[str]:
+def _commit(repo: Path, message: str = "probe", **env: str) -> subprocess.CompletedProcess[str]:
     base = {k: v for k, v in os.environ.items() if k != "VENV"}
     base.update({"FAKE_LOG": str(repo.parent / "calls.log"), "GIT_AUTHOR_NAME": "t",
                  "GIT_AUTHOR_EMAIL": "t@t", "GIT_COMMITTER_NAME": "t",
                  "GIT_COMMITTER_EMAIL": "t@t"}, **env)
-    return subprocess.run(["bash", str(BIN_COMMIT), "-qm", "probe"], cwd=repo, capture_output=True,
+    return subprocess.run(["bash", str(BIN_COMMIT), "-qm", message], cwd=repo, capture_output=True,
                           text=True, timeout=120, env=base)
 
 
@@ -184,3 +187,24 @@ def test_the_local_gate_refuses_without_an_interpreter(tmp_path: Path) -> None:
     out = _commit(repo)
     assert out.returncode == 1 and "no project interpreter" in out.stderr
     assert _commits(repo) == 1
+
+
+def test_the_local_gate_refuses_a_protected_file_with_no_operator_approval(tmp_path: Path) -> None:
+    """2026-11-17, run: a decision-line file written straight to disk, as a Bash edit writes it
+    with no hook seeing it, is refused before the suite runs and nothing is committed; the same
+    change whose message quotes the operator's approval goes through the whole gate and commits."""
+    repo = _checkout(tmp_path)
+    target = repo / "vinci" / "dossier" / "verdict.py"
+    target.parent.mkdir(parents=True)
+    target.write_text("# rewritten by sed\n")
+    subprocess.run(["git", "-C", str(repo), "add", "-A"], check=True)
+    out = _commit(repo)
+    assert out.returncode == 1, out.stdout + out.stderr
+    assert "REFUSED" in out.stderr and "vinci/dossier/verdict.py" in out.stderr
+    assert not (repo.parent / "calls.log").exists()          # refused before ruff
+    assert _commits(repo) == 1
+    approved = ('probe\n\nOperator-approved: vinci/dossier/verdict.py "Yes, card to fix '
+                '(Recommended)" 2026-11-17')
+    out = _commit(repo, approved)
+    assert out.returncode == 0, out.stderr
+    assert _commits(repo) == 2

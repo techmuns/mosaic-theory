@@ -4,8 +4,19 @@
 WHY. CLAUDE.md draws one line that must not blur — the LLM never free-writes a verdict, the
 proposal mapping is never outcome-tuned, nothing approaches execution — and says "if a change
 crosses any of these, STOP and flag it". That was a sentence an agent had to remember. This makes
-it a permission prompt the agent cannot skip: an Edit/Write to a file below forces Claude Code to
-ask the operator (a hook's "ask" also forces the prompt in auto mode), naming what the file is.
+it a permission prompt: an Edit/Write to a file below makes Claude Code ask, naming what the file is.
+
+WHAT THE PROMPT IS, AND WHAT IT IS NOT (2026-11-17, #1097). This said "a hook's 'ask' also forces
+the prompt in auto mode", and that holds: Claude Code's docs say auto mode still shows a prompt a
+hook forces, 47 of the 48 asks logged 2026-11-04 → 11-17 (every one in auto mode) were granted
+through the app's "Allow once" path, the 48th was refused by the classifier, and the operator
+granted #1097's. What it is NOT is a decision of record, which is how it was being read. A grant is
+a click — 10 of the 47 came within 10 s of the ask — recorded only in a temp file and a local
+transcript. And the prompt never fires on a Bash edit: sed, python, a heredoc, `git apply` and
+`git checkout <ref> -- f` each rewrote a protected file with no prompt (5 of 5). So the record is
+the gate's: `.github/scripts/protected_approval.py`, run by gate.yml and bin/commit, refuses a
+branch that changes a file below until a commit message on it names the operator's approval of
+that file. This prompt is the early warning, and its reason names the line the gate will want.
 
 ONCE PER FILE PER SESSION. PreToolUse asks; PostToolUse runs only if the edit went through, i.e.
 the operator approved, and records the approval — so a build that edits `vinci/dossier/schemas.py`
@@ -17,8 +28,9 @@ decision-path module: screens and the ranker are governed by the real-run-before
 prompt on every ranker edit would train the operator to click through.
 
 Standard library only, Python 3.9+ (hooks run under the system `python3`). Fails OPEN on anything
-unexpected (no git, unreadable input): a broken guard must not wedge every session; the gate in CI
-is the backstop.
+unexpected (no git, unreadable input): a broken guard must not wedge every session; the approval
+check in the gate is the backstop. (Until 2026-11-17 this sentence named a backstop that did not
+exist: no gate looked at these files.)
 """
 from __future__ import annotations
 
@@ -50,7 +62,7 @@ PROTECTED: tuple[tuple[str, str], ...] = (
     ("pyproject.toml", "the gate's configuration (pytest options and markers, the ruff rule "
                        "set, mypy strictness, dependency pins)"),
     ("tests/conftest.py", "the fixtures and hooks every test runs under"),
-    (".github/scripts/", "a CI script (the key check)"),
+    (".github/scripts/", "a CI script (the key check, the protected-file approval check)"),
     ("vinci/evals/", "the synthesis grader: its metrics, gap types and panel"),
     ("tests/fixtures/synthesis_gap_gold/", "the gold set the M-GAP grader is measured against"),
     ("tests/fixtures/synthesis_gold/", "the synthesis gold set the grader is measured against"),
@@ -129,7 +141,10 @@ def main() -> int:
         "permissionDecisionReason": (
             f"`{rel}` is {why}. CLAUDE.md treats a change here as crossing the decision line — "
             "confirm it is intended. Asked once per file per session "
-            "(.claude/hooks/decision_path_guard.py)."),
+            "(.claude/hooks/decision_path_guard.py). This answer is not the record: the gate "
+            "refuses the branch until a commit message on it carries "
+            f"`Operator-approved: {rel} \"<the operator's words>\" <YYYY-MM-DD>` "
+            "(.github/scripts/protected_approval.py)."),
     }}))
     return 0
 

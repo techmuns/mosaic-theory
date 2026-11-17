@@ -92,6 +92,15 @@ def test_guard_asks_before_the_proposal_mapping_is_edited() -> None:
     assert "vinci/dossier/verdict.py" in decision["permissionDecisionReason"]
 
 
+def test_guard_names_the_approval_line_the_gate_will_want() -> None:
+    """2026-11-17 (#1097): a granted prompt is a click nothing durable records, so the ask says
+    what the gate will refuse the branch without — the operator's words, in a commit message."""
+    reason = json.loads(_edit("vinci/dossier/schemas.py", _session()).stdout)[
+        "hookSpecificOutput"]["permissionDecisionReason"]
+    assert 'Operator-approved: vinci/dossier/schemas.py "' in reason
+    assert ".github/scripts/protected_approval.py" in reason
+
+
 def test_guard_leaves_an_ordinary_module_alone() -> None:
     out = _edit("vinci/dossier/assemble.py", _session())
     assert out.returncode == 0 and out.stdout == ""
