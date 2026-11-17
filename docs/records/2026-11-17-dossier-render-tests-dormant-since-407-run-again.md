@@ -134,14 +134,18 @@ folder linked (as CI).
   `tests/test_public_transcript_text` reads pages only, never a card. Its quote rule, applied to
   every card field whose source names a call or a transcript, finds none, and neither card
   contains the word "transcript".
-- **The trial merge with slice 4** (`origin/claude/named-pins-4-dossier`, #1108) is clean, with 0
-  conflicts, and the 15 tests give the same result there.
+- **After slices 2–4 merged.** #1108 merged first, as A ordered, and main `6110795d`, holding slices
+  2, 3 and 4, was merged into this branch (`811ebfea`) clean. The checks were then run again:
+  - the 15 by name: 14 PASSED, 1 SKIPPED (BRBR's, with its stated reason);
+  - the breakage table again: 14 of 14 red, then green once restored;
+  - `asserts_unchanged.py 6110795d`: changed 0, disabled 0, control 0, vanished 0.
 - **The full offline gate.** `bin/commit` runs ruff, `mypy --strict` over `vinci/`,
-  `pytest -m "not network"` and the mirror check. It is green at `d130bb23` and at `fc497583`,
+  `pytest -m "not network"` and the mirror check. It is green at `d130bb23`, `fc497583`, `00a3bb3b`
+  and on this record's commit over the merged tree,
   with no CIQ folder linked, as in CI.
 - **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` was run at
-  `f0cc9cc1`, after main `2f85a6f2` (#1104) was merged in. 0 of 374 tests fail on base code and
-  pass on head code. That is expected for a test-only change: `vinci/` is byte-identical, so the
+  `811ebfea`, against base `6110795d`, the merge base. It was first run at `f0cc9cc1` against
+  `2f85a6f2`, with the same result. 0 of 374 tests fail on base code and pass on head code. That is expected for a test-only change: `vinci/` is byte-identical, so the
   fail-first evidence is the breakage table above. 363 pass at both, 11 skip, 0 fail at head.
   The 11 skips are:
   - the eight card-guard pins, which skip in the harness's exported tree by design;
@@ -185,8 +189,8 @@ folder linked (as CI).
   `pending_analyst` (`git log -S`), from #407 on.
 - **"Violations":** `tests/test_public_transcript_text.violations` over a page at the named commit.
 - **"106 committed pages":** every JSON file with a `mechanical` key under `data/dossiers/`,
-  `frontend/dossiers/` and `tests/fixtures/` at this branch's head (`f0cc9cc1`'s tree, main
-  `2f85a6f2` merged). An administrative-only gap 8-K is a `drawdown_cause.filings` row with
+  `frontend/dossiers/` and `tests/fixtures/` at this branch's head, with main `6110795d` merged
+  in (106 before that merge too). An administrative-only gap 8-K is a `drawdown_cause.filings` row with
   `explanatory: false`.
 - **"24 BRBR pages":** every commit in `git log -- data/dossiers/BRBR/dossier.json` whose page
   carries such a row.
