@@ -21,6 +21,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import assemble as asm
 from vinci.dossier.anchor import OPERATOR_RETAG_MARK, Anchor, preserve_operator_tag
 from vinci.dossier.schemas import Dossier
@@ -40,11 +41,13 @@ COMMITTED = sorted(p.parent.name for p in (ROOT / "data" / "dossiers").glob("*/d
 
 
 def _carrier(ticker: str, anchor: dict[str, object]) -> Dossier:
-    """Today's committed dossier for the name, carrying the anchor the erasing build produced. Only
-    the anchor is the incident's; everything else is the real artifact the write path renders."""
-    path = ROOT / "data" / "dossiers" / ticker / "dossier.json"
+    """The name's committed dossier (as frozen at the cut, `tests/frozen_support.py`), carrying the
+    anchor the erasing build produced. Only the anchor is the incident's; everything else is the
+    real artifact the write path renders."""
     if ticker == "AORT":  # retired 2026-11-09: its page as committed on 2026-10-26, frozen
         path = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-10-26" / "AORT" / "dossier.json"
+    else:
+        path = frozen_page(ticker) / "dossier.json"
     live = Dossier.model_validate_json(path.read_text())
     return live.model_copy(update={"anchor": Anchor.model_validate(anchor)})
 

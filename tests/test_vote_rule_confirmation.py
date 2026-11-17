@@ -20,6 +20,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_doc
+
 ROOT = Path(__file__).resolve().parents[1]
 BULL = "strongly-bullish — the runway outruns the multiple."
 MIXED = "mixed — two-sided and unresolved."
@@ -186,7 +188,7 @@ def test_the_transcripts_are_read_as_the_replay_harness_reads_them(
     for t in ("GOOGL", "LLY", "SMPL"):
         if not (ciq / t).is_dir():
             continue
-        page = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+        page = frozen_doc(t)   # the page as frozen at the cut: both readers read the same one
         bundle = CiqBundle.from_files(t, sorted(p for p in (ciq / t).iterdir() if p.is_file()))
         unread = []
         for wb in bundle.all_workbooks("transcript"):
@@ -402,8 +404,7 @@ def test_a_page_built_before_the_rule_prints_its_split_not_a_dict(
 def _tecx() -> dict[str, typing.Any]:
     """TECX's committed page: its input record is a BUILD record (complete — every export the
     bundle held is listed) and lists no transcript, because the build read none."""
-    page: dict[str, typing.Any] = json.loads(
-        (ROOT / "data/dossiers/TECX/dossier.json").read_text())
+    page = frozen_doc("TECX")   # TECX's page, as frozen at the cut
     assert page["inputs"]["recorded"] == "build"
     assert not [c for c in page["inputs"]["ciq"] if c["kind"] == "transcript"]
     return page
