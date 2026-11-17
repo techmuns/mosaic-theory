@@ -214,9 +214,9 @@ function freshnessPanel(mon, voidedNames = new Set()) {
       : ((f.triggers || []).length
           ? `<div class="foot" style="margin-top:6px;">no measured criteria — every falsifier above is a judgment, so none is machine-checked</div>`
           : "");
-    const stale = (f.stale_tags || []).length
-      ? `<div class="fact-caveat" style="margin-top:6px;">stale tag(s), served but not current: ${escapeHtml((f.stale_tags || []).join(", "))}</div>`
-      : "";
+    // NO STALE-TAG LINE (retired 2026-11-17): it rendered on no row of any committed day, and a
+    // stale value is withheld where it is read, never reported here. Why:
+    // docs/records/2026-11-17-the-monitors-stale-tag-row-is-retired.md
     return `
       <div class="card" style="margin-bottom:10px;">
         <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
@@ -230,7 +230,6 @@ function freshnessPanel(mon, voidedNames = new Set()) {
         ${newer ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Filed since the record's evidence</span><ul class="kv-list">${newer}</ul></div>` : ""}
         ${trigs ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Re-underwrite triggers (verbatim — not adjudicated)</span><ul class="kv-list">${trigs}</ul></div>` : ""}
         ${measuredBlock}
-        ${stale}
         ${f.watch_note ? `<div class="fact-caveat" style="margin-top:6px;">${escapeHtml(f.watch_note)}</div>` : ""}
       </div>`;
   };
