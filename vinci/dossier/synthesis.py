@@ -485,7 +485,8 @@ _SYSTEM_TEMPLATE = (
     "and NEVER suppressed when genuine (a real disconfirming fact SURVIVES). Under a mixed "
     "lean neither side is the minority: state every point plainly. On ANY lean, a point never "
     "ends by rebutting itself: a fact that cuts the other way is a point on the other side, and "
-    "the weighing of the two sides is evidence_balance's, never a closing clause. Both sides "
+    "the weighing of the two sides is evidence_balance's, never a closing clause (reading a "
+    "point's OWN metric as the real signal or the misread, rule 9, is not a rebuttal). Both sides "
     "must survive scrutiny: no redundant or padding claims, and do not inflate the majority "
     "either. A one-sided reality shows a one-sided COUNT, not a laundered balanced list. "
     "evidence_balance itself is ONE concise line (≤25 words: label + the single dominant "
@@ -2063,8 +2064,9 @@ def _validate(
             flags.append(
                 f"FALSE-BALANCE? the written assessment commits a strong lean but the body is "
                 f"near-symmetric ({nb} bull vs {nr} bear) and the minority {side}_points aren't "
-                "qualified-as-outweighed — size the minority against the lean (rule 7), or it "
-                "launders a one-sided case"
+                "sized against the lean (stated as what would have to be true for the minority "
+                "case) — size the minority against the lean (rule 7), or it launders a one-sided "
+                "case"
             )
 
     # G.3 peer-comp contract: the comps facts are the CONSENSUS read the edge must RESIST. A
@@ -3410,19 +3412,25 @@ def _drawdown_anchor_ask(at: dict[str, Any], word: str) -> str:
     2026-11-17). "Has the cause named at the follow played out?" was asked of every anchor, so a
     part with no gap-down — MCK's follow, 2026-05-02 to 2026-10-29 — was asked about a cause it
     never named, and the question led the answer (#920 §14). Read from the part's structure
-    (`gaps`, `gap_down_dates`), never its shape string: a drop is named when either lists one; a
-    part whose shape is not PRESENT could not be read, which is not the same as no drop."""
+    (`gaps`, `gap_down_dates`), never its shape string. A cause is named by a gap-down's 8-K
+    (`GapDown.accession`): a drop with no company filing (NCNO's underwrite, TECX's follow) names
+    none. A part built before `gaps` existed lists its drops only in `gap_down_dates` and keeps
+    the question it was always asked. A part whose shape is not PRESENT could not be read, which is
+    not the same as no drop."""
     tail = (" Answer inside your points (a bull or bear point, or the decisive question's "
             "evidence), citing these source_refs verbatim; where the facts cannot tell, say so in "
             "key_unknowns. An outlook marked SUPERSEDED is history, never the current guide.")
+    gaps = at.get("gaps") or []
     dates = at.get("gap_down_dates") or {}
-    named = bool(at.get("gaps")) or (dates.get("status") == "present" and bool(dates.get("value")))
+    named = (any(isinstance(g, dict) and g.get("accession") for g in gaps) if gaps
+             else dates.get("status") == "present" and bool(dates.get("value")))
     if named:
         return (f"ASK: has the cause named at the {word} played out? Set the since part and the "
                 "current facts against it — did the outlook that came with the drop hold, get cut "
                 "again, or recover; did a later drop repeat the cause or name a new one." + tail)
     read = (at.get("shape") or {}).get("status") == "present"
-    why = ("shows no discrete gap-down" if read else "could not be read (UNKNOWN)")
+    why = ("shows no gap-down with a company filing" if gaps
+           else "shows no discrete gap-down" if read else "could not be read (UNKNOWN)")
     return (f"ASK: the part at the {word} {why}, so it names no cause — never state or assume "
             f"one. Set the since part and the current facts against the {word}: did a drop come "
             "after it, and what does its filing name; what does the current outlook say." + tail)

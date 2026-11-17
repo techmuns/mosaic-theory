@@ -461,6 +461,19 @@ def test_an_anchor_with_no_gap_down_is_not_asked_about_a_cause_it_never_named() 
     assert "names no cause" in ask and "shows no discrete gap-down" in ask
 
 
+def test_a_gap_down_with_no_company_filing_names_no_cause() -> None:
+    """NCNO's underwrite and TECX's follow each hold one at-anchor gap-down whose cause is "no
+    company filing" (committed pages, 2026-11-17): a drop is there, a cause is not. SMPL's drops
+    with their 8-K accessions removed, the real type's own shape for that case."""
+    at = _built()["mechanical"]["drawdown_cause"]["anchor"]["at_anchor"]
+    nofiling = {**at, "filings": [], "gaps": [
+        {**g, "cause": "no company filing", "accession": None} for g in at["gaps"]]}
+    assert nofiling["gaps"]
+    ask = _ask(_brief_with_at_anchor(nofiling))
+    assert "cause named at the" not in ask
+    assert "names no cause" in ask and "no gap-down with a company filing" in ask
+
+
 def test_an_unread_at_anchor_part_is_not_called_a_part_with_no_drop() -> None:
     """A part whose shape is UNKNOWN could not be read: no cause is named, and the question says
     WHY — never that the window had no drop, which the build did not establish."""

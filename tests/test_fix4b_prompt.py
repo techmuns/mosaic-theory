@@ -31,7 +31,7 @@ OLD_REBUTTAL = ("outweigh", "genuine counter-point", "SURVIVES, qualified")
 
 #: RULE 7 ITSELF, a code-written constant, so its exact text is pinned (as rule 8's is,
 #: `tests/test_gap_test.py`). Moving it is a prompt change, measured on the panel (RUNBOOKS §n).
-RULE_7_SHA256 = "2aba75a4b0ac72f5d4599f5006e3e87816771604b49d78c2536328776838a59b"
+RULE_7_SHA256 = "19aea74a04ba6a1175c3ea9cdc0fad59cb532fe38aa6b9a16219b24f7e56a184"
 
 
 def old_rebuttal(text: str) -> list[str]:
