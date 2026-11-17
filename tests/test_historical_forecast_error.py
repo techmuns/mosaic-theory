@@ -20,7 +20,7 @@ from typing import Any
 
 import pytest
 
-from tests.ciq_export_support import skip_unless_pages_export
+from tests.ciq_export_support import skip_unless_export
 from tests.frozen_support import frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
@@ -217,10 +217,12 @@ def test_the_layer_is_never_synthesis_input_and_sits_before_the_anchor() -> None
 # --- the refresh step: only from the export the page was built from ------------------------------
 
 
-def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(tmp_path: Path) -> None:
+def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """END TO END on AMZN: the page's forward consensus names this export, so the layer lands —
     equal to the builder's — and nothing else moves. NEGATIVE: a page naming another export, or
     none, is left alone."""
+    from vinci.dossier import manual_store as ms
     from vinci.dossier.refresh import historical_forecast_error_transform, refresh_dossier
 
     b = _bundle("AMZN")
@@ -231,9 +233,14 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(tmp_path: Pa
         (folder / name).write_text((src / name).read_text())
     path = folder / "dossier.json"
     before = json.loads(path.read_text())
-    # the frozen page beside the LIVE export: run only while the export on disk is the one the
-    # page names, else skip naming both (a skip, never a looser assertion: ciq_export_support)
-    skip_unless_pages_export("AMZN", "estimates", page=before, bundle=b)
+    # THE FROZEN PAGE NAMES ITS EXPORT, so the pin runs on that export: the folder's while it is
+    # there, else the archived folder that holds it (`ciq_export_support.skip_unless_export`), and
+    # the transform reads that same folder. It skips, naming both sha256s, only when neither does.
+    b = skip_unless_export("AMZN", "estimates", before["forward_consensus"]["source_sha256"],
+                           why="the frozen page names this Estimates export", bundle=b)
+    held = b.workbooks[0].path.parent
+    monkeypatch.setattr(ms.LocalFolderStore, "from_config",
+                        staticmethod(lambda _cfg=None: ms.LocalFolderStore(held.parent)))
     step = historical_forecast_error_transform("AMZN")
     other = json.loads(json.dumps(before))
     other["forward_consensus"]["as_of"] = "≥1999-01-01"

@@ -27,10 +27,10 @@ reported` are NOT negations — they MEAN missing, so they keep their own altern
 from __future__ import annotations
 
 import json
+import pathlib
 
 import pytest
 
-from tests.frozen_support import frozen_page
 from vinci.dossier.synthesis import _MISSING_CLAIM
 
 #: Real absence claims — the guard's actual purpose. Each MUST match.
@@ -84,7 +84,9 @@ def test_the_live_fubo_sentence_is_no_longer_flagged() -> None:
     THIS shape must not be flagged, not that the model must keep writing it. If the population
     empties, the parametrised cases above still hold the rule.
     """
-    path = frozen_page("FUBO") / "dossier.json"   # FUBO's committed page, as frozen at the cut
+    path = pathlib.Path(__file__).resolve().parents[1] / "data/dossiers/FUBO/dossier.json"
+    if not path.is_file():
+        pytest.skip("FUBO dossier not committed")
     syn = json.loads(path.read_text()).get("synthesis") or {}
     claims = [
         p.get("claim", "") for side in ("bull_points", "bear_points")

@@ -1,9 +1,10 @@
 """The shared which-export-is-on-disk checks (`tests/ciq_export_support.py`), pinned both ways.
 
 Runs everywhere: the exports here are constructed files (only their bytes are hashed, never
-parsed), and the page is SMPL's real committed one. The shape these pins encode is the one observed
-on 2026-11-04 with the Drive folder linked: SMPL's page records Estimates export 06670995ba and the
-folder held c50fddc012, its 2026-10-28 re-export.
+parsed), and the page is SMPL's real committed one as frozen at the cut (`tests/frozen_support.py`,
+served by `_pages_at_the_cut`). The shape these pins encode is the one observed on 2026-11-04 with
+the Drive folder linked: SMPL's page records Estimates export 06670995ba and the folder held
+c50fddc012, its 2026-10-28 re-export.
 
 The floor (`OWN_EXPORT_FLOOR`) and the archive lookup answer the cross-review of #889: a skip is not
 a pass, so when the page-keyed tests skip as a class something must fail, and a frozen pin whose
@@ -104,8 +105,8 @@ def test_the_pages_own_export_runs(tmp_path: Path) -> None:
 
 @pytest.mark.usefixtures("_pages_at_the_cut")
 def test_another_export_than_the_pages_skips_and_names_both(tmp_path: Path) -> None:
-    """NEGATIVE, on the real committed page: an export the page does not record is skipped, and
-    the reason names the page's sha256 and the one on disk."""
+    """NEGATIVE, on the real committed page (frozen at the cut): an export the page does not record
+    is skipped, and the reason names the page's sha256 and the one on disk."""
     bundle, sha = _bundle_with_estimates(tmp_path, b"a later re-export")
     want = _page()["forward_consensus"]["source_sha256"]
     assert want and want != sha
@@ -120,6 +121,7 @@ def test_no_export_on_disk_leaves_the_test_as_it_was() -> None:
                    bundle=CiqBundle.from_files("SMPL", []))
 
 
+@pytest.mark.usefixtures("_pages_at_the_cut")
 def test_the_folder_lookup_is_the_path_the_suite_uses(tmp_path: Path,
                                                      monkeypatch: pytest.MonkeyPatch) -> None:
     """WITHOUT AN INJECTED BUNDLE — how the parity and EV-gap tests call it: the configured folder
