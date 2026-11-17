@@ -22,6 +22,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import anchor as anc
 from vinci.edgar import net_debt as nd
 from vinci.edgar.concepts import extract_points, facts_as_of, latest_instant, points_for_tag
@@ -192,7 +193,7 @@ def test_amzns_anchor_carries_the_leg_and_its_base_value_moves_by_exactly_it(
     assert frozen is not None and frozen.tag == "MarketableSecuritiesCurrent"
     assert frozen.value / 1e6 == pytest.approx(44_775.0, abs=0.001)
 
-    page = ROOT / "data" / "dossiers" / "AMZN" / "dossier.json"
+    page = frozen_page("AMZN") / "dossier.json"   # AMZN's page, as frozen at the cut
     mech = json.loads(page.read_text())["mechanical"]
     facts: dict[str, Any] = json.loads((FIXTURES / "AMZN.json").read_text())
     cut = anc.price_as_of(mech)

@@ -23,6 +23,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from tests.test_release_adjusted_eps import _rel
 from vinci.dossier import ebitda_recon as er
 
@@ -230,7 +231,7 @@ def test_the_leverage_caveat_is_regenerated_never_string_edited() -> None:
     committed page — nothing to regenerate. (−) Two candidates: refused, never a guess at which."""
     from vinci.dossier.refresh import leverage_caveat_transform
 
-    doc = json.loads(Path("data/dossiers/TGT/dossier.json").read_text())
+    doc = frozen_doc("TGT")   # TGT's committed page, as frozen at the cut
     now = list(doc["caveats"])
     i = next(i for i, c in enumerate(now) if c.startswith("Net debt/EBITDA ("))
     assert "CIQ's EBITDA (vendor-normalised" in now[i]

@@ -18,6 +18,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier.ev_gap import (
     EvGapInputs,
     Route,
@@ -40,7 +41,7 @@ FROZEN_MVST = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "MVS
 
 def _cell(ticker: str, metric: str, fy: str | None = None) -> dict[str, object]:
     frozen = {"VITL": FROZEN_VITL, "MVST": FROZEN_MVST}
-    folder = frozen.get(ticker, ROOT / "data" / "dossiers" / ticker)
+    folder = frozen[ticker] if ticker in frozen else frozen_page(ticker)   # never a living page
     d = json.loads((folder / "dossier.json").read_text())
     cells = d["mechanical"]["consensus_context"]["consensus_levels"][metric]
     return cells[0] if fy is None else next(c for c in cells if str(c["fy"]) == fy)
@@ -160,9 +161,18 @@ def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
             unrouted.add(f.parent.name)
             continue
         got[f.parent.name] = route_for(lv["EBITDA"][0])[0]
-    assert "VITL" in got, "VITL's living page carries an EBITDA consensus block"
+    # the two NAMED routes are values, so they are read off the pages as frozen at the cut
+    # (tests/frozen_support.py), into their own map: the walk's `got` stays the living fleet's
+    # routes, never overwritten (A's review of #1107), and a retirement or a re-assembly of VITL
+    # or SMPL moves nothing here
+    cut = {}
+    for t in ("VITL", "SMPL"):
+        lv = (frozen_doc(t)["mechanical"]["consensus_context"] or {}).get("consensus_levels")
+        if lv and "EBITDA" in lv:
+            cut[t] = route_for(lv["EBITDA"][0])[0]
+    assert "VITL" in cut, "VITL's page as frozen at the cut carries an EBITDA consensus block"
     assert got["MVST"] == Route.PRICE_IMPLIED_ONLY
-    assert got["SMPL"] == Route.FULL
+    assert cut["SMPL"] == Route.FULL
     assert unrouted <= UNROUTED_BY_DESIGN, (
         f"{sorted(unrouted - UNROUTED_BY_DESIGN)} carry no EBITDA consensus block and are not "
         f"stated exemptions — either the consensus extraction stopped resolving for them, or the "
@@ -285,7 +295,7 @@ def test_smpl_holds_multiple_dominant_at_its_adjacent_year_on_real_consensus() -
         labels_across_years,
     )
 
-    d = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    d = json.loads((frozen_page("SMPL") / "dossier.json").read_text())   # as frozen at the cut
     lv = d["mechanical"]["consensus_context"]["consensus_levels"]
     adj = adjacent_year(lv, "2026")
     assert adj == "2027"

@@ -27,6 +27,7 @@ from typing import Any, cast
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import anchor as anc
 from vinci.edgar import concepts
 from vinci.edgar import net_debt as nd
@@ -108,8 +109,7 @@ def test_the_moved_names_move_toward_ciq(ticker: str) -> None:
 def _burl_anchor(lease_basis: dict[str, Any] | None) -> Any:
     """BURL's anchor with the page's lease basis SET or REMOVED explicitly (#750's convention), so
     the pin reads one state before and after the artifact pass lands the block on the page."""
-    mech = json.loads((ROOT / "data" / "dossiers" / "BURL" / "dossier.json").read_text())[
-        "mechanical"]
+    mech = frozen_doc("BURL")["mechanical"]   # BURL's page, as frozen at the cut
     mech["valuation"].pop("lease_basis", None)
     if lease_basis is not None:
         mech["valuation"]["lease_basis"] = lease_basis

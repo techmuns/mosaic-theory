@@ -17,6 +17,7 @@ import shutil
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from tests.test_consensus_rows import REVENUE_BASELINE, _bundle, data_vintage
 from vinci.dossier.refresh import CONSENSUS_METRICS, consensus_transform, refresh_dossier
 from vinci.dossier.schemas import Dossier
@@ -29,9 +30,7 @@ def test_the_levels_reach_the_written_dossier(ticker: str, tmp_path) -> None:  #
     """READ BACK, never compared to the extractor. The eleven-name baseline already verifies the
     extractor; what is unverified is whether the value lands."""
     bundle = _bundle(ticker)                          # skips if the CIQ bundle is unavailable
-    src = ROOT / "data" / "dossiers" / ticker / "dossier.json"
-    if not src.is_file():
-        pytest.skip(f"{ticker}: no committed dossier")
+    src = frozen_page(ticker) / "dossier.json"   # the host page, as frozen at the cut
     work = tmp_path / "dossier.json"
     shutil.copy(src, work)
     shutil.copy(src.with_name("dossier.md"), tmp_path / "dossier.md")

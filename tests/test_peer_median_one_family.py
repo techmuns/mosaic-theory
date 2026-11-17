@@ -21,6 +21,7 @@ import statistics
 from datetime import date
 from typing import Any
 
+from tests.frozen_support import covered_where
 from vinci.dossier.capital_allocation import build_peer_capital_intensity
 from vinci.dossier.schemas import PeerRow
 
@@ -133,10 +134,6 @@ def test_a_row_with_no_total_names_its_case_and_keeps_its_assets() -> None:
     assert str(two.note).startswith("no shared balance — ") and two.total_assets == 4000.0
 
 
-def _page(t: str) -> dict[str, Any]:
-    return json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
-
-
 def test_the_committed_pages_state_each_medians_count_and_its_population() -> None:
     """END TO END: every committed page prints each median as "median of N of M peers"; on a page
     built under the ruling, its median is over the peers with both legs only (a row with no note),
@@ -169,8 +166,12 @@ def test_the_committed_pages_state_each_medians_count_and_its_population() -> No
         for line in lines:
             assert line in md and line in committed, (jp, line)
     assert short, "no page has a charged peer without a ratio — this pin checked nothing"
-    for t in ("MCK", "AMZN", "TGT", "BURL"):           # the pages refreshed under the ruling
-        pc = _page(t)["mechanical"]["peer_capital_intensity"]
+    # every covered page with the block (the roster; at the cut every one is built under the
+    # ruling), never the four named pages that were refreshed first
+    for t, doc in covered_where(lambda _t, d: bool(
+            (d["mechanical"].get("peer_capital_intensity") or {}).get("rows")),
+            "carries a peer capital-intensity block"):
+        pc = doc["mechanical"]["peer_capital_intensity"]
         both = [r["pct_assets"] for r in pc["rows"]
                 if not r.get("is_subject") and r.get("note") is None
                 and r.get("pct_assets") is not None and r.get("pct_market_cap") is not None]

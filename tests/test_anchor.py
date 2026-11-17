@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import covered_where, frozen_page
 from vinci.dossier import anchor as anc
 from vinci.dossier import midcycle as mc
 from vinci.dossier.anchor import (
@@ -102,22 +103,25 @@ def test_backfilled_anchor_base_consistent_with_stored_inputs() -> None:
     """END-TO-END on the committed artifact: the stored ``anchor_base_value_per_share`` recomputes
     EXACTLY from the anchor's OWN stored inputs (margin/multiple/D&A/net-debt/shares/LTM-rev) via
     the block's EBITDA-basis math — value-INDEPENDENT (holds whatever the numbers are, so it
-    survives an EDGAR data refresh), and it re-proves the D&A (EBITDA) inclusion."""
-    d = json.loads((_ROOT / "data" / "dossiers" / "IT" / "dossier.json").read_text())
-    a = d.get("anchor")
-    assert a and a["recipe_hint"] == RECIPE_R1 and a["applicable"]
-    # the count the base was struck on (`per_share_shares`: point-in-time since 2026-10-21)
-    shares = per_share_shares(a)
-    assert shares is not None
-    sv = mc.scenario_value(
-        mc.Scenario(name="base", revenue=a["ltm_revenue"]["value"], margin=a["margin"]["value"],
-                    multiple=a["multiple"]["value"], source="anchor default",
-                    d_and_a=a["d_and_a"]["value"]),
-        net_debt=a["net_debt"]["value"], shares=shares)
-    recomputed = sv.equity * 1e6 / shares
-    assert recomputed == pytest.approx(a["anchor_base_value_per_share"], abs=0.01)
-    # EBITDA basis: the stored EV/EBIT exceeds the multiple (EV/EBITDA) because EBIT < EBITDA
-    assert a["anchor_ev_ebit"] > a["multiple"]["value"]
+    survives an EDGAR data refresh), and it re-proves the D&A (EBITDA) inclusion — on every covered
+    page with an applicable R1 anchor (the roster), never a named one."""
+    for _t, d in covered_where(lambda _t, d: (d.get("anchor") or {}).get("recipe_hint")
+                               == RECIPE_R1 and bool((d.get("anchor") or {}).get("applicable")),
+                               "carries an applicable R1 anchor"):
+        a = d.get("anchor")
+        assert a and a["recipe_hint"] == RECIPE_R1 and a["applicable"]
+        # the count the base was struck on (`per_share_shares`: point-in-time since 2026-10-21)
+        shares = per_share_shares(a)
+        assert shares is not None
+        sv = mc.scenario_value(
+            mc.Scenario(name="base", revenue=a["ltm_revenue"]["value"], margin=a["margin"]["value"],
+                        multiple=a["multiple"]["value"], source="anchor default",
+                        d_and_a=a["d_and_a"]["value"]),
+            net_debt=a["net_debt"]["value"], shares=shares)
+        recomputed = sv.equity * 1e6 / shares
+        assert recomputed == pytest.approx(a["anchor_base_value_per_share"], abs=0.01)
+        # EBITDA basis: the stored EV/EBIT exceeds the multiple (EV/EBITDA) because EBIT < EBITDA
+        assert a["anchor_ev_ebit"] > a["multiple"]["value"]
 
 
 # --- positivity guard --------------------------------------------------------------------------
@@ -690,7 +694,7 @@ def test_the_flag_reaches_both_rendered_pages_end_to_end() -> None:
     import subprocess
 
     from vinci.dossier import render as dr
-    amzn = Dossier.model_validate_json((_ROOT / "data/dossiers/AMZN/dossier.json").read_text())
+    amzn = Dossier.model_validate_json((frozen_page("AMZN") / "dossier.json").read_text())
     assert amzn.anchor is not None
     m = amzn.mechanical.model_dump(mode="json")
     gap = anc.midcycle_gap(amzn.anchor.margin.value if amzn.anchor.margin else None, 10,
@@ -706,12 +710,12 @@ def test_the_flag_reaches_both_rendered_pages_end_to_end() -> None:
     flagged = amzn.anchor.model_copy(update={"midcycle_gap": gap})
     py = "\n".join(dr._screening_context_lines(flagged))
     assert "Mid-cycle assumption under strain." in py and gap.read in py
-    epam = Dossier.model_validate_json((_ROOT / "data/dossiers/EPAM/dossier.json").read_text())
+    epam = Dossier.model_validate_json((frozen_page("EPAM") / "dossier.json").read_text())
     assert "Mid-cycle assumption" not in "\n".join(dr._screening_context_lines(epam.anchor))
 
     if not shutil.which("node"):
         pytest.skip("node unavailable")
-    page = json.loads((_ROOT / "data/dossiers/AMZN/dossier.json").read_text())
+    page = json.loads((frozen_page("AMZN") / "dossier.json").read_text())
     page["anchor"]["midcycle_gap"] = json.loads(gap.model_dump_json())
     driver = r"""
 import { readFileSync } from "node:fs";
@@ -725,7 +729,7 @@ const { escapeHtml } = await import(pathToFileURL(path.resolve("frontend/lib/for
 const page = JSON.parse(readFileSync(process.argv[1], "utf8"));
 const read = page.anchor.midcycle_gap.read;
 const flagged = renderDossier(page, null);
-const epam = JSON.parse(readFileSync("data/dossiers/EPAM/dossier.json", "utf8"));
+const epam = JSON.parse(readFileSync(process.argv[2], "utf8"));   // EPAM, frozen at the cut
 const plain = renderDossier(epam, null);
 console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under strain."),
   sentence: read.length > 0 && flagged.includes(escapeHtml(read)),
@@ -734,7 +738,9 @@ console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under st
     import tempfile
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
         json.dump(page, fh)
-    out = subprocess.run(["node", "--input-type=module", "-e", driver, fh.name], cwd=_ROOT,
+    epam_page = str(frozen_page("EPAM") / "dossier.json")   # the one cut the Python half reads
+    out = subprocess.run(["node", "--input-type=module", "-e", driver, fh.name, epam_page],
+                         cwd=_ROOT,
                          capture_output=True, text=True, check=True)
     assert json.loads(out.stdout.strip().splitlines()[-1]) == {"on": True, "sentence": True,
                                                                "off": False}
@@ -835,7 +841,7 @@ def test_wlk_flag_reaches_the_screening_block_unsigned_and_the_right_way_round_e
     2026-09-21. The direction is asserted from WHICHEVER quadrant the page's numbers land in, so a
     re-assembled page cannot turn this into a stale value pin."""
     from vinci.dossier import render as dr
-    wlk = Dossier.model_validate_json((_ROOT / "data/dossiers/WLK/dossier.json").read_text())
+    wlk = Dossier.model_validate_json((frozen_page("WLK") / "dossier.json").read_text())
     assert wlk.anchor is not None and wlk.anchor.margin is not None
     m = wlk.mechanical.model_dump(mode="json")
     basis = anc.basis_check({2025: -1578 / 11170}, m)
