@@ -221,6 +221,10 @@
           "title": "Consensus Eps",
           "type": "number"
         },
+        "line": {
+          "title": "Line",
+          "type": "string"
+        },
         "period": {
           "title": "Period",
           "type": "string"
@@ -236,6 +240,7 @@
       },
       "required": [
         "consensus_eps",
+        "line",
         "period",
         "source",
         "reason"
@@ -796,6 +801,18 @@
             }
           ],
           "default": null
+        },
+        "eps_line": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eps Line"
         }
       },
       "required": [
