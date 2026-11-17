@@ -8895,41 +8895,51 @@ def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read()
     labelled a verdict, because the BUY/AVOID verdict of record is the ledger's.
 
     Phrasing-independent: the thesis is asserted to equal the COMMITTED record's own text rather
-    than any literal string, and the scenario rows are checked against the record's inputs."""
-    p = Path("data/dossiers/IT/dossier.json")
-    sp = Path("scenarios/IT.json")
-    if not (p.exists() and sp.exists()):
-        pytest.skip("no committed IT dossier/scenario record")
-    from vinci.scenarios import read_record
-    card = read_record("IT")
-    d = ds.Dossier.model_validate_json(p.read_text())
-    md = dr.render_markdown(d, card=card)
-    glance = md.split("## At a glance")[1].split("\n## ")[0]
+    than any literal string, and the scenario rows are checked against the record's inputs.
 
-    thesis = card.verdict.rationale_plain or card.verdict.rationale
-    assert thesis and "### Thesis — our rationale" in glance and thesis in glance
-    # authorship: the machine read is suppressed once the analyst's thesis is present
-    if d.synthesis is not None and d.synthesis.evidence_balance:
-        assert dr._machine_read_md(d.synthesis.evidence_balance) not in glance
-    # disposition, never "verdict of record" (that is the ledger's)
-    assert "Underwrite disposition:" in glance
-    assert "Verdict of record:" not in glance
-    assert f"{card.spot:,.2f}" in glance  # the economics strip carries the recorded spot
+    Since W27 it walks every covered page that has a live record (the roster), never a named one:
+    the page and its record are both LIVING, since a frozen page beside a living record would mix
+    two vintages, and a logged name's retirement archives its record, which the walk then skips.
+    It walks the R1 records: the scenario table it asserts is R1's (revenue, margin, multiple),
+    and an R2 or R3 record renders its own recipe's columns."""
+    from tests.frozen_support import covered_where
+    from vinci.scenarios import RECIPE_R1, read_record
 
-    scen = md.split("## Scenario analysis")[1].split("\n## ")[0]
-    # (item 1e) the % column is against the record's FROZEN spot, so the header names the
-    # BASIS. It deliberately carries NO date: `underwrite_date` is when the call was frozen,
-    # and the close it was struck on is older on every committed record (audit P4).
-    assert "| scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |" \
-        in scen
-    assert f"vs spot @ {card.underwrite_date}" not in scen
-    for nm in ("bear", "base", "bull"):
-        s = card.scenarios.get(nm)
-        if s is None:
-            continue
-        assert f"| {nm} | {s.revenue:,.0f} |" in scen, f"{nm} row must carry its recorded revenue"
-        if s.reason:
-            assert s.reason in scen, f"{nm}'s recorded reason must render beside the arithmetic"
+    def logged_r1(t: str, _doc: dict[str, Any]) -> bool:
+        return Path(f"scenarios/{t}.json").exists() and read_record(t).recipe_id == RECIPE_R1
+
+    for t, _doc in covered_where(logged_r1, "has a live R1 record"):
+        card = read_record(t)
+        d = ds.Dossier.model_validate_json(Path(f"data/dossiers/{t}/dossier.json").read_text())
+        md = dr.render_markdown(d, card=card)
+        glance = md.split("## At a glance")[1].split("\n## ")[0]
+
+        thesis = card.verdict.rationale_plain or card.verdict.rationale
+        assert thesis and "### Thesis — our rationale" in glance and thesis in glance
+        # authorship: the machine read is suppressed once the analyst's thesis is present
+        if d.synthesis is not None and d.synthesis.evidence_balance:
+            assert dr._machine_read_md(d.synthesis.evidence_balance) not in glance
+        # disposition, never "verdict of record" (that is the ledger's)
+        assert "Underwrite disposition:" in glance
+        assert "Verdict of record:" not in glance
+        assert f"{card.spot:,.2f}" in glance  # the economics strip carries the recorded spot
+
+        scen = md.split("## Scenario analysis")[1].split("\n## ")[0]
+        # (item 1e) the % column is against the record's FROZEN spot, so the header names the
+        # BASIS. It deliberately carries NO date: `underwrite_date` is when the call was frozen,
+        # and the close it was struck on is older on every committed record (audit P4).
+        assert ("| scenario | revenue $M | margin | multiple | value / sh "
+                "| vs entry-vintage spot |") in scen
+        assert f"vs spot @ {card.underwrite_date}" not in scen
+        for nm in ("bear", "base", "bull"):
+            s = card.scenarios.get(nm)
+            if s is None:
+                continue
+            assert f"| {nm} | {s.revenue:,.0f} |" in scen, \
+                f"{nm} row must carry its recorded revenue"
+            if s.reason:
+                assert s.reason in scen, \
+                    f"{nm}'s recorded reason must render beside the arithmetic"
 
 
 def test_md_without_a_card_states_the_absence_and_keeps_the_machine_read() -> None:
