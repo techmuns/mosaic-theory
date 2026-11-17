@@ -42,16 +42,17 @@ DOSS = ROOT / "data" / "dossiers"
 PANEL_FILED = ("mechanical", "capital_structure", "maturity_check", "panel_filed")
 
 
-def _living(t: str) -> dict[str, Any]:
-    """``t``'s page as frozen at the cut (`tests/frozen_support.py`): the pages these pins build
-    their fleets from are real, and none is the living one, so a retirement moves nothing."""
+def _at_cut(t: str) -> dict[str, Any]:
+    """``t``'s `dossier.json` as frozen at the cut (`tests/frozen_support.py`): the pages these
+    pins build their fleets from are real, and none is the living one, so a retirement moves
+    nothing."""
     return frozen_doc(t)
 
 
 def _undated(t: str) -> dict[str, Any]:
     """The page (frozen at the cut) with its comps export's `export_date` taken off its record:
     the page as a build wrote it before #1082, which the pass exists to date."""
-    page = _living(t)
+    page = _at_cut(t)
     (row,) = [r for r in page["inputs"]["ciq"] if r["kind"] == "comps"]
     row.pop("export_date", None)
     return page
@@ -82,9 +83,9 @@ def test_an_export_not_on_disk_is_named_never_reported_unchanged(
     """THE DEFECT. IT's record names its comps export by sha256 and no file under the root matches
     it: the page is named with that sha256, and is not "unchanged". NKE's record names no comps
     export (a BACKFILL), so the pass looks for nothing there and NKE is plain "unchanged"."""
-    sha = _living("IT")["inputs"]["ciq"][0]["sha256"]
-    assert _living("IT")["inputs"]["ciq"][0]["kind"] == "comps"
-    tree = _fleet(tmp_path / "repo", {"IT": _undated("IT"), "NKE": _living("NKE")})
+    sha = _at_cut("IT")["inputs"]["ciq"][0]["sha256"]
+    assert _at_cut("IT")["inputs"]["ciq"][0]["kind"] == "comps"
+    tree = _fleet(tmp_path / "repo", {"IT": _undated("IT"), "NKE": _at_cut("NKE")})
     empty = tmp_path / "ciq"
     empty.mkdir()
     out = _run(tree, [empty], monkeypatch)
@@ -206,7 +207,7 @@ def test_the_count_is_over_the_pages_the_step_ran_on(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """A SEALED page is refused before the step runs, so it is named under "refused" and never
     counted among the pages the step looked at (code review, round 0)."""
-    tree = _fleet(tmp_path / "repo", {"IT": _undated("IT"), "NKE": _living("NKE")})
+    tree = _fleet(tmp_path / "repo", {"IT": _undated("IT"), "NKE": _at_cut("NKE")})
     (tree / "data" / "dossiers" / "NKE" / "known_wrong.json").write_text("{}\n")
     empty = tmp_path / "ciq"
     empty.mkdir()
@@ -220,7 +221,7 @@ def test_a_pass_with_no_skip_reporting_step_states_no_count(
     """A no-op pass, or a step that looks for no export, adds no skip count: the count is the export
     pass's, never a line every refresh prints."""
     monkeypatch.setattr(refresh, "mirror_to_frontend", lambda: None)
-    tree = _fleet(tmp_path / "repo", {"NKE": _living("NKE")})
+    tree = _fleet(tmp_path / "repo", {"NKE": _at_cut("NKE")})
     out = refresh.refresh_fleet(tree)
     assert out == {"moved": [], "unchanged": ["NKE"], "refused": [], "skipped": []}
 
@@ -232,7 +233,7 @@ def test_the_step_reports_only_its_last_page() -> None:
     assert isinstance(step, refresh.NamesSkips)
     step(_undated("IT"))
     assert len(step.skipped) == 1 and len(step.looked_for) == 1
-    step(_living("NKE"))
+    step(_at_cut("NKE"))
     assert step.skipped == [] and step.looked_for == []
 
 
