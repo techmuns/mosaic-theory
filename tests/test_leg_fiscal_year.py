@@ -227,15 +227,20 @@ def test_every_scenario_input_field_is_settable_from_the_template() -> None:
     until it passes, the shape this repo has already paid for. If you tighten this, you will delete
     the reason it works.
 
-    The exemption list is EMPTY today. It is written as an exact set so a new field cannot be
-    quietly excused: adding one to the model without a template cell reddens this, and adding it
-    HERE requires stating why in the same breath."""
+    The exemption list holds ONE field since recipe 3a (`miss_case`, R3-only). It is written as an
+    exact set so a new field cannot be quietly excused: adding one to the model without a template
+    cell reddens this, and adding it HERE requires stating why in the same breath."""
     import vinci.scenarios as _sc
     from vinci.dossier.propose import build_template
 
-    #: Fields legitimately absent from every template cell, each with its reason. EMPTY — kept as a
-    #: declared set so an addition is a deliberate, explained act rather than a quiet one.
-    exempt: dict[str, str] = {}
+    #: Fields legitimately absent from every template cell, each with its reason. One entry —
+    #: kept as a declared set so an addition is a deliberate, explained act rather than a quiet one.
+    exempt: dict[str, str] = {
+        # recipe 3a (2026-11-17): R3's bear only. This sweep reads the R1 template, whose legs carry
+        # no EPS for a miss case to bound; `build_r3_template` carries the cell, and
+        # `tests/test_recipe_3a.py` writes it through `scenario-create`.
+        "miss_case": "R3 bear only — the R3 template carries the cell",
+    }
 
     doc = json.loads(FROZEN_SMPL.read_text())   # a page the template accepts (row 36)
     cells = build_template(doc)["scenarios"]
