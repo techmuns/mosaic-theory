@@ -28,9 +28,9 @@ from vinci.facts.edgar_ingest import NotInCacheError, cik_for_ticker, pad_cik
 from vinci.facts.store import FactsStoreError
 from vinci.followed import follow_records
 
-RULE = ("the coverage roster's active and watch names (data/coverage_roster.jsonl), each checked "
-        "against its committed page (data/dossiers/*/dossier.json), plus followed names "
-        "(data/followed.json)")
+RULE = ("the coverage roster's active and watch names, and an intake name once its first page is "
+        "committed (data/coverage_roster.jsonl), each checked against its committed page "
+        "(data/dossiers/*/dossier.json), plus followed names (data/followed.json)")
 SCREEN_RULE = ("the universe of screen run {run_id}: its candidate rows "
                "(data/snapshots/screen_runs/{run_id}.jsonl), each ticker's CIK from "
                "data/snapshots/securities.jsonl through data/snapshots/universe_snapshot.jsonl at "

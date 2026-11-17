@@ -153,7 +153,8 @@ def _tree(tmp_path: Path, case: str) -> Path:
     - no_roster_line: a covered name's page stays and its move is gone;
     - no_page / active_no_page: a watch / an active name's move stays and its page is gone;
     - retired_paged: a retired name's last page back under data/dossiers (#1044 undone);
-    - intake_no_page / intake_paged: a new name taken in, before / after its first page."""
+    - intake_no_page / intake_paged: a new name taken in, before / after its first page;
+    - stray_page: a page for a name no line names, as a scratch or failed build leaves one."""
     data = tmp_path / "data"
     (data / "dossiers").mkdir(parents=True)
     text = ROSTER.read_text("utf-8")
@@ -175,7 +176,7 @@ def _tree(tmp_path: Path, case: str) -> Path:
         gone = _a("retired")
         (data / "dossiers" / gone).mkdir()
         (data / "dossiers" / gone / "dossier.json").symlink_to(_frozen_page(gone))
-    if case == "intake_paged":
+    if case in ("intake_paged", "stray_page"):
         (data / "dossiers" / NEW).mkdir()
         (data / "dossiers" / NEW / "dossier.json").symlink_to(
             DATA / "dossiers" / _a("watch") / "dossier.json")
@@ -183,7 +184,8 @@ def _tree(tmp_path: Path, case: str) -> Path:
 
 
 _NAMED = {"no_roster_line": lambda: _a("watch"), "no_page": lambda: _a("watch"),
-          "active_no_page": lambda: _a("active"), "retired_paged": lambda: _a("retired")}
+          "active_no_page": lambda: _a("active"), "retired_paged": lambda: _a("retired"),
+          "stray_page": lambda: NEW}
 
 
 def _build_twin(tree: Path, monkeypatch: pytest.MonkeyPatch) -> list[str]:
@@ -295,6 +297,20 @@ def test_an_intake_name_leaves_every_reader_working_with_or_without_its_page(
     assert READERS[reader](tree, monkeypatch) == want
 
 
+def test_the_fact_scopes_stated_rule_names_every_status_it_walks(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The fact scope writes `RULE` into an ingest's manifest as the boundary of its count. It
+    walks an intake name once its first page is committed, so a rule naming only "active and
+    watch" understated the population it stamped."""
+    from vinci.facts.scope import RULE
+
+    tree = _tree(tmp_path, "intake_paged")
+    statuses = {roster.current(tree / "data")[t].status
+                for t in _facts_scope(tree, monkeypatch)}
+    assert statuses == {"active", "watch", "intake"}
+    assert [s for s in sorted(statuses) if s not in RULE] == []
+
+
 def test_a_build_the_roster_refuses_leaves_the_served_mirror_as_it_was(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """The refusal comes BEFORE the mirror is cleared: a build that stops on a disagreement leaves
@@ -323,6 +339,29 @@ def test_the_build_twin_agrees_with_the_backend_reader_on_the_committed_tree() -
     assert _build()._covered_pages() == roster.covered_pages(DATA)
     index = json.loads((ROOT / "frontend" / "dossiers" / "index.json").read_text())
     assert index["tickers"] == roster.covered_pages(DATA)
+
+
+def test_the_build_twin_refuses_a_status_the_roster_does_not_name(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A paged name whose latest line says `"Watch"` was neither covered nor a disagreement to the
+    twin, so the mirror dropped its page and the build passed. Paths that run the twin with no
+    strict read of the roster first include `python frontend/build.py` by hand, `ciq-reread`,
+    `caveat-reword`, and the driver-facts and transcript-cut passes given their names. The twin
+    names the reader's statuses, compared here so the two lists cannot drift apart."""
+    tree = _tree(tmp_path, "agrees")
+    path = tree / "data" / roster.ROSTER_NAME
+    lines = path.read_text("utf-8").splitlines()
+    n, move = next((i, json.loads(lines[i])) for i in reversed(range(len(lines)))
+                   if json.loads(lines[i])["ticker"] == _a("watch"))   # the name's latest move
+    lines[n] = json.dumps(move | {"status": "Watch"}, ensure_ascii=False)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    # the strict reader refuses it too, and for the status, not for the line's form
+    with pytest.raises(roster.CoverageRosterError, match="status 'Watch' is not one of"):
+        roster.covered_pages(tree / "data")
+    with pytest.raises(SystemExit) as err:
+        _build_twin(tree, monkeypatch)
+    assert _a("watch") in str(err.value) and "'Watch'" in str(err.value)
+    assert _build()._STATUSES == roster.STATUSES
 
 
 def test_the_corpus_walk_is_the_roster() -> None:
@@ -397,6 +436,26 @@ def test_a_first_build_needs_one_appended_intake_line(
     rc, built, clients = _dossier_cli(monkeypatch, NEW)
     assert rc == 0 and built == [NEW] and clients == 1
     assert NEW not in roster.covered_pages(tree / "data")
+
+
+@pytest.mark.parametrize("case", ["stray_page", "no_roster_line", "no_page", "active_no_page",
+                                  "retired_paged"])
+def test_assembly_refuses_a_tree_the_roster_disagrees_with_before_any_model_client(
+        case: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str]) -> None:
+    """THE PAGES MUST AGREE WITH THE ROSTER BEFORE THE SPEND. The build of an ACTIVE name passed
+    the finalist check, built its client and paid for its phases; only then did the mirror it
+    runs refuse the tree, so a stray `data/dossiers/ZZZZ/` cost a whole build. Each disagreement
+    now refuses before any client is built, naming the name. `active_no_page` is the name being
+    built: an active page that vanished is restored from git, never rebuilt at a cost, and a name
+    with no page yet enters as `intake` (review round 0: the refusal said neither)."""
+    tree = _tree(tmp_path, case)
+    monkeypatch.chdir(tree)
+    rc, built, clients = _dossier_cli(monkeypatch, _a("active"))
+    assert rc == 1 and built == [] and clients == 0
+    out = capsys.readouterr().out
+    assert "REFUSED" in out and "disagree" in out and _NAMED[case]() in out
+    assert "restored from git" in out and "RUNBOOKS §i step 1b" in out
 
 
 def test_the_scratch_tree_links_pages_and_copies_nothing_it_writes(tmp_path: Path) -> None:
