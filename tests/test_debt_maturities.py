@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import mechanical as dm
 from vinci.dossier import refresh as rf
 from vinci.dossier.ciq_sheets import _cs_panel_filed, liquidity_line
@@ -529,9 +530,8 @@ def test_assembly_governs_before_anything_reads_a_date() -> None:
 
 def _vrrm_page() -> dict[str, Any]:
     """The committed VRRM page as it stood before this build: its panel rows (frozen), on the
-    page's other blocks as committed."""
-    doc: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / "VRRM" / "dossier.json").read_text())
+    page's other blocks as committed (the page as frozen at the cut)."""
+    doc = frozen_doc("VRRM")
     doc["caveats"] = [c for c in doc["caveats"] if not c.startswith(dm.MATURITY_CAVEAT)]
     cs = doc["mechanical"]["capital_structure"]
     cs.pop("maturity_check", None)

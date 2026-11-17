@@ -19,6 +19,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import newest_frozen_copy
 from vinci import coverage_roster as roster
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -133,9 +134,10 @@ def _a(status: str) -> str:
 
 
 def _frozen_page(ticker: str) -> Path:
-    """The frozen copy of a retired name's last page (`tests/fixtures/frozen_pages/<date>/<T>/`)."""
-    frozen = ROOT / "tests" / "fixtures" / "frozen_pages"
-    return sorted(frozen.glob(f"*/{ticker}/dossier.json"))[-1]
+    """The frozen copy of a retired name's last page: its NEWEST frozen copy by date, a dated
+    folder's or a cut's (`tests/frozen_support.newest_frozen_copy`), never by the sort order of the
+    folders' names (review round 1 of #1098, item 7)."""
+    return newest_frozen_copy(ticker) / "dossier.json"
 
 
 NEW = "ZZZQ"   # a name no committed tree holds: an intake's first page
