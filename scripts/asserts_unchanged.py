@@ -11,6 +11,11 @@ AST of its assertions, in order:
 `ast.dump` carries no line numbers, so a move that shifts lines compares equal, and a renamed
 variable, a changed literal or a dropped assert does not.
 
+A function whose assertions differ ONLY in which page reader they call (`_page("BRBR")[…]` →
+`frozen_doc("BRBR")[…]`) is listed READER-ONLY, never counted as changed: the readers are
+`tests/frozen_support.py`'s and every function of the module that reads a page (its source
+names `dossier`).
+
 It prints each function whose assertions changed, each test or asserting helper that vanished
 (a helper that asserts nothing may go), and each new function (a new helper is expected; a new
 test is listed for the reader). It exits 1 when any assertion changed or any such function
@@ -43,18 +48,51 @@ def _is_pytest_call(node: ast.AST, names: tuple[str, ...]) -> bool:
         and node.func.value.id == "pytest"
 
 
-def assertions(fn: ast.AST) -> list[str]:
+#: The page readers a move swaps one for another inside an assert (`_page("BRBR")[...]` →
+#: `frozen_doc("BRBR")[...]`): `tests/frozen_support.py`'s, plus every function of the module
+#: that reads a page, its source naming `dossier` (found per file). They are normalized to one
+#: name only for the READER-ONLY report.
+SUPPORT_READERS = frozenset({"frozen_doc", "frozen_page", "living_doc"})
+
+
+def readers(source: str) -> frozenset[str]:
+    """The module's own page readers: its functions whose source names `dossier`."""
+    tree = ast.parse(source)
+    return SUPPORT_READERS | {n.name for n in ast.walk(tree)
+                              if isinstance(n, ast.FunctionDef) and "dossier" in ast.unparse(n)}
+
+
+class _Reader(ast.NodeTransformer):
+    def __init__(self, names: frozenset[str]) -> None:
+        self.names = names
+
+    def visit_Call(self, node: ast.Call) -> ast.AST:
+        self.generic_visit(node)
+        if isinstance(node.func, ast.Name) and node.func.id in self.names:
+            node.func = ast.Name(id="READ", ctx=ast.Load())
+        return node
+
+
+def assertions(fn: ast.AST, reader_names: frozenset[str] | None = None) -> list[str]:
     """The function's assertions in SOURCE order (an assert moved into a loop keeps its place;
-    `ast.walk` alone is breadth-first, and would reorder it)."""
+    `ast.walk` alone is breadth-first, and would reorder it). With ``reader_names``, every call to
+    one of them is dumped as `READ(...)`, so a swap of reader alone compares equal."""
+    import copy
+
     out: list[tuple[int, int, str]] = []
+    norm = _Reader(reader_names) if reader_names else None
+
+    def dump(node: ast.AST) -> str:
+        return ast.dump(norm.visit(copy.deepcopy(node)) if norm else node)
+
     for n in ast.walk(fn):
         if isinstance(n, ast.Assert):
-            out.append((n.lineno, n.col_offset, ast.dump(n)))
+            out.append((n.lineno, n.col_offset, dump(n)))
         elif isinstance(n, ast.With | ast.AsyncWith):
-            out += [(i.context_expr.lineno, i.context_expr.col_offset, ast.dump(i.context_expr))
+            out += [(i.context_expr.lineno, i.context_expr.col_offset, dump(i.context_expr))
                     for i in n.items if _is_pytest_call(i.context_expr, ("raises", "warns"))]
         elif isinstance(n, ast.Expr) and _is_pytest_call(n.value, ("fail",)):
-            out.append((n.lineno, n.col_offset, ast.dump(n)))
+            out.append((n.lineno, n.col_offset, dump(n)))
     return [d for *_, d in sorted(out)]
 
 
@@ -70,19 +108,28 @@ def functions(source: str) -> dict[str, ast.AST]:
     return out
 
 
-def compare(base: str, path: str) -> tuple[list[str], list[str], list[str], int]:
-    """(changed, vanished, new, functions compared) for one file."""
+def compare(base: str, path: str) -> tuple[list[str], list[str], list[str], int, list[str]]:
+    """(changed, vanished, new, functions compared, reader-only) for one file. A function whose
+    assertions differ ONLY in which page reader they call (equal once every reader is `READ`) is
+    reader-only, listed apart and never counted as changed."""
     try:
-        before = functions(_git("show", f"{base}:{path}"))
+        src_before = _git("show", f"{base}:{path}")
     except subprocess.CalledProcessError:
-        before = {}
-    after = functions((ROOT / path).read_text()) if (ROOT / path).exists() else {}
-    changed = [f"{path}::{k}" for k in sorted(before.keys() & after.keys())
-               if assertions(before[k]) != assertions(after[k])]
+        src_before = ""
+    src_after = (ROOT / path).read_text() if (ROOT / path).exists() else ""
+    before = functions(src_before) if src_before else {}
+    after = functions(src_after) if src_after else {}
+    names = (readers(src_before) if src_before else SUPPORT_READERS) | (
+        readers(src_after) if src_after else SUPPORT_READERS)
+    differ = [k for k in sorted(before.keys() & after.keys())
+              if assertions(before[k]) != assertions(after[k])]
+    reader_only = [f"{path}::{k}" for k in differ
+                   if assertions(before[k], names) == assertions(after[k], names)]
+    changed = [f"{path}::{k}" for k in differ if f"{path}::{k}" not in reader_only]
     vanished = [f"{path}::{k}" for k in sorted(before.keys() - after.keys())
                 if k.rsplit(".", 1)[-1].startswith("test") or assertions(before[k])]
     new = [f"{path}::{k}" for k in sorted(after.keys() - before.keys())]
-    return changed, vanished, new, len(before.keys() & after.keys())
+    return changed, vanished, new, len(before.keys() & after.keys()), reader_only
 
 
 def main(argv: list[str]) -> int:
@@ -98,19 +145,23 @@ def main(argv: list[str]) -> int:
     changed: list[str] = []
     vanished: list[str] = []
     new: list[str] = []
+    reader_only: list[str] = []
     compared = asserts = 0
     for path in files:
-        c, v, n, k = compare(base, path)
+        c, v, n, k, r = compare(base, path)
         changed, vanished, new, compared = changed + c, vanished + v, new + n, compared + k
+        reader_only += r
         if (ROOT / path).exists():
             asserts += sum(len(assertions(f))
                            for f in functions((ROOT / path).read_text()).values())
     print(f"=== assertions at {base[:8]} vs the working tree: {len(files)} file(s), {compared} "
           f"function(s) in both, {asserts} assertion node(s) in the working tree ===")
-    for label, rows in (("CHANGED", changed), ("VANISHED", vanished), ("new", new)):
+    for label, rows in (("CHANGED", changed), ("VANISHED", vanished), ("READER", reader_only),
+                        ("new", new)):
         for r in rows:
             print(f"  {label:8} {r}")
-    print(f"--- changed {len(changed)}, vanished {len(vanished)}, new {len(new)}")
+    print(f"--- changed {len(changed)}, vanished {len(vanished)}, reader-only {len(reader_only)} "
+          f"(the same assertion through another page reader), new {len(new)}")
     return 1 if changed or vanished else 0
 
 
