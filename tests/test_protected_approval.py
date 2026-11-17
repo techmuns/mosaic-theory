@@ -601,3 +601,32 @@ def test_an_amend_reusing_another_commits_message_drops_heads(tmp_path: Path) ->
     assert _check(repo, "--base", "origin/main", "--", "--amend", "-C", approving).returncode == 0
     reused = _load(CHECK).commit_arg_messages(["-qC", "X"], reuse=lambda ref: f"message of {ref}")
     assert reused == ["message of X"]
+
+
+# ── review round 2 (Codex's P2 on c6d54b01) ───────────────────────────────────────────────────
+
+@pytest.mark.parametrize("form,ok", [
+    (["--fixup={t}"], False),           # "fixup! <subject>": HEAD's approved message is replaced
+    (["--fixup", "{t}"], False),
+    (["--fixup=amend:{t}"], False),     # "amend! <subject>" over the target's message, which has
+    (["--fixup=reword:{t}"], False),    # no line: HEAD's is replaced
+    (["--fixup=amend:{a}"], True),      # ...and a target whose message carries the line passes
+    (["--squash={t}"], True),           # "squash! <subject>" ABOVE HEAD's message, which stays
+    (["--squash={t}", "-m", "x"], False),  # unless -m gives one
+])
+def test_an_amend_reads_the_message_every_fixup_and_squash_form_writes(
+        tmp_path: Path, form: list[str], ok: bool) -> None:
+    """Round 2 (Codex P2). `bin/commit --amend --fixup=<c>` kept HEAD's approval while git wrote
+    `fixup! …` without it. Each form is checked locally, then committed for real and checked as CI
+    checks it: the two must agree, so the pin follows git's own writing of the message."""
+    repo = _repo(tmp_path)
+    _git(repo, "commit", "-q", "--allow-empty", "-m", "an unapproved target")
+    target = _git(repo, "rev-parse", "HEAD").strip()
+    _git(repo, "commit", "-q", "--allow-empty", "-m", f"an approved target\n\n{APPROVED}")
+    approving = _git(repo, "rev-parse", "HEAD").strip()
+    _change(repo, "vinci/dossier/verdict.py", f"a change\n\n{APPROVED}")
+    args = [a.format(t=target, a=approving) for a in form]
+    local = _check(repo, "--base", "origin/main", "--", "--amend", *args)
+    assert (local.returncode == 0) is ok, (form, local.stdout + local.stderr)
+    _git(repo, "commit", "-q", "--amend", *args, GIT_EDITOR="true")
+    assert (_ci(repo).returncode == 0) is ok, (form, _git(repo, "log", "-1", "--format=%B"))

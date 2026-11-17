@@ -199,6 +199,25 @@ are FIXED, each behind a pin; items 10 and 11 are recorded.
   holds whatever the check's functions are named.
 - The file now holds 66 nodes: round 0's 48, the 17 new ones, and the protected-entry parametrize's new node for `requirements.lock`.
 
+**Review round 2** (Codex's P2 on `c6d54b01`, the last round): `bin/commit --amend --fixup=<c>`
+kept HEAD's approval, while git wrote `fixup! …` without it. FIXED.
+- Measured on git 2.39 with `--amend`, git writes these messages:
+
+  | form | message written | HEAD's message |
+  |---|---|---|
+  | `--fixup=<c>` | `fixup! <c's subject>` (an `-m` adds a body) | replaced |
+  | `--fixup=amend:<c>`, `reword:<c>` | `amend! <subject>` over c's whole message (git refuses `-m`) | replaced |
+  | `--squash=<c>` | `squash! <subject>` | kept below it, unless an `-m` gives one |
+
+  So `--squash` is not the same case, and is read as a prefix.
+- The pin runs each of 7 forms twice: through the local check, then as a real `git commit` checked
+  as CI checks it. The two must agree.
+  - The 4 `--fixup` forms fail on `c6d54b01`.
+  - The 3 others are agreement cases that pass either way: an `amend:` target carrying the line,
+    `--squash`, and `--squash` with `-m`.
+- 1 mutation (the `amend:` form dropping the target's message) is caught.
+- The file holds 73 nodes.
+
 **BOUNDARY.**
 - **The census** is every transcript present under `~/.claude/projects` on 2026-11-17 that names
   the guard. An ask is a `hook_success` attachment whose stdout carries `"ask"`; its grant is the

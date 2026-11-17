@@ -280,9 +280,11 @@ def _trailer(value: str) -> str:
 def commit_args(args: list[str],
                 reuse: Optional[Callable[[str], str]] = None) -> list[tuple[str, str]]:
     """What a `git commit` invocation writes into its message, as (kind, text): "message" for
-    -m/--message, -F/--file and a commit's message reused by -C/-c (--reuse-message,
-    --reedit-message; read through ``reuse``, or "" without one), "trailer" for each --trailer.
-    Clustered short flags included (`-qm`, `-am`, `-qC`). The editor and `-F -` are not read."""
+    -m/--message, -F/--file, a commit's message reused by -C/-c (--reuse-message,
+    --reedit-message) and every --fixup form, each of which replaces HEAD's on --amend;
+    "prefix" for --squash, which does not; "trailer" for each --trailer. A commit's message is
+    read through ``reuse`` ("" without one). Clustered short flags included (`-qm`, `-am`,
+    `-qC`). The editor and `-F -` are not read."""
     out: list[tuple[str, str]] = []
 
     def take(flag: str, value: str) -> None:
@@ -292,10 +294,25 @@ def commit_args(args: list[str],
             out.append(("message", _read(value)))
         elif flag in ("-C", "-c", "--reuse-message", "--reedit-message"):
             out.append(("message", reuse(value) if reuse else ""))
+        elif flag == "--fixup":
+            # what git writes, measured on git 2.39 (#1104 round 2, Codex): `--fixup=<c>` writes
+            # "fixup! <c's subject>" (an -m adds a body); `amend:<c>` and `reword:<c>` write
+            # "amend! <subject>" over c's whole message. Each REPLACES HEAD's message on --amend.
+            kind, _, target = value.partition(":") if value.startswith(("amend:", "reword:")) \
+                else ("", "", value)
+            text = reuse(target) if reuse else ""
+            subject = " ".join(text.split("\n\n", 1)[0].split())
+            out.append(("message", f"amend! {subject}\n\n{text}" if kind else f"fixup! {subject}"))
+        elif flag == "--squash":
+            # "squash! <c's subject>", and on --amend git KEEPS HEAD's message beneath it unless a
+            # -m/-F gives one: a prefix, never a replacement
+            text = reuse(value) if reuse else ""
+            out.append(("prefix", "squash! " + " ".join(text.split("\n\n", 1)[0].split())))
         else:
             out.append(("trailer", _trailer(value)))
 
-    long_valued = ("--message", "--file", "--reuse-message", "--reedit-message", "--trailer")
+    long_valued = ("--message", "--file", "--reuse-message", "--reedit-message", "--trailer",
+                   "--fixup", "--squash")
     i = 0
     while i < len(args):
         a, nxt = args[i], (args[i + 1] if i + 1 < len(args) else None)
