@@ -1845,6 +1845,14 @@ def bear_consensus_problems(rec: ScenarioRecord) -> list[str]:
             out.append(f"ntm_consensus_eps is read only on an R3 record — on {rec.recipe_id} it "
                        "bounds no leg, so it is refused rather than carried")
         return out
+    # ONE LINE PER RECORD: the ratio subtracts the bear's value from the base's, so legs on two
+    # lines move the unlike comparison out of the bound and into the ratio itself
+    stated = {name: leg.eps_line for name, leg in (rec.scenarios or {}).items() if leg.eps_line}
+    if len(set(stated.values())) > 1:
+        out.append("the legs state different EPS lines ("
+                   + ", ".join(f"{k} {v}" for k, v in sorted(stated.items()))
+                   + ") — the ratio would compare values struck on two quantities; strike every "
+                   "leg on one line")
     bear = (rec.scenarios or {}).get("bear")
     if bear is None or bear.eps is None:
         return out                 # a missing leg or EPS is `validate_legs`' and `_run_r3`'s

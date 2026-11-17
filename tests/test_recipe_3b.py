@@ -118,7 +118,7 @@ def test_a_superseded_r2_payload_is_struck_nominal(
     is struck nominal, and the command says so before anything else it decides."""
     payload = json.loads((ROOT / "scenarios" / "NCNO.json").read_text())
     out = _supersede(_stage(tmp_path, monkeypatch, "NCNO", payload), capsys)
-    assert "the reissue is struck NOMINAL" in out, out
+    assert "the reissue is struck NOMINAL" in out and "drop it" in out, out
     assert (tmp_path / "scenarios" / "NCNO.json").read_text() == (
         ROOT / "scenarios" / "NCNO.json").read_text(), "a dry run wrote"
 
@@ -294,3 +294,15 @@ def test_the_r3_template_asks_for_the_line_and_names_the_pages() -> None:
         cell = tpl["scenarios"][leg]
         assert cell["eps_line"] is None
         assert "struck on gaap" in cell["_eps_line_why"]
+
+
+def test_legs_on_two_lines_are_refused() -> None:
+    """(−, review round 0) A bear on one line and a base on another moves the unlike comparison
+    into the ratio itself; the legs strike on one line."""
+    rec = _googl_new("gaap")
+    mixed = rec.model_copy(update={"scenarios": {**rec.scenarios, "bear": rec.scenarios[
+        "bear"].model_copy(update={"eps_line": "normalized"})}})
+    assert any(p.startswith("the legs state different EPS lines")
+               for p in sc.bear_consensus_problems(mixed))
+    assert not any(p.startswith("the legs state different EPS lines")
+                   for p in sc.bear_consensus_problems(rec))

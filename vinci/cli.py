@@ -2844,7 +2844,8 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
         _r2_legacy = None
     if _r2_legacy is not None and incoming.recipe_formula == _r2_legacy:
         print("  ⚠ R2: the payload carries the PV-ratio stamp; the reissue is struck NOMINAL "
-              "(on value_T) under the new chain")
+              "(on value_T) under the new chain — a result the payload STATES was struck on the "
+              "PV, so drop it and let the recipe compute it")
         incoming = incoming.model_copy(update={"recipe_formula": []})
     # ...and none lands struck at a year the decomposition does not use, unexplained. `doc` is
     # None when the name has no committed dossier (WERN), and `leg_fy_problems` treats a missing
