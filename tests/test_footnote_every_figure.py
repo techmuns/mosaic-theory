@@ -302,18 +302,45 @@ def test_every_sleeve_carries_the_footnote_rule() -> None:
         assert "(13) FOOTNOTE EVERY FIGURE" in syn.system_for(key), key
 
 
+def _quality_stating_the_example() -> dict[str, Any]:
+    """LLY's frozen quality block (a439eabe, the real type), with the four facts the example's
+    refs name made to state the example's figures in place of LLY's. Since fix 4b the example is
+    FICTIONAL by design (no filer's figures, no rebuttal), so no committed page states them; the
+    guard is checked on the very fields the example cites, each moved by structure."""
+    q: dict[str, Any] = json.loads(_LLY_QUALITY.read_text())["quality"]
+    fcf = q["free_cash_flow"]
+    assert fcf["value"] == 9343.7
+    fcf["value"] = 412.6
+    for old, new in (("30,645.0", "1,205.0"), ("10,984.0", "388.0"), ("19,661.0", "817.0")):
+        assert old in fcf["note"]
+        fcf["note"] = fcf["note"].replace(old, new)
+    trend = q["margin_trend"]
+    assert trend["value"].count("(LTM) 46,489") == 1
+    trend["value"] = trend["value"].replace("(LTM) 46,489", "(LTM) 1,870")
+    lev = q["net_debt_to_ebitda"]
+    assert lev["value"] == 0.9
+    lev["value"] = 2.4
+    lev["source_ref"] = ("CIQ Net Debt $4,488M [Q3 Sep-30-2026] ÷ CIQ EBITDA $1,870M "
+                         "[LTM 12 months Sep-30-2026]")
+    cov = q["interest_coverage"]
+    assert cov["value"] == 121.4
+    cov["value"] = 6.2
+    return q
+
+
 def test_the_prompts_literal_example_checks_clean_against_the_facts_it_cites() -> None:
-    """The example is real: LLY's committed bear point at a439eabe, its refs read from that page. On
-    LLY's frozen quality block it traces figure by figure, the computed one included."""
+    """The example's SHAPE is one the trace accepts: on a quality block stating its figures
+    (`_quality_stating_the_example`) it traces figure by figure, the computed one included, and
+    unfootnoted it flags exactly the figures its own ref does not state."""
     ex = _example()
     p = ds.SourcedPoint.model_validate({**ex, "source_ref": ex["figures"][0]["source_ref"]})
     assert len(p.figures) == 7 and sum(f.derived is not None for f in p.figures) == 1
-    quality = json.loads(_LLY_QUALITY.read_text())["quality"]
+    quality = _quality_stating_the_example()
     mech = _frozen().model_copy(update={"quality": ds.Quality.model_validate(quality)})
     assert [f for f in _flags(mech, p) if f.startswith(("UNTRACEABLE", "UNDERIVED",
                                                          "MISMATCH"))] == []
     unfootnoted = p.model_copy(update={"figures": []})
-    assert _flagged(mech, unfootnoted) == ["46489", "121.4", "0.9"]
+    assert _flagged(mech, unfootnoted) == ["1870", "6.2", "2.4"]
 
 
 # --- (4) refs on the blocks the assembler builds -------------------------------------------------
