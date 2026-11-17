@@ -91,9 +91,6 @@ def test_smpls_page_reads_multiple_dominant() -> None:
     body = block(FROZEN_SMPL)
     assert "**multiple-dominant** at FY2026" in body
     assert "does not move with the year" in body, "the cross-year check is missing from the page"
-    def _gap_of(d: dict) -> dict:
-        return (d.get("mechanical") or {}).get("ev_gap") or {}
-
     for t, doc in covered_where(lambda _t, d: _gap_of(d).get("status") == "computed"
                                 and bool(_gap_of(d).get("shape")), "prints a gap shape"):
         g = _gap_of(doc)
@@ -161,14 +158,17 @@ def test_the_render_never_restrikes_tev_itself() -> None:
 
 # --- THE TOTAL GAP NEEDS NO CONSENSUS (operator's revised R2 ruling, 2026-08-03) ---------------
 
-def _gapj(t: str) -> dict:
-    doc = json.loads((_folder(t) / "dossier.json").read_text())
+def _gap_of(doc: dict) -> dict:
+    """A parsed page's `ev_gap` block, or {}: the one read the helpers below and the walks share."""
     return (doc.get("mechanical") or {}).get("ev_gap") or {}
+
+
+def _gapj(t: str) -> dict:
+    return _gap_of(json.loads((_folder(t) / "dossier.json").read_text()))
 
 
 def _living_gapj(t: str) -> dict:
-    doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
-    return (doc.get("mechanical") or {}).get("ev_gap") or {}
+    return _gap_of(json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text()))
 
 
 TOTAL = sorted(f.name for f in DOSSIERS if _living_gapj(f.name).get("status") == "computed")

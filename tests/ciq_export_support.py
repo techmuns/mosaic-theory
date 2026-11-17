@@ -34,6 +34,7 @@ file the code under test reads.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
@@ -123,9 +124,17 @@ def archive_roots(ticker: str) -> list[Path]:
 
 def archived_bundle(ticker: str, kind: str, sha: str, *,
                     freq: str | None = None) -> CiqBundle | None:
-    """The bundle of the one archived folder for ``ticker`` whose ``kind`` export has sha256
+    """The bundle of the first archived folder for ``ticker`` whose ``kind`` export has sha256
     prefix ``sha``, or None. The WHOLE folder is the bundle — one pull, never one archived
     workbook spliced into the live folder's other exports."""
+    return next(archived_bundles(ticker, kind, sha, freq=freq), None)
+
+
+def archived_bundles(ticker: str, kind: str, sha: str, *,
+                     freq: str | None = None) -> Iterator[CiqBundle]:
+    """Every archived folder for ``ticker`` whose ``kind`` export has sha256 prefix ``sha``, in
+    `archived_bundle`'s order. One export can sit in several archived folders (it outlives a
+    re-export of another kind), so a pin keyed on TWO exports searches all of them."""
     for root in archive_roots(ticker):
         for folder in sorted(p for p in root.rglob(ticker.upper()) if p.is_dir()):
             files = sorted(p for p in folder.iterdir()
@@ -139,8 +148,7 @@ def archived_bundle(ticker: str, kind: str, sha: str, *,
                 # other archived folders
                 continue
             if held == sha:
-                return bundle
-    return None
+                yield bundle
 
 
 def skip_unless_export(ticker: str, kind: str, sha: str, *, why: str, freq: str | None = None,

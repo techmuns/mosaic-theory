@@ -62,8 +62,14 @@ superseded-by:
   export and a stand-in archive holding AMZN's: all three passed, reading the archive. (Found in
   slice 2's review, where the same gate had skipped after any re-export.) The bridge also finds a
   Financials-only re-export: the live folder then holds the page's Estimates beside another
-  Financials, and the archived folder holding the bands' Financials serves, if its Estimates are
-  the page's too (this slice's review).
+  Financials, and EVERY archived folder holding the bands' Financials is searched for one whose
+  Estimates are the page's too (this slice's reviews: the second found that taking only the first
+  such folder skipped after an Estimates-only re-export followed by a Financials-only one, while a
+  later archived folder held both; replayed in scratch on AMZN's real exports, the first-folder
+  helper skipped and this one ran on that later folder). For that search the shared
+  `tests/ciq_export_support.py` gains `archived_bundles`, every archived folder holding an export,
+  and `archived_bundle` becomes its first, its behaviour unchanged (`test_ciq_export_support`
+  passes, 18 of 18).
 - **Both twins on one vintage.** `test_anchor_point_in_time_shares`'s web twin read the living
   `frontend/dossiers/` mirrors of TJX and LLY, which no longer match the cut its markdown twin
   reads. It now renders the cut's pages too (this slice's review).
@@ -82,8 +88,9 @@ row 41 (a)). This slice moves that cost off the valuation group, which had the m
   checker exits 1.
 - **Each walk was run on every page it walks before it moved** (the populations above). No page
   failed one.
-- **The files.** The 23 changed files, offline, with the CIQ link present: 722 passed, 24 skipped,
-  15 failed. Main `8a71a383` with the same link fails the same 15 (the mislabelled PARR workbook,
+- **The files.** The 23 changed test files, offline, with the CIQ link present: 722 passed, 24
+  skipped, 15 failed (after the second review, with `test_ciq_export_support` added: 740 passed,
+  the same 15 failed). Main `8a71a383` with the same link fails the same 15 (the mislabelled PARR workbook,
   re-exported CIQ data) and passes 724. The two fewer items are `test_consensus_parity`'s three
   parametrized cases, now one walk: 10 → 8 collected, and no other file's count moves.
 - **The scan** (`named_page_pins.py HEAD`, against main at `8a71a383`): 423 → 307 pairs (value

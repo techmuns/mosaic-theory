@@ -200,7 +200,7 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap() -> None:
         # one (2026-11-04: SMPL's 2026-10-28 export read ≥2026-10-27 against its page's
         # ≥2026-07-21).
         try:
-            skip_unless_pages_export(ticker, "estimates")
+            skip_unless_pages_export(ticker, "estimates", page=page)   # the page walked
         except pytest.skip.Exception:
             unverified.append(f"{ticker} (another estimates export on disk)")
             continue

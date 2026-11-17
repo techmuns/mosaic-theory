@@ -28,10 +28,11 @@ from typing import Any
 
 import pytest
 
-from tests.ciq_export_support import archived_bundle, export_sha, skip_unless_export
+from tests.ciq_export_support import archived_bundles, export_sha
 from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import manual_store as ms
+from vinci.dossier.ciq import CiqAmbiguousError
 from vinci.dossier.schemas import Dossier, EvBridge, dossier_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -271,26 +272,39 @@ def _the_pages_exports(doc: dict[str, Any], b: Any, ticker: str,
                        monkeypatch: pytest.MonkeyPatch) -> Any:
     """THE FROZEN PAGE NAMES BOTH ITS EXPORTS: the Estimates export its `forward_consensus` stamps
     and the quarterly Financials export its trailing bands stamp. The pin runs on the folder that
-    holds both: the folder's own while it does, else the archived folder holding the Estimates
-    export (`tests/ciq_export_support.skip_unless_export`, the whole folder, one pull), whose
-    Financials export must be the bands' too — else the archived folder holding the bands'
-    Financials export, whose Estimates export must be the page's (a Financials-only re-export
-    leaves the page's Estimates in the live folder beside another Financials). The transform reads
-    that same folder. It SKIPS, naming both sha256s, when no folder holds both (a skip, never a
-    looser assertion). RUN THE PIN ON THE BUNDLE THIS RETURNS."""
+    holds both: the folder's own while it does, else EVERY archived folder holding the bands'
+    Financials export is searched for the page's Estimates beside it (the whole folder, one pull:
+    `tests/ciq_export_support.archived_bundles`). Every one, not the first: one export outlives a
+    re-export of the other kind, so it sits in several archived folders, and the first may hold
+    the other kind's older export (an Estimates-only re-export, then a Financials-only one). The
+    transform reads that same folder. It SKIPS, naming both sha256s, when no folder holds both (a
+    skip, never a looser assertion). RUN THE PIN ON THE BUNDLE THIS RETURNS."""
     est = str(doc["forward_consensus"]["source_sha256"])
-    got = skip_unless_export(ticker, "estimates", est,
-                             why="the frozen page names this Estimates export", bundle=b)
     stamps = sorted({str(x.get("source_sha256"))
                      for x in doc["mechanical"]["valuation"]["own_history"]["value"] or []})
-    held = export_sha(ticker, "financials", freq="quarterly", bundle=got)
-    if held not in stamps and len(stamps) == 1:
-        alt = archived_bundle(ticker, "financials", stamps[0], freq="quarterly")
-        if alt is not None and export_sha(ticker, "estimates", bundle=alt) == est:
-            got, held = alt, stamps[0]
-    if held not in stamps:
-        pytest.skip(f"{ticker}: the Financials export beside the page's Estimates export ({held}) "
-                    f"is not the one the frozen page's bands name ({', '.join(stamps)})")
+    if len(stamps) != 1:   # as `test_forward_multiple_history._the_bands_export`: a frozen page
+        pytest.fail(f"{ticker}: the frozen page's bands name {len(stamps)} exports ({stamps}), "
+                    "so no one export is the page's")
+    fin = stamps[0]
+
+    def holds_both(cand: Any) -> bool:
+        return (export_sha(ticker, "estimates", bundle=cand) == est
+                and export_sha(ticker, "financials", freq="quarterly", bundle=cand) == fin)
+
+    got = b if holds_both(b) else None
+    for cand in ([] if got is not None else
+                 archived_bundles(ticker, "financials", fin, freq="quarterly")):
+        try:
+            if holds_both(cand):
+                got = cand
+                break
+        except CiqAmbiguousError:
+            continue   # an archived folder of two exports of one kind is no page's
+    if got is None:
+        pytest.skip(f"{ticker}: no folder, live or under ciq-archive/, holds both the frozen "
+                    f"page's Estimates export ({est}) and its bands' Financials export ({fin}); "
+                    f"the live folder holds {export_sha(ticker, 'estimates', bundle=b)} and "
+                    f"{export_sha(ticker, 'financials', freq='quarterly', bundle=b)}")
     folder = got.workbooks[0].path.parent
     monkeypatch.setattr(ms.LocalFolderStore, "from_config",
                         staticmethod(lambda _cfg=None: ms.LocalFolderStore(folder.parent)))
