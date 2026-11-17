@@ -19,6 +19,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num, excel_date
 from vinci.dossier.schemas import (
@@ -208,9 +209,7 @@ def test_the_layer_is_never_synthesis_input() -> None:
 
 
 def test_absent_until_built_and_it_sits_before_the_anchor() -> None:
-    path = ROOT / "data" / "dossiers" / "AMZN" / "dossier.json"
-    if not path.exists():
-        pytest.skip("no committed AMZN dossier")
+    path = frozen_page("AMZN") / "dossier.json"   # the page as frozen at the cut
     doc = Dossier.model_validate_json(path.read_text())
     if doc.forward_multiple_history is None:
         assert '"forward_multiple_history"' not in dossier_json(doc), "absent was written as a key"
@@ -222,14 +221,27 @@ def test_absent_until_built_and_it_sits_before_the_anchor() -> None:
 
 
 def _copy_page(tmp_path: Path, ticker: str) -> Path:
-    src = ROOT / "data" / "dossiers" / ticker
-    if not (src / "dossier.json").exists():
-        pytest.skip(f"no committed {ticker} dossier")
+    """``ticker``'s page, as frozen at the cut (`tests/frozen_support.py`), copied to tmp."""
+    src = frozen_page(ticker)
     folder = tmp_path / ticker
     folder.mkdir()
     for name in ("dossier.json", "dossier.md"):
         (folder / name).write_text((src / name).read_text())
     return folder / "dossier.json"
+
+
+def _skip_unless_the_bands_name(doc: dict[str, Any], b: CiqBundle, ticker: str) -> None:
+    """A frozen page beside the LIVE export runs only while the Financials export on disk is the
+    one its trailing bands name; otherwise it SKIPS naming both (a skip, never a looser assertion:
+    `tests/ciq_export_support.py`). The living page would wait for a re-assembly; the frozen one
+    waits for a new cut."""
+    bands = doc["mechanical"]["valuation"]["own_history"]["value"] or []
+    stamps = sorted({str(x.get("source_sha256")) for x in bands})
+    built = cs.forward_multiple_history(b)
+    held = built.source_sha256 if built is not None else None
+    if held not in stamps:
+        pytest.skip(f"{ticker}: the Financials export on disk ({held}) is not the one the frozen "
+                    f"page's bands name ({', '.join(stamps)}) — cut the page anew on it")
 
 
 def test_the_refresh_lands_the_layer_and_moves_nothing_else(tmp_path: Path) -> None:
@@ -241,6 +253,7 @@ def test_the_refresh_lands_the_layer_and_moves_nothing_else(tmp_path: Path) -> N
     b = _bundle("AMZN")
     path = _copy_page(tmp_path, "AMZN")
     before = json.loads(path.read_text())
+    _skip_unless_the_bands_name(before, b, "AMZN")
     md_before = path.with_name("dossier.md").read_text()
     refresh_dossier(path, top_level=forward_multiple_history_transform("AMZN"))
     after = json.loads(path.read_text())
@@ -258,9 +271,9 @@ def test_a_page_that_cannot_name_this_export_is_left_alone() -> None:
     layer would put a second vintage on it. It waits for a re-assembly."""
     from vinci.dossier.refresh import forward_multiple_history_transform
 
-    _bundle("AMZN")
-    doc: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    b = _bundle("AMZN")
+    doc: dict[str, Any] = frozen_doc("AMZN")   # the page as frozen at the cut
+    _skip_unless_the_bands_name(doc, b, "AMZN")
     step = forward_multiple_history_transform("AMZN")
     assert "forward_multiple_history" in step(doc)
     bands = doc["mechanical"]["valuation"]["own_history"]["value"]

@@ -10,9 +10,11 @@ from __future__ import annotations
 
 import json
 import pathlib
+from typing import Any
 
 import pytest
 
+from tests.frozen_support import covered_where, frozen_doc
 from vinci.dossier.ev_gap import BasisMismatchError, EvGapInputs, anchor_year, decompose
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -109,7 +111,7 @@ def test_the_anchor_is_the_nearest_year_where_both_metrics_resolve() -> None:
     """EPAM CARRIES REVENUE 5fy AGAINST EBITDA 3fy. Revenue's furthest year would leave the margin
     ratio uncomputable, so the anchor is the intersection — and NEAREST within it, because the
     closest forward year is the one the market is pricing."""
-    epam = json.loads((ROOT / "data" / "dossiers" / "EPAM" / "dossier.json").read_text())
+    epam = frozen_doc("EPAM")   # EPAM's spans, as frozen at the cut
     levels = epam["mechanical"]["consensus_context"]["consensus_levels"]
     rev = {str(c["fy"]) for c in levels["Revenue"]}
     ebitda = {str(c["fy"]) for c in levels["EBITDA"]}
@@ -118,14 +120,22 @@ def test_the_anchor_is_the_nearest_year_where_both_metrics_resolve() -> None:
     assert got is not None and got in rev and got in ebitda
     assert got == min(rev & ebitda, key=int)
 
-    # the year off SMPL's frozen 2026-08-18 page; its living page (re-assembled on the FY2026 10-K,
-    # 2026-11-04) is held to the same rule, nearest year both metrics carry, at whatever year it is
+    # the year off SMPL's frozen 2026-08-18 page; every covered living page (the roster, never a
+    # named one) is held to the same rule, nearest year both metrics carry, at whatever year it is
     frozen = json.loads((ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"
                          / "dossier.json").read_text())
     assert anchor_year(frozen["mechanical"]["consensus_context"]["consensus_levels"]) == "2026"
-    smpl = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
-    now = smpl["mechanical"]["consensus_context"]["consensus_levels"]
-    both = {str(c["fy"]) for c in now["Revenue"]} & {str(c["fy"]) for c in now["EBITDA"]}
-    assert anchor_year(now) == min(both, key=int)
+    def _levels(d: dict[str, Any]) -> dict[str, Any]:
+        return (d["mechanical"].get("consensus_context") or {}).get("consensus_levels") or {}
+
+    def common(_t: str, d: dict[str, Any]) -> bool:
+        lv = _levels(d)
+        return bool({str(c["fy"]) for c in lv.get("Revenue") or []}
+                    & {str(c["fy"]) for c in lv.get("EBITDA") or []})
+
+    for _t, page in covered_where(common, "carries a year both Revenue and EBITDA cover"):
+        now = _levels(page)
+        both = {str(c["fy"]) for c in now["Revenue"]} & {str(c["fy"]) for c in now["EBITDA"]}
+        assert anchor_year(now) == min(both, key=int)
 
     assert anchor_year({"Revenue": [{"fy": "2026"}]}) is None, "one metric is not an anchor"
