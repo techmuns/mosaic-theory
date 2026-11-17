@@ -48,9 +48,14 @@ def _decisions_at_the_cut_still_covered() -> set[str]:
     (`tests/frozen_support.py`; 4 there: AMZN, CNXC, GOOGL, UBER), on the names the coverage roster
     still covers. The floor the two decision pins hold the living fleet to, BY NAME: a retirement
     lowers it by that name's own decision, never by a test edit, and a decision a covered page
-    loses still goes red even when another page gains one (a count would net the two)."""
-    return {t for t in covered_pages() if (CUT / t).is_dir()
-            and (frozen_doc(t).get("anchor") or {}).get("operator_decision")}
+    loses still goes red even when another page gains one (a count would net the two). It fails
+    loud when the last of them leaves coverage: an empty floor holds no page to anything, and the
+    two pins would pass on a fleet with no decision at all."""
+    floor = {t for t in covered_pages() if (CUT / t).is_dir()
+             and (frozen_doc(t).get("anchor") or {}).get("operator_decision")}
+    assert floor, ("no covered page carried an operator decision at the cut — the decision pins "
+                   "hold nothing; pin the shape on a frozen copy (tests/frozen_support.py)")
+    return floor
 
 
 def _pages() -> list[Path]:
@@ -212,9 +217,10 @@ def test_md_operator_decisions_stay_on_the_brief_e2e() -> None:
         assert md.count(head) == 1, f"{tkr}: the decision renders more than once"
         assert head not in "\n".join(_screening_context_lines(anchor)), (
             f"{tkr}: the decision still rides inside the screening block")
-    assert decided >= _decisions_at_the_cut_still_covered(), (
-        f"expected the recorded decisions (AMZN, CNXC, GOOGL, UBER at the cut), saw "
-        f"{sorted(decided)}")
+    floor = _decisions_at_the_cut_still_covered()
+    assert decided >= floor, (
+        f"a covered page lost its recorded decision: {sorted(floor - decided)} (the cut's "
+        f"{sorted(floor)}), saw {sorted(decided)}")
 
 
 def test_md_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:
@@ -429,9 +435,10 @@ def test_web_operator_decisions_stay_on_the_brief_collapsed_force_open_and_print
         block = brief.find(_BLOCK)
         assert block < 0 or at < block, f"{t}: the decision still rides inside the screening block"
         assert dec["head"] not in p["analysis"], f"{t}: the decision renders under Analysis"
-    assert decided >= _decisions_at_the_cut_still_covered(), (
-        f"expected the recorded decisions (AMZN, CNXC, GOOGL, UBER at the cut), saw "
-        f"{sorted(decided)}")
+    floor = _decisions_at_the_cut_still_covered()
+    assert decided >= floor, (
+        f"a covered page lost its recorded decision: {sorted(floor - decided)} (the cut's "
+        f"{sorted(floor)}), saw {sorted(decided)}")
 
 
 def test_web_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:

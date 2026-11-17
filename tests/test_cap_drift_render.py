@@ -225,7 +225,9 @@ def test_the_committed_json_still_carries_the_inputs_to_reproduce_it() -> None:
     """The mark is DERIVED at render, not stored — so the JSON must keep the three inputs it is
     derived from, or the machine-complete tier stops being able to reproduce the page: on every
     covered page (the roster), never a named one."""
-    for _t, doc in covered_where(lambda _t, _d: True, "to reproduce"):
-        si = doc["mechanical"]["stock_info"]
+    for t, doc in covered_where(lambda _t, _d: True, "to reproduce"):
+        si = doc["mechanical"].get("stock_info")
+        assert si is not None, f"{t}: the stock_info block must remain in the JSON"
         for field in ("market_cap", "shares_out", "price"):
-            assert si[field]["value"] is not None, f"{field} must remain in the JSON"
+            assert (si.get(field) or {}).get("value") is not None, (
+                f"{t}: {field} must remain in the JSON")

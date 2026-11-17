@@ -21,7 +21,11 @@ superseded-by:
     slice does not otherwise edit now read the cut as well: `test_evals_independence`,
     `test_evals_run_builds` (NFLX), `test_evals_order8` (SMPL) and `test_evidence_same_passage`
     (GOOGL). Each uses the page as a host for invented rows or a replay, and all four files pass
-    (96 tests). Its corpus walk, `committed_pages()`, still reads the living pages.
+    (96 tests). Seven more files reach it through the module's own wrappers and read the cut too:
+    `replayable_text` (`test_evals_compare`, `test_evals_pr2_round2`, `test_evals_replication_rule`,
+    `test_evals_m_gap`) and `synthetic_page` (`test_driver_facts`, `test_driver_evidence`,
+    `test_driver_facts_page_pass`); their host-page pins pass (second review, round 0). Its corpus
+    walk, `committed_pages()`, still reads the living pages.
   - `test_pages_await_parser_rebuild`: every landed pin reads the cut (`_PAGES = CUT`). A new
     awaiting pin watches a living page by design, so it reads `living_doc`.
   - `test_surprise_listing_block`: its two strict-xfail tripwires (NFLX, PARR) flip when the
@@ -118,9 +122,9 @@ false positives; the ratchet; the AMZN replay; STATE row 41.
 1. **A walk's floor fails loud** when the last covered page with its property leaves (A's ruling).
    The R1-record walk is the nearest case: 5 names. Falsifier: a walk passes on an empty
    population.
-2. **The decision floor is the cut's count, not a constant.** A decision recorded after the cut
-   raises nothing until the page is cut anew. Falsifier: a covered page at the cut loses its
-   decision and the pin stays green.
+2. **The decision floor is the cut's names, not a constant.** A decision recorded after the cut
+   raises nothing until the page is cut anew; the floor fails loud once none of the cut's names
+   is covered. Falsifier: a covered page at the cut loses its decision and the pin stays green.
 3. **The tripwires still read living pages.** NFLX's and PARR's strict xfails watch for the living
    page's re-read, so they still name it, behind a roster skip.
 4. **Seventeen moved reads name the cut by path** (`tests/fixtures/frozen_pages/cut-4889ddba/<T>/`,

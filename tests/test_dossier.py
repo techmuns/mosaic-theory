@@ -8909,9 +8909,9 @@ def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read()
     def logged_r1(t: str, _doc: dict[str, Any]) -> bool:
         return Path(f"scenarios/{t}.json").exists() and read_record(t).recipe_id == RECIPE_R1
 
-    for t, _doc in covered_where(logged_r1, "has a live R1 record"):
+    for t, doc in covered_where(logged_r1, "has a live R1 record"):
         card = read_record(t)
-        d = ds.Dossier.model_validate_json(Path(f"data/dossiers/{t}/dossier.json").read_text())
+        d = ds.Dossier.model_validate(doc)   # the living page the walk handed back
         md = dr.render_markdown(d, card=card)
         glance = md.split("## At a glance")[1].split("\n## ")[0]
 

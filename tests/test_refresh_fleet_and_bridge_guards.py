@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.frozen_support import covered_where, frozen_doc, frozen_page
+from tests.frozen_support import covered_pages, frozen_doc, frozen_page
 from vinci.dossier import render as dr
 from vinci.dossier import schemas as ds
 from vinci.dossier.ev_gap import build_ev_gap
@@ -65,7 +65,8 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     # a correctly rebuilt mirror read as stale.
     sentinel = "MIRROR-NOT-REBUILT-SENTINEL-3f9c1e"
     # every covered page's mirror, walked by the roster, never a named one (W27)
-    names = [t for t, _ in covered_where(lambda _t, _d: True, "to mirror")]
+    names = covered_pages()
+    assert names, "no covered page to mirror — the walk would check nothing (W27)"
     for t in names:
         mirror = tmp_path / "frontend" / "dossiers" / f"{t}.md"
         mirror.write_text(f"{sentinel} — this must be overwritten by the pass\n")
