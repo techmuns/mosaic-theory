@@ -1,6 +1,6 @@
 ---
 id:
-status: shipped
+status: open
 date: 2026-11-17
 prs: []
 supersedes:
@@ -51,8 +51,18 @@ superseded-by:
   - **this code:** 2 of 2 read in **5 of 5** trials, 0 of 10 lost.
   - **No text moves.** Read alone, main's command and this code give the same text: Q1 6,584 words, sha256 `f0f9d7d495…`; Q2 7,464 words, `a6904be912…`; the whole slice `87ecb881f9dc…`.
 - **Nothing left behind.** After 10 pin runs and 10 VRRM trials, the temp dir held 0 `vinci-soffice-profile-*` folders.
-- **Gate:** GATE_LINE
-- **Impact check:** IMPACT_LINE
+- **Gate:** At head `86c5ee33` (main `8a71a383` merged), with CIQ linked and no `data/cache` or price store in the worktree:
+  - ruff and `mypy --strict vinci` are clean.
+  - `pytest -m "not network" -n auto` gave 12,462 passed, 56 failed, 116 skipped and 7 xfailed (39 deselected), from its progress lines.
+  - **1 failure was this PR's:** this record said `shipped` with an empty `prs:`. It was set to `open` until its number exists.
+  - **The other 55 fail identically on main `8a71a383`** in the same environment: re-run on main's code, 0 failed only here. Among the causes are PARR's mislabelled quarterly Financials export in the live CIQ folder; re-pulled V, GOOGL and LLY exports; the transcript-run guard, with no `data/cache/sec` to excuse a window; and #1097's `test_the_reader_reads_its_date_off_the_real_workbook`, which calls `filed_through()` without its `read_on`.
+  - **Main's own suite collides.** `test_transcript_run_guard`'s 26 page tests were run with 6 workers. At main `8a71a383` they failed on 18 pages ("LibreOffice fails a conversion while another runs"). On this branch they failed on 1: PARR, which fails on main as well. Run alone on main, AMZN's passes.
+- **Impact check:** `python -m vinci.impact run`, base `8a71a383`, head `86c5ee33`, patch-id `1e51ff4d…`, $0:
+  - 6 of 35 changed-test nodes fail at base and pass at head, and 0 fail at head.
+  - **0 of 25 pages move.** PARR was not built at base, because of its mislabelled export.
+  - 0 of 25 synthesis requests and 0 of 6 frozen panel pages differ, so the row-53 panel check is not owed.
+  - 0 committed pages re-render. The ledger, scoring report and monitor are identical at both refs.
+  - `verify`: VALID.
 
 **BOUNDARY.**
 - Every run was on this machine (macOS 14.5, LibreOffice 26.2.4.2), on 2026-11-17, against main `6b5fbe51` and this branch.
