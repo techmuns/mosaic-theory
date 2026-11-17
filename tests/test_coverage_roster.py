@@ -245,6 +245,28 @@ def test_every_reader_refuses_a_page_the_roster_does_not_agree_with(
     assert name in str(err.value)
 
 
+def test_a_build_the_roster_refuses_leaves_the_served_mirror_as_it_was(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The refusal comes BEFORE the mirror is cleared: a build that stops on a disagreement leaves
+    the served `frontend/dossiers` and `frontend/snapshots` as they were, never deleted. (The first
+    cut checked the roster after `shutil.rmtree` of both, so a refused build wiped the mirror.)"""
+    tree = _tree(tmp_path, "no_page")
+    build = _build()
+    out_doss, out_snap = tmp_path / "out" / "dossiers", tmp_path / "out" / "snapshots"
+    for d in (out_doss, out_snap):
+        d.mkdir(parents=True)
+        (d / "served.json").write_text("{}")
+    monkeypatch.setattr(build, "DOSS", tree / "data" / "dossiers")
+    monkeypatch.setattr(build, "COVERAGE", tree / "data" / roster.ROSTER_NAME)
+    monkeypatch.setattr(build, "ROOT", tree)
+    monkeypatch.setattr(build, "OUT_DOSS", out_doss)
+    monkeypatch.setattr(build, "OUT_SNAP", out_snap)
+    with pytest.raises(SystemExit) as err:
+        build.main([])
+    assert "FUBO" in str(err.value)
+    assert (out_doss / "served.json").is_file() and (out_snap / "served.json").is_file()
+
+
 def test_the_build_twin_agrees_with_the_backend_reader_on_the_committed_tree() -> None:
     """The stdlib twin is pinned to `vinci.coverage_roster` on the real tree, as the labels twin
     is, and the committed index lists exactly the covered names."""

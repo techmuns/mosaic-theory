@@ -370,7 +370,8 @@ def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> Non
     assert {"AORT", "MVST"} <= set(retired) <= set(roster.retired(ROOT / "data"))
     book = _watch_tickers(ROOT)
     assert book, "the committed book carries a watch name, so the check is not vacuous"
-    assert book & set(roster.retired(ROOT / "data")) == set(), sorted(book & set(retired))
+    gone = set(roster.retired(ROOT / "data"))
+    assert book & gone == set(), sorted(book & gone)
     scratch = tmp_path / "scenarios"
     scratch.mkdir()
     for p in (ROOT / "scenarios").glob("*.json"):

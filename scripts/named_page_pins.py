@@ -148,10 +148,9 @@ def kind(fn: ast.FunctionDef) -> str:
     return "invariant"
 
 
-def scan(ref: str) -> dict[str, dict[str, set[str]]]:
-    names = pages_at(ref)
+def scan(ref: str, names: set[str], files: list[str]) -> dict[str, dict[str, set[str]]]:
     found: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
-    for path in test_files(ref):
+    for path in files:
         _scan_module(path, ast.parse(git("show", f"{ref}:{path}")), names, found)
     return found
 
@@ -227,14 +226,24 @@ def _scan_module(path: str, tree: ast.Module, names: set[str],
 
 
 def main(argv: list[str]) -> int:
-    args = [a for a in argv if not a.startswith("--")]
+    # `--names T,U` (as the usage line spells it) or `--names=T,U`
+    only: list[str] | None = None
+    args: list[str] = []
+    rest = iter(argv)
+    for a in rest:
+        if a == "--names":
+            only = [t.strip().upper() for t in next(rest, "").split(",") if t.strip()]
+        elif a.startswith("--names="):
+            only = [t.strip().upper() for t in a.split("=", 1)[1].split(",") if t.strip()]
+        elif not a.startswith("--"):
+            args.append(a)
     ref = args[0] if args else "HEAD"
-    only = next((a.split("=", 1)[1].split(",") for a in argv if a.startswith("--names=")), None)
-    found = scan(ref)
-    names = sorted(only or pages_at(ref),
+    pages, files = pages_at(ref), test_files(ref)
+    found = scan(ref, pages, files)
+    names = sorted(only or pages,
                    key=lambda t: (-sum(len(v) for v in found[t].values()), t))
     print(f"=== tests reading a living page by name at {git('rev-parse', '--short', ref).strip()} "
-          f"· {len(pages_at(ref))} pages · {len(test_files(ref))} test files scanned ===")
+          f"· {len(pages)} pages · {len(files)} test files scanned ===")
     tv = ti = 0
     for t in names:
         v, i = found[t]["value"], found[t]["invariant"]

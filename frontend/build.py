@@ -800,6 +800,9 @@ def main(argv: list[str] | None = None) -> None:
     )
     ap.parse_args(argv)
 
+    # THE COVERED NAMES ARE CHECKED BEFORE THE MIRROR IS CLEARED (W27): a roster the pages
+    # disagree with stops the build with the served mirror still as it was, never wiped.
+    covered = _covered_pages()
     for d in (OUT_SNAP, OUT_DOSS):
         if d.exists():
             shutil.rmtree(d)
@@ -844,9 +847,9 @@ def main(argv: list[str] | None = None) -> None:
     # grid reads — without it a quality name is indistinguishable from an overshoot one until you
     # open it, and its BUY/PASS vocabulary and different question then arrive unexplained.
     sleeves: dict[str, str] = {}
-    # THE COVERED NAMES, FROM THE ROSTER (W27): each one's page is checked present above, so the
-    # folder no longer decides what is published.
-    for ticker in _covered_pages():
+    # THE COVERED NAMES, FROM THE ROSTER (W27): each one's page was checked present before the
+    # mirror was cleared, so the folder no longer decides what is published.
+    for ticker in covered:
         folder = DOSS / ticker
         f = folder / "dossier.json"
         shutil.copyfile(f, OUT_DOSS / f"{ticker}.json")

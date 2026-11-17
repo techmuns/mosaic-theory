@@ -17,5 +17,10 @@ _ARCHIVE_KEY = re.compile(r".+-\d{4}-\d{2}-\d{2}")
 
 
 def live_sealed(root: Path) -> set[str]:
-    """The seal manifest's keys that name a live record (a ticker, not an archive key)."""
-    return {k for k in seal.load_manifest(root) if not _ARCHIVE_KEY.fullmatch(k)}
+    """The seal manifest's keys that name a live record (a ticker, not an archive key).
+
+    NEVER EMPTY: the walks that compare with this replaced a `seen >= 7` floor, and an absent
+    manifest reads as {} — so an empty set would let an empty walk pass as "the corpus"."""
+    live = {k for k in seal.load_manifest(root) if not _ARCHIVE_KEY.fullmatch(k)}
+    assert live, f"no live record in the seal manifest under {root} — the corpus walk is vacuous"
+    return live

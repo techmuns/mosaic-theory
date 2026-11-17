@@ -305,6 +305,11 @@ neither retired name has a page. So nothing was stopped for.
    and the fleet passes refuse loud. If that first assembly fails after its spend inside a
    `--top` cohort that wrote another page, the closing mirror raises naming the name. The written
    pages stay on disk and a $0 re-run of the mirror publishes them (found by `/code-review`).
+   The served mirror is left as it was: `frontend/build.py` checks the roster BEFORE it clears
+   `frontend/dossiers` and `frontend/snapshots`. The first cut checked after clearing them, so a
+   refused build deleted the served pages. The second review found that and it is fixed, pinned
+   by `test_a_build_the_roster_refuses_leaves_the_served_mirror_as_it_was`, which fails on the
+   old order.
    Falsifier: a new name's line and page are committed apart, or an operator is blocked from a
    first build.
 8. **$0.** No model call and no vendor call, and no page is rebuilt or re-rendered.
