@@ -39,16 +39,18 @@ def _is_pytest_call(node: ast.AST, names: tuple[str, ...]) -> bool:
 
 
 def assertions(fn: ast.AST) -> list[str]:
-    out: list[str] = []
+    """The function's assertions in SOURCE order (an assert moved into a loop keeps its place;
+    `ast.walk` alone is breadth-first, and would reorder it)."""
+    out: list[tuple[int, int, str]] = []
     for n in ast.walk(fn):
         if isinstance(n, ast.Assert):
-            out.append(ast.dump(n))
+            out.append((n.lineno, n.col_offset, ast.dump(n)))
         elif isinstance(n, ast.With | ast.AsyncWith):
-            out += [ast.dump(i.context_expr) for i in n.items
-                    if _is_pytest_call(i.context_expr, ("raises", "warns"))]
+            out += [(i.context_expr.lineno, i.context_expr.col_offset, ast.dump(i.context_expr))
+                    for i in n.items if _is_pytest_call(i.context_expr, ("raises", "warns"))]
         elif isinstance(n, ast.Expr) and _is_pytest_call(n.value, ("fail",)):
-            out.append(ast.dump(n))
-    return out
+            out.append((n.lineno, n.col_offset, ast.dump(n)))
+    return [d for *_, d in sorted(out)]
 
 
 def functions(source: str) -> dict[str, ast.AST]:
