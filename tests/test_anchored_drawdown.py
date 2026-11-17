@@ -425,6 +425,69 @@ def test_the_brief_marks_the_dated_outlooks_and_asks_if_the_cause_played_out() -
     assert _drawdown_anchor_digest(dumped) is None
 
 
+def _brief_with_at_anchor(at_anchor: dict[str, Any] | None) -> str:
+    """SMPL's real anchored build, its at-anchor part replaced by ``at_anchor`` (a real
+    `DrawdownWindow` dumped), through the digest the request carries."""
+    from vinci.dossier.synthesis import _drawdown_anchor_digest, _mark_drawdown_guidance
+
+    built = _built()
+    anchor = built["mechanical"]["drawdown_cause"]["anchor"]
+    if at_anchor is not None:
+        anchor["at_anchor"] = at_anchor
+    doc = Dossier.model_validate(built)
+    assert doc.mechanical is not None and doc.mechanical.drawdown_cause.anchor is not None
+    dumped = doc.mechanical.model_dump(exclude={"primary_source"})
+    _mark_drawdown_guidance(dumped, doc.mechanical.primary_source)
+    digest = _drawdown_anchor_digest(dumped)
+    assert digest is not None
+    return digest
+
+
+def _ask(digest: str) -> str:
+    asks = [ln for ln in digest.splitlines() if ln.startswith("ASK: ")]
+    assert len(asks) == 1, asks
+    return asks[0]
+
+
+def test_an_anchor_with_no_gap_down_is_not_asked_about_a_cause_it_never_named() -> None:
+    """FIX 4b (2026-11-17): MCK's follow (2026-05-02 to 2026-10-29) shows no gap-down, yet the
+    brief asked "has the cause named at the follow played out?" — a question that presupposes the
+    answer (#920 §14). The part is SMPL's own `since` window: a real no-gap-down `DrawdownWindow`.
+    Structure only: the question no longer names a cause, and says none is named."""
+    since = _built()["mechanical"]["drawdown_cause"]["anchor"]["since"]
+    assert since["gaps"] == [] and since["shape"]["status"] == "present"
+    ask = _ask(_brief_with_at_anchor(since))
+    assert "cause named at the" not in ask
+    assert "names no cause" in ask and "shows no discrete gap-down" in ask
+
+
+def test_an_unread_at_anchor_part_is_not_called_a_part_with_no_drop() -> None:
+    """A part whose shape is UNKNOWN could not be read: no cause is named, and the question says
+    WHY — never that the window had no drop, which the build did not establish."""
+    from vinci.dossier.schemas import Sourced
+
+    at = _built()["mechanical"]["drawdown_cause"]["anchor"]["at_anchor"]
+    unread = {**at, "gaps": [],
+              "gap_down_dates": Sourced[list[str]].unknown(note="EDGAR unavailable").model_dump(),
+              "shape": Sourced[str].unknown(note="EDGAR filing index unavailable").model_dump()}
+    ask = _ask(_brief_with_at_anchor(unread))
+    assert "cause named at the" not in ask
+    assert "could not be read" in ask and "no discrete gap-down" not in ask
+
+
+def test_an_anchor_that_names_its_drops_keeps_the_question_byte_for_byte() -> None:
+    """SMPL's at-underwrite part names two earnings gap-downs: its question is the one every
+    earlier build sent, so fix 4b moves no byte of SMPL's request in this span."""
+    ask = _ask(_brief_with_at_anchor(None))
+    assert ask == (
+        "ASK: has the cause named at the underwrite played out? Set the since part and the "
+        "current facts against it — did the outlook that came with the drop hold, get cut again, "
+        "or recover; did a later drop repeat the cause or name a new one. Answer inside your "
+        "points (a bull or bear point, or the decisive question's evidence), citing these "
+        "source_refs verbatim; where the facts cannot tell, say so in key_unknowns. An outlook "
+        "marked SUPERSEDED is history, never the current guide.")
+
+
 def test_the_digest_example_is_smpls_real_at_anchor_line() -> None:
     """The ONE literal example is not invented: its at-anchor line is SMPL's build, verbatim."""
     from vinci.dossier.synthesis import _DRAWDOWN_ANCHOR_EXAMPLE
