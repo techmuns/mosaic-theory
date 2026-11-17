@@ -4,6 +4,8 @@ Each part is measured, never asserted (`vinci.impact` names the five). The run l
 repository (captured requests carry licensed transcript text):
 
     <out>/code/<side>/            the side's ``vinci/`` and ``frontend/build.py`` (git archive)
+    <out>/failfirst/              part 1's logs and junit files; its two checkouts are detached
+                                  git worktrees there while its tests run (`fail_first`)
     <out>/inputs-src/             the DATA REF's committed ``data/``, ``scenarios/``, ``frontend/``
     <out>/<side>/impact-inputs/   a clone of it, the side's cwd, with the git-ignored inputs linked:
                                   ``data/manual/ciq`` and ``data/cache`` (shared, read through the
@@ -347,7 +349,12 @@ def _pytest(s: Settings, tree: Path, tests: Sequence[str], log: Path, junit: Pat
     env = child_env(tree, None, TEST_SECRET_ENV)
     shim: list[str] = []
     if missing:
-        (tree / "_impact_shim.py").write_text(_SHIM, encoding="utf-8")
+        # BESIDE the checkout, never in it: git there would list it as an untracked file at base
+        # alone, and a test that reads the tree through git would see a file the PR never had
+        place = log.parent / "shim"
+        place.mkdir(exist_ok=True)
+        (place / "_impact_shim.py").write_text(_SHIM, encoding="utf-8")
+        env["PYTHONPATH"] = os.pathsep.join((str(tree), str(place)))
         env["IMPACT_MISSING"] = json.dumps(list(missing))
         shim = ["-p", "_impact_shim"]
     return subprocess.Popen(
@@ -357,8 +364,55 @@ def _pytest(s: Settings, tree: Path, tests: Sequence[str], log: Path, junit: Pat
         cwd=tree, env=env, stdout=log.open("wb"), stderr=subprocess.STDOUT)
 
 
+#: How part 1's checkouts are made, recorded in its result so the report states it.
+CHECKOUT = "worktree"
+
+
+def _worktree(repo: Path, ref: str, dest: Path) -> None:
+    """A DETACHED GIT WORKTREE of ``ref`` at ``dest``: a real checkout, with the repository's
+    history and refs, as in the gate's CI (``fetch-depth: 0``) and in an operator's own checkout.
+
+    Never a ``git archive`` extract (the follow-up to #1104): an extract has no ``.git``, so a test
+    that asks git about its own checkout could not run there. 7 nodes of
+    `tests/test_claude_hooks.py` FAILED at both refs, and `tests/test_frozen_pages_are_cuts.py`
+    skips by design, while all of them pass in a checkout. Neither outcome said whether the test
+    fails first, and the report printed them as if it had run them."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    st.git(repo, "worktree", "add", "--detach", "--quiet", str(dest), ref)
+
+
+def _drop_worktrees(repo: Path, root: Path) -> None:
+    """Unregister and delete every worktree of ``repo`` under ``root``, including one a killed run
+    left behind, so a run leaves no entry in the shared repository's ``git worktree list``. Only
+    these: a ``git worktree prune`` would act on other sessions' entries too. ``--force`` TWICE: a
+    run killed during ``git worktree add`` leaves its worktree locked ("initializing"), and one
+    ``--force`` refuses a locked worktree."""
+    here = root.resolve()
+    for line in st.git(repo, "worktree", "list", "--porcelain").splitlines():
+        if line.startswith("worktree "):
+            path = Path(line.removeprefix("worktree ")).resolve()
+            if here in path.parents:
+                st.git(repo, "worktree", "remove", "--force", "--force", str(path))
+
+
+def _checkouts(s: Settings, shas: dict[str, str], root: Path) -> dict[str, Path]:
+    """Both checkouts are HEAD's commit. Base's then swaps ``vinci/`` for base's, in its index as
+    well as its files, so git there lists, diffs and reads base's code. A file only head has is
+    then absent from ``git ls-files`` too, not listed as a file that is missing on disk."""
+    trees = {"head": root / "head-tree", "base": root / "base-tree"}
+    for side in SIDES:
+        _worktree(s.repo, shas["head"], trees[side])
+    base = trees["base"]
+    if st.git(s.repo, "ls-tree", "--name-only", shas["head"], "vinci").strip():
+        st.git(base, "rm", "-r", "-q", "vinci")
+    if st.git(s.repo, "ls-tree", "--name-only", shas["base"], "vinci").strip():
+        st.git(base, "checkout", shas["base"], "--", "vinci")
+    return trees
+
+
 def fail_first(s: Settings, shas: dict[str, str]) -> dict[str, Any]:
-    """Head's changed test files, run on base's ``vinci/`` and on head's (both in head's tree).
+    """Head's changed test files, run on base's ``vinci/`` and on head's, each in a real checkout
+    of head (`_worktree`, `_checkouts`).
 
     A test file that imports a name base's code does not define fails to COLLECT at base, which
     would report one error for the file and no test. Each such name gets a placeholder that raises
@@ -370,25 +424,25 @@ def fail_first(s: Settings, shas: dict[str, str]) -> dict[str, Any]:
         return {"tests": [], "cases": [], "note": "the PR changes no test file"}
     t0 = time.monotonic()
     root = s.out / "failfirst"
+    _drop_worktrees(s.repo, root)
     if root.exists():
         shutil.rmtree(root)
-    trees = {"head": root / "head-tree", "base": root / "base-tree"}
-    _extract(s.repo, shas["head"], ["."], trees["head"])
-    _clone(trees["head"], trees["base"])
-    shutil.rmtree(trees["base"] / "vinci")
-    _extract(s.repo, shas["base"], ["vinci"], trees["base"])
-    procs = {side: _pytest(s, tree, tests, root / f"pytest-{side}.log",
-                           root / f"junit-{side}.xml") for side, tree in trees.items()}
-    codes = {side: p.wait() for side, p in procs.items()}
-    missing: list[tuple[str, str]] = []
-    for _ in range(8):
-        found = {(m.group(2), m.group(1)) for m in _CANNOT_IMPORT.finditer(
-            (root / "pytest-base.log").read_text(errors="replace"))} - set(missing)
-        if not found:
-            break
-        missing += sorted(found)
-        codes["base"] = _pytest(s, trees["base"], tests, root / "pytest-base.log",
-                                root / "junit-base.xml", missing).wait()
+    try:
+        trees = _checkouts(s, shas, root)
+        procs = {side: _pytest(s, tree, tests, root / f"pytest-{side}.log",
+                               root / f"junit-{side}.xml") for side, tree in trees.items()}
+        codes = {side: p.wait() for side, p in procs.items()}
+        missing: list[tuple[str, str]] = []
+        for _ in range(8):
+            found = {(m.group(2), m.group(1)) for m in _CANNOT_IMPORT.finditer(
+                (root / "pytest-base.log").read_text(errors="replace"))} - set(missing)
+            if not found:
+                break
+            missing += sorted(found)
+            codes["base"] = _pytest(s, trees["base"], tests, root / "pytest-base.log",
+                                    root / "junit-base.xml", missing).wait()
+    finally:   # the logs and junit files stay in root; the checkouts do not
+        _drop_worktrees(s.repo, root)
     res = {side: _junit(root / f"junit-{side}.xml") for side in SIDES}
     # a file that did not collect at base: each of its tests failed there, at the import
     uncollected = {n.removesuffix(" (collection)"): r for n, r in res["base"].items()
@@ -402,7 +456,7 @@ def fail_first(s: Settings, shas: dict[str, str]) -> dict[str, Any]:
         b = res["base"].get(node, {"outcome": "absent", "where": None, "message": ""})
         h = res["head"].get(node, {"outcome": "absent", "where": None, "message": ""})
         cases.append({"node": node, "base": b, "head": h})
-    return {"tests": tests, "cases": cases, "exit": codes,
+    return {"tests": tests, "cases": cases, "exit": codes, "checkout": CHECKOUT,
             "missing_at_base": [f"{m}.{n}" for m, n in missing],
             "seconds": round(time.monotonic() - t0, 1)}
 
