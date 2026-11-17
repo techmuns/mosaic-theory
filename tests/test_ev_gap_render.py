@@ -91,9 +91,12 @@ def test_smpls_page_reads_multiple_dominant() -> None:
     body = block(FROZEN_SMPL)
     assert "**multiple-dominant** at FY2026" in body
     assert "does not move with the year" in body, "the cross-year check is missing from the page"
-    for t, _doc in covered_where(lambda t, _d: _living_gapj(t).get("status") == "computed"
-                                 and bool(_living_gapj(t).get("shape")), "prints a gap shape"):
-        g = _living_gapj(t)
+    def _gap_of(d: dict) -> dict:
+        return (d.get("mechanical") or {}).get("ev_gap") or {}
+
+    for t, doc in covered_where(lambda _t, d: _gap_of(d).get("status") == "computed"
+                                and bool(_gap_of(d).get("shape")), "prints a gap shape"):
+        g = _gap_of(doc)
         living = block(ROOT / "data" / "dossiers" / t)
         assert f"**{g['shape']['anchor']}** at FY{g['anchor_fy']}" in living, living[:400]
 

@@ -28,7 +28,7 @@ from typing import Any
 
 import pytest
 
-from tests.ciq_export_support import export_sha, skip_unless_export
+from tests.ciq_export_support import archived_bundle, export_sha, skip_unless_export
 from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import manual_store as ms
@@ -273,14 +273,21 @@ def _the_pages_exports(doc: dict[str, Any], b: Any, ticker: str,
     and the quarterly Financials export its trailing bands stamp. The pin runs on the folder that
     holds both: the folder's own while it does, else the archived folder holding the Estimates
     export (`tests/ciq_export_support.skip_unless_export`, the whole folder, one pull), whose
-    Financials export must be the bands' too. The transform reads that same folder. It SKIPS,
-    naming both sha256s, when no folder holds both (a skip, never a looser assertion).
-    RUN THE PIN ON THE BUNDLE THIS RETURNS."""
-    got = skip_unless_export(ticker, "estimates", str(doc["forward_consensus"]["source_sha256"]),
+    Financials export must be the bands' too — else the archived folder holding the bands'
+    Financials export, whose Estimates export must be the page's (a Financials-only re-export
+    leaves the page's Estimates in the live folder beside another Financials). The transform reads
+    that same folder. It SKIPS, naming both sha256s, when no folder holds both (a skip, never a
+    looser assertion). RUN THE PIN ON THE BUNDLE THIS RETURNS."""
+    est = str(doc["forward_consensus"]["source_sha256"])
+    got = skip_unless_export(ticker, "estimates", est,
                              why="the frozen page names this Estimates export", bundle=b)
     stamps = sorted({str(x.get("source_sha256"))
                      for x in doc["mechanical"]["valuation"]["own_history"]["value"] or []})
     held = export_sha(ticker, "financials", freq="quarterly", bundle=got)
+    if held not in stamps and len(stamps) == 1:
+        alt = archived_bundle(ticker, "financials", stamps[0], freq="quarterly")
+        if alt is not None and export_sha(ticker, "estimates", bundle=alt) == est:
+            got, held = alt, stamps[0]
     if held not in stamps:
         pytest.skip(f"{ticker}: the Financials export beside the page's Estimates export ({held}) "
                     f"is not the one the frozen page's bands name ({', '.join(stamps)})")

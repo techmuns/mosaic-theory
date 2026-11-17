@@ -25,6 +25,7 @@ parity test covering one field, read as covering the layer, is worse than one th
 from __future__ import annotations
 
 import json
+import warnings
 from pathlib import Path
 from typing import Any
 
@@ -164,6 +165,7 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap() -> None:
     from vinci.dossier.refresh import ev_gap_transform
 
     vintages = 0
+    unverified: list[str] = []
     def decomposed(_t: str, d: dict[str, Any]) -> bool:
         g = d["mechanical"].get("ev_gap") or {}
         return g.get("status") == "computed" and g.get("form") == "three-ratio"
@@ -191,6 +193,7 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap() -> None:
         # real assembly cannot run without the bundle, so the None branch is reachable only from a
         # test.
         if not LocalFolderStore.from_config(get_config()).files(ticker):
+            unverified.append(f"{ticker} (no licensed bundle)")
             continue   # the licensed bundle is unavailable: this page's vintages are unverifiable
         # AND THE VINTAGE IS THE EXPORT'S, so it matches the page's only on the export the page was
         # built from. An operator re-export ahead of a re-assembly is a newer vintage, not a lost
@@ -199,11 +202,17 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap() -> None:
         try:
             skip_unless_pages_export(ticker, "estimates")
         except pytest.skip.Exception:
+            unverified.append(f"{ticker} (another estimates export on disk)")
             continue
         assert after["vintages"] == before["vintages"]
         vintages += 1
     if not vintages:
         pytest.skip("no decomposed page's own estimates export is on disk — vintages unverifiable")
+    if unverified:
+        # A PARTIAL CHECK SAYS SO: one verified page must not read as all of them (review of this
+        # slice: on main each name skipped in its own parametrized case)
+        warnings.warn(f"the vintage half ran on {vintages} page(s); unverified here: "
+                      f"{', '.join(unverified)}", stacklevel=1)
 
 
 def test_the_insider_line_has_two_write_paths_and_this_file_does_not_compare_them() -> None:

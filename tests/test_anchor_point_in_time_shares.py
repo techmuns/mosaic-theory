@@ -123,6 +123,7 @@ def test_the_screen_rows_name_the_count_and_the_test_md_and_web_e2e() -> None:
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    pages = json.dumps({t: str(frozen_page(t) / "dossier.json") for t in ("TJX", "LLY")})
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
 const stub = new Proxy(function(){{}}, handler);
@@ -130,8 +131,9 @@ for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub
 import {{ readFileSync, existsSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
 const out = {{}};
+const pages = {pages};   // the pages as frozen at the cut: the md twin above reads the same ones
 for (const t of ["TJX", "LLY"]) {{
-  const d = JSON.parse(readFileSync(`frontend/dossiers/${{t}}.json`));
+  const d = JSON.parse(readFileSync(pages[t]));
   const cp = `frontend/scenarios/${{t}}.json`;
   const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
   out[t] = {{ count: h.includes("shares outstanding"), test: h.includes("Dilution test / share"),

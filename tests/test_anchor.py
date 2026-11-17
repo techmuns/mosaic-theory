@@ -729,8 +729,7 @@ const { escapeHtml } = await import(pathToFileURL(path.resolve("frontend/lib/for
 const page = JSON.parse(readFileSync(process.argv[1], "utf8"));
 const read = page.anchor.midcycle_gap.read;
 const flagged = renderDossier(page, null);
-const epamPage = "tests/fixtures/frozen_pages/cut-4889ddba/EPAM/dossier.json";  // frozen at the cut
-const epam = JSON.parse(readFileSync(epamPage, "utf8"));
+const epam = JSON.parse(readFileSync(process.argv[2], "utf8"));   // EPAM, frozen at the cut
 const plain = renderDossier(epam, null);
 console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under strain."),
   sentence: read.length > 0 && flagged.includes(escapeHtml(read)),
@@ -739,7 +738,9 @@ console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under st
     import tempfile
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
         json.dump(page, fh)
-    out = subprocess.run(["node", "--input-type=module", "-e", driver, fh.name], cwd=_ROOT,
+    epam_page = str(frozen_page("EPAM") / "dossier.json")   # the one cut the Python half reads
+    out = subprocess.run(["node", "--input-type=module", "-e", driver, fh.name, epam_page],
+                         cwd=_ROOT,
                          capture_output=True, text=True, check=True)
     assert json.loads(out.stdout.strip().splitlines()[-1]) == {"on": True, "sentence": True,
                                                                "off": False}
