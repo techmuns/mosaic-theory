@@ -13,8 +13,11 @@ its folder names: the same git blob. This test refuses:
 Each cut is also headed. Its row in the frozen-pages README names it. Its own `README.md` lists
 every copy with its two blobs, and the list must match the copies exactly.
 
-CI checks out the whole history (`fetch-depth: 0`, gate.yml), so `git cat-file` reads any commit. A
-checkout without the commit FAILS here. It never skips: a cut no check can read is not trusted.
+CI checks out the whole history (`fetch-depth: 0`, gate.yml), so `git cat-file` reads any commit,
+and the guard runs on every PR. A GIT CHECKOUT without the cut's commit (a shallow clone) FAILS
+here: a cut no check can read is not trusted. A tree that is not a git checkout at all (the impact
+harness's `git archive` export) has no history to hold a cut to, so those pins SKIP there, the
+reason named (#280's lesson, as `test_state_identifiers` applies it).
 
 CORPUS BEFORE SYNTHETIC: the first pin runs on the committed cut and must check every file in it.
 The negatives then show the check firing on the real bytes, edited.
@@ -37,6 +40,18 @@ _ROW = re.compile(r"^\| (?P<t>[A-Z][A-Z0-9.\-]*) \|.*\| `(?P<json>[0-9a-f]{40})`
 def _git(*args: str, stdin: str | None = None) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, input=stdin, capture_output=True, text=True,
                           check=True).stdout
+
+
+def _in_a_checkout() -> bool:
+    try:
+        return _git("rev-parse", "--is-inside-work-tree").strip() == "true"
+    except (OSError, subprocess.CalledProcessError):
+        return False
+
+
+#: Only an exported tree skips; a git checkout lacking the commit fails (the module docstring).
+needs_git = pytest.mark.skipif(not _in_a_checkout(), reason=(
+    "not a git checkout (an exported tree): the cut is held to git history in CI"))
 
 
 def _blob_of(paths: list[Path]) -> dict[Path, str]:
@@ -99,6 +114,7 @@ def _header_problems(cut: Path, frozen_root: Path, have: dict[Path, str]) -> lis
     return out
 
 
+@needs_git
 def test_every_file_in_every_cut_is_its_commits_page_byte_for_byte() -> None:
     """(+ · the committed cut) Every copy in every cut is the committed page at the cut's commit,
     and every cut is headed. All 52 files of `cut-4889ddba` are checked, so the walk is not
@@ -108,6 +124,7 @@ def test_every_file_in_every_cut_is_its_commits_page_byte_for_byte() -> None:
     assert checked >= len(list(CUT.glob("*/dossier.*"))) == 52, checked
 
 
+@needs_git
 def test_the_cut_is_the_commit_frozen_support_names() -> None:
     """(+) The folder `frozen_support` reads is the cut of its stated commit."""
     assert CUT.name == f"cut-{CUT_SHA[:8]}"
@@ -128,6 +145,7 @@ def _copy_cut(tmp_path: Path, tickers: tuple[str, ...] = ("SMPL",)) -> Path:
     return cut
 
 
+@needs_git
 def test_an_unedited_copy_of_a_real_cut_passes(tmp_path: Path) -> None:
     """(+ · control) The tmp copy the negatives edit passes as it stands, so each negative's
     failure is its edit's."""
@@ -135,6 +153,7 @@ def test_an_unedited_copy_of_a_real_cut_passes(tmp_path: Path) -> None:
     assert cut_problems(tmp_path / "frozen_pages") == ([], 4)
 
 
+@needs_git
 def test_a_one_byte_edit_to_a_copy_is_refused(tmp_path: Path) -> None:
     """(−) A copy edited by one byte, the shape a re-fitted pin would leave, is not the page."""
     cut = _copy_cut(tmp_path)
@@ -148,6 +167,7 @@ def test_a_one_byte_edit_to_a_copy_is_refused(tmp_path: Path) -> None:
     assert any("its README states blob" in p for p in problems), problems
 
 
+@needs_git
 def test_a_file_the_page_never_had_is_refused(tmp_path: Path) -> None:
     """(−) A file the committed page folder did not hold is not part of a cut."""
     cut = _copy_cut(tmp_path)
@@ -156,6 +176,7 @@ def test_a_file_the_page_never_had_is_refused(tmp_path: Path) -> None:
     assert any("SMPL/notes.json: not a page file at 4889ddba" in p for p in problems), problems
 
 
+@needs_git
 def test_a_cut_of_an_unknown_commit_is_refused(tmp_path: Path) -> None:
     """(−) A folder named for no commit is a working-tree copy, never a cut."""
     cut = _copy_cut(tmp_path)
@@ -164,6 +185,7 @@ def test_a_cut_of_an_unknown_commit_is_refused(tmp_path: Path) -> None:
     assert problems == ["cut-0000dead: no commit 0000dead in this checkout"], problems
 
 
+@needs_git
 def test_a_cut_its_readmes_do_not_head_is_refused(tmp_path: Path) -> None:
     """(−) A cut with no row in the frozen-pages README, or a copy its own README does not list,
     is unheaded."""
