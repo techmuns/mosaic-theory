@@ -38,6 +38,30 @@ covered names only once the committed pages agree, and otherwise raises naming e
 disagreement: a page whose name has no line, a page for a retired name, and a covered name with
 no page. A page is its ``dossier.json``, never its folder: a git-ignored ``llm_call.log`` outlives
 a retired page in a checkout that held it.
+
+A WATCH PAGE SAYS SO, AND NAMES WHAT IT KEEPS WRONG (STATE row 41 (b), B's design on issue #1004).
+``watch_notice`` is what both renderers print near the top of a watch page: the move's date and
+ruling, that the page is kept as committed with no paid rebuild until the name goes active, and the
+page's known defects. It is read from the roster at RENDER time, never written into
+``dossier.json``, so a move to active removes it at the next render with no page edit.
+
+THE DEFECTS ARE A SECOND FILE, ``data/watch_defects.json``, NOT A FIELD ON THE MOVE. A move is a
+coverage decision and is refused when it repeats a status, so a defect fixed by a $0 refresh while
+its name stays on watch could not be recorded on the roster at all; and the roster's six fields
+are strict on every line, so a seventh would rewrite an append-only log. A defect is a fact about
+a PAGE: each entry names its STATE row and record, and the page field it lives in with the value
+it holds there.
+
+A PAGE THAT NO LONGER HOLDS ONE IS REFUSED WHERE IT IS SAVED OR PUBLISHED, NEVER AT RENDER
+(operator, 2026-11-17: "Refuse where pages are saved or published (Recommended)"). The renderer
+stays side-effect free: ``watch_notice`` prints only the defects the page being rendered still
+holds, so the line never names one the page no longer has, and a fresh build of a watch name (the
+cross-setup harness renders one; ORKA's reads 93 sells where its committed page's bound line reads
+98) renders. Saved, the line would drop the defect and the page would look clean, so
+``refresh_dossier`` refuses to write a watch page ``write_problems`` names; ``frontend/build.py``
+refuses to publish one, before the mirror is cleared; and the suite refuses an entry the COMMITTED
+page no longer holds (``defect_problems``). A rebuild or refresh past a defect stops until the
+entry is removed.
 """
 
 from __future__ import annotations
@@ -48,6 +72,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 #: the roster's file name, under the data directory (``data/coverage_roster.jsonl``)
 ROSTER_NAME = "coverage_roster.jsonl"
@@ -59,6 +84,13 @@ COVERED = frozenset({"active", "watch"})
 BUILDABLE = frozenset({"intake", "active"})
 #: a line's keys, in the order ``render_line`` writes them
 FIELDS = ("date", "ticker", "status", "ruling", "source", "record")
+#: the known-defect file's name, under the data directory (``data/watch_defects.json``)
+DEFECTS_NAME = "watch_defects.json"
+#: a defect's keys, in the order ``render_defects`` writes them
+DEFECT_FIELDS = ("defect", "state_row", "record", "page_field", "page_value", "measured")
+#: the statuses a defect may be listed for: a watch page prints it, and an active name keeps its
+#: entry until the rebuild moves the page's value (which ``watch_notice``'s check then refuses)
+DEFECT_STATUSES = frozenset({"watch", "active"})
 
 _TICKER = re.compile(r"[A-Z][A-Z0-9.\-]{0,9}")
 
@@ -73,6 +105,10 @@ class CoverageMismatchError(CoverageRosterError):
 
 class NotActiveError(CoverageRosterError):
     """A name was asked to be assembled while its roster status is not ``active``."""
+
+
+class WatchDefectError(CoverageRosterError):
+    """The known-defect file is absent, cannot be read, or disagrees with a page or the roster."""
 
 
 @dataclass(frozen=True)
@@ -252,3 +288,214 @@ def require_buildable(data_dir: Path, ticker: str) -> Move:
             f"{move.cite()} — only an intake or active name is assembled; append a move to "
             f"active, with the ruling, first")
     return move
+
+
+# --- the watch notice: the line a watch page prints, and the defects it names ---------------------
+
+
+@dataclass(frozen=True)
+class Defect:
+    """One known defect a page keeps: what it is, the STATE row and record that track it, and the
+    page field it lives in with the value it holds there."""
+
+    defect: str
+    state_row: int
+    record: str
+    page_field: str
+    page_value: str | int | float | bool
+    measured: str
+
+    def cite(self) -> str:
+        return f"STATE row {self.state_row}; {self.record}"
+
+    def sentence(self) -> str:
+        """The defect as the page prints it, its citation closing the sentence."""
+        return f"{self.defect} ({self.cite()})."
+
+
+@dataclass(frozen=True)
+class WatchNotice:
+    """What a watch page prints near its top: its move, and the defects it keeps until active."""
+
+    move: Move
+    defects: tuple[Defect, ...]
+
+    def head(self) -> str:
+        return f"Frozen since {self.move.date}: {self.move.ticker} is on watch."
+
+    def ruling(self) -> str:
+        where = self.move.source + (f"; {self.move.record}" if self.move.record else "")
+        return f"The operator's ruling: \"{self.move.ruling}\" ({where})."
+
+    def kept(self) -> str:
+        return (f"This page is kept as committed, with no paid rebuild, until "
+                f"{self.move.ticker} goes active.")
+
+    @staticmethod
+    def defects_head() -> str:
+        return "Known defects it keeps until then:"
+
+
+def defects_path(data_dir: Path) -> Path:
+    return data_dir / DEFECTS_NAME
+
+
+def render_defects(defects: Mapping[str, tuple[Defect, ...]]) -> str:
+    """The one canonical form of the file: ``read_defects`` refuses any other."""
+    obj = {t: [{"defect": d.defect, "state_row": d.state_row, "record": d.record,
+                "page_field": d.page_field, "page_value": d.page_value,
+                "measured": d.measured} for d in defects[t]] for t in sorted(defects)}
+    return json.dumps(obj, indent=2, ensure_ascii=False) + "\n"
+
+
+def _defect(raw: object, where: str) -> Defect:
+    if not isinstance(raw, dict) or tuple(raw) != DEFECT_FIELDS:
+        got = tuple(raw) if isinstance(raw, dict) else type(raw).__name__
+        raise WatchDefectError(f"{where}: a defect carries exactly {DEFECT_FIELDS}, in that "
+                               f"order; got {got}")
+    for key in ("defect", "measured"):
+        if not isinstance(raw[key], str) or not raw[key].strip():
+            raise WatchDefectError(f"{where}: {key} must be a non-empty string, got "
+                                   f"{raw[key]!r}")
+    if raw["defect"].rstrip().endswith("."):
+        raise WatchDefectError(f"{where}: a defect ends without a full stop — its citation "
+                               f"closes the sentence (\"… (STATE row N; record).\")")
+    row = raw["state_row"]
+    if not isinstance(row, int) or isinstance(row, bool) or row < 1:
+        raise WatchDefectError(f"{where}: state_row must be a STATE.md row number, got {row!r}")
+    record = raw["record"]
+    if not (isinstance(record, str) and record.startswith("docs/records/")
+            and record.endswith(".md")):
+        raise WatchDefectError(f"{where}: record must be a docs/records/*.md path, got "
+                               f"{record!r}")
+    field = raw["page_field"]
+    if not isinstance(field, str) or not field.startswith("/") or field == "/":
+        raise WatchDefectError(f"{where}: page_field must be a JSON pointer into dossier.json "
+                               f"(\"/mechanical/...\"), got {field!r}")
+    value = raw["page_value"]
+    if value is None or not isinstance(value, (str, int, float, bool)):
+        raise WatchDefectError(f"{where}: page_value must be the scalar the page holds at "
+                               f"page_field, got {value!r}")
+    return Defect(defect=raw["defect"], state_row=row, record=record, page_field=field,
+                  page_value=value, measured=raw["measured"])
+
+
+def read_defects(data_dir: Path) -> dict[str, tuple[Defect, ...]]:
+    """Every name's known defects, after the whole file is checked.
+
+    AN ABSENT FILE RAISES, as an absent roster does: read as "no defects", every watch page would
+    print its line without the defects it keeps, and look clean. A name with no defect is simply
+    not a key."""
+    path = defects_path(data_dir)
+    if not path.is_file():
+        raise WatchDefectError(f"no known-defect file at {path} — a watch page names its known "
+                               f"defects from it, so none can be shown as absent without it")
+    text = path.read_text(encoding="utf-8")
+    try:
+        obj = json.loads(text)
+    except ValueError as exc:
+        raise WatchDefectError(f"{path}: not JSON: {exc}") from exc
+    if not isinstance(obj, dict):
+        raise WatchDefectError(f"{path}: the file maps each ticker to its defects")
+    out: dict[str, tuple[Defect, ...]] = {}
+    for ticker, raws in obj.items():
+        if not isinstance(ticker, str) or not _TICKER.fullmatch(ticker):
+            raise WatchDefectError(f"{path}: {ticker!r} is not an upper-case symbol")
+        if not isinstance(raws, list) or not raws:
+            raise WatchDefectError(f"{path}: {ticker} lists no defect — a name with none is "
+                                   f"not a key")
+        out[ticker] = tuple(_defect(r, f"{path}: {ticker}[{i}]") for i, r in enumerate(raws))
+    if render_defects(out) != text:
+        raise WatchDefectError(f"{path}: not in the canonical form render_defects writes "
+                               f"(names sorted, two-space indent, one newline at the end)")
+    return out
+
+
+_MISSING = object()
+
+
+def page_value(page: Mapping[str, Any], pointer: str) -> object:
+    """The value at a JSON pointer (RFC 6901) into a page's JSON, or ``_MISSING``."""
+    node: object = page
+    for raw in pointer.split("/")[1:]:
+        key = raw.replace("~1", "/").replace("~0", "~")
+        if isinstance(node, dict) and key in node:
+            node = node[key]
+        elif (isinstance(node, list) and key.isascii() and key.isdigit()
+              and int(key) < len(node)):
+            node = node[int(key)]
+        else:
+            return _MISSING
+    return node
+
+
+def holds(defect: Defect, page: Mapping[str, Any]) -> bool:
+    """Whether the page still holds the defect: its field holds the value it was measured at."""
+    got = page_value(page, defect.page_field)
+    return (got is not _MISSING and type(got) is type(defect.page_value)
+            and got == defect.page_value)
+
+
+def defect_problems(latest: Mapping[str, Move], defects: Mapping[str, tuple[Defect, ...]],
+                    pages: Mapping[str, Mapping[str, Any]]) -> list[str]:
+    """Every way the defect file disagrees with the roster or the committed pages given, sorted
+    by name; [] when they agree. The suite's check over every committed page (a renderer prints
+    only what ``holds``, and never refuses a page another name's entry disagrees with)."""
+    out: list[str] = []
+    for t in sorted(defects):
+        move = latest.get(t)
+        if move is None or move.status not in DEFECT_STATUSES:
+            out.append(f"{t} has known defects listed and is "
+                       f"{'not on the roster' if move is None else move.status} — a defect is "
+                       f"listed only for a watch or active page")
+            continue
+        page = pages.get(t)
+        if page is None:
+            continue
+        for d in defects[t]:
+            got = page_value(page, d.page_field)
+            if got is _MISSING:
+                out.append(f"{t}: the page has no {d.page_field} — the defect \"{d.defect}\" "
+                           f"({d.cite()}) is bound to a field the page does not hold")
+            elif not holds(d, page):
+                out.append(f"{t}: {d.page_field} holds {got!r}, not the {d.page_value!r} the "
+                           f"defect \"{d.defect}\" ({d.cite()}) was measured at — the page "
+                           f"moved past it; remove or re-measure the entry")
+    return out
+
+
+def write_problems(data_dir: Path, ticker: str, page: Mapping[str, Any]) -> list[str]:
+    """Why ``page`` may not be SAVED: each defect listed for its watch name that it no longer
+    holds, as ``defect_problems`` words it; [] when it may be. ``page`` is the JSON about to be
+    written, as its one writer writes it (``dossier_json``).
+
+    Only a WATCH page is checked: it is the one whose line would drop the defect and look clean.
+    An active name's entry waits for its rebuild, and the suite holds it to its committed page. A
+    tree with no roster is a scratch copy and is not checked, as the renderer prints no line there;
+    a tree WITH one reads the defect file strictly, so an absent or malformed one raises."""
+    if not roster_path(data_dir).is_file():
+        return []
+    move = current(data_dir).get(ticker.upper())
+    if move is None or move.status != "watch":
+        return []
+    listed = read_defects(data_dir).get(move.ticker, ())
+    return defect_problems({move.ticker: move}, {move.ticker: listed}, {move.ticker: page})
+
+
+def watch_notice(data_dir: Path, ticker: str,
+                 page: Mapping[str, Any]) -> WatchNotice | None:
+    """The notice a page prints near its top, or None when its name is not on watch.
+
+    ``page`` is the page's JSON as its one writer writes it (``dossier_json``). The notice names
+    only the defects listed for this name that the page still ``holds``: a watch page never
+    prints a defect it no longer has, and a fresh build of the name (the cross-setup harness
+    renders one) prints none of its committed page's. The file itself is read strictly, so an
+    absent or malformed one still raises. A page that no longer holds a listed defect is refused
+    where it is saved (``write_problems``, in ``refresh_dossier``) or published
+    (``frontend/build.py``), never here, and one stale entry never stops another page's render.
+    Read at render time from the tree being rendered."""
+    move = current(data_dir).get(ticker.upper())
+    if move is None or move.status != "watch":
+        return None
+    listed = read_defects(data_dir).get(move.ticker, ())
+    return WatchNotice(move=move, defects=tuple(d for d in listed if holds(d, page)))

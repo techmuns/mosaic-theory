@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, verdictWord, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves, getFollowed, getExtractionVersions } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, verdictWord, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow, getSleeves, getFollowed, getExtractionVersions, getCoverage } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
@@ -72,6 +72,36 @@ const stampDetail = (v, table = versionTable) => {
   return named !== null ? `${c} — ${named}`
     : `${c} — not a version this code declares; built by a different extractor`;
 };
+
+// (STATE row 41 (b)) THE WATCH LINE — the twin of render.py _watch_lines and
+// vinci/coverage_roster.WatchNotice. The deploy's coverage table (getCoverage), set by render()
+// before a page is drawn, like the extraction-version table above: one per deploy, never per page.
+// A WATCH page prints its move's date and ruling, that it is kept as committed with no paid rebuild
+// until the name goes active, and the known defects it keeps; any other page prints nothing. Read
+// from the roster at deploy, never stored in the page, so a move to active removes it with no page
+// edit. Unset, the page SAYS the roster did not load — never silence, which reads as "not on watch".
+let coverageTable = null;
+export function useCoverage(table) { coverageTable = table || null; }
+function watchLine(ticker, table = coverageTable) {
+  if (!table) {
+    return `<div class="ds-frozen ds-frozen-unknown">This deploy's coverage roster did not load, so whether this page is on watch is not shown.</div>`;
+  }
+  const c = table.names[ticker];
+  if (!c) {
+    return `<div class="ds-frozen ds-frozen-unknown">${escapeHtml(ticker)} is not on this deploy's coverage roster.</div>`;
+  }
+  if (c.status !== "watch") return "";
+  const where = c.source + (c.record ? `; ${c.record}` : "");
+  const defects = c.defects || [];
+  const list = defects.length
+    ? `<div class="ds-frozen-defects"><b>Known defects it keeps until then:</b><ol>${defects.map((x) =>
+      `<li>${escapeHtml(`${x.defect} (STATE row ${x.state_row}; ${x.record}).`)}</li>`).join("")}</ol></div>`
+    : "";
+  return `<div class="ds-frozen"><div><b>${escapeHtml(`Frozen since ${c.date}: ${ticker} is on watch.`)}</b> `
+    + `${escapeHtml(`The operator's ruling: "${c.ruling}" (${where}).`)} `
+    + `${escapeHtml(`This page is kept as committed, with no paid rebuild, until ${ticker} goes active.`)}</div>`
+    + `${list}</div>`;
+}
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -239,6 +269,7 @@ export async function render(root, params, { item, frame }) {
   // WERN, the only ticker with an underwrite but no dossier, i.e. the only page whose normal path
   // requires a MISSING file. The index lists exactly what the build emitted — ask it, don't probe.
   const versionTableLoad = getExtractionVersions();  // never rejects: a failed load is null
+  const coverageLoad = getCoverage();  // never rejects either: the watch line says when it failed
   const [known, led, followed] = await Promise.all([getDossierIndex(), getLedger(), getFollowed()]);
   const d = known.includes(ticker) ? await getDossier(ticker) : null;
   // The underwrite record is read ONCE, for BOTH paths — a name may have a dossier, a record, or
@@ -297,6 +328,7 @@ export async function render(root, params, { item, frame }) {
   // watch record; id-binding here would blank the history the moment a record was superseded.
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
   useExtractionVersions(await versionTableLoad);
+  useCoverage(await coverageLoad);
   // A VOIDED CALL (operator ruling 2026-11-11) is not a live verdict, but the record says one was
   // logged and ruled out — never "no verdict logged yet"
   const voidedCall = verdict ? null : ((led.voided || []).find((e) => e.ticker === ticker) || null);
@@ -3305,6 +3337,7 @@ function header(d) {
       <h1 class="page-h">${escapeHtml(d.name || d.ticker)} <span class="page-h-id">(${d.exchange ? `${escapeHtml(d.exchange)}: ` : ""}<span class="mono">${escapeHtml(d.ticker)}</span>)</span></h1>
       <div class="ds-meta">${fmtDate(d.assembled_at)} · extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}</span>${
         refreshedTo(d.layer_refreshes) ? ` · layers refreshed to <span class="mono">${escapeHtml(refreshedTo(d.layer_refreshes))}</span>` : ""}</div>
+      ${watchLine(d.ticker)}
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"
