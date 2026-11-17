@@ -28,6 +28,8 @@ from typing import Any
 
 import pytest
 
+from tests.ciq_export_support import export_sha, skip_unless_pages_export
+from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.schemas import Dossier, EvBridge, dossier_json
 
@@ -188,7 +190,7 @@ def test_a_ciq_column_label_decodes_to_its_date(cell: Any, want: str | None) -> 
 # --- absent until built; one builder; refresh only from the page's own exports -----------------
 
 def test_a_page_without_the_field_writes_no_null() -> None:
-    doc = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    doc = frozen_doc("AMZN")   # the page as frozen at the cut
     doc.pop("ev_bridge", None)
     got = json.loads(dossier_json(Dossier.model_validate(doc)))
     assert "ev_bridge" not in got
@@ -264,6 +266,21 @@ def test_a_bridge_off_ciqs_current_figure_says_so(monkeypatch: pytest.MonkeyPatc
     assert isinstance(got, EvBridge) and got.note is not None and "DISAGREES" in got.note
 
 
+def _skip_unless_both_exports_are_the_pages(doc: dict[str, Any], b: Any,
+                                           ticker: str) -> None:
+    """A frozen page beside the LIVE exports runs only while both exports on disk are the ones it
+    names (the Estimates export its `forward_consensus` stamps, the quarterly Financials export its
+    trailing bands stamp); otherwise it SKIPS naming both (a skip, never a looser assertion:
+    `tests/ciq_export_support.py`). The frozen page waits for a new cut."""
+    skip_unless_pages_export(ticker, "estimates", page=doc, bundle=b)
+    stamps = sorted({str(x.get("source_sha256"))
+                     for x in doc["mechanical"]["valuation"]["own_history"]["value"] or []})
+    held = export_sha(ticker, "financials", freq="quarterly", bundle=b)
+    if held not in stamps:
+        pytest.skip(f"{ticker}: the Financials export on disk ({held}) is not the one the frozen "
+                    f"page's bands name ({', '.join(stamps)}) — cut the page anew on it")
+
+
 def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     tmp_path: pathlib.Path,
 ) -> None:
@@ -272,13 +289,14 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     from vinci.dossier.refresh import ev_bridge_transform, refresh_dossier
 
     b = _bundle("AMZN")
-    src = ROOT / "data" / "dossiers" / "AMZN"
+    src = frozen_page("AMZN")   # the page as frozen at the cut
     folder = tmp_path / "AMZN"
     folder.mkdir()
     for name in ("dossier.json", "dossier.md"):
         (folder / name).write_text((src / name).read_text())
     path = folder / "dossier.json"
     before = json.loads(path.read_text())
+    _skip_unless_both_exports_are_the_pages(before, b, "AMZN")
     step = ev_bridge_transform("AMZN")
     other = json.loads(json.dumps(before))
     other["forward_consensus"]["source_sha256"] = "0000000000"
