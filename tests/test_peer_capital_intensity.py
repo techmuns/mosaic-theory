@@ -11,11 +11,11 @@ Against TOTAL ASSETS it measures how acquisitive the balance sheet IS.
 """
 from __future__ import annotations
 
-import json
 import pathlib
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier.capital_allocation import PEER_SIZE_FLOOR_MUSD, build_peer_capital_intensity
 from vinci.dossier.schemas import PeerRow
 
@@ -24,7 +24,7 @@ pytestmark = pytest.mark.network
 
 
 def _grid(t: str) -> list[PeerRow]:
-    doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+    doc = frozen_doc(t)   # the page's peer grid, as frozen at the cut (tests/frozen_support.py)
     v = ((doc["mechanical"].get("peer_comps") or {}).get("peer_grid") or {}).get("value") or []
     return [PeerRow.model_validate(x) for x in v]
 

@@ -20,9 +20,11 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
+from typing import Any
 
 import pytest
 
+from tests.frozen_support import covered_where, frozen_doc
 from vinci.dossier import anchor as an
 from vinci.dossier import ev_ebitda_basis as eb
 from vinci.dossier import render as dr
@@ -33,7 +35,13 @@ _PAGES = sorted(Path("data/dossiers").glob("*/dossier.json"))
 
 
 def _doc(t: str) -> ds.Dossier:
+    """A LIVING page, for a name a roster walk handed back."""
     return ds.Dossier.model_validate_json(Path(f"data/dossiers/{t}/dossier.json").read_text())
+
+
+def _frozen_doc(t: str) -> ds.Dossier:
+    """A NAMED page, as frozen at the cut (`tests/frozen_support.py`), never the living one."""
+    return ds.Dossier.model_validate(frozen_doc(t))
 
 
 def _with(m: ds.MechanicalLayer, *, rent: float | None = ..., multiple: float | None = None,
@@ -54,7 +62,7 @@ def _with(m: ds.MechanicalLayer, *, rent: float | None = ..., multiple: float | 
 def test_tjx_reproduces_the_rent_inclusive_pairing() -> None:
     """THE RED: 13.3x divides $12,810M, which is reported LTM EBITDA plus rent — and the line says
     it is NOT a multiple of reported EBITDA."""
-    got = eb.headline_basis(_doc("TJX").mechanical)
+    got = eb.headline_basis(_frozen_doc("TJX").mechanical)
     assert got is not None and got.reading == "ebitda_plus_rent", got
     assert got.ratio_to_reported_plus_rent is not None
     assert abs(got.ratio_to_reported_plus_rent - 1) <= eb.PAIRING_TOL
@@ -72,13 +80,13 @@ def test_tjx_reproduces_the_rent_inclusive_pairing() -> None:
 ])
 def test_each_reading_is_measured_never_assumed(rent: float | None, multiple: float,
                                                 reading: str) -> None:
-    got = eb.headline_basis(_with(_doc("TJX").mechanical, rent=rent, multiple=multiple))
+    got = eb.headline_basis(_with(_frozen_doc("TJX").mechanical, rent=rent, multiple=multiple))
     assert got is not None and got.reading == reading, got
 
 
 def test_no_snapshot_tev_no_reading() -> None:
     """NEGATIVE: without the comps TEV there is no denominator to test — absent, never a guess."""
-    m = _doc("TJX").mechanical
+    m = _frozen_doc("TJX").mechanical
     v = m.valuation
     assert v.implied_expectations is not None
     ie = v.implied_expectations.model_copy(update={"tev": ds.Sourced[float].unknown(note="x")})
@@ -114,8 +122,13 @@ def test_the_at_price_figure_is_its_own_arithmetic_e2e() -> None:
 
 def test_an_immaterial_rent_page_carries_no_ex_lease_figure() -> None:
     """NEGATIVE: where rent is immaterial R1 prices CIQ's own history, so there is no ex-lease
-    figure to strike — absent on the page, not a figure on a basis R1 does not use."""
-    for t in ("LLY", "V", "GOOGL"):
+    figure to strike — absent on the page, not a figure on a basis R1 does not use. It walks every
+    covered page with an immaterial lease basis (the roster), never a named one."""
+    def immaterial(_t: str, d: dict[str, Any]) -> bool:
+        lb = d["mechanical"]["valuation"].get("lease_basis")
+        return bool(lb) and not lb.get("material")
+
+    for t, _d in covered_where(immaterial, "carries an immaterial lease basis"):
         lb = _doc(t).mechanical.valuation.lease_basis
         if lb is not None and not lb.material:
             assert _doc(t).mechanical.valuation.ev_ebitda_ex_lease_at_price is None, t
@@ -125,7 +138,7 @@ def test_r1s_current_multiple_is_on_r1s_basis_e2e() -> None:
     """`valuation_basis.current_multiple` for R1 was always empty. On an ex-lease page it is the
     history's latest quarterly close AND the same basis at the page's price — the block's value,
     not CIQ's lease-inclusive headline."""
-    d = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    d = frozen_doc("TJX")   # TJX's page, as frozen at the cut
     cm = d["valuation_basis"]["current_multiple"]
     at = d["mechanical"]["valuation"]["ev_ebitda_ex_lease_at_price"]
     band = d["mechanical"]["valuation"]["lease_basis"]["ex_lease_band"]
@@ -204,7 +217,7 @@ def test_the_price_and_the_value_are_struck_on_one_count(t: str, shares: float,
                                                          label: str) -> None:
     """THE COMPUTE, on the real page and its frozen companyfacts: R1's multiple at the page's price
     divides by `anchor.share_denominator` — and the line names which count it is."""
-    at = eb.ex_lease_at_price(_doc(t).mechanical, _fixture(t))
+    at = eb.ex_lease_at_price(_frozen_doc(t).mechanical, _fixture(t))
     assert at is not None and at.shares == shares and at.shares_basis == label
     assert f"{shares:,.0f} {label}" in at.line
 
@@ -226,7 +239,7 @@ def _offline_transform(monkeypatch: pytest.MonkeyPatch, t: str) -> object:
     monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(
         lambda _cfg: SimpleNamespace(files=_no_folder)))
     monkeypatch.setattr(sec, "build_sec_http", lambda _cfg: None)
-    return rf.valuation_bases_transform(t, _doc(t).cik)
+    return rf.valuation_bases_transform(t, _frozen_doc(t).cik)
 
 
 def test_the_transform_rebuilds_a_block_never_carries_it(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -234,14 +247,14 @@ def test_the_transform_rebuilds_a_block_never_carries_it(monkeypatch: pytest.Mon
     existed, failed the transform's own validation — the old block was carried into the rebuild.
     (+) An old-shape block is replaced by the rebuilt one. (−) On a page the builder writes no
     ex-lease figure for (LLY, rent immaterial), a planted block does not survive."""
-    tjx = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())["mechanical"]
+    tjx = frozen_doc("TJX")["mechanical"]   # the pages as frozen at the cut
     old = dict(tjx["valuation"]["ev_ebitda_ex_lease_at_price"])
     old.pop("shares_basis")
     tjx["valuation"]["ev_ebitda_ex_lease_at_price"] = old
     out = _offline_transform(monkeypatch, "TJX")(tjx)  # type: ignore[operator]
     assert out["valuation"]["ev_ebitda_ex_lease_at_price"]["shares_basis"] == (
         an.SHARES_OUTSTANDING_LABEL)
-    lly = json.loads(Path("data/dossiers/LLY/dossier.json").read_text())["mechanical"]
+    lly = frozen_doc("LLY")["mechanical"]
     lly["valuation"]["ev_ebitda_ex_lease_at_price"] = old
     out = _offline_transform(monkeypatch, "LLY")(lly)  # type: ignore[operator]
     assert "ev_ebitda_ex_lease_at_price" not in out["valuation"]

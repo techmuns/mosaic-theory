@@ -18,6 +18,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier.ev_gap import (
     EvGapInputs,
     Route,
@@ -40,7 +41,7 @@ FROZEN_MVST = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "MVS
 
 def _cell(ticker: str, metric: str, fy: str | None = None) -> dict[str, object]:
     frozen = {"VITL": FROZEN_VITL, "MVST": FROZEN_MVST}
-    folder = frozen.get(ticker, ROOT / "data" / "dossiers" / ticker)
+    folder = frozen[ticker] if ticker in frozen else frozen_page(ticker)   # never a living page
     d = json.loads((folder / "dossier.json").read_text())
     cells = d["mechanical"]["consensus_context"]["consensus_levels"][metric]
     return cells[0] if fy is None else next(c for c in cells if str(c["fy"]) == fy)
@@ -285,7 +286,7 @@ def test_smpl_holds_multiple_dominant_at_its_adjacent_year_on_real_consensus() -
         labels_across_years,
     )
 
-    d = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    d = json.loads((frozen_page("SMPL") / "dossier.json").read_text())   # as frozen at the cut
     lv = d["mechanical"]["consensus_context"]["consensus_levels"]
     adj = adjacent_year(lv, "2026")
     assert adj == "2027"
