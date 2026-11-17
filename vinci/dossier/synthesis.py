@@ -3350,9 +3350,10 @@ _DRAWDOWN_ANCHOR_EXAMPLE = (
 def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
     """The prompt section for a name with a drawdown anchor (`DrawdownAnchor`): both dated parts,
     one line each (window → per-gap date, move and cause → source_ref, then the outlook it
-    furnished → source_ref), and the question the anchor exists to ask — has the original cause
-    played out. Read from ``dumped``, the facts as the prompt carries them, so the outlook here
-    wears the same vintage mark as there. None for a name with no anchor: its prompt is unchanged.
+    furnished → source_ref), and the closing question (`_drawdown_anchor_ask`): whether the cause
+    the at-anchor part names has played out, or, where it names none, what came after. Read
+    from ``dumped``, the facts as the prompt carries them, so the outlook here wears the same
+    vintage mark as there. None for a name with no anchor: its prompt is unchanged.
 
     One literal example (`_DRAWDOWN_ANCHOR_EXAMPLE`, SMPL's), shape only:
       at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); … →
