@@ -562,6 +562,16 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     # than spending on the rest of it.
     from vinci import coverage_roster as roster
 
+    # THE PAGES MUST AGREE WITH THE ROSTER BEFORE THE SPEND, not only the finalists. The mirror
+    # this command runs once a page is written refuses any disagreement, so one found there came
+    # after the model calls, with the served mirror left stale: a stray `data/dossiers/ZZZZ/` left
+    # by a scratch or failed build cost a whole paid build of an active name (review of #1092).
+    # An active name whose page vanished is refused too; its page is restored from git, at $0.
+    try:
+        roster.covered_pages(cfg.data_dir)
+    except roster.CoverageMismatchError as exc:
+        print(f"=== dossier · REFUSED before any model call: {exc} ===")
+        return 1
     refused: list[str] = []
     for fin in finalists:
         try:

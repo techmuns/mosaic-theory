@@ -754,6 +754,8 @@ def _extraction_versions(module: Path = EV_MODULE, entries: Path = EV_ENTRIES) -
 
 
 COVERAGE = ROOT / "data" / "coverage_roster.jsonl"
+#: every status a move can name: `vinci.coverage_roster.STATUSES`, pinned equal in the suite
+_STATUSES = ("intake", "active", "watch", "retired")
 
 
 def _covered_pages() -> list[str]:
@@ -762,8 +764,9 @@ def _covered_pages() -> list[str]:
     once its first page is committed, sorted, once the committed pages agree with it. Stdlib
     twin of `vinci.coverage_roster.covered_pages` (the build fence forbids the import);
     `tests/test_coverage_roster.py` pins the two against each other on the real committed tree.
-    This twin reads each name's latest move and checks the pages; the roster's own form (order,
-    fields, canonical lines) is the backend reader's, run in the suite. A disagreement stops the
+    This twin reads each name's latest move, refuses a status the roster does not name, and checks
+    the pages; the roster's own form (order, fields, canonical lines) is the backend reader's, run
+    in the suite. A disagreement stops the
     build naming every name, never a quiet publish of whatever is on disk: a page is published
     because its name is covered, not because its folder exists."""
     if not COVERAGE.is_file():
@@ -772,6 +775,12 @@ def _covered_pages() -> list[str]:
     for line in COVERAGE.read_text(encoding="utf-8").splitlines():
         if line.strip():
             move = json.loads(line)
+            # a status the twin does not know is neither published nor refused below, so its page
+            # would leave the mirror in silence. A hand run, `ciq-reread` and `caveat-reword` reach
+            # this with no strict read of the roster first.
+            if move["status"] not in _STATUSES:
+                raise SystemExit(f"{COVERAGE.relative_to(ROOT)}: {move['ticker']}'s status "
+                                 f"{move['status']!r} is not one of {_STATUSES}")
             latest[str(move["ticker"])] = str(move["status"])
     covered = {t for t, s in latest.items() if s in ("active", "watch")}
     paged = {p.parent.name for p in DOSS.glob("*/dossier.json")}
