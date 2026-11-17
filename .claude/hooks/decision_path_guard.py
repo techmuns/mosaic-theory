@@ -66,6 +66,28 @@ PROTECTED: tuple[tuple[str, str], ...] = (
     ("vinci/evals/", "the synthesis grader: its metrics, gap types and panel"),
     ("tests/fixtures/synthesis_gap_gold/", "the gold set the M-GAP grader is measured against"),
     ("tests/fixtures/synthesis_gold/", "the synthesis gold set the grader is measured against"),
+    # What the gate installs its own tools from (gate.yml's `pip install --require-hashes`): a
+    # changed pin changes the ruff, mypy or pytest that grades every PR (#1104 review, 2026-11-17).
+    ("requirements.lock", "the lock the gate installs ruff, mypy and pytest from"),
+)
+#: (file name, what it is) — a file of this NAME at ANY depth (#1104 review, 2026-11-17). Each is
+#: read by pytest, ruff or mypy IN PLACE OF, or on top of, pyproject.toml's settings: pytest takes
+#: pytest.ini/.pytest.ini/pytest.toml/.pytest.toml before pyproject.toml, and any conftest.py
+#: beside a test adds hooks to it; ruff takes the ruff.toml nearest a file; mypy takes mypy.ini and
+#: setup.cfg. At any depth, because a nested one governs the files below it. 2026-11-17: the only
+#: tracked file matching is tests/conftest.py, protected above.
+PROTECTED_NAMES: tuple[tuple[str, str], ...] = (
+    ("conftest.py", "a pytest conftest: fixtures and hooks the tests beside it run under"),
+    ("pytest.ini", "a pytest config that overrides pyproject.toml's"),
+    (".pytest.ini", "a pytest config that overrides pyproject.toml's"),
+    ("pytest.toml", "a pytest config that overrides pyproject.toml's"),
+    (".pytest.toml", "a pytest config that overrides pyproject.toml's"),
+    ("tox.ini", "a pytest/tox config pytest reads when pyproject.toml has none"),
+    ("setup.cfg", "a pytest/mypy config read beside pyproject.toml"),
+    ("ruff.toml", "a ruff config that overrides pyproject.toml's for the files below it"),
+    (".ruff.toml", "a ruff config that overrides pyproject.toml's for the files below it"),
+    ("mypy.ini", "a mypy config that overrides pyproject.toml's"),
+    (".mypy.ini", "a mypy config that overrides pyproject.toml's"),
 )
 STATE_DIR = Path(tempfile.gettempdir()) / "mosaic-theory-hooks"
 
@@ -73,6 +95,15 @@ STATE_DIR = Path(tempfile.gettempdir()) / "mosaic-theory-hooks"
 def protected_reason(rel: str) -> str | None:
     for path, why in PROTECTED:
         if rel == path or (path.endswith("/") and rel.startswith(path)):
+            return why
+        # A PACKAGE of the module's name is imported in its place (a directory with __init__.py
+        # wins over a same-named .py), so `vinci/seal/__init__.py` replaces `vinci/seal.py`
+        # without touching it (#1104 review, 2026-11-17).
+        if path.endswith(".py") and rel.startswith(path[:-3] + "/"):
+            return f"{why}, shadowed by a package of the same name"
+    name = rel.rsplit("/", 1)[-1]
+    for basename, why in PROTECTED_NAMES:
+        if name == basename:
             return why
     return None
 

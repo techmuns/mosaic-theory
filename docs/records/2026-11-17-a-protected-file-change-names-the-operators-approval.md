@@ -10,32 +10,59 @@ superseded-by:
 # A change to a decision-line file is refused by the gate until a commit message names the operator's approval of it; the guard's prompt stays, and is no longer read as the record
 
 **WHAT.** `.github/scripts/protected_approval.py` (new) reads a branch's diff against main and lists
-every file on `.claude/hooks/decision_path_guard.py`'s `PROTECTED` list that the branch changes. It
-loads the guard's list by path, never a copy. It refuses the branch unless, for each such file, a
-commit message on the branch carries one line of a fixed form:
+every file protected by `.claude/hooks/decision_path_guard.py`. It refuses the branch unless, for
+each such file, a commit message on the branch carries one line of a fixed form:
 
     Operator-approved: <path> "<the operator's words, quoted>" <YYYY-MM-DD>
 
-`<path>` is the file itself, or one of the guard's own directory entries that holds it
-(`vinci/evals/`). No other prefix counts.
+`<path>` is the file itself, or one of MAIN's directory entries that holds it (`vinci/evals/`). No
+other prefix counts, and a branch cannot add one.
 
 Two gates run it:
-- **`gate.yml`**, on every pull request, before the install. It reads against `origin/<base_ref>`.
+- **`gate.yml`**, on every pull request, before the install. It always reads against
+  `origin/main`, never the PR's own base.
 - **`bin/commit`**, after the tree-equals-index check and before ruff. It reads the staged change
-  and the message being committed: `-m`, `-F` and `--trailer`. With `--amend` and a new message,
-  HEAD's old message no longer counts.
+  and the message being committed: `-m`, `-F`, `-C`/`-c` (the reused commit's message) and
+  `--trailer` (`token=value` read as git writes it, `token: value`). With `--amend` and a new
+  message, HEAD's old message no longer counts.
 
-How the diff is read:
-- **The list is the branch's guard AND the base's.** Each guard's own `protected_reason` is
-  called; the rule is never re-implemented. A branch that drops an entry from its copy and changes
-  that file is still checked against main's list.
+**Which guard, and which list:**
+- The only guard CODE the check runs is MAIN's: the guard file as the merge base has it, executed
+  for its matching rule.
+- The branch's guard is read for its lists as LITERALS (`ast.literal_eval`), never run, and its
+  entries are matched by main's rule beside main's own.
+- So a branch can neither patch the check through the file it loads, nor shrink main's list by
+  dropping an entry from its own copy.
+- A base with no guard, or one that will not load, exits 2. So does a branch guard with no literal
+  list.
+
+**When an approval counts:**
+- It must sit in a commit no older than the branch's last change to that file: every commit that
+  gives the file new content must be an ancestor of, or the same as, the approving one.
+- In bin/commit, a file the commit being made changes needs the line in that commit's own message.
+- A two-parent merge has changed a file only where its content differs from what git's own merge
+  of the parents gives (`git merge-tree`). So a clean re-sync keeps an approval, and an edit made
+  inside a merge does not.
+- Its date is no later than the latest date anywhere at that moment (UTC+14), and no earlier than
+  14 days before the branch's first commit.
+
+**How the diff is read:**
 - Renames are not detected, so a protected file moved away or deleted counts under its old name.
 - A re-sync from main is not read as the branch's own change. That holds in CI, and while
   bin/commit concludes a merge, where the base is taken against HEAD and MERGE_HEAD together. A
   merge of a side branch cut from an older main counts only the branch's change.
 - An approval is one whole line; quoted words never run over a line break.
-- A refusal names any line that mentions `Operator-approved:` but is not in the form.
-- A missing base, or a guard that cannot load, exits 2. That is a refusal, never a pass.
+- A refusal names, under each file, every approval it did not count and why, and any line that
+  mentions `Operator-approved:` but is not in the form.
+
+**The list, widened in round 1** (review item 5):
+- `requirements.lock`, which gate.yml installs ruff, mypy and pytest from.
+- `PROTECTED_NAMES`: a file of these names at ANY depth, since each is read in place of, or on top
+  of, pyproject.toml's settings. They are `conftest.py`, `pytest.ini`, `.pytest.ini`,
+  `pytest.toml`, `.pytest.toml`, `tox.ini`, `setup.cfg`, `ruff.toml`, `.ruff.toml`, `mypy.ini` and
+  `.mypy.ini`. pytest 9.1.1, the locked version, reads the four pytest names.
+- A package shadowing a protected module (`vinci/seal/__init__.py` is imported in place of
+  `vinci/seal.py`). The rule covers every protected `.py`.
 
 The guard still asks. Its reason now names the line the gate will want, and its docstring says what
 the prompt is and is not. Operator ruling 2026-11-17, relayed by the coordinator: "Approve as
@@ -147,14 +174,48 @@ message, a trailer included, replace HEAD's.
 
 8 of 8 were caught.
 
+**Review round 1** (A's independent review of `d1eea93e`, plus Codex's P2): 11 items. Items 1–9
+are FIXED, each behind a pin; items 10 and 11 are recorded.
+- 17 of the new pins fail on `d1eea93e` as reviewed. They cover:
+  - items 1 and 2, run the way gate.yml runs them (the script inside the checkout, no `--root`);
+  - item 3, plus a clean re-sync and an edit made inside a merge;
+  - item 4, a base with no guard;
+  - item 5, a shadowing package and seven config names, plus the guard's own pin;
+  - items 6–8: the date window, `token=value` trailers, `-C`/`-c`;
+  - item 9, gate.yml against main.
+- 1 pin, main's guard failing when RUN, passes there: that behaviour was right. A's finding was
+  that a mutant survived every pin; it now catches that mutant.
+- 9 mutations, one per fix, are each caught by the fix's pin:
+  1. the branch's guard code run;
+  2. directory approvals from both lists;
+  3. no ancestor check;
+  4. a merge authoring whatever differs from both parents;
+  5. main's guard failing to run swallowed;
+  6. a base with no guard read as empty;
+  7. the date unbounded;
+  8. a trailer not normalised;
+  9. `-C`/`-c` not read.
+- **M1 at first SURVIVED.** The pin's payload patched `sys.exit`, and `sys.exit(main())` looks
+  `sys.exit` up before `main` runs. The pin was hardened to a payload that exits 0 at import, so it
+  holds whatever the check's functions are named.
+- The file now holds 66 pins.
+
 **BOUNDARY.**
 - **The census** is every transcript present under `~/.claude/projects` on 2026-11-17 that names
   the guard. An ask is a `hook_success` attachment whose stdout carries `"ask"`; its grant is the
   matching tool result's `permissionDecision`. Raise-to-grant is the difference between their
   timestamps, and includes rendering.
-- **The corpus** is first-parent commits on main from 2026-10-22T00:00 to `bdb2d45d`: 322 commits,
-  each diffed against its first parent and read against its own message. 94 would be refused: 211
-  (commit, file) pairs over 66 distinct files, `vinci/dossier/schemas.py` in 38.
+- **The corpus** is first-parent commits on main from 2026-10-22T00:00 COMMITTER LOCAL TIME
+  (+05:30) to `bdb2d45d`: 322 commits, each diffed against its first parent and read against its
+  own message.
+  - The protected list used is the HEAD's, at `d1eea93e`.
+  - 94 would be refused: 211 (commit, file) pairs over 66 distinct files, `vinci/dossier/schemas.py`
+    in 38.
+  - From 2026-10-22T00:00 UTC the window holds 319 commits, and 94 would still be refused.
+  - Under round 1's widened list: still 94 of 322 (94 of 319 at UTC). Its only new path on main,
+    `requirements.lock`, changed in 2 of those commits (`6652a242`, `96d0cfea`), both already
+    refused for another file. So the widening adds no refused PR in the window, and 0 tracked
+    files beyond `requirements.lock` newly match it.
 - **In the census window**, 2026-11-04 to 11-17 by commit date, 62 of 203 commits changed a
   protected file, as 163 pairs. That is not a ratio against the 48 asks: one ask covers a file for a
   whole session, and some asks were on branches never merged.
@@ -164,18 +225,31 @@ message, a trailer included, replace HEAD's.
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 
 **The cost.** About 3 in 10 PRs need at least one line: 94 of 322 since 2026-10-22, and
-`schemas.py` alone 38 times in 26 days. Each line carries the operator's own words, relayed by the
-coordinator.
+`schemas.py` alone 38 times in 26 days. Round 1's widened list adds none in that window. Each line
+carries the operator's own words, relayed by the coordinator.
+
+A line must now also be no older than the file's last change. So a protected file edited again
+after its approval needs a new line, and so does a conflict resolved inside a merge. A clean
+re-sync does not.
 
 **Accepted, not catchable here.** A line an agent writes with words the operator never said.
 Agents and the operator share one GitHub account, so no check can tell them apart. The check turns
 a SILENT change into a public, permanent CLAIM that the person merging reads and can refute.
 
-**Accepted: a PR can pass itself.** Review round 0 found that a `pull_request` run executes the
-PR's OWN copy of `gate.yml` and of the script. A PR that rewrites either, or deletes the step, can
-therefore pass. The rewrite is itself a protected change, in the diff the person merging reads, but
-CI does not refuse it. Closing that needs a check that runs from main's copy, such as a ruleset's
-required workflow or `pull_request_target`. That is the operator's call, and it is not built here.
+**Accepted: a PR can pass itself, and a retarget re-runs nothing (STATE row 32 item 33, owner:
+the operator).** A `pull_request` run executes the PR's OWN copy of `gate.yml` and of the script.
+The routes that remain are:
+- edit the script;
+- drop or soften the gate.yml step;
+- add a stdlib-named module to `.github/scripts/`, which the script's own directory puts first on
+  its import path;
+- open a PR onto a branch carrying an unapproved change, then retarget it to main. `pull_request`
+  has no `edited` trigger and `gate` is not strict, so nothing re-runs.
+
+Round 1 closed the guard route (item 1) and makes every run read against main (item 9). Each
+remaining route is itself a protected change, in the diff the person merging reads, but CI does
+not refuse it. Closing them needs the check run from MAIN's copy: a ruleset-required workflow, or
+`pull_request_target`. That is the operator's call, and it is not built here.
 
 **Accepted: an admin's direct push to main is not checked.** Branch protection takes every change
 to main through a PR, but it is not enforced for admins.

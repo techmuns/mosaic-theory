@@ -15,8 +15,10 @@ interpreter is a stand-in that records what it was asked to run.
 """
 from __future__ import annotations
 
+import datetime as dt
 import os
 import shlex
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -127,6 +129,11 @@ def _checkout(tmp_path: Path, *, venv: bool = True) -> Path:
     repo = tmp_path / "checkout"
     (repo / "frontend").mkdir(parents=True)
     (repo / "frontend" / "page.txt").write_text("built\n")
+    # main's guard: the protected-file check reads what is protected from the base's copy, and a
+    # base without one is a check that cannot run (#1104 round 1)
+    guard = repo / ".claude" / "hooks" / "decision_path_guard.py"
+    guard.parent.mkdir(parents=True)
+    shutil.copy(ROOT / ".claude" / "hooks" / "decision_path_guard.py", guard)
     subprocess.run(["git", "init", "-q", str(repo)], check=True)
     if venv:
         py = repo / ".venv" / "bin" / "python"
@@ -204,7 +211,7 @@ def test_the_local_gate_refuses_a_protected_file_with_no_operator_approval(tmp_p
     assert not (repo.parent / "calls.log").exists()          # refused before ruff
     assert _commits(repo) == 1
     approved = ('probe\n\nOperator-approved: vinci/dossier/verdict.py "Yes, card to fix '
-                '(Recommended)" 2026-11-17')
+                f'(Recommended)" {dt.date.today().isoformat()}')
     out = _commit(repo, approved)
     assert out.returncode == 0, out.stderr
     assert _commits(repo) == 2

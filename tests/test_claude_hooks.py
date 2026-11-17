@@ -132,6 +132,21 @@ def test_guard_protects_the_gates_configuration_and_the_grader() -> None:
         assert _edit(path, _session()).stdout == "", path
 
 
+def test_guard_protects_a_shadowing_package_the_gates_overriding_configs_and_its_lock() -> None:
+    """#1104 review round 1, item 5. A package of a protected module's name is imported in its
+    place; pytest, ruff and mypy each read a config beside or below pyproject.toml's, at any depth;
+    gate.yml installs its tools from requirements.lock. NEGATIVE: a near name is not protected."""
+    for path in ("vinci/seal/__init__.py", "vinci/dossier/verdict/core.py",
+                 "vinci/dossier/schemas/__init__.py", "conftest.py", "tests/sub/conftest.py",
+                 "pytest.ini", ".pytest.ini", "pytest.toml", "tox.ini", "setup.cfg", "ruff.toml",
+                 "vinci/.ruff.toml", "mypy.ini", ".mypy.ini", "requirements.lock"):
+        out = _edit(path, _session())
+        assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask", path
+    for path in ("vinci/sealer.py", "vinci/dossier/verdict_helpers.py", "tests/conftest_helpers.py",
+                 "requirements.txt", "vinci/seal_test/x.py"):
+        assert _edit(path, _session()).stdout == "", path
+
+
 def test_guard_asks_once_per_file_per_session_and_only_after_an_approved_edit() -> None:
     session = _session()
     assert _edit("vinci/scoring/harness.py", session).stdout          # asks
