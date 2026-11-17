@@ -1,6 +1,6 @@
 # Dossier — MCKESSON CORP (NYSE: MCK)
 
-_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
+_November 5, 2026 · extraction 2026-11-05.input-record · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
 
 > **Frozen since 2026-11-13: MCK is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until MCK goes active.
 
@@ -649,6 +649,7 @@ _Source §: 8-K 0001193125-13-450016 · d629383dex101.htm · amended by 00009276
   - 2026-11-10 · mechanical.peer_capital_intensity — refresh at 2026-11-10.one-family-peers
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
+  - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
 - **Price store:** `b6-model-inputs-1e3db3 → mosaic-theory-ta` · reaching 2026-11-04
 - **Panel age:** oldest panel 1d old — 2026-11-04 (valuation.implied_expectations.tev_as_of), against a 2026-11-05 build
 - **Consensus age:** consensus 1d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

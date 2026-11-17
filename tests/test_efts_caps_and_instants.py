@@ -22,6 +22,7 @@ from typing import Any, cast
 from unittest.mock import patch
 
 import vinci.dossier.mechanical as mech
+from tests.frozen_support import frozen_page
 from vinci.dossier.mechanical import (
     _COVENANT_CLASS_RE,
     COVENANT_SEARCH_FOUND_NOTHING,
@@ -112,10 +113,11 @@ def test_a_one_page_search_is_one_request_on_the_url_it_always_had() -> None:
 # ─── the covenant-pointer table states its own caps ──────────────────────────────────────────
 
 def _instruments(ticker: str) -> list[CapitalInstrument]:
-    # AORT was retired 2026-11-09 and MVST 2026-11-12: each page as last committed, frozen
+    # Every panel is a page's as frozen, never a living page's (tests/frozen_support.py): AORT
+    # (retired 2026-11-09) and MVST (2026-11-12) as last committed, the others at the cut
     frozen = {"AORT": "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json",
               "MVST": "tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json"}
-    path = _ROOT / frozen.get(ticker, f"data/dossiers/{ticker}/dossier.json")
+    path = _ROOT / frozen[ticker] if ticker in frozen else frozen_page(ticker) / "dossier.json"
     page = json.loads(path.read_text())
     return [CapitalInstrument.model_validate(i)
             for i in page["mechanical"]["capital_structure"]["instruments"]["value"]]

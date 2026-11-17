@@ -191,7 +191,7 @@ LADDER_FIELDS: tuple[str, ...] = (
 #: `miss_case` (2026-11-17, recipe 3a) for the `ebit` reason: absent says *this bear states no
 #: miss*, and every committed record stays byte-identical.
 LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps", "ebit", "revenue", "margin",
-                                                 "miss_case")
+                                                 "miss_case", "eps_line")
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -380,6 +380,15 @@ class AssumptionDerivation(BaseModel):
         return v
 
 
+#: (R3, recipe 3b (3), operator 2026-11-17: "Yes, add the field") THE EPS LINES A LEG CAN BE ON, in
+#: the page's own vocabulary (`forward_consensus.pe_eps_basis`: the keys of
+#: `ciq_sheets._PE_EPS_LINES`). A leg's EPS is on one line; `indistinguishable` and
+#: `undetermined` describe the PAGE's evidence about CIQ's P/E, never a leg.
+EPS_LINES: frozenset[str] = frozenset({"gaap", "normalized"})
+#: The stamp line that matches either leg line: both lines fit CIQ's P/E, so they move together.
+STAMP_LINE_EITHER = "indistinguishable"
+
+
 class MissCase(BaseModel):
     """(R3, recipe 3a) A bear EPS above today's NTM consensus, stated as the earnings MISS it
     models.
@@ -392,6 +401,10 @@ class MissCase(BaseModel):
     the bear EPS must sit BELOW ``consensus_eps``, so the miss is arithmetic anyone can check."""
 
     consensus_eps: float   # $/share — the consensus EPS for the period the bear EPS is struck at
+    #: (3b (3)) the EPS line that consensus is on — `gaap` | `normalized`, the page's vocabulary.
+    #: It must equal the bear leg's `eps_line`: a miss measured on another line is the unlike
+    #: comparison the field exists to end. Required, because a line-less miss case is that again.
+    line: str
     period: str            # that consensus's period, e.g. "FY2027"
     source: str            # where it was read (a page field, a CIQ sheet and cell)
     reason: str            # why the bear's earnings fall short of it
@@ -404,6 +417,13 @@ class MissCase(BaseModel):
         if not math.isfinite(v) or v <= 0:
             raise ValueError(f"miss_case.consensus_eps {v!r} is not a positive EPS — a bound any "
                              "bear EPS sits below is not a miss case")
+        return v
+
+    @field_validator("line")
+    @classmethod
+    def _miss_line_known(cls, v: str) -> str:
+        if v not in EPS_LINES:
+            raise ValueError(f"miss_case.line {v!r} is not one of {sorted(EPS_LINES)}")
         return v
 
     @field_validator("period", "source", "reason")
@@ -481,6 +501,19 @@ class ScenarioInput(BaseModel):
     #: (R3 bear only, recipe 3a) the earnings miss a bear EPS above the NTM consensus models — see
     #: :class:`MissCase`. Absent on every committed record, and dropped when None, so none churns.
     miss_case: MissCase | None = None
+    #: (R3, recipe 3b (3)) WHICH EPS LINE this leg's `eps` is on — `gaap` | `normalized`
+    #: (:data:`EPS_LINES`). Required on every R3 leg at the point of decision, so the bear bound
+    #: compares like with like; never parsed out of the leg's prose, never assumed. Absent on every
+    #: committed record and dropped when None, so none churns: GOOGL's is FLAGGED, not rewritten.
+    eps_line: str | None = None
+
+    @field_validator("eps_line")
+    @classmethod
+    def _eps_line_known(cls, v: str | None) -> str | None:
+        if v is not None and v not in EPS_LINES:
+            raise ValueError(f"eps_line {v!r} is not one of {sorted(EPS_LINES)} — a leg's EPS is "
+                             "on one line; `indistinguishable`/`undetermined` describe a page")
+        return v
 
     @field_validator("bear_basis")
     @classmethod
@@ -531,7 +564,9 @@ class ScenarioOutcome(BaseModel):
     ev_ebit: float | None = None   # CROSS-CHECK
     norm_fcf: float | None = None  # CROSS-CHECK ($M)
     # (R2) the terminal-year bridge and its present value. `value_per_share` above carries the PV —
-    # it is what the ratio uses — and `value_terminal` the undiscounted terminal number. BOTH are
+    # the ratio's input on a record stamped `R2_FORMULA` / `R2_FORMULA_REVENUE`; a record stamped
+    # with `R2_NOMINAL_RATIO_LINE` (3b (1)) strikes its ratio on `value_terminal` instead — and
+    # `value_terminal` the undiscounted terminal number. BOTH are
     # rendered and labelled: conflating them is how a five-year story gets compared against a price
     # paid today. Absent on R1 records.
     years: float | None = None
@@ -1229,6 +1264,25 @@ def axes_for(recipe_id: str, multiple_basis: str | None) -> tuple[str, ...] | No
     return AXES_BY_RECIPE.get(recipe_id)
 
 
+#: (recipe 3b (1), 2026-11-17) THE LINE A NOMINAL R2 STAMP ADDS — a NEW formula version, never a
+#: reworded one. `R2_FORMULA` / `R2_FORMULA_REVENUE` are record stamps and `_run_r2` refuses a
+#: mismatch, so rewording either would refuse NCNO's record (the #762 shape, on R1's stamp). A
+#: record stamped with today's chain still computes under it, byte-identical: its ratio on the PV.
+#: A new or superseded R2 record carries this line, and its ratio is struck on `value_T` — the
+#: NOMINAL basis R1, R3 and R4 already strike on, so "PASS 2:1" is one standard across the book.
+R2_NOMINAL_RATIO_LINE = ("reward:risk = (base value_T − spot) ÷ (spot − bear value_T) — NOMINAL, "
+                         "as R1, R3 and R4 strike it; the PV is recorded beside it, never the "
+                         "ratio's input")
+
+
+def r2_formula(basis: str, *, nominal: bool) -> tuple[str, ...]:
+    """The R2 chain a record on ``basis`` runs: today's stamp, or the nominal version (3b (1))."""
+    from vinci.dossier import terminal_margin as tmod
+
+    chain = tmod.formula_for(basis)
+    return (*chain, R2_NOMINAL_RATIO_LINE) if nominal else chain
+
+
 def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
     """(R2) Compute ``result{}`` via the terminal-margin engine. The machine records the bar test
     and the gate; it does NOT touch ``verdict``.
@@ -1256,10 +1310,15 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
         raise ValueError(
             f"recipe {RECIPE_R2} on basis {tmod.BASIS_REVENUE} carries a 'd_and_a_ratio' fact that "
             "no computation reads — omit it rather than record a driver the value never used")
-    formula = tmod.formula_for(rec.multiple_basis)
-    if rec.recipe_formula and rec.recipe_formula != list(formula):
+    legacy = r2_formula(rec.multiple_basis, nominal=False)
+    nominal = r2_formula(rec.multiple_basis, nominal=True)
+    if rec.recipe_formula and rec.recipe_formula not in (list(legacy), list(nominal)):
         raise ValueError(f"record's recipe_formula does not match the {rec.multiple_basis} chain — "
                          "refusing to compute under a misstated recipe")
+    # THE STAMP DECIDES THE RATIO'S BASIS (3b (1)): a record carrying today's chain keeps its PV
+    # ratio, byte-identical; an unstamped record — a first compute — is struck nominal
+    on_nominal = rec.recipe_formula != list(legacy)
+    formula = nominal if on_nominal else legacy
     si = rec.survival_input
     if si is None:
         raise ValueError(f"recipe {RECIPE_R2} needs survival_input — a terminal value on a company "
@@ -1303,7 +1362,9 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
             shares_now=shares_now, g_sbc=rec.facts["share_growth"].value,
             raise_shares=si.raise_shares * 1e6)
         per[name] = ScenarioOutcome(
-            value_per_share=v.pv,                 # the PV IS what the ratio uses
+            # the PV — the ratio's input on a record stamped with today's chain; on a nominal
+            # record (3b (1)) it is recorded and the ratio reads `value_terminal` below
+            value_per_share=v.pv,
             op_income=v.ebit_t, ebitda=v.ebitda_t, ev=v.ev_t, equity=v.equity_t,
             # EV/EBIT is a cross-check on the EBIT the value used; with no EBIT there is nothing
             # to cross-check, and inventing one from a revenue multiple would be circular.
@@ -1319,15 +1380,15 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
         raise_accession=surv.raise_accession, note=surv.note, detail=list(surv.detail))
     res = Result(per_scenario=per, bar=BAR, survival=sb, hurdle=tmod.HURDLE)
     if "base" in per and "bear" in per:
-        rr = mc.reward_risk(base_vps=per["base"].value_per_share,
-                            bear_vps=per["bear"].value_per_share, spot=rec.spot)
+        rr = mc.reward_risk(base_vps=_ratio_value(per["base"], on_nominal),
+                            bear_vps=_ratio_value(per["bear"], on_nominal), spot=rec.spot)
         res = Result(per_scenario=per, reward=rr.reward, risk=rr.risk, ratio=rr.ratio,
                      ratio_undefined=rr.undefined, bar=BAR, survival=sb, hurdle=tmod.HURDLE,
                      pass_fail=("UNDEFINED" if rr.ratio is None else
                                 ("PASS" if rr.clears_bar else "FAIL")))
     # R2 already requires `years_to_terminal` on every leg, so its IRR computes immediately —
-    # off `value_terminal`, the UNDISCOUNTED number, never the PV the ratio uses.
-    res = _with_irr_gate(res, rec)
+    # off `value_terminal`, the UNDISCOUNTED number, on either stamp.
+    res = _with_irr_gate(res, rec, ratio_on_terminal=on_nominal)
     return rec.model_copy(update={"result": res, "recipe_formula": list(formula)})
 
 
@@ -1702,6 +1763,13 @@ def _require_spot_as_of(rec: ScenarioRecord) -> None:
             f"it does not belong in a record.")
 
 
+#: (recipe 3b (2), operator 2026-11-16: "yes, exempt watch") THE STATUSES THAT ARE A CALL OF
+#: RECORD, and so owe a horizon at create and supersede. `watch`, `passed` and `pending_analyst`
+#: hold no position and owe no IRR — IT's confirmed watch stays without one. `log-verdict` owes one
+#: whatever the record's status (`ledger.workflow.require_underwrite`, #1004 item 5).
+HORIZON_OWED_BY: frozenset[str] = frozenset({"confirmed", "overridden"})
+
+
 def horizon_problems(rec: ScenarioRecord) -> list[str]:
     """The stated-horizon requirement, as `validate_legs` returns problems — empty when satisfied.
 
@@ -1709,17 +1777,23 @@ def horizon_problems(rec: ScenarioRecord) -> list[str]:
     see the note in `run_recipe` for why refusing on recomputation would blind the coherence
     invariant over the four committed R1 records that predate this convention.
 
+    OWED ONLY BY A CALL OF RECORD (:data:`HORIZON_OWED_BY`, 3b (2)): a record whose status holds no
+    position is never refused for a missing horizon here — the refusal that matters sits at
+    `log-verdict`, where a position is taken.
+
     R2 needs no entry here — it already refuses a leg without `years_to_terminal` inside
     `_run_r2`, because there the horizon drives the discount and the dilution as well as the IRR.
     """
+    if rec.verdict.status not in HORIZON_OWED_BY:
+        return []
     base = (rec.scenarios or {}).get("base")
     if base is None:
         return []                       # the missing-leg problem is `validate_legs`', not this one
     if base.years_to_terminal is None:
-        return [f"base.years_to_terminal is required — the house convention is nominal {BAR:g}:1 "
-                f"AND a base-case IRR floor of {IRR_FLOOR:.0%} AND a stated horizon, and without a "
-                "realisation date no IRR exists to test. State it in years (1.5 = 18 months). Not "
-                "defaulted: a guessed horizon sets the return."]
+        return [f"base.years_to_terminal is required on a {rec.verdict.status} record — the house "
+                f"convention is nominal {BAR:g}:1 AND a base-case IRR floor of {IRR_FLOOR:.0%} AND "
+                "a stated horizon, and without a realisation date no IRR exists to test. State it "
+                "in years (1.5 = 18 months). Not defaulted: a guessed horizon sets the return."]
     if base.years_to_terminal <= 0:
         return [f"base.years_to_terminal = {base.years_to_terminal} must be > 0"]
     return []
@@ -1745,17 +1819,40 @@ def bear_consensus_problems(rec: ScenarioRecord) -> list[str]:
     keeps its payload's own `schema_version` (`supersede_record` sets only the links), so a gate at
     a new version is escaped by copying the live record — GOOGL's is 1.5. A face-validity rule
     with no tuned number: it reads no forward return.
+
+    LIKE WITH LIKE (3b (3), operator 2026-11-17: "Yes, add the field"). Every R3 leg states its
+    `eps_line`. The stamp is compared only when its line is the bear's, or `indistinguishable`
+    (both lines fit CIQ's P/E). On a different line — or an `undetermined` one, where the page
+    cannot say which line CIQ's NTM P/E is struck on and no line is assumed — the stamp is not
+    compared at all: the bear passes only on a miss case stated on its OWN line, and is otherwise
+    refused naming both lines. DOES THIS SELECT ON FORM? No: GAAP and normalized EPS are two
+    quantities, and matching them is the basis of the comparison — substance, not wording.
     """
     out: list[str] = []
     for name, leg in (rec.scenarios or {}).items():
         if leg.miss_case is not None and (name != "bear" or rec.recipe_id != RECIPE_R3):
             out.append(f"{name}.miss_case is read only on an R3 bear leg — on {rec.recipe_id} "
                        f"{name} it bounds nothing, so it is refused rather than carried")
+        if rec.recipe_id != RECIPE_R3 and leg.eps_line is not None:
+            out.append(f"{name}.eps_line is read only on an R3 leg — on {rec.recipe_id} no leg "
+                       "values EPS, so it is refused rather than carried")
+        if rec.recipe_id == RECIPE_R3 and leg.eps_line is None:
+            out.append(f"{name}.eps_line is required on an R3 leg — "
+                       f"{' | '.join(sorted(EPS_LINES))}, the line its EPS is on, so the bear "
+                       "bound compares like with like; it is never read out of the leg's prose")
     if rec.recipe_id != RECIPE_R3:
         if rec.ntm_consensus_eps is not None:
             out.append(f"ntm_consensus_eps is read only on an R3 record — on {rec.recipe_id} it "
                        "bounds no leg, so it is refused rather than carried")
         return out
+    # ONE LINE PER RECORD: the ratio subtracts the bear's value from the base's, so legs on two
+    # lines move the unlike comparison out of the bound and into the ratio itself
+    stated = {name: leg.eps_line for name, leg in (rec.scenarios or {}).items() if leg.eps_line}
+    if len(set(stated.values())) > 1:
+        out.append("the legs state different EPS lines ("
+                   + ", ".join(f"{k} {v}" for k, v in sorted(stated.items()))
+                   + ") — the ratio would compare values struck on two quantities; strike every "
+                   "leg on one line")
     bear = (rec.scenarios or {}).get("bear")
     if bear is None or bear.eps is None:
         return out                 # a missing leg or EPS is `validate_legs`' and `_run_r3`'s
@@ -1775,16 +1872,34 @@ def bear_consensus_problems(rec: ScenarioRecord) -> list[str]:
             f"ntm_consensus_eps is knowable from {stamp.as_of}, AFTER spot_as_of "
             f"{rec.spot_as_of} — the bear cannot be bounded by a consensus its legs could not "
             "have seen. Strike the legs at a spot on or after the consensus date"]
-    if bear.eps <= stamp.value:
-        return out
     mc = bear.miss_case
-    if mc is None:
+    if mc is not None and bear.eps_line is not None and mc.line != bear.eps_line:
         return out + [
-            f"bear.eps {bear.eps:g} is ABOVE the NTM consensus EPS {stamp.value:g} ({stamp.line} "
-            f"line, {stamp.as_of}) and states no miss case — a bear whose earnings beat consensus "
-            "is a multiple-compression case only. Strike the bear EPS at or below consensus, or "
-            "state bear.miss_case: the consensus EPS for the bear's own period, its period and "
-            "source, and why the bear falls short of it"]
+            f"bear.miss_case is on the {mc.line} line, but bear.eps is on the {bear.eps_line} "
+            "line — a miss measured on another line is the unlike comparison eps_line ends"]
+    like = bear.eps_line is not None and stamp.line in (bear.eps_line, STAMP_LINE_EITHER)
+    if like:
+        if bear.eps <= stamp.value:
+            return out
+        if mc is None:
+            return out + [
+                f"bear.eps {bear.eps:g} is ABOVE the NTM consensus EPS {stamp.value:g} "
+                f"({stamp.line} line, {stamp.as_of}) and states no miss case — a bear whose "
+                "earnings beat consensus is a multiple-compression case only. Strike the bear EPS "
+                "at or below consensus, or state bear.miss_case: the consensus EPS for the bear's "
+                "own period on its own line, its period and source, and why the bear falls short "
+                "of it"]
+    elif mc is None:
+        why = ("the page cannot say which line CIQ's NTM P/E is struck on (pe_eps_basis.ntm "
+               "`undetermined`), so no line is assumed" if stamp.line == "undetermined" else
+               f"the stamp is on the {stamp.line} line")
+        return out + [
+            f"bear.eps {bear.eps:g} is on the {bear.eps_line or 'unstated'} line and the NTM "
+            f"consensus EPS {stamp.value:g} cannot bound it — {why}. State bear.miss_case on the "
+            f"bear's own line: the consensus EPS for its period on the {bear.eps_line or '<its>'} "
+            "line, which the bear EPS must sit below"]
+    if mc is None:                     # unreachable: every mc-is-None path has returned above
+        return out
     if not bear.eps < mc.consensus_eps:
         return out + [
             f"bear.miss_case states a {mc.period} consensus of {mc.consensus_eps:g}, and bear.eps "
@@ -1792,13 +1907,27 @@ def bear_consensus_problems(rec: ScenarioRecord) -> list[str]:
     return out
 
 
-def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
+def _ratio_value(o: ScenarioOutcome, on_terminal: bool) -> float:
+    """The per-leg value a ratio — and its ceiling — is struck on: `value_terminal` on a nominal
+    R2 record (3b (1)), `value_per_share` everywhere else. One reader, so the ratio and the 2:1
+    ceiling beside it can never be struck on two different bases."""
+    if not on_terminal:
+        return o.value_per_share
+    if o.value_terminal is None:
+        raise ValueError("a nominal R2 leg carries no value_terminal to strike the ratio on — "
+                         "refusing to fall back to the PV")
+    return o.value_terminal
+
+
+def _with_irr_gate(res: Result, rec: ScenarioRecord, *,
+                   ratio_on_terminal: bool = False) -> Result:
     """Stamp the horizon, the base IRR and the CONJUNCTION onto a computed Result.
 
     ONE implementation for both recipes, deliberately: R1 and R2 already diverge on what
     `value_per_share` means, and letting each compute its own gate is how the two would come to
     disagree about what passing means. `base_irr` handles the nominal/PV difference; everything
-    downstream of it is identical.
+    downstream of it is identical. ``ratio_on_terminal``: the ratio was struck on `value_terminal`
+    (a nominal R2 record), so the ceiling is too.
     """
     base_leg = rec.scenarios.get("base")
     years = base_leg.years_to_terminal if base_leg is not None else None
@@ -1844,7 +1973,8 @@ def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     # an invented 2 … the card carries no fund constants of its own". This seat reads `res.bar`.
     per, ceiling, ceiling_el = res.per_scenario or {}, None, None
     if "base" in per and "bear" in per and res.bar:
-        b_vps, r_vps = per["base"].value_per_share, per["bear"].value_per_share
+        b_vps = _ratio_value(per["base"], ratio_on_terminal)
+        r_vps = _ratio_value(per["bear"], ratio_on_terminal)
         if b_vps is not None and r_vps is not None:
             ceiling = (b_vps + res.bar * r_vps) / (1.0 + res.bar)
             # the ELIGIBILITY ceiling — same formula, same seat, the 1.75 line

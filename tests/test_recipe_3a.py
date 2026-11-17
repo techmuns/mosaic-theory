@@ -221,12 +221,14 @@ def _googl() -> sc.ScenarioRecord:
 
 def _stamped(rec: sc.ScenarioRecord) -> sc.ScenarioRecord:
     """The record as a NEW one would be written today: the page's stamp, at the page's spot date
-    (the template pre-fills `spot_as_of` from `stock_info.as_of`)."""
+    (the template pre-fills `spot_as_of` from `stock_info.as_of`), each leg on the stamp's own line
+    (`eps_line`, recipe 3b (3)) so these pins read the like-for-like bound."""
     doc = _doc("GOOGL")
     stamp, _ = ntm_consensus_eps(doc)
     assert stamp is not None
+    legs = {k: v.model_copy(update={"eps_line": stamp["line"]}) for k, v in rec.scenarios.items()}
     return rec.model_copy(update={
-        "ntm_consensus_eps": sc.ConsensusEps(**stamp),
+        "ntm_consensus_eps": sc.ConsensusEps(**stamp), "scenarios": legs,
         "spot_as_of": date.fromisoformat(doc["mechanical"]["stock_info"]["as_of"])})
 
 
@@ -243,7 +245,7 @@ def test_a_consensus_not_knowable_at_the_spot_is_refused() -> None:
 def test_a_miss_case_must_state_a_positive_consensus(bad: float) -> None:
     """(−) A bound every bear sits below is no miss: the model refuses it."""
     with pytest.raises(ValueError, match="not a positive EPS"):
-        sc.MissCase(consensus_eps=bad, period="FY2028", source="s", reason="r")
+        sc.MissCase(consensus_eps=bad, line="gaap", period="FY2028", source="s", reason="r")
 
 
 def _bear(rec: sc.ScenarioRecord, **upd: Any) -> sc.ScenarioRecord:
@@ -259,7 +261,10 @@ def test_googls_committed_record_is_flagged_and_still_writes(tmp_path: pathlib.P
     rec = _googl()
     assert rec.recipe_id == sc.RECIPE_R3 and rec.scenarios["bear"].eps == pytest.approx(15.388)
     flags = sc.bear_consensus_problems(rec)
-    assert len(flags) == 1 and "carries no NTM consensus EPS" in flags[0], flags
+    assert any("carries no NTM consensus EPS" in f for f in flags), flags
+    # since recipe 3b (3) its three legs are flagged too: they state no eps_line
+    assert sorted(f.split(".")[0] for f in flags if ".eps_line is required" in f) == [
+        "base", "bear", "bull"], flags
     with pytest.warns(sc.AdmissibilityWarning, match="carries no NTM consensus EPS"):
         path = sc.write_record(rec, root=tmp_path)
     assert path.read_text() == (ROOT / "scenarios" / "GOOGL.json").read_text()
@@ -284,7 +289,7 @@ def test_a_bear_at_or_below_consensus_or_with_a_real_miss_passes() -> None:
     v = rec.ntm_consensus_eps.value
     assert sc.bear_consensus_problems(_bear(rec, eps=v)) == []
     assert sc.bear_consensus_problems(_bear(rec, eps=v - 1.0)) == []
-    miss = {"period": "FY2028", "source": "forward_consensus.spreads EPS Normalized FY 2028",
+    miss = {"line": "gaap", "period": "FY2028", "source": "TEST value — a FY2028 consensus",
             "reason": "TEST value"}
     above = _bear(rec, miss_case=sc.MissCase(consensus_eps=18.12, **miss))
     assert sc.bear_consensus_problems(above) == []
@@ -297,7 +302,7 @@ def test_a_miss_case_off_the_r3_bear_is_refused() -> None:
     rec = _stamped(_googl())
     legs = dict(rec.scenarios)
     legs["base"] = legs["base"].model_copy(update={"miss_case": sc.MissCase(
-        consensus_eps=18.0, period="FY2028", source="s", reason="r")})
+        consensus_eps=18.0, line="gaap", period="FY2028", source="s", reason="r")})
     probs = sc.bear_consensus_problems(rec.model_copy(update={"scenarios": legs}))
     assert any(p.startswith("base.miss_case is read only on an R3 bear") for p in probs), probs
 
@@ -336,6 +341,7 @@ def test_create_through_the_cli_refuses_the_committed_bear_and_stamps_the_page(
         src = committed["scenarios"][leg]
         tpl["scenarios"][leg].update(eps=src["eps"], multiple=src["multiple"],
                                      reason=src["reason"], eps_derivation="stated",
+                                     eps_line="gaap",   # the page's stamp line (recipe 3b (3))
                                      multiple_derivation="stated")
     base = committed["scenarios"]["base"]
     tpl["scenarios"]["base"].update(years_to_terminal=base["years_to_terminal"],

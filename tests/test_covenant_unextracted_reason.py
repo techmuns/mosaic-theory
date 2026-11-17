@@ -34,6 +34,7 @@ import typing
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.render import _covenant_term_lines, render_markdown
 from vinci.dossier.schemas import CapitalStructure, CovenantPointer, Dossier
@@ -72,11 +73,9 @@ def _frozen(ticker: str) -> dict[str, typing.Any]:
 
 
 def _host(ticker: str) -> dict[str, typing.Any]:
-    """The committed dossier of ``ticker`` with its capital structure swapped for the frozen one."""
-    p = ROOT / "data" / "dossiers" / ticker / "dossier.json"
-    if not p.exists():
-        pytest.skip(f"no committed {ticker} dossier to host the frozen block")
-    d: dict[str, typing.Any] = json.loads(p.read_text())
+    """The committed dossier of ``ticker`` (frozen at the cut, `tests/frozen_support.py`) with its
+    capital structure swapped for the frozen one."""
+    d = frozen_doc(ticker)
     d["mechanical"]["capital_structure"] = _frozen(ticker)["capital_structure"]
     return d
 

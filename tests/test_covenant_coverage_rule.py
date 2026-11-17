@@ -35,6 +35,7 @@ import typing
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from tests.test_covenant_exhibit_outcomes import _committed, _md_line, _web_line
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.schemas import CapitalStructure, CovenantExhibitOutcome, Sourced
@@ -501,12 +502,11 @@ def test_a_later_document_must_be_filed_later(filed: str) -> None:
 def test_every_fixture_target_is_a_committed_pointer_target(ticker: str) -> None:
     """(precondition) The fixture's layer is the committed page's, unmodified, so its exhibits are
     the page's own: every target, and every other exhibit a pointer row lists, which the loop reads
-    for who it is (review round 2, F1). A page re-assembled since moves its pointers, and this pin
-    names it."""
-    p = ROOT / "data" / "dossiers" / ticker / "dossier.json"
-    if not p.exists():
-        pytest.skip(f"no committed {ticker} dossier")
-    committed = json.loads(p.read_text())["mechanical"]["capital_structure"]
+    for who it is (review round 2, F1). The page is read as frozen at the cut
+    (`tests/frozen_support.py`), the page these fixtures were taken from: a pin on one page's own
+    pointers is a value pin, so a re-assembly or a retirement of the living page moves nothing
+    here."""
+    committed = frozen_doc(ticker)["mechanical"]["capital_structure"]
     fx = _fixture(ticker)
     assert fx["capital_structure"]["covenant_pointer_rows"] == committed["covenant_pointer_rows"]
     layer = CapitalStructure.model_validate(fx["capital_structure"])
