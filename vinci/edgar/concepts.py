@@ -216,7 +216,8 @@ def extract_points(facts: dict[str, Any], concept: str, *, currency: str = "USD"
     tag also stops being reported when the FACT ceases (a company that repaid its current debt stops
     tagging it), and turning that into UNKNOWN would manufacture a hole where the filer simply has
     nothing to report. Distinguishing abandonment from cessation needs the filer's own words, not a
-    date — so this fixes what it can prove and leaves the rest visible via ``stale_served``.
+    date — so this fixes what it can prove and leaves the rest to the readers that judge the
+    value they serve (:func:`current_annual`, :func:`current_pair`); ``stale_served`` measures it.
 
     THE ALL-STALE FALLBACK IS THE FIRST ALIAS, NEVER THE LAST. ``CONCEPT_ALIASES`` is ordered by
     MEANING, not by convenience: ``SalesRevenueNet`` is a last resort because for some filers it is
@@ -367,11 +368,14 @@ def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
 
     A MEASUREMENT, WITH NO PRODUCTION READER BY DECISION (2026-11-17). It was built as the
     reporting half of MC1, for a monitor row that never read it. That row is retired because a
-    stale value is withheld where it is read: an annual by :func:`current_annual` and
-    :func:`current_pair`, a share count by the dossier's 180-day bound, a debt line by net debt
-    reading every leg at the cash instant. Nor is this a reader's check. Its clock is the filer's
-    frontier of ANY tag, which one forward-dated context moves years ahead, and it does not see a
-    substitute :func:`annual_line` accepts. Why:
+    stale value is to be withheld where it is read: an annual by :func:`current_annual` and
+    :func:`current_pair`, a share count by the dossier's age bound (180 days, 540 for a filer
+    that reports only annually), a debt line by net debt reading every leg at the cash instant.
+    Two readers do not withhold yet (STATE.md §5.0 row 11): a filer that moved its statements to
+    IFRS keeps a frozen us-gaap fiscal year, so :func:`behind_filer` passes its last us-gaap
+    annual, and net debt's cash instant has no age bound. Nor is this a reader's check. Its clock
+    is the filer's frontier of ANY tag, which one forward-dated context moves years ahead, and it
+    does not see a substitute :func:`annual_line` accepts. Why:
     docs/records/2026-11-17-the-monitors-stale-tag-row-is-retired.md
     """
     frontier = filer_frontier(facts)

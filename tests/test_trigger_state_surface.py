@@ -231,22 +231,24 @@ def test_the_retired_stale_tag_row_has_no_surface() -> None:
 
     It scanned dossier nodes for `status == "stale"`, a value `SourceStatus` never had (PRESENT,
     UNKNOWN, MISSING), so it was empty on every row of every committed day. Wiring it to
-    `stale_served` instead was measured and refused: on the 2026-11-11 book it names two debt
-    tags no reader serves, and every flag on the 26 committed pages is already withheld where the
-    value is read. A row re-added here, under this name or as a caption on the panel, reddens this
-    pin; the record says what a new one must show first.
+    `stale_served` instead was measured and refused: on the 2026-11-11 day's seven freshness names
+    it names two debt tags no reader serves, and every flag on the 26 committed pages is already
+    withheld where the value is read. A row re-added here, under this name, or as a caption read
+    by any script under `frontend/`, reddens this pin; the record says what a new one must show
+    first.
     """
     import vinci.monitor as mon
 
     assert "stale_tags" not in mon.FreshnessRow.model_fields, (
         f"FreshnessRow carries stale_tags again: read {_RETIRED} before reporting staleness here")
     assert not hasattr(mon, "_stale_tags"), f"the monitor scans for stale tags again: {_RETIRED}"
-    src = _panel_src()
-    assert "stale_tags" not in src and "served but not current" not in src, (
-        f"the panel renders stale tags again: {_RETIRED}")
-    views = sorted(str(p.relative_to(ROOT)) for p in (ROOT / "frontend" / "views").rglob("*.js")
-                   if "stale_tags" in p.read_text())
-    assert views == [], f"a frontend view reads stale_tags again {views}: {_RETIRED}"
+    scripts = _frontend_scripts()
+    assert {ROOT / "frontend" / "app.js", ROOT / "frontend" / "lib" / "snapshots.js",
+            ROOT / "frontend" / "views" / "shared" / "decision-log.js"} <= set(scripts), (
+        "the scan misses part of the frontend")
+    readers = sorted(str(p.relative_to(ROOT)) for p in scripts
+                     if "stale_tags" in (t := p.read_text()) or "served but not current" in t)
+    assert readers == [], f"the frontend renders stale tags again {readers}: {_RETIRED}"
     # and a row built from real committed inputs writes no such key into the day
     rec, mech = _record_and_mech()
     row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
@@ -281,28 +283,68 @@ def test_a_committed_day_reads_back_without_the_retired_field() -> None:
         f"no committed day carries stale_tags ({rows} rows read) — this pin exercises nothing")
 
 
+def _frontend_scripts() -> list[pathlib.Path]:
+    """Every script the served frontend runs: all of `frontend/`'s `.js`, none vendored."""
+    return sorted((ROOT / "frontend").rglob("*.js"))
+
+
+#: Where production Python lives: the package, its scripts, and the frontend's build.
+_PRODUCTION_PY = ("vinci", "scripts", "frontend")
+
+
+def _stale_served_references(source: str) -> list[int]:
+    """The lines of `source` that REACH `stale_served`, read from the AST so a docstring or a
+    comment naming it is not a reader. Caught: an import of the name (aliased or not), the bare
+    name, an attribute of that name on any object (`c.stale_served`, called or not), and the
+    name as a string constant (`getattr(c, "stale_served")`). Not caught: a name built at run
+    time (`getattr(c, "stale_" + "served")`)."""
+    import ast
+
+    hits: list[int] = []
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.ImportFrom):
+            hit = any(a.name == "stale_served" for a in node.names)
+        elif isinstance(node, ast.Name):
+            hit = node.id == "stale_served"
+        elif isinstance(node, ast.Attribute):
+            hit = node.attr == "stale_served"
+        elif isinstance(node, ast.Constant):
+            hit = node.value == "stale_served"
+        else:
+            continue
+        if hit:
+            hits.append(node.lineno)
+    return hits
+
+
+def test_the_reader_scan_sees_every_way_to_reach_stale_served() -> None:
+    """The scan below is only as good as the forms it sees (review of #1096: a module-attribute
+    reference and a `getattr` by name passed it). Positive: each way a reader reaches the
+    function. Negative: a docstring and a comment that only name it, and the function's own
+    definition."""
+    reach = {
+        "from vinci.edgar.concepts import stale_served\n": 1,
+        "from vinci.edgar.concepts import stale_served as s\n": 1,
+        "import vinci.edgar.concepts as c\nc.stale_served(f, 'cash')\n": 2,
+        "import vinci.edgar.concepts as c\nf = c.stale_served\n": 2,
+        "import vinci.edgar.concepts as c\nf = getattr(c, 'stale_served')\n": 2,
+    }
+    for src, line in reach.items():
+        assert _stale_served_references(src) == [line], src
+    quiet = ('"""Unlike stale_served, this reads the annual line."""\n'
+             "x = 1  # stale_served measures this case\n"
+             "def stale_served(facts, concept):\n    return None\n")
+    assert _stale_served_references(quiet) == []
+
+
 def test_stale_served_has_no_production_reader() -> None:
     """`stale_served` stays a MEASUREMENT. Its clock is the filer's frontier of any tag, which a
     forward-dated context moves years ahead (92 of the 129 flow flags the annual readers serve,
-    in the record), so a reader or report built on it would print false staleness.
-
-    Read in the AST, not as text: a docstring may name it, and a call inside its own module
-    (`concepts.py`) or in `scripts/` is a reader as much as one anywhere else. An IMPORT of it
-    counts too, so a reader cannot pass under an alias (`import stale_served as s`)."""
-    import ast
-
-    readers: list[str] = []
-    for top in ("vinci", "scripts"):
-        for p in sorted((ROOT / top).rglob("*.py")):
-            for node in ast.walk(ast.parse(p.read_text())):
-                if isinstance(node, ast.ImportFrom):
-                    hit = any(a.name == "stale_served" for a in node.names)
-                elif isinstance(node, ast.Call):
-                    f = node.func
-                    hit = (f.id if isinstance(f, ast.Name) else
-                           f.attr if isinstance(f, ast.Attribute) else None) == "stale_served"
-                else:
-                    continue
-                if hit:
-                    readers.append(f"{p.relative_to(ROOT)}:{node.lineno}")
+    in the record), so a reader or report built on it would print false staleness. Every
+    production Python file is scanned, its own module (`concepts.py`) included; the forms the
+    scan sees are pinned above."""
+    files = [p for top in _PRODUCTION_PY for p in sorted((ROOT / top).rglob("*.py"))]
+    assert ROOT / "frontend" / "build.py" in files, "the frontend's build is not scanned"
+    readers = [f"{p.relative_to(ROOT)}:{n}" for p in files
+               for n in _stale_served_references(p.read_text())]
     assert readers == [], f"stale_served gained a production reader {readers}: {_RETIRED}"
