@@ -19,6 +19,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier.edgar_fundamentals import EdgarFundamentals
 from vinci.dossier.schemas import SourceStatus
 from vinci.edgar.client import compute_fundamental_snapshot
@@ -159,7 +160,7 @@ def test_a_clean_present_edgar_fact_renders_no_caveat_on_the_web_brief() -> None
     present fact as "⚠ …". AMZN's committed page, its quality FCF sign and leverage rebuilt from
     AMZN's real companyfacts through the production path, rendered by `dossier.js`: no ⚠ added."""
     from vinci.dossier.mechanical import _sourced
-    page = json.loads((_ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    page = frozen_doc("AMZN")   # AMZN's committed page, as frozen at the cut
     facts = json.loads((_ROOT / "tests" / "fixtures" / "companyfacts" / "AMZN.json").read_text())
     snap = compute_fundamental_snapshot("0001018724", facts)
     assert snap.fcf_sign.coverage_status is CoverageStatus.PRESENT

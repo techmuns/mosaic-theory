@@ -37,6 +37,7 @@ from datetime import date
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import filed_tiebreak as ft
 from vinci.dossier import flags as dossier_flags
@@ -627,7 +628,7 @@ def test_nflxs_committed_page_carries_the_caveat_the_code_writes() -> None:
     confirmation."""
     from vinci.dossier.render import render_markdown
 
-    page = json.loads((ROOT / "data" / "dossiers" / "NFLX" / "dossier.json").read_text())
+    page = frozen_doc("NFLX")   # NFLX's committed page, as frozen at the cut
     d = _decide("NFLX", MERGER, cut=date(2026, 11, 4))
     assert d.figure is not None
     filed = page["mechanical"]["financial_summary"].get("filed_ltm") or []

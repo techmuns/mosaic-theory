@@ -8,6 +8,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.impact import run as rn
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -79,7 +80,7 @@ def test_a_text_diff_counts_a_removed_line_that_starts_with_dashes() -> None:
     """The unified diff's two FILE headers start "---"/"+++"; a content line removed that itself
     starts "--" (a markdown rule, "---") prints as "----" and was dropped as a header, so a page
     losing its rule read identical. Real committed page, one rule inserted then removed."""
-    md = (ROOT / "data" / "dossiers" / "MCK" / "dossier.md").read_text()
+    md = (frozen_page("MCK") / "dossier.md").read_text()   # the page as frozen at the cut
     lines = md.splitlines()
     ruled = "\n".join([*lines[:3], "---", *lines[3:]])
     d = rn.text_diff(ruled, md)
