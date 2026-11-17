@@ -31,6 +31,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.frozen_support import frozen_doc
 from vinci.config import get_config
 from vinci.dossier import ciq_balance, ebitda_recon, midcycle
 from vinci.dossier import ciq_sheets as cs
@@ -419,7 +420,7 @@ def test_a_refused_reconciliation_is_said_on_the_page_md_e2e(bundle: CiqBundle) 
     from vinci.dossier import schemas as ds
     from vinci.dossier.assemble import _read_scenario_card
 
-    page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    page = frozen_doc("TJX")   # the host page, as frozen at the cut
     page["mechanical"]["financial_summary"]["ebitda_reconciliation"] = _refused_block(bundle)
     doc = ds.Dossier.model_validate(page)
     rec = doc.mechanical.financial_summary.ebitda_reconciliation  # type: ignore[union-attr]
@@ -438,7 +439,7 @@ def test_a_refused_reconciliation_is_said_on_the_web_page_e2e(
 
     if not shutil.which("node"):
         pytest.skip("node not available")
-    page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    page = frozen_doc("TJX")   # the host page, as frozen at the cut
     block = _refused_block(bundle)
     page["mechanical"]["financial_summary"]["ebitda_reconciliation"] = block
     (tmp_path / "page.json").write_text(json.dumps(page))

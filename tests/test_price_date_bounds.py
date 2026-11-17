@@ -30,6 +30,7 @@ from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import mechanical as dm
 from vinci.dossier.freshness import date_of_close
 from vinci.dossier.schemas import CohortMember, Sourced
@@ -58,7 +59,7 @@ def _bars(t: str) -> list[PriceBar]:
 
 
 def _committed_cohort() -> list[str]:
-    page = json.loads((ROOT / "data" / "dossiers" / "GOOGL" / "dossier.json").read_text())
+    page = frozen_doc("GOOGL")   # GOOGL's committed cohort, as frozen at the cut
     return [m["ticker"] for m in page["mechanical"]["idiosyncratic_vs_shared"]["cohort"]["value"]]
 
 

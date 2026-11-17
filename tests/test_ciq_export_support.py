@@ -11,7 +11,6 @@ export sits in the operator's `ciq-archive/` must run there instead of skipping.
 """
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +26,7 @@ from tests.ciq_export_support import (
     skip_unless_export,
     skip_unless_pages_export,
 )
+from tests.frozen_support import CUT, frozen_doc
 from tests.test_ev_gap_transform_idempotent import COMPUTED
 from vinci.config import get_config
 from vinci.dossier import manual_store as ms
@@ -35,9 +35,19 @@ from vinci.dossier.ciq_sheets import file_provenance
 
 
 def _page() -> dict[str, Any]:
-    page: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
-    return page
+    """SMPL's committed page, as frozen at the cut (`tests/frozen_support.py`)."""
+    return frozen_doc("SMPL")
+
+
+@pytest.fixture
+def _pages_at_the_cut(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """`ciq_export_support` reads a page by ticker under its own ROOT. Pointed at a root whose
+    `data/dossiers` is the cut, the page its lookup reads is the one `_page()` returns, so the
+    test reads no living page and still runs the lookup itself."""
+    root = tmp_path / "cut_root"
+    (root / "data").mkdir(parents=True)
+    (root / "data" / "dossiers").symlink_to(CUT, target_is_directory=True)
+    monkeypatch.setattr(ces, "ROOT", root)
 
 
 def _bundle_with_estimates(tmp_path: Path, content: bytes) -> tuple[CiqBundle, str]:
@@ -92,6 +102,7 @@ def test_the_pages_own_export_runs(tmp_path: Path) -> None:
     _must_not_skip(skip_unless_pages_export, "SMPL", "estimates", page=page, bundle=bundle)
 
 
+@pytest.mark.usefixtures("_pages_at_the_cut")
 def test_another_export_than_the_pages_skips_and_names_both(tmp_path: Path) -> None:
     """NEGATIVE, on the real committed page: an export the page does not record is skipped, and
     the reason names the page's sha256 and the one on disk."""
@@ -216,6 +227,7 @@ def test_the_floor_holds_at_half_and_names_every_drifted_page_below_it() -> None
     assert floor_breach([], []) is not None
 
 
+@pytest.mark.usefixtures("_pages_at_the_cut")
 def test_the_census_reads_the_page_stamp_against_the_folder(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """A page is OWN only when the folder's Estimates export is the one it stamps: a constructed

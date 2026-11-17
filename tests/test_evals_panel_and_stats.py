@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import covered_pages
 from vinci.evals import panel as pn
 from vinci.evals import replay as rp
 from vinci.evals import stats as sx
@@ -39,10 +40,16 @@ _AORT_PASSED_BLOB = "983a4b92eee87723dde2b254e6f83dd375dcbe73"
 
 
 def test_each_unmoved_page_still_yields_its_frozen_row() -> None:
+    """A name that left coverage after the panel froze has no living page: its page moved off the
+    tree, so it is not an unmoved page and is not checked (the roster says which names those are,
+    never a list here). AORT and MVST read their frozen pages, as their notes say."""
+    covered = set(covered_pages())
     checked = 0
     for row in FROZEN["rows"]:
         t = row["ticker"]
         path = ROOT / f"data/dossiers/{t}/dossier.json"
+        if t not in covered and t not in ("AORT", "MVST"):
+            continue
         if t == "AORT":  # retired 2026-11-09: its page as committed on 2026-10-26, frozen
             path = ROOT / "tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json"
         if t == "MVST":  # retired 2026-11-12. Its page moved after the panel froze, so its row

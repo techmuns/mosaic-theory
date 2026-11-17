@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
 from vinci.dossier.schemas import Dossier, HistoricalForecastError, MechanicalLayer, dossier_json
@@ -202,9 +203,7 @@ def test_the_layer_says_by_type_that_it_is_not_a_revision_distribution() -> None
 def test_the_layer_is_never_synthesis_input_and_sits_before_the_anchor() -> None:
     assert "historical_forecast_error" in Dossier.model_fields
     assert "historical_forecast_error" not in MechanicalLayer.model_fields
-    path = ROOT / "data" / "dossiers" / "AMZN" / "dossier.json"
-    if not path.exists():
-        pytest.skip("no committed AMZN dossier")
+    path = frozen_page("AMZN") / "dossier.json"   # the page as frozen at the cut
     doc = Dossier.model_validate_json(path.read_text())
     if doc.historical_forecast_error is None:
         assert '"historical_forecast_error"' not in dossier_json(doc)
@@ -224,9 +223,7 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(tmp_path: Pa
     from vinci.dossier.refresh import historical_forecast_error_transform, refresh_dossier
 
     b = _bundle("AMZN")
-    src = ROOT / "data" / "dossiers" / "AMZN"
-    if not (src / "dossier.json").exists():
-        pytest.skip("no committed AMZN dossier")
+    src = frozen_page("AMZN")   # the page as frozen at the cut: it names this export
     folder = tmp_path / "AMZN"
     folder.mkdir()
     for name in ("dossier.json", "dossier.md"):
