@@ -515,8 +515,9 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
     derived rebuild — the seam B1 plugs into. Absent, this is a pure no-op round-trip, which is
     exactly what the round-trip pin drives.
 
-    Raises :class:`RefreshRefusedError` when a moved figure is one the stored prose cites, or when
-    the name's record is SEALED."""
+    Raises :class:`RefreshRefusedError` when a moved figure is one the stored prose cites, when
+    the name's record is SEALED, or when it would save a watch page that no longer holds a known
+    defect its watch line names (``coverage_roster.write_problems``; STATE row 41 (b))."""
     # A SEALED RECORD IS NOT REFRESHABLE. FUBO's `known_wrong.json` states the rule in its own
     # words — "`dossier.json` is untouched … it stays sealed" until a post-combination re-assembly
     # exists — and the A2b pass wrote `ev_gap` straight into it anyway. The seal test caught it,
@@ -593,6 +594,18 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
     old_md = md_path.read_text() if md_path.exists() else None
     changed = new_json != path.read_text() or (old_md is not None and new_md != old_md)
     if changed:
+        # A WATCH PAGE THAT NO LONGER HOLDS A KNOWN DEFECT IS NOT SAVED (STATE row 41 (b); operator,
+        # 2026-11-17: "Refuse where pages are saved or published"). The renderer drops the defect
+        # from the line, so written, the page would look clean; nothing is written until the
+        # entry in `data/watch_defects.json` is removed or re-measured.
+        if stale := roster.write_problems(path.parent.parent.parent, model.ticker,
+                                          json.loads(new_json)):
+            raise RefreshRefusedError(
+                f"{model.ticker}: this refresh would save a watch page that no longer holds a "
+                f"known defect its watch line names — {'; '.join(stale)}. Saved, the line would "
+                "drop it and the page would look clean. Remove or re-measure the entry in "
+                "data/watch_defects.json, then refresh again; the other names in the batch are "
+                "unaffected.")
         # THE DECISION GUARD, as on every other write (review of #780). The top-level seam cannot
         # set the anchor today (`_TOP_LEVEL_REFRESHABLE`), so this refuses nothing the corpus
         # does — it is here so a seam opened later cannot drop a decision, and a legacy re-tag

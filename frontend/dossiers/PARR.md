@@ -2,6 +2,12 @@
 
 _October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.driver-text-filed_
 
+> **Frozen since 2026-11-13: PARR is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until PARR goes active.
+>
+> **Known defects it keeps until then:**
+>
+> 1. Its credit agreement's interest line prints LIBOR + 225 bps, which is one level of a pricing grid: the quote the page stores names no level in force (STATE row 34; docs/records/2026-10-28-a-label-names-its-own-year-and-a-rate-its-own-quote.md).
+
 # Brief — first cut
 
 ## At a glance

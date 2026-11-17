@@ -124,10 +124,17 @@ def test_a_noop_refresh_is_byte_identical(tmp_path: pathlib.Path) -> None:
     round-trip back-fills defaulted fields, which the next test pins as value-preserving."""
     pre = _pre_schema()
     drifted = []
+    # the copy is laid out as the data tree, its roster and defect file beside the pages: a watch
+    # page's committed md carries the line those two print (STATE row 41 (b)), and a tree with no
+    # roster renders none, which would read here as churn
+    data = tmp_path / "data"
+    (data / "dossiers").mkdir(parents=True)
+    for name in ("coverage_roster.jsonl", "watch_defects.json"):
+        shutil.copy(DOSS.parent / name, data / name)
     for src in sorted(DOSS.glob("*/dossier.json")):
         if src.parent.name in pre:
             continue
-        folder = tmp_path / src.parent.name
+        folder = data / "dossiers" / src.parent.name
         folder.mkdir()
         shutil.copy(src, folder / "dossier.json")
         shutil.copy(src.parent / "dossier.md", folder / "dossier.md")

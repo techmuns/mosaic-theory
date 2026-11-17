@@ -50,6 +50,10 @@ data/dossiers/*/llm_call.log
 # names the fund covers (active, watch, retired), one dated move per line with the operator's
 # ruling. Hand-authored decisions, neither derived nor licensed: committed and diffable.
 !data/coverage_roster.jsonl
+# (h) data/watch_defects.json — the KNOWN DEFECTS a watch page keeps until its name goes active
+# (`vinci.coverage_roster.read_defects`), each bound to its STATE row, its record and the page
+# field it lives in. Hand-authored, neither derived nor licensed: committed and diffable.
+!data/watch_defects.json
 # (f) data/facts/ — the FACT LAYER (docs/records/2026-11-04-fact-layer-adr.md): the schema contract,
 # one JSON manifest per snapshot, current.json, and — as a STOPGAP, kept since the R2 upload of
 # 2026-11-05 (docs/records/2026-11-05-fact-layer-r2-upload.md) — the pages snapshot's immutable
