@@ -24,6 +24,7 @@ axis silently dropping from the render is data loss.
 from __future__ import annotations
 
 import json
+import math
 import re
 import warnings
 from datetime import date
@@ -396,6 +397,14 @@ class MissCase(BaseModel):
     reason: str            # why the bear's earnings fall short of it
 
     model_config = {"frozen": True}
+
+    @field_validator("consensus_eps")
+    @classmethod
+    def _miss_is_a_level(cls, v: float) -> float:
+        if not math.isfinite(v) or v <= 0:
+            raise ValueError(f"miss_case.consensus_eps {v!r} is not a positive EPS — a bound any "
+                             "bear EPS sits below is not a miss case")
+        return v
 
     @field_validator("period", "source", "reason")
     @classmethod
@@ -1753,6 +1762,16 @@ def bear_consensus_problems(rec: ScenarioRecord) -> list[str]:
             "the record carries no NTM consensus EPS (ntm_consensus_eps), so its bear EPS "
             f"{bear.eps:g} cannot be bounded — `scenario-create` and `scenario-supersede` stamp it "
             "from the page's forward_consensus.pe_eps_basis, and refuse a page that states none"]
+    # KNOWABLE AT THE SPOT (the brief binds the bound "as of the record's spot_as_of"): a consensus
+    # whose floor date is after the close the legs are struck at is a lookahead, not a bound. The
+    # page's floor-date reader, one reader per figure.
+    from vinci.dossier.valuation_basis import _day
+    known = _day(stamp.as_of)
+    if known is not None and rec.spot_as_of is not None and known > rec.spot_as_of:
+        out = out + [
+            f"ntm_consensus_eps is knowable from {stamp.as_of}, AFTER spot_as_of "
+            f"{rec.spot_as_of} — the bear cannot be bounded by a consensus its legs could not "
+            "have seen. Strike the legs at a spot on or after the consensus date"]
     if bear.eps <= stamp.value:
         return out
     mc = bear.miss_case
@@ -2226,14 +2245,11 @@ def _warn_admissibility(rec: ScenarioRecord) -> None:
     (R3, recipe 3a) The bear-EPS bound joins it as a FLAG: a committed record is never rewritten
     to meet a rule written after it, so the point-of-decision refusal
     (:func:`bear_consensus_problems`) is a warning on every other write."""
+    notes: list[str] = list(bear_consensus_problems(rec))
     bear = (rec.scenarios or {}).get("bear")
-    if bear is None:
-        return
-    notes: list[str] = []
-    if bear.bear_basis == "own-history":
+    if bear is not None and bear.bear_basis == "own-history":
         notes.append("bear_basis is 'own-history' — confirm the band contains a bear-state visit "
                      "(vinci audit r1)")
-    notes.extend(bear_consensus_problems(rec))
     if notes:
         warnings.warn(f"{rec.ticker}: " + "; ".join(notes), AdmissibilityWarning, stacklevel=3)
 

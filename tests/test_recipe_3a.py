@@ -1,4 +1,4 @@
-"""RECIPE 3a (W25, 2026-11-17) — R1's base multiple is TODAY'S, and an R3 bear is bounded by consensus.
+"""RECIPE 3a (W25, 2026-11-17) — R1's base multiple is TODAY'S; an R3 bear is bounded by consensus.
 
 (1) R1's proposed base multiple is the band's CURRENT multiple, with the trailing median printed
     beside it; a band with no usable current proposes NOTHING and says why, never the median.
@@ -21,6 +21,7 @@ import copy
 import json
 import pathlib
 import warnings
+from datetime import date
 from typing import Any
 
 import pytest
@@ -86,15 +87,15 @@ def test_frozen_smpl_proposes_its_current_multiple_with_the_median_beside_it() -
 
 @pytest.mark.parametrize("ticker", ["SMPL", "BRBR", "EPAM", "IT", "VRRM"])
 def test_the_living_pages_propose_the_band_current_never_its_median(ticker: str) -> None:
-    """(+) On the five pages where the median sits 2.4x-3.9x above today's multiple (measured at
-    `4889ddba`), the proposal is the selected band's `current` — read off the page, so a
-    re-assembly cannot rot the pin — and the median is beside it, not in the cell."""
+    """(+) On the five pages where the median sat 2.4x-3.9x above today's multiple (measured at
+    `4889ddba`), the proposal is the selected band's `current` — read off the page, an invariant a
+    re-assembly cannot rot (TEST-LAYER rule: no value pin on a living page) — and the median is
+    beside it, not in the cell."""
     doc = _doc(ticker)
     band, _ = _r1_proposal_band(doc)
     assert band is not None
     a = _base_multiple(doc)
     assert a is not None and a.schema_value == pytest.approx(float(band["current"]))
-    assert float(band["median"]) > 2 * float(band["current"]), "the shape the fix is for moved"
     tpl = build_template(doc) if ticker != "SMPL" else None   # living SMPL: STATE row 36 refuses
     if tpl is not None:
         cell = tpl["scenarios"]["base"]
@@ -122,13 +123,16 @@ def test_a_band_with_no_usable_current_proposes_nothing_and_says_why(current: An
             and "no usable current" in p], probs
 
 
-def test_a_page_whose_band_has_a_current_states_no_refusal() -> None:
-    """(+) The refusal fires only on its shape: every committed page with an R1 band has a usable
-    current (22 of 26 at `4889ddba`; FUBO, ORKA, TECX and VITL have no band), so none refuses."""
+def test_the_refusal_and_the_proposal_never_coexist_on_the_corpus() -> None:
+    """(+) Across every committed page, exactly one of three holds: no band (no proposal, no
+    refusal), a proposal, or a refusal — never both, never a band with neither. At `4889ddba`:
+    22 of 26 pages propose, 0 refuse; FUBO, ORKA, TECX and VITL carry no band. An invariant, so
+    a page whose band is NM later refuses here without reddening the suite."""
     for p in sorted(DOSS.glob("*/dossier.json")):
         doc = json.loads(p.read_text())
-        if _r1_proposal_band(doc)[0] is not None:
-            assert multiple_base_refusal(doc) is None, p.parent.name
+        has_band = _r1_proposal_band(doc)[0] is not None
+        proposes, refuses = _base_multiple(doc) is not None, multiple_base_refusal(doc) is not None
+        assert (proposes or refuses) == has_band and not (proposes and refuses), p.parent.name
 
 
 def test_moving_off_the_current_to_the_median_needs_a_stated_adjustment() -> None:
@@ -216,9 +220,30 @@ def _googl() -> sc.ScenarioRecord:
 
 
 def _stamped(rec: sc.ScenarioRecord) -> sc.ScenarioRecord:
-    stamp, _ = ntm_consensus_eps(_doc("GOOGL"))
+    """The record as a NEW one would be written today: the page's stamp, at the page's spot date
+    (the template pre-fills `spot_as_of` from `stock_info.as_of`)."""
+    doc = _doc("GOOGL")
+    stamp, _ = ntm_consensus_eps(doc)
     assert stamp is not None
-    return rec.model_copy(update={"ntm_consensus_eps": sc.ConsensusEps(**stamp)})
+    return rec.model_copy(update={
+        "ntm_consensus_eps": sc.ConsensusEps(**stamp),
+        "spot_as_of": date.fromisoformat(doc["mechanical"]["stock_info"]["as_of"])})
+
+
+def test_a_consensus_not_knowable_at_the_spot_is_refused() -> None:
+    """(−) Today's stamp (≥2026-11-01) on GOOGL's own spot date (2026-08-31): a lookahead, named."""
+    rec = _googl().model_copy(update={"ntm_consensus_eps": _stamped(_googl()).ntm_consensus_eps})
+    assert rec.spot_as_of == date(2026, 8, 31)
+    probs = sc.bear_consensus_problems(rec)
+    assert any("AFTER spot_as_of 2026-08-31" in p for p in probs), probs
+    assert not any("AFTER spot_as_of" in p for p in sc.bear_consensus_problems(_stamped(rec)))
+
+
+@pytest.mark.parametrize("bad", [0.0, -1.0, float("inf"), float("nan")])
+def test_a_miss_case_must_state_a_positive_consensus(bad: float) -> None:
+    """(−) A bound every bear sits below is no miss: the model refuses it."""
+    with pytest.raises(ValueError, match="not a positive EPS"):
+        sc.MissCase(consensus_eps=bad, period="FY2028", source="s", reason="r")
 
 
 def _bear(rec: sc.ScenarioRecord, **upd: Any) -> sc.ScenarioRecord:
