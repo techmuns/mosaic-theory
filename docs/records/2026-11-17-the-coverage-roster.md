@@ -263,8 +263,9 @@ neither retired name has a page. So nothing was stopped for.
   not seen. It over-counts a helper that switches a retired name to its frozen copy (see N = 0
   above). The kind rule is mechanical, so the follow-up reads each site.
 - **The 197 corpus lines:** `glob`/`iterdir`/`rglob`/`listdir` lines near `dossier` in `tests/`.
-- **The fail-first run:** the 48 nodes of `tests/test_coverage_roster.py` at the branch's
-  WIP commit `943a44a5`.
+- **The fail-first run:** the 48 nodes of `tests/test_coverage_roster.py`, first at the branch's
+  WIP commit `943a44a5` and again with the file as merged here, at base `4336b542` code. Both
+  runs gave the same 23 red nodes.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 1. **The pin sites on living pages are not moved.** Moving 450 (test, name) pairs in 98 test
