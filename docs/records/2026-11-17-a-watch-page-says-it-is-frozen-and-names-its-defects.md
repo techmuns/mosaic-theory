@@ -45,12 +45,25 @@ superseded-by:
   - The file maps each ticker to its defects. A name with no defect has no key.
   - Each defect carries `defect`, `state_row`, `record`, `page_field` (a JSON pointer into
     `dossier.json`), `page_value` (what the page holds there) and `measured` (the date and commit).
-  - `vinci.coverage_roster.read_defects` reads it strictly, in one canonical form.
-  - `watch_notice` checks each defect's field on the page being rendered, as its one writer
-    (`dossier_json`) writes it. A field that no longer holds its value REFUSES the render, naming
-    the field, so the line never names a defect the page no longer has.
-  - A defect listed for a name that is neither watch nor active is refused, and so is a roster
-    with no defect file beside it.
+  - `vinci.coverage_roster.read_defects` reads it strictly, in one canonical form. A roster
+    with no defect file beside it is refused, and so is a malformed file.
+  - `watch_notice` prints only the defects the page being rendered still `holds`, read as its one
+    writer (`dossier_json`) writes it. `frontend/build.py` does the same from the committed page,
+    so the line never names a defect the page no longer has, on either surface.
+  - The suite (`defect_problems`, over every committed page) refuses:
+    - an entry whose committed page no longer holds its value;
+    - an entry listed for a name that is neither watch nor active.
+
+    So a rebuild or a refresh past a defect, or a retirement, goes red until the entry is removed.
+  - **Review round 0 moved that check from the render to the suite.** The first cut refused at
+    render, and two problems followed:
+    - the cross-setup harness renders a fresh $0 build of every watch name (`vinci/impact/child.py`),
+      which holds none of its committed page's defects (PARR's build has no covenant rows), so
+      every future impact run would have reported a render failure there;
+    - one stale entry, for example a name retired by its one roster line, stopped every other
+      watch page's render.
+
+    The output on every committed page is unchanged.
 - **A tree with no roster renders no line.** That is a scratch copy, never the data tree, whose
   roster every fleet reader and `vinci dossier` already require. The first cut raised there, and
   about 20 test files that copy real pages into roster-less scratch trees went red. Reading the
@@ -118,14 +131,16 @@ superseded-by:
   - **Citations:** every defect cites an open §5.0 row and an existing record, and still holds its
     value on its page.
   - **Going active:** an appended move to active removes the line on both surfaces.
-  - **Refusals:**
-    - PARR's page with 200 bps in place of 225;
-    - a defect listed for MVST (retired) or an unlisted name;
-    - a roster with no defect file;
-    - eight malformed-file shapes;
-    - a roster that did not load on the web, which is SAID and never silent.
+  - **Guards:**
+    - a listed defect whose field is moved or missing on its page is printed on neither surface,
+      the page keeps its line, and the suite's check names the entry (run on whichever defect
+      is listed first, never a hard-coded value);
+    - an entry for MVST (retired) or an unlisted name is named by the suite's check, and the
+      listed page still renders;
+    - refused: a roster with no defect file, and eight malformed-file shapes;
+    - a roster that did not load on the web is SAID, never silent.
 
-    The positive pin sits beside each refusal.
+    The positive pin sits beside each one.
 - **Test trees that gained the file:**
   - `tests/roster_support.write_roster` writes an empty defect file beside the roster;
   - `test_refresh_fleet_and_bridge_guards` copies the committed one.
@@ -147,16 +162,24 @@ superseded-by:
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 1. **A defect's binding is index-based** (`covenant_term_rows/value/2`). A frozen page does not
-   reorder its rows; if one does, the render refuses rather than mis-bind.
+   reorder its rows; if one does, the defect drops from the line and the suite refuses its entry,
+   rather than mis-bind.
 
-   Falsifier: a refusal on an unchanged defect.
+   Falsifier: an entry refused while its defect is still on the page.
 2. **An active page with a known defect prints no line.** The line is the watch status, by the
    brief. A name that goes active keeps its entries until its rebuild moves the bound value, which
    the suite then refuses until the entry is removed.
 
    Falsifier: an active page served for long with a listed defect and no rebuild.
 3. **A scratch tree with no roster renders no line** (above). The data tree's line is held by the
-   suite, not by the renderer.
+   suite, not by the renderer, and so is the defect file's agreement with the committed pages.
 
-   Falsifier: a committed watch page without its line passing the suite.
-4. **$0.** No model call, no vendor call; the pages move by render only.
+   Falsifier: a committed watch page without its line, or naming a defect it no longer holds,
+   passing the suite.
+4. **Review round 0, deferred.** `refresh.band_checks_backfill` and `cli._attach_midcycle` write
+   `dossier.json` before they render `dossier.md`. Unlike `refresh_dossier`, which renders first,
+   they leave the JSON written if the render raises. This change adds two ways for a render to
+   raise: an absent or malformed defect file beside a roster. Each would leave that page's md stale
+   against its JSON, and the drift pins go red. The reorder is in code outside this change, and it
+   has its own falsifier: a half-written page from either path.
+5. **$0.** No model call, no vendor call; the pages move by render only.

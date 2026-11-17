@@ -204,32 +204,72 @@ def test_a_name_moved_to_active_loses_the_line_on_both_surfaces(tmp_path: Path,
 # --- the guards: positive and negative pins ---------------------------------------------------
 
 
-def test_a_defect_the_page_no_longer_holds_refuses_the_render(tmp_path: Path) -> None:
-    """NEGATIVE: PARR's page with its stored 225 bps margin changed — the value its listed defect
-    is bound to has moved, so the render refuses, naming the field, rather than print a defect
-    the page no longer has. POSITIVE: the unchanged copy renders its line. (The check reads the
-    page as its one writer writes it, `dossier_json`, which re-derives `valuation_basis`, so a
-    stored value is what a test moves here.)"""
-    data = _scratch(tmp_path, ("PARR",))
-    n = _notice("PARR")
-    assert n.head() in _md("PARR", data / "dossiers")
-    [x] = n.defects
-    page = _page("PARR", data / "dossiers")
-    assert roster.page_value(page, x.page_field) == 225.0
-    page["mechanical"]["capital_structure"]["covenant_term_rows"]["value"][2]["margin_bps"] = 200.0
-    (data / "dossiers" / "PARR" / "dossier.json").write_text(json.dumps(page, indent=2))
-    with pytest.raises(roster.WatchDefectError, match=f"PARR: {x.page_field} holds 200.0"):
-        _md("PARR", data / "dossiers")
+def _listed() -> tuple[str, roster.Defect]:
+    """The first listed defect, whichever page and field it is — never a hard-coded value."""
+    t, ds = next(iter(sorted(roster.read_defects(DATA).items())))
+    return t, ds[0]
 
 
-def test_a_defect_listed_for_a_retired_or_unlisted_name_is_refused(tmp_path: Path) -> None:
+def _set(page: dict[str, Any], pointer: str, value: Any) -> None:
+    """Set (or, with ``value`` None, delete) the field a JSON pointer names."""
+    *path, last = pointer.split("/")[1:]
+    node: Any = page
+    for key in path:
+        node = node[int(key)] if isinstance(node, list) else node[key]
+    if value is None:
+        del node[int(last) if isinstance(node, list) else last]
+    else:
+        node[int(last) if isinstance(node, list) else last] = value
+
+
+def _moved(v: Any) -> Any:
+    return (not v) if isinstance(v, bool) else (v + 1) if isinstance(v, (int, float)) \
+        else f"{v} (moved)"
+
+
+@pytest.mark.parametrize("change", ["moved", "missing"])
+def test_a_defect_the_page_no_longer_holds_is_not_printed_and_the_suite_names_it(
+        tmp_path: Path, monkeypatch: Any, change: str) -> None:
+    """A listed defect whose field the page no longer holds — moved (a rebuild or refresh past
+    it), or missing (a fresh $0 build, as the cross-setup harness renders one) — is not printed
+    on either surface, and the page still prints its line; the suite's check over the COMMITTED
+    pages names the entry. POSITIVE: the unchanged copy prints it. (A renderer never refuses a
+    page for it: a fresh build of a watch name holds none of its committed page's defects.)"""
+    t, x = _listed()
+    data = _scratch(tmp_path, (t,))
+    assert x.sentence() in _md(t, data / "dossiers")
+    page = _page(t, data / "dossiers")
+    assert roster.holds(x, page)
+    _set(page, x.page_field, _moved(x.page_value) if change == "moved" else None)
+    (data / "dossiers" / t / "dossier.json").write_text(json.dumps(page, indent=2))
+    assert not roster.holds(x, page)
+    if change == "moved":       # a missing field can leave a page the model refuses to load
+        md = _md(t, data / "dossiers")
+        assert _notice(t).head() in md and x.sentence() not in md
+    problems = roster.defect_problems(roster.current(data), roster.read_defects(data), {t: page})
+    assert any(x.page_field in p for p in problems), problems
+    build = _build()
+    monkeypatch.setattr(build, "DOSS", data / "dossiers")
+    monkeypatch.setattr(build, "COVERAGE", data / roster.ROSTER_NAME)
+    monkeypatch.setattr(build, "WATCH_DEFECTS", data / roster.DEFECTS_NAME)
+    shown = build._coverage_snapshot([t])["names"][t]["defects"]
+    assert x.defect not in [d["defect"] for d in shown]
+
+
+def test_a_defect_listed_for_a_retired_or_unlisted_name_is_named_and_breaks_no_other_page(
+        tmp_path: Path) -> None:
+    """A stale entry (a name retired by one roster line, or never on the roster) is named by the
+    suite's check, and stops no other watch page's render — the W27 one-line retirement must
+    not take the fleet's renders down with it."""
     raw = json.loads((DATA / roster.DEFECTS_NAME).read_text())
+    t, x = _listed()
     for gone in ("MVST", "ZZZZ"):          # retired on the roster; never on it
-        bad = dict(raw, **{gone: raw["UBER"]})
-        data = _scratch(tmp_path / gone, defects=json.dumps(
+        bad = dict(raw, **{gone: raw[t]})
+        data = _scratch(tmp_path / gone, (t,), defects=json.dumps(
             dict(sorted(bad.items())), indent=2, ensure_ascii=False) + "\n")
-        with pytest.raises(roster.WatchDefectError, match=gone):
-            _md("UBER", data / "dossiers")
+        assert x.sentence() in _md(t, data / "dossiers")
+        problems = roster.defect_problems(roster.current(data), roster.read_defects(data), {})
+        assert len(problems) == 1 and problems[0].startswith(gone), problems
 
 
 def test_a_watch_page_whose_tree_has_no_defect_file_is_refused(tmp_path: Path) -> None:

@@ -4808,9 +4808,15 @@ def _watch_lines(d: Dossier, root: Path | None = None) -> list[str]:
     built to differ from it — the known-wrong banner's two-sources defect. The line on a
     COMMITTED watch page is held by the suite (the live-render drift pin, and
     ``tests/test_watch_frozen_line.py`` over every committed md and its mirror). A tree WITH a
-    roster refuses a watch page whose defect file is absent or no longer matches the page."""
+    roster refuses a watch page whose defect file is absent or malformed, and prints only the
+    defects the page being rendered still holds (``coverage_roster.watch_notice``)."""
     data_dir = Path(root).parent if root is not None else get_config().data_dir
     if not coverage_roster.roster_path(data_dir).is_file():
+        return []
+    # the status first: only a watch page is serialized for the defect check (an active page,
+    # most renders, would otherwise re-serialize and re-parse the whole page for nothing)
+    move = coverage_roster.current(data_dir).get(d.ticker.upper())
+    if move is None or move.status != "watch":
         return []
     notice = coverage_roster.watch_notice(data_dir, d.ticker, json.loads(dossier_json(d)))
     if notice is None:

@@ -50,9 +50,11 @@ coverage decision and is refused when it repeats a status, so a defect fixed by 
 its name stays on watch could not be recorded on the roster at all; and the roster's six fields
 are strict on every line, so a seventh would rewrite an append-only log. A defect is a fact about
 a PAGE: each entry names its STATE row and record, and the page field it lives in with the value
-it holds there. ``watch_notice`` refuses a page whose field no longer holds that value, so a page
-that is rebuilt or refreshed past its defect stops rendering until the entry is removed, and the
-line cannot go on naming a defect the page no longer has.
+it holds there. ``watch_notice`` prints only the defects the page being rendered still holds, so
+the line never names a defect the page no longer has — a fresh build of a watch name (the
+cross-setup harness renders one) holds none of its committed page's defects — and the suite
+refuses an entry the COMMITTED page no longer holds (``defect_problems``), so a rebuild or a
+refresh past a defect turns it red until the entry is removed.
 """
 
 from __future__ import annotations
@@ -412,18 +414,26 @@ def page_value(page: Mapping[str, Any], pointer: str) -> object:
         key = raw.replace("~1", "/").replace("~0", "~")
         if isinstance(node, dict) and key in node:
             node = node[key]
-        elif isinstance(node, list) and key.isdigit() and int(key) < len(node):
+        elif (isinstance(node, list) and key.isascii() and key.isdigit()
+              and int(key) < len(node)):
             node = node[int(key)]
         else:
             return _MISSING
     return node
 
 
+def holds(defect: Defect, page: Mapping[str, Any]) -> bool:
+    """Whether the page still holds the defect: its field holds the value it was measured at."""
+    got = page_value(page, defect.page_field)
+    return (got is not _MISSING and type(got) is type(defect.page_value)
+            and got == defect.page_value)
+
+
 def defect_problems(latest: Mapping[str, Move], defects: Mapping[str, tuple[Defect, ...]],
                     pages: Mapping[str, Mapping[str, Any]]) -> list[str]:
-    """Every way the defect file disagrees with the roster or the pages given, sorted by name;
-    [] when they agree. ``pages`` holds the page JSON of the names to check (a renderer passes
-    the one page it renders; the suite passes every committed page)."""
+    """Every way the defect file disagrees with the roster or the committed pages given, sorted
+    by name; [] when they agree. The suite's check over every committed page (a renderer prints
+    only what ``holds``, and never refuses a page another name's entry disagrees with)."""
     out: list[str] = []
     for t in sorted(defects):
         move = latest.get(t)
@@ -440,7 +450,7 @@ def defect_problems(latest: Mapping[str, Move], defects: Mapping[str, tuple[Defe
             if got is _MISSING:
                 out.append(f"{t}: the page has no {d.page_field} — the defect \"{d.defect}\" "
                            f"({d.cite()}) is bound to a field the page does not hold")
-            elif type(got) is not type(d.page_value) or got != d.page_value:
+            elif not holds(d, page):
                 out.append(f"{t}: {d.page_field} holds {got!r}, not the {d.page_value!r} the "
                            f"defect \"{d.defect}\" ({d.cite()}) was measured at — the page "
                            f"moved past it; remove or re-measure the entry")
@@ -451,16 +461,15 @@ def watch_notice(data_dir: Path, ticker: str,
                  page: Mapping[str, Any]) -> WatchNotice | None:
     """The notice a page prints near its top, or None when its name is not on watch.
 
-    ``page`` is the page's JSON as committed (``dossier_json``), checked against every defect
-    listed for it: a defect whose field no longer holds its value raises, so a watch page never
-    prints a defect it no longer has. Read at render time from the tree being rendered."""
-    latest = current(data_dir)
-    move = latest.get(ticker.upper())
+    ``page`` is the page's JSON as its one writer writes it (``dossier_json``). The notice names
+    only the defects listed for this name that the page still ``holds``: a watch page never
+    prints a defect it no longer has, and a fresh build of the name (the cross-setup harness
+    renders one) prints none of its committed page's. The file itself is read strictly, so an
+    absent or malformed one still raises; whether every entry still holds on its COMMITTED page,
+    and names a covered name, is the suite's check (``defect_problems``), so one stale entry
+    never stops another page's render. Read at render time from the tree being rendered."""
+    move = current(data_dir).get(ticker.upper())
     if move is None or move.status != "watch":
         return None
-    defects = read_defects(data_dir)
-    problems = defect_problems(latest, defects, {move.ticker: page})
-    if problems:
-        raise WatchDefectError(f"{defects_path(data_dir)} disagrees with the roster or "
-                               f"{move.ticker}'s page: " + "; ".join(problems))
-    return WatchNotice(move=move, defects=defects.get(move.ticker, ()))
+    listed = read_defects(data_dir).get(move.ticker, ())
+    return WatchNotice(move=move, defects=tuple(d for d in listed if holds(d, page)))

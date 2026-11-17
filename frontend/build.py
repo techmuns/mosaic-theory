@@ -796,9 +796,10 @@ def _coverage_snapshot(covered: list[str]) -> dict[str, Any]:
     dossier page prints as its WATCH line (STATE row 41 (b); dossier.js ``watchLine``). Written to
     ``snapshots/coverage.json`` on every deploy, never committed, so the line follows the roster
     and no page churns. Stdlib twin of `vinci.coverage_roster.watch_notice` (the build fence
-    forbids the import): this copies the move and the defect text; the strict readers, and the
-    check that each defect's page field still holds its value, are the backend's, run on every
-    md render and in the suite (`tests/test_watch_frozen_line.py` pins the two twins)."""
+    forbids the import): a watch name's defects are those its committed page still holds (the
+    field at `page_field` holds `page_value`), as the md renderer prints them; the strict file
+    reader and the check that every entry still holds are the backend's, run on every md render
+    and in the suite (`tests/test_watch_frozen_line.py` pins the two twins)."""
     if not WATCH_DEFECTS.is_file():
         raise SystemExit(f"no known-defect file at {WATCH_DEFECTS} — a watch page names its "
                          "known defects from it, so none can be shown as absent without it")
@@ -813,9 +814,25 @@ def _coverage_snapshot(covered: list[str]) -> dict[str, Any]:
         move = latest[t]
         names[t] = {k: move[k] for k in ("status", "date", "ruling", "source", "record")}
         if move["status"] == "watch":
+            page = json.loads((DOSS / t / "dossier.json").read_text(encoding="utf-8"))
             names[t]["defects"] = [{k: d[k] for k in ("defect", "state_row", "record")}
-                                   for d in defects.get(t, [])]
+                                   for d in defects.get(t, []) if _holds(page, d)]
     return {"names": names}
+
+
+def _holds(page: Any, defect: dict[str, Any]) -> bool:
+    """Whether the page holds the defect at its JSON pointer — twin of `coverage_roster.holds`."""
+    node = page
+    for raw in str(defect["page_field"]).split("/")[1:]:
+        key = raw.replace("~1", "/").replace("~0", "~")
+        if isinstance(node, dict) and key in node:
+            node = node[key]
+        elif isinstance(node, list) and key.isascii() and key.isdigit() and int(key) < len(node):
+            node = node[int(key)]
+        else:
+            return False
+    want = defect["page_value"]
+    return type(node) is type(want) and bool(node == want)
 
 
 def _git_sha() -> str | None:
