@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# THE COVERAGE ROSTER (W27): which names the fund covers is one dated file, `data/coverage_roster.jsonl`, and every reader that walks the covered names reads it, the pages checked against it; retiring MVST or AORT the roster's way is one appended line plus the name's own nine files (#1044 touched 32 files, #942 30); nothing rendered moves ($0)
+# THE COVERAGE ROSTER (W27): which names the fund covers is one dated file, `data/coverage_roster.jsonl`, and every reader that walks the covered names reads it, the pages checked against it; retiring MVST or AORT the roster's way is one roster line + the page's own 9 files + 0 pin sites (#1044 touched 32 files, #942 30), and a retirement today still carries the pin sites that read that name's living page, measured per name (211 value pins and 239 invariant reads at `4336b542`); nothing rendered moves ($0)
 
 **WHAT.**
 - **The roster.** `data/coverage_roster.jsonl` holds one move per line: a `date`, a `ticker`, the
@@ -164,10 +164,17 @@ neither retired name has a page. So nothing was stopped for.
     record moved back live; its seal key went back to the ticker; and the mirrors were rebuilt.
   - *AFTER:* retired the roster's way. One line was appended, the page deleted, the record
     archived, the seal key renamed, and `frontend/build.py` run.
-  - *The count:* `git diff --stat -M` from BEFORE to AFTER is 10 files for each name. They are the
-    roster's one appended line, the page's two files, the two web mirrors, the dossier index, the
-    record's archive move, its seal key, its card mirror and the card index. #1044 touched 32
-    files and #942 30.
+  - *The count:* `git diff --stat -M` from BEFORE to AFTER is, for each name, **one roster line +
+    the page's own 9 files + 0 pin sites still naming it.** The 9 files are the page's two files,
+    the two web mirrors, the dossier index, the record's archive move, its seal key, its card
+    mirror and the card index. #1044 touched 32 files and #942 30.
+  - *N = 0, measured, because #1044 and #942 had already re-pointed those names' pins.* The static
+    scan below flags 14 MVST and 9 AORT test functions on the BEFORE trees. All 18 distinct ones
+    (51 cases) pass on the AFTER tree with no test edited and none skipped: each reaches the
+    frozen copy through a ticker-conditional helper the scan cannot follow. One network pin
+    outside the offline suite, `test_primary_source_assembly_mvst_live`, reads MVST's living page
+    and has always skipped since #1044, which reported it. A name retired today carries its N
+    from the table below, not 0.
   - *The control:* the AFTER tree equals this branch's tree but for the roster file.
   - *The tests in each state.* 13 test files for MVST and 17 for AORT were run.
     - BEFORE fails only pins that hold the name as retired: its dated line, the retired-paged
@@ -179,22 +186,58 @@ neither retired name has a page. So nothing was stopped for.
     for a retirement whose move gives `record: null`. It now checks a record only when the move
     names one. Three mutation cases had depended on the first line's exact text and were rebuilt
     from the parsed move.
-- **The remainder, measured.** No value pin had to move in the proof, because #1044 and #942
-  already re-pointed those names' pins at frozen copies. A name retired today would still re-point
-  the value pins that read its living page by name. At `4336b542` that is 178 lines in 72 test
-  files:
+- **The remainder, measured: the pin sites a retirement still carries.** A retirement must still
+  re-point every test that reads that name's LIVING page by name. These come in two kinds, which
+  the TEST-LAYER RULE treats differently:
+  - **(a) value pins** — a figure, a date or a phrase read off the re-drawn page. The rule puts
+    these on frozen fixtures, so they violate it today;
+  - **(b) invariant reads that name a ticker** — presence and citation, ordering, guard
+    behaviour. The rule allows these on a living page, and they still break when the name
+    leaves.
 
-  | name | lines | files |
-  |---|---|---|
-  | AMZN | 34 | 19 |
-  | SMPL | 30 | 12 |
-  | IT | 20 | 4 |
-  | CNXC | 10 | 4 |
-  | GOOGL | 10 | 6 |
-  | every other name | 0 to 9 | |
-  | NCNO, ORKA, ROST, V | 0 | 0 |
+  At `4336b542` there are **450 (test function, name) pairs: 211 value and 239 invariant**, in
+  385 distinct test functions in 98 files. The count is printed by `scripts/named_page_pins.py
+  4336b542`, run read-only. A (test, name) pair is one site; `files` counts distinct files.
 
-  That move is not in this PR (WHAT IT COSTS, item 1).
+  | name | value (a) | invariant (b) | files |
+  |---|---|---|---|
+  | SMPL | 44 | 39 | 26 |
+  | AMZN | 33 | 37 | 25 |
+  | GOOGL | 11 | 24 | 15 |
+  | TJX | 14 | 13 | 8 |
+  | BRBR | 12 | 12 | 6 |
+  | IT | 14 | 10 | 6 |
+  | UBER | 10 | 10 | 7 |
+  | LLY | 4 | 14 | 10 |
+  | BURL | 8 | 9 | 10 |
+  | TECX | 3 | 14 | 5 |
+  | VRRM | 8 | 7 | 8 |
+  | CNXC | 5 | 9 | 6 |
+  | NFLX | 6 | 7 | 9 |
+  | EPAM | 9 | 2 | 10 |
+  | NCNO | 5 | 6 | 5 |
+  | VITL | 8 | 3 | 8 |
+  | MCK | 3 | 5 | 5 |
+  | WERN | 5 | 3 | 6 |
+  | FUBO | 2 | 5 | 7 |
+  | NKE | 3 | 4 | 4 |
+  | PARR | 1 | 2 | 1 |
+  | V | 1 | 2 | 3 |
+  | TGT | 1 | 1 | 2 |
+  | WLK | 1 | 1 | 2 |
+  | ORKA | 0 | 0 | 0 |
+  | ROST | 0 | 0 | 0 |
+
+  **The scan was validated on the two known answers.**
+  - At `dad8f441`, #1044's parent, it finds 20 MVST functions in 10 files: 17 of the 18 pins #1044
+    re-pointed, plus the 3 other MVST test sites #1044 changed (the `test_guidance_vintage` skip,
+    the deleted strict xfail, the network pin). It misses one: `test_dossier`'s cited EX-99.1
+    bear point.
+  - At `f491d155`, #942's parent, it finds 12 AORT functions in 8 files. Of the 8 test files #942
+    changed that read AORT's page, it finds 7 (it misses `test_dilution_denominator`), and it adds
+    `test_known_wrong_marker`.
+
+  Neither kind is moved in this PR (WHAT IT COSTS, item 1). No frozen fixture is added.
 
 **BOUNDARY.**
 - **Counts:** at main `4336b542` (2026-11-16), on the committed tree, unless another commit is
@@ -202,18 +245,38 @@ neither retired name has a page. So nothing was stopped for.
 - **"Pages":** `data/dossiers/*/dossier.json`, 26.
 - **"Files touched":** `git show --stat` for #1044 (`12764514`) and #942 (`fd123ada`), and
   `git diff --stat -M` between the scratch states.
-- **The remainder:** lines in `tests/**/*.py` matching `dossiers["'/ ]+<T>["'/]` or
-  `dossiers/<T>/`, less lines naming `frozen_pages`. It is a lower bound, since a pin that reads a
-  page through a helper or a parameter list is not counted.
+- **The remainder:** `scripts/named_page_pins.py` at `4336b542`, an AST scan of the 529
+  `tests/**/*.py` files (less `tests/fixtures/`), for the 26 names with a page there. Its
+  docstring gives the rules. A read is one of:
+  - a path literal naming `dossiers/<T>`;
+  - `<dossiers> / "<T>"`;
+  - `<dossiers> / name` or an f-string, with the name bound to literal tickers by a `for`, a
+    `parametrize`, or a helper parameter (helpers followed within the module);
+  - a literal ticker used as a subscript key in a page-reading function.
+
+  The kind:
+  - VALUE when an `assert` compares against a number literal other than 0 or 1, a
+    `pytest.approx`, or a string literal holding a digit or a space;
+  - INVARIANT otherwise.
+
+  It is a lower bound: a read through another module's helper, or a ticker built at run time, is
+  not seen. It over-counts a helper that switches a retired name to its frozen copy (see N = 0
+  above). The kind rule is mechanical, so the follow-up reads each site.
 - **The 197 corpus lines:** `glob`/`iterdir`/`rglob`/`listdir` lines near `dossier` in `tests/`.
 - **The fail-first run:** the 48 nodes of `tests/test_coverage_roster.py` at the branch's
   WIP commit `943a44a5`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-1. **The value pins on living pages are not moved.** Moving 178 lines in 72 test files would
-   collide with every open PR that edits those tests, so it is a follow-up (STATE row 41, open item (a)). Until
-   then, retiring a name with value pins on its page still re-points them, as #1044 did.
-   Falsifier: a retirement after this PR edits a test that reads the retired page by name.
+1. **The pin sites on living pages are not moved.** Moving 450 (test, name) pairs in 98 test
+   files would collide with every open PR that edits those tests, so it is a follow-up (STATE row
+   41, open item (a)), proposed by A after this merges. Its scope:
+   - **(a)** moves each value pin to a frozen fixture, cut from the real committed page through
+     the real decode path (`tests/fixtures/frozen_pages/`), never hand-rolled;
+   - **(b)** makes each invariant read iterate the roster's covered names instead of naming a
+     ticker.
+
+   Until then, retiring a name re-points its N sites from the table, as #1044 did. Falsifier: a
+   retirement after the follow-up still edits a test that reads the retired page by name.
 2. **A paid or `--no-llm` build of a watch or unlisted name is refused.** That includes a `--top N`
    run of screen finalists not yet on the roster. Building one means appending its move to
    `active` first, with the ruling. This is what B's three statuses mean: the status decides the
