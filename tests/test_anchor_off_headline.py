@@ -34,11 +34,22 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import CUT, covered_pages, frozen_doc
+
 ROOT = Path(__file__).resolve().parents[1]
 DOSSIERS = ROOT / "data" / "dossiers"
 #: The pages the corpus holds at this build (main b207c8a9: 26, every one carrying an anchor block).
 #: A floor, not an exact count: retiring or adding a page must not turn these pins red.
 MIN_PAGES = 20
+
+
+def _decisions_at_the_cut_still_covered() -> int:
+    """How many recorded operator decisions the pages carried at the cut (`tests/frozen_support.py`;
+    4 there: AMZN, CNXC, GOOGL, UBER), counted on the names the coverage roster still covers. The
+    floor the two decision pins hold the living fleet to: a retirement lowers it by that name's
+    own decision, never by a test edit, and a decision a covered page loses still goes red."""
+    return sum(1 for t in covered_pages() if (CUT / t).is_dir()
+               and (frozen_doc(t).get("anchor") or {}).get("operator_decision"))
 
 
 def _pages() -> list[Path]:
@@ -200,8 +211,8 @@ def test_md_operator_decisions_stay_on_the_brief_e2e() -> None:
         assert md.count(head) == 1, f"{tkr}: the decision renders more than once"
         assert head not in "\n".join(_screening_context_lines(anchor)), (
             f"{tkr}: the decision still rides inside the screening block")
-    assert decided >= 4, (
-        f"expected the 4 recorded decisions (AMZN, CNXC, GOOGL, UBER), saw {decided}")
+    assert decided >= _decisions_at_the_cut_still_covered(), (
+        f"expected the recorded decisions (AMZN, CNXC, GOOGL, UBER at the cut), saw {decided}")
 
 
 def test_md_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:
@@ -416,8 +427,8 @@ def test_web_operator_decisions_stay_on_the_brief_collapsed_force_open_and_print
         block = brief.find(_BLOCK)
         assert block < 0 or at < block, f"{t}: the decision still rides inside the screening block"
         assert dec["head"] not in p["analysis"], f"{t}: the decision renders under Analysis"
-    assert decided >= 4, (
-        f"expected the 4 recorded decisions (AMZN, CNXC, GOOGL, UBER), saw {decided}")
+    assert decided >= _decisions_at_the_cut_still_covered(), (
+        f"expected the recorded decisions (AMZN, CNXC, GOOGL, UBER at the cut), saw {decided}")
 
 
 def test_web_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:

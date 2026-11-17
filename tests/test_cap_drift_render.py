@@ -26,6 +26,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import covered_pages
 from vinci.dossier import render as render_mod
 from vinci.dossier.schemas import Dossier
 
@@ -223,7 +224,9 @@ def test_every_committed_name_either_reconciles_or_says_why() -> None:
 
 def test_the_committed_json_still_carries_the_inputs_to_reproduce_it() -> None:
     """The mark is DERIVED at render, not stored — so the JSON must keep the three inputs it is
-    derived from, or the machine-complete tier stops being able to reproduce the page."""
-    si = json.loads((DOSSIERS / "UBER" / "dossier.json").read_text())["mechanical"]["stock_info"]
-    for field in ("market_cap", "shares_out", "price"):
-        assert si[field]["value"] is not None, f"{field} must remain in the JSON"
+    derived from, or the machine-complete tier stops being able to reproduce the page: on every
+    covered page (the roster), never a named one."""
+    for t in covered_pages():
+        si = json.loads((DOSSIERS / t / "dossier.json").read_text())["mechanical"]["stock_info"]
+        for field in ("market_cap", "shares_out", "price"):
+            assert si[field]["value"] is not None, f"{field} must remain in the JSON"
