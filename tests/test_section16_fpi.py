@@ -22,6 +22,7 @@ from typing import Any, cast
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import mechanical as mech
 from vinci.dossier.mechanical import (
     _EEA_CODES,
@@ -347,8 +348,7 @@ def test_the_rendered_row_states_the_horizon_and_collapses_other() -> None:
     from vinci.dossier import render
     from vinci.dossier.schemas import Dossier
 
-    d = Dossier.model_validate_json((FIX.parent.parent / "data" / "dossiers" / "WERN" /
-                                     "dossier.json").read_text())
+    d = Dossier.model_validate_json((frozen_page("WERN") / "dossier.json").read_text())
     assert d.mechanical.catalyst_path is not None
     for name in ("SLI", "IPX"):
         cp = d.mechanical.catalyst_path.model_copy(update={"insider_activity": _run(name)})
