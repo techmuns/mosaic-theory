@@ -65,6 +65,13 @@ drew NFLX five times per variant.
   and WERN only (TECX's $0 build on this store carries no anchor); the ledger, scoring report and
   monitor are identical at both refs. 11 pages were not built: 10 have no price history in this
   Mac's store (frontier 2026-08-05), and PARR's quarterly export is mislabelled.
+- **The vintage and one re-pinned test.** Vintage `2026-11-17.synthesis-prompt-fix-4b`, with
+  `synthesis.py` re-pinned to it. `test_the_prompts_literal_example_checks_clean_against_the_facts_it_cites`
+  pinned that rule 13's example was LLY's real bear point. The example is fictional by design now,
+  so the test checks the figure trace on LLY's frozen quality block with the four facts the example
+  cites made to state its figures: it traces clean, and unfootnoted it flags exactly 1870, 6.2 and
+  2.4, the figures its own ref does not state. `compare --base 38c170fa --cand b6a0a6a8` refuses
+  ("reaches no page's request"): the registered bytes are the shipped ones.
 - **Review round 0** (`/code-review high --fix`): three fixed (the no-filing case above; rule 7's
   clause contradicting rule 9's real-or-misread reading; the false-balance flag's text still asking
   for "qualified-as-outweighed"), two skipped (below).
