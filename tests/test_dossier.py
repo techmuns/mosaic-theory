@@ -2096,9 +2096,7 @@ def test_smpl_pltm_basis_caveat_present_in_committed_artifact_e2e() -> None:
     (the caveat rightly disappears with the shape). The matched fragment is a code-generated
     TEMPLATE (mechanical.py, the (d) branch) — deterministic, never LLM prose, so the substring
     cannot rot on a reword."""
-    p = Path("data/dossiers/SMPL/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed SMPL dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/SMPL/dossier.json")
     doss = ds.Dossier.model_validate_json(p.read_text())
     ltm = dm._ltm_gaap_eps(doss.mechanical.financial_summary)
     if ltm is None or ltm >= 0:
@@ -2130,9 +2128,9 @@ def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
     import pathlib
     import shutil
     import subprocess
-    # MVST is retired (2026-11-12): its page is the frozen copy, VRRM's the living one
+    # MVST is retired (2026-11-12): its page is the frozen copy; VRRM's is its page at the cut
     pages = {"MVST": "tests/fixtures/frozen_pages/2026-09-17/MVST/dossier.json",
-             "VRRM": "data/dossiers/VRRM/dossier.json"}
+             "VRRM": "tests/fixtures/frozen_pages/cut-4889ddba/VRRM/dossier.json"}
     tickers = [t for t in ("MVST", "VRRM") if pathlib.Path(pages[t]).exists()]
     if not tickers:
         pytest.skip("no committed dossier.json")
@@ -2863,9 +2861,7 @@ def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
     independent so a re-draw of the living artifact can't rot it (values on the frozen fixture)."""
     import pathlib
     import re as _re
-    p = pathlib.Path("data/dossiers/VRRM/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed VRRM dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/cut-4889ddba/VRRM/dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
     if d.mechanical.stock_info is None:
         pytest.skip("VRRM not re-assembled with stock_info yet")
@@ -4226,13 +4222,10 @@ def test_stock_perf_exhibit_renders_from_committed_cnxc_e2e() -> None:
     here, not only by source inspection. Phrasing-independent: presence of the chart card + title +
     the rebased-100 aria-label, and ≥2 polylines (name + benchmark) — never an exact coordinate."""
     import json
-    import pathlib
     import shutil
     import subprocess
     if not shutil.which("node"):
         pytest.skip("node unavailable")
-    if not pathlib.Path("data/dossiers/CNXC/dossier.json").exists():
-        pytest.skip("no committed CNXC dossier.json")
     driver = r"""
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -4241,7 +4234,8 @@ const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, const
 for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
 const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
 const { renderDossier } = await import(dj);
-const html = renderDossier(JSON.parse(readFileSync("data/dossiers/CNXC/dossier.json")), null);
+const page = "tests/fixtures/frozen_pages/cut-4889ddba/CNXC/dossier.json";  // frozen at the cut
+const html = renderDossier(JSON.parse(readFileSync(page)), null);
 console.log(JSON.stringify({
   has_card: html.includes("ds-exhibit brief-perf"),
   has_title: html.includes("Stock performance"),
@@ -4263,9 +4257,7 @@ def test_stock_performance_committed_cnxc_artifact_invariants() -> None:
     the last plotted point. Phrasing/value-INDEPENDENT — the exact returns live on the frozen unit
     fixture above, never on the re-drawn artifact (CLAUDE.md TEST-LAYER rule)."""
     import pathlib
-    p = pathlib.Path("data/dossiers/CNXC/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed CNXC dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/cut-4889ddba/CNXC/dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
     sp = d.mechanical.stock_performance
     assert sp is not None and len(sp.points) >= 2
@@ -6593,9 +6585,7 @@ def test_peer_grid_renders_valuation_columns_e2e() -> None:
     """(B2 e2e) The per-peer grid carries the valuation columns (TEV/EBITDA, TEV/Rev, P/E) on
     committed VRRM — presence of the headers, phrasing/value-independent."""
     import pathlib
-    p = pathlib.Path("data/dossiers/VRRM/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed VRRM dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/cut-4889ddba/VRRM/dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
     pg = d.mechanical.peer_comps.peer_grid if d.mechanical.peer_comps else None
     if pg is None or pg.status is not ds.SourceStatus.PRESENT or not any(
@@ -7954,9 +7944,7 @@ def test_return_ratios_exhibit_no_phantom_negative_tick_e2e() -> None:
     import subprocess
     if not shutil.which("node"):
         pytest.skip("node unavailable")
-    doss = Path("data/dossiers/IT/dossier.json")
-    if not doss.exists():
-        pytest.skip("no committed IT dossier")
+    doss = Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json")
     rr = (json.loads(doss.read_text()).get("mechanical", {}) or {}).get("return_ratios")
     if not rr or rr.get("status") != "present":
         pytest.skip("IT return_ratios absent")
@@ -7977,7 +7965,8 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
-const html = renderDossier(JSON.parse(readFileSync("data/dossiers/IT/dossier.json")), null);
+const page = "tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json";  // frozen at the cut
+const html = renderDossier(JSON.parse(readFileSync(page)), null);
 const m = html.match(/<svg[^>]*aria-label="Return ratios[\\s\\S]*?<\\/svg>/);
 console.log(JSON.stringify({{ found: !!m, svg: m ? m[0] : "" }}));
 """
@@ -8210,7 +8199,8 @@ def test_brief_windows_the_annual_table_and_states_what_it_hides() -> None:
     inversion of the old bug: curate the view, never the record."""
     import re as _re
 
-    d = ds.Dossier.model_validate_json(Path("data/dossiers/IT/dossier.json").read_text())
+    d = ds.Dossier.model_validate_json(
+        Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json").read_text())
     tbl = d.mechanical.financial_summary.annual.value        # type: ignore[union-attr]
     assert tbl is not None and len(tbl.columns) > 7, "IT should carry its full exported history"
     idx = dr._brief_window(tbl)
@@ -8336,9 +8326,7 @@ def test_release_drivers_dedup_identical_segments() -> None:
     dossier printed it twice. Frozen committed-artifact pin + the extractor guard."""
     import json as _json
     import pathlib
-    p = pathlib.Path("data/dossiers/IT/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed IT dossier.json")
+    p = pathlib.Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json")
     # OVER EVERY FILING, not `filings[0]` (2026-08-13). The index assumed IT's Feb-3 8-K sat first;
     # the 2026-08-12 re-assembly left `filings` empty and the pin raised IndexError — an absence
     # reported as a crash rather than as the dedup finding it owns. The RULE is that no filing
@@ -8434,9 +8422,7 @@ def test_committed_it_dossier_capband_benchmark_and_fresh_price() -> None:
     basis. And the committed CMP carries NO stale-at-assembly note (the pre-assembly refresh ran;
     the note is stamped at assembly, so this is an artifact fact, not a clock read). Deterministic
     values only: the cap-band mapping is plain code, never LLM text."""
-    p = Path("data/dossiers/IT/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed IT dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json")
     mech = json.loads(p.read_text())["mechanical"]
     io = mech["idiosyncratic_vs_shared"]
     assert io["benchmark_symbol"] == "MDY"
@@ -8447,7 +8433,7 @@ def test_committed_it_dossier_capband_benchmark_and_fresh_price() -> None:
     # under a mid-band read)
     assert "MDY" in (io["rel_vs_market"].get("source_ref") or "")
     assert mech["stock_info"]["price"].get("note") in (None, "")
-    md = Path("data/dossiers/IT/dossier.md").read_text()
+    md = Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.md").read_text()
     assert "Market (MDY) 180d return" in md
 
 
@@ -8567,11 +8553,9 @@ def test_md_brief_crux_block_and_case_dedup() -> None:
     'At a glance' (the question; pre-teaser-removal artifacts may still carry ≤2 unknowns until
     the next re-render — this test asserts only the shape-stable invariants) and 'The case'
     carries neither the question nor an unknowns list — content parity with the web cover."""
-    p = Path("data/dossiers/IT/dossier.md")
-    if not p.exists():
-        pytest.skip("no committed IT dossier.md")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.md")   # frozen at the cut
     md = p.read_text()
-    j = json.loads(Path("data/dossiers/IT/dossier.json").read_text())
+    j = json.loads(Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json").read_text())
     q = j["synthesis"]["decisive_question"]["question"]
     glance = md.split("## At a glance")[1].split("\n## ")[0]
     assert "The crux — what decides this" in glance and q in glance
@@ -8585,9 +8569,7 @@ def test_md_crux_ku_teaser_removed_render_level() -> None:
     CURRENT code), artifact-independent, so it is green before AND after the artifact re-render.
     Evidence for the removal: across 109 consecutive historical draw pairs the unknowns' set
     survives ~17% and the top-2 slots ~7% — the teaser presented weather as a curated top-2."""
-    p = Path("data/dossiers/IT/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed IT dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json")
     doss = ds.Dossier.model_validate_json(p.read_text())
     assert doss.synthesis is not None
     md = dr.render_markdown(doss)
@@ -8964,9 +8946,7 @@ def test_md_without_a_card_states_the_absence_and_keeps_the_machine_read() -> No
     (Said "a PDF reader" until 2026-07-27; the PDF scopes print the WEB page and were never
     affected. Corrected after a live preview.)
     """
-    p = Path("data/dossiers/IT/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed IT dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
     md = dr.render_markdown(d, card=None)
     assert "Thesis — our rationale" not in md
@@ -9411,9 +9391,7 @@ def test_catalyst_stale_caveat_reworded_on_committed_brbr_e2e() -> None:
     the catalyst caveat with the staleness discriminator, never the 'no as-of stamp' opener."""
     import json as _json
 
-    p = Path("data/dossiers/BRBR/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed BRBR dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/BRBR/dossier.json")
     d = _json.loads(p.read_text())
     raw = " ".join(c for c in (d.get("caveats") or []))
     if "Catalyst-path as-of UNVERIFIABLE" not in raw:
@@ -9707,15 +9685,13 @@ def test_what_broke_event_study_on_committed_cnxc_e2e() -> None:
     guarded skips keep it green on pre-daily JSON."""
     import json as _json
 
-    p = Path("data/dossiers/CNXC/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed CNXC dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/CNXC/dossier.json")
     d = _json.loads(p.read_text())
     dc = d["mechanical"].get("drawdown_cause") or {}
     gaps = (dc.get("gap_down_dates") or {}).get("value") or []
     if len(gaps) < 2:
         pytest.skip("CNXC no longer has multiple gap-downs")
-    md = Path("data/dossiers/CNXC/dossier.md").read_text()
+    md = Path("tests/fixtures/frozen_pages/cut-4889ddba/CNXC/dossier.md").read_text()
     # the label names the rolling window's length since 2026-11-04 (`render._rolling`)
     read_line = r"\*\*Read — what broke(?: \([^)]*days[^)]*\))?\*\* · discrete gap-downs:"
     if not re.search(read_line, md):
@@ -9757,12 +9733,12 @@ def test_substantive_non_earnings_items_surface_on_card_and_dropdown_dedups() ->
         and any("termination notice" in s for s in subs)
     assert dr._substantive_events(_F(["7.01 Regulation FD Disclosure: webcast"])) == []
 
-    pv = Path("data/dossiers/VRRM/dossier.json")
+    pv = Path("tests/fixtures/frozen_pages/cut-4889ddba/VRRM/dossier.json")
     if pv.exists() and "termination notice from Avis" in pv.read_text():
         md = dr.render_markdown(ds.Dossier.model_validate_json(pv.read_text()))
         wb = md.split("What broke — and did it fall alone?")[1].split("\n### ")[0]
         assert "termination notice from Avis" in wb, "the Avis catalyst must be on the surface"
-    pc = Path("data/dossiers/CNXC/dossier.json")
+    pc = Path("tests/fixtures/frozen_pages/cut-4889ddba/CNXC/dossier.json")
     if pc.exists():
         md = dr.render_markdown(ds.Dossier.model_validate_json(pc.read_text()))
         wb = md.split("What broke — and did it fall alone?")[1].split("\n### ")[0]
@@ -9852,9 +9828,7 @@ def test_catalyst_calendar_render_placement_b_and_crux_line() -> None:
     ONE Next-catalyst line (the earliest entry). A dossier WITHOUT the field (every pre-build
     artifact) renders NO section and NO crux line — old JSON round-trips without a phantom."""
     import vinci.scenarios as sc
-    p = Path("data/dossiers/SMPL/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed SMPL dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/SMPL/dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
     cal = ds.CatalystCalendar(rows=[ds.CatalystRow(
         event="Next results print", expected_date="2026-10-08", date_basis="cadence-estimate",
@@ -10155,9 +10129,7 @@ def test_panel_freshness_on_the_real_smpl_panels_before_and_after_the_print() ->
     rewind them to the pre-disposition stale vintages (2026-06-03 / 2026-06-25) and the gate FIRES —
     the caveat that was missing when the BUY was recorded. Invariant, not a value pin: a fresh
     assembly always pulls CIQ on/after the latest print, so 'fresh is silent' is stable."""
-    p = Path("data/dossiers/SMPL/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed SMPL dossier.json")
+    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/SMPL/dossier.json")
     ie = ds.Dossier.model_validate_json(p.read_text()).mechanical.valuation.implied_expectations
     assert ie is not None, "SMPL dossier carries an implied-expectations block"
     print_date = date(2026, 7, 9)  # SMPL FQ3 8-K item 2.02 (a fixed historical fact)
