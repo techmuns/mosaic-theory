@@ -1,6 +1,6 @@
 # Dossier — Uber Technologies, Inc (NYSE: UBER)
 
-_November 9, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
+_November 9, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
 
 # Brief — first cut
 
@@ -636,6 +636,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
+  - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
 - **Price store:** `artifacts-order1-rebuilds-6a7a7b` · reaching 2026-11-06
 - **Panel age:** oldest panel 5d old — 2026-11-04 (valuation.implied_expectations.tev_as_of), against a 2026-11-09 build
 - **Consensus age:** consensus 5d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling
