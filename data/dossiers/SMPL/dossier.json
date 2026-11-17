@@ -15725,7 +15725,13 @@
         "file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Annual.xls",
         "sha256": "cc99900b61070f4ffc31e8a204ff5054ea51c64eb59bd3a44320be892e509d8b",
         "bytes": 352266,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-27",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 84, column 15 [Aug-29-2026], workbook sha256 cc99900b61070f4ffc31e8a204ff5054ea51c64eb59bd3a44320be892e509d8b",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: [Aug-29-2015] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "financials",
@@ -15733,7 +15739,13 @@
         "file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls",
         "sha256": "3a3e2873fa0ff723dc2c6d68582f280f76decb590cf856bc6564e050dc711e62",
         "bytes": 590346,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-27",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 82, column 45 [FQ4/CQ3 Aug-29-2026], workbook sha256 3a3e2873fa0ff723dc2c6d68582f280f76decb590cf856bc6564e050dc711e62",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 3 columns, [FQ1/CQ4 Nov-26-2016] to [FQ3/CQ2 May-27-2017] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "key_developments",
@@ -15902,6 +15914,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

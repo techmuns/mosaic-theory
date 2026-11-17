@@ -16672,7 +16672,13 @@
         "file": "Netflix Inc NasdaqGS NFLX Financials_Annual.xls",
         "sha256": "8ae9f12b10ac4a250a880612b5162ccc8337d6d81f6fcdb464dec10bffcb4422",
         "bytes": 314890,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-21",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 83, column 11 [Sep-30-2026], workbook sha256 8ae9f12b10ac4a250a880612b5162ccc8337d6d81f6fcdb464dec10bffcb4422",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -16680,7 +16686,13 @@
         "file": "Netflix Inc NasdaqGS NFLX Financials_Quarterly.xls",
         "sha256": "512a1e9a0abc8068bef8a7049e3a3d078c48b1314bf9cf0a5cb55f7abf4fd213",
         "bytes": 551434,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-21",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 83, column 40 [Q3 Sep-30-2026], workbook sha256 512a1e9a0abc8068bef8a7049e3a3d078c48b1314bf9cf0a5cb55f7abf4fd213",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "key_developments",
@@ -16869,6 +16881,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

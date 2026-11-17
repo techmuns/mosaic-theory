@@ -1,6 +1,6 @@
 # Dossier — WERNER ENTERPRISES INC (Nasdaq: WERN)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
 
 # Brief — first cut
 
@@ -730,6 +730,7 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm · amended by 0000
 - **Refreshed since assembly** (oldest first):
   - 2026-11-14 · mechanical.primary_source — refresh at 2026-11-14.a-release-quote-keeps-the-figure-it-backs
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
+  - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 9d old (2026-11-05, valuation.implied_expectations.multiples_as_of) — within the ceiling

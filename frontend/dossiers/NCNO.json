@@ -13919,7 +13919,13 @@
         "file": "nCino Inc NasdaqGS NCNO Financials_Annual.xls",
         "sha256": "3add02a2f4184e231166b59aee5483fb74be8bbbfa71cb3733c2747d12232738",
         "bytes": 284170,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-08-25",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 88, column 11 [Jul-31-2026], workbook sha256 3add02a2f4184e231166b59aee5483fb74be8bbbfa71cb3733c2747d12232738",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -13927,7 +13933,13 @@
         "file": "nCino Inc NasdaqGS NCNO Financials_Quarterly.xls",
         "sha256": "a4ee9ab06634eac4014addd32b7cc8c6278f066ee15c686fcc8351af3521400b",
         "bytes": 434186,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-08-25",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 89, column 31 [Q2 Jul-31-2026], workbook sha256 a4ee9ab06634eac4014addd32b7cc8c6278f066ee15c686fcc8351af3521400b",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 3 columns, [Q1 Apr-30-2019] to [Q3 Oct-31-2019] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "key_developments",
@@ -14086,6 +14098,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

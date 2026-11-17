@@ -16371,7 +16371,13 @@
         "file": "McKesson Corporation NYSE MCK Financials_Annual.xls",
         "sha256": "d55cf10f332f4676b4ae9d356dbe9b4a53abd9c559d7884eee0cf62319c49a93",
         "bytes": 369162,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-04",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 93, column 12 [Sep-30-2026], workbook sha256 d55cf10f332f4676b4ae9d356dbe9b4a53abd9c559d7884eee0cf62319c49a93",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -16379,7 +16385,13 @@
         "file": "McKesson Corporation NYSE MCK Financials_Quarterly.xls",
         "sha256": "e437e3b38dd59b40503a1cdda7d5b92f0998b1a23d3ef65ceff6fea3d0eec6b5",
         "bytes": 650250,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-04",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 91, column 43 [FQ2/CQ3 Sep-30-2026], workbook sha256 e437e3b38dd59b40503a1cdda7d5b92f0998b1a23d3ef65ceff6fea3d0eec6b5",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Cash Flow: [3 months FQ3/CQ4 Dec-31-2017] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "key_developments",
@@ -16559,6 +16571,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

@@ -16328,7 +16328,13 @@
         "file": "Uber Technologies Inc NYSE UBER Financials_Annual.xls",
         "sha256": "1e4b03d44df60a74635242fe034544749c6bf05465403c9c3c2554ac14bc3c31",
         "bytes": 299018,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-04",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 97, column 12 [Sep-30-2026], workbook sha256 1e4b03d44df60a74635242fe034544749c6bf05465403c9c3c2554ac14bc3c31",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -16336,7 +16342,13 @@
         "file": "Uber Technologies Inc NYSE UBER Financials_Quarterly.xls",
         "sha256": "c4b233215f4419a8b4109c5c97a2b2795b1e531e0eecd38c847a5a32a769e9a5",
         "bytes": 467466,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-04",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 95, column 36 [Q3 Sep-30-2026], workbook sha256 c4b233215f4419a8b4109c5c97a2b2795b1e531e0eecd38c847a5a32a769e9a5",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 3 columns, [Q1 Mar-31-2018] to [Q3 Sep-30-2018] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "key_developments",
@@ -16483,6 +16495,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

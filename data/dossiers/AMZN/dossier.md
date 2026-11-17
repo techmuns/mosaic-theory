@@ -1,6 +1,6 @@
 # Dossier — AMAZON COM INC (Nasdaq: AMZN)
 
-_November 3, 2026 · extraction 2026-11-03.ex-lease-share-cut · layers refreshed to 2026-11-10.driver-text-filed_
+_November 3, 2026 · extraction 2026-11-03.ex-lease-share-cut · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
 
 # Brief — first cut
 
@@ -675,6 +675,7 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
   - 2026-11-10 · mechanical.capital_allocation, mechanical.peer_capital_intensity — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.peer_capital_intensity — refresh at 2026-11-10.one-family-peers
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
+  - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
 - **Price store:** `busy-goldstine-88c81c` · reaching 2026-11-02
 - **Panel age:** oldest panel 4d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-03 build
 - **Consensus age:** consensus 2d old (2026-11-01, valuation.implied_expectations.multiples_as_of) — within the ceiling

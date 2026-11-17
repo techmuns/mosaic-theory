@@ -19533,7 +19533,13 @@
         "file": "Eli Lilly and Company NYSE LLY Financials_Annual.xls",
         "sha256": "0fa91cd48189e365694d72d74b91866093750969468d9644edde2e52a25bc38d",
         "bytes": 367114,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-29",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 96, column 11 [Sep-30-2026], workbook sha256 0fa91cd48189e365694d72d74b91866093750969468d9644edde2e52a25bc38d",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -19541,7 +19547,13 @@
         "file": "Eli Lilly and Company NYSE LLY Financials_Quarterly.xls",
         "sha256": "f8c731a5c759285004faffa891745d1f792d539a1bd78345d4fa78303c5d2c14",
         "bytes": 658954,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-29",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 94, column 40 [Q3 Sep-30-2026], workbook sha256 f8c731a5c759285004faffa891745d1f792d539a1bd78345d4fa78303c5d2c14",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "key_developments",
@@ -19714,6 +19726,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

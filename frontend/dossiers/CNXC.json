@@ -12077,7 +12077,13 @@
         "bytes": 322570,
         "stamped_by": [
           "anchor.d_and_a.source"
-        ]
+        ],
+        "filed_through": {
+          "value": "2026-10-07",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 86, column 11 [Aug-31-2026], workbook sha256 e96007d828c4d932d738601fb34a1e5277f78b789404eb7962953d66a90c446b",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: [Nov-30-2017] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "financials",
@@ -12091,7 +12097,13 @@
           "forward_multiple_history.source_sha256",
           "mechanical.valuation.lease_basis.ex_lease_band.source_sha256",
           "mechanical.valuation.own_history.value.source_sha256"
-        ]
+        ],
+        "filed_through": {
+          "value": "2026-10-07",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 87, column 32 [Q3 Aug-31-2026], workbook sha256 35c54fd6f0734dcb252a759dd68c93b5e68e9ac30c79e29f9deb4f2041528cc7",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 3 columns, [Q1 Feb-28-2019] to [Q3 Aug-31-2019] read 'NA', stating no filing date"
+        }
       }
     ],
     "responses_listed": "all",
@@ -12136,6 +12148,14 @@
       "writer": "driver-facts-pass",
       "layers": [
         "mechanical.operating_drivers"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
+        "inputs"
       ]
     }
   ],

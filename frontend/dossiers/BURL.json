@@ -15267,7 +15267,13 @@
           "forward_multiple_history.source_sha256",
           "mechanical.valuation.lease_basis.ex_lease_band.source_sha256",
           "mechanical.valuation.own_history.value.source_sha256"
-        ]
+        ],
+        "filed_through": {
+          "value": "2026-08-27",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 88, column 43 [Q2 Aug-01-2026], workbook sha256 b4a0f828eef6c59cd5d26add86f98613f682aceb3c5faacfe229995e40100a4a",
+          "status": "present",
+          "note": null
+        }
       }
     ],
     "responses_listed": "all",
@@ -15361,6 +15367,14 @@
       "writer": "driver-facts-pass",
       "layers": [
         "mechanical.operating_drivers"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
+        "inputs"
       ]
     }
   ],

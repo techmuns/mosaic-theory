@@ -16284,7 +16284,13 @@
         "file": "Gartner Inc NYSE IT Financials_Annual.xls",
         "sha256": "708414dea5f90d08c9584d5fc42c497abdf1f7fc393244e8c9e09600c41a112c",
         "bytes": 334346,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-03",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 86, column 11 [Sep-30-2026], workbook sha256 708414dea5f90d08c9584d5fc42c497abdf1f7fc393244e8c9e09600c41a112c",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -16292,7 +16298,13 @@
         "file": "Gartner Inc NYSE IT Financials_Quarterly.xls",
         "sha256": "bc5a5c8cd8bf1b538ae7b6345d3c4d0570e6174c4bf8b433b579d38f5d52777f",
         "bytes": 562698,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-03",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 85, column 40 [Q3 Sep-30-2026], workbook sha256 bc5a5c8cd8bf1b538ae7b6345d3c4d0570e6174c4bf8b433b579d38f5d52777f",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "key_developments",
@@ -16467,6 +16479,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }
