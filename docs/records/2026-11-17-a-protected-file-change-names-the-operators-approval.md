@@ -176,15 +176,14 @@ message, a trailer included, replace HEAD's.
 
 **Review round 1** (A's independent review of `d1eea93e`, plus Codex's P2): 11 items. Items 1–9
 are FIXED, each behind a pin; items 10 and 11 are recorded.
-- 17 of the new pins fail on `d1eea93e` as reviewed. They cover:
-  - items 1 and 2, run the way gate.yml runs them (the script inside the checkout, no `--root`);
-  - item 3, plus a clean re-sync and an edit made inside a merge;
-  - item 4, a base with no guard;
-  - item 5, a shadowing package and seven config names, plus the guard's own pin;
-  - items 6–8: the date window, `token=value` trailers, `-C`/`-c`;
-  - item 9, gate.yml against main.
-- 1 pin, main's guard failing when RUN, passes there: that behaviour was right. A's finding was
-  that a mutant survived every pin; it now catches that mutant.
+- **Fail-first, measured on `d1eea93e` as reviewed** (all three pin files run there): 19 nodes fail,
+  120 pass.
+  - The 19 are all 17 new round-1 nodes (11 functions, the config test across 7 names), the
+    re-pinned gate.yml wiring, and the hooks file's new pin.
+  - Items 1 and 2 run the way gate.yml runs them: the script inside the checkout, no `--root`.
+    Under `--root` the old code loaded the script checkout's guard, so those pins passed.
+- 1 pin, main's guard failing when RUN (rewritten), passes there: that behaviour was right. A's
+  finding was that a mutant survived every pin; it now catches that mutant.
 - 9 mutations, one per fix, are each caught by the fix's pin:
   1. the branch's guard code run;
   2. directory approvals from both lists;
@@ -198,7 +197,7 @@ are FIXED, each behind a pin; items 10 and 11 are recorded.
 - **M1 at first SURVIVED.** The pin's payload patched `sys.exit`, and `sys.exit(main())` looks
   `sys.exit` up before `main` runs. The pin was hardened to a payload that exits 0 at import, so it
   holds whatever the check's functions are named.
-- The file now holds 66 pins.
+- The file now holds 66 nodes: round 0's 48, the 17 new ones, and the protected-entry parametrize's new node for `requirements.lock`.
 
 **BOUNDARY.**
 - **The census** is every transcript present under `~/.claude/projects` on 2026-11-17 that names
