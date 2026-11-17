@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-18
-prs: []
+prs: [1111]
 supersedes:
 superseded-by:
 ---
