@@ -453,6 +453,52 @@ def test_the_pass_names_every_export_it_cannot_read_with_its_boundary(
     _no_local_path(out, tmp_path)
 
 
+# --- end to end, on the committed corpus (TEST-LAYER RULE: invariants on living pages) -----------
+
+def _pages() -> list[tuple[str, dict[str, Any]]]:
+    return [(p.parent.name, json.loads(p.read_text()))
+            for p in sorted(DOSS.glob("*/dossier.json"))]
+
+
+def test_no_committed_page_is_dated_before_a_financials_filing_date_it_records() -> None:
+    """Every page is dated on or after each Financials filing date its record states; its rule
+    names a row exactly when that row sets the date; and every UNKNOWN one is named in the rule."""
+    seen = 0
+    for t, doc in _pages():
+        ds = doc["date_semantics"]
+        for i, r in enumerate((doc.get("inputs") or {}).get("ciq") or []):
+            ft = r.get("filed_through")
+            if not ft:
+                continue
+            seen += 1
+            where = f"inputs.ciq[{i}].filed_through"
+            if ft["status"] == "present":
+                assert ds["analysis_as_of"] >= ft["value"], (t, where)
+                named = where in ds["analysis_as_of_rule"]
+                assert named == (ft["value"] == ds["analysis_as_of"]
+                                 and vb.RULE_FILED_CLAUSE.split("{")[0] in ds[
+                                     "analysis_as_of_rule"]), (t, where)
+            else:
+                assert where in ds["analysis_as_of_rule"], (t, where)
+    assert seen >= 20, seen                              # never vacuous: the pass filled them
+
+
+def test_every_build_recorded_page_states_its_financials_filing_date() -> None:
+    """Every Financials export a BUILD recorded states its filing date on the page, read or UNKNOWN:
+    none is left looked-for-and-silent. A backfilled record can name an export no folder holds
+    (ORKA's, PARR's), and is held only by the pin above."""
+    checked = []
+    for t, doc in _pages():
+        rec = doc.get("inputs") or {}
+        if rec.get("recorded") != "build":
+            continue
+        for r in rec.get("ciq") or []:
+            if r.get("kind") == "financials":
+                assert r.get("filed_through"), (t, r["file"])
+                checked.append(t)
+    assert "IT" in checked and len(set(checked)) >= 10, checked
+
+
 # --- CIQ-bound: the real workbooks (skip without them) ------------------------------------------
 
 def test_the_reader_reads_its_date_off_the_real_workbook() -> None:
