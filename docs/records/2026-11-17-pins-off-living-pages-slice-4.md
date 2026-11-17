@@ -55,30 +55,41 @@ row 41 (a)). This slice moves that cost off the dossier render and refresh group
 4.
 
 **HOW VERIFIED.**
-- **The checker.** `python scripts/asserts_unchanged.py 8a71a383` (main, with slice 1 merged) over 15
-  files and 745 functions: 0 disabled, 0 control, 0 vanished, 1 reader-only
-  (`test_an_export_not_on_disk_is_named_never_reported_unchanged`, `_living` → `_at_cut`), 2
-  population (the R1 walk, the cap-line walk), and **4 changed, each reviewed**:
+- **The checker.** `python scripts/asserts_unchanged.py origin/main` (main `e15659ba`, merged) over
+  15 files and 745 functions: 0 disabled, 0 control, 0 vanished, 1 reader-only
+  (`test_an_export_not_on_disk_is_named_never_reported_unchanged`, `_living` → `_at_cut`), 1
+  population (the R1 walk), and **5 changed, each reviewed**:
   1. and 2. `test_anchor_off_headline`'s two decision pins, md and web. The floor `decided >= 4`
      became `decided >= _decisions_at_the_cut_still_covered()`, a floor BY NAME: the set of names
      whose cut pages carry a recorded decision (AMZN, CNXC, GOOGL, UBER), on the names the roster
      still covers, must be a subset of the names whose living pages carry one. It is those 4
-     today. A retirement lowers it by that name's own decision, never by a test edit, and a
-     decision a covered page loses goes red even when another page gains one, which a count would
-     net (code review, round 0: mutation, AMZN's decision dropped from the md walk → red, naming
-     the 3 it saw). The message now says "at the cut" and lists the names.
+     today. A retirement lowers it by that name's own decision, never by a test edit; a decision
+     a covered page loses goes red even when another page gains one, which a count would net
+     (code review, round 0: mutation, AMZN's decision dropped from the md walk → red); and the
+     floor itself fails loud once no covered name carried a decision at the cut (the second
+     review: shown with the roster stubbed to two undecided names). The message names the lost
+     decision.
   3. `test_layer_refreshes::test_a_refresh_that_moves_a_layer_records_it`. A reader swap through a
      path expression: `DOSS / "UBER"` → `frozen_page("UBER")`. The checker normalizes a reader only
      when it is a call, so it reads this as CHANGED. `_copy` writes the same frozen page into the
      tmp tree, so the assertion still compares the refreshed page with the page it came from.
   4. `test_refresh_fleet_and_bridge_guards::test_a_fleet_refresh_updates_the_frontend_mirror`.
-     SMPL → each covered name `t`, in the walk above, and the message names the page.
+     SMPL → each covered name `t`, in the walk above; the message names the page, and the walk
+     fails loud on an empty roster. It keeps #1100's `watch_defects.json` copy (merged, not
+     hand-edited).
+  5. `test_cap_drift_render::test_the_committed_json_still_carries_the_inputs_to_reproduce_it`.
+     UBER → the 26 covered pages; each message names its page, and a page with no `stock_info`
+     block fails on a named assertion rather than a `TypeError` (the second review).
+
+  Slice 5's refined checker, which also counts a skip raised inside a helper, reads 2 disabled:
+  `test_surprise_listing_block`'s two tripwire pins, whose `_committed` skips a name the roster no
+  longer covers (cost 3).
 - **The dormant test.** `test_return_ratios_exhibit_no_phantom_negative_tick_e2e` skips on main:
   no record is `pending_analyst`, so its move had never run. It was run once with WERN's record set
   to `pending_analyst` in the slice's worktree, and the record was then restored (`git checkout`):
   it passes on the frozen IT page.
-- **The files.** The 14 changed test files, offline, with the CIQ link present: 642 passed, 17
-  skipped, 2 xfailed, 0 failed.
+- **The files.** The 14 changed test files, offline, with the CIQ link present, at the merged
+  head: 642 passed, 17 skipped, 2 xfailed, 0 failed.
 - **The scan** (`python scripts/named_page_pins.py HEAD`, the same 26 pages, against main at
   `8a71a383`): 423 → 358 pairs (value 208 → 181, invariant 215 → 177), 366 → 311 functions, 83 →
   76 files. What it still finds in these files, 27 pairs in 24 functions:
@@ -96,8 +107,20 @@ row 41 (a)). This slice moves that cost off the dossier render and refresh group
     option (1) the 9 stay, with slice 5's record writing up the class.
 
   Slice 5 fixes the scan's false positives and records the residue.
-- **The suite.** {SUITE}
-- **The impact check.** {IMPACT}
+- **The suite.** The full offline suite (`-m "not network" -n 8`, the CIQ folder linked) at
+  `bca68679` (main `5c9c7eac` merged), against the same run of main `8a71a383`: **74 → 76
+  failing**. Main's 74 are local-data failures CI does not run. Of the differences:
+  - named noise: `test_records_ledger` (this record's PR number, filled once the PR opened);
+    `test_transcript_run_guard`, 2 new and 1 gone; `test_evidence_same_passage`'s LibreOffice
+    conversion, gone;
+  - `test_forward_multiple_history::test_the_refresh_lands_the_layer_and_moves_nothing_else`, a
+    file this slice does not touch: it fails on main `5c9c7eac` itself, with the CIQ link. #1100
+    gave a watch page a frozen-since line, and this pin's tmp copy of AMZN has no roster, so the
+    re-render drops AMZN's line. CI does not run it. Slice 3 (#1107) moves it to the cut, which
+    predates the line. Reported to A.
+- **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` at
+  `34436f76` (main `e15659ba` merged): 0 of 661 tests fail on base code and pass on head code
+  (641 pass at both, 20 skipped), and `verify` reads VALID. The PR body carries the report.
 
 **FOUND, NOT FIXED (out of scope; reported to A).** 14 of the 15 `test_dossier` tests that name
 `pending_analyst` compute a pending exemplar, `pend`, and never use it: their only use is
