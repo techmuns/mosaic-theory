@@ -1,9 +1,9 @@
 """Count the tests that read a LIVING committed page by its ticker, by name and by kind (W27).
 
 A retirement still has to re-point every test that reads the retired name's living page by name
-(`data/dossiers/<T>/…`): the coverage roster removes the other files a retirement touched, not
-these. This prints, for each name with a committed page at REF, the test functions that read its
-page, split into two kinds:
+(`data/dossiers/<T>/…`, or its web mirror `frontend/dossiers/<T>.json` / `.md`): the coverage
+roster removes the other files a retirement touched, not these. This prints, for each name with a
+committed page at REF, the test functions that read its page, split into two kinds:
 
 - VALUE — the function asserts a figure, a date or a phrase: an `assert` comparison with an
   operand that is a number literal other than 0 or 1, a `pytest.approx(...)` call, or a string
@@ -13,31 +13,57 @@ page, split into two kinds:
   allows on a living page, and which still breaks when that name leaves.
 
 WHAT COUNTS AS A READ, by the AST of each `tests/**/*.py` at REF (never `tests/fixtures/`):
-1. a string literal naming `dossiers/<T>` (a path segment), not under `frozen_pages`;
+1. a string literal naming `dossiers/<T>` (a path segment, or the mirror's `<T>.json` / `<T>.md`),
+   not under `frozen_pages`;
 2. `<dossiers> / "<T>"`, where `<dossiers>` is a literal ending in `dossiers`, a `Path(...)` of
-   one, a `… / "dossiers"` chain, or a name assigned one anywhere in the module;
+   one, a `… / "dossiers"` chain, or a name assigned one (in the function, else in the module);
 3. `<dossiers> / <name>` or `f"…dossiers/{name}…"` where `<name>` is bound to literal tickers:
    by a `for` over a literal list or tuple, by `@pytest.mark.parametrize` on the function, or as
-   a parameter of a helper (followed through helpers calling helpers, in one module) that a
-   function calls with a literal ticker or a name so bound;
-4. a literal ticker used as a subscript key (`idx["SMPL"]`) in a function that reads pages.
+   a parameter of a helper (followed through helpers calling helpers, in one module, and into the
+   helpers of the support modules it imports from) that a function calls with a literal ticker
+   or a name so bound;
+4. a literal ticker used as a subscript key (`idx["SMPL"]`) of a name the function filled from
+   page reads (assigned from one, or written in a loop over one);
+5. a JavaScript template path `dossiers/${t}` in a string (a node driver), charged to every page
+   ticker the same string quotes (`for (const t of ["TJX", "NFLX"])`).
+
+WHAT DOES NOT COUNT (each was a false positive of the first scan, slices 1–4 of W27):
+- a path rooted in a pytest tmp directory (`tmp_path / "data" / "dossiers" / "AMZN"`, or a name
+  assigned from one): a scratch tree the test writes, never the committed page;
+- a git object path (`f"{rev}:data/dossiers/NFLX/dossier.json"`): a page as it was at a commit;
+- a name bound to a dossiers folder in ANOTHER function: bindings are read per function first.
+
 A read inside a helper or at module level is charged to each test function that calls the helper
 or names the module-level binding, and takes that test's kind. A read the AST cannot see (a
-ticker built at run time, a page reached through another module's helper) is not counted, so
-every count is a lower bound.
+ticker built at run time, a page reached through a non-`tests` module) is not counted, so every
+count is a LOWER BOUND: `tests/test_named_page_pins.py`'s ratchet holds it, and a retirement
+replayed with the whole suite is the proof.
 
-Usage: python scripts/named_page_pins.py [REF] [--names T,U] [--list]
-REF defaults to HEAD. Read only: it reads git objects at REF and writes nothing.
+Usage: python scripts/named_page_pins.py [REF] [--names T,U] [--list] [--worktree]
+REF defaults to HEAD. Read only: it reads git objects at REF (or the working tree with
+`--worktree`) and writes nothing.
 """
 from __future__ import annotations
 
 import ast
+import functools
 import re
 import subprocess
 import sys
 from collections import defaultdict
+from pathlib import Path
 
-SEG = re.compile(r"(?:^|/)dossiers/([A-Z][A-Z0-9.\-]*)(?:/|$)")
+#: A page by its path segment, or its web mirror by `<T>.json` / `<T>.md`.
+SEG = re.compile(r"(?:^|/)dossiers/([A-Z][A-Z0-9.\-]*?)(?:/|\.(?:json|md)\b|$)")
+#: A git object path, `<rev>:data/dossiers/…`: the page as it was at a commit, never the living one.
+GITREV = re.compile(r"[^\s\"'`]*:(?:data/|frontend/)?dossiers/[^\s\"'`]*")
+#: A JavaScript template path over a ticker variable, in a node driver string.
+JS_TEMPLATE = re.compile(r"dossiers/\$\{")
+JS_QUOTED = re.compile(r"[\"']([A-Z][A-Z0-9.\-]*)[\"']")
+#: The pytest fixtures that name a scratch directory.
+TMP_ROOTS = frozenset({"tmp_path", "tmp_path_factory", "tmpdir"})
+
+Found = dict[str, dict[str, set[str]]]
 
 
 def git(*args: str) -> str:
@@ -58,22 +84,135 @@ def test_files(ref: str) -> list[str]:
                   if p.endswith(".py") and not p.startswith("tests/fixtures/"))
 
 
+def sources_at(ref: str) -> dict[str, str]:
+    return {p: git("show", f"{ref}:{p}") for p in test_files(ref)}
+
+
+def worktree(root: Path) -> tuple[set[str], dict[str, str]]:
+    """(the page names, every `tests/**/*.py` source) as the working tree holds them."""
+    pages = {p.parent.name for p in (root / "data" / "dossiers").glob("*/dossier.json")}
+    files = {p.relative_to(root).as_posix(): p.read_text()
+             for p in sorted((root / "tests").rglob("*.py"))
+             if "fixtures" not in p.relative_to(root / "tests").parts
+             and "__pycache__" not in p.parts}
+    return pages, files
+
+
 def _const_str(node: ast.AST) -> str | None:
     return node.value if isinstance(node, ast.Constant) and isinstance(node.value, str) else None
+
+
+def _names_in(node: ast.AST) -> set[str]:
+    return {n.id for n in ast.walk(node) if isinstance(n, ast.Name)}
+
+
+@functools.lru_cache(maxsize=8192)
+def _assigned(scope: ast.AST) -> tuple[tuple[str, ast.AST], ...]:
+    """(name, value) for every plain-name assignment in scope (`=`, annotated, walrus)."""
+    out: list[tuple[str, ast.AST]] = []
+    for n in ast.walk(scope):
+        if isinstance(n, ast.Assign):
+            out += [(t.id, n.value) for t in n.targets if isinstance(t, ast.Name)]
+        elif (isinstance(n, ast.AnnAssign) and n.value is not None
+              and isinstance(n.target, ast.Name)) or isinstance(n, ast.NamedExpr):
+            assert n.value is not None and isinstance(n.target, ast.Name)
+            out.append((n.target.id, n.value))
+    return tuple(out)
+
+
+def _docstrings(tree: ast.AST) -> set[int]:
+    """The ids of every docstring node: prose about a page, never a read of one."""
+    out: set[int] = set()
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Module | ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef) \
+                and n.body and isinstance(n.body[0], ast.Expr) \
+                and _const_str(n.body[0].value) is not None:
+            out.add(id(n.body[0].value))
+    return out
+
+
+def _tmp_closure(scope: ast.AST, start: set[str]) -> set[str]:
+    """``start`` and every name scope assigns from one of them: a path built in a tmp directory."""
+    out = set(start)
+    grew = True
+    while grew:
+        more = {t for t, v in _assigned(scope) if t not in out and _names_in(v) & out}
+        out |= more
+        grew = bool(more)
+    return out
+
+
+def _string_tickers(s: str, names: set[str]) -> set[str]:
+    """The page tickers a string literal reads: its path segments and mirror files, less any git
+    object path, plus every quoted ticker of a JavaScript template over a ticker variable."""
+    s = GITREV.sub("", s)
+    out = {m for m in SEG.findall(s) if m in names}
+    if JS_TEMPLATE.search(s):
+        out |= {m for m in JS_QUOTED.findall(s) if m in names}
+    return out
 
 
 class Module:
     def __init__(self, tree: ast.Module, names: set[str]) -> None:
         self.tree, self.names = tree, names
-        self.doss_names = {t.id for n in ast.walk(tree) if isinstance(n, ast.Assign)
-                           for t in n.targets if isinstance(t, ast.Name)
-                           and self.is_doss(n.value, set())}
-        # one more pass: a name assigned from another dossiers name
-        self.doss_names |= {t.id for n in ast.walk(tree) if isinstance(n, ast.Assign)
-                            for t in n.targets if isinstance(t, ast.Name)
-                            and self.is_doss(n.value, self.doss_names)}
+        self.docs = _docstrings(tree)
+        self.funcs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+        self._tmp_cache: dict[int, set[str]] = {}
+        self._known_cache: dict[int, set[str]] = {}
+        self.tmp_names = _tmp_closure(tree, set(TMP_ROOTS))
+        self.tmp_params = self._tmp_params()
+        self.doss_names = self._dossiers_names(tree, set())
 
-    def is_doss(self, node: ast.AST, known: set[str] | None = None) -> bool:
+    def _tmp_params(self) -> dict[str, set[str]]:
+        """Per module function, the parameters EVERY call site in the module passes a tmp
+        directory (`_copy("UBER", tmp_path)` → `_copy`'s `root`). A helper also called with the
+        real root anywhere is not one, so a living read through it still counts."""
+        params = {n: [a.arg for a in f.args.args] for n, f in self.funcs.items()}
+        out: dict[str, set[str]] = {n: set() for n in self.funcs}
+        for _ in range(3):   # a tmp parameter handed on to another helper
+            sites: dict[str, list[tuple[ast.Call, set[str]]]] = defaultdict(list)
+            for name, f in self.funcs.items():
+                tmp = _tmp_closure(f, self.tmp_names | out[name])
+                for n in ast.walk(f):
+                    if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) \
+                            and n.func.id in self.funcs:
+                        sites[n.func.id].append((n, tmp))
+            for callee, calls in sites.items():
+                for i, p in enumerate(params[callee]):
+                    def passes_tmp(call: ast.Call, tmp: set[str], i: int = i, p: str = p) -> bool:
+                        arg = call.args[i] if i < len(call.args) else next(
+                            (k.value for k in call.keywords if k.arg == p), None)
+                        return arg is not None and bool(_names_in(arg) & tmp)
+                    if calls and all(passes_tmp(c, t) for c, t in calls):
+                        out[callee].add(p)
+        return out
+
+    def tmp_in(self, scope: ast.AST) -> set[str]:
+        if not isinstance(scope, ast.FunctionDef):
+            return self.tmp_names
+        if id(scope) not in self._tmp_cache:
+            self._tmp_cache[id(scope)] = _tmp_closure(
+                scope, self.tmp_names | self.tmp_params.get(scope.name, set()))
+        return self._tmp_cache[id(scope)]
+
+    def _dossiers_names(self, scope: ast.AST, outer: set[str],
+                        tmp: set[str] | None = None) -> set[str]:
+        """The names bound to a dossiers folder in scope, its own bindings first: a name the scope
+        assigns is the scope's, whatever another scope binds it to."""
+        pairs = _assigned(scope)
+        own = {t for t, _ in pairs}
+        known = outer - own
+        for _ in range(3):   # a name assigned from another dossiers name
+            known |= {t for t, v in pairs if self.is_doss(v, known, tmp)}
+        return known
+
+    def _tmp_rooted(self, node: ast.AST, tmp: set[str] | None = None) -> bool:
+        while isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+            node = node.left
+        return bool(_names_in(node) & (self.tmp_names if tmp is None else tmp))
+
+    def is_doss(self, node: ast.AST, known: set[str] | None = None,
+                tmp: set[str] | None = None) -> bool:
         known = self.doss_names if known is None else known
         s = _const_str(node)
         if s is not None:
@@ -82,32 +221,81 @@ class Module:
             return node.id in known
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
             r = _const_str(node.right)
-            return r is not None and r.rstrip("/").endswith("dossiers") and \
-                "frozen_pages" not in ast.unparse(node.left)
+            if r is not None and r.rstrip("/").endswith("dossiers") and \
+                    "frozen_pages" not in ast.unparse(node.left):
+                return not self._tmp_rooted(node, tmp)
+            return False
         if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", "")) \
                 == "Path" and len(node.args) == 1:
-            return self.is_doss(node.args[0], known)
+            return self.is_doss(node.args[0], known, tmp)
         return False
+
+    def known_in(self, scope: ast.AST) -> set[str]:
+        if not isinstance(scope, ast.FunctionDef | ast.AsyncFunctionDef):
+            return self.doss_names
+        if id(scope) not in self._known_cache:
+            self._known_cache[id(scope)] = self._dossiers_names(
+                scope, self.doss_names, self.tmp_in(scope))
+        return self._known_cache[id(scope)]
 
     def direct(self, scope: ast.AST) -> tuple[set[str], set[str]]:
         """(literal tickers read in scope, names used as the ticker segment in scope)."""
+        known, tmp = self.known_in(scope), self.tmp_in(scope)
         lits, vars_ = set(), set()
+        tmp_args: set[int] = set()   # literals that extend a tmp-rooted path
+        for n in ast.walk(scope):
+            if isinstance(n, ast.BinOp) and isinstance(n.op, ast.Div) and self._tmp_rooted(n, tmp):
+                tmp_args |= {id(c) for c in ast.walk(n.right)}
         for n in ast.walk(scope):
             s = _const_str(n)
-            if s is not None and "frozen_pages" not in s:
-                lits |= {m for m in SEG.findall(s) if m in self.names}
-            if isinstance(n, ast.BinOp) and isinstance(n.op, ast.Div) and self.is_doss(n.left):
+            if s is not None and "frozen_pages" not in s and id(n) not in tmp_args \
+                    and id(n) not in self.docs:
+                lits |= _string_tickers(s, self.names)
+            if isinstance(n, ast.JoinedStr):
+                text = "".join(_const_str(v) or "\x00" for v in n.values)
+                if JS_TEMPLATE.search(text) and "frozen_pages" not in text:
+                    lits |= {m for m in JS_QUOTED.findall(text) if m in self.names}
+                for a, b in zip(n.values, n.values[1:], strict=False):
+                    if (_const_str(a) or "").endswith("dossiers/") and \
+                            not GITREV.search(_const_str(a) or "") and \
+                            isinstance(b, ast.FormattedValue) and isinstance(b.value, ast.Name):
+                        vars_.add(b.value.id)
+            if isinstance(n, ast.BinOp) and isinstance(n.op, ast.Div) and \
+                    self.is_doss(n.left, known, tmp):
                 r = _const_str(n.right)
                 if r in self.names:
                     lits.add(r)
                 elif isinstance(n.right, ast.Name):
                     vars_.add(n.right.id)
-            if isinstance(n, ast.JoinedStr):
-                for a, b in zip(n.values, n.values[1:], strict=False):
-                    if (_const_str(a) or "").endswith("dossiers/") and \
-                            isinstance(b, ast.FormattedValue) and isinstance(b.value, ast.Name):
-                        vars_.add(b.value.id)
         return lits, vars_
+
+    def page_vars(self, fn: ast.AST) -> set[str]:
+        """The names a function fills from page reads: assigned from an expression that reads
+        pages, or written (`x[k] = …`, `x.append(…)`) inside a loop over one."""
+        known, tmp = self.known_in(fn), self.tmp_in(fn)
+
+        def reads(expr: ast.AST, pv: set[str]) -> bool:
+            return any(self.is_doss(c, known, tmp) for c in ast.walk(expr)) \
+                or bool(_names_in(expr) & pv)
+
+        pv: set[str] = set()
+        for _ in range(3):
+            for t, v in _assigned(fn):
+                if reads(v, pv):
+                    pv.add(t)
+            for loop in (n for n in ast.walk(fn) if isinstance(n, ast.For | ast.comprehension)):
+                if not reads(loop.iter, pv):
+                    continue
+                body = loop.body if isinstance(loop, ast.For) else []
+                for n in (c for b in body for c in ast.walk(b)):
+                    if isinstance(n, ast.Subscript) and isinstance(n.ctx, ast.Store) and \
+                            isinstance(n.value, ast.Name):
+                        pv.add(n.value.id)
+                    if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and \
+                            isinstance(n.func.value, ast.Name) and \
+                            n.func.attr in ("append", "add", "update", "setdefault"):
+                        pv.add(n.func.value.id)
+        return pv
 
     def bound(self, scope: ast.AST, var: str) -> set[str]:
         """Literal tickers `var` is bound to in scope: a for-loop or a parametrize decorator."""
@@ -148,16 +336,35 @@ def kind(fn: ast.FunctionDef) -> str:
     return "invariant"
 
 
-def scan(ref: str, names: set[str], files: list[str]) -> dict[str, dict[str, set[str]]]:
-    found: dict[str, dict[str, set[str]]] = defaultdict(lambda: defaultdict(set))
-    for path in files:
-        _scan_module(path, ast.parse(git("show", f"{ref}:{path}")), names, found)
-    return found
+def _module_name(path: str) -> str:
+    return path[:-3].replace("/", ".")
 
 
-def _scan_module(path: str, tree: ast.Module, names: set[str],
-                 found: dict[str, dict[str, set[str]]]) -> None:
-    mod = Module(tree, names)
+def _imports(tree: ast.Module) -> tuple[dict[str, tuple[str, str]], dict[str, str]]:
+    """(local name → (module, function) for `from tests.m import f [as g]`,
+    alias → module for `import tests.m as a` / `from tests import m`)."""
+    funcs: dict[str, tuple[str, str]] = {}
+    mods: dict[str, str] = {}
+    for n in ast.walk(tree):
+        if isinstance(n, ast.ImportFrom) and n.module and n.module.split(".")[0] == "tests":
+            for a in n.names:
+                if n.module == "tests":
+                    mods[a.asname or a.name] = f"tests.{a.name}"
+                else:
+                    funcs[a.asname or a.name] = (n.module, a.name)
+        elif isinstance(n, ast.Import):
+            for a in n.names:
+                if a.name.split(".")[0] == "tests" and a.asname:
+                    mods[a.asname] = a.name
+    return funcs, mods
+
+
+def _helpers(tree: ast.Module, mod: Module, ext: dict[str, dict[str, set[int]]]
+             ) -> tuple[dict[str, ast.FunctionDef], dict[str, set[str]], dict[str, set[str]],
+                        dict[str, list[str]], dict[str, set[int]], dict[str, set[int]]]:
+    """A module's functions, their own literal reads and segment names, parameters, which
+    parameters reach a page path (to a fixed point, local helpers and imported ones alike), and
+    the imported helpers by local name."""
     funcs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
     params = {name: [a.arg for a in fn.args.args] for name, fn in funcs.items()}
     own: dict[str, set[str]] = {}
@@ -166,38 +373,103 @@ def _scan_module(path: str, tree: ast.Module, names: set[str],
         lits, vars_ = mod.direct(fn)
         seg_vars[name] = vars_
         own[name] = lits | {t for v in vars_ for t in mod.bound(fn, v)}
-        # rule 4: a page-reading function that keys what it read by a literal ticker
-        if any(mod.is_doss(n) for n in ast.walk(fn)):
-            own[name] |= {k for n in ast.walk(fn) if isinstance(n, ast.Subscript)
-                          if (k := _const_str(n.slice)) in names}
-    # helpers, to a fixed point: a parameter that reaches a page path, directly or through
-    # another helper's parameter
+        # rule 4: a literal ticker keying a name the function filled from page reads
+        pv = mod.page_vars(fn)
+        own[name] |= {k for n in ast.walk(fn) if isinstance(n, ast.Subscript)
+                      and isinstance(n.value, ast.Name) and n.value.id in pv
+                      if (k := _const_str(n.slice)) in mod.names}
+    imp_funcs, imp_mods = _imports(tree)
+    imported: dict[str, set[int]] = {}
+    for local, (m, f) in imp_funcs.items():
+        if f in ext.get(m, {}) and ext[m][f]:
+            imported[local] = ext[m][f]
     helper: dict[str, set[int]] = {n: {params[n].index(v) for v in seg_vars[n]
                                        if v in params[n]} for n in funcs}
+
+    def callee_params(n: ast.Call) -> set[int] | None:
+        f = n.func
+        if isinstance(f, ast.Name):
+            return helper.get(f.id) if f.id in funcs else imported.get(f.id)
+        if isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name) and \
+                f.value.id in imp_mods:
+            return ext.get(imp_mods[f.value.id], {}).get(f.attr) or None
+        return None
+
     changed = True
     while changed:
         changed = False
         for name, fn in funcs.items():
             for n in ast.walk(fn):
-                if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) \
-                        and n.func.id in helper and n.func.id != name:
-                    for i in helper[n.func.id]:
-                        if i < len(n.args) and isinstance(n.args[i], ast.Name) \
-                                and n.args[i].id in params[name]:
-                            j = params[name].index(n.args[i].id)
-                            if j not in helper[name]:
-                                helper[name].add(j)
-                                changed = True
+                if not isinstance(n, ast.Call) or getattr(n.func, "id", None) == name:
+                    continue
+                for i in callee_params(n) or set():
+                    if i < len(n.args) and isinstance(n.args[i], ast.Name) \
+                            and n.args[i].id in params[name]:
+                        j = params[name].index(n.args[i].id)
+                        if j not in helper[name]:
+                            helper[name].add(j)
+                            changed = True
+    ext_calls = {**imported, **{f"{a}.{f}": ps for a, m in imp_mods.items()
+                                for f, ps in ext.get(m, {}).items() if ps}}
+    return funcs, own, seg_vars, params, helper, ext_calls
+
+
+def support_helpers(sources: dict[str, str], names: set[str]) -> dict[str, dict[str, set[int]]]:
+    """For each support module (`tests/**/*.py` not named `test_*`), its functions whose
+    parameter reaches a page path, and which parameters: `living_doc(T)`, `page_export_sha(T)`.
+    Two passes, so a helper calling another support module's helper is followed."""
+    ext: dict[str, dict[str, set[int]]] = {}
+    support = {p: s for p, s in sources.items() if not Path(p).name.startswith("test_")
+               and "dossiers" in s}
+    for _ in range(2):
+        for path, src in support.items():
+            tree = ast.parse(src)
+            _, _, _, _, helper, _ = _helpers(tree, Module(tree, names), ext)
+            ext[_module_name(path)] = helper
+    return ext
+
+
+def scan_sources(sources: dict[str, str], names: set[str]) -> Found:
+    found: Found = defaultdict(lambda: defaultdict(set))
+    ext = support_helpers(sources, names)
+    # EXACT, NOT A HEURISTIC: every rule needs `dossiers` in the module's text, or a call to a
+    # support helper whose parameter reaches a page path, so a module with neither has no pair
+    readers = {f for helpers in ext.values() for f, ps in helpers.items() if ps}
+    for path, src in sources.items():
+        if "dossiers" in src or any(f in src for f in readers):
+            _scan_module(path, ast.parse(src), names, found, ext)
+    return found
+
+
+def scan(ref: str, names: set[str], files: list[str]) -> Found:
+    return scan_sources({p: git("show", f"{ref}:{p}") for p in files}, names)
+
+
+def _scan_module(path: str, tree: ast.Module, names: set[str], found: Found,
+                 ext: dict[str, dict[str, set[int]]] | None = None) -> None:
+    mod = Module(tree, names)
+    funcs, own, _, _, helper, ext_calls = _helpers(tree, mod, ext or {})
+
+    def call_params(n: ast.Call) -> tuple[str | None, set[int]]:
+        f = n.func
+        if isinstance(f, ast.Name) and f.id in funcs:
+            return f.id, helper[f.id]
+        key = f.id if isinstance(f, ast.Name) else (
+            f"{f.value.id}.{f.attr}" if isinstance(f, ast.Attribute)
+            and isinstance(f.value, ast.Name) else "")
+        return None, ext_calls.get(key, set())
 
     def reads_of(name: str, seen: frozenset[str] = frozenset()) -> set[str]:
         fn, out = funcs[name], set(own[name])
         for n in ast.walk(fn):
-            if not (isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
-                    and n.func.id in funcs and n.func.id not in seen | {name}):
+            if not isinstance(n, ast.Call):
                 continue
-            callee = n.func.id
-            out |= reads_of(callee, seen | {name}) if not helper[callee] else set(own[callee])
-            for i in helper[callee]:
+            local, idx = call_params(n)
+            if local is not None:
+                if local in seen | {name}:
+                    continue
+                out |= reads_of(local, seen | {name}) if not helper[local] else set(own[local])
+            for i in idx:
                 if i < len(n.args):
                     v = _const_str(n.args[i])
                     if v in names:
@@ -225,6 +497,11 @@ def _scan_module(path: str, tree: ast.Module, names: set[str],
             found[t][k].add(f"{path}::{name}")
 
 
+def pairs(found: Found) -> set[tuple[str, str]]:
+    """Every (test function, ticker) pair the scan found."""
+    return {(s, t) for t, kinds in found.items() for k in kinds.values() for s in k}
+
+
 def main(argv: list[str]) -> int:
     # `--names T,U` (as the usage line spells it) or `--names=T,U`
     only: list[str] | None = None
@@ -237,13 +514,18 @@ def main(argv: list[str]) -> int:
             only = [t.strip().upper() for t in a.split("=", 1)[1].split(",") if t.strip()]
         elif not a.startswith("--"):
             args.append(a)
-    ref = args[0] if args else "HEAD"
-    pages, files = pages_at(ref), test_files(ref)
-    found = scan(ref, pages, files)
+    if "--worktree" in argv:
+        pages, sources = worktree(Path(git("rev-parse", "--show-toplevel").strip()))
+        where = "the working tree"
+    else:
+        ref = args[0] if args else "HEAD"
+        pages, sources = pages_at(ref), sources_at(ref)
+        where = git("rev-parse", "--short", ref).strip()
+    found = scan_sources(sources, pages)
     names = sorted(only or pages,
                    key=lambda t: (-sum(len(v) for v in found[t].values()), t))
-    print(f"=== tests reading a living page by name at {git('rev-parse', '--short', ref).strip()} "
-          f"· {len(pages)} pages · {len(files)} test files scanned ===")
+    print(f"=== tests reading a living page by name at {where} "
+          f"· {len(pages)} pages · {len(sources)} test files scanned ===")
     tv = ti = 0
     for t in names:
         v, i = found[t]["value"], found[t]["invariant"]
@@ -258,7 +540,7 @@ def main(argv: list[str]) -> int:
     every = {s for t in names for k in found[t].values() for s in k}
     print(f"--- (test function, name) pairs: value {tv}, invariant {ti}; distinct test functions "
           f"{len(every)} in {len({s.split('::')[0] for s in every})} files — a LOWER BOUND (a read "
-          f"through another module's helper, or a ticker built at run time, is not seen), and the "
+          f"through a non-`tests` module, or a ticker built at run time, is not seen), and the "
           f"value/invariant split is a mechanical heuristic, read each site before acting on it")
     return 0
 

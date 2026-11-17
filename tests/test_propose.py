@@ -11,7 +11,7 @@ import pathlib
 
 import pytest
 
-from tests.frozen_support import frozen_doc
+from tests.frozen_support import covered_where, frozen_doc
 from vinci.dossier.anchor import RECIPE_R1
 from vinci.dossier.propose import (
     ANCHORED,
@@ -39,7 +39,9 @@ def _doc(t: str) -> dict:
 #: its scenario record was struck against. The living page was re-assembled on its FY2026 10-K
 #: (2026-11-04): its anchors moved (margin median 15.4481% → 15.3855%, base revenue onto FY2027's
 #: consensus) and `build_template` refuses it on STATE row 36's share gap. So the VALUE pins and
-#: the template fixtures read this page, and the structural checks also read the living one.
+#: the template fixtures read this page. Since W27 a pin naming SMPL or BRBR reads its page as
+#: frozen at the cut (`frozen_doc`), and the two structural checks that read "the living page"
+#: walk every covered page with the property (`covered_where`, the coverage roster).
 FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
 
 
@@ -61,7 +63,6 @@ def _legs(**over) -> dict[str, dict]:
 # --- what it proposes ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_exactly_three_axes_are_proposed_two_medians_and_the_current_multiple() -> None:
     """THE COUNT IS THE FINDING, and it is three — not six, which the first cut of the derivability
     read claimed. Revenue and margin are MEDIANS: a median absorbs one bad year, while a
@@ -75,7 +76,6 @@ def test_exactly_three_axes_are_proposed_two_medians_and_the_current_multiple() 
     assert len(ancs) == 3 and 9 - len(ancs) == 6
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_every_proposal_carries_a_source_and_a_vintage() -> None:
     """SCHEMA 1.4 REQUIRES `vintage`, AND THIS IS WHY IT EXISTS: SMPL's five committed margin
     references are unstamped, so when three of its live references moved (LTM revenue, consensus,
@@ -87,7 +87,6 @@ def test_every_proposal_carries_a_source_and_a_vintage() -> None:
         assert rp.leg == "base" and rp.role
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_cohort_partner_proposes_from_its_own_longest_coverage_anchor() -> None:
     """BRBR IS THE ALIAS SHAPE, so this pins the anchor it actually proposes from. Its ASC-606 tag
     holds ONE fiscal year while `Revenues` holds seven; `midcycle` picks longest-coverage, so the
@@ -119,14 +118,13 @@ def test_the_six_unproposed_cells_each_state_why_they_are_unproposed() -> None:
     assert all(v.strip() for v in UNPROPOSED_REASON.values())
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_committed_smpl_base_margin_is_refused_which_is_the_whole_point() -> None:
     """§D, MADE STRUCTURALLY IMPOSSIBLE. SMPL's record states a base margin of 14.0% derived by
     averaging a cited anchor against a figure that exists nowhere but prose. Against the computed
     anchor of 15.4481% that is a −1.45pp deviation, and the writer now refuses it unless the
     adjustment is stated. The ruling moved into the write path, where it binds every author.
-    The figures are the frozen page's, the one the record was struck against; the living page
-    still refuses the same leg."""
+    The figures are the frozen page's, the one the record was struck against; SMPL's page as
+    frozen at the cut (W27) still refuses the same leg."""
     # SCHEMA UNITS — ScenarioInput.margin is a decimal fraction, so the committed 14.0% is 0.14.
     legs = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5})
     problems = validate_legs(legs, propose_anchors(_frozen_smpl()))
@@ -138,16 +136,21 @@ def test_the_committed_smpl_base_margin_is_refused_which_is_the_whole_point() ->
     assert now and "§D" in now[0], now
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing() -> None:
     """THE POSITIVE HALF. The guard demands a stated derivation, not a particular number — an
     analyst who says why may sit anywhere, and one who takes the anchor states nothing. Run on the
-    frozen page (its base revenue anchor is the 1,351.7 written below) and on the living page,
-    where every at-anchor leg is read off the proposal."""
+    frozen page (its base revenue anchor is the 1,351.7 written below) and on every covered
+    living page proposing all three base anchors (the roster, since W27; 20 of the 26 covered
+    pages on 2026-11-17), where every at-anchor leg is read off the proposal."""
+    def three_base(_t: str, d: dict) -> bool:
+        have = {(a.axis, a.leg) for a in propose_anchors(d)}
+        return {("revenue", "base"), ("margin", "base"), ("multiple", "base")} <= have
+
     stated = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5,
                          "margin_adjustment": "−1.45pp: this year's gross-margin reset treated as "
                                               "partly structural"})
-    for doc, revenue in ((_frozen_smpl(), 1351.7), (frozen_doc("SMPL"), None)):
+    for doc, revenue in ((_frozen_smpl(), 1351.7), *(
+            (d, None) for _t, d in covered_where(three_base, "proposes all three base anchors"))):
         ancs = propose_anchors(doc)
         m = next(a for a in ancs if a.axis == "margin")
         # the multiple the ANCHOR proposes, read off the proposal like the margin — not a literal
@@ -160,7 +163,6 @@ def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing(
         assert not [p for p in validate_legs(at_anchor, ancs) if p.startswith("base.")]
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_an_unanchored_leg_must_state_a_basis_and_a_missing_leg_is_never_defaulted() -> None:
     ancs = propose_anchors(frozen_doc("SMPL"))
     bare = validate_legs(_legs(), ancs)
@@ -206,19 +208,23 @@ def test_a_dossier_record_recipe_disagreement_refuses() -> None:
                              "R1_midcycle_margin_evebitda")
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_margin_anchor_is_compared_in_schema_units_not_display_units() -> None:
     """TWO UNITS, TWO FIELDS — caught in self-review of this PR. `ScenarioInput.margin` is a DECIMAL
     FRACTION (SMPL's committed legs are 0.1 / 0.14 / 0.165) while a `RefPoint` displays a margin as
     `15.4481` + `"%"`. A single field would compare a supplied 0.14 against 15.4481 and report a
     99% deviation on a leg that matches its anchor EXACTLY — display formatting made load-bearing,
     which is the rule this repo already has. The figures are the frozen page's; the two units
-    are checked on the living page too."""
+    are checked on every covered living page with a margin anchor too (the roster, since W27; 21
+    of the 26 covered pages on 2026-11-17)."""
+    def margin(d: dict) -> list:
+        return [a for a in propose_anchors(d) if a.axis == "margin"]
+
     frozen = next(a for a in propose_anchors(_frozen_smpl()) if a.axis == "margin")
     assert frozen.unit == "%" and abs(frozen.value - 15.4481) < 1e-4, frozen      # display
     assert abs(frozen.schema_value - 0.154481) < 1e-6, frozen    # what a leg is compared to
 
-    for m in (frozen, next(a for a in propose_anchors(frozen_doc("SMPL")) if a.axis == "margin")):
+    for m in (frozen, *(margin(d)[0] for _t, d in covered_where(
+            lambda _t, d: bool(margin(d)), "proposes a margin anchor"))):
         assert m.unit == "%" and abs(m.schema_value * 100 - m.value) < 1e-3, m
         assert m.as_refpoint().value == m.value
         ancs = [m]
@@ -269,7 +275,6 @@ def test_applicable_false_is_a_disagreement_on_every_live_case() -> None:
 # --- the template + the create path --------------------------------------------------------------
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_template_prefills_three_and_leaves_six_empty_with_their_reasons() -> None:
     from vinci.dossier.propose import build_template, legs_from_template
     tpl = build_template(frozen_doc("BRBR"))
@@ -286,7 +291,6 @@ def test_the_template_prefills_three_and_leaves_six_empty_with_their_reasons() -
     assert not any(k.startswith("_") for cell in legs.values() for k in cell)
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_template_carries_the_peer_row_beside_the_own_history_band() -> None:
     """THE MISTAKE THIS BLOCK EXISTS TO PREVENT (operator, working BellRing by hand): anchoring on
     own history, taking a haircut, calling it conservative — while the name trades at a PREMIUM to
@@ -299,7 +303,6 @@ def test_the_template_carries_the_peer_row_beside_the_own_history_band() -> None
     assert "Median" in peer and "Low" in peer and "High" in peer, peer
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_own_history_line_names_a_rank_not_a_percentile_level() -> None:
     """`own_history.percentile` is WHERE CURRENT SITS (BRBR: 0.037 → 3.7th), not a 25th-percentile
     LEVEL. The first cut printed it as `p25`, putting a 0.037 rank where a multiple belongs."""
@@ -308,7 +311,6 @@ def test_the_own_history_line_names_a_rank_not_a_percentile_level() -> None:
     assert "pctile of its own range" in line and "p25 0.03" not in line, line
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_no_evidence_line_is_empty() -> None:
     """`startswith("revenue")` also matched "Revenue YoY" and emitted a blank arc — evidence nobody
     can read is noise in a block whose only purpose is to be read."""
@@ -318,7 +320,6 @@ def test_no_evidence_line_is_empty() -> None:
             assert line.strip() and not line.rstrip().endswith(":"), (axis, line)
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_shares_denominator_is_taken_stated_and_refused_on_disagreement() -> None:
     """ITEM 24: the denominator is diluted outstanding AT THE VALUATION DATE, and NEITHER dossier
     field is that — one is diluted-but-averaged, the other at-a-date-but-basic. The create path
@@ -344,7 +345,6 @@ def test_the_shares_denominator_is_taken_stated_and_refused_on_disagreement() ->
         resolve_shares({"ticker": "X", "mechanical": {"stock_info": {"shares_out": {"value": 0}}}})
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_anchors_reach_the_record_as_sourced_vintaged_references() -> None:
     """THE LEAK THIS CLOSES, caught in self-review of #334. `Anchor.as_refpoint()` had ZERO
     production callers — defined, never called — and the create path built no `assumptions` at all,
@@ -372,7 +372,6 @@ def test_the_anchors_reach_the_record_as_sourced_vintaged_references() -> None:
         assert [x["role"] for x in context] == (["median"] if axis == "multiple" else []), refs
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_composed_method_names_the_statistic_not_the_house_label() -> None:
     """The prose linter flags "anchor" as a house token — *state the claim, not the house label* —
     and it is right. Analyst words are never edited; this sentence is the MACHINE's, so it is the
@@ -387,7 +386,6 @@ def test_the_composed_method_names_the_statistic_not_the_house_label() -> None:
             axis, a["method"])
 
 
-@pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_shares_fact_labels_its_unit_as_millions() -> None:
     """`resolve_shares` returns MILLIONS and the first cut labelled the fact "shares" — a unit
     label disagreeing with its own value, which is `percentile`-as-`p25` one field over. SMPL's
@@ -397,7 +395,6 @@ def test_the_shares_fact_labels_its_unit_as_millions() -> None:
     assert f["unit"] == "M shares" and 100 < f["value"] < 200, f
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_template_carries_the_operating_drivers_under_every_axis() -> None:
     """THE ROWS THE ANALYST SETS SIX NUMBERS AGAINST. Until 2026-08-04 the cap deleted them from the
     artifact; recovering them put them on the PAGE, but the page having them is not the analyst
@@ -423,7 +420,6 @@ def test_the_template_carries_the_operating_drivers_under_every_axis() -> None:
         assert len(emitted) == len(rows), (axis, len(emitted), len(rows))
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_forward_peer_leg_is_in_the_template_whatever_a_roll_cites() -> None:
     """THE REROLL DEMONSTRATED THE NEED. SMPL's 2026-08-04 re-assembly dropped the FORWARD peer
     comparison from its synthesis (NTM TEV/EBITDA 5.65 vs 8.72, NTM P/E 6.12 vs 13.08 all vanished)
@@ -508,7 +504,6 @@ def test_scenario_create_refuses_a_name_that_already_has_a_record(tmp_path, monk
     assert "already has a committed record" not in " ".join(out), out
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_margin_trend_is_labelled_ebitda_against_an_ebit_leg() -> None:
     """THE ONE EBITDA FIGURE IN AN EBIT BLOCK. The anchor is `OperatingIncomeLoss / Revenue`, the
     raw series is EBIT, and R1's leg is an operating margin — but the CIQ trend is an EBITDA series.

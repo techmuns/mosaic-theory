@@ -639,7 +639,9 @@ def test_the_web_twin_knows_the_same_placeholders(tmp_path: Path) -> None:
     assert m is not None and set(re.findall(r'"([^"]+)"', m.group(1))) == set(PLACEHOLDER_HINTS)
     if not shutil.which("node"):
         pytest.skip("node unavailable")
-    page = json.loads((ROOT / "frontend" / "dossiers" / "AMZN.json").read_text())
+    # AMZN's web mirror as frozen at the cut: a mirror is its page's `dossier.json`, byte for byte
+    # (`frontend/dossiers/AMZN.json` at 4889ddba is the cut's page), and only the host is read here
+    page = json.loads((frozen_page("AMZN") / "dossier.json").read_text())
     for hint in sorted(PLACEHOLDER_HINTS):
         page["anchor"]["machine_recipe_hint"] = hint
         (tmp_path / f"{hint}.json").write_text(json.dumps(page))

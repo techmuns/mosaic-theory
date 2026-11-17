@@ -17,7 +17,7 @@ import pathlib
 
 import pytest
 
-from tests.frozen_support import covered_pages, frozen_doc
+from tests.frozen_support import covered_where, frozen_doc
 from vinci.dossier.schemas import Dossier
 from vinci.dossier.synthesis import _primary_source_digest
 
@@ -185,11 +185,14 @@ def test_only_guidance_carries_a_vintage_mark_never_a_reported_actual() -> None:
     A per-line mark has no scope to creep and nothing to bleed into. Reconciliations, one-offs and
     event impacts must carry NO vintage mark at all.
 
-    The per-line rule holds on every covered living page (the roster, since W27) AND on SMPL's
-    frozen one; the $60.9M impairment is a VALUE, so it is read from the frozen 2026-08-18 page
-    only."""
+    The per-line rule holds on every covered living page with a primary source (the roster,
+    since W27: all 26 on 2026-11-17), through `covered_where`, which fails loud on an empty
+    population, AND on SMPL's frozen one; the $60.9M impairment is a VALUE, so it is read from the
+    frozen 2026-08-18 page only."""
     marks = ("[CURRENT GUIDE,", "[SUPERSEDED", "VINTAGE UNDATED")
-    for t, root in [*((t, DOSS) for t in covered_pages()), ("SMPL", FROZEN)]:
+    for t, root in [*((t, DOSS) for t, _d in covered_where(
+            lambda _t, d: bool(d["mechanical"].get("primary_source")), "carries a primary source")),
+                    ("SMPL", FROZEN)]:
         for line in _digest(t, root).splitlines():
             if any(m in line for m in marks):
                 assert line.startswith("guidance "), (

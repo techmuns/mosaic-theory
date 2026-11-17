@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.frozen_support import covered_pages, frozen_doc
+from tests.frozen_support import covered_where, frozen_doc
 from vinci.edge_basis import (
     BASIS_BY_KEY,
     EDGE_BASES,
@@ -87,10 +87,11 @@ def test_a_variant_claim_is_refused_where_no_gap_is_stated(ticker: str) -> None:
 def test_every_no_variant_option_passes_regardless_of_the_gap(key: str) -> None:
     """AGREEMENT IS ALLOWED, on ANY name. These five say "no variant" out loud; conditioning them
     on the gap would make honesty conditional on data the name may never have. On every covered
-    page (the roster), never a named one."""
+    page (the roster), never a named one, through `covered_where`, which fails loud on an empty
+    roster: a walk of nothing would pass."""
     # A NOTE IS NOW REQUIRED for these five — `needs` is enforced (review of #322). Supplying one
     # here is the point: the claim under test is that agreement is ALLOWED, not that it is free.
-    for ticker in covered_pages():
+    for ticker, _page in covered_where(lambda _t, _d: True, "to check"):
         line = require_edge_basis(key, ev_gap=gap(ticker), note="2026-11-14 — the stated evidence")
         assert line and "No variant" in line
 
