@@ -29,6 +29,7 @@ from typing import Any, cast
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import mechanical as mech
 from vinci.dossier import render
 from vinci.dossier.schemas import Dossier, Sourced, SourceStatus
@@ -180,7 +181,7 @@ def test_the_domestic_read_stops_at_the_reference_date(name: str, late: str) -> 
 
 
 def _wern_with(insider: Sourced[str]) -> Dossier:
-    d = Dossier.model_validate_json((ROOT / "data/dossiers/WERN/dossier.json").read_text())
+    d = Dossier.model_validate_json((frozen_page("WERN") / "dossier.json").read_text())
     assert d.mechanical.catalyst_path is not None
     cp = d.mechanical.catalyst_path.model_copy(update={"insider_activity": insider})
     return d.model_copy(update={"mechanical": d.mechanical.model_copy(

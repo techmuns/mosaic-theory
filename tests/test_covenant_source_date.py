@@ -17,6 +17,7 @@ import subprocess
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier.render import _covenant_source_suffix, _covenant_summary_lines, render_markdown
 from vinci.dossier.schemas import Dossier
 
@@ -182,9 +183,7 @@ def test_an_undated_accession_prints_no_date_on_either_surface_e2e(tmp_path: pat
     pointer rows' filing dates blanked (the schema's own "absent"). Its covenant lines still
     render, on both surfaces, and neither names a filing — never a guessed date. The same page
     undamaged carries a date on every line, so the absence is the dates', not the block's."""
-    src = ROOT / "data" / "dossiers" / "EPAM" / "dossier.json"
-    if not src.exists():
-        pytest.skip("no committed EPAM dossier")
+    src = frozen_page("EPAM") / "dossier.json"   # the page as frozen at the cut
     d = json.loads(src.read_text())
     ptrs = d["mechanical"]["capital_structure"]["covenant_pointer_rows"]["value"]
     assert ptrs, "EPAM's committed page has no covenant pointer rows"

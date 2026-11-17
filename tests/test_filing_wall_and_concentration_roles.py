@@ -200,21 +200,24 @@ _MVST_WALL = (
 
 def _committed_panel(ticker: str) -> list[ps.PanelInstrument]:
     """The CIQ capital panel the committed page carries, read as assembly reads it — for MVST and
-    WERN, the frozen 2026-09-17 page's (`tests/fixtures/frozen_pages/README.md`)."""
+    WERN, the frozen 2026-09-17 page's (`tests/fixtures/frozen_pages/README.md`), and for every
+    other name its page as frozen at the cut (`tests/frozen_support.py`), never the living one."""
     import json
     from pathlib import Path
 
+    from tests.frozen_support import frozen_page
     from vinci.dossier.schemas import CapitalStructure
 
-    page = Path(__file__).resolve().parent.parent / "data" / "dossiers" / ticker / "dossier.json"
     if ticker == "MVST":  # retired 2026-11-12: its page as committed on 2026-09-17, frozen
         page = (Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-09-17"
                 / "MVST" / "dossier.json")
-    if ticker == "WERN":  # the page that read the June-quarter 10-Q these pins quote, frozen; the
-        # living page (2026-11-14) reads the September quarter and a panel predating the Oct-8
+    elif ticker == "WERN":  # the page that read the June-quarter 10-Q these pins quote, frozen;
+        # the living page (2026-11-14) reads the September quarter and a panel predating the Oct-8
         # termination, whose divergence it states
         page = (Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-09-17"
                 / "WERN" / "dossier.json")
+    else:
+        page = frozen_page(ticker) / "dossier.json"
     mech = json.loads(page.read_text())["mechanical"]
     return dm._wall_panel(CapitalStructure.model_validate(mech["capital_structure"]))
 

@@ -23,6 +23,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.frozen_support import covered_where, frozen_doc
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import render
 from vinci.dossier.ciq import CiqBundle
@@ -154,8 +155,9 @@ console.log(JSON.stringify({{found: at >= 0, row: html.slice(at, at + 300)}}));
 
 
 def _page_with_roster(tmp: Path, ticker: str, roster: Any) -> Path:
-    """A committed page (AMZN's) copied to ``tmp`` with its roster replaced — the REAL page type."""
-    page = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    """A committed page (AMZN's, frozen at the cut) copied to ``tmp`` with its roster replaced —
+    the REAL page type."""
+    page = frozen_doc("AMZN")
     page["mechanical"]["concentration"]["customers"] = json.loads(roster.model_dump_json())
     page["mechanical"]["concentration"].pop("customers_listed", None)
     jp = tmp / "dossiers" / ticker / "dossier.json"
@@ -206,10 +208,15 @@ def test_the_writer_refuses_an_export_that_is_not_the_pages_own(tmp_path: Path) 
 def test_the_count_is_never_sent_to_the_synthesis() -> None:
     """The count is the roster's display twin: the model reads the roster, and every synthesis
     request stays byte-identical to the one built before the field existed (row 53 measures any
-    change to it on the panel first) — on a page carrying a count and on one that does not."""
+    change to it on the panel first) — on every covered page carrying a count and every one that
+    does not (the roster; at least one of each, never a named page)."""
     from vinci.dossier.synthesis import NOT_SENT
 
-    for t in ("AMZN", "BURL"):
-        page = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+    def counted(_t: str, d: dict[str, Any]) -> bool:
+        return d["mechanical"]["concentration"].get("customers_listed") is not None
+
+    both = [*covered_where(counted, "carries a customer count"),
+            *covered_where(lambda t, d: not counted(t, d), "carries no customer count")]
+    for t, page in both:
         mech = Dossier.model_validate(page).mechanical
         assert "customers_listed" not in mech.model_dump(exclude=NOT_SENT)["concentration"], t

@@ -6,20 +6,24 @@ model answer — the stored value, quote and components — against an exhibit h
 the term's kept clauses. So the digest it rebuilds is the one a re-assembly of the page on this
 code would hand the synthesis, for those terms.
 
-Invariants on living pages only (TEST-LAYER RULE): the equality, that a page none of whose terms
-the fence refuses is unchanged, and that the transform never attaches the rows.
+Invariants only (TEST-LAYER RULE): the equality, that a page none of whose terms the fence
+refuses is unchanged, and that the transform never attaches the rows. The equality walks every
+living panel page the roster covers that carries a PRESENT quoted term, so a retirement edits
+nothing here. The unchanged-page pin reads CNXC and LLY as frozen at the cut
+(`tests/frozen_support.py`), since each half is that one page's shape.
 """
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 import pytest
 
+from tests.frozen_support import covered_where, frozen_doc, living_doc
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.schemas import CapitalStructure, MechanicalLayer, SourceStatus
 from vinci.evals import variants
+from vinci.evals.replay import load_panel_file
 from vinci.graph.llm import LlmClient
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,7 +44,7 @@ class _Answer(LlmClient):
 
 
 def _page(t: str) -> dict[str, Any]:
-    return json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+    return living_doc(t)
 
 
 def _rows(page: dict[str, Any]) -> list[Any]:
@@ -48,7 +52,18 @@ def _rows(page: dict[str, Any]) -> list[Any]:
     return list(cs.covenant_term_rows.value or []) if cs.covenant_term_rows else []
 
 
-@pytest.mark.parametrize("ticker", ["BURL", "CNXC", "MCK", "SMPL"])
+def _quoted_panel_page(t: str, page: dict[str, Any]) -> bool:
+    return t in load_panel_file()["panel"] and any(
+        r.value.status is SourceStatus.PRESENT and (r.value.note or "").startswith(_LEAD)
+        for r in _rows(page))
+
+
+#: The equality's population: every covered panel page with a PRESENT quoted covenant term.
+_QUOTED = [t for t, _ in covered_where(
+    _quoted_panel_page, "on the synthesis panel carries a PRESENT quoted covenant term")]
+
+
+@pytest.mark.parametrize("ticker", _QUOTED)
 def test_each_fenced_row_is_the_extractors_row_for_the_same_answer(ticker: str) -> None:
     rows = _rows(_page(ticker))
     fenced = variants.fenced_covenant_rows(rows)
@@ -78,12 +93,12 @@ def test_each_fenced_row_is_the_extractors_row_for_the_same_answer(ticker: str) 
 
 
 def test_a_page_whose_terms_all_pass_is_unchanged_and_no_rows_are_attached() -> None:
-    page = _page("CNXC")
+    page = frozen_doc("CNXC")
     mech = MechanicalLayer.model_validate(page["mechanical"])
     received = mech.model_copy(update={"capital_structure": mech.capital_structure.model_copy(
         update={"covenant_term_rows": None})})   # as `pre_synthesis_mech` hands the synthesis
     out = variants.covenant_value_figures(received, variants.Context(page=page, comps=None))
     assert out.capital_structure.covenant_term_rows is None
-    lly = _page("LLY")
+    lly = frozen_doc("LLY")
     lmech = MechanicalLayer.model_validate(lly["mechanical"])
     assert variants.covenant_value_figures(lmech, variants.Context(page=lly, comps=None)) == lmech

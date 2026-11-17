@@ -6,13 +6,13 @@ here errors at import — the required red. Suite-green-unchanged is not evidenc
 """
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 import pytest
 
 from tests.ciq_export_support import skip_unless_export
+from tests.frozen_support import covered_where, frozen_page
 from vinci.dossier.materiality import (
     MCAP_FRACTION,
     MaterialityError,
@@ -131,18 +131,26 @@ def test_every_committed_bundle_has_a_locatable_block() -> None:
     assert seen >= 5, f"expected the committed bundle corpus, saw {seen}"
 
 
+def _annual_rows(doc: dict[str, Any]) -> list[dict[str, Any]]:
+    ann = (doc.get("mechanical") or {}).get("financial_summary", {}).get("annual") or {}
+    rows: list[dict[str, Any]] = (ann.get("value", ann) or {}).get("rows") or []
+    return rows
+
+
+def _has_unusual_row(_t: str, doc: dict[str, Any]) -> bool:
+    return any(any(k in r["label"].lower() for k in ("writedown", "impairment", "restructuring"))
+               for r in _annual_rows(doc))
+
+
 def test_material_unusual_items_reach_the_committed_record() -> None:
     """E2E on the ARTIFACT, conditional so a re-underwrite cannot redden it: IF a committed
     dossier's annual summary carries an unusual-item row, its value is structured (charts consume
     values, never re-parsed display strings). SMPL and CNXC are the two names the guard fires on;
-    both must surface their line as DATA once re-assembled."""
-    for t in ("SMPL", "CNXC"):
-        f = ROOT / "data" / "dossiers" / t / "dossier.json"
-        if not f.exists():
-            continue
-        ann = (json.loads(f.read_text()).get("mechanical") or {}).get(
-            "financial_summary", {}).get("annual") or {}
-        rows = (ann.get("value", ann) or {}).get("rows") or []
+    both must surface their line as DATA once re-assembled. It walks every covered page that carries
+    such a row (the roster), never a named one, so a retirement edits nothing here."""
+    for t, doc in covered_where(_has_unusual_row, "carries an unusual-item row in its annual "
+                                "summary"):
+        rows = _annual_rows(doc)
         for r in rows:
             if any(k in r["label"].lower() for k in ("writedown", "impairment", "restructuring")):
                 assert r.get("values"), f"{t}: {r['label']} carries no structured values"
@@ -215,7 +223,7 @@ def test_the_green_path_is_deterministic_and_does_not_involve_the_llm() -> None:
         pytest.skip("licensed CIQ bundles unavailable (never committed)")
     checked = 0
     for t in ("SMPL", "CNXC"):
-        d, dj = man / t, ROOT / "data" / "dossiers" / t / "dossier.json"
+        d, dj = man / t, frozen_page(t) / "dossier.json"   # the page as frozen at the cut
         if not d.is_dir() or not dj.exists():
             continue
         b = CiqBundle.from_files(t, sorted(d.glob("*")))
@@ -357,8 +365,7 @@ def test_the_material_default_round_trips_every_pre_238_dossier() -> None:
 
     from vinci.dossier.schemas import Dossier
 
-    live = Dossier.model_validate_json(
-        (ROOT / "data" / "dossiers" / "CNXC" / "dossier.json").read_text())
+    live = Dossier.model_validate_json((frozen_page("CNXC") / "dossier.json").read_text())
     raw = json.loads(live.model_dump_json())
 
     ann = raw["mechanical"]["financial_summary"]["annual"]["value"]

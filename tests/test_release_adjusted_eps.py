@@ -12,11 +12,10 @@ would print March's as Target's earnings power; the newest release, or nothing, 
 """
 from __future__ import annotations
 
-import json
 import typing
 from datetime import date
-from pathlib import Path
 
+from tests.frozen_support import frozen_doc
 from tests.test_dossier import _facts, _min_record, _StubEdgar
 from tests.test_guidance_opener_period import _TJX
 from vinci.dossier import mechanical as dm
@@ -65,8 +64,9 @@ def test_burlington_s_committed_release_reaches_the_valuation_e2e() -> None:
     """THE COMMITTED PAGE, read as the assembler will read it: Burlington's stored releases already
     carry its guide, and nothing carried it to the field. Asserts the field equals the newest
     release's annual adjusted-EPS range, whatever it reads after a re-pull — a value pin on a living
-    page would rot."""
-    doc = json.loads(Path("data/dossiers/BURL/dossier.json").read_text())
+    page would rot. The page is read as frozen at the cut (`tests/frozen_support.py`): its record
+    (P/E 27.0 at $256.85) is BURL's own, so the pin is that one page's."""
+    doc = frozen_doc("BURL")
     ps = PrimarySource.model_validate(doc["mechanical"]["primary_source"])
     newest = max((r for r in ps.releases if r.filed), key=lambda r: r.filed or date.min)
     annual = [g for g in newest.guidance if g.metric == "adjusted eps" and g.low and g.high

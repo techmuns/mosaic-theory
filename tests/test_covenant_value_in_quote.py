@@ -22,6 +22,7 @@ import typing
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from tests.test_covenant_refused_newer import _node_render
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.render import _refused_newer_text, render_markdown
@@ -432,11 +433,9 @@ def test_a_later_value_refusal_withholds_the_older_value_and_its_lead_says_why()
 def _nke_host_with_a_value_refusal() -> dict[str, typing.Any]:
     """NKE's committed dossier with its frozen covenant block (tests/fixtures/refused_newer, main
     18d19bfb), its one LATER refusal — the 2024 credit agreement's interest row — rewritten as the
-    value refusal this extractor now writes. Everything else on the page is the real type."""
-    p = ROOT / "data" / "dossiers" / "NKE" / "dossier.json"
-    if not p.exists():
-        pytest.skip("no committed NKE dossier to host the frozen block")
-    d: dict[str, typing.Any] = json.loads(p.read_text())
+    value refusal this extractor now writes. Everything else on the page is the real type, as
+    frozen at the cut (`tests/frozen_support.py`)."""
+    d = frozen_doc("NKE")
     cs = json.loads((ROOT / "tests/fixtures/refused_newer/NKE_capital_structure.json").read_text())
     acc = "0000320187-24-000009"
     hits = [r for r in cs["covenant_term_rows"]["value"]

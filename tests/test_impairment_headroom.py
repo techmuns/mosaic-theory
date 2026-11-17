@@ -27,6 +27,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import capital_allocation as ca
 from vinci.dossier.schemas import SourceStatus
 
@@ -217,7 +218,7 @@ def test_the_refresh_reads_edgar_as_filed_by_the_pages_price_date_and_moves_its_
             return _mck_with_a_later_filing()
 
     monkeypatch.setattr(client.EdgarClient, "from_config", classmethod(lambda cls, *a: _Edgar()))
-    page = json.loads((ROOT / "data" / "dossiers" / "MCK" / "dossier.json").read_text())
+    page = frozen_doc("MCK")   # the page as frozen at the cut
     mech = page["mechanical"]
     mech["stock_info"]["as_of"] = FIX["names"]["MCK"]["cut"]
     out = refresh.impairment_headroom_transform(page["cik"])(mech)
@@ -236,7 +237,7 @@ def test_the_refresh_reads_edgar_as_filed_by_the_pages_price_date_and_moves_its_
 def test_the_refresh_writes_nothing_without_a_price_date_or_a_block() -> None:
     from vinci.dossier import refresh
 
-    page = json.loads((ROOT / "data" / "dossiers" / "MCK" / "dossier.json").read_text())
+    page = frozen_doc("MCK")   # the page as frozen at the cut
     mech = page["mechanical"]
     no_date = json.loads(json.dumps(mech))
     no_date["stock_info"]["as_of"] = None

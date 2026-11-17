@@ -19,7 +19,8 @@ contract → `not_debt_agreement`; over the size limit → `too_large`; an `LlmE
 THE FIXTURES ARE THE REAL TYPE. The branch pins run the real loop over BURL's committed pointer
 rows (`tests/fixtures/covenant_unextracted/BURL.json`, frozen by #1073), stubbed only at the
 fetch and model boundary. The render pins host each frozen block in its real committed dossier
-with a frozen outcome list (`tests/fixtures/covenant_exhibit_outcomes/<T>.json`), which the
+(as frozen at the cut, `tests/frozen_support.py`) with a frozen outcome list
+(`tests/fixtures/covenant_exhibit_outcomes/<T>.json`), which the
 preview of this change wrote through the same real loop, reading each exhibit from the EDGAR
 cache and stubbing only the model (the fixture's README says how).
 """
@@ -36,6 +37,7 @@ import typing
 
 import pytest
 
+from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.schemas import (
     CapitalStructure,
@@ -265,9 +267,7 @@ _ONE = [{"accession": "0001193125-26-116001", "filename": "burl-ex10_39.htm",
 def test_the_field_is_absent_until_built_and_written_once_built() -> None:
     """(− / +) The one serializer writes no key on a page without the field, so every committed
     page round-trips byte for byte, and writes it on a page that has it."""
-    p = ROOT / "data" / "dossiers" / "BURL" / "dossier.json"
-    if not p.exists():
-        pytest.skip("no committed BURL dossier")
+    p = frozen_page("BURL") / "dossier.json"
     text = p.read_text()
     assert "covenant_exhibit_outcomes" not in text
     assert dossier_json(Dossier.model_validate_json(text)) == text
@@ -285,9 +285,7 @@ def test_the_synthesis_input_a_replay_rebuilds_carries_no_outcomes() -> None:
     from vinci.dossier.confirmation import layer_as_synthesized
     from vinci.evals.capture_child import pre_synthesis_mech
 
-    p = ROOT / "data" / "dossiers" / "BURL" / "dossier.json"
-    if not p.exists():
-        pytest.skip("no committed BURL dossier")
+    p = frozen_page("BURL") / "dossier.json"
     page = replayable(json.loads(p.read_text()))  # the rows whose words are off the page, out
     built = _with_outcomes(page, _ONE)
     for rebuild in (pre_synthesis_mech, layer_as_synthesized):
@@ -301,9 +299,7 @@ def test_the_pre_spend_forecast_says_the_field_is_written_where_an_exhibit_is_lo
     carries it is never read as losing it, and ABSENT where none is."""
     from vinci.dossier.prespend import ABSENT, forecast_llm_fields
 
-    p = ROOT / "data" / "dossiers" / "BURL" / "dossier.json"
-    if not p.exists():
-        pytest.skip("no committed BURL dossier")
+    p = frozen_page("BURL") / "dossier.json"
     page = Dossier.model_validate(json.loads(p.read_text()))
     path = "mechanical.capital_structure.covenant_exhibit_outcomes"
     fc = forecast_llm_fields(page, http=_Http(dict.fromkeys(_TEXT), default=_LEASE))
@@ -346,11 +342,9 @@ _IDS = [c.ticker for c in CASES]
 
 
 def _committed(ticker: str) -> dict[str, typing.Any]:
-    p = ROOT / "data" / "dossiers" / ticker / "dossier.json"
-    if not p.exists():
-        pytest.skip(f"no committed {ticker} dossier to host the frozen block")
-    page: dict[str, typing.Any] = json.loads(p.read_text())
-    return page
+    """`ticker`'s committed page as frozen at the cut (`tests/frozen_support.py`), never the
+    living one: the blocks it hosts are frozen, and so is their host."""
+    return frozen_doc(ticker)
 
 
 def _hosted(ticker: str, outcomes: list[dict[str, typing.Any]] | None) -> dict[str, typing.Any]:

@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.edgar import segment_facts as sf
 
 _FIX = Path(__file__).resolve().parent / "fixtures" / "segment_facts"
@@ -374,7 +375,7 @@ def test_the_line_reaches_both_pages_and_a_single_segment_page_draws_nothing() -
               for f in r.figures],
         segments_sum=sum(f.profit for f in r.figures) / 1e6, consolidated=79_975.0,
         line=_segment_profit_line(r))
-    page = json.loads((_ROOT / "data/dossiers/AMZN/dossier.json").read_text())
+    page = frozen_doc("AMZN")   # the host page, as frozen at the cut
     page["mechanical"]["concentration"]["segment_profit"] = json.loads(
         Sourced.present(block, source_ref="EDGAR 10-K fixture").model_dump_json())
     doc = Dossier.model_validate(page)
@@ -426,7 +427,7 @@ def test_nikes_ebit_line_reaches_both_renderers_and_the_gross_profit_label_does_
                                revenue=(f.revenue / 1e6 if f.revenue else None))
               for f in r.figures],
         segments_sum=sum(f.profit for f in r.figures) / 1e6, line=_segment_profit_line(r))
-    page = json.loads((_ROOT / "data/dossiers/AMZN/dossier.json").read_text())
+    page = frozen_doc("AMZN")   # the host page, as frozen at the cut
     page["mechanical"]["concentration"]["segment_profit"] = json.loads(
         Sourced.present(block, source_ref="EDGAR 10-K fixture").model_dump_json())
     md = dr.render_markdown(Dossier.model_validate(page))
