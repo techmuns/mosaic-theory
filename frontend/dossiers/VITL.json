@@ -13101,7 +13101,13 @@
         "file": "Vital Farms Inc NasdaqGM VITL Financials_Annual.xls",
         "sha256": "291163ffbed7d0c49b020273e8408911bcb4ab0b84c757f98d566e0674b5e7e5",
         "bytes": 293386,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-03",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 97, column 11 [Sep-27-2026], workbook sha256 291163ffbed7d0c49b020273e8408911bcb4ab0b84c757f98d566e0674b5e7e5",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: [Dec-31-2017] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "financials",
@@ -13109,7 +13115,13 @@
         "file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls",
         "sha256": "5f7e3a18e3ba9f545be58a23cdc7aab35f380c7749480d1d1f992e0c8d7fe5d2",
         "bytes": 465930,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-03",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 93, column 32 [Q3 Sep-27-2026], workbook sha256 5f7e3a18e3ba9f545be58a23cdc7aab35f380c7749480d1d1f992e0c8d7fe5d2",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 3 columns, [Q1 Mar-31-2019] to [Q3 Sep-29-2019] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "key_developments",
@@ -13268,6 +13280,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

@@ -12925,7 +12925,13 @@
           "forward_multiple_history.series.band.source_sha256",
           "forward_multiple_history.source_sha256",
           "mechanical.valuation.own_history.value.source_sha256"
-        ]
+        ],
+        "filed_through": {
+          "value": "2026-08-04",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 86, column 36 [FQ3/CQ2 Jun-30-2026], workbook sha256 cb902c8d1dea085f494cb4d733badff59b61ca7ec7342ee6de2c22759eb3243a",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 4 columns, [FQ1/CQ4 Dec-31-2017] to [FQ1/CQ4 Dec-31-2018] read 'NA', stating no filing date"
+        }
       }
     ],
     "responses_listed": "all",
@@ -13020,6 +13026,14 @@
       "writer": "driver-facts-pass",
       "layers": [
         "mechanical.operating_drivers"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
+        "inputs"
       ]
     }
   ],

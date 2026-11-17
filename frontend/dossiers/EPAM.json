@@ -16593,7 +16593,13 @@
         "file": "EPAM Systems Inc NYSE EPAM Financials_Annual.xls",
         "sha256": "e8bb764b1adae2c4b4f75d8ee061ecb2917e788e1f4d489b88e14507b2843d04",
         "bytes": 315402,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-05",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 92, column 11 [Sep-30-2026], workbook sha256 e8bb764b1adae2c4b4f75d8ee061ecb2917e788e1f4d489b88e14507b2843d04",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -16601,7 +16607,13 @@
         "file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls",
         "sha256": "43be6ee5bf5c6cc541f205b7c7ff2f86c09e372394167f0c11fb67ae18c735f9",
         "bytes": 564746,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-05",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 93, column 40 [Q3 Sep-30-2026], workbook sha256 43be6ee5bf5c6cc541f205b7c7ff2f86c09e372394167f0c11fb67ae18c735f9",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "key_developments",
@@ -16754,6 +16766,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

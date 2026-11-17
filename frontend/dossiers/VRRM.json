@@ -13973,7 +13973,13 @@
         "file": "Verra Mobility Corporation NasdaqCM VRRM Financials_Annual.xls",
         "sha256": "89b2dd087f4985e7ee082d7a73311475261cfb1bce0a4873b7e55fefbc0119bd",
         "bytes": 299530,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-30",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 89, column 11 [Sep-30-2026], workbook sha256 89b2dd087f4985e7ee082d7a73311475261cfb1bce0a4873b7e55fefbc0119bd",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -13981,7 +13987,13 @@
         "file": "Verra Mobility Corporation NasdaqCM VRRM Financials_Quarterly.xls",
         "sha256": "b5aea89c0d8a7df596125fbf5b000cdf3f2c20cae0f139cb70b7243841f6b74f",
         "bytes": 526346,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-30",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 90, column 40 [Q3 Sep-30-2026], workbook sha256 b5aea89c0d8a7df596125fbf5b000cdf3f2c20cae0f139cb70b7243841f6b74f",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 3 columns, [Q1 Mar-31-2017] to [Press Release Q3 Sep-30-2017] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "key_developments",
@@ -14147,6 +14159,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }
