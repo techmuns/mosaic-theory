@@ -31,6 +31,7 @@ from typing import Any
 import pytest
 
 import vinci.cli as cli
+from tests.frozen_support import frozen_page
 from vinci.dossier import assemble as asm
 from vinci.dossier import layer_refresh
 from vinci.dossier.anchor import (
@@ -63,9 +64,10 @@ def _decided(case: dict[str, Any]) -> dict[str, Any]:
 
 
 def _carrier(ticker: str, anchor: dict[str, Any]) -> Dossier:
-    """Today's committed dossier carrying the anchor the build produced — only the anchor is the
-    incident's; everything else is the real artifact the write path renders."""
-    live = Dossier.model_validate_json((DOSS / ticker / "dossier.json").read_text())
+    """The committed dossier (as frozen at the cut, `tests/frozen_support.py`) carrying the anchor
+    the build produced — only the anchor is the incident's; everything else is the real artifact
+    the write path renders."""
+    live = Dossier.model_validate_json((frozen_page(ticker) / "dossier.json").read_text())
     return live.model_copy(update={"anchor": Anchor.model_validate(anchor)})
 
 
@@ -111,7 +113,7 @@ def test_the_backfill_keeps_the_decision_it_used_to_erase(ticker: str, tmp_path:
     case = FIX[ticker]
     folder = tmp_path / "dossiers" / ticker
     folder.mkdir(parents=True)
-    page = json.loads((DOSS / ticker / "dossier.json").read_text())
+    page = json.loads((frozen_page(ticker) / "dossier.json").read_text())   # frozen at the cut
     page["anchor"] = _decided(case)
     (folder / "dossier.json").write_text(json.dumps(page))
     _stub_cli(monkeypatch, tmp_path, Anchor.model_validate(case["rebuilt"]))
@@ -130,7 +132,7 @@ def test_a_disagreeing_rebuild_keeps_the_decision_and_says_so(tmp_path: Path) ->
     machine's recipe is recorded beside it, and the page states the divergence — first, above the
     machine's read. Assembly adds no caveat: the block carries both recipes, so every render shows
     it, not only the render after a rebuild."""
-    live = json.loads((DOSS / "GOOGL" / "dossier.json").read_text())["anchor"]
+    live = json.loads((frozen_page("GOOGL") / "dossier.json").read_text())["anchor"]   # the cut
     rebuilt = LEGACY["GOOGL"]["rebuilt"]
     assert live["operator_decision"]["recipe"] != rebuilt["recipe_hint"], "no divergence to show"
     folder = _seed(tmp_path, "GOOGL", live)

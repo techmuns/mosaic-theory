@@ -25,6 +25,7 @@ import pathlib
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_page
 from vinci.dossier.ev_gap import leg_basis
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -260,7 +261,7 @@ def test_a_declared_year_difference_that_does_not_move_the_shape_is_not_a_defect
     only page in the fleet showing this caveat. A correctly-declared difference read as a defect.
 
     Severity now follows the cross-year check the shape line already computed."""
-    md = (ROOT / "data" / "dossiers" / "EPAM" / "dossier.md").read_text()
+    md = (frozen_page("EPAM") / "dossier.md").read_text()   # EPAM's page, as frozen at the cut
     lines = md.splitlines()
     # TWO lines start "- **Shape:**" — the drawdown character line and the EV-gap decomposition
     # line. Only the latter carries a fiscal year, which is what disambiguates them.
@@ -290,7 +291,7 @@ def test_the_caveat_severity_is_driven_by_the_cross_year_check_on_all_three_stat
     from vinci.dossier.render import _ev_gap_lines
     from vinci.dossier.schemas import MechanicalLayer
 
-    doc = _json.loads((ROOT / "data" / "dossiers" / "EPAM" / "dossier.json").read_text())
+    doc = _json.loads((frozen_page("EPAM") / "dossier.json").read_text())   # frozen at the cut
 
     def caveat(agree: object, leg_fy: str) -> str:
         mech = _json.loads(_json.dumps(doc["mechanical"]))
