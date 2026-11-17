@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from tests.frozen_support import frozen_doc
 from tests.test_capital_panel_selection import _bundles
 from tests.test_dossier import _fin_bundle
 from vinci.dossier import ciq_sheets as cs
@@ -79,9 +80,9 @@ def test_every_committed_line_marks_its_cut() -> None:
 
 
 def _lly() -> dict[str, Any]:
-    """LLY's committed page with its line as it stood before the mark: the unmarked join."""
-    doc: dict[str, Any] = json.loads((ROOT / "data" / "dossiers" / "LLY" / "dossier.json")
-                                     .read_text())
+    """LLY's committed page (frozen at the cut) with its line as it stood before the mark: the
+    unmarked join."""
+    doc = frozen_doc("LLY")
     doc["mechanical"]["quality"]["liquidity_covenant_flags"]["value"] = "; ".join(
         cs.liquidity_segments(_insts(doc)))
     return doc

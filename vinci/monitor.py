@@ -343,9 +343,10 @@ class FreshnessRow(BaseModel):
     # Empty is the normal state and does NOT mean "nothing fired": it means this record states no
     # measured criterion — every one of its falsifiers is a judgment. The renderer must say which.
     measured: list[MeasuredTriggerRow] = Field(default_factory=list)
-    #: (MC1) tags whose series has gone quiet, named rather than silently served. `stale_served`
-    #: has had no caller since #531 shipped it, so the 7 stale tags it can name reached no human.
-    stale_tags: list[str] = Field(default_factory=list)
+    # NO STALE-TAG FIELD (retired 2026-11-17). A stale value is WITHHELD where it is read,
+    # upstream, never reported here. A committed day still carries `stale_tags: []`, empty on
+    # every row of every day, and reads back without it (`test_trigger_state_surface`). Why:
+    # docs/records/2026-11-17-the-monitors-stale-tag-row-is-retired.md
     watch_note: str | None = None                            # e.g. WERN avoid_priced
     #: (2026-10-11) evidence the record states AFTER the date this row reads through — an
     #: underwrite or amendment written later, left out of ``last_evidence_date``. Non-empty means
@@ -854,41 +855,6 @@ def next_expected_print(filing_dates: list[date], *,
     return future[0], "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)"
 
 
-def _stale_tags(mechanical: dict[str, Any] | None) -> list[str]:
-    """(MC1) The tags whose series has gone quiet, named for a human.
-
-    `stale_served` shipped in #531 and has had NO CALLER since, so the seven stale tags it can
-    name reached nobody — the reporting half of that work was built and left unwired, which is the
-    same shape as the dilution overlay this repo already records. It needs companyfacts, which the
-    monitor does not hold; what IS available here is the dossier's own recorded flags, so this
-    reads those rather than inventing a second source for the same fact.
-
-    AND THAT SUBSTITUTE DOES NOT WORK — stated here rather than discovered later (review, #556).
-    `SourceStatus` has exactly three members: PRESENT, UNKNOWN, MISSING. There is no `stale`, so
-    the scan below cannot match by CONSTRUCTION, not merely in today's corpus (census over the
-    committed dossiers: 1471 present, 233 unknown, 3 suppressed, **0 stale**). This function
-    therefore returns `[]` on every input and the monitor's stale-tag row is always empty.
-
-    IT IS LEFT IN PLACE, NOT DELETED, and that is a deliberate and narrow call: it renders nothing
-    today and rendered nothing before this PR, so removing it would change a surface without
-    changing a reader's information, while wiring it for real needs companyfacts in the monitor —
-    a build, not a review edit. What was NOT acceptable was leaving the docstring claiming a
-    working substitute. `test_the_stale_tag_scan_cannot_match_and_says_so` pins the gap so the day
-    `SourceStatus` gains a `stale` member this is revisited instead of quietly starting to matter.
-    Recorded in STATE.md §5.0 with its falsifier.
-    """
-    if not mechanical:
-        return []
-    out: list[str] = []
-    for block in mechanical.values():
-        if not isinstance(block, dict):
-            continue
-        for name, node in block.items():
-            if isinstance(node, dict) and str(node.get("status") or "") == "stale":
-                out.append(str(name))
-    return sorted(set(out))
-
-
 def _history_for(ticker: str, trig: Any,
                  prior_days: list[dict[str, Any]]) -> list[Any] | None:
     """Prior readings of THIS NAME's criterion, newest first, from already-committed monitor days.
@@ -1026,8 +992,7 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
         newer_filings=newer, unread_print=bool(newer),
         next_expected_print=nxt, next_expected_basis=basis,
         triggers=triggers, passed_trigger_deadlines=passed,
-        measured=measured, stale_tags=_stale_tags(mechanical),
-        watch_note=watch_note, evidence_after_day=later,
+        measured=measured, watch_note=watch_note, evidence_after_day=later,
     )
 
 

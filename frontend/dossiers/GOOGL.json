@@ -19408,7 +19408,13 @@
         "file": "Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls",
         "sha256": "482debf2751a3743489219356e96feeb058ce02192b4ecd0a77e5b1ba129a3a8",
         "bytes": 305162,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-29",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 92, column 11 [Sep-30-2026], workbook sha256 482debf2751a3743489219356e96feeb058ce02192b4ecd0a77e5b1ba129a3a8",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -19416,7 +19422,13 @@
         "file": "Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls",
         "sha256": "f494e7869bf22fb00a61d35556b96cde9c54d662c05fc14003942b81c067b958",
         "bytes": 500234,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-10-29",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 92, column 40 [Q3 Sep-30-2026], workbook sha256 f494e7869bf22fb00a61d35556b96cde9c54d662c05fc14003942b81c067b958",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "key_developments",
@@ -19690,6 +19702,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

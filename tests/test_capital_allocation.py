@@ -16,6 +16,7 @@ from datetime import date
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier.capital_allocation import (
     ACQUISITION,
     BUYBACK_AVG_PRICE,
@@ -279,8 +280,7 @@ def test_the_block_reads_differently_on_a_name_that_impaired_and_one_that_never_
     from vinci.dossier.schemas import MechanicalLayer
 
     def block(t: str) -> str:
-        import json
-        doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
+        doc = frozen_doc(t)   # the page as frozen at the cut, its block the fixture's
         m = MechanicalLayer.model_validate(doc["mechanical"]).model_copy(
             update={"capital_allocation": _ca(t)})
         return "\n".join(_capital_allocation(m))
@@ -302,11 +302,9 @@ def test_every_caveat_reaches_the_surface_not_just_the_json() -> None:
     PERIOD MISMATCH on two PRESENT values is silently dropped — EPAM states buyback cash over 89
     days and its share count over 364, and printed adjacent they invite the exact division the
     average-price guard refuses."""
-    import json
-
     from vinci.dossier.render import _capital_allocation
     from vinci.dossier.schemas import MechanicalLayer
-    doc = json.loads((ROOT / "data" / "dossiers" / "EPAM" / "dossier.json").read_text())
+    doc = frozen_doc("EPAM")   # the page as frozen at the cut
     m = MechanicalLayer.model_validate(doc["mechanical"]).model_copy(
         update={"capital_allocation": _ca("EPAM")})
     page = "\n".join(_capital_allocation(m))

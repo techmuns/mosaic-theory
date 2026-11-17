@@ -24,6 +24,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import mechanical as dm
 from vinci.dossier import refresh as rf
 from vinci.edgar import release_parse as rp
@@ -292,7 +293,7 @@ def _moved_impairment(monkeypatch: pytest.MonkeyPatch, period: str | None,
                       text: str) -> tuple[dict[str, Any], list[str]]:
     """VRRM's page with ONE release whose only row is a billion-scale impairment (1.2 → 1,200 on
     re-read): no reconciliation row, so nothing else the lines read moves."""
-    mech = json.loads(Path("data/dossiers/VRRM/dossier.json").read_text())["mechanical"]
+    mech = json.loads((frozen_page("VRRM") / "dossier.json").read_text())["mechanical"]
     acc = "0001193125-26-209031"
     src = f"8-K {acc} EX-99.1"
     held: dict[str, Any] = {"amount": 1.2, "description": "goodwill impairment charge",
@@ -372,7 +373,7 @@ def test_the_refresh_rebuilds_through_the_assemblers_builder(
     monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(
         lambda _c: SimpleNamespace(files=lambda _t: [])))
     monkeypatch.setattr(ciq_mod.CiqBundle, "from_files", staticmethod(lambda _t, _f: object()))
-    mech = json.loads(Path("data/dossiers/CNXC/dossier.json").read_text())["mechanical"]
+    mech = json.loads((frozen_page("CNXC") / "dossier.json").read_text())["mechanical"]
     mech["primary_source"]["basis_triangulation"]["value"] = "tri 1"
     mech["primary_source"]["guide_verification"]["value"] = "guide 1"
     # the planted lines are the fake's, so the page's own stored outcome is not theirs
@@ -439,7 +440,7 @@ def test_the_refresh_itself_refuses_a_page_citing_the_old_figure(tmp_path: Path)
     """THE WIRING, through `refresh_dossier` on a real page: VRRM's committed page with main's
     "$38.0M" row put back and its synthesis quoting it — a refresh that drops the row is refused,
     and the page on disk is untouched."""
-    doc = json.loads(Path("data/dossiers/VRRM/dossier.json").read_text())
+    doc = json.loads((frozen_page("VRRM") / "dossier.json").read_text())
     rel = doc["mechanical"]["primary_source"]["releases"][0]
     rel["reconciliation"].append(_row("adjusted ebitda", "2026", 38.0))
     doc["synthesis"]["bull_points"] = [*doc["synthesis"]["bull_points"], "adj EBITDA of $38.0M"]
@@ -534,7 +535,7 @@ def test_a_line_that_does_not_reproduce_refuses(monkeypatch: pytest.MonkeyPatch)
     from vinci.dossier import ciq_sheets
     from vinci.dossier.schemas import ReleaseExtract, Sourced
 
-    mech = json.loads(Path("data/dossiers/CNXC/dossier.json").read_text())["mechanical"]
+    mech = json.loads((frozen_page("CNXC") / "dossier.json").read_text())["mechanical"]
     mech["primary_source"]["basis_triangulation"]["value"] = "not what the inputs build"
     monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(
         lambda _c: SimpleNamespace(files=lambda _t: [])))
@@ -636,8 +637,13 @@ console.log(JSON.stringify(out));
 
 def test_vrrms_card_never_shows_the_range_made_figures_md_and_web_e2e() -> None:
     """VRRM's card, both renderers: the strings the range-made actuals printed never return. An
-    ABSENCE of the observed defect — a correct re-read can never produce it, so this cannot rot."""
-    md = Path("data/dossiers/VRRM/dossier.md").read_text()
+    ABSENCE of the observed defect — a correct re-read can never produce it, so this cannot rot.
+    The banned strings are VRRM's own wrong figures, so the pin is VRRM's card, read as frozen at
+    the cut (`tests/frozen_support.py`). A walk over every covered card (round 0) went vacuous, with
+    no floor, the day VRRM left coverage, and a legitimate "$1.10" on another card would have turned
+    it red (review round 1 of #1098, item 1)."""
+    page = frozen_page("VRRM")
+    md = (page / "dossier.md").read_text()
     bad = ("adj EBITDA 2026 $38.0M", "adj EPS 2026 $1.10", "adj EPS 2025 $1.30",
            "adj EPS Q1 2026 $1.30")
     assert not [b for b in bad if b in md]
@@ -650,7 +656,7 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync, existsSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
-const d = JSON.parse(readFileSync("frontend/dossiers/VRRM.json"));
+const d = JSON.parse(readFileSync({json.dumps(str(page / "dossier.json"))}));
 const cp = "frontend/scenarios/VRRM.json";
 const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
 console.log(JSON.stringify({json.dumps(list(bad))}.filter((b) => h.includes(b))));

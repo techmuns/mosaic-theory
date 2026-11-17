@@ -31,7 +31,7 @@ from vinci import provenance
 from vinci.dossier import inputs
 from vinci.dossier import valuation_basis as vb
 from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook
-from vinci.dossier.refresh import _only_export_dates, export_date_transform, refresh_dossier
+from vinci.dossier.refresh import _only_stated_dates, export_date_transform, refresh_dossier
 from vinci.dossier.schemas import Dossier, dossier_json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -202,11 +202,11 @@ def test_an_export_no_file_on_this_machine_matches_is_left_alone(tmp_path: Path)
 def test_the_seam_admits_only_the_stamp() -> None:
     page = _frozen("IT")
     stamped = _with_stamp("IT")["inputs"]
-    assert _only_export_dates(page["inputs"], stamped)
+    assert _only_stated_dates(page["inputs"], stamped)
     swapped = copy.deepcopy(stamped)
     swapped["ciq"][0]["sha256"] = "0" * 64
-    assert not _only_export_dates(page["inputs"], swapped)
-    assert not _only_export_dates(page["inputs"], stamped | {"recorded": "backfill"})
+    assert not _only_stated_dates(page["inputs"], swapped)
+    assert not _only_stated_dates(page["inputs"], stamped | {"recorded": "backfill"})
 
 
 def test_the_seam_never_rewrites_a_stamp_already_recorded() -> None:
@@ -221,9 +221,9 @@ def test_the_seam_never_rewrites_a_stamp_already_recorded() -> None:
             del row["export_date"]
         else:
             row["export_date"] = stamp
-    assert _only_export_dates(stamped, stamped)
-    assert not _only_export_dates(stamped, moved)
-    assert not _only_export_dates(stamped, dropped)
+    assert _only_stated_dates(stamped, stamped)
+    assert not _only_stated_dates(stamped, moved)
+    assert not _only_stated_dates(stamped, dropped)
 
 
 def test_a_record_that_is_no_mapping_is_left_alone(tmp_path: Path) -> None:
@@ -259,7 +259,7 @@ def test_a_comps_export_that_cannot_be_parsed_is_still_recorded(tmp_path: Path) 
     comps = folder / FIXTURE["IT"]["workbook"]
     comps.write_bytes(bytes.fromhex("d0cf11e0a1b11ae1") + b"\0" * 600)   # OLE2 magic, no body
     with provenance.recording() as rec, pytest.raises(Exception):  # noqa: B017, PT011
-        inputs.load_bundle("IT", [comps])
+        inputs.load_bundle("IT", [comps], read_on=date(2026, 11, 15))
     assert [(Path(f.path).name, f.kind) for f in rec.reads().files] == [(comps.name, "comps")]
 
 
@@ -293,7 +293,7 @@ def test_the_transform_reads_its_export_by_sha256_off_the_real_workbook() -> Non
     assert wb is not None
     page = _frozen("IT")
     out = export_date_transform("IT", [wb.path.parent.parent])(page)
-    assert _only_export_dates(page["inputs"], out["inputs"])
+    assert _only_stated_dates(page["inputs"], out["inputs"])
     assert [r.get("export_date") for r in out["inputs"]["ciq"] if r["kind"] == "comps"] == [
         FIXTURE["IT"]["export_date"]]
 
@@ -305,7 +305,7 @@ def test_the_build_records_the_stamp_off_the_real_workbook() -> None:
     wb = bundle.workbook("comps")
     assert wb is not None
     with provenance.recording() as rec:
-        inputs.load_bundle("IT", [w.path for w in bundle.workbooks])
+        inputs.load_bundle("IT", [w.path for w in bundle.workbooks], read_on=date(2026, 11, 15))
     stamps = {Path(f.path).name: f.export_date for f in rec.reads().files if f.kind}
     assert stamps.pop(wb.path.name) == FIXTURE["IT"]["export_date"]
     assert set(stamps.values()) == {None}

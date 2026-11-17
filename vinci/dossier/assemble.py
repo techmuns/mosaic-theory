@@ -1193,7 +1193,8 @@ def assemble_one(
         security_types=PolygonEodClient.from_config(cfg).security_types())
     ticker = rec.identity.ticker
     # every CIQ file the build reads is recorded, a loader refusal's included (`load_bundle`)
-    bundle = page_inputs.load_bundle(ticker, manual.files(ticker))
+    # the build's own instant bounds its Financials filing dates (`inputs.filed_through`)
+    bundle = page_inputs.load_bundle(ticker, manual.files(ticker), read_on=built_at.date())
     _require_spool(bundle, llm)
     location = manual.location(ticker)
     # MISSING-manifest: per-module 'pull CIQ' flags from the ONE requirements definition (so this

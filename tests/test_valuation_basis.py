@@ -334,6 +334,9 @@ def test_every_page_names_its_dates_from_its_layers() -> None:
         # (2026-11-16) and a CIQ column's own stated filing date the page carries structured
         filed = [x for x in [((m.get("capital_structure") or {}).get("maturity_check") or {})
                              .get("panel_filed")] if x]
+        # (2026-11-17) and each Financials export's latest column filing date, off the record
+        filed += [ft["value"] for r in (doc.get("inputs") or {}).get("ciq") or []
+                  if (ft := r.get("filed_through")) and ft["status"] == "present"]
         known = days + stamps + filed
         assert ds["analysis_as_of"] == (max(known) if known else None), t
 
