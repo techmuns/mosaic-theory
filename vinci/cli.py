@@ -555,6 +555,24 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     if not finalists:
         print("no finalists — run `vinci screen` then `vinci rank` first")
         return 1
+    # THE ROSTER DECIDES THE WORK (W27): a page is assembled only for an `active` name — a `watch`
+    # page stays as committed, a `retired` name has none, and a name with no line was never taken
+    # into coverage. Asked of every finalist BEFORE any model client exists, so a refusal costs
+    # nothing, and one refused name refuses the run rather than spending on the rest of it.
+    from vinci import coverage_roster as roster
+
+    refused: list[str] = []
+    for fin in finalists:
+        try:
+            roster.require_active(cfg.data_dir, fin.data_record.identity.ticker)
+        except roster.NotActiveError as exc:
+            refused.append(str(exc))
+    if refused:
+        print(f"=== dossier · REFUSED {len(refused)} of {len(finalists)} finalist(s) before any "
+              f"model call: not active on the coverage roster ===")
+        for line in refused:
+            print(f"  {line}")
+        return 1
     llm = None
     if not args.no_llm:
         from vinci.graph.llm import AnthropicLlmClient
@@ -1000,8 +1018,9 @@ def _cmd_driver_facts_pass(args: argparse.Namespace) -> int:
     elif args.tickers:
         tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
     else:
-        tickers = sorted(p.name for p in (cfg.data_dir / "dossiers").iterdir()
-                         if (p / "dossier.json").is_file())
+        from vinci import coverage_roster as roster
+
+        tickers = roster.covered_pages(cfg.data_dir)   # the roster's covered names (W27)
     # a refusal raised mid-run (a spool key holding other bytes) must not leave the pages already
     # written with a stale frontend mirror: the mirror runs on the way out either way
     try:
@@ -1040,9 +1059,10 @@ def _cmd_transcript_run_cut(args: argparse.Namespace) -> int:
 
     cfg = get_config()
     ciq_root = Path(args.ciq_root) if args.ciq_root else cfg.data_dir / "manual" / "ciq"
+    from vinci import coverage_roster as roster
+
     tickers = ([t.strip().upper() for t in args.tickers.split(",") if t.strip()] if args.tickers
-               else sorted(p.name for p in (cfg.data_dir / "dossiers").iterdir()
-                           if (p / "dossier.json").is_file()))
+               else roster.covered_pages(cfg.data_dir))   # the roster's covered names (W27)
     outcomes = []
     try:
         for t in tickers:
@@ -3445,7 +3465,16 @@ _STATUS_LABEL = {"pending_analyst": "verdict pending"}
 
 def _watch_tickers(root: Path) -> set[str]:
     """Scenario records that are NOT ledger positions but must appear in the freshness panel —
-    standing-trigger `watch` names and `pending_analyst` records whose verdict is still owed."""
+    standing-trigger `watch` names and `pending_analyst` records whose verdict is still owed.
+
+    A RETIRED NAME'S RECORD IS LEFT OUT (W27, the coverage roster under `root/data`): the operator
+    has ruled the name out of coverage, so no verdict is owed on it and no trigger is watched,
+    whether or not its record has been archived yet. Only this record door reads the roster: a
+    live LEDGER decision on a retired name stays in the book through `live_verdicts`, scored to
+    its horizon, because retiring a name is never a quiet void."""
+    from vinci import coverage_roster as roster
+
+    gone = set(roster.retired(root / "data"))
     out: set[str] = set()
     d = root / "scenarios"
     if not d.is_dir():
@@ -3454,7 +3483,8 @@ def _watch_tickers(root: Path) -> set[str]:
         if p.name.startswith("_"):
             continue
         rec = json.loads(p.read_text())
-        if (rec.get("verdict") or {}).get("status") in _FRESHNESS_STATUSES:
+        if ((rec.get("verdict") or {}).get("status") in _FRESHNESS_STATUSES
+                and str(rec["ticker"]) not in gone):
             out.add(str(rec["ticker"]))
     return out
 

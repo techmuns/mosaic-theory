@@ -50,6 +50,8 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
             shutil.copytree(src, tmp_path / rel, dirs_exist_ok=False)
     shutil.copy(ROOT / "vinci/dossier/extraction_version.py",
                 tmp_path / "vinci/dossier/extraction_version.py")
+    # the fleet and the mirror both walk the coverage roster's names (W27)
+    shutil.copy(ROOT / "data" / "coverage_roster.jsonl", tmp_path / "data")
     (tmp_path / "frontend" / "build.py").write_text(
         (ROOT / "frontend" / "build.py").read_text())
 

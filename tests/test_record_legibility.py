@@ -19,6 +19,7 @@ from typing import Any
 
 import pytest
 
+from vinci import coverage_roster as roster
 from vinci import scenarios as sc
 from vinci import seal
 
@@ -254,15 +255,17 @@ def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
 
 
 # --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
-#: ARCHIVED BECAUSE THE NAME LEFT COVERAGE, not because a record replaced it (2026-11-09). A
-#: retired name's record has no successor to point at, and writing one would invent it, so each is
-#: named here beside the record of the operator's ruling. An archive that points nowhere for any
-#: other reason still fails, and so does a "retired" one that names a successor or a live record.
-RETIRED_ARCHIVES: dict[str, str] = {
-    "AORT-2026-07-22": "docs/records/2026-11-09-aort-retired.md",  # "retire AORT fully"
-    # "we want to drop/remove MVST altogether from our list for future as well"
-    "MVST-2026-07-22": "docs/records/2026-11-13-mvst-retired.md",
-}
+def _retired_archives(archived: dict[str, sc.ScenarioRecord]) -> dict[str, str]:
+    """ARCHIVED BECAUSE THE NAME LEFT COVERAGE, not because a record replaced it (2026-11-09). A
+    retired name's record has no successor to point at, and writing one would invent it, so each
+    archive that points nowhere is accepted only for a name the COVERAGE ROSTER retires, beside the
+    record of the operator's ruling the roster's move cites (W27: the list was kept here by hand,
+    so each retirement edited it). An archive that points nowhere for any other reason still
+    fails, and so does a "retired" one that names a successor or a live record."""
+    gone = roster.retired(ROOT / "data")
+    return {key: gone[rec.ticker.upper()].record or gone[rec.ticker.upper()].source
+            for key, rec in sorted(archived.items())
+            if rec.ticker.upper() in gone and not rec.superseded_by}
 
 
 def _paged_tickers() -> set[str]:
@@ -302,11 +305,15 @@ def test_archived_records_leave_the_live_set_but_stay_in_the_seal_sweep() -> Non
     archived = sc.all_archived(root=ROOT)
     assert archived, "the committed book carries at least one archived record"
     assert set(live) & set(archived) == set(), "an archive key must never collide with a ticker"
-    assert _archive_pointer_problems(live, archived, RETIRED_ARCHIVES, _paged_tickers()) == []
+    retired = _retired_archives(archived)
+    assert {"AORT-2026-07-22", "MVST-2026-07-22"} <= set(retired)
+    assert _archive_pointer_problems(live, archived, retired, _paged_tickers()) == []
+    for t in roster.retired(ROOT / "data"):   # whatever its archives point at
+        assert t not in live, f"{t} is retired on the coverage roster and has a LIVE record"
     for key in archived:
         assert key not in live, f"{key} is in the LIVE set — audit/spread would double-count"
     # a retired name's ruling is on the record
-    for key, record in RETIRED_ARCHIVES.items():
+    for key, record in retired.items():
         assert (ROOT / record).is_file(), f"{key}: the ruling's record {record} is missing"
     # the seal sweep DOES cover them, keyed as the manifest keys them
     sealable = seal.load_all_sealable(ROOT)
@@ -322,7 +329,7 @@ def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: st
     record), each changed in the one way the case names. The positive pin is the test above."""
     live = sc.all_records(root=ROOT)
     archived = sc.all_archived(root=ROOT)
-    retired = dict(RETIRED_ARCHIVES)
+    retired = _retired_archives(archived)
     paged = _paged_tickers()
     key = "AORT-2026-07-22"
     if case == "unnamed":
@@ -346,15 +353,16 @@ def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: st
 
 def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> None:
     """THE MONITOR'S FRESHNESS SET HOLDS NO RETIRED NAME (2026-11-12, MVST). A monitor day writes
-    a freshness row for each live ledger decision and each `watch` / `pending_analyst` record, and
-    both doors need `scenarios/<T>.json`: `_watch_tickers` globs the live records, and the day
-    skips a name with none. Archiving a retired name's record is what takes it out, so the set is
-    pinned on the committed book. NEGATIVE: the same check on a scratch copy of the book with
-    MVST's archived record put back live sees MVST. The sealed archive is only read."""
+    a freshness row for each live ledger decision and each `watch` / `pending_analyst` record.
+    Since W27 the COVERAGE ROSTER takes a retired name's record out of that set, whether or not the
+    record is archived yet: on a scratch copy of the book with MVST's archived record put back
+    live, MVST stays out while the roster retires it, and comes back the moment the roster's MVST
+    move is gone (the NEGATIVE). Before W27 only the archive took it out, so the first scratch read
+    saw MVST. The sealed archive is only read."""
     from vinci.cli import _watch_tickers
 
     archived = sc.all_archived(root=ROOT)
-    retired = {archived[key].ticker.upper(): key for key in RETIRED_ARCHIVES}
+    retired = {archived[key].ticker.upper(): key for key in _retired_archives(archived)}
     assert {"AORT", "MVST"} <= set(retired)
     book = _watch_tickers(ROOT)
     assert book, "the committed book carries a watch name, so the check is not vacuous"
@@ -366,6 +374,12 @@ def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> Non
             (scratch / p.name).write_bytes(p.read_bytes())
     restored = ROOT / "scenarios" / "archive" / f"{retired['MVST']}.json"
     (scratch / "MVST.json").write_bytes(restored.read_bytes())
+    (tmp_path / "data").mkdir()
+    lines = (ROOT / "data" / roster.ROSTER_NAME).read_text("utf-8").splitlines(keepends=True)
+    (tmp_path / "data" / roster.ROSTER_NAME).write_text("".join(lines), encoding="utf-8")
+    assert _watch_tickers(tmp_path) & set(retired) == set(), "the roster no longer takes MVST out"
+    (tmp_path / "data" / roster.ROSTER_NAME).write_text(
+        "".join(ln for ln in lines if '"ticker": "MVST"' not in ln), encoding="utf-8")
     assert _watch_tickers(tmp_path) & set(retired) == {"MVST"}
 
 

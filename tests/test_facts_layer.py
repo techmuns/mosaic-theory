@@ -19,6 +19,7 @@ from typing import Any
 
 import pytest
 
+from tests.roster_support import write_roster
 from vinci.edgar.concepts import facts_as_of
 from vinci.facts import (
     FILED,
@@ -307,6 +308,7 @@ def test_a_tombstoned_follow_leaves_the_scope(tmp_path: Path) -> None:
     pages = tmp_path / "dossiers"
     (pages / "FUBO").mkdir(parents=True)
     (pages / "FUBO" / "dossier.json").write_text(json.dumps({"cik": "0001484769"}))
+    write_roster(tmp_path, {"FUBO": "watch"})   # the scope's covered names are the roster's (W27)
     followed = tmp_path / "followed.json"
     followed.write_text(json.dumps({
         "FUBO": {"followed_since": "2026-01-01", "sleeve": "quality", "reason": "r"},
@@ -363,6 +365,7 @@ def _two_pages(tmp: Path) -> Path:
         (tmp / "data" / "dossiers" / ticker).mkdir(parents=True)
         (tmp / "data" / "dossiers" / ticker / "dossier.json").write_text(
             json.dumps({"cik": cik, "reference_date": "2026-11-02"}))
+    write_roster(tmp / "data", {"FUBO": "watch", "NFLX": "watch"})   # the scope reads it (W27)
     return _cache_with(tmp, ["FUBO-companyfacts-slice.json", "NFLX-companyfacts-slice.json"])
 
 

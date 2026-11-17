@@ -18,6 +18,7 @@ import pathlib
 import pytest
 
 import vinci.scenarios as sc
+from tests.sealed_corpus import live_sealed
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -296,8 +297,9 @@ def test_every_committed_record_would_survive_the_new_supersede_check() -> None:
         again = sc.run_recipe(rec.model_copy(deep=True)).result
         assert _result_mismatch(rec.result, again) is None, f.name
         seen += 1
-    # 9 until AORT was archived (2026-11-09), 8 until MVST was (2026-11-12)
-    assert seen >= 7, f"corpus check walked {seen} records — it is not exercising anything"
+    # every live record the seal holds (9 until AORT was archived, 2026-11-09; 8 until MVST was,
+    # 2026-11-12): the count is the seal's, which an archive rewrites, never a literal here (W27)
+    assert seen == len(live_sealed(ROOT)), f"corpus check walked {seen} records"
 
 
 def test_supersede_derives_an_unstated_result_instead_of_refusing_it() -> None:

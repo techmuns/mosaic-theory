@@ -37,6 +37,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.sealed_corpus import live_sealed
 
 SMPL = Path("scenarios/SMPL.json")
 
@@ -136,18 +137,27 @@ def test_a_spot_dated_after_its_own_underwrite_is_refused_at_any_schema(tmp_path
 def test_the_live_stamped_records_all_precede_their_underwrite() -> None:
     """The measurement the rule above rests on, pinned so a later record cannot quietly invert it
     and be excused as 'how it has always been'."""
-    checked = 0
+    checked, walked, owed = 0, 0, set()
+    required = sc._schema_ver(sc.SPOT_AS_OF_REQUIRED_FROM)
     for p in sorted(Path("scenarios").glob("*.json")):
         if p.stem.startswith("_"):
             continue
+        walked += 1
         doc = json.loads(p.read_text())
+        if sc._schema_ver(str(doc["schema_version"])) >= required:
+            owed.add(p.stem)
         if not doc.get("spot_as_of"):
             continue
+        owed.discard(p.stem)
         checked += 1
         assert str(doc["spot_as_of"]) <= str(doc["underwrite_date"])[:10], (
             f"{p.stem}: spot dated {doc['spot_as_of']} against underwrite {doc['underwrite_date']}")
-    # six stamped until MVST's record was archived (2026-11-12); five live ones remain
-    assert checked >= 5, f"only {checked} records carry a spot date — expected the five stamped"
+    # NOT A LITERAL (W27): six stamped until MVST's record was archived (2026-11-12), five since,
+    # and each retirement edited the count. The walk sees every live record the seal holds, every
+    # record at or past the stamp's schema carries one, and at least one stamp is checked.
+    assert walked == len(live_sealed(Path("."))), f"walked {walked} of the sealed live records"
+    assert not owed, f"{sorted(owed)}: at or past {sc.SPOT_AS_OF_REQUIRED_FROM}, no spot date"
+    assert checked >= 1, "no live record carries a spot date — the check above is vacuous"
 
 
 # ─── the template that has to satisfy it ──────────────────────────────────────────────────────

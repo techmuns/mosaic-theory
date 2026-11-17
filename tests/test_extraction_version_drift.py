@@ -100,6 +100,8 @@ NOT_EXTRACTION: dict[str, str] = {
     # cannot change a page value given the same source data
     # (tests/test_page_build_modules_classified.py holds the rule).
     "vinci/__init__.py": "the package's docstring",
+    "vinci/coverage_roster.py": "the coverage roster (W27): which pages a fleet pass walks and "
+                                "which names a build is refused for; sets no page field",
     "vinci/eod/__init__.py": "re-exports the EOD clients and the watched features module",
     "vinci/eod/client.py": "market-data transport (Polygon bars and reference types): what a page "
                            "read is recorded in its inputs block, how is not a value rule",

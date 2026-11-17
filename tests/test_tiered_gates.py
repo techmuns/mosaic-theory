@@ -27,6 +27,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.sealed_corpus import live_sealed
 from vinci.dossier.render import _underwrite_lines
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -608,8 +609,9 @@ def test_the_committed_corpus_is_unmoved_by_the_stamping_fix() -> None:
         assert again.result.gate_regime == rec.result.gate_regime, f.name
         assert (again.result.ratio or 0) == pytest.approx(rec.result.ratio or 0), f.name
         seen += 1
-    # 9 until AORT was archived (2026-11-09), 8 until MVST was (2026-11-12)
-    assert seen >= 7, f"corpus check walked {seen} records — it is not exercising anything"
+    # every live record the seal holds (9 until AORT was archived, 2026-11-09; 8 until MVST was,
+    # 2026-11-12): the count is the seal's, which an archive rewrites, never a literal here (W27)
+    assert seen == len(live_sealed(ROOT)), f"corpus check walked {seen} records"
 
 
 @pytest.mark.parametrize("path", LADDER_RECORDS, ids=lambda p: p.stem)

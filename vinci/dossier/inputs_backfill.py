@@ -33,6 +33,7 @@ import json
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
+from vinci import coverage_roster as roster
 from vinci.config import Config
 from vinci.dossier import inputs
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
@@ -58,8 +59,8 @@ def run(cfg: Config, *, tickers: Sequence[str], exclude: Sequence[str],
 
     root = cfg.data_dir / "dossiers"
     skip = {t.upper() for t in exclude}
-    names = ([t.upper() for t in tickers] if tickers
-             else sorted(p.parent.name for p in root.glob("*/dossier.json")))
+    # every covered page, from the coverage roster (W27), when no ticker is named
+    names = [t.upper() for t in tickers] if tickers else roster.covered_pages(cfg.data_dir)
     skipped = sorted(skip & set(names))
     names = [t for t in names if t not in skip]
     search = list(roots) if roots else default_roots(cfg)
