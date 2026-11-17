@@ -21,7 +21,14 @@ import pytest
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
-from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqParseError, classify, read_text
+from vinci.dossier.ciq import (
+    CiqBundle,
+    CiqFormat,
+    CiqParseError,
+    CiqWorkbook,
+    classify,
+    read_text,
+)
 from vinci.dossier.manual_store import LocalFolderStore
 
 _OLE_MAGIC = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
@@ -31,12 +38,16 @@ def _stub(tmp: Path, *, fail_on: str | None = None) -> Path:
     """A `soffice` that exits 1 — for every file, or only for one whose name holds ``fail_on``
     (the others are converted to a one-line `.txt`, as LibreOffice writes it)."""
     script = tmp / "soffice"
-    cond = f'case "$6" in *"{fail_on}"*) fail=1;; *) fail=0;; esac' if fail_on else "fail=1"
+    # the source is the last argument and the folder follows `--outdir`, wherever the profile
+    # flag puts them (`ciq.libreoffice_convert` passes `-env:UserInstallation` first)
+    cond = f'case "$src" in *"{fail_on}"*) fail=1;; *) fail=0;; esac' if fail_on else "fail=1"
     script.write_text(
-        "#!/bin/sh\n" + cond + "\n"
+        "#!/bin/sh\n"
+        'prev=""; for a; do [ "$prev" = "--outdir" ] && out=$a; prev=$a; src=$a; done\n'
+        + cond + "\n"
         'if [ "$fail" = 1 ]; then echo "Error: source file could not be loaded" >&2; exit 1; fi\n'
-        'name=$(basename "$6"); printf "Operator: welcome to the call.\\n" '
-        '> "$5/${name%.*}.txt"\n')
+        'name=$(basename "$src"); printf "Operator: welcome to the call.\\n" '
+        '> "$out/${name%.*}.txt"\n')
     script.chmod(0o755)
     return script
 
@@ -73,8 +84,10 @@ def test_ra_d11_a_failed_conversion_of_a_real_call_is_a_parse_error(
 def test_ra_d11_one_failed_call_is_left_out_and_named_and_the_rest_still_read(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """THE SKIP-AND-FLAG PATH, end to end on AMZN's calls: the first call's conversion exits 1.
-    The build does not stop; the slice holds every other call; the flag names the one left out.
-    (−) With every conversion failing, the slice is None and the flag says no call reached it."""
+    The reader does not stop; the slice holds every other call; the flag names the one left out.
+    (−) With every conversion failing, the slice is None and the flag says no call reached it.
+    The $0 build keeps exactly this; a paid one refuses on it before any model call
+    (`test_a_paid_build_refuses_a_call_that_did_not_read_before_any_model_call`)."""
     b = _amzn()
     calls = [w.path.name for w in b.all_workbooks("transcript")]
     if len(calls) < 2:
@@ -104,3 +117,76 @@ def test_ra_d11_twin_an_ole_file_whose_conversion_fails_raises_the_callers_error
     assert not isinstance(err.value, subprocess.CalledProcessError)
     _use(monkeypatch, _stub(tmp_path, fail_on="no such call"))
     assert read_text(doc) == "Operator: welcome to the call.\n"
+
+
+_PAID = object()  # any client: the refusal asks only whether the build is a paid one
+
+
+def _two_calls() -> CiqBundle:
+    def call(q: str) -> CiqWorkbook:
+        return CiqWorkbook(kind="transcript", fmt=CiqFormat.OLE_DISGUISED, freq=None,
+                           path=Path(f"Zinnober Fixture Works Inc, {q} 2026 Earnings Call.rtf"))
+    return CiqBundle(ticker="ZFW", workbooks=(call("Q1"), call("Q2")))
+
+
+def test_a_paid_build_refuses_a_call_that_did_not_read_before_any_model_call() -> None:
+    """A PAID BUILD READS EVERY CALL ON FILE OR SPENDS NOTHING (2026-11-17). VRRM's check build
+    (run `6043fb83`) read 1 of its 2 calls, flagged the other, and spent $5.15 on a page that lost
+    all 12 of the Q1 call's driver rows, so the page was held. FAILED before the fix: no refusal
+    existed and the build went on to its covenant, driver and synthesis calls.
+    (+) One of two calls missing from the slice: refused, naming it and not the call that read.
+    (+) No call read at all (the slice is None): refused, naming both."""
+    from vinci.dossier import assemble
+
+    b = _two_calls()
+    q1, q2 = (w.path.name for w in b.all_workbooks("transcript"))
+    with pytest.raises(assemble.DossierAssemblyError, match="1 of 2 call") as err:
+        assemble._refuse_unread_calls(b, f"--- {q2} ---\nremarks", _PAID)  # type: ignore[arg-type]
+    assert q1 in str(err.value) and q2 not in str(err.value)
+    with pytest.raises(assemble.DossierAssemblyError, match="2 of 2 call") as err:
+        assemble._refuse_unread_calls(b, None, _PAID)  # type: ignore[arg-type]
+    assert q1 in str(err.value) and q2 in str(err.value)
+
+
+def test_the_unread_call_refusal_spares_the_zero_dollar_build_and_a_whole_read() -> None:
+    """(−) The $0 build (`llm` None: the precheck's `mechanical_build`, the impact child) keeps
+    the skip-and-flag and is never refused. (−) Every call read, one of them cut at the ceiling:
+    no refusal, since a cut call is in the model's input. (−) No call on file: nothing to read."""
+    from vinci.dossier import assemble
+    from vinci.dossier import ciq_sheets as cs
+
+    b = _two_calls()
+    q1, q2 = (w.path.name for w in b.all_workbooks("transcript"))
+    assemble._refuse_unread_calls(b, None, None)
+    whole = f"--- {q1} ---\nremarks{cs._cut_marker(10**6)}\n\n--- {q2} ---\nremarks"
+    assemble._refuse_unread_calls(b, whole, _PAID)  # type: ignore[arg-type]
+    assert "cut at the ceiling" in (cs.unparsed_transcript_flag(b, whole) or "")
+    assemble._refuse_unread_calls(CiqBundle(ticker="ZFW", workbooks=()), None,
+                                  _PAID)  # type: ignore[arg-type]
+
+
+def test_the_unread_call_refusal_comes_before_the_first_paid_phase() -> None:
+    """In `assemble_one`'s own source: the refusal reads the slice the build just computed and is
+    asked before the covenant phase, the first call the build pays for."""
+    from vinci.dossier import assemble
+
+    src = Path(assemble.__file__).read_text()
+    read = src.index("transcript = ciq_sheets.transcript_for_synthesis(bundle)")
+    refuse = src.index("_refuse_unread_calls(bundle, transcript, llm)")
+    assert read < refuse < src.index("extract_covenant_terms(\n") < src.index(
+        "extract_transcript_drivers(\n")
+
+
+def test_a_paid_build_refuses_one_real_call_that_did_not_read(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """On AMZN's real calls (skip where the licensed folder is absent, as on CI): the first call's
+    conversion exits 1, and the refusal names it and no other call."""
+    from vinci.dossier import assemble
+
+    b = _amzn()
+    calls = [w.path.name for w in b.all_workbooks("transcript")]
+    _use(monkeypatch, _stub(tmp_path, fail_on=calls[0]))
+    sliced = cs.transcript_for_synthesis(b)
+    with pytest.raises(assemble.DossierAssemblyError, match=f"1 of {len(calls)} call") as err:
+        assemble._refuse_unread_calls(b, sliced, _PAID)  # type: ignore[arg-type]
+    assert calls[0] in str(err.value) and all(c not in str(err.value) for c in calls[1:])
