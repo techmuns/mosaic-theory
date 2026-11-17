@@ -88,8 +88,15 @@ impact and misc group.
   Slice 5 fixes the scan's false positives, records the residue, and adds the blind spots the
   review found: a read through a support module's own `ROOT`, a path built from `__file__`, and a
   page read in a same-module helper.
-- **The suite.** {SUITE}
-- **The impact check.** {IMPACT}
+- **The suite.** The full offline suite (`-m "not network" -n 8`, the CIQ folder linked) at
+  `e9486658`, against the same run of main `8a71a383` on the same machine: **74 → 75 failing**.
+  Every one of main's 74 is a local-data failure CI does not run. Every difference is named noise:
+  `test_records_ledger` (this record's PR number, filled once the PR opened);
+  `test_transcript_run_guard`, 4 new and 3 gone (it fails a different subset of its cases on every
+  run of one tree); and `test_evidence_same_passage`'s LibreOffice conversion, gone.
+- **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` at
+  `e9486658`: 0 of 589 tests fail on base code and pass on head code (465 pass at both, 124
+  skipped), and `verify` reads VALID. The PR body carries the report.
 
 **BOUNDARY.**
 - **Counts:** at this slice's commit, against main at `8a71a383` (slice 1 merged as #1098), unless
@@ -105,7 +112,8 @@ ratchet and STATE row 41).
 1. **The CIQ-paired refresh pin skips when neither the folder nor the archive holds its page's
    export.** It used to fail until the page was rebuilt. Falsifier: it skips while the folder or
    `ciq-archive/` holds the export the frozen page names.
-2. **The checker cannot see a skip inside a helper.** `skip_unless_export` and
-   `skip_unless_pages_export` skip from inside a support function, so `asserts_unchanged.py`
-   counts no new skip call. Slice 5 teaches it the repo's skip helpers.
+2. **The checker could not see a skip inside a helper.** `skip_unless_export` skips from inside
+   a support function, which `asserts_unchanged.py` did not count. Slice 5's checker counts it,
+   and reads this slice as 0 disabled too: the AMZN pin drops main's page-absent skip as it gains
+   the export skip.
 3. **$0.** No model call, no vendor call, and no page rebuilt or re-rendered.
