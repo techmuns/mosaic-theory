@@ -16,8 +16,13 @@ backwards, with one move per name per day; each is written in one canonical form
 (``render_line``), so the file is deterministic and a hand edit that reorders or reformats it is
 refused rather than read.
 
-THREE STATUSES (the operator's marking, 2026-11-13, "go ahead", issue #1004):
-- ``active``  — covered and worked: the only status a page is assembled for.
+FOUR STATUSES — three from the operator's marking (2026-11-13, "go ahead", issue #1004), and
+``intake`` for a name's way in (W27 review, #1092):
+- ``intake``  — taken into coverage, its first page not yet committed: assembled like an active
+  name, and its page optional, so a first build refused or failed after its spend leaves every
+  reader working. The PR that commits its first page appends its move to ``active`` (or ``watch``).
+- ``active``  — covered and worked: assembled, and its page required, so an active page that
+  vanishes is refused.
 - ``watch``   — covered, with its committed page kept as it is and no paid rebuild until the name
   goes active. NOT the scenario record's ``watch`` verdict status (``vinci/scenarios.py``), which
   is a standing-trigger record that is not a position: IT's record is a ``watch`` and IT is
@@ -47,9 +52,11 @@ from pathlib import Path
 #: the roster's file name, under the data directory (``data/coverage_roster.jsonl``)
 ROSTER_NAME = "coverage_roster.jsonl"
 #: every status a move can name, in the order the module docstring defines them
-STATUSES = ("active", "watch", "retired")
-#: the statuses whose names have a committed page
+STATUSES = ("intake", "active", "watch", "retired")
+#: the statuses whose names must have a committed page
 COVERED = frozenset({"active", "watch"})
+#: the statuses a page is assembled for
+BUILDABLE = frozenset({"intake", "active"})
 #: a line's keys, in the order ``render_line`` writes them
 FIELDS = ("date", "ticker", "status", "ruling", "source", "record")
 
@@ -195,7 +202,8 @@ def paged(dossiers_dir: Path) -> set[str]:
 
 
 def mismatches(latest: Mapping[str, Move], pages: set[str]) -> list[str]:
-    """Every way the pages disagree with the roster, sorted by name; [] when they agree."""
+    """Every way the pages disagree with the roster, sorted by name; [] when they agree. An
+    ``intake`` name agrees with or without its page."""
     out: list[str] = []
     for t in sorted(set(latest) | pages):
         move = latest.get(t)
@@ -204,38 +212,43 @@ def mismatches(latest: Mapping[str, Move], pages: set[str]) -> list[str]:
         elif move.status in COVERED and t not in pages:
             out.append(f"{t} is {move.status} on the roster and has no committed page "
                        f"({move.cite()})")
-        elif move.status not in COVERED and t in pages:
+        elif move.status == "retired" and t in pages:
             out.append(f"{t} is {move.status} on the roster and still has a committed page "
                        f"({move.cite()})")
     return out
 
 
 def covered_pages(data_dir: Path) -> list[str]:
-    """The covered names, sorted, once every committed page agrees with the roster; raises
-    ``CoverageMismatchError`` naming every disagreement otherwise. The one call a reader that
-    walks the covered names makes."""
+    """The names whose pages a reader walks, sorted — every active and watch name, and an intake
+    name once its first page is committed — after every committed page agrees with the roster;
+    raises ``CoverageMismatchError`` naming every disagreement otherwise. The one call a reader
+    that walks the covered names makes."""
     latest = current(data_dir)
-    problems = mismatches(latest, paged(data_dir / "dossiers"))
+    pages = paged(data_dir / "dossiers")
+    problems = mismatches(latest, pages)
     if problems:
         raise CoverageMismatchError(
             f"the committed pages disagree with {roster_path(data_dir)} on {len(problems)} "
             f"name(s): " + "; ".join(problems))
-    return sorted(t for t, m in latest.items() if m.status in COVERED)
+    return sorted(t for t, m in latest.items()
+                  if m.status in COVERED or (m.status == "intake" and t in pages))
 
 
-def require_active(data_dir: Path, ticker: str) -> Move:
-    """The name's latest move, when it is ``active``; raises ``NotActiveError`` otherwise.
+def require_buildable(data_dir: Path, ticker: str) -> Move:
+    """The name's latest move, when it is ``intake`` or ``active``; raises ``NotActiveError``
+    otherwise.
 
-    Assembly is the work an ``active`` name gets: a ``watch`` page is kept as committed until the
-    name goes active, a ``retired`` name has no page, and a name with no line has not been taken
-    into coverage. Asked BEFORE any model call, so a refusal costs nothing."""
+    Assembly is the work an active name gets, and an intake name's first page: a ``watch`` page is
+    kept as committed until the name goes active, a ``retired`` name has no page, and a name with
+    no line was never taken into coverage. Asked BEFORE any model call, so a refusal costs
+    nothing."""
     move = current(data_dir).get(ticker.upper())
     if move is None:
         raise NotActiveError(
             f"{ticker.upper()} has no line in {roster_path(data_dir)} — append its move to "
-            f"active, with the ruling, before its page is assembled")
-    if move.status != "active":
+            f"intake (a first page) or active, with the ruling, before its page is assembled")
+    if move.status not in BUILDABLE:
         raise NotActiveError(
-            f"{move.cite()} — only an active name is assembled; append a move to active, with "
-            f"the ruling, first")
+            f"{move.cite()} — only an intake or active name is assembled; append a move to "
+            f"active, with the ruling, first")
     return move

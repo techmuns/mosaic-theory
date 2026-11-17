@@ -14,7 +14,7 @@ from typing import Any
 import pydantic
 import pytest
 
-from tests.sealed_corpus import live_sealed
+from tests.sealed_corpus import live_records
 from vinci import scenarios as sc
 
 
@@ -915,7 +915,7 @@ def test_13_every_committed_record_passes_the_gate_and_carries_the_migration() -
     root = Path(__file__).resolve().parents[1]
     recs = {p.stem: sc.read_record(p.stem, root=root)
             for p in (root / "scenarios").glob("*.json") if not p.stem.startswith("_")}
-    assert len(recs) == len(live_sealed(root))   # every live record the seal holds (W27)
+    assert len(recs) == len(live_records(root))   # sealed + pending live records (W27)
     legs = excls = notes = 0
     for t, rec in recs.items():
         sc.require_fielded_refs(rec)             # raises = a migrated record regressed
@@ -1026,12 +1026,14 @@ def test_no_committed_record_is_silently_in_violation_of_the_vintage_rule(tmp_pa
             f"{f.name} is at schema {rec['schema_version']} — at or past "
             f"{sc.VINTAGE_REQUIRED_FROM} its references must each carry a vintage; "
             f"{unstamped(rec)} carry none")
-    # EXACT, not a floor, against the seal: a record is added or archived only beside its seal
-    # entry, so the walk must see exactly the live records the seal holds. Nine as of GOOGL,
-    # 2026-09-01; eight since AORT was archived, 2026-11-09; seven since MVST was, 2026-11-12. The
-    # count was a literal here until W27, so each retirement edited it.
-    sealed = len(live_sealed(root.parent))
-    assert seen == sealed, f"expected the {sealed} sealed live records, walked {seen}"
+    # EXACT, not a floor: the walk sees every live record the seal names (a SEALED record the walk
+    # drops goes red, since the manifest still names it) plus every pending record, counted apart
+    # because it is unsealed by design. What this no longer forces: adding a record does not edit
+    # this test (a sealed add is carried by the seal diff; a pending add by nothing). Nine as of
+    # GOOGL, 2026-09-01; eight since AORT was archived, 2026-11-09; seven since MVST was,
+    # 2026-11-12. The count was a literal here until W27, so each retirement edited it.
+    expected = len(live_records(root.parent))
+    assert seen == expected, f"expected the {expected} live records, walked {seen}"
 
 
 def _ref_keys(payload: dict[str, object], axis: str = "revenue") -> set[str]:
@@ -1114,9 +1116,10 @@ def test_the_committed_records_round_trip_byte_identical(tmp_path: Path) -> None
             f"{f.name} does not round-trip — re-writing it changes the committed record, so the "
             "next real diff is unreadable. If a field was just added, declare it in "
             "REF_FIELDS_INTRODUCED_IN or AXIS_FIELDS_INTRODUCED_IN.")
-    # EXACT, against the seal's live records (AORT archived 2026-11-09, MVST 2026-11-12; W27)
-    sealed = len(live_sealed(root.parent))
-    assert seen == sealed, f"expected the {sealed} sealed live records, walked {seen}"
+    # EXACT: every live record the seal names plus every pending one (AORT archived 2026-11-09,
+    # MVST 2026-11-12; W27). A sealed record the walk drops goes red; adding one edits nothing here.
+    expected = len(live_records(root.parent))
+    assert seen == expected, f"expected the {expected} live records, walked {seen}"
 
     # THE ARCHIVE IS THE ONLY RECORD BELOW 1.3, and therefore the only one that exercises
     # version-scoping AT ALL: seven records that share a version cannot fail a version check.

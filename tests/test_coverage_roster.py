@@ -24,7 +24,6 @@ from vinci import coverage_roster as roster
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 ROSTER = DATA / roster.ROSTER_NAME
-FROZEN_MVST = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "MVST"
 
 ACTIVE = ["BRBR", "EPAM", "GOOGL", "IT", "LLY", "NCNO", "SMPL", "TJX", "VITL", "VRRM", "WERN"]
 WATCH = ["AMZN", "BURL", "CNXC", "FUBO", "MCK", "NFLX", "NKE", "ORKA", "PARR", "ROST", "TECX",
@@ -127,25 +126,64 @@ def test_the_committed_pages_are_exactly_the_covered_names() -> None:
     assert not set(roster.retired(DATA)) & roster.paged(DATA / "dossiers")
 
 
+def _a(status: str) -> str:
+    """A name the committed roster gives this status NOW, never a literal (review of #1092, R8):
+    a pin that names a ticker breaks when that name moves, which is the pattern the roster ends."""
+    return next(t for t, m in sorted(roster.current(DATA).items()) if m.status == status)
+
+
+def _frozen_page(ticker: str) -> Path:
+    """The frozen copy of a retired name's last page (`tests/fixtures/frozen_pages/<date>/<T>/`)."""
+    frozen = ROOT / "tests" / "fixtures" / "frozen_pages"
+    return sorted(frozen.glob(f"*/{ticker}/dossier.json"))[-1]
+
+
+NEW = "ZZZQ"   # a name no committed tree holds: an intake's first page
+
+
+def _intake_line() -> str:
+    last = roster.read_moves(DATA)[-1].date
+    return roster.render_line(roster.Move(date=last, ticker=NEW, status="intake",
+                                          ruling="test", source="test", record=None)) + "\n"
+
+
 def _tree(tmp_path: Path, case: str) -> Path:
     """A scratch repository holding the committed roster and every committed page (linked, read
-    only), changed in the one way the case names; "agrees" changes nothing."""
+    only), changed in the one way the case names; "agrees" changes nothing.
+    - no_roster_line: a covered name's page stays and its move is gone;
+    - no_page / active_no_page: a watch / an active name's move stays and its page is gone;
+    - retired_paged: a retired name's last page back under data/dossiers (#1044 undone);
+    - intake_no_page / intake_paged: a new name taken in, before / after its first page."""
     data = tmp_path / "data"
     (data / "dossiers").mkdir(parents=True)
     text = ROSTER.read_text("utf-8")
     pages = roster.paged(DATA / "dossiers")
-    if case == "no_roster_line":     # FUBO's page stays, its move is gone
-        text = "".join(ln + "\n" for ln in text.splitlines() if '"ticker": "FUBO"' not in ln)
-    elif case == "no_page":          # FUBO's move stays, its page is gone
-        pages = pages - {"FUBO"}
+    if case == "no_roster_line":
+        text = "".join(ln + "\n" for ln in text.splitlines()
+                       if f'"ticker": "{_a("watch")}"' not in ln)
+    elif case == "no_page":
+        pages = pages - {_a("watch")}
+    elif case == "active_no_page":
+        pages = pages - {_a("active")}
+    elif case in ("intake_no_page", "intake_paged"):
+        text += _intake_line()
     (data / roster.ROSTER_NAME).write_text(text, encoding="utf-8")
     for t in sorted(pages):
         (data / "dossiers" / t).mkdir()
         (data / "dossiers" / t / "dossier.json").symlink_to(DATA / "dossiers" / t / "dossier.json")
-    if case == "retired_paged":      # #1044 undone: MVST's last page back under data/dossiers
-        (data / "dossiers" / "MVST").mkdir()
-        (data / "dossiers" / "MVST" / "dossier.json").symlink_to(FROZEN_MVST / "dossier.json")
+    if case == "retired_paged":
+        gone = _a("retired")
+        (data / "dossiers" / gone).mkdir()
+        (data / "dossiers" / gone / "dossier.json").symlink_to(_frozen_page(gone))
+    if case == "intake_paged":
+        (data / "dossiers" / NEW).mkdir()
+        (data / "dossiers" / NEW / "dossier.json").symlink_to(
+            DATA / "dossiers" / _a("watch") / "dossier.json")
     return tmp_path
+
+
+_NAMED = {"no_roster_line": lambda: _a("watch"), "no_page": lambda: _a("watch"),
+          "active_no_page": lambda: _a("active"), "retired_paged": lambda: _a("retired")}
 
 
 def _build_twin(tree: Path, monkeypatch: pytest.MonkeyPatch) -> list[str]:
@@ -231,18 +269,30 @@ def test_every_reader_walks_exactly_the_roster(reader: str, tmp_path: Path,
     assert READERS[reader](tree, monkeypatch) == roster.covered_pages(DATA)
 
 
-@pytest.mark.parametrize("case", ["no_roster_line", "no_page", "retired_paged"])
+@pytest.mark.parametrize("case", ["no_roster_line", "no_page", "active_no_page", "retired_paged"])
 @pytest.mark.parametrize("reader", sorted(READERS))
 def test_every_reader_refuses_a_page_the_roster_does_not_agree_with(
         reader: str, case: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """THE NEGATIVE PINS: a page with no line, a covered line with no page, and a retired name's
-    page put back are each refused by every reader before it walks a single page, naming the
-    name — never a quiet walk of whatever is on disk."""
+    """THE NEGATIVE PINS: a page with no line, a watch or ACTIVE line whose page has gone, and a
+    retired name's page put back are each refused by every reader before it walks a single page,
+    naming the name — never a quiet walk of whatever is on disk. The active case is R2's (d): an
+    intake name's page is optional, an active name's is not."""
     tree = _tree(tmp_path, case)
-    name = "MVST" if case == "retired_paged" else "FUBO"
     with pytest.raises((roster.CoverageMismatchError, SystemExit)) as err:
         READERS[reader](tree, monkeypatch)
-    assert name in str(err.value)
+    assert _NAMED[case]() in str(err.value)
+
+
+@pytest.mark.parametrize("case", ["intake_no_page", "intake_paged"])
+@pytest.mark.parametrize("reader", sorted(READERS))
+def test_an_intake_name_leaves_every_reader_working_with_or_without_its_page(
+        reader: str, case: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R2 (b), review of #1092. A name taken in is one appended `intake` line, and its first build
+    may be refused or fail after its spend (GOOGL's was, #1077): with no page yet every reader
+    walks the covered names as before, and once the page is committed it is walked with them."""
+    tree = _tree(tmp_path, case)
+    want = sorted(roster.covered_pages(DATA) + ([NEW] if case == "intake_paged" else []))
+    assert READERS[reader](tree, monkeypatch) == want
 
 
 def test_a_build_the_roster_refuses_leaves_the_served_mirror_as_it_was(
@@ -263,7 +313,7 @@ def test_a_build_the_roster_refuses_leaves_the_served_mirror_as_it_was(
     monkeypatch.setattr(build, "OUT_SNAP", out_snap)
     with pytest.raises(SystemExit) as err:
         build.main([])
-    assert "FUBO" in str(err.value)
+    assert _a("watch") in str(err.value)
     assert (out_doss / "served.json").is_file() and (out_snap / "served.json").is_file()
 
 
@@ -285,16 +335,22 @@ def test_the_corpus_walk_is_the_roster() -> None:
 
 # --- assembly: the roster decides the work ------------------------------------------------------
 
-def _dossier_cli(monkeypatch: pytest.MonkeyPatch, ticker: str) -> tuple[int, list[str]]:
+def _dossier_cli(monkeypatch: pytest.MonkeyPatch, ticker: str) -> tuple[int, list[str], int]:
+    """Drive `vinci dossier --ticker T` on the path that BUILDS A MODEL CLIENT (no `--no-llm`):
+    returns (exit code, names the cohort was asked to assemble, clients built). A client built for
+    a refused name is spend the gate exists to prevent (review of #1092, R6: with `--no-llm` the
+    client path never ran, so moving the check below it would still have passed)."""
     from vinci import cli
     from vinci.dossier import assemble
 
     built: list[str] = []
+    clients: list[str] = []
     fin = SimpleNamespace(data_record=SimpleNamespace(identity=SimpleNamespace(ticker=ticker)))
     monkeypatch.setattr(assemble, "load_finalists", lambda *a, **k: [fin])
 
-    def _no_spend(*_: Any, **__: Any) -> Any:
-        raise AssertionError("a model client was built for a name the roster refuses")
+    def _client(cls: Any, *_: Any, **__: Any) -> Any:
+        clients.append(ticker)   # recorded, never raised: the CLI catches a client's exception
+        return object()
 
     def _cohort(finalists: list[Any], **_: Any) -> tuple[list[Any], list[str]]:
         built.extend(f.data_record.identity.ticker for f in finalists)
@@ -302,30 +358,45 @@ def _dossier_cli(monkeypatch: pytest.MonkeyPatch, ticker: str) -> tuple[int, lis
 
     import vinci.graph.llm as llm
 
-    monkeypatch.setattr(llm.AnthropicLlmClient, "from_config", classmethod(_no_spend))
+    monkeypatch.setattr(llm.AnthropicLlmClient, "from_config", classmethod(_client))
     monkeypatch.setattr(assemble, "assemble_cohort", _cohort)
-    args = argparse.Namespace(mode="assemble", top=None, ticker=ticker, no_llm=True, json=False,
+    args = argparse.Namespace(mode="assemble", top=None, ticker=ticker, no_llm=False, json=False,
                               show_proposal=False, peers=None, scenario=None)
-    return cli._cmd_dossier(args), built
+    return cli._cmd_dossier(args), built, len(clients)
 
 
-@pytest.mark.parametrize("ticker", ["MVST", "FUBO", "ZZZZ"])
-def test_assembly_refuses_a_name_that_is_not_active_before_any_model_call(
-        ticker: str, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
-    """A retired name (MVST), a watch name (FUBO, whose page stays as committed) and a name with
-    no line are refused before any client exists and before the cohort is assembled."""
+@pytest.mark.parametrize("status", ["retired", "watch", "unlisted"])
+def test_assembly_refuses_a_name_that_is_not_buildable_before_any_model_client(
+        status: str, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    """A retired name, a watch name (its page stays as committed) and a name with no line are
+    refused before any client is built and before the cohort is assembled."""
     monkeypatch.chdir(ROOT)
-    rc, built = _dossier_cli(monkeypatch, ticker)
-    assert rc == 1 and built == []
+    ticker = NEW if status == "unlisted" else _a(status)
+    rc, built, clients = _dossier_cli(monkeypatch, ticker)
+    assert rc == 1 and built == [] and clients == 0
     out = capsys.readouterr().out
     assert "REFUSED 1 of 1" in out and ticker in out
 
 
 def test_assembly_proceeds_for_an_active_name(monkeypatch: pytest.MonkeyPatch) -> None:
-    """THE CONTROL: an active name (SMPL) reaches the cohort."""
+    """THE CONTROL: an active name reaches the cohort, its client built."""
     monkeypatch.chdir(ROOT)
-    rc, built = _dossier_cli(monkeypatch, "SMPL")
-    assert rc == 0 and built == ["SMPL"]
+    ticker = _a("active")
+    rc, built, clients = _dossier_cli(monkeypatch, ticker)
+    assert rc == 0 and built == [ticker] and clients == 1
+
+
+def test_a_first_build_needs_one_appended_intake_line(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """R2 (a), review of #1092. A followed name with no page (MNST today, RUNBOOKS §i) is taken
+    in by ONE appended line, `intake`, and its first paid build then runs — with no page yet, so
+    no reader refuses meanwhile. Without the line it is refused, as every unlisted name is."""
+    tree = _tree(tmp_path, "intake_no_page")
+    monkeypatch.chdir(tree)
+    assert roster.require_buildable(tree / "data", NEW).status == "intake"
+    rc, built, clients = _dossier_cli(monkeypatch, NEW)
+    assert rc == 0 and built == [NEW] and clients == 1
+    assert NEW not in roster.covered_pages(tree / "data")
 
 
 def test_the_scratch_tree_links_pages_and_copies_nothing_it_writes(tmp_path: Path) -> None:

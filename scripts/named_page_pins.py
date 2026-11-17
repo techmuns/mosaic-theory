@@ -257,7 +257,9 @@ def main(argv: list[str]) -> int:
                 print(f"    invariant  {s}")
     every = {s for t in names for k in found[t].values() for s in k}
     print(f"--- (test function, name) pairs: value {tv}, invariant {ti}; distinct test functions "
-          f"{len(every)} in {len({s.split('::')[0] for s in every})} files")
+          f"{len(every)} in {len({s.split('::')[0] for s in every})} files — a LOWER BOUND (a read "
+          f"through another module's helper, or a ticker built at run time, is not seen), and the "
+          f"value/invariant split is a mechanical heuristic, read each site before acting on it")
     return 0
 
 

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -255,16 +256,27 @@ def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
 
 
 # --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
+_ARCHIVE_KEY = re.compile(r"(.+)-\d{4}-\d{2}-\d{2}")
+
+
 def _retired_archives(archived: dict[str, sc.ScenarioRecord]) -> dict[str, roster.Move]:
     """ARCHIVED BECAUSE THE NAME LEFT COVERAGE, not because a record replaced it (2026-11-09). A
-    retired name's record has no successor to point at, and writing one would invent it, so each
-    archive that points nowhere is accepted only for a name the COVERAGE ROSTER retires, beside the
-    record of the operator's ruling the roster's move cites (W27: the list was kept here by hand,
-    so each retirement edited it). An archive that points nowhere for any other reason still
-    fails, and so does a "retired" one that names a successor or a live record."""
+    retired name's record has no successor to point at, and writing one would invent it. So the
+    archives of every name the COVERAGE ROSTER retires are named here, keyed as the seal manifest
+    and the archive folder key them, beside the move that retired the name (W27: the list was kept
+    here by hand, so each retirement edited it). Derived from the ROSTER's names and the SEAL's
+    keys, never from the archives' own pointers, so a retired name's archive that names a
+    successor, or one the seal names and the folder lacks, is still caught (review of #1092, R5).
+    An archive that points nowhere for any other reason still fails."""
     gone = roster.retired(ROOT / "data")
-    return {key: gone[rec.ticker.upper()] for key, rec in sorted(archived.items())
-            if rec.ticker.upper() in gone and not rec.superseded_by}
+    keys = set(seal.load_manifest(ROOT)) | set(archived)
+    out: dict[str, roster.Move] = {}
+    for key in sorted(keys):
+        m = _ARCHIVE_KEY.fullmatch(key)
+        ticker = archived[key].ticker.upper() if key in archived else (m.group(1) if m else "")
+        if m and ticker in gone:
+            out[key] = gone[ticker]
+    return out
 
 
 def _paged_tickers() -> set[str]:
@@ -283,7 +295,9 @@ def _archive_pointer_problems(
             if not rec.superseded_by:
                 out.append(f"{key} is archived but points nowhere")
             continue
-        if rec.superseded_by:
+        # an older archive of a retired name may point at the next archive of its own chain;
+        # anything else it names is a successor that does not exist, since the name has no record
+        if rec.superseded_by and rec.superseded_by not in archived:
             out.append(f"{key} names a successor ({rec.superseded_by}) — superseded, not retired")
         if rec.ticker.upper() in live:
             out.append(f"{key}: {rec.ticker} still has a LIVE record — a retired name has none")
@@ -350,6 +364,27 @@ def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: st
         want = "is not archived"
     problems = _archive_pointer_problems(live, archived, retired, paged)
     assert any(want in p for p in problems), problems
+
+
+@pytest.mark.parametrize("case", ["names_a_successor", "not_archived"])
+def test_the_retired_set_is_the_rosters_so_a_derived_read_still_refuses(case: str) -> None:
+    """R5 (review of #1092). The guard's retired set is DERIVED, and a derivation that read the
+    archives' own pointers (`not superseded_by`) could never see the two shapes it exists to
+    refuse: a retired name's archive that names a successor dropped out of the set, and so did an
+    archive the folder lost. Here the set is derived AFTER the change, as the positive test derives
+    it on the committed tree, and both still refuse."""
+    live = sc.all_records(root=ROOT)
+    archived = sc.all_archived(root=ROOT)
+    key = "MVST-2026-07-22"
+    if case == "names_a_successor":
+        archived[key] = archived[key].model_copy(update={"superseded_by": "MVST-2026-11-12"})
+        want = "superseded, not retired"
+    else:
+        archived.pop(key)
+        want = "is not archived"
+    problems = _archive_pointer_problems(live, archived, _retired_archives(archived),
+                                         _paged_tickers())
+    assert any(want in p and key in p for p in problems), problems
 
 
 def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> None:

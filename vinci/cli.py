@@ -555,21 +555,22 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     if not finalists:
         print("no finalists — run `vinci screen` then `vinci rank` first")
         return 1
-    # THE ROSTER DECIDES THE WORK (W27): a page is assembled only for an `active` name — a `watch`
-    # page stays as committed, a `retired` name has none, and a name with no line was never taken
-    # into coverage. Asked of every finalist BEFORE any model client exists, so a refusal costs
-    # nothing, and one refused name refuses the run rather than spending on the rest of it.
+    # THE ROSTER DECIDES THE WORK (W27): a page is assembled only for an `active` name, or an
+    # `intake` name's first page — a `watch` page stays as committed, a `retired` name has none,
+    # and a name with no line was never taken into coverage. Asked of every finalist BEFORE any
+    # model client exists, so a refusal costs nothing, and one refused name refuses the run rather
+    # than spending on the rest of it.
     from vinci import coverage_roster as roster
 
     refused: list[str] = []
     for fin in finalists:
         try:
-            roster.require_active(cfg.data_dir, fin.data_record.identity.ticker)
+            roster.require_buildable(cfg.data_dir, fin.data_record.identity.ticker)
         except roster.NotActiveError as exc:
             refused.append(str(exc))
     if refused:
         print(f"=== dossier · REFUSED {len(refused)} of {len(finalists)} finalist(s) before any "
-              f"model call: not active on the coverage roster ===")
+              f"model call: neither intake nor active on the coverage roster ===")
         for line in refused:
             print(f"  {line}")
         return 1

@@ -757,13 +757,15 @@ COVERAGE = ROOT / "data" / "coverage_roster.jsonl"
 
 
 def _covered_pages() -> list[str]:
-    """The names the mirror publishes: the COVERAGE ROSTER's active and watch names, sorted, once
-    the committed pages agree with it. Stdlib twin of `vinci.coverage_roster.covered_pages` (the
-    build fence forbids the import); `tests/test_coverage_roster.py` pins the two against each
-    other on the real committed tree. This twin reads each name's latest move and checks the
-    pages; the roster's own form (order, fields, canonical lines) is the backend reader's, run in
-    the suite. A disagreement stops the build naming every name, never a quiet publish of whatever
-    is on disk: a page is published because its name is covered, not because its folder exists."""
+    """The names the mirror publishes: the COVERAGE ROSTER's active and watch names, and an
+    intake name
+    once its first page is committed, sorted, once the committed pages agree with it. Stdlib
+    twin of `vinci.coverage_roster.covered_pages` (the build fence forbids the import);
+    `tests/test_coverage_roster.py` pins the two against each other on the real committed tree.
+    This twin reads each name's latest move and checks the pages; the roster's own form (order,
+    fields, canonical lines) is the backend reader's, run in the suite. A disagreement stops the
+    build naming every name, never a quiet publish of whatever is on disk: a page is published
+    because its name is covered, not because its folder exists."""
     if not COVERAGE.is_file():
         raise SystemExit(f"no coverage roster at {COVERAGE} — the mirror publishes covered names")
     latest: dict[str, str] = {}
@@ -777,12 +779,13 @@ def _covered_pages() -> list[str]:
                  if t not in latest]
                 + [f"{t} is {latest[t]} on the roster and has no committed page"
                    for t in sorted(covered - paged)]
-                + [f"{t} is {latest[t]} on the roster and still has a committed page"
-                   for t in sorted((paged & set(latest)) - covered)])
+                + [f"{t} is retired on the roster and still has a committed page"
+                   for t in sorted(paged) if latest.get(t) == "retired"])
     if problems:
         raise SystemExit(f"the committed pages disagree with {COVERAGE.relative_to(ROOT)}: "
                          + "; ".join(problems))
-    return sorted(covered)
+    # an `intake` name is published once its first page is committed, and needs none before
+    return sorted(covered | {t for t in paged if latest.get(t) == "intake"})
 
 
 def _git_sha() -> str | None:

@@ -20,7 +20,7 @@ import pathlib
 import warnings
 
 import vinci.scenarios as sc
-from tests.sealed_corpus import live_sealed
+from tests.sealed_corpus import live_records
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -54,9 +54,10 @@ def test_every_committed_record_round_trips_byte_identical(tmp_path: pathlib.Pat
             out = sc.write_record(rec, root=tmp_path)
         assert out.read_text() == f.read_text(), f"{f.stem} churned on a no-op write"
         seen += 1
-    # every live record the seal holds (9 until AORT was archived, 2026-11-09; 8 until MVST was,
-    # 2026-11-12): the count is the seal's, which an archive rewrites, never a literal here (W27)
-    assert seen == len(live_sealed(ROOT)), f"expected the committed corpus, saw {seen}"
+    # every live record: the sealed ones the seal names, pending ones counted apart (9 until AORT
+    # was archived, 2026-11-09; 8 until MVST was, 2026-11-12). The sealed count is the seal's,
+    # which an archive rewrites, never a literal here (W27)
+    assert seen == len(live_records(ROOT)), f"expected the committed corpus, saw {seen}"
 
 
 def test_a_stated_entry_basis_survives_the_write(tmp_path: pathlib.Path) -> None:

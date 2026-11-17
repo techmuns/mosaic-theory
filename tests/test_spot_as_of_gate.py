@@ -37,7 +37,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
-from tests.sealed_corpus import live_sealed
+from tests.sealed_corpus import live_records
 
 SMPL = Path("scenarios/SMPL.json")
 
@@ -134,10 +134,18 @@ def test_a_spot_dated_after_its_own_underwrite_is_refused_at_any_schema(tmp_path
     assert "AFTER the underwrite date" in str(exc.value), str(exc.value)
 
 
+#: EVERY RECORD CARRYING A SPOT DATE when the count stopped being a literal (W27, 2026-11-17):
+#: GOOGL at schema 1.5, where the version gate owes it, and the four schema-1.3 records the gate
+#: does not reach (Codex P2 on #1092). Read against the LIVE records, so archiving one at a
+#: retirement edits nothing here, while losing one of their stamps still goes red.
+STAMPED = frozenset({"GOOGL", "IT", "NCNO", "SMPL", "WERN"})
+
+
 def test_the_live_stamped_records_all_precede_their_underwrite() -> None:
     """The measurement the rule above rests on, pinned so a later record cannot quietly invert it
     and be excused as 'how it has always been'."""
     checked, walked, owed = 0, 0, set()
+    stamped: set[str] = set()
     required = sc._schema_ver(sc.SPOT_AS_OF_REQUIRED_FROM)
     for p in sorted(Path("scenarios").glob("*.json")):
         if p.stem.startswith("_"):
@@ -149,14 +157,18 @@ def test_the_live_stamped_records_all_precede_their_underwrite() -> None:
         if not doc.get("spot_as_of"):
             continue
         owed.discard(p.stem)
+        stamped.add(p.stem)
         checked += 1
         assert str(doc["spot_as_of"]) <= str(doc["underwrite_date"])[:10], (
             f"{p.stem}: spot dated {doc['spot_as_of']} against underwrite {doc['underwrite_date']}")
-    # NOT A LITERAL (W27): six stamped until MVST's record was archived (2026-11-12), five since,
-    # and each retirement edited the count. The walk sees every live record the seal holds, every
-    # record at or past the stamp's schema carries one, and at least one stamp is checked.
-    assert walked == len(live_sealed(Path("."))), f"walked {walked} of the sealed live records"
+    # NOT A COUNT (W27): six stamped until MVST's record was archived (2026-11-12), five since,
+    # and each retirement edited the count. The walk sees every live record, every record at or
+    # past the stamp's schema carries one, and every STAMPED record still live still carries its.
+    live = live_records(Path("."))
+    assert walked == len(live), f"walked {walked} of the live records"
     assert not owed, f"{sorted(owed)}: at or past {sc.SPOT_AS_OF_REQUIRED_FROM}, no spot date"
+    lost = sorted((STAMPED & live) - stamped)
+    assert not lost, f"{lost} carried a spot date and no longer do — their legs are unauditable"
     assert checked >= 1, "no live record carries a spot date — the check above is vacuous"
 
 

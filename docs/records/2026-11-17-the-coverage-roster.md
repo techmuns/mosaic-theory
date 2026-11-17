@@ -7,11 +7,11 @@ supersedes:
 superseded-by:
 ---
 
-# THE COVERAGE ROSTER (W27): which names the fund covers is one dated file, `data/coverage_roster.jsonl`, and every reader that walks the covered names reads it, the pages checked against it; retiring MVST or AORT the roster's way is one roster line + the page's own 9 files + 0 pin sites (#1044 touched 32 files, #942 30), and a retirement today still carries the pin sites that read that name's living page, measured per name (211 value pins and 239 invariant reads at `4336b542`); nothing rendered moves ($0)
+# THE COVERAGE ROSTER (W27): which names the fund covers is one dated file, `data/coverage_roster.jsonl`, and every reader that walks the covered names reads it, the pages checked against it; retiring MVST or AORT the roster's way is one roster line + the page's own 9 files + 0 pin sites (#1044 touched 32 files, #942 30), and a retirement today still carries the pin sites that read that name's living page, measured per name (at least 211 value pins and 239 invariant reads at `4336b542`; a lower bound, the split heuristic); nothing rendered moves ($0)
 
 **WHAT.**
 - **The roster.** `data/coverage_roster.jsonl` holds one move per line: a `date`, a `ticker`, the
-  `status` it moves to (`active`, `watch` or `retired`), the operator's `ruling` in their own words,
+  `status` it moves to (`intake`, `active`, `watch` or `retired`), the operator's `ruling` in their own words,
   the `source` that carries it, and the `record` that explains it (or null). A name's status is
   its latest line. A move is appended, never edited, so a dated line is history. The file holds 28
   moves:
@@ -46,11 +46,17 @@ superseded-by:
     `vinci dossier inputs-backfill --all`;
   - the fact layer's `pages` scope, `vinci/facts/scope.py`, whose stated `RULE` is restated to
     say so.
-- **Assembly is the work an active name gets.** `vinci dossier`, for `--ticker` and `--top` alike,
-  refuses every finalist whose roster status is not `active`. A watch page stays as committed, a
-  retired name has no page, and a name with no line was never taken into coverage. The check runs
-  before any model client exists, so a refusal costs nothing, and one refused name refuses the
-  run.
+- **Assembly is the work an active name gets, and an intake name's first page.** `vinci dossier`,
+  for `--ticker` and `--top` alike, refuses every finalist whose roster status is neither `intake`
+  nor `active`. A watch page stays as committed, a retired name has no page, and a name with no line
+  was never taken into coverage. The check runs before any model client exists, so a refusal
+  costs nothing, and one refused name refuses the run.
+- **`intake`, a fourth status, is a name's way in** (review of #1092, R2). A name is taken in by
+  ONE appended `intake` line. It is assembled like an active name, and its page is optional, so a
+  first build refused or failed after its spend (as GOOGL's was, #1077) leaves every reader
+  working. Once its page is committed it is walked with the covered names, and the PR that commits
+  it appends the move to `active` (or `watch`). An `active` or `watch` name whose page vanishes
+  is still refused, and so is a committed page with no line. RUNBOOKS §i carries the step.
 - **The monitor reads no roster, and agrees with it by a pin.** The monitor marks decisions and
   records: its freshness set is the live ledger decisions plus the `watch` and `pending_analyst`
   records. B's design keeps coverage apart from verdicts and positions, and a live decision on a
@@ -64,8 +70,12 @@ superseded-by:
   monitor code is main's.
 - **The test-side lists a retirement used to edit now derive:**
   - `test_record_legibility`'s hand list of retired archives comes from the roster;
-  - eight record-count pins compare their walk with the seal manifest's live records
-    (`tests/sealed_corpus.py`), which every archive already rewrites;
+  - eight record-count pins compare their walk with every live record
+    (`tests/sealed_corpus.live_records`). That is the seal manifest's live keys, which every
+    archive already rewrites, plus any record at an UNSEALED status (`pending_analyst`, which the
+    machine writes on a name's next underwrite) counted apart from the records themselves. So a
+    pending record reddens nothing, and a sealed record the walk drops still goes red. The first
+    cut counted the seal alone, which a pending record would have broken (review of #1092, R1);
   - the page-count floor compares with the roster.
 
 **WHY.** The code held no list of the names the fund covers. Coverage was whichever page was
@@ -195,8 +205,9 @@ neither retired name has a page. So nothing was stopped for.
     behaviour. The rule allows these on a living page, and they still break when the name
     leaves.
 
-  At `4336b542` there are **450 (test function, name) pairs: 211 value and 239 invariant**, in
-  385 distinct test functions in 98 files. The count is printed by `scripts/named_page_pins.py
+  At `4336b542` there are **at least 450 (test function, name) pairs: 211 value and 239
+  invariant**, in 385 distinct test functions in 98 files. That is a lower bound, and the
+  value/invariant split is a mechanical heuristic: the follow-up reads each site. The count is printed by `scripts/named_page_pins.py
   4336b542`, run read-only. A (test, name) pair is one site; `files` counts distinct files.
 
   | name | value (a) | invariant (b) | files |
@@ -280,36 +291,53 @@ neither retired name has a page. So nothing was stopped for.
    retirement after the follow-up still edits a test that reads the retired page by name.
 2. **A paid or `--no-llm` build of a watch or unlisted name is refused.** That includes a `--top N`
    run of screen finalists not yet on the roster. Building one means appending its move to
-   `active` first, with the ruling. This is what B's three statuses mean: the status decides the
-   work. Falsifier: a build the operator asked for is refused while its name is active.
+   `intake` (a first page) or `active` first, with the ruling. This is what B's statuses mean: the
+   status decides the work. Falsifier: a build the operator asked for is refused while its name is
+   intake or active.
 3. **A synthetic tree with pages needs a roster.** Six test files gained one.
 4. **Two pins changed shape.**
-   - `test_scenarios`'s two EXACT record counts now take their number from the seal manifest. A
-     record added with its seal entry no longer edits that test, and the seal diff carries the
-     add.
-   - `test_spot_as_of_gate`'s floor of five stamped records became three checks: the walk sees
-     every sealed live record, every record at or past schema 1.5 carries a stamp, and at least
-     one stamp is checked. A pre-1.5 record losing its stamp is no longer caught there; nothing
-     else that pin checked is lost.
+   - `test_scenarios`'s two EXACT record counts now take their number from `live_records`, the
+     seal's live keys plus the pending records. They still force the walk to see every sealed live
+     record and every pending one. They no longer force an edit when a record is added: a sealed
+     add is carried by the seal diff, a pending add by nothing.
+   - `test_spot_as_of_gate`'s floor of five stamped records became four checks:
+     - the walk sees every live record;
+     - every record at or past schema 1.5 carries a stamp;
+     - every record stamped when the count stopped being a literal still carries its stamp while
+       it is live: GOOGL, plus IT, NCNO, SMPL and WERN, which the version gate does not reach
+       (Codex P2 on #1092);
+     - at least one stamp is checked.
 
-   Falsifier for both: a record walk that misses a live record still passes.
+     A retirement edits nothing there; a lost stamp still goes red.
+
+   Falsifier for both: a record walk that misses a sealed live record, or a stamped record that
+   loses its stamp, still passes.
 5. **The screen can still rank a retired name.** The queue holds no exclusion, by the operator's
    2026-11-05 ruling, but assembly now refuses one. That closes #942's and #1044's falsifier, "an
    assembly of MVST started without the operator asking".
 6. **A watch page carries no dated "frozen" line.** B's design gave each one such a line, naming
    its known defects. That is a render change, under the PREVIEW RULE, and is not built here
    (STATE row 41, open item (b)).
-7. **A new name's line and its first page land together.** An `active` line with no page is
-   refused by every reader, as the brief's pin requires, and `vinci dossier` builds only an
-   active name. So between appending a new name's line and committing its first page, the mirror
-   and the fleet passes refuse loud. If that first assembly fails after its spend inside a
-   `--top` cohort that wrote another page, the closing mirror raises naming the name. The written
-   pages stay on disk and a $0 re-run of the mirror publishes them (found by `/code-review`).
-   The served mirror is left as it was: `frontend/build.py` checks the roster BEFORE it clears
-   `frontend/dossiers` and `frontend/snapshots`. The first cut checked after clearing them, so a
-   refused build deleted the served pages. The second review found that and it is fixed, pinned
-   by `test_a_build_the_roster_refuses_leaves_the_served_mirror_as_it_was`, which fails on the
-   old order.
-   Falsifier: a new name's line and page are committed apart, or an operator is blocked from a
-   first build.
-8. **$0.** No model call and no vendor call, and no page is rebuilt or re-rendered.
+7. **A new name's first build no longer stalls the readers** (`intake`, item R2 of the review
+   of #1092; it replaces this item's first text, which accepted the stall). Before `intake`, the
+   only buildable status was `active`, and an active line with no page was refused everywhere.
+   Taking a followed name in (MNST is followed today with no line) made every reader refuse until
+   its page was committed, and a first build refused after its spend left them refusing. The
+   served mirror is left as it was on any refusal: `frontend/build.py` checks the roster BEFORE
+   it clears `frontend/dossiers` and `frontend/snapshots`. The first cut checked after clearing
+   them, so a refused build deleted the served pages; the second review found it, and it is fixed
+   and pinned by `test_a_build_the_roster_refuses_leaves_the_served_mirror_as_it_was`, which
+   fails on the old order. Falsifier: an `intake` name lingers with a committed page and no move
+   to active (not enforced; the PR that commits the page appends it).
+8. **Two spends the gate does not reach (DEFER, review of #1092, R7).**
+   - The gate sits only in `vinci dossier` (`_cmd_dossier`). `assemble.assemble_cohort` and
+     `assemble_one` are unguarded: their only other caller today is the $0 pre-spend check.
+   - `vinci log-verdict`'s ten-draw confirmation (about $3–4) still spends on a watch page. That
+     is a verdict path, not a rebuild, and a verdict on a watch name is the operator's to log.
+
+   Falsifier: a paid build reaches a non-buildable name through either path without the operator
+   asking.
+9. **`intake` is a fourth status the marking did not name.** It is a way in, governs no current
+   name, and is reversible by a line. Falsifier: the operator rules the entry state should be
+   named or shaped otherwise.
+10. **$0.** No model call and no vendor call, and no page is rebuilt or re-rendered.
