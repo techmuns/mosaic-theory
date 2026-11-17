@@ -150,6 +150,8 @@ superseded-by:
   - **Synthesis requests:** 0 of 25 differ, and the frozen panel is 0 of 6, so the row-53 panel check is not owed. The field sits outside `mechanical`.
   - **Rendered:** 0 of 26 committed pages re-render differently under head's code. The only frontend file that differs is `snapshots/extraction_versions.json`, which carries the new vintage.
   - **Downstream:** the decision ledger, the scoring report and the monitor are identical at both refs. The screen and the theme desk were not run (no `--run-screen`, no `--theme-data`).
+  - **Re-run at review round 1's head** `427240f4` (base `bdb2d45d`, main merged; patch-id `5dba2f80`). Fail first: 38 of 131 nodes red at base, 0 at head. Pages: 25 of 26 built, 0 of 25 move (PARR as above). Synthesis requests: 0 of 25 differ, frozen panel 0 of 6. Rendered: 0 re-renders. The ledger, scoring report and monitor are identical.
+  - **What the fail-first count shows (review round 1, note 6).** Most of those nodes are the new test file failing to collect at base (`FILED_SHEETS` absent), or pins on names and signatures base lacks (`_only_stated_dates`, `load_bundle(read_on=)`). They show the code is new, not what it does. The behaviour evidence is the hand-run base/head table above, and round 1's pins, each shown red on the prior head.
 
 **BOUNDARY.**
 - **Pages:** the 26 committed `data/dossiers/*/dossier.json` at main `4889ddba` (2026-11-17), the coverage roster's covered names (11 active, 15 watch).
