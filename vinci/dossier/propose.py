@@ -1451,12 +1451,22 @@ def build_r3_template(doc: dict[str, Any]) -> dict[str, Any]:
     """
     anchor_fy = _get(doc, "mechanical", "ev_gap", "anchor_fy")
     multiple_why = _r3_multiple_why(doc)
+    ntm_line = _get(doc, "forward_consensus", "pe_eps_basis", "ntm")
+    eps_line_why = (
+        "gaap | normalized — the line this leg's EPS is on. The bear bound compares it with the "
+        f"NTM consensus only on a matching line; this page's NTM P/E is struck on "
+        f"{ntm_line or 'no line the page names'} (forward_consensus.pe_eps_basis.ntm), and on any "
+        "other line the bear needs a miss case stated on its own line")
     scenarios: dict[str, Any] = {}
     for leg in LEGS:
         cell: dict[str, Any] = {
             "eps": None,
             f"{COMMENTARY_PREFIX}eps_why_no_anchor": R3_EPS_WHY,
             "eps_derivation": "",                    # REQUIRED — where this number came from
+            # (recipe 3b (3)) WHICH LINE the EPS above is on — REQUIRED, never proposed: R3 fills
+            # no EPS, so there is no page figure whose line it could state
+            "eps_line": None,
+            f"{COMMENTARY_PREFIX}eps_line_why": eps_line_why,
             "multiple": None,
             f"{COMMENTARY_PREFIX}multiple_why_no_anchor": multiple_why,
             "multiple_derivation": "",               # REQUIRED
