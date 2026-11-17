@@ -105,8 +105,10 @@ fallback when no filing period end is read, and FUBO's page reads its 10-Q's.)
 - **Mutations, one per pin, each restored to the commit.** Each turned red the pin it was aimed
   at:
   1. `FreshnessRow` regains `stale_tags`: the surface pin and the read-back pin;
-  2. the panel reads `f.stale_tags` again: the surface pin;
-  3. `vinci/monitor.py` imports `stale_served`: the no-reader pin;
+  2. the panel reads `f.stale_tags` again, and separately another view under `frontend/views/`
+     reads it: the surface pin, both times;
+  3. `vinci/monitor.py` imports `stale_served`, under an alias: the no-reader pin, which reads
+     imports and calls in the AST across `vinci/` and `scripts/`, its own module included;
   4. a committed day carries `["debt_current"]`: the read-back pin.
 - **Never-assert-absence searches.** Vocabularies: `stale_tags`, `_stale_tags`, `stale_served`,
   `stale tag`, `MC1`, and `CoverageStatus.STALE`. The last is the screen envelope's price
