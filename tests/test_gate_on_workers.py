@@ -230,11 +230,12 @@ def test_the_guard_sits_between_the_mark_and_the_mirror_build() -> None:
 def test_the_checkout_starts_no_git_maintenance_beside_its_walk(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """The fixture's commit starts no `git maintenance run --auto` (nor, on a git older than
-    maintenance, `gc --auto`). Git starts it DETACHED, so it outlives the commit and creates and
-    removes `.git/objects/maintenance.lock` while `_checkout` walks the repo: CI gate run
-    44051868311 (PR #1099's head d33f45ca, 2026-11-17) failed with FileNotFoundError on that lock,
-    listed by `rglob` and gone by `lstat`. Read from git's own trace of the run, so it holds
-    whether the race lands or not; the trace must show the commit, or it saw nothing."""
+    maintenance, `gc --auto`). A recent git starts it DETACHED (`--detach`, as the trace shows on
+    git 2.50), so it can outlive the commit and create and remove `.git/objects/maintenance.lock`
+    while `_checkout` walks the repo: CI gate run 44051868311 (PR #1099's head d33f45ca,
+    2026-11-17) failed with FileNotFoundError on that lock, listed by `rglob` and gone by `lstat`.
+    Read from git's own trace of the run, so it holds whether the race lands or not; the trace
+    must show the commit, or it saw nothing."""
     trace = tmp_path / "git-trace"
     monkeypatch.setenv("GIT_TRACE", str(trace))
     _checkout(tmp_path)
