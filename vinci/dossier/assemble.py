@@ -817,6 +817,31 @@ def _require_spool(bundle: CiqBundle, llm: LlmClient | None) -> None:
         driver_evidence.EvidenceSpool.from_env()
 
 
+def _refuse_unread_calls(bundle: CiqBundle, transcript: str | None,
+                         llm: LlmClient | None) -> None:
+    """A PAID BUILD READS EVERY CALL ON FILE, OR SPENDS NOTHING (2026-11-17). `assemble_one` asks
+    right after it reads the slice, before the covenant phase, the first call it pays for.
+
+    The reader leaves out a call whose read fails and the page flags it
+    (`ciq_sheets.unparsed_transcript_flag`, RA-D11). For a paid build that was the wrong place to
+    be loud: VRRM's check build (run `6043fb83`) read 1 of its 2 calls and spent $5.15 on a page
+    that lost all 12 of the Q1 call's driver rows, so the page was held and the money was lost
+    (`docs/records/2026-11-17-vrrm-check-build-held.md`). The page pass, the run cut and the
+    confirmation already refuse a call on disk that does not read (`driver_pass.prepare`,
+    `transcript_run_pass.run`, `confirmation.page_transcripts`); the build was the one reader
+    that went on. The $0 build (``llm`` None: the precheck's `prespend.mechanical_build`, the
+    impact child) keeps the flag, so it still says which call did not read."""
+    if llm is None:
+        return
+    if unread := ciq_sheets.unread_calls(bundle, transcript):
+        total = len(bundle.all_workbooks("transcript"))
+        raise DossierAssemblyError(
+            f"{bundle.ticker}: {len(unread)} of {total} call(s) on file did not read "
+            f"({'; '.join(unread)}) — refused before any model call, so nothing is spent; "
+            "re-run; if a call never reads, check LibreOffice (`soffice`) is installed, then "
+            "re-export it")
+
+
 def _has_transcript_text(dossier: Dossier) -> bool:
     """A transcript driver row on the page still holds its words (an assembly's own rows do)."""
     od = dossier.mechanical.operating_drivers
@@ -1267,6 +1292,7 @@ def assemble_one(
     unparsed = ciq_sheets.unparsed_transcript_flag(bundle, transcript)
     if unparsed is not None:
         flags.append(unparsed)
+    _refuse_unread_calls(bundle, transcript, llm)
     # (forward consensus) built ONCE, here: the page carries it and the GAAP-EPS momentum check
     # reads it, so the check judges the claims against the same figures the reader is shown.
     forward_consensus = ciq_sheets.forward_consensus(bundle)
