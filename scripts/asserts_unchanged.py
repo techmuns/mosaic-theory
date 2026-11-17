@@ -13,10 +13,13 @@ tree. It classifies each difference:
   not.
 - **DISABLED** (fails): the test can now stop running. Either a skip, skipif, xfail or
   importorskip decorator appears or changes (one only REMOVED runs the test more, and is not
-  DISABLED), or a skip call appears where BASE had fewer. A skip call is `pytest.skip` /
+  DISABLED), or a skip call appears that BASE did not make. A skip call is `pytest.skip` /
   `pytest.xfail` / `pytest.importorskip`, or a call to a SKIP HELPER: an imported `skip_unless_*`
-  (`tests/ciq_export_support.py`'s), or a function of the module whose own body makes a skip call.
-  Slices 2–4 of W27 each added a helper skip that the first cut, counting bare calls only, missed.
+  (`tests/ciq_export_support.py`'s), or a function of the module that makes a skip call, itself
+  or through another skip helper, to any depth. The calls are compared by WHAT they call, never
+  counted: one skip traded for another is DISABLED, as a count would net it. Slices 2–4 of W27
+  each added a helper skip that the first cut, counting bare calls only, missed, and A's review
+  of #1106 and #1107 found two more: a skip two calls down, and a swap the count read as none.
 - **CONTROL** (fails): an assertion's enclosing conditions differ, or the function gains an early
   exit. A condition is each enclosing `if` (its test), `while` or `try`. An early exit is a new
   `return`, `continue`, `break` or `raise`. A wrapped or bypassable assert reads like an unchanged
@@ -44,6 +47,7 @@ import ast
 import copy
 import subprocess
 import sys
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -101,16 +105,31 @@ class Facts:
     loops: list[str]                         # per assertion: its enclosing loops' iterables
     marks: list[str] = field(default_factory=list)       # skip/skipif/xfail decorators
     params: list[str] = field(default_factory=list)      # parametrize decorators
-    skip_calls: int = 0
+    skips: list[str] = field(default_factory=list)       # what each skip call calls
     exits: int = 0
 
 
 def skippers(source: str) -> frozenset[str]:
-    """The module's own skip helpers: its functions whose own body makes a pytest skip call."""
+    """The module's own skip helpers: its functions whose own body makes a skip call, a pytest
+    one or a call to a skip helper, to any depth (`_the_bands_export` skips only through
+    `skip_unless_export`)."""
     tree = ast.parse(source)
-    return frozenset(n.name for n in ast.walk(tree)
-                     if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef)
-                     and any(_is_pytest_call(c, SKIP_CALLS) for c in _own_nodes(n)))
+    fns = [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef)]
+    found: frozenset[str] = frozenset()
+    while True:
+        more = frozenset(n.name for n in fns if n.name not in found and any(
+            _is_pytest_call(c, SKIP_CALLS) or _is_skip_helper_call(c, found)
+            for c in _own_nodes(n)))
+        if not more:
+            return found
+        found |= more
+
+
+def _callee(node: ast.Call) -> str:
+    f = node.func
+    if isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name) and f.value.id == "pytest":
+        return f"pytest.{f.attr}"
+    return f.id if isinstance(f, ast.Name) else f.attr if isinstance(f, ast.Attribute) else ""
 
 
 def _is_skip_helper_call(node: ast.AST, helpers: frozenset[str]) -> bool:
@@ -164,7 +183,7 @@ def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[st
     for n in _own_nodes(fn):
         if isinstance(n, ast.Call) and (_is_pytest_call(n, SKIP_CALLS)
                                         or _is_skip_helper_call(n, helpers)):
-            out.skip_calls += 1
+            out.skips.append(_callee(n))
         elif isinstance(n, ast.Return | ast.Continue | ast.Break | ast.Raise):
             out.exits += 1
     return out
@@ -216,7 +235,7 @@ def compare_sources(before_src: str, after_src: str, path: str) -> dict[str, lis
         row = f"{path}::{k}"
         if b.asserts != a.asserts:
             out["READER" if b.reader_asserts == a.reader_asserts else "CHANGED"].append(row)
-        if set(a.marks) - set(b.marks) or a.skip_calls > b.skip_calls:
+        if set(a.marks) - set(b.marks) or Counter(a.skips) - Counter(b.skips):
             out["DISABLED"].append(row)
         same = b.reader_asserts == a.reader_asserts
         if (same and b.conditions != a.conditions) or a.exits > b.exits:

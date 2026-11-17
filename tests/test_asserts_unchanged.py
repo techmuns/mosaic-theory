@@ -161,3 +161,40 @@ def test_a_removed_skip_mark_is_not_disabled() -> None:
     changed = before.replace("skipif(True,", "skipif(False,")
     assert _checker().compare_sources(before, changed, "tests/test_x.py")["DISABLED"], (
         "a changed mark is still DISABLED")
+
+
+#: A SKIP TWO CALLS DOWN, AND A SKIP SWAPPED FOR ANOTHER (A's review of #1107, item 5; of #1106,
+#: item 2). `_the_bands_export` skips only through `skip_unless_export`, so a checker that read one
+#: level saw no skip in it. And a count nets a swap: the AMZN refresh pins traded `_bundle`'s skip
+#: (no live folder) for an export gate's (a re-export), one for one, so on main a drift FAILED and
+#: on the slice's head it SKIPPED, while the count read 0 disabled.
+_NESTED = BASE.replace(
+    "def test_the_count():",
+    "def _gate(t):\n    return skip_unless_export(t, 'estimates', '0' * 10, why='w')\n\n\n"
+    "def _export(t):\n    return _gate(t)\n\n\ndef test_the_count():").replace(
+    '    doc = _page("BRBR")\n', '    _export("BRBR")\n    doc = _page("BRBR")\n')
+_SWAP_BASE = BASE.replace(
+    "def test_the_count():",
+    "def _bundle(t):\n    if not t:\n        pytest.skip('no folder')\n\n\n"
+    "def _gate(t):\n    return skip_unless_export(t, 'estimates', '0' * 10, why='w')\n\n\n"
+    "def test_the_count():").replace(
+    '    doc = _page("BRBR")\n', '    _bundle("BRBR")\n    doc = _page("BRBR")\n')
+
+
+def test_a_skip_raised_two_calls_down_is_disabled() -> None:
+    """(−) A module helper that skips only through another helper still skips the test."""
+    got = _diff(_NESTED)
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], got
+
+
+def test_a_skip_swapped_for_another_is_disabled_and_the_same_one_is_not() -> None:
+    """(−) one skip traded for another is DISABLED, though the count is unchanged; (+) the same
+    skip kept, and one only removed, are not."""
+    swapped = _SWAP_BASE.replace('    _bundle("BRBR")\n', '    _gate("BRBR")\n')
+    cmp = _checker().compare_sources
+    got = cmp(_SWAP_BASE, swapped, "tests/test_x.py")
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], got
+    kept = _SWAP_BASE.replace('    doc = _page("BRBR")\n', '    doc = _page("BRBR")  # moved\n')
+    assert not cmp(_SWAP_BASE, kept, "tests/test_x.py")["DISABLED"]
+    removed = _SWAP_BASE.replace('    _bundle("BRBR")\n', "")
+    assert not cmp(_SWAP_BASE, removed, "tests/test_x.py")["DISABLED"]
