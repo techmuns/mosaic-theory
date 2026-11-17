@@ -259,7 +259,7 @@ def test_a_comps_export_that_cannot_be_parsed_is_still_recorded(tmp_path: Path) 
     comps = folder / FIXTURE["IT"]["workbook"]
     comps.write_bytes(bytes.fromhex("d0cf11e0a1b11ae1") + b"\0" * 600)   # OLE2 magic, no body
     with provenance.recording() as rec, pytest.raises(Exception):  # noqa: B017, PT011
-        inputs.load_bundle("IT", [comps])
+        inputs.load_bundle("IT", [comps], read_on=date(2026, 11, 15))
     assert [(Path(f.path).name, f.kind) for f in rec.reads().files] == [(comps.name, "comps")]
 
 
@@ -305,7 +305,7 @@ def test_the_build_records_the_stamp_off_the_real_workbook() -> None:
     wb = bundle.workbook("comps")
     assert wb is not None
     with provenance.recording() as rec:
-        inputs.load_bundle("IT", [w.path for w in bundle.workbooks])
+        inputs.load_bundle("IT", [w.path for w in bundle.workbooks], read_on=date(2026, 11, 15))
     stamps = {Path(f.path).name: f.export_date for f in rec.reads().files if f.kind}
     assert stamps.pop(wb.path.name) == FIXTURE["IT"]["export_date"]
     assert set(stamps.values()) == {None}

@@ -6471,8 +6471,9 @@ def financials_filed_through(bundle: CiqBundle, freq: str | None, *, sha256: str
     committed page's backfill.
 
     Each period column of the Balance Sheet, Income Statement and Cash Flow sheets states, in its
-    'Filing Date' row, the filing its figures were taken from: a date cell, decoded off the cell by
-    `excel_date` (an Excel serial on every export on file), never off a display string. CIQ stamps
+    'Filing Date' row, the filing its figures were taken from: a DATE-TYPED cell (an Excel serial on
+    every export on file, decoded by `excel_date`, or a date the decode path hands back), never
+    text, which is UNKNOWN rather than parsed (review round 1: a text '11/03/2026' read). CIQ stamps
     no Financials export date, so the latest of them is the earliest day the export could have
     been made, and its facts known (CLAUDE.md, PUBLISHED DATA: CIQ is not point-in-time).
 
@@ -6488,10 +6489,12 @@ def financials_filed_through(bundle: CiqBundle, freq: str | None, *, sha256: str
       (`ev_bridge.balance_sheet_date` on the quarterly Balance Sheet), so CIQ's no-value marker
       there is UNKNOWN, and an older column's date is never read in its place;
     * an older column reading CIQ's marker ('NA', '-', a blank) states no filing and is passed
-      over, counted in the note. Any other cell that is no date is UNKNOWN;
+      over, counted in the note. Any other cell that is no date, a text cell among them, is
+      UNKNOWN;
     * a date before its own column's period end files no such column, and a date after
       ``read_on``, the day the export is read, is no filing yet made: each is UNKNOWN, checks on
-      the VALUE beside the checks that a date is there.
+      the VALUE beside the checks that a date is there. ``read_on`` is the build's own instant or,
+      in a backfill, the page's assembly day — never the wall clock (review round 1).
 
     The date's ``source_ref`` names the workbook's sha256, the sheet, and the cell's row and
     column (1-based, as the workbook numbers them). Where several cells state it, the Balance
@@ -6544,8 +6547,21 @@ def financials_filed_through(bundle: CiqBundle, freq: str | None, *, sha256: str
                                    "its place", ref)
                 markers.append((label, _cell_words(cell)))
                 continue
-            if (filed := excel_date(cell)) is None:
-                return unknown(f"{at}: 'Filing Date' reads {_cell_words(cell)} at [{label}], "
+            where = f"the latest column [{label}]" if j == latest.col else f"[{label}]"
+            if isinstance(cell, datetime):
+                filed: date | None = cell.date()
+            elif isinstance(cell, date):
+                filed = cell
+            elif isinstance(cell, (int, float)) and not isinstance(cell, bool):
+                filed = excel_date(cell)
+            else:
+                # TEXT IS NEVER PARSED AS A DATE (review round 1): `excel_date` reads string
+                # formats, and a text '11/03/2026' read PRESENT through them
+                return unknown(f"{at}: 'Filing Date' reads {_cell_words(cell)} at {where}, a text "
+                               "cell, which is no date: a filing date is read off a date cell, "
+                               "never parsed from text", ref)
+            if filed is None:
+                return unknown(f"{at}: 'Filing Date' reads {_cell_words(cell)} at {where}, "
                                "which is no date", ref)
             if filed < end:
                 return unknown(f"{at}: 'Filing Date' reads {filed.isoformat()} at [{label}], "

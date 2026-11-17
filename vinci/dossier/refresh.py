@@ -78,6 +78,10 @@ _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_histo
 #: may write: the export date it states of itself, and a Financials export's stated filing date.
 #: The same keys the page drops where none is stated (`schemas.CIQ_EXPORT_DROP_WHEN_NONE`).
 _STATED_KEYS = CIQ_EXPORT_DROP_WHEN_NONE
+#: The one kind of export that states each: only the comps workbook states an export date
+#: (`inputs.export_dates`), and only a Financials export a filing date (`inputs.filed_through`).
+#: `date_semantics` counts either on whatever row carries it, so the seam places each by its kind.
+_STATED_ON: dict[str, str] = {"export_date": "comps", "filed_through": "financials"}
 
 
 def _only_stated_dates(old: Any, new: Any) -> bool:
@@ -101,11 +105,11 @@ def _only_stated_dates(old: Any, new: Any) -> bool:
     # a date already recorded is what the build READ: the seam only fills an absent one
     kept = all(o is None or o == n for key in _STATED_KEYS
                for o, n in zip(_held(old, key), _held(new, key), strict=False))
-    # a filing date is a FINANCIALS export's (`CiqExport.filed_through`): on any other row it
-    # would be counted by `date_semantics` as one
-    placed = all(r.get("kind") == "financials" for r in
+    # each stated date on the kind of export that states it (`_STATED_ON`): on any other row it
+    # would be counted by `date_semantics` as one (review rounds 0 and 1)
+    placed = all(r.get("kind") == kind for r in
                  (new.get("ciq") if isinstance(new, dict) else None) or []
-                 if isinstance(r, dict) and "filed_through" in r)
+                 if isinstance(r, dict) for key, kind in _STATED_ON.items() if key in r)
     return bool(_bare(old) == _bare(new)) and kept and placed
 
 
@@ -1379,6 +1383,17 @@ class FiledThroughStep:
                 and r.get("kind") == "financials" and "filed_through" not in r]
         if not todo:
             return {}
+        # THE PAGE'S OWN READ DAY bounds the read (review round 1): the bytes matched are the bytes
+        # its build read, so a filing after its assembly day cannot date it. Never the wall clock,
+        # which let the run day decide a value the seam then never rewrites
+        built_on = _assembly_day(doc.get("assembled_at"))
+        if built_on is None:
+            for i in todo:
+                sha = str(rows[i].get("sha256"))
+                self.looked_for.append(sha)
+                self.skipped.append(f"{self.ticker}: skipped: export {sha}: the page states no "
+                                    "assembly day to bound the read by")
+            return {}
         found = page_inputs.candidates(self.ticker, self.roots)
         filled = list(rows)
         for i in todo:
@@ -1398,7 +1413,8 @@ class FiledThroughStep:
             # by a computed bundle address (the CIQ_MODULES drift guard reads only literal ones)
             wb = next((w for w in bundle.workbooks
                        if w.kind == "financials" and w.freq == freq), None)
-            ft = page_inputs.filed_through(bundle).get(path) if wb is not None else None
+            ft = (page_inputs.filed_through(bundle, read_on=built_on).get(path)
+                  if wb is not None else None)
             if ft is None:
                 what = f"{freq} Financials" if freq else "Financials"
                 self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) not "
@@ -1412,6 +1428,14 @@ class FiledThroughStep:
         return {} if filled == rows else {"inputs": record | {"ciq": filled}}
 
 
+def _assembly_day(at: Any) -> date | None:
+    """The UTC day a page's ``assembled_at`` (ISO, UTC) names; None when it names none."""
+    try:
+        return date.fromisoformat(str(at)[:10]) if at else None
+    except ValueError:
+        return None
+
+
 def filed_through_transform(ticker: str, roots: Sequence[Path]) -> FiledThroughStep:
     """A `refresh_dossier` top-level step writing `inputs.ciq[].filed_through` — the latest filing
     date a recorded CIQ Financials export's statement columns state, with its cell, or UNKNOWN
@@ -1419,7 +1443,8 @@ def filed_through_transform(ticker: str, roots: Sequence[Path]) -> FiledThroughS
     STATE row 64(a)).
 
     ONLY FROM THE EXPORT THE PAGE RECORDS, BY ITS FULL SHA256, read by the build's own reader
-    (`inputs.filed_through`), as `export_date_transform` reads an export date. A row that already
+    (`inputs.filed_through`), as `export_date_transform` reads an export date, bounded by the page's
+    own assembly day, never the day the pass runs. A row that already
     carries the field is left as it is; nothing else in the record moves (`_only_stated_dates`,
     enforced by `refresh_dossier`). Each export it cannot read is named
     (`FiledThroughStep.skipped`). The write is recorded in `layer_refreshes`."""

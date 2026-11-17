@@ -32,7 +32,7 @@ import pytest
 from tests.test_analysis_as_of_knowable import _frozen
 from tests.test_analysis_as_of_skips_and_filings import _fleet, _no_local_path
 from vinci import provenance
-from vinci.dossier import ciq_sheets, inputs, refresh
+from vinci.dossier import ciq_sheets, inputs, refresh, schemas
 from vinci.dossier import valuation_basis as vb
 from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook
 from vinci.dossier.inputs_schema import FiledThrough
@@ -45,6 +45,9 @@ FIXTURE: dict[str, Any] = json.loads(
 BS, IS, CF = (f"financials|{s}" for s in ciq_sheets.FILED_SHEETS)
 #: the day the fixture's exports were read (cut 2026-11-17): no filing it states is later
 READ_ON = date(2026, 11, 17)
+#: IT's frozen page (main c58d5b2f) was assembled 2026-11-14T07:22:24Z: the day a backfill of it
+#: bounds the read by (review round 1)
+ASSEMBLED_IT = date(2026, 11, 14)
 
 
 def _serial(d: date) -> float:
@@ -351,6 +354,103 @@ def test_the_seam_refuses_a_filing_date_on_a_row_that_is_no_financials_export() 
     assert refresh._only_stated_dates(page["inputs"],
                                       _with_filed(_frozen("IT"), _read("IT"))["inputs"])
 
+
+def test_the_seam_refuses_an_export_date_on_a_row_that_is_no_comps_export() -> None:
+    """(review round 1) `date_semantics` counts an `export_date` on whatever row carries it, and
+    only the comps workbook states one (`inputs.export_dates`): the seam admits it on a comps row
+    only, as it admits `filed_through` on a Financials row only. Each stated key names its kind."""
+    page = _frozen("IT")
+    fin = copy.deepcopy(page["inputs"])
+    _quarterly({"inputs": fin})[1]["export_date"] = "2026-11-12"
+    assert not refresh._only_stated_dates(page["inputs"], fin)
+    comps = copy.deepcopy(page["inputs"])
+    (row,) = [r for r in comps["ciq"] if r["kind"] == "comps"]
+    row["export_date"] = "2026-11-12"
+    assert refresh._only_stated_dates(page["inputs"], comps)
+    assert set(refresh._STATED_ON) == set(schemas.CIQ_EXPORT_DROP_WHEN_NONE)
+
+
+def test_the_backfill_bounds_the_read_by_the_pages_assembly_day_never_the_wall_clock(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(review round 1, MEDIUM) The read-day bound is the PAGE's: the bytes a backfill reads are the
+    bytes its build read, so a filing the build could not yet have seen cannot date the page. IT's
+    frozen page was assembled 2026-11-14; its Balance Sheet's latest cell moved to 2026-11-16 is
+    after that day, so it is UNKNOWN — read against the wall clock (2026-11-17) it was PRESENT and
+    dated the page after its own build, and the seam would have kept that for good."""
+    real = ciq_sheets.financials_filed_through
+    sheets = _sheets("IT")
+    _filing_row(sheets, BS)[39] = _serial(date(2026, 11, 16))
+    held, _path = _bundle("IT", sheets)
+
+    def _reader(bundle: CiqBundle, freq: str | None, *, sha256: str,
+                read_on: date) -> FiledThrough:
+        return real(held, freq, sha256=sha256, read_on=read_on)
+
+    page = _frozen("IT")
+    i, row = _quarterly(page)
+    folder = tmp_path / "IT"
+    folder.mkdir()
+    (folder / row["file"]).write_bytes(b"one Financials export's bytes")
+    row["sha256"], row["bytes"] = provenance.file_sha256(folder / row["file"])
+    monkeypatch.setattr(ciq_sheets, "financials_filed_through", _reader)
+    # the file on disk is a stand-in for the export's bytes: the step's can-this-machine-parse-it
+    # probe (`ciq.read_sheets`) is told it parses, as the real export does
+    from vinci.dossier import ciq
+    monkeypatch.setattr(ciq, "read_sheets", lambda path, fmt=None: {})
+    out = refresh.filed_through_transform("IT", [tmp_path])(page)
+    ft = out["inputs"]["ciq"][i]["filed_through"]
+    assert ft["status"] == "unknown" and ft["value"] is None, ft
+    assert "after 2026-11-14, the day it is read" in ft["note"]
+
+
+def test_the_build_bounds_the_read_by_its_own_instant(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(review round 1, MEDIUM) The build's bound is its own instant (`built_at`, UTC, taken once in
+    `assemble`, as `_freshness_check` reads it), handed through `load_bundle`; the door takes no
+    default, so no caller can fall back to the wall clock."""
+    import inspect
+
+    from vinci.dossier import assemble
+
+    assert inspect.signature(inputs.filed_through).parameters["read_on"].default is (
+        inspect.Parameter.empty)
+    assert inspect.signature(inputs.load_bundle).parameters["read_on"].default is (
+        inspect.Parameter.empty)
+    assert ("page_inputs.load_bundle(ticker, manual.files(ticker), read_on=built_at.date())"
+            in Path(assemble.__file__).read_text())
+    seen: list[date] = []
+    want = _read("IT")                  # read before the reader is replaced below
+
+    def _reader(bundle: CiqBundle, freq: str | None, *, sha256: str,
+                read_on: date) -> FiledThrough:
+        seen.append(read_on)
+        return want
+
+    folder = tmp_path / "IT"
+    folder.mkdir()
+    fin = folder / FIXTURE["IT"]["workbook"]
+    fin.write_bytes(b"one Financials export's bytes")
+    monkeypatch.setattr(ciq_sheets, "financials_filed_through", _reader)
+    with provenance.recording() as rec:
+        inputs.load_bundle("IT", [fin], read_on=ASSEMBLED_IT)
+    assert seen == [ASSEMBLED_IT]
+    assert [f.filed_through for f in rec.reads().files] == [want]
+
+
+def test_a_text_cell_is_unknown_never_parsed_as_a_date() -> None:
+    """(review round 1) A filing date is read off a DATE-TYPED cell (an Excel serial, or a date the
+    decode path hands back), never parsed from text: '11/03/2026' as text read PRESENT through
+    `excel_date`'s string formats. Every export on file stores serials; a date-typed cell reads."""
+    from datetime import datetime
+
+    sheets = _sheets("IT")
+    _filing_row(sheets, BS)[39] = "11/03/2026"
+    ft = _read("IT", sheets)
+    assert ft.status == "unknown" and ft.value is None
+    assert "reads '11/03/2026' at the latest column [Q3 Sep-30-2026], a text cell" in str(ft.note)
+    _filing_row(sheets, BS)[39] = datetime(2026, 11, 3)
+    assert _read("IT", sheets).value == date(2026, 11, 3)
+
 def test_a_record_naming_no_financials_export_or_already_filed_is_left_alone(
         tmp_path: Path) -> None:
     step = refresh.filed_through_transform("IT", [tmp_path])
@@ -381,7 +481,7 @@ def test_the_step_fills_a_row_off_the_export_its_sha256_names(
     def _reader(bundle: CiqBundle, freq: str | None, *, sha256: str,
                 read_on: date) -> FiledThrough:
         handed.append(sha256)
-        assert read_on == date.today()            # the door reads on the day it is run
+        assert read_on == ASSEMBLED_IT            # the page's assembly day, never the wall clock
         assert freq == "quarterly" and bundle.workbook("financials", freq=freq) is not None
         return want
 
@@ -519,7 +619,7 @@ def test_the_build_records_the_date_off_the_real_workbook() -> None:
     bundle = skip_unless_export("IT", "financials", FIXTURE["IT"]["sha256"][:10], freq="quarterly",
                                 why="the filing date is read off IT's quarterly Financials export")
     with provenance.recording() as rec:
-        inputs.load_bundle("IT", [w.path for w in bundle.workbooks])
+        inputs.load_bundle("IT", [w.path for w in bundle.workbooks], read_on=READ_ON)
     by_kind: dict[str, list[FiledThrough | None]] = {}
     for f in rec.reads().files:
         if f.kind:
