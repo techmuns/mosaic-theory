@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.frozen_support import covered_pages, frozen_doc, frozen_page
+from tests.frozen_support import covered_where, frozen_doc, frozen_page
 from vinci.dossier import render as dr
 from vinci.dossier import schemas as ds
 from vinci.dossier.ev_gap import build_ev_gap
@@ -62,10 +62,11 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     # in its own text (a non-operating read whose window ends before the latest filed quarter), so
     # a correctly rebuilt mirror read as stale.
     sentinel = "MIRROR-NOT-REBUILT-SENTINEL-3f9c1e"
-    # any covered page's mirror, named by the roster, never a named one (W27)
-    t = covered_pages()[0]
-    mirror = tmp_path / "frontend" / "dossiers" / f"{t}.md"
-    mirror.write_text(f"{sentinel} — this must be overwritten by the pass\n")
+    # every covered page's mirror, walked by the roster, never a named one (W27)
+    names = [t for t, _ in covered_where(lambda _t, _d: True, "to mirror")]
+    for t in names:
+        mirror = tmp_path / "frontend" / "dossiers" / f"{t}.md"
+        mirror.write_text(f"{sentinel} — this must be overwritten by the pass\n")
 
     cwd = Path.cwd()
     try:
@@ -75,9 +76,12 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
     finally:
         os.chdir(cwd)
 
-    assert sentinel not in mirror.read_text(), (
-        "a fleet refresh left the web mirror stale — mirror_to_frontend is not wired into the pass")
-    assert mirror.read_text() == (tmp_path / "data" / "dossiers" / t / "dossier.md").read_text()
+    for t in names:
+        mirror = tmp_path / "frontend" / "dossiers" / f"{t}.md"
+        assert sentinel not in mirror.read_text(), (
+            f"{t}: a fleet refresh left the web mirror stale — mirror_to_frontend is not wired "
+            f"into the pass")
+        assert mirror.read_text() == (tmp_path / f"data/dossiers/{t}/dossier.md").read_text()
 
 
 def test_the_mirror_is_called_from_the_orchestrator_not_merely_defined() -> None:
