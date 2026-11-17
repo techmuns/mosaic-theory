@@ -18538,7 +18538,13 @@
         "file": "Visa Inc NYSE V Financials_Annual.xls",
         "sha256": "a195e4235684bbb621b023f0aa71e648ea61f6b9c00bbf57a9e8911402410c44",
         "bytes": 341514,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-05",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 89, column 11 [Sep-30-2026], workbook sha256 a195e4235684bbb621b023f0aa71e648ea61f6b9c00bbf57a9e8911402410c44",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -18546,7 +18552,13 @@
         "file": "Visa Inc NYSE V Financials_Quarterly.xls",
         "sha256": "7c4fe2c74603b8d919fb1a92d5b2ec8c39f10904865866b3b2ebb6a98d6572ca",
         "bytes": 586250,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-05",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 89, column 41 [FQ4/CQ3 Sep-30-2026], workbook sha256 7c4fe2c74603b8d919fb1a92d5b2ec8c39f10904865866b3b2ebb6a98d6572ca",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "key_developments",
@@ -18733,6 +18745,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

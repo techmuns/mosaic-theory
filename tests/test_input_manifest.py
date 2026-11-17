@@ -285,7 +285,8 @@ def test_assemble_one_records_its_reads_onto_the_page_it_writes() -> None:
               if isinstance(n, ast.FunctionDef) and n.name == "assemble_one")
     assert [ast.unparse(d) for d in fn.decorator_list] == ["provenance.recorded"]
     src = ast.unparse(fn)
-    assert "page_inputs.load_bundle(ticker, manual.files(ticker))" in src
+    assert ("page_inputs.load_bundle(ticker, manual.files(ticker), read_on=built_at.date())"
+            in src)
     assert "reads.add_reads(fin.reads)" in src and "index_reads" in src
     ret = fn.body[-1]
     assert isinstance(ret, ast.Return) and ast.unparse(ret) == (
@@ -482,7 +483,9 @@ def test_a_page_with_no_record_reads_as_none_and_round_trips() -> None:
     doc = {k: v for k, v in doc.items() if k != "inputs"}
     model = Dossier.model_validate(doc)
     assert model.inputs is None
-    assert '"inputs"' not in dossier_json(model)
+    # the KEY is absent: a `layer_refreshes` entry may still name the `inputs` layer as a value
+    # (the 2026-11-17 Financials filing-date pass wrote one on this page)
+    assert "inputs" not in json.loads(dossier_json(model))
 
 
 def test_only_a_ten_hex_value_is_read_as_an_export_stamp() -> None:
@@ -502,7 +505,7 @@ def test_a_folder_the_loader_refuses_is_still_recorded(tmp_path: pathlib.Path) -
     a.write_bytes(b"one")
     b.write_bytes(b"two")
     with provenance.recording() as rec, pytest.raises(CiqAmbiguousError):
-        inputs.load_bundle("FUBO", [a, b])
+        inputs.load_bundle("FUBO", [a, b], read_on=dt.date(2026, 11, 17))
     m = inputs.manifest_for(rec.reads(), db_path=tmp_path / "v.db", extraction_version="t")
     assert sorted(e.file for e in m.ciq) == sorted([a.name, b.name])
 
@@ -667,7 +670,7 @@ def test_the_folder_files_a_build_reads_beside_its_workbooks_are_recorded(
     (folder / "AS_OF").write_text("2026-10-30\n")
     (folder / "FUBO notes.docx").write_bytes(b"n")
     with provenance.recording() as rec:
-        bundle = inputs.load_bundle("FUBO", sorted(folder.iterdir()))
+        bundle = inputs.load_bundle("FUBO", sorted(folder.iterdir()), read_on=dt.date(2026, 11, 17))
     assert bundle.unrecognised
     m = inputs.manifest_for(rec.reads(), db_path=tmp_path / "v.db", extraction_version="t")
     assert {(e.kind, e.file) for e in m.ciq} == {
