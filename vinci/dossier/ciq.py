@@ -13,10 +13,15 @@ loud to UNKNOWN — a missing or unrecognised cell is never a fabricated number.
 
 from __future__ import annotations
 
+import contextlib
 import enum
 import html as _html
+import os
 import quopri
 import re
+import signal
+import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -135,6 +140,59 @@ def _bounded_font_scan(raw: str) -> str:
     return _FONT_SWITCH.sub(lambda m: m.group(0) or "\n", raw)
 
 
+#: A conversion still running after this long is HUNG, not slow (2026-11-17). The 66 OLE calls
+#: on file took at most 8.9 s each alone and 9.5 s eight at once on this machine, so this is over
+#: 12x the slowest. Set by face validity, never by an outcome.
+SOFFICE_TIMEOUT_S = 120.0
+
+
+def libreoffice_convert(soffice: str, src: Path, to: str,
+                        outdir: Path) -> subprocess.CompletedProcess[bytes]:
+    """ONE LibreOffice conversion of ``src`` into ``outdir`` (``--convert-to <to>``), under a user
+    profile of its OWN that is removed when it returns. Never raises on LibreOffice's exit: the
+    caller reads ``returncode`` and the output file, and says what failed. Raises `CiqParseError`
+    on a conversion still running at ``SOFFICE_TIMEOUT_S``, after killing its whole process group.
+
+    A HUNG CONVERSION IS KILLED WHOLE (A's review of #1105). Under an unwritable profile `soffice`
+    ran past a 60 s bound, and a kill of the launcher alone left a re-parented office process
+    (Homebrew's `soffice` is a shell script that starts the app). With no bound the read never
+    returned, and `assemble_cohort`'s `pool.map` would wait for good with no run line. So each
+    conversion leads a session of its own, and a timeout kills every process in it.
+
+    WHY EVERY CONVERSION, NOT EVERY PROCESS (2026-11-17). With no ``-env:UserInstallation`` every
+    build, precheck and suite conversion on the machine ran under LibreOffice's one default
+    profile. A second conversion started while one runs under the same profile is handed to the
+    running instance, which may exit before reading it: VRRM's check build read 1 of its 2 calls
+    (run `6043fb83`, `docs/records/2026-11-17-vrrm-check-build-held.md`). Measured at $0 on a
+    generated RTF: a second conversion started 0.0–1.2 s into a first lost 4 of 14 under the
+    default profile and 0 of 14 with a profile each. `assemble_cohort` builds up to 8 names on
+    threads of ONE process, so a per-process profile (`vinci.impact.child.own_soffice_profile`,
+    kept for the impact check's old refs, which predate this) would still share one.
+
+    THE COST, measured the same day (LibreOffice 26.2.4.2, this machine): a conversion under a
+    fresh profile took about 2.0 s against about 1.1 s under a warm one — LibreOffice's first-start
+    set-up, once per conversion. The profile it leaves is about 0.5 MB, removed in milliseconds."""
+    # a profile LibreOffice still holds when it returns is left behind, never raised: an OSError
+    # here would escape `transcript_for_synthesis`, which skips only a `CiqParseError` (RA-D11)
+    with tempfile.TemporaryDirectory(prefix="vinci-soffice-profile-",
+                                     ignore_cleanup_errors=True) as profile:
+        args = [soffice, f"-env:UserInstallation={Path(profile).as_uri()}", "--headless",
+                "--convert-to", to, "--outdir", str(outdir), str(src)]
+        with subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,  # noqa: S603
+                              start_new_session=True) as proc:
+            try:
+                out, err = proc.communicate(timeout=SOFFICE_TIMEOUT_S)
+            except subprocess.TimeoutExpired:
+                with contextlib.suppress(ProcessLookupError):  # it finished as the bound passed
+                    os.killpg(proc.pid, signal.SIGKILL)
+                proc.wait()
+                raise CiqParseError(
+                    f"{src.name}: LibreOffice did not finish converting it in "
+                    f"{SOFFICE_TIMEOUT_S:g} s, so it and every process it started were killed — "
+                    "re-run it; if it hangs again, re-export the file") from None
+        return subprocess.CompletedProcess(args, proc.returncode, out, err)
+
+
 def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False) -> str:
     """Decode a text-bearing CIQ file to clean prose. Fail loud if a needed tool is absent.
 
@@ -175,7 +233,6 @@ def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False
         return _html.unescape(soup.get_text(" ", strip=True))
     if fmt is CiqFormat.PDF:
         import shutil
-        import subprocess
 
         if not shutil.which("pdftotext"):
             raise CiqParseError(f"{path.name}: pdftotext not installed — cannot read PDF")
@@ -185,8 +242,6 @@ def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False
         return out.stdout
     if fmt is CiqFormat.OLE_DISGUISED:
         import shutil
-        import subprocess
-        import tempfile
 
         soffice = shutil.which("soffice") or shutil.which("libreoffice")
         if soffice is None:
@@ -198,18 +253,15 @@ def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False
             # A NON-ZERO EXIT IS A PARSE FAILURE, NOT A CRASH (audit RA-D11, 2026-11-10).
             # `check=True` raised `CalledProcessError`, which no caller catches, so the
             # skip-and-flag path (`transcript_for_synthesis` → `unparsed_transcript_flag`) never
-            # ran and the build died instead: LibreOffice refuses a second conversion while one
-            # runs, and the auditor saw it exit 1 in 2 of ~25 runs on unmodified transcripts.
-            done = subprocess.run(  # noqa: S603 — fixed args, path from the local manual store
-                [soffice, "--headless", "--convert-to", "txt", "--outdir", td, str(path)],
-                capture_output=True, check=False,
-            )
+            # ran and the build died instead. The auditor saw exit 1 in 2 of ~25 runs; the cause,
+            # one profile shared by every conversion, is removed in `libreoffice_convert`.
+            done = libreoffice_convert(soffice, path, "txt", Path(td))
             if done.returncode != 0:
                 tail = (done.stderr or b"").decode("utf-8", errors="replace").strip()[-200:]
                 raise CiqParseError(
                     f"{path.name}: LibreOffice exited {done.returncode} converting it"
                     + (f" ({tail})" if tail else "")
-                    + " — another conversion may have been running; re-run alone")
+                    + " — re-run it; if it never converts, re-export the file")
             txt_path = Path(td) / f"{path.stem}.txt"
             if not txt_path.exists():
                 raise CiqParseError(f"{path.name}: LibreOffice conversion produced no .txt output")

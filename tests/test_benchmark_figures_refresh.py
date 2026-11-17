@@ -25,6 +25,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier.refresh import (
     RefreshRefusedError,
     benchmark_figures_transform,
@@ -102,7 +103,7 @@ def test_the_write_path_refuses_a_page_whose_prose_quotes_the_moved_return(
         tmp_path: Path) -> None:
     """At the call site: `refresh_dossier` on a copy of a committed page whose synthesis carries a
     frozen claim quoting its market return — refused, naming the figure, the page untouched."""
-    shutil.copytree(ROOT / "data" / "dossiers" / "GOOGL", tmp_path / "GOOGL")
+    shutil.copytree(frozen_page("GOOGL"), tmp_path / "GOOGL")   # the page as frozen at the cut
     path = tmp_path / "GOOGL" / "dossier.json"
     doc = json.loads(path.read_text())
     io = doc["mechanical"]["idiosyncratic_vs_shared"]

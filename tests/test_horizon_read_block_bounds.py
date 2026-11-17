@@ -18,6 +18,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
 from vinci.dossier.refresh import (
@@ -114,8 +115,7 @@ def test_the_fix_moves_only_metrics_whose_block_ended_in_the_wrong_place(ticker:
 
 
 def _amzn_mech(stored_value: str) -> dict[str, Any]:
-    mech: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())["mechanical"]
+    mech: dict[str, Any] = frozen_doc("AMZN")["mechanical"]   # the page as frozen at the cut
     mech["catalyst_path"]["horizon_read"]["value"] = stored_value
     return mech
 
@@ -124,8 +124,7 @@ def test_a_page_built_from_this_export_is_corrected_and_nothing_else_moves() -> 
     """The stored string is the pre-fix bounding's, from THIS export (rebuilt byte-for-byte), so the
     transform replaces it with the correct one and leaves every other field alone."""
     b = _bundle("AMZN")
-    as_of = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())[
-        "mechanical"]["catalyst_path"]["as_of"]["value"]
+    as_of = frozen_doc("AMZN")["mechanical"]["catalyst_path"]["as_of"]["value"]
     old = cs.horizon_read_as_assembled(b, as_of=as_of)
     assert old is not None
     before = _amzn_mech(old)

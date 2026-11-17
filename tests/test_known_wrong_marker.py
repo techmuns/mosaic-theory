@@ -52,14 +52,17 @@ def test_no_record_is_sealed_without_this_module_being_updated() -> None:
 
 
 def test_a_name_without_a_marker_renders_unchanged() -> None:
-    """The banner is per-name and silent by default — every unmarked dossier must be untouched."""
+    """The banner is per-name and silent by default — every unmarked dossier must be untouched.
+    It walks every covered page with no sidecar (the roster), never a named one."""
+    from tests.frozen_support import covered_where
     from vinci.dossier.render import render_markdown
     from vinci.dossier.schemas import Dossier
 
-    for ticker in ("SMPL", "AORT", "FUBO"):
+    def unmarked(t: str, _doc: object) -> bool:
+        return not (DOSSIERS / t / "known_wrong.json").is_file()
+
+    for ticker, _doc in covered_where(unmarked, "carries no known-wrong marker"):
         path = DOSSIERS / ticker / "dossier.json"
-        if not path.is_file():
-            continue
         md = render_markdown(Dossier.model_validate_json(path.read_text()))
         assert "KNOWN-WRONG" not in md, f"{ticker} rendered a marker it has no file for"
 

@@ -29,6 +29,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.frozen_support import frozen_doc
 from vinci.dossier import ciq_balance
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import (
@@ -1093,8 +1094,7 @@ def test_tecxs_page_rebuilt_from_its_export_says_none_recent_on_both_surfaces(
     if not shutil.which("node"):
         pytest.skip("node not available")
     b, who = _prior_section_export()
-    page = json.loads((Path(__file__).resolve().parents[1] / "data" / "dossiers" / "TECX"
-                       / "dossier.json").read_text())
+    page = frozen_doc("TECX")   # the host page, as frozen at the cut
     page["mechanical"]["concentration"]["customers"] = cs.customers(b).model_dump(mode="json")
     md = [ln for ln in render_markdown(Dossier.model_validate(page)).splitlines()
           if ln.startswith("- **Customers:**")]

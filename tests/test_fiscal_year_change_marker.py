@@ -31,6 +31,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.frozen_support import frozen_page
 from vinci.config import get_config
 from vinci.dossier import ciq_balance
 from vinci.dossier import ciq_sheets as cs
@@ -374,7 +375,7 @@ def test_an_unbuilt_bridge_says_why(bundle: CiqBundle, edit: Any, why: str) -> N
 def test_a_page_carries_the_bridge_or_why_never_both() -> None:
     from vinci.dossier.schemas import Dossier, dossier_json
 
-    page = Path(__file__).resolve().parents[1] / "data" / "dossiers" / "AMZN" / "dossier.json"
+    page = frozen_page("AMZN") / "dossier.json"   # AMZN's page, as frozen at the cut
     doc = Dossier.model_validate_json(page.read_text())
     assert doc.ev_bridge is not None and "ev_bridge_unbuilt" not in json.loads(dossier_json(doc))
     reason = EvBridgeUnbuilt(reason="the quarterly Balance Sheet carries no 'Net Debt' row")

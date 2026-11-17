@@ -38,6 +38,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
@@ -222,13 +223,11 @@ def test_an_untraceable_point_passes_only_when_the_page_discloses_it() -> None:
     UNCITED flag — it passes; claiming `cited: true`, or with the flag gone, it is the stale-stamp
     failure this file exists for (CONSTRUCTED from the real page)."""
     import copy
-    import json
 
     from vinci.dossier.schemas import Dossier
     from vinci.dossier.synthesis import _refs_in, _traces
 
-    root = pathlib.Path(__file__).resolve().parents[1]
-    doc = json.loads((root / "data" / "dossiers" / "UBER" / "dossier.json").read_text())
+    doc = frozen_doc("UBER")   # UBER's page, as frozen at the cut
     refs = _refs_in(Dossier.model_validate(doc).mechanical)
     pts = doc["synthesis"]["decisive_question"]["evidence_against"]
     untraced = [k for k, pt in enumerate(pts) if not _traces(pt.get("source_ref") or "", refs)]

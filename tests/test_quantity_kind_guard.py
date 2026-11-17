@@ -27,6 +27,7 @@ from pathlib import Path
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_page
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE = sorted(p for p in (ROOT / "scenarios").glob("*.json") if not p.name.startswith("_"))
@@ -182,9 +183,7 @@ def test_a_freshly_proposed_record_is_born_stamped() -> None:
     from vinci.dossier.propose import SHARES_QUANTITY_KIND, build_template
 
     assert SHARES_QUANTITY_KIND in sc.QUANTITY_KINDS
-    doss = ROOT / "data" / "dossiers" / "BRBR" / "dossier.json"
-    if not doss.is_file():
-        pytest.skip("no committed BRBR dossier")
+    doss = frozen_page("BRBR") / "dossier.json"   # BRBR's committed page, as frozen at the cut
     f = build_template(json.loads(doss.read_text()))["facts"]["diluted_shares"]
     assert f["quantity_kind"] == "outstanding", f
     # and the template's fact is loadable as the real type, stamp included

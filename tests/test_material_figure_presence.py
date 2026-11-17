@@ -29,6 +29,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier.synthesis import (
     MATERIAL_FIGURE_FLOOR_MUSD,
     _figure_cited,
@@ -369,11 +370,12 @@ def test_the_guard_fires_on_the_real_committed_shape() -> None:
     """BEHAVIOURAL COMPANION to the ordering pin. The MECHANICAL side stays LIVE — read from the
     committed artifact and flagged by `_mark_material` itself, because a constructed row is exactly
     what hid the defect and `_mark_material` is the function whose ordering was wrong. Only the
-    prose is frozen. On the living page the pin is STRUCTURAL: the guard fires, and on a row the
-    page itself flags material."""
+    prose is frozen. On the page the pin is STRUCTURAL: the guard fires, and on a row the page
+    itself flags material. Since W27 the page is SMPL's as frozen at the cut, never the living
+    one: the frozen prose is SMPL's, so the pin is that one page's, its writedown row the cut's."""
     import json
 
-    page = _ROOT / "data" / "dossiers" / "SMPL" / "dossier.json"
+    page = frozen_page("SMPL") / "dossier.json"   # SMPL's page, as frozen at the cut
     fired = _fired_on(page)
     assert fired, (
         "with the flags applied the guard must see SMPL's writedown against prose that names no "

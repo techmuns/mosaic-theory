@@ -26,6 +26,7 @@ from typing import Any
 import pytest
 
 from tests.fixtures.ciq_synthetic import generate as gen
+from tests.frozen_support import frozen_doc
 from vinci.dossier import ciq_balance, ev_gap
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, read_cell, read_sheets
@@ -135,7 +136,7 @@ def test_a_marker_count_is_shown_never_folded_into_no_revisions_web(tmp_path: Pa
 
     if not shutil.which("node"):
         pytest.skip("node not available")
-    page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    page = frozen_doc("TJX")   # the host page, as frozen at the cut
     page["mechanical"]["catalyst_path"]["horizon_read"] = {
         "status": "present", "value": "EPS (GAAP) FQ1 2027: 1m n/a↑/0↓, 2m 0↑/0↓",
         "source_ref": "CIQ Estimates→Revisions"}

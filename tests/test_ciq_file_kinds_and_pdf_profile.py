@@ -25,7 +25,13 @@ import pytest
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
-from vinci.dossier.ciq import CiqBundle, CiqFormat, _customers_role, workbook_kind
+from vinci.dossier.ciq import (
+    CiqBundle,
+    CiqFormat,
+    _customers_role,
+    libreoffice_convert,
+    workbook_kind,
+)
 from vinci.dossier.manual_store import LocalFolderStore
 from vinci.dossier.schemas import SourceStatus
 
@@ -121,8 +127,9 @@ def test_ra_d17_a_pdf_tearsheet_reads_its_industry(tmp_path: Path) -> None:
     prof = next(f for f in _smpl_files() if f.name.endswith("Public Company Profile.rtf"))
     rtf = cs.gics_industry(CiqBundle.from_files("SMPL", [prof]))
     assert rtf.status is SourceStatus.PRESENT, rtf.note
-    done = subprocess.run([soffice, "--headless", "--convert-to", "pdf", "--outdir",
-                           str(tmp_path), str(prof)], capture_output=True, check=False)
+    # under a profile of its own, as every production conversion is: under the default one this
+    # test collided with any build converting a call at the same time (VRRM run `6043fb83`)
+    done = libreoffice_convert(soffice, prof, "pdf", tmp_path)
     pdf = tmp_path / f"{prof.stem}.pdf"
     if done.returncode != 0 or not pdf.exists():
         pytest.skip("LibreOffice could not convert the tearsheet on this machine")

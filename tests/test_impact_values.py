@@ -13,6 +13,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.impact.values import ABSENT, show, sourced_pairs, value_changes
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -32,7 +33,7 @@ def test_every_committed_page_against_itself_moves_nothing(page: pathlib.Path) -
 
 
 def test_a_moved_number_carries_its_citation() -> None:
-    doc = _load(ROOT / "data" / "dossiers" / "MCK" / "dossier.json")
+    doc = _load(frozen_page("MCK") / "dossier.json")
     moved = copy.deepcopy(doc)
     moved["mechanical"]["capital_allocation"]["goodwill"]["value"] = 1.0
     [c] = value_changes(doc, moved)
@@ -135,7 +136,7 @@ def test_a_reordered_list_of_records_is_a_change() -> None:
     """A list of records is matched by identity, so a pure reordering moved no member and read as
     no change. MCK's real peer grid (keyed by ticker), reversed: one ``[order]`` change, the
     shared members in each side's order. A member joining is not a reorder (negative pin)."""
-    base = _load(ROOT / "data" / "dossiers" / "MCK" / "dossier.json")
+    base = _load(frozen_page("MCK") / "dossier.json")
     grid = base["mechanical"]["peer_comps"]["peer_grid"]["value"]
     assert len(grid) >= 3
     head = copy.deepcopy(base)

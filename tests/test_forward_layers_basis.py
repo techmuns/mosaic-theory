@@ -19,6 +19,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
@@ -191,9 +192,7 @@ def test_amzn_s_fy27_lines_do_not_add_up_and_the_record_says_by_how_much() -> No
 def test_a_page_built_before_the_new_keys_round_trips_byte_identically() -> None:
     """The committed pages predate these keys; written through the one serializer they must come
     back unchanged — ABSENT, never null, until a refresh fills them."""
-    path = ROOT / "data" / "dossiers" / "AMZN" / "dossier.json"
-    if not path.exists():
-        pytest.skip("no committed AMZN dossier")
+    path = frozen_page("AMZN") / "dossier.json"   # the page as frozen at the cut
     text = path.read_text()
     doc = Dossier.model_validate_json(text)
     if doc.forward_consensus is None or doc.forward_consensus.current_multiples is not None:

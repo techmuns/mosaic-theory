@@ -34,11 +34,28 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import CUT, covered_pages, frozen_doc
+
 ROOT = Path(__file__).resolve().parents[1]
 DOSSIERS = ROOT / "data" / "dossiers"
 #: The pages the corpus holds at this build (main b207c8a9: 26, every one carrying an anchor block).
 #: A floor, not an exact count: retiring or adding a page must not turn these pins red.
 MIN_PAGES = 20
+
+
+def _decisions_at_the_cut_still_covered() -> set[str]:
+    """The names whose pages carried a recorded operator decision at the cut
+    (`tests/frozen_support.py`; 4 there: AMZN, CNXC, GOOGL, UBER), on the names the coverage roster
+    still covers. The floor the two decision pins hold the living fleet to, BY NAME: a retirement
+    lowers it by that name's own decision, never by a test edit, and a decision a covered page
+    loses still goes red even when another page gains one (a count would net the two). It fails
+    loud when the last of them leaves coverage: an empty floor holds no page to anything, and the
+    two pins would pass on a fleet with no decision at all."""
+    floor = {t for t in covered_pages() if (CUT / t).is_dir()
+             and (frozen_doc(t).get("anchor") or {}).get("operator_decision")}
+    assert floor, ("no covered page carried an operator decision at the cut — the decision pins "
+                   "hold nothing; pin the shape on a frozen copy (tests/frozen_support.py)")
+    return floor
 
 
 def _pages() -> list[Path]:
@@ -187,12 +204,12 @@ def test_md_operator_decisions_stay_on_the_brief_e2e() -> None:
     once, and nowhere in the screening block (which is under Valuation)."""
     from vinci.dossier.render import _screening_context_lines
 
-    decided = 0
+    decided: set[str] = set()
     for tkr, anchor, _rec, md in _md_pages():
         dec = anchor.operator_decision if anchor is not None else None
         if dec is None:
             continue
-        decided += 1
+        decided.add(tkr)
         head = f"**The operator's decision: {dec.recipe}**"
         scen = _md_section(_md_tier(md, "Brief"), "Scenario analysis")
         for part in (head, dec.source_ref, dec.reason.splitlines()[0]):
@@ -200,8 +217,10 @@ def test_md_operator_decisions_stay_on_the_brief_e2e() -> None:
         assert md.count(head) == 1, f"{tkr}: the decision renders more than once"
         assert head not in "\n".join(_screening_context_lines(anchor)), (
             f"{tkr}: the decision still rides inside the screening block")
-    assert decided >= 4, (
-        f"expected the 4 recorded decisions (AMZN, CNXC, GOOGL, UBER), saw {decided}")
+    floor = _decisions_at_the_cut_still_covered()
+    assert decided >= floor, (
+        f"a covered page lost its recorded decision: {sorted(floor - decided)} (the cut's "
+        f"{sorted(floor)}), saw {sorted(decided)}")
 
 
 def test_md_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:
@@ -398,12 +417,12 @@ def test_web_operator_decisions_stay_on_the_brief_collapsed_force_open_and_print
     once, never inside the screening block. Its head and the operator's words sit outside every
     <details>, so the collapsed page shows them; where it is recorded sits in a <details>, which the
     force-opened page and the print CSS open."""
-    decided = 0
+    decided: set[str] = set()
     for t, p in _web_pages().items():
         dec = p["decision"]
         if dec is None:
             continue
-        decided += 1
+        decided.add(t)
         brief, full = p["brief"], p["brief"] + p["analysis"] + p["appendix"]
         for part in (dec["head"], dec["reason"], dec["source"]):
             assert part in brief, f"{t}: the operator's decision is not on the Brief: {part[:60]}"
@@ -416,8 +435,10 @@ def test_web_operator_decisions_stay_on_the_brief_collapsed_force_open_and_print
         block = brief.find(_BLOCK)
         assert block < 0 or at < block, f"{t}: the decision still rides inside the screening block"
         assert dec["head"] not in p["analysis"], f"{t}: the decision renders under Analysis"
-    assert decided >= 4, (
-        f"expected the 4 recorded decisions (AMZN, CNXC, GOOGL, UBER), saw {decided}")
+    floor = _decisions_at_the_cut_still_covered()
+    assert decided >= floor, (
+        f"a covered page lost its recorded decision: {sorted(floor - decided)} (the cut's "
+        f"{sorted(floor)}), saw {sorted(decided)}")
 
 
 def test_web_strain_and_data_quality_notices_move_with_the_anchor_e2e() -> None:

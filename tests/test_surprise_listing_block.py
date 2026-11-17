@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import covered_pages, frozen_doc, living_doc
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook
 from vinci.dossier.schemas import Dossier, SourceStatus
@@ -103,6 +104,22 @@ _AWAITS_REREAD = pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
     "fix request 2, prompt-fix 2 — fixed in code; the committed page waits for its $0 re-read "
     "(`vinci dossier ciq-reread --field surprise_history`) in the combined artifact pass"))
 
+#: The pages `_AWAITS_REREAD` watches. A strict xfail flips on its LIVING page's re-read, so it
+#: reads the living page, and only while the coverage roster covers the name (a retired name's page
+#: awaits nothing); every other pin reads the page as frozen at the cut (`tests/frozen_support.py`).
+#: THE SAME EDIT TAKES BOTH OFF: when a re-read lands and a pin loses its marker, its name leaves
+#: this set, and its page is cut anew (the cut predates the re-read), or the landed pin would go on
+#: reading the living page.
+_AWAITING = frozenset({"NFLX", "PARR"})
+
+
+def _committed(name: str) -> dict[str, Any]:
+    if name not in _AWAITING:
+        return frozen_doc(name)
+    if name not in covered_pages():
+        pytest.skip(f"{name} is not covered: its page awaits no re-read")
+    return living_doc(name)
+
 
 @pytest.mark.parametrize("name", [
     "GOOGL", pytest.param("NFLX", marks=_AWAITS_REREAD)])
@@ -110,7 +127,7 @@ def test_the_committed_page_states_what_its_own_export_reads(name: str) -> None:
     """The committed page's value is the code's read of the export it stamps — whenever it was
     built from the one the fixture was cut from."""
     got = cs.surprise_history(_bundle(name))
-    page = json.loads((ROOT / "data" / "dossiers" / name / "dossier.json").read_text())
+    page = _committed(name)
     stamped = {c["kind"]: c["sha256"] for c in (page.get("inputs") or {}).get("ciq", [])}
     if stamped.get("estimates") != FIX["_about"]["exports"][name]["sha256"]:
         raise LookupError(f"{name}'s page stamps another Estimates export — re-point this pin")
@@ -125,7 +142,7 @@ def test_parrs_committed_page_states_its_own_listings_surprise_history() -> None
     page was built from the export the fixture was cut from (its stamped sha256)."""
     from vinci.dossier.render import render_markdown
 
-    page = json.loads((ROOT / "data" / "dossiers" / "PARR" / "dossier.json").read_text())
+    page = _committed("PARR")
     stamped = {c["kind"]: c["sha256"] for c in (page.get("inputs") or {}).get("ciq", [])}
     if stamped.get("estimates") != FIX["_about"]["exports"]["PARR"]["sha256"]:
         pytest.skip("PARR's page was built from another Estimates export than the fixture's")
@@ -203,7 +220,7 @@ def _reread_page(tmp: pathlib.Path, monkeypatch: pytest.MonkeyPatch, *, stamp: s
     wb = CiqWorkbook(kind="estimates", path=export, fmt=CiqFormat.BIFF_XLS, freq=None)
     bundle = CiqBundle(ticker="PARR", workbooks=(wb,), _cache={export: {"Surprise": _rows("PARR")}})
     monkeypatch.setattr(ciq_reread, "_bundle", lambda _t, _root: bundle)
-    page = json.loads((ROOT / "data" / "dossiers" / "PARR" / "dossier.json").read_text())
+    page = frozen_doc("PARR")   # the writer's host page, as frozen at the cut
     page["mechanical"]["consensus_context"]["surprise_history"] = {
         "value": "GAAP-EPS surprise: FY2006 +0%", "source_ref": "CIQ Estimates→Surprise (annual)",
         "status": "present", "note": None}

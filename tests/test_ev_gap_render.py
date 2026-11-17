@@ -12,6 +12,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import covered_where, frozen_page
+
 ROOT = Path(__file__).resolve().parents[1]
 DOSSIERS = sorted(d for d in (ROOT / "data" / "dossiers").iterdir() if (d / "dossier.md").exists())
 HEAD = "### The EV gap — our base case vs the street"
@@ -32,8 +34,11 @@ FROZEN_MVST = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-09-17" / "MVS
 
 
 def _folder(ticker: str) -> Path:
+    """A NAMED page's folder: AORT's and MVST's last committed pages, every other name's page as
+    frozen at the cut (`tests/frozen_support.py`), never the living one. The corpus lists below
+    read the living pages (`_living_gapj`)."""
     frozen = {"AORT": FROZEN_AORT, "MVST": FROZEN_MVST}
-    return frozen.get(ticker, ROOT / "data" / "dossiers" / ticker)
+    return frozen[ticker] if ticker in frozen else frozen_page(ticker)
 
 
 def block(folder: Path) -> str:
@@ -81,20 +86,23 @@ def test_smpls_page_reads_multiple_dominant() -> None:
     """THE OPERATOR'S ACCEPTANCE CONDITION, checked on the PAGE. The audit found the SMPL view
     rests on re-rating rather than on the business; this is that finding, reproduced by the machine
     and printed where a human meets it. The figures are the frozen page's; the living page must
-    print the shape its own JSON holds, at its own anchor year."""
+    print the shape its own JSON holds, at its own anchor year: every covered page whose gap
+    carries a shape (the roster), never a named one."""
     body = block(FROZEN_SMPL)
     assert "**multiple-dominant** at FY2026" in body
     assert "does not move with the year" in body, "the cross-year check is missing from the page"
-    g = _gapj("SMPL")
-    living = block(ROOT / "data" / "dossiers" / "SMPL")
-    assert f"**{g['shape']['anchor']}** at FY{g['anchor_fy']}" in living, living[:400]
+    for t, doc in covered_where(lambda _t, d: _gap_of(d).get("status") == "computed"
+                                and bool(_gap_of(d).get("shape")), "prints a gap shape"):
+        g = _gap_of(doc)
+        living = block(ROOT / "data" / "dossiers" / t)
+        assert f"**{g['shape']['anchor']}** at FY{g['anchor_fy']}" in living, living[:400]
 
 
 def test_the_consensus_floor_marker_survives_to_the_page() -> None:
     """`≥` IS THE CLAIM. SMPL's estimates export states no as-of, so its date is a floor; printing
     a bare date asserts a precision the workbook cannot attest. The first cut tested for ASCII
     `>=` and the note silently never rendered — a missing precision-caveat nobody could see."""
-    body = block(ROOT / "data" / "dossiers" / "SMPL")
+    body = block(frozen_page("SMPL"))   # SMPL's page as frozen at the cut
     assert "≥" in body, "the floor marker was stripped from the page"
     assert "a FLOOR" in body, "the floor is printed without saying it is one"
 
@@ -150,14 +158,22 @@ def test_the_render_never_restrikes_tev_itself() -> None:
 
 # --- THE TOTAL GAP NEEDS NO CONSENSUS (operator's revised R2 ruling, 2026-08-03) ---------------
 
-def _gapj(t: str) -> dict:
-    doc = json.loads((_folder(t) / "dossier.json").read_text())
+def _gap_of(doc: dict) -> dict:
+    """A parsed page's `ev_gap` block, or {}: the one read the helpers below and the walks share."""
     return (doc.get("mechanical") or {}).get("ev_gap") or {}
 
 
-TOTAL = sorted(f.name for f in DOSSIERS if _gapj(f.name).get("status") == "computed")
-DECOMPOSED = sorted(t for t in TOTAL if _gapj(t).get("form") == "three-ratio")
-SUPPRESSED = sorted(t for t in TOTAL if (_gapj(t).get("decomposition") or {}).get("status")
+def _gapj(t: str) -> dict:
+    return _gap_of(json.loads((_folder(t) / "dossier.json").read_text()))
+
+
+def _living_gapj(t: str) -> dict:
+    return _gap_of(json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text()))
+
+
+TOTAL = sorted(f.name for f in DOSSIERS if _living_gapj(f.name).get("status") == "computed")
+DECOMPOSED = sorted(t for t in TOTAL if _living_gapj(t).get("form") == "three-ratio")
+SUPPRESSED = sorted(t for t in TOTAL if (_living_gapj(t).get("decomposition") or {}).get("status")
                     == "suppressed")
 
 
@@ -228,12 +244,12 @@ def test_the_decomposed_names_are_unchanged_and_still_multiple_dominant(ticker: 
     """THE CONTROL. The revision must not move the three names that were already right. SMPL's
     shape is read off its frozen 2026-08-18 page (its living one moved with its FY2026 10-K), and
     EPAM's off its frozen 2026-09-17 page (its living one moved with its September-quarter 10-Q);
-    each living page still carries the three-ratio form."""
+    each page, as frozen at the cut, carries the three-ratio form."""
     g = _gapj(ticker)
     assert g["form"] == "three-ratio"
     assert set(g["ratios"]) == {"revenue_ratio", "margin_ratio", "multiple_ratio", "ev_gap"}
     frozen = {"SMPL": FROZEN_SMPL, "EPAM": FROZEN_EPAM}
-    folder = frozen.get(ticker, ROOT / "data" / "dossiers" / ticker)
+    folder = frozen[ticker] if ticker in frozen else frozen_page(ticker)
     shaped = json.loads((folder / "dossier.json").read_text())["mechanical"]["ev_gap"]
     assert shaped["shape"]["anchor"] == "multiple-dominant"
     assert "**multiple-dominant** at" in block(folder)
