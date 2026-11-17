@@ -27,6 +27,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import CUT, frozen_page
 from vinci.dossier import recipe_proposal as rp
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.mechanical import _nonoperating_earnings, _nonoperating_quarters
@@ -52,9 +53,23 @@ class _Stub:
 
 
 def _page(t: str) -> dict[str, Any]:
+    """A LIVING page, for a name the `PAGES` loops hand back."""
     frozen = {"AORT": FROZEN_AORT, "MVST": FROZEN_MVST}
     doc: dict[str, Any] = json.loads(frozen.get(t, DOSS / t / "dossier.json").read_text())
     return doc
+
+
+def _frozen_page(t: str) -> dict[str, Any]:
+    """A NAMED page: AORT's and MVST's last committed pages, every other name's as frozen at the
+    cut (`tests/frozen_support.py`), never the living one."""
+    frozen = {"AORT": FROZEN_AORT, "MVST": FROZEN_MVST}
+    doc: dict[str, Any] = json.loads(
+        (frozen[t] if t in frozen else frozen_page(t) / "dossier.json").read_text())
+    return doc
+
+
+#: The names the cut holds: the corpus a value pinned on the whole fleet is read off.
+CUT_PAGES = sorted(p.name for p in CUT.iterdir() if (p / "dossier.json").is_file())
 
 
 def _ref(doc: dict[str, Any]) -> date:
@@ -62,8 +77,9 @@ def _ref(doc: dict[str, Any]) -> date:
 
 
 def _with_count(t: str) -> dict[str, Any]:
-    """The committed page with its non-operating COUNT derived through the real extractor."""
-    doc = _page(t)
+    """The committed page (as frozen at the cut) with its non-operating COUNT derived through the
+    real extractor."""
+    doc = _frozen_page(t)
     if not (FIX / f"{t}.json").is_file():
         pytest.skip(f"no companyfacts fixture for {t}")
     nq = _nonoperating_quarters(_Stub(json.loads((FIX / f"{t}.json").read_text())), "x", _ref(doc))
@@ -180,8 +196,8 @@ def test_the_rule_selects_amzn_googl_and_uber_and_no_other_name() -> None:
     """The ELIGIBILITY test the rule was ratified on, now run by the machine: AMZN and UBER — the
     ratified table — and, since its 2026-11-02 page, GOOGL, whose FY P/E rows on that day's
     EstimatesReport fit GAAP EPS (its committed R3 still wins: the proposal is shown, never
-    written). No other committed name."""
-    proposed = [t for t in PAGES if (FIX / f"{t}.json").is_file()
+    written). No other committed name. A value on the whole fleet, read off the cut's pages."""
+    proposed = [t for t in CUT_PAGES if (FIX / f"{t}.json").is_file()
                 and rp.propose(d := _with_count(t), _r1(d)).recipe_hint == rp.RECIPE_R4]
     assert proposed == ["AMZN", "GOOGL", "UBER"]
 
@@ -276,7 +292,7 @@ def test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe(
     for t, committed in (("AMZN", "R3_forward_pe"), ("UBER", "R2_NEEDED")):
         folder = tmp_path / t
         folder.mkdir()
-        page = _page(t)                     # CONSTRUCTED: the tags each page carried before the
+        page = _frozen_page(t)              # CONSTRUCTED: the tags each page carried before the
         page["anchor"]["recipe_hint"] = committed      # 2026-10-09 re-tags, so the copy disagrees
         # ...and a reason of that recipe's own. Since AMZN's re-assembly (#700) its committed reason
         # IS this build's R4 reason, and the caveat appends the fresh reason only where it differs
@@ -296,11 +312,11 @@ def test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe(
         assert kept.anchor is not None and kept.anchor.recipe_hint == committed
         [cav] = [c for c in kept.caveats if c.startswith("Recipe kept")]
         assert f"proposes {rp.RECIPE_R4}" in cav and "R3 cannot price it cleanly" in cav
-    # the committed state today: R4 tagged, R4 proposed — agreement, so no "kept" caveat at all
+    # the committed state at the cut: R4 tagged, R4 proposed — agreement, so no "kept" caveat
     for t in ("AMZN", "UBER"):
         folder = tmp_path / f"{t}-now"
         folder.mkdir()
-        shutil.copy(DOSS / t / "dossier.json", folder / "dossier.json")
+        shutil.copy(frozen_page(t) / "dossier.json", folder / "dossier.json")
         doc = _with_count(t)
         doc["caveats"] = []
         fresh = Dossier.model_validate(

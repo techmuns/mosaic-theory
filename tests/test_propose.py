@@ -11,6 +11,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier.anchor import RECIPE_R1
 from vinci.dossier.propose import (
     ANCHORED,
@@ -29,6 +30,8 @@ DOSS = ROOT / "data" / "dossiers"
 
 
 def _doc(t: str) -> dict:
+    """A LIVING page, for a name the corpus walk below handed back. A NAMED page reads its copy
+    as frozen at the cut (`frozen_doc`, `tests/frozen_support.py`), never the living one."""
     return json.loads((DOSS / t / "dossier.json").read_text())
 
 
@@ -63,7 +66,7 @@ def test_exactly_three_axes_are_proposed_and_all_three_are_medians() -> None:
     """THE COUNT IS THE FINDING, and it is three — not six, which the first cut of the derivability
     read claimed. The safe anchors are exactly the MEDIANS: a median absorbs one bad year, while a
     min/max/band-low IS the statistic one observation defines."""
-    ancs = propose_anchors(_doc("SMPL"))
+    ancs = propose_anchors(frozen_doc("SMPL"))
     assert {(a.axis, a.leg) for a in ancs} == set(ANCHORED)
     assert all(a.leg == "base" for a in ancs), "a non-base leg acquired a default"
     assert {a.role for a in ancs} <= {"median", "consensus"}, [a.role for a in ancs]
@@ -76,7 +79,7 @@ def test_every_proposal_carries_a_source_and_a_vintage() -> None:
     references are unstamped, so when three of its live references moved (LTM revenue, consensus,
     current multiple) nothing could say whether they were right when struck. A proposal that
     inherits no vintage would reproduce that defect on every record written from here."""
-    for a in propose_anchors(_doc("SMPL")):
+    for a in propose_anchors(frozen_doc("SMPL")):
         rp = a.as_refpoint()
         assert rp.source.strip() and rp.vintage and rp.vintage.strip(), a
         assert rp.leg == "base" and rp.role
@@ -88,7 +91,7 @@ def test_the_cohort_partner_proposes_from_its_own_longest_coverage_anchor() -> N
     holds ONE fiscal year while `Revenues` holds seven; `midcycle` picks longest-coverage, so the
     margin anchor must be sourced to `Revenues` and NOT to the truncated tag. If the shared
     first-hit extractor ever becomes the anchor's source, this goes red."""
-    mg = next(a for a in propose_anchors(_doc("BRBR")) if a.axis == "margin")
+    mg = next(a for a in propose_anchors(frozen_doc("BRBR")) if a.axis == "margin")
     assert "Revenues" in mg.source and "OperatingIncomeLoss" in mg.source, mg.source
     assert "RevenueFromContractWithCustomer" not in mg.source, (
         "BRBR's margin anchor is sourced to the ASC-606 tag, which holds ONE year for this filer — "
@@ -128,7 +131,7 @@ def test_the_committed_smpl_base_margin_is_refused_which_is_the_whole_point() ->
     hit = [p for p in problems if p.startswith("base.margin")]
     assert hit and "15.4481" in hit[0] and "-0.014481" in hit[0], problems
     assert "§D" in hit[0]
-    now = [p for p in validate_legs(legs, propose_anchors(_doc("SMPL")))
+    now = [p for p in validate_legs(legs, propose_anchors(frozen_doc("SMPL")))
            if p.startswith("base.margin")]
     assert now and "§D" in now[0], now
 
@@ -142,7 +145,7 @@ def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing(
     stated = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5,
                          "margin_adjustment": "−1.45pp: this year's gross-margin reset treated as "
                                               "partly structural"})
-    for doc, revenue in ((_frozen_smpl(), 1351.7), (_doc("SMPL"), None)):
+    for doc, revenue in ((_frozen_smpl(), 1351.7), (frozen_doc("SMPL"), None)):
         ancs = propose_anchors(doc)
         m = next(a for a in ancs if a.axis == "margin")
         # the multiple the ANCHOR proposes, read off the proposal like the margin — not a literal
@@ -157,7 +160,7 @@ def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing(
 
 @pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_an_unanchored_leg_must_state_a_basis_and_a_missing_leg_is_never_defaulted() -> None:
-    ancs = propose_anchors(_doc("SMPL"))
+    ancs = propose_anchors(frozen_doc("SMPL"))
     bare = validate_legs(_legs(), ancs)
     assert any(p.startswith("bear.revenue") and "revenue_derivation" in p
                for p in bare), bare
@@ -213,7 +216,7 @@ def test_the_margin_anchor_is_compared_in_schema_units_not_display_units() -> No
     assert frozen.unit == "%" and abs(frozen.value - 15.4481) < 1e-4, frozen      # display
     assert abs(frozen.schema_value - 0.154481) < 1e-6, frozen    # what a leg is compared to
 
-    for m in (frozen, next(a for a in propose_anchors(_doc("SMPL")) if a.axis == "margin")):
+    for m in (frozen, next(a for a in propose_anchors(frozen_doc("SMPL")) if a.axis == "margin")):
         assert m.unit == "%" and abs(m.schema_value * 100 - m.value) < 1e-3, m
         assert m.as_refpoint().value == m.value
         ancs = [m]
@@ -267,7 +270,7 @@ def test_applicable_false_is_a_disagreement_on_every_live_case() -> None:
 @pytest.mark.skipif(not (DOSS / "BRBR").is_dir(), reason="no committed BRBR")
 def test_the_template_prefills_three_and_leaves_six_empty_with_their_reasons() -> None:
     from vinci.dossier.propose import build_template, legs_from_template
-    tpl = build_template(_doc("BRBR"))
+    tpl = build_template(frozen_doc("BRBR"))
     legs = legs_from_template(tpl)
     filled = [(lg, ax) for lg in LEGS for ax in AXES if legs[lg][ax] is not None]
     assert sorted(filled) == sorted((lg, ax) for ax, lg in ANCHORED), filled
@@ -287,7 +290,7 @@ def test_the_template_carries_the_peer_row_beside_the_own_history_band() -> None
     own history, taking a haircut, calling it conservative — while the name trades at a PREMIUM to
     the peer median. BRBR is the live case: LTM TEV/EBITDA 8.8 against a peer median of 6.9."""
     from vinci.dossier.propose import build_template
-    mult = build_template(_doc("BRBR"))["_evidence"]["multiple"]
+    mult = build_template(frozen_doc("BRBR"))["_evidence"]["multiple"]
     assert any("own history" in x for x in mult)
     peer = next(x for x in mult if "PEER CROSS-SECTION" in x)
     assert "TEV/EBITDA" in peer and "NTM TEV/EBITDA" in peer, peer
@@ -299,7 +302,7 @@ def test_the_own_history_line_names_a_rank_not_a_percentile_level() -> None:
     """`own_history.percentile` is WHERE CURRENT SITS (BRBR: 0.037 → 3.7th), not a 25th-percentile
     LEVEL. The first cut printed it as `p25`, putting a 0.037 rank where a multiple belongs."""
     from vinci.dossier.propose import build_template
-    line = build_template(_doc("BRBR"))["_evidence"]["multiple"][0]
+    line = build_template(frozen_doc("BRBR"))["_evidence"]["multiple"][0]
     assert "pctile of its own range" in line and "p25 0.03" not in line, line
 
 
@@ -308,7 +311,7 @@ def test_no_evidence_line_is_empty() -> None:
     """`startswith("revenue")` also matched "Revenue YoY" and emitted a blank arc — evidence nobody
     can read is noise in a block whose only purpose is to be read."""
     from vinci.dossier.propose import build_template
-    for axis, lines in build_template(_doc("BRBR"))["_evidence"].items():
+    for axis, lines in build_template(frozen_doc("BRBR"))["_evidence"].items():
         for line in lines:
             assert line.strip() and not line.rstrip().endswith(":"), (axis, line)
 
@@ -319,7 +322,7 @@ def test_the_shares_denominator_is_taken_stated_and_refused_on_disagreement() ->
     field is that — one is diluted-but-averaged, the other at-a-date-but-basic. The create path
     takes the point-in-time count, SAYS what it is and is not, and refuses a structural gap."""
     from vinci.dossier.propose import SHARE_DISAGREEMENT_TOL, resolve_shares
-    val, basis, source = resolve_shares(_doc("BRBR"))
+    val, basis, source = resolve_shares(frozen_doc("BRBR"))
     # FROZEN LITERALS, per this file's stated convention — the oracle must not come from the same
     # artifact as the subject, or a corrupted dossier value would satisfy the check that reads it.
     # They moved when BRBR was re-assembled 2026-08-10 against a newer filing (diluted 117,500,000
@@ -349,7 +352,7 @@ def test_the_anchors_reach_the_record_as_sourced_vintaged_references() -> None:
     (`ScenarioRecord` refuses a 1.4 record whose assumptions miss an axis, so the path was BROKEN
     rather than silently lossy — but a create path that cannot write is not a create path.)"""
     from vinci.dossier.propose import assumptions_from, build_template, legs_from_template
-    doc = _doc("BRBR")
+    doc = frozen_doc("BRBR")
     legs = legs_from_template(build_template(doc))
     asm = assumptions_from(doc, legs)
     assert set(asm) == set(AXES)
@@ -368,7 +371,7 @@ def test_the_composed_method_names_the_statistic_not_the_house_label() -> None:
     and it is right. Analyst words are never edited; this sentence is the MACHINE's, so it is the
     machine's to get right."""
     from vinci.dossier.propose import assumptions_from, build_template, legs_from_template
-    doc = _doc("BRBR")
+    doc = frozen_doc("BRBR")
     asm = assumptions_from(doc, legs_from_template(build_template(doc)))
     for axis, a in asm.items():
         assert "computed anchor" not in a["method"], (axis, a["method"])
@@ -381,7 +384,7 @@ def test_the_shares_fact_labels_its_unit_as_millions() -> None:
     label disagreeing with its own value, which is `percentile`-as-`p25` one field over. SMPL's
     committed record says "M shares" for exactly this reason."""
     from vinci.dossier.propose import build_template
-    f = build_template(_doc("BRBR"))["facts"]["diluted_shares"]
+    f = build_template(frozen_doc("BRBR"))["facts"]["diluted_shares"]
     assert f["unit"] == "M shares" and 100 < f["value"] < 200, f
 
 
@@ -628,7 +631,7 @@ def _r3_legs(**over) -> dict[str, dict]:
 
 def test_r3_axes_are_not_asked_for_revenue_or_margin():
     """The refusal that made R3 uncreatable: nine problems, six of them for axes it never reads."""
-    ancs = propose_anchors(_doc("GOOGL"))
+    ancs = propose_anchors(frozen_doc("GOOGL"))
     trio = validate_legs(_r3_legs(), ancs)                       # today's default — the R1 shape
     assert [p for p in trio if ".revenue" in p or ".margin" in p], (
         "guard is inert: the R1 default must still demand revenue/margin, or this test proves "
@@ -643,7 +646,7 @@ def test_r3_multiple_is_not_anchored_to_the_ev_ebitda_band():
     Dropping that anchor does not weaken the check — it makes it STRICTER: the leg becomes
     unanchored, so it must state its `multiple_derivation` or be refused.
     """
-    ancs = propose_anchors(_doc("GOOGL"))
+    ancs = propose_anchors(frozen_doc("GOOGL"))
     mult = [a for a in ancs if a.axis == "multiple"]
     assert mult and mult[0].basis and "EBITDA" in mult[0].basis.upper(), (
         f"GOOGL's committed multiple anchor is no longer an EV/EBITDA statistic ({mult}) — this "
@@ -666,7 +669,7 @@ def test_r3_earnings_axis_reads_the_eps_leg_field():
     """
     from vinci.dossier.propose import assumptions_from
 
-    doc = _doc("GOOGL")
+    doc = frozen_doc("GOOGL")
     bare = validate_legs(_r3_legs(bear={"eps": None}), propose_anchors(doc),
                          axes=R3_AXES, basis="P/E")
     assert [p for p in bare if p.startswith("bear.eps is required")], bare

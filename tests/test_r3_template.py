@@ -20,6 +20,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_doc
 from vinci.dossier.midcycle import MULTIPLE_BASIS
 from vinci.dossier.propose import (
     AXIS_LEG_FIELD,
@@ -44,9 +45,8 @@ R1_CELL_INPUTS = {"revenue", "revenue_adjustment", "revenue_derivation", "margin
 
 
 def _page(ticker: str) -> dict[str, Any]:
-    doc: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
-    return doc
+    """``ticker``'s page as frozen at the cut (`tests/frozen_support.py`), never the living one."""
+    return frozen_doc(ticker)
 
 
 def _r3_page() -> dict[str, Any]:
