@@ -39,6 +39,7 @@ from vinci.dossier.ciq import (
     sheet_top,
     stated_unit,
 )
+from vinci.dossier.inputs_schema import FiledThrough
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
     CHECK_AGREE,
@@ -6430,6 +6431,115 @@ def comps_export_stamp(bundle: CiqBundle) -> date | None:
     except CiqUnavailableError:
         return None
     return _scan_asof_header(rows)
+
+
+#: (2026-11-17, STATE row 64(a)) The Financials statement sheets whose 'Filing Date' row dates an
+#: export's period columns (`financials_filed_through`). The Capital Structure Summary,
+#: Supplemental, Segments and Industry Specific sheets carry the row too, and are not read: the
+#: capital-structure panel's filing date reaches the page already (`maturity_check.panel_filed`).
+FILED_SHEETS: tuple[str, ...] = ("Balance Sheet", "Income Statement", "Cash Flow")
+FILING_DATE_ROW = "Filing Date"
+
+
+def _span(labels: list[str]) -> str:
+    """A list of column labels as a note prints it: all of them is never cut silently."""
+    return (f"[{labels[0]}]" if len(labels) == 1
+            else f"{len(labels)} columns, [{labels[0]}] to [{labels[-1]}]")
+
+
+def financials_filed_through(bundle: CiqBundle, freq: str | None, *,
+                             sha256: str) -> FiledThrough:
+    """THE ONE READER of the latest filing date a Financials export's statement columns state
+    (2026-11-17, STATE row 64(a)) — `inputs.filed_through` calls it, for the build and for a
+    committed page's backfill.
+
+    Each period column of the Balance Sheet, Income Statement and Cash Flow sheets states, in its
+    'Filing Date' row, the filing its figures were taken from: a date cell, decoded off the cell by
+    `excel_date` (an Excel serial on every export on file), never off a display string. CIQ stamps
+    no Financials export date, so the latest of them is the earliest day the export could have
+    been made, and its facts known (CLAUDE.md, PUBLISHED DATA: CIQ is not point-in-time).
+
+    EVERY DATED COLUMN COUNTS, NOT ONLY THE LATEST. A comparative column carries the filing it was
+    last taken from (IT's Q3 2025 column is dated by its Q3 2026 10-Q), so an older column filed
+    later than the newest is read. Never a guess:
+    * a statement sheet the export does not hold, or holds as CIQ's no-data shell, has no column
+      to date: it is passed over and named in the note. Holding none of the three is UNKNOWN, and
+      so is a workbook that cannot be read;
+    * a held sheet with no 'Filing Date' row, or whose latest column cannot be placed
+      (`latest_cell`, the house reader), is UNKNOWN;
+    * the LATEST column must state a date. It is the column behind the page's latest figures
+      (`ev_bridge.balance_sheet_date` on the quarterly Balance Sheet), so CIQ's no-value marker
+      there is UNKNOWN, and an older column's date is never read in its place;
+    * an older column reading CIQ's marker ('NA', '-', a blank) states no filing and is passed
+      over, counted in the note. Any other cell that is no date is UNKNOWN;
+    * a date before its own column's period end files no such column, and is UNKNOWN: a check on
+      the VALUE beside the checks that a date is there.
+
+    The date's ``source_ref`` names the workbook's sha256, the sheet, and the cell's row and
+    column (1-based, as the workbook numbers them). Where several cells state it, the Balance
+    Sheet's latest column is named first."""
+    name = f"CIQ Financials ({freq})" if freq else "CIQ Financials"
+    held = f"workbook sha256 {sha256}"
+
+    def unknown(note: str, at: str) -> FiledThrough:
+        return FiledThrough(status="unknown", note=note, source_ref=f"{at}, {held}")
+
+    found: list[tuple[date, int, date, str]] = []     # (filed, sheet order, column end, ref)
+    passed: list[str] = []
+    for order, sheet in enumerate(FILED_SHEETS):
+        at = f"{name}→{sheet}"
+        try:
+            rows = bundle.sheet("financials", sheet, freq=freq)
+        except CiqUnavailableError as exc:
+            if isinstance(exc.__cause__, CiqParseError):
+                return unknown(f"the workbook could not be read ({exc}), so no column's filing "
+                               "date is read", name)
+            passed.append(f"no {sheet} sheet")
+            continue
+        if is_no_data_shell(rows):
+            passed.append(f"the {sheet} sheet is CIQ's no-data shell")
+            continue
+        fi = _find_row(rows, FILING_DATE_ROW)
+        if fi is None:
+            return unknown(f"{at} carries no 'Filing Date' row, so the day its columns were filed "
+                           "is unread", at)
+        hdr = _dated_header(rows)
+        latest = latest_cell(rows, fi, hdr)
+        if hdr is None or latest.col is None:
+            return unknown(f"{at}: {latest.reason}", at)
+        row, markers = rows[fi], []
+        for j in range(1, len(rows[hdr])):
+            if (end := _column_date(rows[hdr][j])) is None:
+                continue
+            cell = row[j] if j < len(row) else ""
+            label = _period_text(rows[hdr][j])
+            ref = f"{at}, 'Filing Date' row {fi + 1}, column {j + 1} [{label}]"
+            if read_cell(cell).marker is not None:
+                if j == latest.col:
+                    return unknown(f"{at}: 'Filing Date' reads {_cell_words(cell)} at the latest "
+                                   f"column [{label}] — an older column's date is never read in "
+                                   "its place", ref)
+                markers.append((label, _cell_words(cell)))
+                continue
+            if (filed := excel_date(cell)) is None:
+                return unknown(f"{at}: 'Filing Date' reads {_cell_words(cell)} at [{label}], "
+                               "which is no date", ref)
+            if filed < end:
+                return unknown(f"{at}: 'Filing Date' reads {filed.isoformat()} at [{label}], "
+                               "before the period the column closes, so it files no such column",
+                               ref)
+            found.append((filed, order, end, ref))
+        if markers:
+            words = ", ".join(sorted({w for _label, w in markers}))
+            passed.append(f"{sheet}: {_span([lb for lb, _w in markers])} read {words}, "
+                          "stating no filing date")
+    if not found:
+        return unknown(f"{name} holds none of the {', '.join(FILED_SHEETS)} sheets with a column "
+                       "to date", name)
+    filed, _order, _end, ref = min(found, key=lambda f: (-f[0].toordinal(), f[1],
+                                                         -f[2].toordinal()))
+    note = ("passed over, never read as a filing date: " + "; ".join(passed)) if passed else None
+    return FiledThrough(status="present", value=filed, source_ref=f"{ref}, {held}", note=note)
 
 
 def comps_as_of(bundle: CiqBundle) -> Sourced[str]:

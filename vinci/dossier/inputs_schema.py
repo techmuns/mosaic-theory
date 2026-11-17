@@ -11,7 +11,37 @@ from __future__ import annotations
 from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
+
+
+class FiledThrough(BaseModel):
+    """(2026-11-17, STATE row 64(a)) The latest filing date a CIQ Financials export's statement
+    columns STATE (`ciq_sheets.financials_filed_through`): each period column of the Balance Sheet,
+    Income Statement and Cash Flow sheets carries a 'Filing Date' row. CIQ stamps no Financials
+    export date, and a CIQ export holds history as restated up to its export, so the export was
+    made, and its facts are knowable, no earlier than this.
+
+    THE SHAPE AND CONTRACT OF `schemas.Sourced[date]`, kept here because `schemas` imports this
+    module, so it cannot import `Sourced` (pinned equal by
+    `tests/test_analysis_as_of_financials_filed.py`). PRESENT carries the date and its
+    ``source_ref`` (the workbook's sha256, the sheet, the row and the column); UNKNOWN carries no
+    date and a ``note`` naming why — a row or cell that states none is never a guessed date."""
+
+    value: date | None = None
+    source_ref: str | None = None
+    status: Literal["present", "unknown"]
+    note: str | None = None
+
+    model_config = {"frozen": True}
+
+    @model_validator(mode="after")
+    def _contract(self) -> FiledThrough:
+        if self.status == "present":
+            if self.value is None or not self.source_ref:
+                raise ValueError("PRESENT filing date must carry both a value and a source_ref")
+        elif self.value is not None or not self.note:
+            raise ValueError("UNKNOWN filing date carries no value, and a note saying why")
+        return self
 
 
 class CiqExport(BaseModel):
@@ -30,6 +60,11 @@ class CiqExport(BaseModel):
     #: ABSENT on the page, never null, where the file states none or the record predates the field
     #: (`schemas.dossier_json`).
     export_date: date | None = None
+    #: (2026-11-17, STATE row 64(a)) A FINANCIALS export only: the latest filing date its statement
+    #: columns state (`inputs.filed_through`), with where it was read, or UNKNOWN naming why.
+    #: `date_semantics` counts it where it is later than every other date. ABSENT on the page,
+    #: never null, on any other export and on a record written before the field.
+    filed_through: FiledThrough | None = None
 
     model_config = {"frozen": True}
 

@@ -31,7 +31,7 @@ from vinci import provenance
 from vinci.dossier import inputs
 from vinci.dossier import valuation_basis as vb
 from vinci.dossier.ciq import CiqBundle, CiqFormat, CiqWorkbook
-from vinci.dossier.refresh import _only_export_dates, export_date_transform, refresh_dossier
+from vinci.dossier.refresh import _only_stated_dates, export_date_transform, refresh_dossier
 from vinci.dossier.schemas import Dossier, dossier_json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -202,11 +202,11 @@ def test_an_export_no_file_on_this_machine_matches_is_left_alone(tmp_path: Path)
 def test_the_seam_admits_only_the_stamp() -> None:
     page = _frozen("IT")
     stamped = _with_stamp("IT")["inputs"]
-    assert _only_export_dates(page["inputs"], stamped)
+    assert _only_stated_dates(page["inputs"], stamped)
     swapped = copy.deepcopy(stamped)
     swapped["ciq"][0]["sha256"] = "0" * 64
-    assert not _only_export_dates(page["inputs"], swapped)
-    assert not _only_export_dates(page["inputs"], stamped | {"recorded": "backfill"})
+    assert not _only_stated_dates(page["inputs"], swapped)
+    assert not _only_stated_dates(page["inputs"], stamped | {"recorded": "backfill"})
 
 
 def test_the_seam_never_rewrites_a_stamp_already_recorded() -> None:
@@ -221,9 +221,9 @@ def test_the_seam_never_rewrites_a_stamp_already_recorded() -> None:
             del row["export_date"]
         else:
             row["export_date"] = stamp
-    assert _only_export_dates(stamped, stamped)
-    assert not _only_export_dates(stamped, moved)
-    assert not _only_export_dates(stamped, dropped)
+    assert _only_stated_dates(stamped, stamped)
+    assert not _only_stated_dates(stamped, moved)
+    assert not _only_stated_dates(stamped, dropped)
 
 
 def test_a_record_that_is_no_mapping_is_left_alone(tmp_path: Path) -> None:
@@ -293,7 +293,7 @@ def test_the_transform_reads_its_export_by_sha256_off_the_real_workbook() -> Non
     assert wb is not None
     page = _frozen("IT")
     out = export_date_transform("IT", [wb.path.parent.parent])(page)
-    assert _only_export_dates(page["inputs"], out["inputs"])
+    assert _only_stated_dates(page["inputs"], out["inputs"])
     assert [r.get("export_date") for r in out["inputs"]["ciq"] if r["kind"] == "comps"] == [
         FIXTURE["IT"]["export_date"]]
 

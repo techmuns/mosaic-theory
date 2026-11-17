@@ -490,14 +490,17 @@ RULE_KNOWABLE = (
 
 #: (2026-11-16, STATE row 64(a)(1)) Each CIQ column's own stated FILING date that a page carries as
 #: a STRUCTURED value. A CIQ fact is knowable from its export date or from its column's stated
-#: filing date, never from the period the column describes (CLAUDE.md, PUBLISHED DATA). Only one
-#: reaches a page today: the capital-structure panel's source filing date, parsed ONCE off the
-#: panel's `Source` note by `ciq_sheets._cs_panel_filed` and carried as ISO. The CIQ Financials
-#: sheets state a `Filing Date` row per column too, but no page carries it, so it is not counted
-#: here (STATE row 64(a)).
+#: filing date, never from the period the column describes (CLAUDE.md, PUBLISHED DATA). Two reach
+#: a page: the capital-structure panel's source filing date, parsed ONCE off the panel's `Source`
+#: note by `ciq_sheets._cs_panel_filed` and carried as ISO, here; and, since 2026-11-17, each
+#: Financials export's latest column `Filing Date`, in its row of the input record
+#: (`inputs.ciq[].filed_through`, `CIQ_FINANCIALS_FILED`).
 CIQ_FILED_DATES: tuple[tuple[str, ...], ...] = (
     ("mechanical", "capital_structure", "maturity_check", "panel_filed"),
 )
+#: (2026-11-17, STATE row 64(a)) The input-record key holding a Financials export's latest stated
+#: column filing date (`inputs_schema.FiledThrough`): counted where PRESENT, named where UNKNOWN.
+CIQ_FINANCIALS_FILED = "filed_through"
 #: The clause a page's rule gains where such a date is later than every date the rule names, and so
 #: sets `analysis_as_of`. Where none is later, the latest-of the rule states IS the page's date and
 #: the rule is kept word for word, so the page's bytes do not move (0 of the 26 committed pages
@@ -505,15 +508,31 @@ CIQ_FILED_DATES: tuple[tuple[str, ...], ...] = (
 RULE_FILED_CLAUSE = (
     "; later than every date named above, a CIQ column's own stated filing date, which dates "
     "its facts from the day they were filed, never from the period they describe: {where}")
+#: (2026-11-17) The clause a page's rule gains where a Financials export's filing date was looked
+#: for and is UNKNOWN: the date above may then be early, and the page says so, never imputing one.
+RULE_UNFILED_CLAUSE = (
+    "; not counted, a CIQ Financials export whose column filing date is UNKNOWN (its record "
+    "names why), so this date may be early: {where}")
 
 
 def _ciq_filed(d: dict[str, Any]) -> list[tuple[str, date]]:
-    """``(path, day)`` for each CIQ column filing date in `CIQ_FILED_DATES` the page carries."""
+    """``(path, day)`` for each CIQ column filing date the page carries: each in `CIQ_FILED_DATES`,
+    then each Financials export's PRESENT `CIQ_FINANCIALS_FILED` in the input record."""
     out = []
     for path in CIQ_FILED_DATES:
         if (x := _day(_get(d, *path))) is not None:
             out.append((".".join(path), x))
+    for i, ft in _financials_filed(d):
+        if ft.get("status") == "present" and (x := _day(ft.get("value"))) is not None:
+            out.append((f"inputs.ciq[{i}].{CIQ_FINANCIALS_FILED}", x))
     return out
+
+
+def _financials_filed(d: dict[str, Any]) -> list[tuple[int, dict[str, Any]]]:
+    """``(row index, filed_through)`` for each input-record row that carries one."""
+    rows = _get(d, "inputs", "ciq") or []
+    return [(i, ft) for i, r in enumerate(rows) if isinstance(r, dict)
+            and isinstance(ft := r.get(CIQ_FINANCIALS_FILED), dict)]
 
 
 def _ciq_exported_as_of(d: dict[str, Any]) -> date | None:
@@ -547,6 +566,10 @@ def date_semantics(d: dict[str, Any]) -> DateSemantics:
         top = max(x for _p, x in later)
         days.append(top)
         rule += RULE_FILED_CLAUSE.format(where=", ".join(p for p, x in later if x == top))
+    # a filing date looked for and not read is named, never imputed from the period it describes
+    if unread := [f"inputs.ciq[{i}].{CIQ_FINANCIALS_FILED}" for i, ft in _financials_filed(d)
+                  if ft.get("status") != "present"]:
+        rule += RULE_UNFILED_CLAUSE.format(where=", ".join(unread))
     return DateSemantics.model_validate({
         "screen_reference_date": str(d.get("reference_date"))[:10],
         "reference_date_semantics": (

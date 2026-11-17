@@ -58,34 +58,41 @@ TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
 #: caveat from the page's stored ratio, and refuses if any other caveat would move.
 #: `ev_bridge_unbuilt` since 2026-11-04, for ONE use: `ev_bridge_transform` clears it when it lands
 #: a bridge, since a page never carries both.
-#: `inputs` since 2026-11-15, for ONE use: `export_date_transform` writes the export date each
-#: recorded CIQ export states of itself; `refresh_dossier` refuses any other change to the record
-#: (`_only_export_dates`).
+#: `inputs` since 2026-11-15, for TWO uses (the second 2026-11-17): `export_date_transform` writes
+#: the export date each recorded CIQ export states of itself, and `filed_through_transform` the
+#: latest filing date each recorded Financials export's columns state; `refresh_dossier` refuses
+#: any other change to the record (`_only_stated_dates`).
 _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history",
                                     "historical_forecast_error", "ev_bridge",
                                     "ev_bridge_unbuilt", "caveats", "inputs"})
 
 
-def _only_export_dates(old: Any, new: Any) -> bool:
-    """True when two input records differ in nothing but their CIQ rows' ``export_date`` — the
-    one change the `inputs` seam admits. The record says what a page was built FROM: a refresh
-    that could rewrite it could make a page claim inputs it never read."""
+#: The keys a CIQ row of the input record states of its file, and the only ones the `inputs` seam
+#: may write: the export date it states of itself, and a Financials export's stated filing date.
+_STATED_KEYS = ("export_date", "filed_through")
+
+
+def _only_stated_dates(old: Any, new: Any) -> bool:
+    """True when two input records differ in nothing but their CIQ rows' stated dates
+    (`_STATED_KEYS`) — the one change the `inputs` seam admits. The record says what a page was
+    built FROM: a refresh that could rewrite it could make a page claim inputs it never read."""
     def _bare(rec: Any) -> Any:
         if not isinstance(rec, dict):
             return rec
         rows = rec.get("ciq")
         if not isinstance(rows, list):
             return rec
-        return rec | {"ciq": [{k: v for k, v in r.items() if k != "export_date"}
+        return rec | {"ciq": [{k: v for k, v in r.items() if k not in _STATED_KEYS}
                               if isinstance(r, dict) else r for r in rows]}
 
-    def _held(rec: Any) -> list[Any]:
+    def _held(rec: Any, key: str) -> list[Any]:
         rows = rec.get("ciq") if isinstance(rec, dict) else None
-        return [r.get("export_date") if isinstance(r, dict) else None
+        return [r.get(key) if isinstance(r, dict) else None
                 for r in rows] if isinstance(rows, list) else []
 
-    # a stamp already recorded is what the build READ: the seam only fills an absent one
-    kept = all(o is None or o == n for o, n in zip(_held(old), _held(new), strict=False))
+    # a date already recorded is what the build READ: the seam only fills an absent one
+    kept = all(o is None or o == n for key in _STATED_KEYS
+               for o, n in zip(_held(old, key), _held(new, key), strict=False))
     return bool(_bare(old) == _bare(new)) and kept
 
 
@@ -534,9 +541,10 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
         if stray := sorted(set(extra) - _TOP_LEVEL_REFRESHABLE):
             raise ValueError(f"{doc.get('ticker')}: a top-level refresh may set only "
                              f"{sorted(_TOP_LEVEL_REFRESHABLE)}, not {stray}")
-        if "inputs" in extra and not _only_export_dates(doc.get("inputs"), extra["inputs"]):
+        if "inputs" in extra and not _only_stated_dates(doc.get("inputs"), extra["inputs"]):
             raise ValueError(f"{doc.get('ticker')}: a top-level refresh may change the input "
-                             "record only by its CIQ exports' export_date")
+                             "record only by its CIQ exports' export_date or filed_through, "
+                             "each filled where absent")
         doc.update(extra)
     # ONE SERIALIZER, SHARED WITH THE ASSEMBLER (`schemas.dossier_json`). This path used to re-dump
     # the model's payload with `json.dumps`, which differs from the assembler on unicode escaping
@@ -1309,9 +1317,81 @@ def export_date_transform(ticker: str, roots: Sequence[Path]) -> ExportDateStep:
     assembly. One whose record names an export no file on this machine matches is left alone too,
     and the step NAMES it (`ExportDateStep.skipped`, reported by `refresh_fleet`), as it names a
     matched file from which no export date is read. Nothing else in
-    the record moves (`_only_export_dates`, enforced by `refresh_dossier`). The write is recorded
+    the record moves (`_only_stated_dates`, enforced by `refresh_dossier`). The write is recorded
     in `layer_refreshes` beside the `date_semantics` it moves."""
     return ExportDateStep(ticker, tuple(roots))
+
+
+@dataclasses.dataclass
+class FiledThroughStep:
+    """`filed_through_transform`'s step (2026-11-17, STATE row 64(a)): it names every recorded
+    Financials export it cannot read, under the rules `ExportDateStep` states — a miss is "not
+    found in any <TICKER> folder under the roots", a matched file the loader does not kind as that
+    export is "not read as a <freq> Financials export", and no line names a local path.
+
+    A matched export whose columns state no readable filing date is NOT a skip: the reader's
+    UNKNOWN, naming why, is what the export states, and it is written to the page as such."""
+
+    ticker: str
+    roots: tuple[Path, ...]
+    looked_for: list[str] = dataclasses.field(default_factory=list)
+    skipped: list[str] = dataclasses.field(default_factory=list)
+
+    @property
+    def boundary(self) -> str:
+        return ("recorded Financials export(s) with no filed_through, matched by full sha256 in "
+                f"every folder named for the page's ticker under {len(self.roots)} root(s)")
+
+    def __call__(self, doc: dict[str, Any]) -> dict[str, Any]:
+        from vinci.dossier import inputs as page_inputs
+        from vinci.dossier.ciq import CiqBundle
+
+        self.looked_for, self.skipped = [], []
+        record = doc.get("inputs")
+        if not isinstance(record, dict):
+            return {}
+        rows = record.get("ciq") or []
+        todo = [i for i, r in enumerate(rows) if isinstance(r, dict)
+                and r.get("kind") == "financials" and "filed_through" not in r]
+        if not todo:
+            return {}
+        found = page_inputs.candidates(self.ticker, self.roots)
+        filled = list(rows)
+        for i in todo:
+            sha, freq = str(rows[i].get("sha256")), rows[i].get("freq")
+            self.looked_for.append(sha)
+            # read under the name the record gives the bytes, else the least of them: the loader
+            # kinds a workbook by its NAME (`ExportDateStep`)
+            same = sorted((c for c in found if c.sha256 == sha),
+                          key=lambda c: (c.path.name != rows[i].get("file"), c.path.name))
+            if not same:
+                self.skipped.append(f"{self.ticker}: skipped: export {sha} not found in any "
+                                    f"{self.ticker} folder under the roots")
+                continue
+            path = same[0].path
+            bundle = CiqBundle.from_files(self.ticker, [path])
+            wb = bundle.workbook("financials", freq=freq)
+            ft = page_inputs.filed_through(bundle).get(path) if wb is not None else None
+            if ft is None:
+                self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) not "
+                                    f"read as a {freq} Financials export")
+                continue
+            filled[i] = rows[i] | {"filed_through": ft.model_dump(mode="json")}
+        return {} if filled == rows else {"inputs": record | {"ciq": filled}}
+
+
+def filed_through_transform(ticker: str, roots: Sequence[Path]) -> FiledThroughStep:
+    """A `refresh_dossier` top-level step writing `inputs.ciq[].filed_through` — the latest filing
+    date a recorded CIQ Financials export's statement columns state, with its cell, or UNKNOWN
+    naming why — onto a page built before the field, so `date_semantics` counts it (2026-11-17,
+    STATE row 64(a)).
+
+    ONLY FROM THE EXPORT THE PAGE RECORDS, BY ITS FULL SHA256, read by the build's own reader
+    (`inputs.filed_through`), as `export_date_transform` reads an export date. A row that already
+    carries the field is left as it is; nothing else in the record moves (`_only_stated_dates`,
+    enforced by `refresh_dossier`). Each export it cannot read is named
+    (`FiledThroughStep.skipped`). The write is recorded in `layer_refreshes`."""
+    return FiledThroughStep(ticker, tuple(roots))
 
 
 def ev_bridge_transform(ticker: str) -> TopLevelTransform:

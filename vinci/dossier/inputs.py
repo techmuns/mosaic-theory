@@ -54,6 +54,7 @@ from typing import TYPE_CHECKING, Any
 from vinci import provenance
 from vinci.dossier.inputs_schema import (
     CiqExport,
+    FiledThrough,
     InputManifest,
     PriceSeries,
     Response,
@@ -61,8 +62,8 @@ from vinci.dossier.inputs_schema import (
     Unrecorded,
 )
 
-__all__ = ["CiqExport", "InputManifest", "PriceSeries", "Response", "ResponsesDigest",
-           "Unrecorded"]
+__all__ = ["CiqExport", "FiledThrough", "InputManifest", "PriceSeries", "Response",
+           "ResponsesDigest", "Unrecorded"]
 
 if TYPE_CHECKING:
     from vinci.dossier.ciq import CiqBundle
@@ -114,11 +115,36 @@ def export_dates(bundle: CiqBundle) -> dict[Path, date]:
     return {wb.path: stamp}
 
 
+def filed_through(bundle: CiqBundle) -> dict[Path, FiledThrough]:
+    """``{workbook path: the latest filing date its statement columns state}`` for each Financials
+    export the bundle holds — THE ONE READER of it, for the build (`load_bundle`) and for a
+    committed page's backfill (`refresh.filed_through_transform`) (2026-11-17, STATE row 64(a)).
+
+    CIQ stamps no Financials export date, so `export_dates` reads none; each period column of its
+    statement sheets states a 'Filing Date' instead, read by `ciq_sheets.financials_filed_through`
+    with the workbook's full sha256 in its ``source_ref``. A sheet or cell that states none is
+    UNKNOWN, named, never a guessed date. A workbook that cannot be hashed is left out: the record
+    names it unrecorded (`_ciq`)."""
+    from vinci.dossier import ciq_sheets
+
+    out: dict[Path, FiledThrough] = {}
+    for wb in bundle.workbooks:
+        if wb.kind != "financials":
+            continue
+        try:
+            sha, _size = provenance.file_sha256(wb.path)
+        except OSError:
+            continue
+        out[wb.path] = ciq_sheets.financials_filed_through(bundle, wb.freq, sha256=sha)
+    return out
+
+
 def load_bundle(ticker: str, files: list[Path]) -> CiqBundle:
     """THE BUILD'S CIQ BUNDLE, every file it reads recorded (`provenance.note_file`):
 
     - each workbook the bundle holds — the one door every page reader reads CIQ through — with the
-      export date it states of itself (`export_dates`);
+      export date it states of itself (`export_dates`) and, for a Financials export, the latest
+      filing date its statement columns state (`filed_through`);
     - the ``AS_OF`` sidecar beside them, which sets the comps and estimates as-of;
     - each file no workbook kind matches: only its NAME is read, and it moves a caveat;
     - and, when the LOADER refuses the folder (two exports of a kind, a mislabelled export),
@@ -133,16 +159,22 @@ def load_bundle(ticker: str, files: list[Path]) -> CiqBundle:
             provenance.note_file("ciq", p)
         raise
     # the stamp read PARSES the comps workbook, which can raise past `CiqUnavailableError` (a
-    # corrupt .xls is xlrd's own error): every file is still recorded before that propagates
+    # corrupt .xls is xlrd's own error): every file is still recorded before that propagates. The
+    # Financials filing-date read parses its workbooks the same way, under the same rule
     unread_stamp: Exception | None = None
     try:
         stamps = export_dates(bundle)
     except Exception as exc:  # noqa: BLE001 — re-raised below, once the reads are recorded
         stamps, unread_stamp = {}, exc
+    try:
+        filed = filed_through(bundle)
+    except Exception as exc:  # noqa: BLE001 — re-raised below, once the reads are recorded
+        filed, unread_stamp = {}, unread_stamp or exc
     for wb in bundle.workbooks:
         stamp = stamps.get(wb.path)
         provenance.note_file("ciq", wb.path, kind=wb.kind, freq=wb.freq,
-                             export_date=stamp.isoformat() if stamp is not None else None)
+                             export_date=stamp.isoformat() if stamp is not None else None,
+                             filed_through=filed.get(wb.path))
     for folder in sorted({wb.path.parent for wb in bundle.workbooks}):
         if (folder / AS_OF_SIDECAR).is_file():
             provenance.note_file("ciq", folder / AS_OF_SIDECAR, kind="as_of_sidecar")
@@ -224,7 +256,8 @@ def _ciq(files: Iterable[provenance.FileRead]) -> tuple[list[CiqExport], list[Un
         kind = f.kind or "unknown"
         exports[(kind, f.freq, name, f.sha256)] = CiqExport(
             kind=kind, freq=f.freq, file=name, sha256=f.sha256, bytes=f.bytes,
-            export_date=date.fromisoformat(f.export_date) if f.export_date else None)
+            export_date=date.fromisoformat(f.export_date) if f.export_date else None,
+            filed_through=f.filed_through)
     return sorted(exports.values(), key=lambda e: (e.kind, e.freq or "", e.file)), missing
 
 

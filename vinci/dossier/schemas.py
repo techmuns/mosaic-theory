@@ -3573,6 +3573,10 @@ TOP_DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("date_semantics", "ciq_exported_as_of"),
 )
 
+#: The same rule for the keys a CIQ export's row in the input record states of its file
+#: (`inputs_schema.CiqExport`): ABSENT, never null, where the file states none.
+CIQ_EXPORT_DROP_WHEN_NONE: tuple[str, ...] = ("export_date", "filed_through")
+
 #: (RG-D19 PR 3) A transcript driver row's fields that never reach a committed page once its words
 #: are FILED. This repo is public; the quote, the paragraph after it and the model's stated value
 #: are licensed transcript text, kept in the operator's private store. The page carries the row's
@@ -3658,10 +3662,12 @@ def dossier_json(doc: Dossier) -> str:
         excl["ev_bridge_unbuilt"] = True
     if doc.inputs is None:
         excl["inputs"] = True
-    # the same rule PER ROW for a CIQ export's stated export date (2026-11-15): a record written
-    # before the field, or an export that states none, writes no key
-    elif unstamped := {i: {"export_date"} for i, e in enumerate(doc.inputs.ciq)
-                       if e.export_date is None}:
+    # the same rule PER ROW for a CIQ export's stated export date (2026-11-15) and a Financials
+    # export's stated filing date (2026-11-17): a record written before the field, or an export
+    # that states none, writes no key
+    elif unstamped := {i: keys for i, e in enumerate(doc.inputs.ciq)
+                       if (keys := {k for k in CIQ_EXPORT_DROP_WHEN_NONE
+                                    if getattr(e, k) is None})}:
         excl["inputs"] = {"ciq": unstamped}
     if doc.layer_refreshes is None:
         excl["layer_refreshes"] = True
