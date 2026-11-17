@@ -364,7 +364,9 @@ def test_run_recipe_dispatches_r2_and_stamps_its_formula() -> None:
     not R1's (the multiple_basis precedent: a misstated recipe refuses rather than renders)."""
     from vinci import scenarios as sc
     r = sc.run_recipe(_r2_record())
-    assert r.recipe_formula == list(tm.R2_FORMULA)
+    # a FIRST compute is struck nominal since recipe 3b (1): today's chain plus the ratio line
+    assert r.recipe_formula == list(sc.r2_formula(tm.BASIS_EBITDA, nominal=True))
+    assert r.recipe_formula[:len(tm.R2_FORMULA)] == list(tm.R2_FORMULA)
     assert r.result.hurdle == tm.HURDLE
     assert r.result.survival is not None
     base = r.result.per_scenario["base"]
@@ -417,7 +419,9 @@ def test_r2_revenue_record_runs_and_stamps_the_revenue_chain() -> None:
     carries no earnings figures for a renderer to mistake for value drivers."""
     from vinci import scenarios as sc
     r = sc.run_recipe(_r2_revenue_record())
-    assert r.recipe_formula == list(tm.R2_FORMULA_REVENUE)
+    # a FIRST compute is struck nominal since recipe 3b (1): today's chain plus the ratio line
+    assert r.recipe_formula == list(sc.r2_formula(tm.BASIS_REVENUE, nominal=True))
+    assert r.recipe_formula[:len(tm.R2_FORMULA_REVENUE)] == list(tm.R2_FORMULA_REVENUE)
     base = r.result.per_scenario["base"]
     assert base.op_income is None and base.ebitda is None and base.d_and_a_t is None
     assert base.ev_ebit is None            # no EBIT to cross-check against

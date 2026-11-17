@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +37,12 @@ FROZEN_PAGES = ROOT / "tests" / "fixtures" / "frozen_pages"
 #: The commit the cut was taken at: main after #1092 (the coverage roster), 2026-11-17.
 CUT_SHA = "4889ddba632f34b0479fdb4e6e6e1b32c095cb10"
 CUT = FROZEN_PAGES / f"cut-{CUT_SHA[:8]}"
+
+#: Every cut, by its folder's sha8, with the date of its commit. A frozen copy's age is its
+#: folder's DATE: a dated folder's name (the page's assembled date, the README's convention), a
+#: cut's entry here. It is never the sort order of a folder's name, since hex is not time (review
+#: round 1 of #1098, item 7). The copy guard refuses a cut with no entry.
+CUTS: dict[str, date] = {CUT_SHA[:8]: date(2026, 11, 17)}
 
 
 def frozen_page(ticker: str) -> Path:
@@ -53,6 +60,34 @@ def frozen_doc(ticker: str) -> dict[str, Any]:
     """``ticker``'s frozen ``dossier.json``, parsed: a fresh object on every call."""
     doc: dict[str, Any] = json.loads((frozen_page(ticker) / "dossier.json").read_text())
     return doc
+
+
+def frozen_copies(ticker: str, root: Path = FROZEN_PAGES,
+                  cuts: dict[str, date] = CUTS) -> list[tuple[date, Path]]:
+    """Every frozen copy of ``ticker`` under ``root``, (its date, its folder), oldest first."""
+    out: list[tuple[date, Path]] = []
+    for d in sorted(p for p in root.iterdir() if p.is_dir()):
+        if not (d / ticker / "dossier.json").is_file():
+            continue
+        if d.name.startswith("cut-"):
+            sha8 = d.name.removeprefix("cut-")
+            if sha8 not in cuts:
+                raise ValueError(f"{d.name} states no date in tests/frozen_support.CUTS")
+            out.append((cuts[sha8], d / ticker))
+        else:
+            out.append((date.fromisoformat(d.name), d / ticker))
+    return sorted(out)
+
+
+def newest_frozen_copy(ticker: str, root: Path = FROZEN_PAGES,
+                       cuts: dict[str, date] = CUTS) -> Path:
+    """The folder of ``ticker``'s NEWEST frozen copy: the one whose date is latest (a dated
+    folder's name, a cut's commit date in `CUTS`), a cut winning a tie, since a cut is the page as
+    committed on that date. It raises when the name has none."""
+    copies = frozen_copies(ticker, root, cuts)
+    if not copies:
+        raise FileNotFoundError(f"no frozen copy of {ticker} under {root}")
+    return copies[-1][1]
 
 
 def covered_pages(data_dir: Path = DATA) -> list[str]:

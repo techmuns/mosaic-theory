@@ -13,8 +13,11 @@ its folder names: the same git blob. This test refuses:
 Each cut is also headed. Its row in the frozen-pages README names it. Its own `README.md` lists
 every copy with its two blobs, and the list must match the copies exactly.
 
-CI checks out the whole history (`fetch-depth: 0`, gate.yml), so `git cat-file` reads any commit. A
-checkout without the commit FAILS here. It never skips: a cut no check can read is not trusted.
+CI checks out the whole history (`fetch-depth: 0`, gate.yml), so `git cat-file` reads any commit,
+and the guard runs on every PR. A GIT CHECKOUT without the cut's commit (a shallow clone) FAILS
+here: a cut no check can read is not trusted. A tree that is not a git checkout at all (the impact
+harness's `git archive` export) has no history to hold a cut to, so those pins SKIP there, the
+reason named (#280's lesson, as `test_state_identifiers` applies it).
 
 CORPUS BEFORE SYNTHETIC: the first pin runs on the committed cut and must check every file in it.
 The negatives then show the check firing on the real bytes, edited.
@@ -28,7 +31,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.frozen_support import CUT, CUT_SHA, FROZEN_PAGES, ROOT
+from tests.frozen_support import CUT, CUT_SHA, CUTS, FROZEN_PAGES, ROOT
 
 _ROW = re.compile(r"^\| (?P<t>[A-Z][A-Z0-9.\-]*) \|.*\| `(?P<json>[0-9a-f]{40})` \| "
                   r"`(?P<md>[0-9a-f]{40})` \|$")
@@ -39,9 +42,38 @@ def _git(*args: str, stdin: str | None = None) -> str:
                           check=True).stdout
 
 
+def _in_a_checkout() -> bool:
+    try:
+        return _git("rev-parse", "--is-inside-work-tree").strip() == "true"
+    except (OSError, subprocess.CalledProcessError):
+        return False
+
+
+#: Only an exported tree skips; a git checkout lacking the commit fails (the module docstring).
+needs_git = pytest.mark.skipif(not _in_a_checkout(), reason=(
+    "not a git checkout (an exported tree): the cut is held to git history in CI"))
+
+
 def _blob_of(paths: list[Path]) -> dict[Path, str]:
-    out = _git("hash-object", "--stdin-paths", stdin="".join(f"{p}\n" for p in paths))
+    """Each file's blob id over its RAW bytes. `--no-filters`: with `* text=auto` in
+    `.gitattributes`, a filtered hash normalizes an inserted CR away, and a copy differing from the
+    page by that byte passed (review round 1 of #1098, item 5)."""
+    out = _git("hash-object", "--no-filters", "--stdin-paths",
+               stdin="".join(f"{p}\n" for p in paths))
     return dict(zip(paths, out.split(), strict=True))
+
+
+def _cut_files(cut: Path) -> list[Path]:
+    """The cut's files as git sees them: tracked, plus untracked ones git does not ignore (a copy
+    being added is still checked), never one git ignores, such as a Mac's `.DS_Store` (review
+    round 1 of #1098, item 6). A folder outside any checkout (a tmp copy) is walked whole."""
+    inside = subprocess.run(["git", "-C", str(cut), "rev-parse", "--is-inside-work-tree"],
+                            capture_output=True, text=True).stdout.strip() == "true"
+    if not inside:
+        return sorted(p for p in cut.rglob("*") if p.is_file())
+    out = subprocess.run(["git", "-C", str(cut), "ls-files", "-z", "--cached", "--others",
+                          "--exclude-standard", "--", "."], capture_output=True, check=True).stdout
+    return sorted(cut / x.decode() for x in out.split(b"\0") if x)
 
 
 def cut_problems(frozen_root: Path) -> tuple[list[str], int]:
@@ -55,7 +87,9 @@ def cut_problems(frozen_root: Path) -> tuple[list[str], int]:
         except subprocess.CalledProcessError:
             problems.append(f"{cut.name}: no commit {sha8} in this checkout")
             continue
-        files = sorted(p for p in cut.rglob("*") if p.is_file())
+        if sha8 not in CUTS:
+            problems.append(f"{cut.name}: no date stated for it in tests/frozen_support.CUTS")
+        files = _cut_files(cut)
         stray = [p for p in files if p.parent == cut and p.name != "README.md"]
         problems += [f"{p.relative_to(frozen_root)}: a cut holds only page folders and its "
                      f"README" for p in stray]
@@ -99,6 +133,7 @@ def _header_problems(cut: Path, frozen_root: Path, have: dict[Path, str]) -> lis
     return out
 
 
+@needs_git
 def test_every_file_in_every_cut_is_its_commits_page_byte_for_byte() -> None:
     """(+ · the committed cut) Every copy in every cut is the committed page at the cut's commit,
     and every cut is headed. All 52 files of `cut-4889ddba` are checked, so the walk is not
@@ -108,6 +143,7 @@ def test_every_file_in_every_cut_is_its_commits_page_byte_for_byte() -> None:
     assert checked >= len(list(CUT.glob("*/dossier.*"))) == 52, checked
 
 
+@needs_git
 def test_the_cut_is_the_commit_frozen_support_names() -> None:
     """(+) The folder `frozen_support` reads is the cut of its stated commit."""
     assert CUT.name == f"cut-{CUT_SHA[:8]}"
@@ -128,6 +164,7 @@ def _copy_cut(tmp_path: Path, tickers: tuple[str, ...] = ("SMPL",)) -> Path:
     return cut
 
 
+@needs_git
 def test_an_unedited_copy_of_a_real_cut_passes(tmp_path: Path) -> None:
     """(+ · control) The tmp copy the negatives edit passes as it stands, so each negative's
     failure is its edit's."""
@@ -135,6 +172,7 @@ def test_an_unedited_copy_of_a_real_cut_passes(tmp_path: Path) -> None:
     assert cut_problems(tmp_path / "frozen_pages") == ([], 4)
 
 
+@needs_git
 def test_a_one_byte_edit_to_a_copy_is_refused(tmp_path: Path) -> None:
     """(−) A copy edited by one byte, the shape a re-fitted pin would leave, is not the page."""
     cut = _copy_cut(tmp_path)
@@ -148,6 +186,7 @@ def test_a_one_byte_edit_to_a_copy_is_refused(tmp_path: Path) -> None:
     assert any("its README states blob" in p for p in problems), problems
 
 
+@needs_git
 def test_a_file_the_page_never_had_is_refused(tmp_path: Path) -> None:
     """(−) A file the committed page folder did not hold is not part of a cut."""
     cut = _copy_cut(tmp_path)
@@ -156,6 +195,7 @@ def test_a_file_the_page_never_had_is_refused(tmp_path: Path) -> None:
     assert any("SMPL/notes.json: not a page file at 4889ddba" in p for p in problems), problems
 
 
+@needs_git
 def test_a_cut_of_an_unknown_commit_is_refused(tmp_path: Path) -> None:
     """(−) A folder named for no commit is a working-tree copy, never a cut."""
     cut = _copy_cut(tmp_path)
@@ -164,6 +204,7 @@ def test_a_cut_of_an_unknown_commit_is_refused(tmp_path: Path) -> None:
     assert problems == ["cut-0000dead: no commit 0000dead in this checkout"], problems
 
 
+@needs_git
 def test_a_cut_its_readmes_do_not_head_is_refused(tmp_path: Path) -> None:
     """(−) A cut with no row in the frozen-pages README, or a copy its own README does not list,
     is unheaded."""
@@ -188,3 +229,49 @@ def test_frozen_support_reads_the_cut_and_never_the_living_page(ticker: str) -> 
     assert frozen_doc(ticker)["ticker"] == ticker
     with pytest.raises(FileNotFoundError, match="no frozen copy of ZZZZ"):
         frozen_page("ZZZZ")
+
+
+@needs_git
+def test_an_inserted_carriage_return_is_refused(tmp_path: Path) -> None:
+    """(−) Review round 1 of #1098, item 5: a CR inserted before a newline is a different byte
+    string, and `.gitattributes`' `* text=auto` filter normalized it away, so it passed. The blob
+    is hashed over the raw bytes."""
+    cut = _copy_cut(tmp_path)
+    page = cut / "SMPL" / "dossier.json"
+    raw = page.read_bytes()
+    at = raw.index(b"\n")
+    page.write_bytes(raw[:at] + b"\r" + raw[at:])
+    problems, _ = cut_problems(tmp_path / "frozen_pages")
+    assert any(p.startswith(f"{CUT.name}/SMPL/dossier.json: differs from") for p in problems), \
+        problems
+
+
+@needs_git
+def test_a_file_git_ignores_does_not_redden_the_guard(tmp_path: Path) -> None:
+    """(+ / −) Review round 1 of #1098, item 6: a Mac writes `.DS_Store` into a folder it shows,
+    and the guard read the folder, so a checkout turned red. In a checkout the cut's files are
+    git's: an ignored file is not one, and an untracked file git does not ignore still is."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    (repo / ".gitignore").write_text(".DS_Store\n")
+    cut = _copy_cut(repo)
+    (cut / ".DS_Store").write_bytes(b"\0finder")
+    (cut / "SMPL" / ".DS_Store").write_bytes(b"\0finder")
+    assert cut_problems(repo / "frozen_pages") == ([], 2)
+    (cut / "SMPL" / "notes.json").write_text("{}\n")
+    problems, _ = cut_problems(repo / "frozen_pages")
+    assert any("SMPL/notes.json: not a page file at 4889ddba" in p for p in problems), problems
+
+
+@needs_git
+def test_a_cut_with_no_stated_date_is_refused(tmp_path: Path,
+                                              monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) Review round 1 of #1098, item 7: a cut's age is the date `frozen_support.CUTS` states
+    for it, so a cut with none cannot be ordered, and is refused rather than sorted by its name."""
+    import tests.test_frozen_pages_are_cuts as me
+
+    _copy_cut(tmp_path)
+    monkeypatch.setattr(me, "CUTS", {})
+    problems, _ = cut_problems(tmp_path / "frozen_pages")
+    assert f"{CUT.name}: no date stated for it in tests/frozen_support.CUTS" in problems, problems
