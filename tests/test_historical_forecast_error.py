@@ -225,7 +225,6 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(
     from vinci.dossier import manual_store as ms
     from vinci.dossier.refresh import historical_forecast_error_transform, refresh_dossier
 
-    b = _bundle("AMZN")
     src = frozen_page("AMZN")   # the page as frozen at the cut: it names this export
     folder = tmp_path / "AMZN"
     folder.mkdir()
@@ -236,8 +235,10 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(
     # THE FROZEN PAGE NAMES ITS EXPORT, so the pin runs on that export: the folder's while it is
     # there, else the archived folder that holds it (`ciq_export_support.skip_unless_export`), and
     # the transform reads that same folder. It skips, naming both sha256s, only when neither does.
+    # It builds the bundle itself: one built here from the live folder would skip before the
+    # archive is searched, where no live folder holds the name (a retirement's likeliest state).
     b = skip_unless_export("AMZN", "estimates", before["forward_consensus"]["source_sha256"],
-                           why="the frozen page names this Estimates export", bundle=b)
+                           why="the frozen page names this Estimates export")
     held = b.workbooks[0].path.parent
     monkeypatch.setattr(ms.LocalFolderStore, "from_config",
                         staticmethod(lambda _cfg=None: ms.LocalFolderStore(held.parent)))
@@ -259,6 +260,32 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(
     for key in ("mechanical", "synthesis", "anchor", "forward_consensus"):
         assert after[key] == before[key], f"{key} moved"
     assert list(after)[-1] == "anchor"
+
+
+def test_the_refresh_pin_runs_from_the_archive_when_no_live_folder_holds_the_name(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE STATE AFTER A RETIREMENT: no live AMZN folder, and AMZN's export kept under the
+    operator's `ciq-archive/`. The refresh pin finds it there and RUNS. It never skips before that
+    search (review of #1106: the pin built its bundle from the live folder first, and skipped
+    there, naming no sha256, before `skip_unless_export` could look in the archive)."""
+    sha = json.loads((frozen_page("AMZN") / "dossier.json").read_text())[
+        "forward_consensus"]["source_sha256"]
+    real = skip_unless_export("AMZN", "estimates", sha,
+                              why="the frozen page names this Estimates export")
+    manual = tmp_path / "data" / "manual"
+    (manual / "ciq").mkdir(parents=True)   # the live folder, holding no AMZN
+    kept = manual / "ciq-archive" / "replaced-2026-11-17" / "AMZN"
+    kept.mkdir(parents=True)
+    for p in real.workbooks[0].path.parent.iterdir():
+        if p.is_file() and not p.name.startswith("."):
+            (kept / p.name).symlink_to(p.resolve())   # linked into the scratch tree, never copied
+    monkeypatch.chdir(tmp_path)   # `Config.data_dir` is relative, so the scratch tree is the store
+    run = tmp_path / "run"
+    run.mkdir()
+    try:
+        test_the_refresh_lands_the_layer_only_from_the_pages_own_export(run, monkeypatch)
+    except pytest.skip.Exception as exc:
+        pytest.fail(f"skipped where ciq-archive/ holds the frozen page's export: {exc}")
 
 
 def test_assembly_builds_the_layer_through_the_one_builder() -> None:

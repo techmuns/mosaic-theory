@@ -42,6 +42,12 @@ superseded-by:
   (`ciq-archive/replaced-<date>/`, where the operator keeps each replaced export). It skips, naming
   both sha256s, only when neither holds it. The first cut of this slice skipped after any
   re-export (`skip_unless_pages_export`); the review showed the archive path was there.
+  `skip_unless_export` builds the bundle itself. The pin first built it from the live folder
+  (`_bundle`), which skipped, naming no sha256, before the archive was searched. With no live
+  AMZN folder, the likeliest state after a retirement, the pin skipped where the archive held its
+  export (A's review, round 1). `test_the_refresh_pin_runs_from_the_archive_when_no_live_folder_holds_the_name`
+  pins it: a scratch store with no AMZN folder and AMZN's export linked under `ciq-archive/`. It
+  failed on the round-0 head, skipped by `_bundle`, and passes.
 
 **Populations changed** (the checker lists both as POPULATION):
 - the unmarked-banner check: SMPL, AORT and FUBO → every covered page with no sidecar (26 at the
@@ -63,9 +69,16 @@ superseded-by:
 impact and misc group.
 
 **HOW VERIFIED.**
-- **No assertion changed.** `python scripts/asserts_unchanged.py 8a71a383` (main, with slice 1
-  merged): 16 files, 393 functions in both: 0 changed, 0 disabled, 0 control, 0 vanished, 0
-  reader-only, and 2 population (above).
+- **No assertion changed.** `python scripts/asserts_unchanged.py origin/main` (main `2f85a6f2`,
+  merged at round 1): 16 files, 393 functions in both: 0 changed, 0 disabled, 0 control, 0
+  vanished, 0 reader-only, 2 population (above), and 2 new (`_pages_at_the_cut` and round 1's
+  archive test). At round 0, against `8a71a383`, it read the same less the archive test.
+  **"0 disabled" is a net count** (A's review, round 1). The AMZN refresh pin lost main's skip
+  for an absent committed page, which never fired while the page existed, and gained the export
+  gate, which fires after a re-export whose replaced export is not archived. So on main a drift
+  between the folder's Estimates export and the page's FAILED the pin, and here it SKIPS, naming
+  both sha256s. The CIQ rule allows that (a value verified on one export holds only on that
+  export, `tests/ciq_export_support.py`), and the skip is a cost below (cost 1).
 - **The archive path, run.** In scratch, the live AMZN folder held no Estimates export, and a
   stand-in `ciq-archive/` held AMZN's real export. The refresh pin passed there, reading workbooks
   from the archive. The old gate would have skipped. The scratch copies were deleted.
@@ -96,8 +109,9 @@ impact and misc group.
   `test_transcript_run_guard`, 4 new and 3 gone (it fails a different subset of its cases on every
   run of one tree); and `test_evidence_same_passage`'s LibreOffice conversion, gone.
 - **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` at
-  `e9486658`: 0 of 589 tests fail on base code and pass on head code (465 pass at both, 124
-  skipped), and `verify` reads VALID. The PR body carries the report.
+  `f95401f3` (round 1, main `2f85a6f2` merged): 0 of 590 tests fail on base code and pass on head
+  code (465 pass at both, 125 skipped), and `verify` reads VALID. At round 0 (`e9486658`) it read
+  0 of 589. The PR body carries the report.
 
 **BOUNDARY.**
 - **Counts:** at this slice's commit, against main at `8a71a383` (slice 1 merged as #1098), unless
@@ -111,10 +125,12 @@ ratchet and STATE row 41).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 1. **The CIQ-paired refresh pin skips when neither the folder nor the archive holds its page's
-   export.** It used to fail until the page was rebuilt. Falsifier: it skips while the folder or
-   `ciq-archive/` holds the export the frozen page names.
+   export.** On main a drift between the folder's export and the page's failed it until the page
+   was rebuilt. Falsifier: it skips while the folder or `ciq-archive/` holds the export the frozen
+   page names, with or without a live AMZN folder.
 2. **The checker could not see a skip inside a helper.** `skip_unless_export` skips from inside
-   a support function, which `asserts_unchanged.py` did not count. Slice 5's checker counts it,
-   and reads this slice as 0 disabled too: the AMZN pin drops main's page-absent skip as it gains
-   the export skip.
+   a support function, which `asserts_unchanged.py` did not count. Slice 5's checker follows a
+   skip into a helper and compares skips by what they call, never by count. It reads this slice as
+   **1 disabled**: the AMZN refresh pin, whose export gate replaces main's page-absent skip
+   (above). This record first said 0, from a count that netted the two (A's review, round 1).
 3. **$0.** No model call, no vendor call, and no page rebuilt or re-rendered.
