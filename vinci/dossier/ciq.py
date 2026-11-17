@@ -13,10 +13,13 @@ loud to UNKNOWN — a missing or unrecognised cell is never a fabricated number.
 
 from __future__ import annotations
 
+import contextlib
 import enum
 import html as _html
+import os
 import quopri
 import re
+import signal
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
@@ -137,11 +140,24 @@ def _bounded_font_scan(raw: str) -> str:
     return _FONT_SWITCH.sub(lambda m: m.group(0) or "\n", raw)
 
 
+#: A conversion still running after this long is HUNG, not slow (2026-11-17). The 66 OLE calls
+#: on file took at most 8.9 s each alone and 9.5 s eight at once on this machine, so this is over
+#: 12x the slowest. Set by face validity, never by an outcome.
+SOFFICE_TIMEOUT_S = 120.0
+
+
 def libreoffice_convert(soffice: str, src: Path, to: str,
                         outdir: Path) -> subprocess.CompletedProcess[bytes]:
     """ONE LibreOffice conversion of ``src`` into ``outdir`` (``--convert-to <to>``), under a user
     profile of its OWN that is removed when it returns. Never raises on LibreOffice's exit: the
-    caller reads ``returncode`` and the output file, and says what failed.
+    caller reads ``returncode`` and the output file, and says what failed. Raises `CiqParseError`
+    on a conversion still running at ``SOFFICE_TIMEOUT_S``, after killing its whole process group.
+
+    A HUNG CONVERSION IS KILLED WHOLE (A's review of #1105). Under an unwritable profile `soffice`
+    ran past a 60 s bound, and a kill of the launcher alone left a re-parented office process
+    (Homebrew's `soffice` is a shell script that starts the app). With no bound the read never
+    returned, and `assemble_cohort`'s `pool.map` would wait for good with no run line. So each
+    conversion leads a session of its own, and a timeout kills every process in it.
 
     WHY EVERY CONVERSION, NOT EVERY PROCESS (2026-11-17). With no ``-env:UserInstallation`` every
     build, precheck and suite conversion on the machine ran under LibreOffice's one default
@@ -149,7 +165,7 @@ def libreoffice_convert(soffice: str, src: Path, to: str,
     running instance, which may exit before reading it: VRRM's check build read 1 of its 2 calls
     (run `6043fb83`, `docs/records/2026-11-17-vrrm-check-build-held.md`). Measured at $0 on a
     generated RTF: a second conversion started 0.0–1.2 s into a first lost 4 of 14 under the
-    default profile and 0 of 14 with a profile each. `assemble_all` builds up to 8 names on
+    default profile and 0 of 14 with a profile each. `assemble_cohort` builds up to 8 names on
     threads of ONE process, so a per-process profile (`vinci.impact.child.own_soffice_profile`,
     kept for the impact check's old refs, which predate this) would still share one.
 
@@ -160,10 +176,21 @@ def libreoffice_convert(soffice: str, src: Path, to: str,
     # here would escape `transcript_for_synthesis`, which skips only a `CiqParseError` (RA-D11)
     with tempfile.TemporaryDirectory(prefix="vinci-soffice-profile-",
                                      ignore_cleanup_errors=True) as profile:
-        return subprocess.run(  # noqa: S603 — fixed args, paths from the caller
-            [soffice, f"-env:UserInstallation={Path(profile).as_uri()}", "--headless",
-             "--convert-to", to, "--outdir", str(outdir), str(src)],
-            capture_output=True, check=False)
+        args = [soffice, f"-env:UserInstallation={Path(profile).as_uri()}", "--headless",
+                "--convert-to", to, "--outdir", str(outdir), str(src)]
+        with subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,  # noqa: S603
+                              start_new_session=True) as proc:
+            try:
+                out, err = proc.communicate(timeout=SOFFICE_TIMEOUT_S)
+            except subprocess.TimeoutExpired:
+                with contextlib.suppress(ProcessLookupError):  # it finished as the bound passed
+                    os.killpg(proc.pid, signal.SIGKILL)
+                proc.wait()
+                raise CiqParseError(
+                    f"{src.name}: LibreOffice did not finish converting it in "
+                    f"{SOFFICE_TIMEOUT_S:g} s, so it and every process it started were killed — "
+                    "re-run it; if it hangs again, re-export the file") from None
+        return subprocess.CompletedProcess(args, proc.returncode, out, err)
 
 
 def read_text(path: Path, fmt: CiqFormat | None = None, *, thin_ok: bool = False) -> str:

@@ -610,7 +610,7 @@ def test_the_reader_reads_its_date_off_the_real_workbook() -> None:
                                 why="the filing date is read off IT's quarterly Financials export")
     wb = bundle.workbook("financials", freq="quarterly")
     assert wb is not None
-    got = inputs.filed_through(bundle)[wb.path]
+    got = inputs.filed_through(bundle, read_on=READ_ON)[wb.path]
     assert got.model_dump(mode="json") == FIXTURE["IT"]["filed_through"]
 
 

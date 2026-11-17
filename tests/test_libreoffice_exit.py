@@ -13,9 +13,13 @@ calls (skip where the licensed folder is absent, as on CI); the constructed twin
 """
 from __future__ import annotations
 
+import contextlib
 import shutil
 import subprocess
+from datetime import date
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -30,6 +34,7 @@ from vinci.dossier.ciq import (
     read_text,
 )
 from vinci.dossier.manual_store import LocalFolderStore
+from vinci.graph.llm import LlmClient
 
 _OLE_MAGIC = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"
 
@@ -190,3 +195,68 @@ def test_a_paid_build_refuses_one_real_call_that_did_not_read(
     with pytest.raises(assemble.DossierAssemblyError, match=f"1 of {len(calls)} call") as err:
         assemble._refuse_unread_calls(b, sliced, _PAID)  # type: ignore[arg-type]
     assert calls[0] in str(err.value) and all(c not in str(err.value) for c in calls[1:])
+
+
+class _TrapLlm(LlmClient):
+    """A model client that fails the test if the build ever asks it anything."""
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any],
+                cache: bool = False) -> dict[str, Any]:
+        raise AssertionError("assemble_one reached a model call")
+
+    @property
+    def model(self) -> str:
+        return "trap"
+
+
+def test_assemble_one_refuses_an_unread_call_and_never_reaches_the_model(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE REFUSAL DRIVEN THROUGH `assemble_one` (A's review of #1105). Two calls on disk, the
+    first one's conversion exiting 1, and a model client that fails the test if called. Everything
+    `assemble_one` does before reading the calls that needs a network, a store or a real finalist
+    is stood in for; the CIQ loader, the requirements manifest, the LTM check and the transcript
+    reader are production's own, on the files in this folder. FAILED with the refusal's line
+    removed: the build went on and asked the model."""
+    from vinci import eod
+    from vinci.dossier import assemble
+    from vinci.dossier import driver_evidence as de
+    from vinci.dossier.schemas import Dossier
+
+    frozen = Path("tests/fixtures/frozen_pages/2026-10-26/AORT/dossier.json")
+    mech = Dossier.model_validate_json(frozen.read_text()).mechanical.model_copy(
+        update={"capital_structure": None, "financial_summary": None})
+    folder = tmp_path / "ZFW"
+    folder.mkdir()
+    calls = [folder / f"Zinnober Fixture Works Inc, {q} 2026 Earnings Call, Sep 24, 2026.rtf"
+             for q in ("Q1", "Q2")]
+    for call in calls:
+        call.write_bytes(_OLE_MAGIC + b"\x00" * 504)
+    _use(monkeypatch, _stub(tmp_path, fail_on="Q1"))
+    (tmp_path / "spool").mkdir()
+    monkeypatch.setenv(de.SPOOL_ENV, str(tmp_path / "spool"))
+    rec = SimpleNamespace(identity=SimpleNamespace(ticker="ZFW", internal_id="zfw", cik=None,
+                                                   name="Zinnober Fixture Works"))
+    for name, value in {
+        "_price_store_stamp": lambda cfg: None,
+        "_with_listing_basis": lambda r, **k: r,
+        "Store": lambda path: contextlib.nullcontext(SimpleNamespace()),
+        "EdgarClient": SimpleNamespace(from_config=lambda cfg: None),
+        "build_sec_http": lambda cfg: None,
+        "build_finra_http": lambda cfg: None,
+        "_read_scenario_card": lambda ticker: None,
+        "_drawdown_anchor_date": lambda cfg, ticker: None,
+        "assemble_mechanical": lambda *a, **k: (mech, []),
+    }.items():
+        monkeypatch.setattr(assemble, name, value)
+    monkeypatch.setattr(eod.PolygonEodClient, "from_config",
+                        lambda cfg: SimpleNamespace(security_types=dict))
+    fin = SimpleNamespace(data_record=rec, reference_date=date(2026, 11, 16), sleeve="overshoot",
+                          market_cap_screen=None, reads=None)
+    manual = SimpleNamespace(files=lambda t: sorted(folder.iterdir()), location=lambda t: "ZFW")
+    cfg = SimpleNamespace(db_path=tmp_path / "never-opened.db")  # `Store` is stood in for
+    with pytest.raises(assemble.DossierAssemblyError, match="1 of 2 call") as err:
+        assemble.assemble_one(fin, cfg=cfg, resolver=SimpleNamespace(),  # type: ignore[arg-type]
+                              graph=None, manual=manual, out_root=tmp_path / "out",  # type: ignore[arg-type]
+                              llm=_TrapLlm())
+    assert calls[0].name in str(err.value) and calls[1].name not in str(err.value)
+    assert not (tmp_path / "out").exists()
