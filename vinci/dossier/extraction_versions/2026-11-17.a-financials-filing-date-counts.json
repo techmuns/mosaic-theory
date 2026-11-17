@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-17.a-financials-filing-date-counts",
+  "follows": [
+    "2026-11-16.covenant-selector-reads-a-filings-governing-exhibits"
+  ],
+  "names": "each CIQ Financials export's latest stated column filing date (the Balance Sheet, Income Statement and Cash Flow sheets' 'Filing Date' row, every dated column read off its decoded cell) is recorded in the page's input record with its cell, or UNKNOWN naming why (inputs.ciq[].filed_through), and counts toward analysis_as_of where it is later than every other date, the rule then naming it; an UNKNOWN one is named in the rule, never imputed; a page where it is not later keeps its block word for word"
+}

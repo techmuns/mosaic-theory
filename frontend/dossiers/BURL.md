@@ -1,6 +1,8 @@
 # Dossier — Burlington Stores, Inc. (NYSE: BURL)
 
-_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-10.driver-text-filed_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
+
+> **Frozen since 2026-11-13: BURL is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until BURL goes active.
 
 # Brief — first cut
 
@@ -603,6 +605,7 @@ _Source §: 8-K 0001564590-18-016500 · burl-ex101_6.htm · amended by 000119312
   - 2026-11-10 · mechanical.capital_allocation, mechanical.peer_capital_intensity — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.peer_capital_intensity — refresh at 2026-11-10.one-family-peers
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
+  - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 31d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 34d old (2026-09-22, valuation.implied_expectations.multiples_as_of) — within the ceiling

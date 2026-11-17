@@ -16447,7 +16447,13 @@
         "file": "The TJX Companies Inc NYSE TJX Financials_Annual.xls",
         "sha256": "e84d1f87db6e727655d948893d952267c07e43ab51941edf9e1a306347c71c65",
         "bytes": 344586,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-08-28",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 87, column 12 [Aug-01-2026], workbook sha256 e84d1f87db6e727655d948893d952267c07e43ab51941edf9e1a306347c71c65",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -16455,7 +16461,13 @@
         "file": "The TJX Companies Inc NYSE TJX Financials_Quarterly.xls",
         "sha256": "ae3f6c4d49c5423eb7dc5cca7698f3c0dfd9491d6590b9c42389edec63ffd56e",
         "bytes": 603658,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-08-28",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 85, column 43 [Q2 Aug-01-2026], workbook sha256 ae3f6c4d49c5423eb7dc5cca7698f3c0dfd9491d6590b9c42389edec63ffd56e",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "key_developments",
@@ -16629,6 +16641,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

@@ -754,6 +754,8 @@ def _extraction_versions(module: Path = EV_MODULE, entries: Path = EV_ENTRIES) -
 
 
 COVERAGE = ROOT / "data" / "coverage_roster.jsonl"
+#: every status a move can name: `vinci.coverage_roster.STATUSES`, pinned equal in the suite
+_STATUSES = ("intake", "active", "watch", "retired")
 
 
 def _covered_pages() -> list[str]:
@@ -762,8 +764,9 @@ def _covered_pages() -> list[str]:
     once its first page is committed, sorted, once the committed pages agree with it. Stdlib
     twin of `vinci.coverage_roster.covered_pages` (the build fence forbids the import);
     `tests/test_coverage_roster.py` pins the two against each other on the real committed tree.
-    This twin reads each name's latest move and checks the pages; the roster's own form (order,
-    fields, canonical lines) is the backend reader's, run in the suite. A disagreement stops the
+    This twin reads each name's latest move, refuses a status the roster does not name, and checks
+    the pages; the roster's own form (order, fields, canonical lines) is the backend reader's, run
+    in the suite. A disagreement stops the
     build naming every name, never a quiet publish of whatever is on disk: a page is published
     because its name is covered, not because its folder exists."""
     if not COVERAGE.is_file():
@@ -772,6 +775,12 @@ def _covered_pages() -> list[str]:
     for line in COVERAGE.read_text(encoding="utf-8").splitlines():
         if line.strip():
             move = json.loads(line)
+            # a status the twin does not know is neither published nor refused below, so its page
+            # would leave the mirror in silence. A hand run, `ciq-reread` and `caveat-reword` reach
+            # this with no strict read of the roster first.
+            if move["status"] not in _STATUSES:
+                raise SystemExit(f"{COVERAGE.relative_to(ROOT)}: {move['ticker']}'s status "
+                                 f"{move['status']!r} is not one of {_STATUSES}")
             latest[str(move["ticker"])] = str(move["status"])
     covered = {t for t, s in latest.items() if s in ("active", "watch")}
     paged = {p.parent.name for p in DOSS.glob("*/dossier.json")}
@@ -786,6 +795,61 @@ def _covered_pages() -> list[str]:
                          + "; ".join(problems))
     # an `intake` name is published once its first page is committed, and needs none before
     return sorted(covered | {t for t in paged if latest.get(t) == "intake"})
+
+
+WATCH_DEFECTS = ROOT / "data" / "watch_defects.json"
+
+
+def _coverage_snapshot(covered: list[str]) -> dict[str, Any]:
+    """Each published name's latest roster move, and a watch name's known defects: what the
+    dossier page prints as its WATCH line (STATE row 41 (b); dossier.js ``watchLine``). Written to
+    ``snapshots/coverage.json`` on every deploy, never committed, so the line follows the roster
+    and no page churns. Stdlib twin of `vinci.coverage_roster.watch_notice` (the build fence
+    forbids the import). A WATCH PAGE'S LISTED DEFECT THAT ITS COMMITTED PAGE NO LONGER HOLDS
+    (the field at `page_field` no longer holds `page_value`) STOPS THE DEPLOY, naming the field:
+    served, the line would drop it and the page would look clean. The strict file reader is the
+    backend's, run on every md render and in the suite (`tests/test_watch_frozen_line.py` pins
+    the two twins). Called BEFORE the mirror is cleared (W27's order), so a refusal here leaves
+    the served mirror as it was."""
+    if not WATCH_DEFECTS.is_file():
+        raise SystemExit(f"no known-defect file at {WATCH_DEFECTS} — a watch page names its "
+                         "known defects from it, so none can be shown as absent without it")
+    defects = json.loads(WATCH_DEFECTS.read_text(encoding="utf-8"))
+    latest: dict[str, dict[str, Any]] = {}
+    for line in COVERAGE.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            move = json.loads(line)
+            latest[str(move["ticker"])] = move
+    names: dict[str, dict[str, Any]] = {}
+    for t in covered:
+        move = latest[t]
+        names[t] = {k: move[k] for k in ("status", "date", "ruling", "source", "record")}
+        if move["status"] == "watch":
+            page = json.loads((DOSS / t / "dossier.json").read_text(encoding="utf-8"))
+            listed = defects.get(t, [])
+            gone = [str(d["page_field"]) for d in listed if not _holds(page, d)]
+            if gone:
+                raise SystemExit(f"{t}: its committed page no longer holds the known defect "
+                                 f"bound to {', '.join(gone)} in {WATCH_DEFECTS.name} — remove or "
+                                 "re-measure the entry; served, the watch line would drop it")
+            names[t]["defects"] = [{k: d[k] for k in ("defect", "state_row", "record")}
+                                   for d in listed]
+    return {"names": names}
+
+
+def _holds(page: Any, defect: dict[str, Any]) -> bool:
+    """Whether the page holds the defect at its JSON pointer — twin of `coverage_roster.holds`."""
+    node = page
+    for raw in str(defect["page_field"]).split("/")[1:]:
+        key = raw.replace("~1", "/").replace("~0", "~")
+        if isinstance(node, dict) and key in node:
+            node = node[key]
+        elif isinstance(node, list) and key.isascii() and key.isdigit() and int(key) < len(node):
+            node = node[int(key)]
+        else:
+            return False
+    want = defect["page_value"]
+    return type(node) is type(want) and bool(node == want)
 
 
 def _git_sha() -> str | None:
@@ -804,8 +868,11 @@ def main(argv: list[str] | None = None) -> None:
     ap.parse_args(argv)
 
     # THE COVERED NAMES ARE CHECKED BEFORE THE MIRROR IS CLEARED (W27): a roster the pages
-    # disagree with stops the build with the served mirror still as it was, never wiped.
+    # disagree with stops the build with the served mirror still as it was, never wiped. So is
+    # the coverage table (STATE row 41 (b)): an absent or malformed defect file, or a defect a
+    # watch page no longer holds, stops it here, not after the wipe.
     covered = _covered_pages()
+    coverage = _coverage_snapshot(covered)
     for d in (OUT_SNAP, OUT_DOSS):
         if d.exists():
             shutil.rmtree(d)
@@ -819,6 +886,11 @@ def main(argv: list[str] | None = None) -> None:
     # `vinci.screens.annotations` (tests); copied here as written.
     (OUT_SNAP / "screen_annotations.json").write_text(
         json.dumps(_screen_annotations(SNAP), indent=2) + "\n")
+    # COVERAGE (STATE row 41 (b)) — each published name's roster move, and a watch page's known
+    # defects: the dossier page's WATCH line. Derived on every deploy, never committed.
+    (OUT_SNAP / "coverage.json").write_text(
+        json.dumps(coverage, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8")
     # EXTRACTION VINTAGES — what each page's stamp names, read by the dossier page's Record &
     # reproduce row. Derived from vinci/dossier/ on every deploy, never committed (the function).
     (OUT_SNAP / "extraction_versions.json").write_text(

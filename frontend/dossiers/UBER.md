@@ -1,6 +1,12 @@
 # Dossier — Uber Technologies, Inc (NYSE: UBER)
 
-_November 9, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
+_November 9, 2026 · extraction 2026-11-09.order2-pages · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
+
+> **Frozen since 2026-11-13: UBER is on watch.** The operator's ruling: "go ahead" (issue #1004 comment 6847554747; docs/records/2026-11-13-fix2-bookkeeping-batch-8.md). This page is kept as committed, with no paid rebuild, until UBER goes active.
+>
+> **Known defects it keeps until then:**
+>
+> 1. Its R4 valuation is not priceable: its Financials and comps exports sit on different balance sheets, so the comps are owed a re-export (STATE row 28; docs/records/2026-11-12-rebuild-prep-prechecks-on-all-27-pages.md).
 
 # Brief — first cut
 
@@ -636,6 +642,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
+  - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
 - **Price store:** `artifacts-order1-rebuilds-6a7a7b` · reaching 2026-11-06
 - **Panel age:** oldest panel 5d old — 2026-11-04 (valuation.implied_expectations.tev_as_of), against a 2026-11-09 build
 - **Consensus age:** consensus 5d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling
