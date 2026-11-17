@@ -83,6 +83,35 @@
       "title": "AxisNote",
       "type": "object"
     },
+    "ConsensusEps": {
+      "description": "(R3, recipe 3a) THE NTM CONSENSUS EPS a record's bear is bounded by, STAMPED from the page at\nthe point of decision (`scenario-create`, `scenario-supersede`) \u2014 never typed, never parsed out\nof a leg's prose. `propose.ntm_consensus_eps` is the one reader; see it for the field.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "line": {
+          "title": "Line",
+          "type": "string"
+        },
+        "source_ref": {
+          "title": "Source Ref",
+          "type": "string"
+        },
+        "as_of": {
+          "title": "As Of",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "line",
+        "source_ref",
+        "as_of"
+      ],
+      "title": "ConsensusEps",
+      "type": "object"
+    },
     "DatedTrigger": {
       "description": "(catalyst calendar, ratified 2026-07-24) An ANALYST-owned re-underwrite trigger with a\ndeadline \u2014 the dated form of a ``reunderwrite_triggers`` entry (\"Quest stalling two more\nquarters\" \u2192 the print that closes the window). ANALYST-TYPED ONLY: the machine never invents a\ntrigger or its date. The calendar renders these with the TRIGGER-DEADLINE basis; the monitor\nflags a passed deadline as \"re-underwrite due\" (a flag, never a machine action).",
       "properties": {
@@ -183,6 +212,35 @@
         "unit"
       ],
       "title": "MeasuredTrigger",
+      "type": "object"
+    },
+    "MissCase": {
+      "description": "(R3, recipe 3a) A bear EPS above today's NTM consensus, stated as the earnings MISS it\nmodels.\n\nThe bear's EPS is at its exit, so it can sit above TODAY'S NTM consensus while still missing the\nconsensus for its own period \u2014 that is a bear on earnings. What it may not be is unstated: a\nbear whose EPS beats consensus with nothing said is pure multiple compression (GOOGL's, struck\n2026-09-01 at $15.388 against an NTM $13.29 and breached in about ten weeks). A NUMBER, not a\nsentence, because a sentence is satisfied by boilerplate (the `entry_denominator` precedent):\nthe bear EPS must sit BELOW ``consensus_eps``, so the miss is arithmetic anyone can check.",
+      "properties": {
+        "consensus_eps": {
+          "title": "Consensus Eps",
+          "type": "number"
+        },
+        "period": {
+          "title": "Period",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "consensus_eps",
+        "period",
+        "source",
+        "reason"
+      ],
+      "title": "MissCase",
       "type": "object"
     },
     "RefPoint": {
@@ -727,6 +785,17 @@
           ],
           "default": null,
           "title": "Leg Fy"
+        },
+        "miss_case": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MissCase"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -1447,6 +1516,17 @@
       ],
       "default": null,
       "title": "Entry Denominator"
+    },
+    "ntm_consensus_eps": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConsensusEps"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "facts": {
       "additionalProperties": {

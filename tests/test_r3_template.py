@@ -33,8 +33,9 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 #: Every key an R3 leg cell may carry: the recipe's two axes with their derivations, the reason,
 #: the base leg's horizon and year, and the bear basis. No revenue, margin, EBIT or margin basis.
+#: `miss_case` (recipe 3a, 2026-11-17): the bear's one way past the NTM consensus bound.
 R3_CELL_INPUTS = {"eps", "eps_derivation", "multiple", "multiple_derivation", "reason",
-                  "years_to_terminal", "leg_fy", "bear_basis"}
+                  "years_to_terminal", "leg_fy", "bear_basis", "miss_case"}
 
 #: Every key an R1 leg cell carries or may carry — main's shape, unchanged by this work.
 R1_CELL_INPUTS = {"revenue", "revenue_adjustment", "revenue_derivation", "margin",
@@ -188,6 +189,15 @@ def test_propose_then_create_writes_the_r3_record_with_no_hand_edit(
     tpl["scenarios"]["base"].update(years_to_terminal=base["years_to_terminal"],
                                     leg_fy=base["leg_fy"])
     tpl["scenarios"]["bear"]["bear_basis"] = committed["scenarios"]["bear"]["bear_basis"]
+    # THE ONE CELL RECIPE 3a ADDS (2026-11-17): the committed bear EPS sits above the NTM consensus
+    # the create stamps, so without a stated miss it is refused (`test_recipe_3a`). The miss case
+    # here is a TEST value labelled as one, read off the page: its FY2028 normalized median.
+    fy28 = next(s for s in _r3_page()["forward_consensus"]["spreads"]
+                if s["metric"] == "EPS Normalized" and s["period"] == "FY 2028")
+    tpl["scenarios"]["bear"]["miss_case"] = {
+        "consensus_eps": fy28["median"], "period": "FY2028",
+        "source": "forward_consensus.spreads EPS Normalized FY 2028 median",
+        "reason": "TEST value — the bear's exit-year EPS misses the FY2028 consensus"}
     assert tpl["spot_as_of"], "the page carries no spot date to strike the legs on"
     tpl.update(entry_basis=f"FY{base['leg_fy']}", underwrite_date=tpl["spot_as_of"],
                analyst="test")
