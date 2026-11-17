@@ -9175,7 +9175,12 @@ def test_admin_only_gap_8k_card_suppressed_on_committed_brbr_e2e() -> None:
     filings = (d["mechanical"].get("drawdown_cause") or {}).get("filings") or []
     admin = [f for f in filings if f.get("explanatory") is False]
     if not admin:
-        pytest.skip("committed BRBR no longer carries an administrative-only gap 8-K")
+        pytest.skip(
+            "no committed page that obeys the transcript rule carries an administrative-only gap "
+            "8-K: BRBR's left its page on 2026-08-13, and each of the 24 BRBR pages on main that "
+            "carried one (2026-07-23 → 08-12) publishes transcript words. A compliant copy needs "
+            "the operator's `vinci driver-facts-pass` on one of them (docs/records/"
+            "2026-11-17-dossier-render-tests-dormant-since-407-run-again.md, WHAT REMAINS)")
     # the shape line states the honest label for the administrative gap, never the list repr
     shape = str(((d["mechanical"]["drawdown_cause"]).get("shape") or {}).get("value") or "")
     assert "no earnings/guidance filing (annual-meeting 8-K only)" in shape

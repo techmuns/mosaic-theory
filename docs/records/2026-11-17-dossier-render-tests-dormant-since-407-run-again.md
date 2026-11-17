@@ -63,10 +63,14 @@ superseded-by:
 - **No old page with the property can be committed.** The last committed pending exemplar is
   GOOGL's page and record at `afb94fcb` (2026-09-02). That page breaks the public-transcript rule
   192 times (`tests/test_public_transcript_text.violations`) and carries two absolute local paths
-  in its price-store stamp. So does every page from before the 2026-11-11 page pass: BRBR at
-  `48bc8c89` breaks it 38 times, SMPL at `eac82b7f` 69 times. A byte-for-byte cut of any of them
-  would publish what the rule forbids, so none is used. SMPL's 2026-08-18 copy is the one old page
-  that has already been through both rewrites (`eac82b7f`, `91817458`).
+  in its price-store stamp. Every other old page checked breaks the rule too:
+  - SMPL at `eac82b7f`, 69 times;
+  - each of the 24 BRBR pages on main that carried an administrative-only gap 8-K
+    (2026-07-23 → 08-12, `27913b9a` → `48bc8c89`), 24 to 38 times.
+
+  A byte-for-byte cut of any of them would publish what the rule forbids, so none is used.
+  SMPL's 2026-08-18 copy is a frozen page already put through both rewrites (`eac82b7f`,
+  `91817458`), and it carries the pair.
 - **Two committed records are still `pending_analyst` at `4889ddba`, both archived:** EPAM's
   2026-07-21 and GOOGL's 2026-08-17. GOOGL's card carries a `voided` block, attached by
   `frontend/build.py` since the 2026-11-11 void of GOOGL's BUY. That is a second state, which a
@@ -82,7 +86,13 @@ superseded-by:
 folder linked (as CI).
 - **Before, on main:** the 15 tests skipped, 15 of 15. 13 named the pending pick; SMPL's and BRBR's
   skipped first on their living pages.
-- **After:** 14 pass, and one skips, BRBR's admin-only test, for its page property.
+- **After:** 14 of the 15 run and pass: every test in the table above but
+  `test_admin_only_gap_8k_card_suppressed_on_committed_brbr_e2e`. Each reaches its assertions; the
+  breakage table below is the proof. BRBR's admin-only test skips, and its skip states why and
+  names its unlock (WHAT REMAINS).
+- **Skips.** Across the 15 functions, the `pytest.skip` calls fall 39 → 23, down 16: the 15 pending-pick skips and
+  SMPL's "no committed SMPL dossier.json". The skips that fire on main today fall 15 → 1. The
+  checker's DISABLED count reads 0, because it counts only skips that are added.
 - **Fail first.** Each test that now runs was run green, then red on a deliberate breakage of the
   renderer code it guards, then green with the code restored. 14 of 14 turned red:
 
@@ -118,7 +128,12 @@ folder linked (as CI).
   8 pass.
 - **No assertion changes.** `python scripts/asserts_unchanged.py e15659ba tests/test_dossier.py
   tests/test_frozen_cards_are_cuts.py` reads changed 0, disabled 0, control 0 and vanished 0. The
-  six guard tests are new.
+  guard's 8 tests and 3 helpers are new.
+- **The new frozen files obey the publishing rules.** `tests/test_no_local_paths.scan()` reads all
+  three, the two cards and their README: 2,161 files are scanned, with 0 hits.
+  `tests/test_public_transcript_text` reads pages only, never a card. Its quote rule, applied to
+  every card field whose source names a call or a transcript, finds none, and neither card
+  contains the word "transcript".
 - **The trial merge with slice 4** (`origin/claude/named-pins-4-dossier`, #1108) is clean, with 0
   conflicts, and the 15 tests give the same result there.
 - **The full offline gate.** `bin/commit` runs ruff, `mypy --strict` over `vinci/`,
@@ -137,20 +152,27 @@ folder linked (as CI).
 - **Code review round 0** (`/code-review high --fix`) gave 7 findings: 2 FIX in the card guard,
   and 5 DEFER or DISMISS. Each is listed in the PR's Review dispositions table.
 
+**WHAT REMAINS.**
+1. **BRBR's admin-only 8-K pin stays dormant. Owner: the operator.**
+   - **What it needs.** `test_admin_only_gap_8k_card_suppressed_on_committed_brbr_e2e` needs a page
+     carrying an administrative-only gap 8-K. 0 of the 106 committed pages, mirrors and fixture
+     pages carry one.
+   - **Why no page has one.** BRBR's left its page on 2026-08-13 (`513b2a95`). Each of the 24 BRBR
+     pages on main that carried it (2026-07-23 → 08-12, `27913b9a` → `48bc8c89`) breaks the
+     transcript rule 24 to 38 times.
+   - **The unlock.** A compliant copy needs the operator's `vinci driver-facts-pass` on one of those
+     pages. That pass files the words in the operator's private evidence store, so it is never the
+     agent's to run. The copy then gets a cut and this pin reads it.
+   - **What stands meanwhile.** The test's skip now states all of this.
+     `test_admin_only_8k_is_non_explanatory_with_an_honest_label` pins the behaviour's deterministic
+     half on every run. Its web half is pinned nowhere today.
+
 **FOUND, NOT FIXED (out of scope; reported to A).**
-1. **BRBR's admin-only 8-K pin stays dormant.**
-   `test_admin_only_gap_8k_card_suppressed_on_committed_brbr_e2e` needs a page with an
-   administrative-only gap 8-K. BRBR's left its page on 2026-08-13 (`513b2a95`), and the only pages
-   that carry it (main `c5f105f1` → `48bc8c89`, 2026-08-10 → 08-12) break the transcript rule.
-   A compliant copy would have to pass through `vinci driver-facts-pass`, which files those words
-   in the operator's private evidence store, and that is the operator's to run. The behaviour's
-   deterministic half is pinned on every run by
-   `test_admin_only_8k_is_non_explanatory_with_an_honest_label`. Its web half is not, today.
-2. **The 2026-08-18 SMPL row in `tests/fixtures/frozen_pages/README.md`** says the copy was rewritten
+1. **The 2026-08-18 SMPL row in `tests/fixtures/frozen_pages/README.md`** says the copy was rewritten
    for its store stamp "and nothing else". `git log` shows a second rewrite, the transcript page
    pass at `91817458` (2026-11-11). This PR's frozen-cards README states both; the old row is left
    as it was.
-3. **GOOGL's archived 2026-08-17 card carries `voided`.** `frontend/build.py` attaches the void
+2. **GOOGL's archived 2026-08-17 card carries `voided`.** `frontend/build.py` attaches the void
    of GOOGL's BUY to the archived, undecided record. Whether an undecided record should show a
    void is not this PR's question.
 
@@ -162,6 +184,13 @@ folder linked (as CI).
 - **The pending windows:** the commits on main at which some `scenarios/<T>.json` read
   `pending_analyst` (`git log -S`), from #407 on.
 - **"Violations":** `tests/test_public_transcript_text.violations` over a page at the named commit.
+- **"106 committed pages":** every JSON file with a `mechanical` key under `data/dossiers/`,
+  `frontend/dossiers/` and `tests/fixtures/` at this branch's head (`f0cc9cc1`'s tree, main
+  `2f85a6f2` merged). An administrative-only gap 8-K is a `drawdown_cause.filings` row with
+  `explanatory: false`.
+- **"24 BRBR pages":** every commit in `git log -- data/dossiers/BRBR/dossier.json` whose page
+  carries such a row.
+- **"Skip calls":** `pytest.skip(...)` calls inside the 15 functions (AST), at `e15659ba` and at head.
 - **"0 new objects":** each copy's `git hash-object --no-filters` equals an existing blob.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
@@ -170,6 +199,14 @@ folder linked (as CI).
    renderer. Its web half renders through current code. Falsifier: an md regression on grouping
    by accession passes this pin. The md twin's grouping is not separately pinned at the render
    layer here.
-2. **One more fixture class.** `frozen_cards/` sits beside `frozen_pages/`, with its own guard.
-   Falsifier: a card is edited or added without a README row and the guard stays green.
+2. **One more fixture class, and its own guard.** `frozen_cards/` sits beside `frozen_pages/`.
+   Slice 1's guard does not fit it, for two reasons:
+   - It holds a cut's file to `data/dossiers/<T>/<file>`, and a card is `frontend/scenarios/<key>.json`.
+   - Its README rows need a page's `dossier.json` and `dossier.md` blobs as a pair, and a card is one
+     file.
+
+   Fitting the card there would change that guard's contract in a file the series owns. So the
+   twin reuses its git helpers (`_git`, `_blob_of`, `_cut_files`, `needs_git`) and adds only the
+   path and the README shape. Falsifier: a card is edited or added without a README row, and the
+   guard stays green.
 3. **$0.** No model call, no vendor call, and no page or record rebuilt, re-rendered or edited.
