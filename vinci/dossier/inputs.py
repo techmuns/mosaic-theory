@@ -115,7 +115,7 @@ def export_dates(bundle: CiqBundle) -> dict[Path, date]:
     return {wb.path: stamp}
 
 
-def filed_through(bundle: CiqBundle) -> dict[Path, FiledThrough]:
+def filed_through(bundle: CiqBundle, *, read_on: date | None = None) -> dict[Path, FiledThrough]:
     """``{workbook path: the latest filing date its statement columns state}`` for each Financials
     export the bundle holds — THE ONE READER of it, for the build (`load_bundle`) and for a
     committed page's backfill (`refresh.filed_through_transform`) (2026-11-17, STATE row 64(a)).
@@ -123,11 +123,13 @@ def filed_through(bundle: CiqBundle) -> dict[Path, FiledThrough]:
     CIQ stamps no Financials export date, so `export_dates` reads none; each period column of its
     statement sheets states a 'Filing Date' instead, read by `ciq_sheets.financials_filed_through`
     with the workbook's full sha256 in its ``source_ref``. A sheet or cell that states none is
-    UNKNOWN, named, never a guessed date. A workbook that cannot be hashed is left out: the record
-    names it unrecorded (`_ciq`)."""
+    UNKNOWN, named, never a guessed date, and so is one after ``read_on`` (default: today), the day
+    it is read. A workbook that cannot be hashed is left out: the record names it unrecorded
+    (`_ciq`)."""
     from vinci.dossier import ciq_sheets
 
     out: dict[Path, FiledThrough] = {}
+    day = read_on or date.today()
     for wb in bundle.workbooks:
         if wb.kind != "financials":
             continue
@@ -135,7 +137,8 @@ def filed_through(bundle: CiqBundle) -> dict[Path, FiledThrough]:
             sha, _size = provenance.file_sha256(wb.path)
         except OSError:
             continue
-        out[wb.path] = ciq_sheets.financials_filed_through(bundle, wb.freq, sha256=sha)
+        out[wb.path] = ciq_sheets.financials_filed_through(bundle, wb.freq, sha256=sha,
+                                                           read_on=day)
     return out
 
 

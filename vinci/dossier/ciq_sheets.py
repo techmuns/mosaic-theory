@@ -23,6 +23,7 @@ from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_cohere
 from vinci.dossier.ciq import (
     _UNAVAILABLE_CELLS,
     CIQ_NO_DATA,
+    CiqAmbiguousError,
     CiqBundle,
     CiqFormat,
     CiqParseError,
@@ -6447,8 +6448,8 @@ def _span(labels: list[str]) -> str:
             else f"{len(labels)} columns, [{labels[0]}] to [{labels[-1]}]")
 
 
-def financials_filed_through(bundle: CiqBundle, freq: str | None, *,
-                             sha256: str) -> FiledThrough:
+def financials_filed_through(bundle: CiqBundle, freq: str | None, *, sha256: str,
+                             read_on: date) -> FiledThrough:
     """THE ONE READER of the latest filing date a Financials export's statement columns state
     (2026-11-17, STATE row 64(a)) — `inputs.filed_through` calls it, for the build and for a
     committed page's backfill.
@@ -6472,7 +6473,8 @@ def financials_filed_through(bundle: CiqBundle, freq: str | None, *,
       there is UNKNOWN, and an older column's date is never read in its place;
     * an older column reading CIQ's marker ('NA', '-', a blank) states no filing and is passed
       over, counted in the note. Any other cell that is no date is UNKNOWN;
-    * a date before its own column's period end files no such column, and is UNKNOWN: a check on
+    * a date before its own column's period end files no such column, and a date after
+      ``read_on``, the day the export is read, is no filing yet made: each is UNKNOWN, checks on
       the VALUE beside the checks that a date is there.
 
     The date's ``source_ref`` names the workbook's sha256, the sheet, and the cell's row and
@@ -6490,6 +6492,12 @@ def financials_filed_through(bundle: CiqBundle, freq: str | None, *,
         at = f"{name}→{sheet}"
         try:
             rows = bundle.sheet("financials", sheet, freq=freq)
+        except CiqAmbiguousError:
+            # an export whose period type is unread, beside another Financials export: which one
+            # this request names is not guessed, and no other reader asks without a period type
+            return unknown(f"{name}: its period type is unread and the folder holds another "
+                           "Financials export, so which export's columns to read is not guessed",
+                           name)
         except CiqUnavailableError as exc:
             if isinstance(exc.__cause__, CiqParseError):
                 return unknown(f"the workbook could not be read ({exc}), so no column's filing "
@@ -6528,6 +6536,10 @@ def financials_filed_through(bundle: CiqBundle, freq: str | None, *,
                 return unknown(f"{at}: 'Filing Date' reads {filed.isoformat()} at [{label}], "
                                "before the period the column closes, so it files no such column",
                                ref)
+            if filed > read_on:
+                return unknown(f"{at}: 'Filing Date' reads {filed.isoformat()} at [{label}], "
+                               f"after {read_on.isoformat()}, the day it is read, so it is no "
+                               "filing yet made", ref)
             found.append((filed, order, end, ref))
         if markers:
             words = ", ".join(sorted({w for _label, w in markers}))

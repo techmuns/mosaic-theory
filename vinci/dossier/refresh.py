@@ -41,7 +41,13 @@ from typing import Any, Protocol, runtime_checkable
 
 from vinci import coverage_roster as roster
 from vinci.dossier.anchor import check_decision_write, committed_anchor_block, price_as_of
-from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, EvBridge, dossier_json
+from vinci.dossier.schemas import (
+    CIQ_EXPORT_DROP_WHEN_NONE,
+    DROP_WHEN_NONE,
+    Dossier,
+    EvBridge,
+    dossier_json,
+)
 from vinci.dossier.synthesis import (
     MATERIAL_FIGURE_FLOOR_MUSD,
     SYNTHESIS_CLAIM_LISTS,
@@ -70,7 +76,8 @@ _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_histo
 
 #: The keys a CIQ row of the input record states of its file, and the only ones the `inputs` seam
 #: may write: the export date it states of itself, and a Financials export's stated filing date.
-_STATED_KEYS = ("export_date", "filed_through")
+#: The same keys the page drops where none is stated (`schemas.CIQ_EXPORT_DROP_WHEN_NONE`).
+_STATED_KEYS = CIQ_EXPORT_DROP_WHEN_NONE
 
 
 def _only_stated_dates(old: Any, new: Any) -> bool:
@@ -94,7 +101,12 @@ def _only_stated_dates(old: Any, new: Any) -> bool:
     # a date already recorded is what the build READ: the seam only fills an absent one
     kept = all(o is None or o == n for key in _STATED_KEYS
                for o, n in zip(_held(old, key), _held(new, key), strict=False))
-    return bool(_bare(old) == _bare(new)) and kept
+    # a filing date is a FINANCIALS export's (`CiqExport.filed_through`): on any other row it
+    # would be counted by `date_semantics` as one
+    placed = all(r.get("kind") == "financials" for r in
+                 (new.get("ciq") if isinstance(new, dict) else None) or []
+                 if isinstance(r, dict) and "filed_through" in r)
+    return bool(_bare(old) == _bare(new)) and kept and placed
 
 
 class RefreshRefusedError(RuntimeError):
@@ -1331,7 +1343,10 @@ class FiledThroughStep:
     export is "not read as a <freq> Financials export", and no line names a local path.
 
     A matched export whose columns state no readable filing date is NOT a skip: the reader's
-    UNKNOWN, naming why, is what the export states, and it is written to the page as such."""
+    UNKNOWN, naming why, is what the export states, and it is written to the page as such. A
+    matched export this machine cannot PARSE (no `xlrd`, a format no reader opens) states nothing
+    — the bytes the build read are the same — so it IS a skip, "could not be read here": written,
+    that UNKNOWN would be permanent, since the seam never rewrites a recorded value."""
 
     ticker: str
     roots: tuple[Path, ...]
@@ -1344,8 +1359,17 @@ class FiledThroughStep:
                 f"every folder named for the page's ticker under {len(self.roots)} root(s)")
 
     def __call__(self, doc: dict[str, Any]) -> dict[str, Any]:
+        from vinci.dossier import ciq_sheets
         from vinci.dossier import inputs as page_inputs
-        from vinci.dossier.ciq import CiqBundle
+        from vinci.dossier.ciq import CiqBundle, CiqParseError, CiqUnavailableError
+
+        def unparsed(bundle: CiqBundle, freq: str | None) -> bool:
+            # the workbook is parsed before its sheet is looked up, so any sheet name asks it
+            try:
+                bundle.sheet("financials", ciq_sheets.FILED_SHEETS[0], freq=freq)
+            except CiqUnavailableError as exc:
+                return isinstance(exc.__cause__, CiqParseError)
+            return False
 
         self.looked_for, self.skipped = [], []
         record = doc.get("inputs")
@@ -1374,8 +1398,13 @@ class FiledThroughStep:
             wb = bundle.workbook("financials", freq=freq)
             ft = page_inputs.filed_through(bundle).get(path) if wb is not None else None
             if ft is None:
+                what = f"{freq} Financials" if freq else "Financials"
                 self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) not "
-                                    f"read as a {freq} Financials export")
+                                    f"read as a {what} export")
+                continue
+            if ft.status == "unknown" and wb is not None and unparsed(bundle, wb.freq):
+                self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) could "
+                                    "not be read here")
                 continue
             filled[i] = rows[i] | {"filed_through": ft.model_dump(mode="json")}
         return {} if filled == rows else {"inputs": record | {"ciq": filled}}

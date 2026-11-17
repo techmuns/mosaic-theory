@@ -43,6 +43,8 @@ DOSS = ROOT / "data" / "dossiers"
 FIXTURE: dict[str, Any] = json.loads(
     (ROOT / "tests" / "fixtures" / "ciq_financials_filed_through.json").read_text())["names"]
 BS, IS, CF = (f"financials|{s}" for s in ciq_sheets.FILED_SHEETS)
+#: the day the fixture's exports were read (cut 2026-11-17): no filing it states is later
+READ_ON = date(2026, 11, 17)
 
 
 def _serial(d: date) -> float:
@@ -65,7 +67,8 @@ def _bundle(t: str, sheets: dict[str, list[list[Any]]] | None = None) -> tuple[C
 
 def _read(t: str, sheets: dict[str, list[list[Any]]] | None = None) -> FiledThrough:
     bundle, _path = _bundle(t, sheets)
-    return ciq_sheets.financials_filed_through(bundle, "quarterly", sha256=FIXTURE[t]["sha256"])
+    return ciq_sheets.financials_filed_through(bundle, "quarterly", sha256=FIXTURE[t]["sha256"],
+                                               read_on=READ_ON)
 
 
 def _filing_row(sheets: dict[str, list[list[Any]]], key: str) -> list[Any]:
@@ -105,9 +108,9 @@ def test_an_older_column_filed_later_than_the_newest_is_read() -> None:
     row = _filing_row(sheets, IS)
     hdr = [r for r in sheets[IS] if r][0]
     assert hdr[38] == "3 months\nQ2\nJun-30-2026" and len(hdr) == 40   # older than the latest
-    row[38] = _serial(date(2026, 11, 20))
+    row[38] = _serial(date(2026, 11, 16))
     ft = _read("IT", sheets)
-    assert ft.value == date(2026, 11, 20)
+    assert ft.value == date(2026, 11, 16)
     assert ("→Income Statement, 'Filing Date' row 97, column 39 [3 months Q2 Jun-30-2026]"
             in str(ft.source_ref))
 
@@ -165,6 +168,20 @@ def test_a_date_before_its_own_period_end_is_unknown() -> None:
         ft.note)
 
 
+def test_a_date_after_the_day_it_is_read_is_unknown() -> None:
+    """(review, round 0) THE OTHER BOUND ON THE VALUE. A serial that decodes to a day after the
+    export is read (a corrupt 2099) is no filing yet made: it was PRESENT, later than every other
+    date, and set the page's date to 2099. A filing ON the read day is still read."""
+    sheets = _sheets("IT")
+    _filing_row(sheets, BS)[39] = _serial(date(2099, 1, 1))
+    ft = _read("IT", sheets)
+    assert ft.status == "unknown" and ft.value is None
+    assert "reads 2099-01-01 at [Q3 Sep-30-2026], after 2026-11-17, the day it is read" in str(
+        ft.note)
+    _filing_row(sheets, BS)[39] = _serial(READ_ON)
+    assert _read("IT", sheets).value == READ_ON
+
+
 def test_a_sheet_the_export_does_not_hold_is_named_and_none_held_is_unknown() -> None:
     sheets = _sheets("IT")
     del sheets[CF]
@@ -174,6 +191,25 @@ def test_a_sheet_the_export_does_not_hold_is_named_and_none_held_is_unknown() ->
     none = _read("IT", {})
     assert none.status == "unknown" and none.value is None
     assert "holds none of the Balance Sheet, Income Statement, Cash Flow sheets" in str(none.note)
+
+
+def test_an_export_of_unread_period_type_beside_another_is_unknown_never_a_raise() -> None:
+    """(review, round 0) A Financials export whose period type is unread, beside a quarterly one:
+    the reader's request names no period type, and the bundle refuses it as ambiguous. That
+    refusal stopped the whole build, though every other reader names its period type and reads
+    on; it is UNKNOWN, named, and the quarterly export still dates itself."""
+    sheets = {k.split("|", 1)[1]: v for k, v in _sheets("IT").items()}
+    q, u = Path("/fixture/IT Financials_Quarterly.xls"), Path("/fixture/IT Financials.xls")
+    bundle = CiqBundle(ticker="IT", workbooks=(
+        CiqWorkbook(kind="financials", path=q, fmt=CiqFormat.BIFF_XLS, freq="quarterly"),
+        CiqWorkbook(kind="financials", path=u, fmt=CiqFormat.BIFF_XLS, freq=None)),
+        _cache={q: sheets, u: sheets})
+    unread = ciq_sheets.financials_filed_through(bundle, None, sha256="c" * 64, read_on=READ_ON)
+    assert unread.status == "unknown" and unread.value is None
+    assert "period type is unread" in str(unread.note)
+    dated = ciq_sheets.financials_filed_through(bundle, "quarterly", sha256="c" * 64,
+                                                read_on=READ_ON)
+    assert dated.status == "present" and dated.value == date(2026, 11, 3)
 
 
 def test_the_field_has_sourceds_shape_and_contract() -> None:
@@ -303,6 +339,17 @@ def test_the_seam_admits_only_a_filled_filing_date() -> None:
     assert not refresh._only_stated_dates(page["inputs"], swapped)
 
 
+def test_the_seam_refuses_a_filing_date_on_a_row_that_is_no_financials_export() -> None:
+    """(review, round 0) `date_semantics` counts a `filed_through` on whatever row carries it, so
+    the seam admits one only on a Financials export's row."""
+    page = _frozen("IT")
+    comps = copy.deepcopy(page["inputs"])
+    (row,) = [r for r in comps["ciq"] if r["kind"] == "comps"]
+    row["filed_through"] = _read("IT").model_dump(mode="json")
+    assert not refresh._only_stated_dates(page["inputs"], comps)
+    assert refresh._only_stated_dates(page["inputs"],
+                                      _with_filed(_frozen("IT"), _read("IT"))["inputs"])
+
 def test_a_record_naming_no_financials_export_or_already_filed_is_left_alone(
         tmp_path: Path) -> None:
     step = refresh.filed_through_transform("IT", [tmp_path])
@@ -330,8 +377,10 @@ def test_the_step_fills_a_row_off_the_export_its_sha256_names(
     handed: list[str] = []
     want = _read("IT")                  # read before the reader is replaced below
 
-    def _reader(bundle: CiqBundle, freq: str | None, *, sha256: str) -> FiledThrough:
+    def _reader(bundle: CiqBundle, freq: str | None, *, sha256: str,
+                read_on: date) -> FiledThrough:
         handed.append(sha256)
+        assert read_on == date.today()            # the door reads on the day it is run
         assert freq == "quarterly" and bundle.workbook("financials", freq=freq) is not None
         return want
 
@@ -362,7 +411,29 @@ def test_a_file_the_loader_does_not_read_as_that_export_is_named(tmp_path: Path)
     step(page)
     assert (f"IT: skipped: export {row['sha256']} (Gartner export.xls) not read as a quarterly "
             "Financials export") in step.skipped
+    # (review, round 0) a row recording no period type is named without one, never as "None"
+    row["freq"] = None
+    step(page)
+    line = next(x for x in step.skipped if "Gartner export.xls" in x)
+    assert line.endswith("not read as a Financials export") and "None" not in line, line
 
+
+def test_an_export_this_machine_cannot_parse_is_a_skip_never_a_written_unknown(
+        tmp_path: Path) -> None:
+    """(review, round 0) The bytes the record names, under its own Financials name, that no reader
+    here can open: the build read these same bytes, so "could not be read" is this machine's state,
+    not what the export states. Written, it would stand for good (the seam never rewrites a
+    recorded value); it is a skip, named, and the row is left unfilled."""
+    page = _frozen("IT")
+    _i, row = _quarterly(page)
+    folder = tmp_path / "IT"
+    folder.mkdir()
+    (folder / row["file"]).write_bytes(b"one Financials export's bytes")
+    row["sha256"], row["bytes"] = provenance.file_sha256(folder / row["file"])
+    step = refresh.filed_through_transform("IT", [tmp_path])
+    assert step(page) == {}
+    assert (f"IT: skipped: export {row['sha256']} ({row['file']}) could not be read here"
+            in step.skipped)
 
 def test_the_pass_names_every_export_it_cannot_read_with_its_boundary(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
