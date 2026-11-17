@@ -1359,16 +1359,15 @@ class FiledThroughStep:
                 f"every folder named for the page's ticker under {len(self.roots)} root(s)")
 
     def __call__(self, doc: dict[str, Any]) -> dict[str, Any]:
-        from vinci.dossier import ciq_sheets
         from vinci.dossier import inputs as page_inputs
-        from vinci.dossier.ciq import CiqBundle, CiqParseError, CiqUnavailableError
+        from vinci.dossier.ciq import CiqBundle, CiqParseError, CiqWorkbook, read_sheets
 
-        def unparsed(bundle: CiqBundle, freq: str | None) -> bool:
-            # the workbook is parsed before its sheet is looked up, so any sheet name asks it
+        def unparsed(wb: CiqWorkbook) -> bool:
+            # can THIS machine parse the bytes at all (`ciq.read_sheets`, the bundle's own read)
             try:
-                bundle.sheet("financials", ciq_sheets.FILED_SHEETS[0], freq=freq)
-            except CiqUnavailableError as exc:
-                return isinstance(exc.__cause__, CiqParseError)
+                read_sheets(wb.path, wb.fmt)
+            except CiqParseError:
+                return True
             return False
 
         self.looked_for, self.skipped = [], []
@@ -1395,14 +1394,17 @@ class FiledThroughStep:
                 continue
             path = same[0].path
             bundle = CiqBundle.from_files(self.ticker, [path])
-            wb = bundle.workbook("financials", freq=freq)
+            # the workbook the loader kinds as this row's export, found among those it holds, not
+            # by a computed bundle address (the CIQ_MODULES drift guard reads only literal ones)
+            wb = next((w for w in bundle.workbooks
+                       if w.kind == "financials" and w.freq == freq), None)
             ft = page_inputs.filed_through(bundle).get(path) if wb is not None else None
             if ft is None:
                 what = f"{freq} Financials" if freq else "Financials"
                 self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) not "
                                     f"read as a {what} export")
                 continue
-            if ft.status == "unknown" and wb is not None and unparsed(bundle, wb.freq):
+            if ft.status == "unknown" and wb is not None and unparsed(wb):
                 self.skipped.append(f"{self.ticker}: skipped: export {sha} ({path.name}) could "
                                     "not be read here")
                 continue

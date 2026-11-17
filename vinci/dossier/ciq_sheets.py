@@ -23,7 +23,6 @@ from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_cohere
 from vinci.dossier.ciq import (
     _UNAVAILABLE_CELLS,
     CIQ_NO_DATA,
-    CiqAmbiguousError,
     CiqBundle,
     CiqFormat,
     CiqParseError,
@@ -6440,6 +6439,23 @@ def comps_export_stamp(bundle: CiqBundle) -> date | None:
 #: capital-structure panel's filing date reaches the page already (`maturity_check.panel_filed`).
 FILED_SHEETS: tuple[str, ...] = ("Balance Sheet", "Income Statement", "Cash Flow")
 FILING_DATE_ROW = "Filing Date"
+#: Each statement sheet by a LITERAL (kind, sheet, freq) address, per period type: the
+#: CIQ_MODULES drift guard (`test_ciq_modules_covers_every_address_the_extractors_consume`) reads
+#: only literal addresses, as `_bs_column_near` branches to them.
+_STATEMENT_READS: dict[tuple[str, str], Callable[[CiqBundle], Rows]] = {
+    ("quarterly", "Balance Sheet"):
+        lambda bundle: bundle.sheet("financials", "Balance Sheet", freq="quarterly"),
+    ("quarterly", "Income Statement"):
+        lambda bundle: bundle.sheet("financials", "Income Statement", freq="quarterly"),
+    ("quarterly", "Cash Flow"):
+        lambda bundle: bundle.sheet("financials", "Cash Flow", freq="quarterly"),
+    ("annual", "Balance Sheet"):
+        lambda bundle: bundle.sheet("financials", "Balance Sheet", freq="annual"),
+    ("annual", "Income Statement"):
+        lambda bundle: bundle.sheet("financials", "Income Statement", freq="annual"),
+    ("annual", "Cash Flow"):
+        lambda bundle: bundle.sheet("financials", "Cash Flow", freq="annual"),
+}
 
 
 def _span(labels: list[str]) -> str:
@@ -6486,18 +6502,17 @@ def financials_filed_through(bundle: CiqBundle, freq: str | None, *, sha256: str
     def unknown(note: str, at: str) -> FiledThrough:
         return FiledThrough(status="unknown", note=note, source_ref=f"{at}, {held}")
 
+    if freq not in ("annual", "quarterly"):
+        # an export whose period type is unread: no reader addresses it (every Financials read
+        # names its period type), and which export a bare request means is not guessed
+        return unknown(f"{name}: its period type is unread ({freq!r}), so no statement sheet "
+                       "of it is read", name)
     found: list[tuple[date, int, date, str]] = []     # (filed, sheet order, column end, ref)
     passed: list[str] = []
     for order, sheet in enumerate(FILED_SHEETS):
         at = f"{name}→{sheet}"
         try:
-            rows = bundle.sheet("financials", sheet, freq=freq)
-        except CiqAmbiguousError:
-            # an export whose period type is unread, beside another Financials export: which one
-            # this request names is not guessed, and no other reader asks without a period type
-            return unknown(f"{name}: its period type is unread and the folder holds another "
-                           "Financials export, so which export's columns to read is not guessed",
-                           name)
+            rows = _STATEMENT_READS[(freq, sheet)](bundle)
         except CiqUnavailableError as exc:
             if isinstance(exc.__cause__, CiqParseError):
                 return unknown(f"the workbook could not be read ({exc}), so no column's filing "

@@ -481,7 +481,9 @@ def test_a_page_with_no_record_reads_as_none_and_round_trips() -> None:
     doc = {k: v for k, v in doc.items() if k != "inputs"}
     model = Dossier.model_validate(doc)
     assert model.inputs is None
-    assert '"inputs"' not in dossier_json(model)
+    # the KEY is absent: a `layer_refreshes` entry may still name the `inputs` layer as a value
+    # (the 2026-11-17 Financials filing-date pass wrote one on this page)
+    assert "inputs" not in json.loads(dossier_json(model))
 
 
 def test_only_a_ten_hex_value_is_read_as_an_export_stamp() -> None:

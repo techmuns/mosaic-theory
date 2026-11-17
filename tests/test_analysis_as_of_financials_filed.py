@@ -195,9 +195,10 @@ def test_a_sheet_the_export_does_not_hold_is_named_and_none_held_is_unknown() ->
 
 def test_an_export_of_unread_period_type_beside_another_is_unknown_never_a_raise() -> None:
     """(review, round 0) A Financials export whose period type is unread, beside a quarterly one:
-    the reader's request names no period type, and the bundle refuses it as ambiguous. That
-    refusal stopped the whole build, though every other reader names its period type and reads
-    on; it is UNKNOWN, named, and the quarterly export still dates itself."""
+    a request naming no period type was refused by the bundle as ambiguous, and that refusal
+    stopped the whole build, though every other reader names its period type and reads on. No
+    such request is made now (every address is literal, for the CIQ_MODULES drift guard): it is
+    UNKNOWN, named, and the quarterly export still dates itself."""
     sheets = {k.split("|", 1)[1]: v for k, v in _sheets("IT").items()}
     q, u = Path("/fixture/IT Financials_Quarterly.xls"), Path("/fixture/IT Financials.xls")
     bundle = CiqBundle(ticker="IT", workbooks=(
