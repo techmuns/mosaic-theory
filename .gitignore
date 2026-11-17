@@ -46,6 +46,10 @@ data/dossiers/*/llm_call.log
 # and diffable, because it is the standing record of which out-of-band names the fund covers and
 # why, and the reason it carries is printed in each such dossier's own main body.
 !data/followed.json
+# (g) data/coverage_roster.jsonl — the COVERAGE ROSTER (W27, `vinci/coverage_roster.py`): which
+# names the fund covers (active, watch, retired), one dated move per line with the operator's
+# ruling. Hand-authored decisions, neither derived nor licensed: committed and diffable.
+!data/coverage_roster.jsonl
 # (f) data/facts/ — the FACT LAYER (docs/records/2026-11-04-fact-layer-adr.md): the schema contract,
 # one JSON manifest per snapshot, current.json, and — as a STOPGAP, kept since the R2 upload of
 # 2026-11-05 (docs/records/2026-11-05-fact-layer-r2-upload.md) — the pages snapshot's immutable

@@ -29,6 +29,7 @@ from typing import Any
 
 import pytest
 
+from tests.roster_support import write_roster
 from tests.test_analysis_as_of_knowable import FIXTURE, _frozen
 from vinci import provenance
 from vinci.dossier import refresh
@@ -55,11 +56,13 @@ def _undated(t: str) -> dict[str, Any]:
 
 
 def _fleet(tmp_path: Path, pages: dict[str, dict[str, Any]]) -> Path:
-    """A repository tree holding just these pages, each written through the one serializer."""
+    """A repository tree holding just these pages, each written through the one serializer, and
+    a coverage roster naming them (the fleet is the roster's covered names, W27)."""
     for t, doc in pages.items():
         folder = tmp_path / "data" / "dossiers" / t
         folder.mkdir(parents=True)
         (folder / "dossier.json").write_text(dossier_json(Dossier.model_validate(doc)))
+    write_roster(tmp_path / "data", dict.fromkeys(pages, "watch"))
     return tmp_path
 
 

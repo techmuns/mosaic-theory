@@ -30,6 +30,7 @@ from typing import Any
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
 import pytest
 
+from tests.roster_support import write_roster
 from vinci.facts import (
     FILED,
     FactCutUndeterminedError,
@@ -94,6 +95,7 @@ def _pages_dir(tmp: Path, ciks: dict[str, str]) -> None:
         (tmp / "data" / "dossiers" / ticker).mkdir(parents=True)
         (tmp / "data" / "dossiers" / ticker / "dossier.json").write_text(
             json.dumps({"cik": cik, "reference_date": "2026-11-02"}))
+    write_roster(tmp / "data", dict.fromkeys(ciks, "watch"))   # the scope reads it (W27)
 
 
 def _ingest(tmp: Path, monkeypatch: pytest.MonkeyPatch, cache: Path) -> int:

@@ -39,6 +39,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
+from vinci import coverage_roster as roster
 from vinci.dossier.anchor import check_decision_write, committed_anchor_block, price_as_of
 from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, EvBridge, dossier_json
 from vinci.dossier.synthesis import (
@@ -2440,15 +2441,17 @@ def refresh_fleet(
     "unchanged". ``skip_count`` then states how many it skipped of how many it looked for, on how
     many of the pages refreshed (a refused page never reaches the step), and where it looked.
     """
-    base = (root or Path.cwd()) / "data" / "dossiers"
+    data_dir = (root or Path.cwd()) / "data"
+    base = data_dir / "dossiers"
     out: dict[str, list[str]] = {"moved": [], "unchanged": [], "refused": [], "skipped": []}
     # per boundary: [exports skipped, exports looked for, pages that looked for one]
     tally: dict[str, list[int]] = {}
     refreshed = 0
-    for folder in sorted(base.iterdir()) if base.is_dir() else []:
+    # THE FLEET IS THE COVERAGE ROSTER'S COVERED NAMES (W27), each page checked present, so a page
+    # the roster does not cover stops the pass before any page is rewritten.
+    for name in roster.covered_pages(data_dir):
+        folder = base / name
         path = folder / "dossier.json"
-        if not path.exists():
-            continue
         top = top_level_for(folder.name) if top_level_for else None
         try:
             changed = refresh_dossier(
