@@ -1,8 +1,8 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-17
-prs: []
+prs: [1105]
 supersedes:
 superseded-by:
 ---
@@ -54,7 +54,7 @@ superseded-by:
 - **Gate:** At head `86c5ee33` (main `8a71a383` merged), with CIQ linked and no `data/cache` or price store in the worktree:
   - ruff and `mypy --strict vinci` are clean.
   - `pytest -m "not network" -n auto` gave 12,462 passed, 56 failed, 116 skipped and 7 xfailed (39 deselected), from its progress lines.
-  - **1 failure was this PR's:** this record said `shipped` with an empty `prs:`. It was set to `open` until its number exists.
+  - **1 failure was this PR's:** this record said `shipped` with an empty `prs:`. It now names #1105.
   - **The other 55 fail identically on main `8a71a383`** in the same environment: re-run on main's code, 0 failed only here. Among the causes are PARR's mislabelled quarterly Financials export in the live CIQ folder; re-pulled V, GOOGL and LLY exports; the transcript-run guard, with no `data/cache/sec` to excuse a window; and #1097's `test_the_reader_reads_its_date_off_the_real_workbook`, which calls `filed_through()` without its `read_on`.
   - **Main's own suite collides.** `test_transcript_run_guard`'s 26 page tests were run with 6 workers. At main `8a71a383` they failed on 18 pages ("LibreOffice fails a conversion while another runs"). On this branch they failed on 1: PARR, which fails on main as well. Run alone on main, AMZN's passes.
 - **Impact check:** `python -m vinci.impact run`, base `8a71a383`, head `86c5ee33`, patch-id `1e51ff4d…`, $0:
