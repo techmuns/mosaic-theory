@@ -137,11 +137,6 @@ def test_the_number_and_its_source_ride_along() -> None:
     assert "m.observed" in src and "m.source" in src and "m.reason" in src
 
 
-def test_the_stale_tags_reach_the_page() -> None:
-    """MC1's reporting half had no caller since it shipped; the tags it names now render."""
-    assert "stale_tags" in _panel_src()
-
-
 def test_a_building_streak_is_read_from_satisfied_not_from_state() -> None:
     """THE BUG THIS PIN EXISTS FOR, caught while wiring the history rather than by review.
 
@@ -226,33 +221,63 @@ def test_another_names_readings_do_not_extend_this_names_streak() -> None:
                          mechanical=mech, prior_days=mine).measured[0].state == "FIRED"
 
 
-def test_the_stale_tag_scan_cannot_match_and_says_so() -> None:
-    """`_stale_tags` is DEAD BY CONSTRUCTION, and this pin exists so that stays deliberate.
+#: Why the monitor's stale-tag row was retired, and the census a new one must beat first.
+_RETIRED = "docs/records/2026-11-17-the-monitors-stale-tag-row-is-retired.md"
 
-    It scans mechanical nodes for `status == "stale"`. `SourceStatus` has three members — PRESENT,
-    UNKNOWN, MISSING — so no assembled dossier can carry that value: the monitor's stale-tag row is
-    unconditionally empty and `stale_served` still has no production caller. The reporting half of
-    #531 is NOT delivered.
 
-    THIS PIN IS THE FALSIFIER, not an endorsement. It reddens the moment `SourceStatus` gains a
-    `stale` member — which is exactly when someone must decide whether to finish the wiring
-    (companyfacts in the monitor) or drop the row. A test asserting the empty list against today's
-    corpus would instead go green forever and hide that decision.
+def test_the_retired_stale_tag_row_has_no_surface() -> None:
+    """THE MONITOR'S STALE-TAG ROW IS RETIRED, AT ALL THREE LAYERS, AND CANNOT COME BACK UNSEEN.
+
+    It scanned dossier nodes for `status == "stale"`, a value `SourceStatus` never had (PRESENT,
+    UNKNOWN, MISSING), so it was empty on every row of every committed day. Wiring it to
+    `stale_served` instead was measured and refused: on the 2026-11-11 book it names two debt
+    tags no reader serves, and every flag on the 26 committed pages is already withheld where the
+    value is read. A row re-added here, under this name or as a caption on the panel, reddens this
+    pin; the record says what a new one must show first.
     """
-    import json
-    import pathlib
+    import vinci.monitor as mon
 
-    from vinci.dossier.schemas import SourceStatus
-    from vinci.monitor import _stale_tags
+    assert "stale_tags" not in mon.FreshnessRow.model_fields, (
+        f"FreshnessRow carries stale_tags again: read {_RETIRED} before reporting staleness here")
+    assert not hasattr(mon, "_stale_tags"), f"the monitor scans for stale tags again: {_RETIRED}"
+    assert "stale_tags" not in _panel_src(), f"the panel renders stale tags again: {_RETIRED}"
+    # and a row built from real committed inputs writes no such key into the day
+    rec, mech = _record_and_mech()
+    row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
+                        mechanical=mech)
+    assert "stale_tags" not in row.model_dump(mode="json")
 
-    assert "stale" not in {m.value for m in SourceStatus}, (
-        "SourceStatus gained a `stale` member — `_stale_tags` can now match, so decide: finish "
-        "the wiring (companyfacts in the monitor) or remove the row. Do not just update this pin.")
 
-    # ...and it really does return nothing on every committed dossier, not merely on a fixture
-    root = pathlib.Path(__file__).resolve().parents[1] / "data" / "dossiers"
-    seen = 0
-    for f in sorted(root.glob("*/dossier.json")):
-        assert _stale_tags(json.loads(f.read_text()).get("mechanical")) == []
-        seen += 1
-    assert seen >= 8, f"corpus scan covered {seen} dossiers — it is not exercising anything"
+def test_a_committed_day_reads_back_without_the_retired_field() -> None:
+    """A PAST DAY IS NEVER RE-CUT (RUNBOOKS §j), so the days keep their `stale_tags: []` and must
+    still read, losing nothing. Every row's list was empty, so the retirement dropped no
+    information; any other field the day carries reads back unchanged."""
+    import vinci.monitor as mon
+
+    days = sorted((ROOT / "data" / "monitor").glob("2*.json"))
+    rows = carried = 0
+    for day in days:
+        for raw in json.loads(day.read_text()).get("freshness") or []:
+            rows += 1
+            if "stale_tags" in raw:
+                carried += 1
+                assert raw["stale_tags"] == [], (
+                    f"{day.name} {raw.get('ticker')} carried stale tags — the retirement would "
+                    f"drop them: {_RETIRED}")
+            back = mon.FreshnessRow.model_validate(raw).model_dump(mode="json")
+            assert "stale_tags" not in back
+            assert {k: v for k, v in raw.items() if k != "stale_tags"} == {
+                k: back[k] for k in raw if k != "stale_tags"}, f"{day.name} {raw.get('ticker')}"
+    # the real shape this reader must accept is in the corpus, not only in a fixture
+    assert carried, "no committed day carries stale_tags — this pin exercises nothing"
+    assert rows >= carried
+
+
+def test_stale_served_has_no_production_reader() -> None:
+    """`stale_served` stays a MEASUREMENT. Its clock is the filer's frontier of any tag, which a
+    forward-dated context moves years ahead (92 of the 129 flow flags the annual readers serve,
+    in the record), so a reader or report built on it would print false staleness."""
+    home = ROOT / "vinci" / "edgar" / "concepts.py"
+    readers = sorted(str(p.relative_to(ROOT)) for p in (ROOT / "vinci").rglob("*.py")
+                     if p != home and "stale_served" in p.read_text())
+    assert readers == [], f"stale_served gained a production reader {readers}: {_RETIRED}"
