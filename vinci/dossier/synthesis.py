@@ -385,9 +385,9 @@ _TOOL_TEMPLATE: dict[str, Any] = {
                 "RESIDUAL (overshoot); never compute a residual or an implied upside, and never "
                 "read a HETEROGENEOUS peer set as a clean benchmark. Every bull point must "
                 "SURVIVE SCRUTINY — genuine, load-bearing, never a neutral-as-bullish padding "
-                "of the count; when bull is the MINORITY under evidence_balance, frame each as a "
-                "counter-point OUTWEIGHED by the bear majority, never suppressing a genuine one "
-                "(rule 7).",
+                "of the count; when bull is the MINORITY under a committed evidence_balance, "
+                "state each as what would have to be true for the bull case, never suppressing a "
+                "genuine one; no point ends by rebutting itself (rule 7).",
             },
             "bear_points": {
                 "type": "array",
@@ -400,9 +400,9 @@ _TOOL_TEMPLATE: dict[str, Any] = {
                 "carries one). The edge "
                 "diverges from the biased consensus read — do not reproduce it. Every bear point "
                 "must SURVIVE SCRUTINY — genuine, load-bearing, never padding to inflate the "
-                "majority; when bear is the MINORITY under evidence_balance, frame each as a "
-                "counter-point OUTWEIGHED by the bull majority, never suppressing a genuine one "
-                "(rule 7).",
+                "majority; when bear is the MINORITY under a committed evidence_balance, state "
+                "each as what would have to be true for the bear case, never suppressing a "
+                "genuine one; no point ends by rebutting itself (rule 7).",
             },
             "twin_reference_cases": {
                 "type": "array",
@@ -480,10 +480,13 @@ _SYSTEM_TEMPLATE = (
     "BODY's weight must MATCH evidence_balance, never a balanced count. When the lean is "
     "committed (strongly-bearish OR strongly-bullish), the MAJORITY side (the one the lean "
     "names) is complete and rigorous; the MINORITY side carries ONLY genuine, load-bearing "
-    "counter-points, EACH framed as 'a genuine counter-point, OUTWEIGHED by <the dominant "
-    "majority fact>' or 'what would have to be true for the <minority> case' — sized "
-    "against the lean, NEVER padded with neutral filler to fake symmetry, and NEVER "
-    "suppressed when genuine (a real disconfirming fact SURVIVES, qualified). Both sides "
+    "counter-points, EACH stated as what would have to be true for the <minority> case — sized "
+    "against the lean by how few they are, NEVER padded with neutral filler to fake symmetry, "
+    "and NEVER suppressed when genuine (a real disconfirming fact SURVIVES). Under a mixed "
+    "lean neither side is the minority: state every point plainly. On ANY lean, a point never "
+    "ends by rebutting itself: a fact that cuts the other way is a point on the other side, and "
+    "the weighing of the two sides is evidence_balance's, never a closing clause (reading a "
+    "point's OWN metric as the real signal or the misread, rule 9, is not a rebuttal). Both sides "
     "must survive scrutiny: no redundant or padding claims, and do not inflate the majority "
     "either. A one-sided reality shows a one-sided COUNT, not a laundered balanced list. "
     "evidence_balance itself is ONE concise line (≤25 words: label + the single dominant "
@@ -504,7 +507,10 @@ _SYSTEM_TEMPLATE = (
     "metric, state explicitly whether it is the REAL signal or the optical/consensus MISREAD, "
     "using the paired reconciler in the same fact (a falling margin % carries the absolute EBITDA "
     "beside it — a % can fall while EBITDA RISES). The edge diverges from the biased consensus "
-    "read; do not reproduce it. "
+    "read; do not reproduce it. A PATH word ('every year', 'every step', 'without interruption', "
+    "'never fell') claims that EACH period of a series moved one way: write one only when every "
+    "period the facts carry did; otherwise state the endpoints and the period that broke the "
+    "run. A net change says where a series ended, not what it did in between. "
     "(10) PEER-COMP CONTRACT: the peer-comps facts (peer_set / comparability / trading_multiples / "
     "fundamental_deltas) ARE the consensus comp read — the thing the edge must RESIST, not echo. "
     "NEVER present 'cheap vs the peer median' as a conclusion: a peer multiple is meaningful only "
@@ -536,23 +542,28 @@ _SYSTEM_TEMPLATE = (
     "figures. Dates, fiscal periods and durations ('FY25', '5-year', '52-week') are labels, not "
     "figures. The shape, one entry per figure in claim order (figure → source_ref, or figure → "
     "derived + inputs); one literal example: "
+    # A NEUTRAL EXAMPLE (fix 4b, 2026-11-17): fictional figures that belong to no filer, in the
+    # same shape — seven entries, six cited and one derived, in claim order — and no rebuttal
+    # clause. It was LLY's committed bear point, verbatim, closed by "genuine, but outweighed by
+    # …", the pattern rule 7 now forbids. The text is #920's V3, drawn there five times
+    # (docs/records/2026-11-05-nflx-synthesis-causality-test.md §3). $1,205M − $388M = $817M;
+    # $4,488M ÷ $1,870M = 2.4x.
     '{{"claim": "Reported FCF conversion is weak relative to earnings: LTM Levered FCF was '
-    "$9,343.7M against $46,489M EBITDA (CFO $30,645M less capex $10,984M = $19,661M), reflecting "
-    "heavy capex/IPR&D draw — genuine, but outweighed by 121.4x coverage and 0.9x net leverage "
-    'leaving reinvestment capacity intact.", "figures": ['
-    '{{"figure": "$9,343.7M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
+    "$412.6M against $1,870M EBITDA (CFO $1,205M less capex $388M = $817M); interest coverage is "
+    '6.2x and net leverage is 2.4x.", "figures": ['
+    '{{"figure": "$412.6M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
     '[LTM 12 months Sep-30-2026]"}}, '
-    '{{"figure": "$46,489M", "source_ref": "CIQ Financials→Income Statement (margin % + absolute '
+    '{{"figure": "$1,870M", "source_ref": "CIQ Financials→Income Statement (margin % + absolute '
     'EBITDA reconciler)"}}, '
-    '{{"figure": "$30,645M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
+    '{{"figure": "$1,205M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
     '[LTM 12 months Sep-30-2026]"}}, '
-    '{{"figure": "$10,984M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
+    '{{"figure": "$388M", "source_ref": "CIQ Financials→Cash Flow \'Levered Free Cash Flow\' '
     '[LTM 12 months Sep-30-2026]"}}, '
-    '{{"figure": "$19,661M", "derived": "difference", "inputs": ["$30,645M", "$10,984M"]}}, '
-    '{{"figure": "121.4x", "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest '
+    '{{"figure": "$817M", "derived": "difference", "inputs": ["$1,205M", "$388M"]}}, '
+    '{{"figure": "6.2x", "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest '
     'Expense [LTM 12 months Sep-30-2026]"}}, '
-    '{{"figure": "0.9x", "source_ref": "CIQ Net Debt $43,858M [Q3 Sep-30-2026] ÷ CIQ EBITDA '
-    '$46,489M [LTM 12 months Sep-30-2026]"}}]}}'
+    '{{"figure": "2.4x", "source_ref": "CIQ Net Debt $4,488M [Q3 Sep-30-2026] ÷ CIQ EBITDA '
+    '$1,870M [LTM 12 months Sep-30-2026]"}}]}}'
 )
 
 
@@ -2053,8 +2064,9 @@ def _validate(
             flags.append(
                 f"FALSE-BALANCE? the written assessment commits a strong lean but the body is "
                 f"near-symmetric ({nb} bull vs {nr} bear) and the minority {side}_points aren't "
-                "qualified-as-outweighed — size the minority against the lean (rule 7), or it "
-                "launders a one-sided case"
+                "sized against the lean (stated as what would have to be true for the minority "
+                "case) — size the minority against the lean (rule 7), or it launders a one-sided "
+                "case"
             )
 
     # G.3 peer-comp contract: the comps facts are the CONSENSUS read the edge must RESIST. A
@@ -3338,9 +3350,10 @@ _DRAWDOWN_ANCHOR_EXAMPLE = (
 def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
     """The prompt section for a name with a drawdown anchor (`DrawdownAnchor`): both dated parts,
     one line each (window → per-gap date, move and cause → source_ref, then the outlook it
-    furnished → source_ref), and the question the anchor exists to ask — has the original cause
-    played out. Read from ``dumped``, the facts as the prompt carries them, so the outlook here
-    wears the same vintage mark as there. None for a name with no anchor: its prompt is unchanged.
+    furnished → source_ref), and the closing question (`_drawdown_anchor_ask`): whether the cause
+    the at-anchor part names has played out, or, where it names none, what came after. Read
+    from ``dumped``, the facts as the prompt carries them, so the outlook here wears the same
+    vintage mark as there. None for a name with no anchor: its prompt is unchanged.
 
     One literal example (`_DRAWDOWN_ANCHOR_EXAMPLE`, SMPL's), shape only:
       at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); … →
@@ -3390,14 +3403,38 @@ def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
         "THIS NAME:",
         *part(f"at the {word}", anchor.get("at_anchor")),
         *part(f"since the {word}", anchor.get("since")),
-        f"ASK: has the cause named at the {word} played out? Set the since part and the current "
-        "facts against it — did the outlook that came with the drop hold, get cut again, or "
-        "recover; did a later drop repeat the cause or name a new one. Answer inside your points "
-        "(a bull or bear point, or the decisive question's evidence), citing these source_refs "
-        "verbatim; where the facts cannot tell, say so in key_unknowns. An outlook marked "
-        "SUPERSEDED is history, never the current guide.",
+        _drawdown_anchor_ask(at, word),
     ]
     return "\n".join(lines)
+
+
+def _drawdown_anchor_ask(at: dict[str, Any], word: str) -> str:
+    """The digest's closing question, asked only of what the at-anchor part NAMES (fix 4b,
+    2026-11-17). "Has the cause named at the follow played out?" was asked of every anchor, so a
+    part with no gap-down — MCK's follow, 2026-05-02 to 2026-10-29 — was asked about a cause it
+    never named, and the question led the answer (#920 §14). Read from the part's structure
+    (`gaps`, `gap_down_dates`), never its shape string. A cause is named by a gap-down's 8-K
+    (`GapDown.accession`): a drop with no company filing (NCNO's underwrite, TECX's follow) names
+    none. A part built before `gaps` existed lists its drops only in `gap_down_dates` and keeps
+    the question it was always asked. A part whose shape is not PRESENT could not be read, which is
+    not the same as no drop."""
+    tail = (" Answer inside your points (a bull or bear point, or the decisive question's "
+            "evidence), citing these source_refs verbatim; where the facts cannot tell, say so in "
+            "key_unknowns. An outlook marked SUPERSEDED is history, never the current guide.")
+    gaps = at.get("gaps") or []
+    dates = at.get("gap_down_dates") or {}
+    named = (any(isinstance(g, dict) and g.get("accession") for g in gaps) if gaps
+             else dates.get("status") == "present" and bool(dates.get("value")))
+    if named:
+        return (f"ASK: has the cause named at the {word} played out? Set the since part and the "
+                "current facts against it — did the outlook that came with the drop hold, get cut "
+                "again, or recover; did a later drop repeat the cause or name a new one." + tail)
+    read = (at.get("shape") or {}).get("status") == "present"
+    why = ("shows no gap-down with a company filing" if gaps
+           else "shows no discrete gap-down" if read else "could not be read (UNKNOWN)")
+    return (f"ASK: the part at the {word} {why}, so it names no cause — never state or assume "
+            f"one. Set the since part and the current facts against the {word}: did a drop come "
+            "after it, and what does its filing name; what does the current outlook say." + tail)
 
 
 def _material_figures_digest(figs: list[MaterialFigure]) -> str:
