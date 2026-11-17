@@ -56,6 +56,25 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # THE OPERATOR'S APPROVAL OF EACH PROTECTED FILE (2026-11-17, #1097; operator: "Approve as
+      # designed (Recommended)"). A PR that changes a file on the PROTECTED list in
+      # .claude/hooks/decision_path_guard.py fails here unless a commit message on it carries, per
+      # file, `Operator-approved: <path> "<the operator's words>" <YYYY-MM-DD>`. The guard's
+      # prompt is a click nothing durable records, and a Bash edit never reaches it; this reads the
+      # PR's diff, whatever wrote it. ALWAYS against main, the default branch, never the PR's own
+      # base (#1104 review round 1): a PR opened onto a branch carrying an unapproved change, then
+      # retargeted to main, would otherwise have been checked against that branch. Against the
+      # fetched branch rather than the payload's base sha, which can lag the tip the merge commit
+      # was built on: the merge base is right either way. PRs only: branch protection takes every
+      # change to main through a PR, where this ran; an admin's direct push (protection is not
+      # enforced for admins) is not checked. A PR runs its OWN copy of this file and of the
+      # script, so a PR that rewrites either can pass itself, and a retarget re-runs nothing (no
+      # `edited` trigger): STATE row 32 item 33. Before the install, so a refusal costs seconds.
+      # bin/commit runs the same script on the staged change:
+      # docs/records/2026-11-17-a-protected-file-change-names-the-operators-approval.md
+      - name: protected files carry the operator's approval
+        if: github.event_name == 'pull_request'
+        run: python .github/scripts/protected_approval.py --base origin/main --head HEAD
       # FROM THE LOCK (operator, 2026-11-13: "Check, then pin newest (Recommended)"): every package
       # at the version requirements.lock pins, each checked by its hash, then the package itself
       # with nothing added. Before this, each run resolved the newest of everything: the theme

@@ -16,6 +16,8 @@
 # code that was not the code being committed, which is D16's shape one level up.
 # THE FIX IS A PRECONDITION, not more discipline: refuse when the tree and the index disagree.
 set -euo pipefail
+# This file's own checkout, read before the cd: the approval check below runs from it.
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$(git rev-parse --show-toplevel)"
 # THE INTERPRETER (fix request 2, RH-D3): $VENV, else this checkout's .venv, else the primary
 # checkout's (a worktree's git common dir sits inside it) — the fast gate's own order. The default
@@ -43,6 +45,15 @@ if [ -n "$unstaged$untracked" ]; then
   echo "  the commit does not contain. Run 'git add -A' (or stage deliberately) and re-run." >&2
   exit 1
 fi
+
+# THE OPERATOR'S APPROVAL OF EACH PROTECTED FILE (2026-11-17, #1097; operator: "Approve as
+# designed (Recommended)"). The decision-line guard asks before an Edit or Write, but a grant is a
+# click nothing durable records and a Bash edit never reaches it, so this reads the STAGED result:
+# refused unless a commit message on the branch, or the -m/-F message being committed, carries
+# `Operator-approved: <path> "<the operator's words>" <YYYY-MM-DD>` per protected file changed.
+# Under the system python3, as the hooks run (stdlib only); gate.yml runs it on every PR.
+echo "── protected files carry the operator's approval ───"
+python3 "$here/.github/scripts/protected_approval.py" --root . --base origin/main -- "$@"
 
 echo "── ruff ────────────────────────────────────────────"
 "$VENV" -m ruff check vinci tests frontend

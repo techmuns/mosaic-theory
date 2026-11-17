@@ -138,6 +138,13 @@ PR (CLAUDE.md: coin-time translation).
   build, and runs the downstream readers the change reaches — then stamps the result with the PR's
   own diff (`git patch-id`), so a re-sync that only merges main keeps it*. `vinci/impact/`,
   RUNBOOKS §o, `docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
+- **Operator-approved line / protected-file approval** (2026-11-17, #1097; operator: "Approve as
+  designed (Recommended)"). Plain words: *a commit-message line `Operator-approved: <path>
+  "<the operator's words>" <YYYY-MM-DD>` that the gate (gate.yml on PRs, bin/commit) requires
+  for each file on the decision-line guard's PROTECTED list a branch changes, however the file
+  was written; the guard's prompt is an early warning, this line is the record*.
+  `.github/scripts/protected_approval.py`,
+  `docs/records/2026-11-17-a-protected-file-change-names-the-operators-approval.md`.
 - **Coverage roster / intake · active · watch · retired** (2026-11-17, W27, #1004 item 6).
   Plain words: *the one dated list of which names the fund covers — each name's latest move says
   whether it is being taken in with no page yet (intake), worked and rebuilt (active), kept with
