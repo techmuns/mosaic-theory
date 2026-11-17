@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# PINS OFF LIVING PAGES, SLICE 2 OF 5 (W27 follow-up, STATE row 41 (a)): 18 facts, quality, evals, impact and CIQ-reader test files read the cut or walk the roster, every assertion unchanged; a CIQ-paired refresh pin runs only on the export its frozen page names; the scan's named-living-page pairs fall 389 → 365 (80 → 65 files), and what it still finds in these files is false positives or one read of history ($0)
+# PINS OFF LIVING PAGES, SLICE 2 OF 5 (W27 follow-up, STATE row 41 (a)): 18 facts, quality, evals, impact and CIQ-reader test files read the cut or walk the roster, every assertion unchanged; a CIQ-paired refresh pin runs only on the export its frozen page names; the scan's named-living-page pairs fall 423 → 399 (83 → 68 files), and what it still finds in these files is false positives or one read of history ($0)
 
 **WHAT.**
 - **Slice 2 of the plan A approved on 2026-11-17** (record of slice 1:
@@ -38,22 +38,25 @@ superseded-by:
   a skip, never a looser assertion). A frozen page with no gate would go red for good at the next
   re-export.
 
-**Populations changed** (`scripts/asserts_unchanged.py` cannot see them):
+**Populations changed** (the checker lists the first as POPULATION and the second as CONTROL):
 - the unmarked-banner check: SMPL, AORT and FUBO → every covered page with no sidecar (26 at the
   cut);
 - the panel unmoved-row check: unchanged at the cut. A name that leaves the roster is no longer
-  checked.
+  checked: the walk `continue`s past it, an exit added by design.
 
 **WHY.** A retirement re-points every test reading the retired name's living page by name (STATE row
 41 (a)). This slice moves that cost off 18 of the files in the plan's facts, quality, evals,
 impact and misc group.
 
 **HOW VERIFIED.**
-- **No assertion changed.** `python scripts/asserts_unchanged.py af030d45` (with slice 3's
-  reader-aware version of the checker): 18 files, 417 functions in both; 0 changed, 0 vanished,
-  0 reader-only.
-- **The scan** (`python scripts/named_page_pins.py HEAD`, the same 26 pages, on top of slice 1): 389 → 365
-  pairs (value 183 → 178, invariant 206 → 187), 337 → 314 functions, 80 → 65 files. What it still
+- **No assertion changed.** `python scripts/asserts_unchanged.py 8a71a383` (main, with slice 1
+  merged): 18 files, 417 functions in both: 0 changed, 0 disabled, 0 vanished, 0 reader-only;
+  1 population (`test_known_wrong_marker`'s unmarked-banner walk) and 1 control
+  (`test_evals_panel_and_stats::test_each_unmoved_page_still_yields_its_frozen_row`, its
+  `continue` past a name the roster no longer covers, above).
+- **The scan** (`python scripts/named_page_pins.py HEAD`, the same 26 pages, against main at
+  `8a71a383`): 423 → 399 pairs (value 208 → 203, invariant 215 → 196), 366 → 343 functions, 83 →
+  68 files. What it still
   flags in these files:
   - `tmp_path` trees named for a ticker (`test_descriptive_labels`, `test_quality_ciq`,
     `test_facts_layer`, `test_ciq_relationship_view_edges`'s writer);
@@ -69,7 +72,8 @@ impact and misc group.
 - **The impact check.** {IMPACT}
 
 **BOUNDARY.**
-- **Counts:** at this slice's commit, on top of slice 1 (`af030d45`), unless another is named.
+- **Counts:** at this slice's commit, against main at `8a71a383` (slice 1 merged as #1098), unless
+  another is named.
 - **"Pairs" / "functions" / "files":** `scripts/named_page_pins.py`, a lower bound.
 - **"Assertions":** the changed `tests/*.py` files.
 
