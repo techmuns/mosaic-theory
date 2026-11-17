@@ -47,7 +47,9 @@ superseded-by:
     decomposed gap (BRBR, EPAM, IT, SMPL, WERN). It walks LIVING pages because the transform reads
     the page's own record and export, and a frozen page beside a newer record would mix two
     vintages (CLAUDE.md, derived-pin source layers). Its per-page CIQ skips became per-page
-    `continue`s, and it skips only when no page could verify its vintages.
+    `continue`s, and it skips only when no page could verify its vintages. A partial check warns,
+    naming each page it could not verify, so one verified page does not read as five (review of
+    this slice: on main each name skipped in its own parametrized case).
 - **CIQ-paired refresh pins run on their page's exports.** `test_forward_multiple_history`'s two
   refresh pins and `test_ev_bridge`'s pair the page with CIQ exports, and each transform writes
   only from the exports the page names: the quarterly Financials its bands stamp, and for the
@@ -58,7 +60,13 @@ superseded-by:
   bridge also requires that folder's Financials to be the bands'. Each skips, naming both sha256s,
   only when no folder holds the page's exports. Run in scratch with the live folder missing the
   export and a stand-in archive holding AMZN's: all three passed, reading the archive. (Found in
-  slice 2's review, where the same gate had skipped after any re-export.)
+  slice 2's review, where the same gate had skipped after any re-export.) The bridge also finds a
+  Financials-only re-export: the live folder then holds the page's Estimates beside another
+  Financials, and the archived folder holding the bands' Financials serves, if its Estimates are
+  the page's too (this slice's review).
+- **Both twins on one vintage.** `test_anchor_point_in_time_shares`'s web twin read the living
+  `frontend/dossiers/` mirrors of TJX and LLY, which no longer match the cut its markdown twin
+  reads. It now renders the cut's pages too (this slice's review).
 
 **WHY.** A retirement re-points every test reading the retired name's living page by name (STATE
 row 41 (a)). This slice moves that cost off the valuation group, which had the most value pins
@@ -66,7 +74,7 @@ row 41 (a)). This slice moves that cost off the valuation group, which had the m
 
 **HOW VERIFIED.**
 - **No assertion changed.** `python scripts/asserts_unchanged.py 8a71a383` (main, with slice 1
-  merged) over 23 files and 433 functions: 0 changed, 0 disabled, 0 vanished; 1 reader-only
+  merged) over 23 files and 432 functions: 0 changed, 0 disabled, 0 vanished; 1 reader-only
   (`test_valuation_basis::test_the_ids_and_formulas_are_the_engines`, `_page("BRBR")` →
   `frozen_doc("BRBR")` inside the assert, the READER category #1098 added); 8 population (the
   walks above); and 1 control, `test_consensus_parity`'s per-page `continue`s (above), an exit
@@ -74,12 +82,15 @@ row 41 (a)). This slice moves that cost off the valuation group, which had the m
   checker exits 1.
 - **Each walk was run on every page it walks before it moved** (the populations above). No page
   failed one.
-- **The files.** The 23 changed files, offline: 15 failures, every one of them failing on the
-  unchanged base too (the mislabelled PARR workbook, re-exported CIQ data).
+- **The files.** The 23 changed files, offline, with the CIQ link present: 722 passed, 24 skipped,
+  15 failed. Main `8a71a383` with the same link fails the same 15 (the mislabelled PARR workbook,
+  re-exported CIQ data) and passes 724. The two fewer items are `test_consensus_parity`'s three
+  parametrized cases, now one walk: 10 → 8 collected, and no other file's count moves.
 - **The scan** (`named_page_pins.py HEAD`, against main at `8a71a383`): 423 → 307 pairs (value
-  208 → 132, invariant 215 → 175), 366 → 274 functions, 83 → 62 files. Left in these files: a `tmp_path`
-  writer (`test_lease_basis`) and the fleet split's subscript keys (`test_ev_gap_routing`), whose
-  named routes now read the cut. Both are scan false positives, for slice 5.
+  208 → 132, invariant 215 → 175), 366 → 274 functions, 83 → 62 files. Left in these files: a
+  `tmp_path` writer (`test_lease_basis`) and the fleet split's subscript keys
+  (`test_ev_gap_routing`), whose named routes now read the cut. Both are scan false positives, for
+  slice 5.
 - **The suite.** {SUITE}
 - **The impact check.** {IMPACT}
 
@@ -97,4 +108,10 @@ the proof, the ratchet and STATE row 41.
    empty population.
 2. **CIQ-paired refresh pins skip when neither the folder nor `ciq-archive/` holds their page's
    exports.** Falsifier: one skips while either holds them.
-3. **$0.**
+3. **The checker cannot see a skip inside a helper.** `_the_bands_export` and `_the_pages_exports`
+   skip from inside a function the test calls, so `asserts_unchanged.py`'s "0 disabled" does not
+   cover them. Slice 5 teaches it the repo's skip helpers.
+4. **`test_ev_bridge`'s `if not step(before): pytest.skip(...)` now guards only a transform
+   regression**, since the gate above it guarantees the page's exports. It hid one on main in the
+   same form. Left for a follow-up: as an assertion it would change what the test asserts.
+5. **$0.**
