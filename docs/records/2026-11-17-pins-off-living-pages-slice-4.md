@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# PINS OFF LIVING PAGES, SLICE 4 OF 5 (W27 follow-up, STATE row 41 (a)): 14 dossier-render and refresh test files and the shared `stripped_pages.committed_page` read the cut or walk the roster; three invariants now hold on every covered page with the property; four assertions change, each for a stated reason; the scan's named-living-page pairs fall 420 → 354 (82 → 75 files); 14 render tests were found dormant since #407 and are reported, not fixed ($0)
+# PINS OFF LIVING PAGES, SLICE 4 OF 5 (W27 follow-up, STATE row 41 (a)): 14 dossier-render and refresh test files and the shared `stripped_pages.committed_page` read the cut or walk the roster; three invariants now hold on every covered page with the property; four assertions change, each for a stated reason; the scan's named-living-page pairs fall 423 → 357 (83 → 76 files); 14 render tests were found dormant since #407 and are reported, not fixed ($0)
 
 **WHAT.**
 - **Slice 4 of the plan A approved on 2026-11-17** (slice 1:
@@ -51,8 +51,8 @@ row 41 (a)). This slice moves that cost off the dossier render and refresh group
 4.
 
 **HOW VERIFIED.**
-- **The checker.** `python scripts/asserts_unchanged.py c9c0ee09` (slice 1's head) over 15 files and
-  744 functions: 0 disabled, 0 control, 0 vanished, 1 reader-only
+- **The checker.** `python scripts/asserts_unchanged.py 8a71a383` (main, with slice 1 merged) over 15
+  files and 745 functions: 0 disabled, 0 control, 0 vanished, 1 reader-only
   (`test_an_export_not_on_disk_is_named_never_reported_unchanged`, `_living` → `_at_cut`), 2
   population (the R1 walk, the cap-line walk), and **4 changed, each reviewed**:
   1. and 2. `test_anchor_off_headline`'s two decision pins, md and web. The floor `decided >= 4`
@@ -72,9 +72,9 @@ row 41 (a)). This slice moves that cost off the dossier render and refresh group
   it passes on the frozen IT page.
 - **The files.** The 14 changed test files, offline, with the CIQ link present: 642 passed, 17
   skipped, 2 xfailed, 0 failed.
-- **The scan** (`python scripts/named_page_pins.py HEAD`, the same 26 pages, on top of slice 1 at
-  `c9c0ee09`): 420 → 354 pairs (value 206 → 178, invariant 214 → 176), 363 → 307 functions, 82 →
-  75 files. What it still finds in these files, 26 pairs in 23 functions:
+- **The scan** (`python scripts/named_page_pins.py HEAD`, the same 26 pages, against main at
+  `8a71a383`): 423 → 357 pairs (value 208 → 180, invariant 215 → 177), 366 → 310 functions, 83 →
+  76 files. What it still finds in these files, 26 pairs in 23 functions:
   - **scan false positives, 18 pairs in 15 functions:** `tmp_path` trees built from a frozen copy.
     `test_benchmark_figures_refresh` (6, TECX from its 2026-09-28 copy), `test_input_manifest`
     (3, NFLX and BURL), `test_layer_refreshes` (2), `test_surprise_listing_block`'s writer pins
@@ -98,7 +98,8 @@ own named page. So those 14 render tests run only while some record happens to b
 for the right reason.
 
 **BOUNDARY.**
-- **Counts:** at this slice's commit, on top of slice 1 (`c9c0ee09`), unless another is named.
+- **Counts:** at this slice's commit, against main at `8a71a383` (slice 1 merged as #1098), unless
+  another is named.
 - **"Pages":** the roster's 26 covered names at the cut.
 - **"Pairs" / "functions" / "files":** `scripts/named_page_pins.py`, a lower bound.
 - **"Assertions":** the 15 changed `tests/*.py` files.
