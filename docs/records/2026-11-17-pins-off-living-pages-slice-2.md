@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# PINS OFF LIVING PAGES, SLICE 2 OF 5 (W27 follow-up, STATE row 41 (a)): 16 facts, quality, evals, impact and CIQ-reader test files read the cut or walk the roster, every assertion unchanged; a CIQ-paired refresh pin now runs on the export its frozen page names, live or archived, where it skipped after a re-export; the panel check reads the frozen copy at the panel's blob and checks two pages where it checked one; the scan's named-living-page pairs fall 423 → 399 (83 → 68 files) ($0)
+# PINS OFF LIVING PAGES, SLICE 2 OF 5 (W27 follow-up, STATE row 41 (a)): 16 facts, quality, evals, impact and CIQ-reader test files read the cut or walk the roster, every assertion unchanged; a CIQ-paired refresh pin now runs on the export its frozen page names, live or archived, where it skipped after a re-export; the panel check reads the frozen copy at the panel's blob and checks two pages where it checked one; the scan's named-living-page pairs fall 423 → 401 (83 → 70 files) ($0)
 
 **WHAT.**
 - **Slice 2 of the plan A approved on 2026-11-17** (record of slice 1:
@@ -49,7 +49,7 @@ superseded-by:
 - the panel unmoved-row check: the living tree plus two dated copies → every frozen copy; 1 row →
   2 at the cut (AORT, TECX).
 
-**Kept on the living page, by name, with the reason** (both are outside what the scan sees):
+**Kept on the living page, by name, with the reason** (the scan counts both):
 - `test_nm_is_not_missing::test_the_live_fubo_sentence_is_no_longer_flagged` reads FUBO's CURRENT
   synthesis by design and skips when it carries no "not missing" claim. That has been so since
   2026-08-18, and so is it on the cut's copy, where it would skip for good. It already skips when
@@ -74,8 +74,9 @@ impact and misc group.
   counts: the mislabelled PARR quarterly Financials export (4), the latest-cell contract on the
   current exports (3) and an undated header marker (1).
 - **The scan** (`python scripts/named_page_pins.py HEAD`, the same 26 pages, against main at
-  `8a71a383`): 423 → 399 pairs (value 208 → 203, invariant 215 → 196), 366 → 343 functions, 83 →
-  68 files. What it still flags in these files:
+  `8a71a383`): 423 → 401 pairs (value 208 → 204, invariant 215 → 197), 366 → 345 functions, 83 →
+  70 files. What it still flags in these files:
+  - the two kept on the living page, above (GOOGL's cohort, FUBO's live synthesis);
   - `tmp_path` trees named for a ticker (`test_descriptive_labels`, `test_quality_ciq`,
     `test_facts_layer`, `test_ciq_relationship_view_edges`'s writer);
   - a git-revision path (`test_evals_round2`, which reads the gold pages at the freeze);
@@ -85,9 +86,9 @@ impact and misc group.
     #1036's parent commit, and its head scan skips a file that is gone, so a retirement edits
     nothing.
 
-  Slice 5 fixes the scan's false positives, records the residue, and adds the blind spots the
-  review found: a read through a support module's own `ROOT`, a path built from `__file__`, and a
-  page read in a same-module helper.
+  Slice 5 fixes the scan's false positives, records the residue, and adds the blind spot the
+  review found: a page read through a support module's own `ROOT` (`ciq_export_support`'s
+  lookup).
 - **The suite.** The full offline suite (`-m "not network" -n 8`, the CIQ folder linked) at
   `e9486658`, against the same run of main `8a71a383` on the same machine: **74 → 75 failing**.
   Every one of main's 74 is a local-data failure CI does not run. Every difference is named noise:
