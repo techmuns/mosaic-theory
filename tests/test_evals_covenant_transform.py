@@ -17,8 +17,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import pytest
-
 from tests.frozen_support import covered_where, frozen_doc, living_doc
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.schemas import CapitalStructure, MechanicalLayer, SourceStatus
@@ -52,44 +50,48 @@ def _rows(page: dict[str, Any]) -> list[Any]:
     return list(cs.covenant_term_rows.value or []) if cs.covenant_term_rows else []
 
 
-def _quoted_panel_page(t: str, page: dict[str, Any]) -> bool:
-    return t in load_panel_file()["panel"] and any(
-        r.value.status is SourceStatus.PRESENT and (r.value.note or "").startswith(_LEAD)
-        for r in _rows(page))
+def _quoted() -> list[str]:
+    """The equality's population: every covered panel page with a PRESENT quoted covenant term.
+    Walked inside the test, never at import: a roster the pages disagree with, or an empty walk,
+    fails this test rather than interrupting the whole suite's collection."""
+    panel = load_panel_file()["panel"]
+
+    def quoted(t: str, page: dict[str, Any]) -> bool:
+        return t in panel and any(
+            r.value.status is SourceStatus.PRESENT and (r.value.note or "").startswith(_LEAD)
+            for r in _rows(page))
+
+    return [t for t, _ in covered_where(
+        quoted, "on the synthesis panel carries a PRESENT quoted covenant term")]
 
 
-#: The equality's population: every covered panel page with a PRESENT quoted covenant term.
-_QUOTED = [t for t, _ in covered_where(
-    _quoted_panel_page, "on the synthesis panel carries a PRESENT quoted covenant term")]
-
-
-@pytest.mark.parametrize("ticker", _QUOTED)
-def test_each_fenced_row_is_the_extractors_row_for_the_same_answer(ticker: str) -> None:
-    rows = _rows(_page(ticker))
-    fenced = variants.fenced_covenant_rows(rows)
-    checked = 0
-    for before, after in zip(rows, fenced, strict=True):
-        note = before.value.note or ""
-        if before.value.status is not SourceStatus.PRESENT or not note.startswith(_LEAD):
-            assert after == before
-            continue
-        quote = note[len(_LEAD):-1]
-        answer = {"name": before.name, "present": True, "value": before.value.value,
-                  "quote": quote, "base_rate_label": before.base_rate_label,
-                  **{k: getattr(before, k) for k in ce.RATE_COMPONENTS}}
-        for key, own in (before.component_quotes or {}).items():
-            answer[ce._OWN_QUOTE[key]] = own
-        exhibit = " | ".join([quote, *(before.component_quotes or {}).values()])
-        (built,), _flags, _ = ce._extract_from_exhibit(
-            _Answer({"terms": [answer]}), exhibit, name=ticker, ticker=ticker,
-            source_ref=before.value.source_ref, title=before.agreement_title,
-            amendment=before.agreement_is_amendment)
-        if after.value.status is SourceStatus.UNKNOWN:   # the fence refused it: same refused row
-            assert built == after, (before.name, built, after)
-        else:
-            assert built.value == after.value
-        checked += 1
-    assert checked, f"{ticker}: no PRESENT quoted term to check"
+def test_each_fenced_row_is_the_extractors_row_for_the_same_answer() -> None:
+    for ticker in _quoted():
+        rows = _rows(_page(ticker))
+        fenced = variants.fenced_covenant_rows(rows)
+        checked = 0
+        for before, after in zip(rows, fenced, strict=True):
+            note = before.value.note or ""
+            if before.value.status is not SourceStatus.PRESENT or not note.startswith(_LEAD):
+                assert after == before
+                continue
+            quote = note[len(_LEAD):-1]
+            answer = {"name": before.name, "present": True, "value": before.value.value,
+                      "quote": quote, "base_rate_label": before.base_rate_label,
+                      **{k: getattr(before, k) for k in ce.RATE_COMPONENTS}}
+            for key, own in (before.component_quotes or {}).items():
+                answer[ce._OWN_QUOTE[key]] = own
+            exhibit = " | ".join([quote, *(before.component_quotes or {}).values()])
+            (built,), _flags, _ = ce._extract_from_exhibit(
+                _Answer({"terms": [answer]}), exhibit, name=ticker, ticker=ticker,
+                source_ref=before.value.source_ref, title=before.agreement_title,
+                amendment=before.agreement_is_amendment)
+            if after.value.status is SourceStatus.UNKNOWN:   # the fence refused it: the same row
+                assert built == after, (before.name, built, after)
+            else:
+                assert built.value == after.value
+            checked += 1
+        assert checked, f"{ticker}: no PRESENT quoted term to check"
 
 
 def test_a_page_whose_terms_all_pass_is_unchanged_and_no_rows_are_attached() -> None:

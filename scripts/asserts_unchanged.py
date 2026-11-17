@@ -32,6 +32,11 @@ def _git(*args: str) -> str:
     return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
 
 
+#: every path below is the repository's (`git diff --name-only` and `git show BASE:path` both
+#: speak root-relative paths), so the working-tree side is read from the root, never the cwd
+ROOT = Path(_git("rev-parse", "--show-toplevel").strip())
+
+
 def _is_pytest_call(node: ast.AST, names: tuple[str, ...]) -> bool:
     return isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
         and node.func.attr in names and isinstance(node.func.value, ast.Name) \
@@ -71,7 +76,7 @@ def compare(base: str, path: str) -> tuple[list[str], list[str], list[str], int]
         before = functions(_git("show", f"{base}:{path}"))
     except subprocess.CalledProcessError:
         before = {}
-    after = functions(Path(path).read_text()) if Path(path).exists() else {}
+    after = functions((ROOT / path).read_text()) if (ROOT / path).exists() else {}
     changed = [f"{path}::{k}" for k in sorted(before.keys() & after.keys())
                if assertions(before[k]) != assertions(after[k])]
     vanished = [f"{path}::{k}" for k in sorted(before.keys() - after.keys())
@@ -84,9 +89,11 @@ def main(argv: list[str]) -> int:
     if not argv:
         print(__doc__)
         return 2
-    base, files = argv[0], argv[1:]
+    base = argv[0]
+    files = [Path(f).resolve().relative_to(ROOT).as_posix() for f in argv[1:]]
     if not files:
-        files = sorted(p for p in _git("diff", "--name-only", base, "--", "tests").splitlines()
+        diffed = _git("diff", "--name-only", base, "--", ":(top)tests").splitlines()
+        files = sorted(p for p in diffed
                        if p.endswith(".py") and not p.startswith("tests/fixtures/"))
     changed: list[str] = []
     vanished: list[str] = []
@@ -95,8 +102,9 @@ def main(argv: list[str]) -> int:
     for path in files:
         c, v, n, k = compare(base, path)
         changed, vanished, new, compared = changed + c, vanished + v, new + n, compared + k
-        if Path(path).exists():
-            asserts += sum(len(assertions(f)) for f in functions(Path(path).read_text()).values())
+        if (ROOT / path).exists():
+            asserts += sum(len(assertions(f))
+                           for f in functions((ROOT / path).read_text()).values())
     print(f"=== assertions at {base[:8]} vs the working tree: {len(files)} file(s), {compared} "
           f"function(s) in both, {asserts} assertion node(s) in the working tree ===")
     for label, rows in (("CHANGED", changed), ("VANISHED", vanished), ("new", new)):

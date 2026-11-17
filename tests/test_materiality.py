@@ -137,9 +137,12 @@ def _annual_rows(doc: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
+def _is_unusual(row: dict[str, Any]) -> bool:
+    return any(k in row["label"].lower() for k in ("writedown", "impairment", "restructuring"))
+
+
 def _has_unusual_row(_t: str, doc: dict[str, Any]) -> bool:
-    return any(any(k in r["label"].lower() for k in ("writedown", "impairment", "restructuring"))
-               for r in _annual_rows(doc))
+    return any(_is_unusual(r) for r in _annual_rows(doc))
 
 
 def test_material_unusual_items_reach_the_committed_record() -> None:
@@ -152,7 +155,7 @@ def test_material_unusual_items_reach_the_committed_record() -> None:
                                 "summary"):
         rows = _annual_rows(doc)
         for r in rows:
-            if any(k in r["label"].lower() for k in ("writedown", "impairment", "restructuring")):
+            if _is_unusual(r):
                 assert r.get("values"), f"{t}: {r['label']} carries no structured values"
 
 
@@ -224,8 +227,8 @@ def test_the_green_path_is_deterministic_and_does_not_involve_the_llm() -> None:
     checked = 0
     for t in ("SMPL", "CNXC"):
         d, dj = man / t, frozen_page(t) / "dossier.json"   # the page as frozen at the cut
-        if not d.is_dir() or not dj.exists():
-            continue
+        if not d.is_dir():   # `frozen_page` raises on a missing copy, so only the bundle may be
+            continue          # absent
         b = CiqBundle.from_files(t, sorted(d.glob("*")))
         inc = b.sheet("financials", "Income Statement", freq="annual")
         hdr = _cs._period_header(inc)
