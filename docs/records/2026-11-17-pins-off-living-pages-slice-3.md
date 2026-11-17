@@ -48,11 +48,17 @@ superseded-by:
     the page's own record and export, and a frozen page beside a newer record would mix two
     vintages (CLAUDE.md, derived-pin source layers). Its per-page CIQ skips became per-page
     `continue`s, and it skips only when no page could verify its vintages.
-- **CIQ-paired refresh pins keep their pairing honest.** `test_forward_multiple_history`'s and
-  `test_ev_bridge`'s refresh pins pair the page with the exports on disk. Each transform writes
-  only from the page's own exports: Financials for the bands, and Estimates for the bridge too. The
-  frozen page now runs only while the exports on disk are the ones it names, and otherwise SKIPS,
-  naming both shas (a skip, never a looser assertion).
+- **CIQ-paired refresh pins run on their page's exports.** `test_forward_multiple_history`'s two
+  refresh pins and `test_ev_bridge`'s pair the page with CIQ exports, and each transform writes
+  only from the exports the page names: the quarterly Financials its bands stamp, and for the
+  bridge also the Estimates its `forward_consensus` stamps. The frozen page takes its bundle from
+  `skip_unless_export(..., <the page's own sha256>)`, and the store the transform reads points at
+  that bundle's folder: the folder's own export while it is the page's, else the archived folder
+  that holds it (`ciq-archive/replaced-<date>/`, kept by the operator at each re-export). The
+  bridge also requires that folder's Financials to be the bands'. Each skips, naming both sha256s,
+  only when no folder holds the page's exports. Run in scratch with the live folder missing the
+  export and a stand-in archive holding AMZN's: all three passed, reading the archive. (Found in
+  slice 2's review, where the same gate had skipped after any re-export.)
 
 **WHY.** A retirement re-points every test reading the retired name's living page by name (STATE
 row 41 (a)). This slice moves that cost off the valuation group, which had the most value pins
@@ -89,5 +95,6 @@ the proof, the ratchet and STATE row 41.
 1. **A walk's floor fails loud** when the last covered page with its property leaves (A's ruling).
    An R4 walk with AMZN and UBER both retired is the nearest case. Falsifier: a walk passes on an
    empty population.
-2. **CIQ-paired refresh pins skip after a re-export** until their page is cut anew.
+2. **CIQ-paired refresh pins skip when neither the folder nor `ciq-archive/` holds their page's
+   exports.** Falsifier: one skips while either holds them.
 3. **$0.**

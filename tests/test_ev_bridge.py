@@ -28,9 +28,10 @@ from typing import Any
 
 import pytest
 
-from tests.ciq_export_support import export_sha, skip_unless_pages_export
+from tests.ciq_export_support import export_sha, skip_unless_export
 from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import ciq_sheets as cs
+from vinci.dossier import manual_store as ms
 from vinci.dossier.schemas import Dossier, EvBridge, dossier_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -266,23 +267,31 @@ def test_a_bridge_off_ciqs_current_figure_says_so(monkeypatch: pytest.MonkeyPatc
     assert isinstance(got, EvBridge) and got.note is not None and "DISAGREES" in got.note
 
 
-def _skip_unless_both_exports_are_the_pages(doc: dict[str, Any], b: Any,
-                                           ticker: str) -> None:
-    """A frozen page beside the LIVE exports runs only while both exports on disk are the ones it
-    names (the Estimates export its `forward_consensus` stamps, the quarterly Financials export its
-    trailing bands stamp); otherwise it SKIPS naming both (a skip, never a looser assertion:
-    `tests/ciq_export_support.py`). The frozen page waits for a new cut."""
-    skip_unless_pages_export(ticker, "estimates", page=doc, bundle=b)
+def _the_pages_exports(doc: dict[str, Any], b: Any, ticker: str,
+                       monkeypatch: pytest.MonkeyPatch) -> Any:
+    """THE FROZEN PAGE NAMES BOTH ITS EXPORTS: the Estimates export its `forward_consensus` stamps
+    and the quarterly Financials export its trailing bands stamp. The pin runs on the folder that
+    holds both: the folder's own while it does, else the archived folder holding the Estimates
+    export (`tests/ciq_export_support.skip_unless_export`, the whole folder, one pull), whose
+    Financials export must be the bands' too. The transform reads that same folder. It SKIPS,
+    naming both sha256s, when no folder holds both (a skip, never a looser assertion).
+    RUN THE PIN ON THE BUNDLE THIS RETURNS."""
+    got = skip_unless_export(ticker, "estimates", str(doc["forward_consensus"]["source_sha256"]),
+                             why="the frozen page names this Estimates export", bundle=b)
     stamps = sorted({str(x.get("source_sha256"))
                      for x in doc["mechanical"]["valuation"]["own_history"]["value"] or []})
-    held = export_sha(ticker, "financials", freq="quarterly", bundle=b)
+    held = export_sha(ticker, "financials", freq="quarterly", bundle=got)
     if held not in stamps:
-        pytest.skip(f"{ticker}: the Financials export on disk ({held}) is not the one the frozen "
-                    f"page's bands name ({', '.join(stamps)}) — cut the page anew on it")
+        pytest.skip(f"{ticker}: the Financials export beside the page's Estimates export ({held}) "
+                    f"is not the one the frozen page's bands name ({', '.join(stamps)})")
+    folder = got.workbooks[0].path.parent
+    monkeypatch.setattr(ms.LocalFolderStore, "from_config",
+                        staticmethod(lambda _cfg=None: ms.LocalFolderStore(folder.parent)))
+    return got
 
 
 def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
-    tmp_path: pathlib.Path,
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """END TO END on AMZN: both exports are the page's, so the layer lands — and nothing else moves.
     NEGATIVE: another Estimates export, or no stamped bands, leaves the page alone."""
@@ -296,7 +305,7 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
         (folder / name).write_text((src / name).read_text())
     path = folder / "dossier.json"
     before = json.loads(path.read_text())
-    _skip_unless_both_exports_are_the_pages(before, b, "AMZN")
+    b = _the_pages_exports(before, b, "AMZN", monkeypatch)
     step = ev_bridge_transform("AMZN")
     other = json.loads(json.dumps(before))
     other["forward_consensus"]["source_sha256"] = "0000000000"

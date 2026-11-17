@@ -19,8 +19,10 @@ from typing import Any
 
 import pytest
 
+from tests.ciq_export_support import skip_unless_export
 from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import ciq_sheets as cs
+from vinci.dossier import manual_store as ms
 from vinci.dossier.ciq import CiqBundle, clean_num, excel_date
 from vinci.dossier.schemas import (
     Dossier,
@@ -230,21 +232,29 @@ def _copy_page(tmp_path: Path, ticker: str) -> Path:
     return folder / "dossier.json"
 
 
-def _skip_unless_the_bands_name(doc: dict[str, Any], b: CiqBundle, ticker: str) -> None:
-    """A frozen page beside the LIVE export runs only while the Financials export on disk is the
-    one its trailing bands name; otherwise it SKIPS naming both (a skip, never a looser assertion:
-    `tests/ciq_export_support.py`). The living page would wait for a re-assembly; the frozen one
-    waits for a new cut."""
-    bands = doc["mechanical"]["valuation"]["own_history"]["value"] or []
-    stamps = sorted({str(x.get("source_sha256")) for x in bands})
-    built = cs.forward_multiple_history(b)
-    held = built.source_sha256 if built is not None else None
-    if held not in stamps:
-        pytest.skip(f"{ticker}: the Financials export on disk ({held}) is not the one the frozen "
-                    f"page's bands name ({', '.join(stamps)}) — cut the page anew on it")
+def _the_bands_export(doc: dict[str, Any], b: CiqBundle, ticker: str,
+                      monkeypatch: pytest.MonkeyPatch) -> CiqBundle:
+    """THE FROZEN PAGE'S TRAILING BANDS NAME THEIR QUARTERLY FINANCIALS EXPORT, so the pin runs on
+    that export: the folder's while it is there, else the archived folder that holds it
+    (`tests/ciq_export_support.skip_unless_export`), and the transform reads that same folder. It
+    SKIPS, naming both sha256s, only when neither holds it (a skip, never a looser assertion).
+    RUN THE PIN ON THE BUNDLE THIS RETURNS."""
+    stamps = sorted({str(x.get("source_sha256"))
+                     for x in doc["mechanical"]["valuation"]["own_history"]["value"] or []})
+    if len(stamps) != 1:
+        pytest.fail(f"{ticker}: the frozen page's bands name {len(stamps)} exports ({stamps}), "
+                    "so no one export is the page's")
+    got = skip_unless_export(ticker, "financials", stamps[0], freq="quarterly",
+                             why="the frozen page's trailing bands name this Financials export",
+                             bundle=b)
+    held = got.workbooks[0].path.parent
+    monkeypatch.setattr(ms.LocalFolderStore, "from_config",
+                        staticmethod(lambda _cfg=None: ms.LocalFolderStore(held.parent)))
+    return got
 
 
-def test_the_refresh_lands_the_layer_and_moves_nothing_else(tmp_path: Path) -> None:
+def test_the_refresh_lands_the_layer_and_moves_nothing_else(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """END TO END on AMZN: the page's trailing bands name the export on disk, so the layer is
     written — equal to the builder's — and the synthesis, the anchor, the mechanical layer and the
     rendered page are untouched."""
@@ -253,7 +263,7 @@ def test_the_refresh_lands_the_layer_and_moves_nothing_else(tmp_path: Path) -> N
     b = _bundle("AMZN")
     path = _copy_page(tmp_path, "AMZN")
     before = json.loads(path.read_text())
-    _skip_unless_the_bands_name(before, b, "AMZN")
+    b = _the_bands_export(before, b, "AMZN", monkeypatch)
     md_before = path.with_name("dossier.md").read_text()
     refresh_dossier(path, top_level=forward_multiple_history_transform("AMZN"))
     after = json.loads(path.read_text())
@@ -266,14 +276,15 @@ def test_the_refresh_lands_the_layer_and_moves_nothing_else(tmp_path: Path) -> N
     assert list(after)[-1] == "anchor"
 
 
-def test_a_page_that_cannot_name_this_export_is_left_alone() -> None:
+def test_a_page_that_cannot_name_this_export_is_left_alone(
+        monkeypatch: pytest.MonkeyPatch) -> None:
     """NEGATIVE: a page whose bands name another export, or no export at all, gets nothing — the
     layer would put a second vintage on it. It waits for a re-assembly."""
     from vinci.dossier.refresh import forward_multiple_history_transform
 
     b = _bundle("AMZN")
     doc: dict[str, Any] = frozen_doc("AMZN")   # the page as frozen at the cut
-    _skip_unless_the_bands_name(doc, b, "AMZN")
+    _the_bands_export(doc, b, "AMZN", monkeypatch)
     step = forward_multiple_history_transform("AMZN")
     assert "forward_multiple_history" in step(doc)
     bands = doc["mechanical"]["valuation"]["own_history"]["value"]
