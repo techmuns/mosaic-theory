@@ -566,11 +566,14 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     # this command runs once a page is written refuses any disagreement, so one found there came
     # after the model calls, with the served mirror left stale: a stray `data/dossiers/ZZZZ/` left
     # by a scratch or failed build cost a whole paid build of an active name (review of #1092).
-    # An active name whose page vanished is refused too; its page is restored from git, at $0.
+    # An active name with no page is refused too, even the one being built: a vanished page is
+    # restored from git at $0, and a name with no page yet enters as `intake`, never `active`.
     try:
         roster.covered_pages(cfg.data_dir)
     except roster.CoverageMismatchError as exc:
         print(f"=== dossier · REFUSED before any model call: {exc} ===")
+        print("  a stray page is removed or its name given a line; a vanished page is restored "
+              "from git; a name with no page yet enters as intake (RUNBOOKS §i step 1b)")
         return 1
     refused: list[str] = []
     for fin in finalists:

@@ -32,6 +32,11 @@ findings that reviewer skipped are not addressed here.
      the only one that guarantees no refusal at the mirror from a disagreement that existed
      before the spend. A cohort in which that name's build failed while another's succeeded would
      still reach the mirror and be refused there.
+   - **The refusal names the remedies** (review round 0). An active line appended by mistake for a
+     name that never had a page has no page in git to restore, and the roster's one-move-per-day
+     rule keeps it from being moved to `intake` the same day. So the refusal prints one line:
+     remove a stray page or give its name a line, restore a vanished page from git, and enter a
+     name with no page yet as `intake` (RUNBOOKS §i step 1b).
 2. **The build twin accepted any status.** `frontend/build.py` `_covered_pages`, the stdlib twin
    of the roster reader, read each name's latest status as any string. A paged name whose latest
    line says `"Watch"` was neither covered nor a disagreement, so the mirror dropped it and the
@@ -73,10 +78,13 @@ So: yes.
   On the fix:
   ```
   === dossier · REFUSED before any model call: the committed pages disagree with data/coverage_roster.jsonl on 1 name(s): ZZZZ has a committed page and no line in the coverage roster ===
+    a stray page is removed or its name given a line; a vanished page is restored from git; a name with no page yet enters as intake (RUNBOOKS §i step 1b)
   exit 1; events []
   ```
   The control, the same run with no stray page and the mirror stubbed: `exit 0; events ['client',
-  'cohort']`. An agreeing tree still builds.
+  'cohort']`. An agreeing tree still builds. Loading the finalist fetched 3 SEC EDGAR responses
+  into the worktree's git-ignored `data/cache`, deleted afterwards. That cost $0, with no model,
+  Polygon or Tiingo call.
 - **(2), the twin on a real tree.** The scratch tree linked all 26 committed pages and the roster,
   with AMZN's latest line rewritten to `"Watch"`. On main's `frontend/build.py` (`git show
   71573a69:frontend/build.py`): `publishes 25 of 26 pages; AMZN published: False; no error`. The

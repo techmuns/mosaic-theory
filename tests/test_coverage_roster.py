@@ -355,7 +355,8 @@ def test_the_build_twin_refuses_a_status_the_roster_does_not_name(
                    if json.loads(lines[i])["ticker"] == _a("watch"))   # the name's latest move
     lines[n] = json.dumps(move | {"status": "Watch"}, ensure_ascii=False)
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    with pytest.raises(roster.CoverageRosterError):   # the strict reader refuses it too
+    # the strict reader refuses it too, and for the status, not for the line's form
+    with pytest.raises(roster.CoverageRosterError, match="status 'Watch' is not one of"):
         roster.covered_pages(tree / "data")
     with pytest.raises(SystemExit) as err:
         _build_twin(tree, monkeypatch)
@@ -446,13 +447,15 @@ def test_assembly_refuses_a_tree_the_roster_disagrees_with_before_any_model_clie
     the finalist check, built its client and paid for its phases; only then did the mirror it
     runs refuse the tree, so a stray `data/dossiers/ZZZZ/` cost a whole build. Each disagreement
     now refuses before any client is built, naming the name. `active_no_page` is the name being
-    built: an active page that vanished is restored from git, never rebuilt at a cost."""
+    built: an active page that vanished is restored from git, never rebuilt at a cost, and a name
+    with no page yet enters as `intake` (review round 0: the refusal said neither)."""
     tree = _tree(tmp_path, case)
     monkeypatch.chdir(tree)
     rc, built, clients = _dossier_cli(monkeypatch, _a("active"))
     assert rc == 1 and built == [] and clients == 0
     out = capsys.readouterr().out
     assert "REFUSED" in out and "disagree" in out and _NAMED[case]() in out
+    assert "restored from git" in out and "RUNBOOKS §i step 1b" in out
 
 
 def test_the_scratch_tree_links_pages_and_copies_nothing_it_writes(tmp_path: Path) -> None:
