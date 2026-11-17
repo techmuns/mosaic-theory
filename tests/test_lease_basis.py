@@ -506,17 +506,18 @@ def _page_doc(t: str, lb: dict[str, Any] | None,
 
 
 def test_the_template_proposes_the_multiple_the_anchor_prices() -> None:
-    """(+) TJX: the base multiple is the ex-lease median — a record built from it meets the anchor's
-    ex-lease net debt on one basis. (-) LLY keeps CIQ's median; a refused band proposes none."""
+    """(+) TJX: the base multiple is the ex-lease band's CURRENT (recipe 3a, 2026-11-17; its median
+    until then) — a record built from it meets the anchor's ex-lease net debt on one basis. (-) LLY
+    keeps CIQ's band; a refused band proposes none."""
     tjx = _page_doc("TJX", _lb("TJX"), _lb("TJX"))
     mult = {(x.axis, x.leg): x for x in propose_anchors(tjx)}[("multiple", "base")]
-    assert mult.schema_value == pytest.approx(_lb("TJX")["ex_lease_band"]["median"])
+    assert mult.schema_value == pytest.approx(_lb("TJX")["ex_lease_band"]["current"])
     assert mult.source.startswith("valuation.lease_basis")
     lly = _page_doc("LLY", _lb("LLY"), _lb("LLY"))
     oh = next(b for b in lly["mechanical"]["valuation"]["own_history"]["value"]
               if "EBITDA" in b["metric"])
     got = {(x.axis, x.leg): x for x in propose_anchors(lly)}[("multiple", "base")]
-    assert got.schema_value == pytest.approx(oh["median"])
+    assert got.schema_value == pytest.approx(oh["current"])
     refused = _page_doc("TJX", _lb("UBER"), _lb("UBER"))
     assert ("multiple", "base") not in {(x.axis, x.leg) for x in propose_anchors(refused)}
 
