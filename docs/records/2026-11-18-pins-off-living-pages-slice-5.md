@@ -95,8 +95,8 @@ files net of named noise. This slice ends the series and leaves a machine check 
 plan.
 
 **HOW VERIFIED.**
-- **The checker.** `python scripts/asserts_unchanged.py origin/main` (main `6110795d`, merged)
-  over 22 test files and 484 functions: 0 changed, 0 disabled, 0 control, 0 vanished, 1
+- **The checker.** `python scripts/asserts_unchanged.py origin/main` (main `b2102256`, #1109
+  merged; the same at `6110795d`) over 22 test files and 484 functions: 0 changed, 0 disabled, 0 control, 0 vanished, 1
   reader-only (`test_freshness`: `_assembled("TJX")` → `_frozen_assembled("TJX")`), 6 population
   (the walks above, and two `test_propose` loops whose iterable's reader moved to the cut), 24 new
   (helpers and the new pins).
@@ -105,6 +105,9 @@ plan.
   tests, 111 passed, 1 skipped, 0 failed; templates and proposals, 196 passed, 0 failed; gates and
   triggers, 366 of 367 passed and 0 failed at head, 374 of 375 at main (`test_edge_basis_gate`'s
   parametrize became a walk).
+  At the merged head (main `b2102256`), the 21 changed test files together: 677 tests, 675 passed,
+  2 skipped, 0 failed; main, 667, 665 passed, 2 skipped, 0 failed (18 new pins, less the 8 cases
+  made one walk).
 - **The scan's rules, failing first.** Each rule's fixture run through main's scanner reads wrong:
   it counts the tmp tree, the tmp helper, the git object path, the other function's binding and
   the frozen map's key, and misses the web mirror. The new scanner reads each right.
@@ -150,12 +153,13 @@ plan.
   - **The ratchet passes in the retired tree.** AMZN's 7 named pairs are false positives, and
     with no living AMZN page none is read as stale.
 - **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` at
-  `f79bf681` (main `6110795d` merged): 0 of 677 tests fail on base code and pass on head code
-  (672 pass at both, 5 skipped), and `verify` reads VALID. The PR body carries the report.
+  `1dca055a` (main `b2102256` merged): 0 of 677 tests fail on base code and pass on head code
+  (672 pass at both, 5 skipped), and `verify` reads VALID. At `f79bf681`, against `6110795d`, it
+  read the same. The PR body carries the report.
 
 **BOUNDARY.**
-- **Counts:** at this slice's commit, against main `6110795d` (slices 1–4 merged), unless another
-  is named.
+- **Counts:** at this slice's commit, against main `6110795d` (slices 1–4 merged) or, where named,
+  `b2102256` (#1109 merged too).
 - **"Pairs" / "functions" / "files":** `scripts/named_page_pins.py`, a lower bound, over
   `tests/**/*.py` less `tests/fixtures/`; "main's scanner" is its version at `6110795d`.
 - **"Pages":** the roster's 26 covered names.
