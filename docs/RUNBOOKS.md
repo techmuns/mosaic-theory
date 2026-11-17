@@ -206,6 +206,19 @@ is the 3.9 system one).
    (`vinci/sleeves.py`); untagged, the name would silently inherit the OVERSHOOT framing and be
    asked what broke when nothing did. A bare string (the pre-2026-08-09 shape), a missing sleeve,
    or an unlisted one each raise at assembly with the rewrite quoted.
+   **1b. Take the name into coverage: one appended line** in `data/coverage_roster.jsonl`
+   (W27, `vinci/coverage_roster.py`), after the file's last line, in the reader's one canonical
+   form (`vinci.coverage_roster.render_line`):
+
+   ```json
+   {"date": "<today>", "ticker": "<T>", "status": "intake", "ruling": "<the operator's words>", "source": "<PR or issue comment>", "record": null}
+   ```
+
+   `vinci dossier` assembles only an `intake` or `active` name, and refuses any other before a
+   model call. An `intake` name needs no page yet, so a first build refused or failed after its
+   spend leaves every reader working. The PR that commits the first page appends the name's move
+   to `active` (or `watch`), with the ruling. A page committed with no line is refused, and so
+   is an `active` or `watch` name whose page has gone.
 2. **Benchmark bars must exist for the name's cap band.** The bands are MUTUALLY EXCLUSIVE — one
    name, one benchmark — and they are read from `monitor.benchmark_for_cap`, not restated:
 

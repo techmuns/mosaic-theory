@@ -22,6 +22,7 @@ from typing import Any
 
 import pytest
 
+from tests.roster_support import write_roster
 from tests.sec_offline_support import no_network, seed_sec_cache
 from vinci import provenance
 from vinci.config import Config
@@ -405,6 +406,7 @@ def test_the_backfill_writes_only_the_block_and_keeps_a_record_it_finds(
     before = json.loads(path.read_text())
     (cfg.data_dir / "dossiers" / "ZZZZ").mkdir()
     (cfg.data_dir / "dossiers" / "ZZZZ" / "dossier.json").write_text("not json")
+    write_roster(cfg.data_dir, {"NFLX": "active", "ZZZZ": "watch"})   # `--all` reads it (W27)
     out: list[str] = []
     assert inputs_backfill.run(cfg, tickers=[], exclude=["ZZZZ"], roots=[tmp_path / "none"],
                                write=True, emit=out.append) == 0
@@ -743,6 +745,7 @@ def test_a_whole_corpus_backfill_runs_without_exclude(tmp_path: pathlib.Path) ->
         (cfg.data_dir / "dossiers" / t).mkdir(parents=True)
         (cfg.data_dir / "dossiers" / t / "dossier.json").write_text(
             dossier_json(Dossier.model_validate(page | {"ticker": t})))
+    write_roster(cfg.data_dir, {"BURL": "watch", "NFLX": "watch"})   # `--all` reads it (W27)
     out: list[str] = []
     assert inputs_backfill.run(cfg, tickers=[], exclude=[], roots=[tmp_path / "none"],
                                write=False, emit=out.append) == 0

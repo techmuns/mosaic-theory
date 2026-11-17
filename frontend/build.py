@@ -753,6 +753,41 @@ def _extraction_versions(module: Path = EV_MODULE, entries: Path = EV_ENTRIES) -
 
 
 
+COVERAGE = ROOT / "data" / "coverage_roster.jsonl"
+
+
+def _covered_pages() -> list[str]:
+    """The names the mirror publishes: the COVERAGE ROSTER's active and watch names, and an
+    intake name
+    once its first page is committed, sorted, once the committed pages agree with it. Stdlib
+    twin of `vinci.coverage_roster.covered_pages` (the build fence forbids the import);
+    `tests/test_coverage_roster.py` pins the two against each other on the real committed tree.
+    This twin reads each name's latest move and checks the pages; the roster's own form (order,
+    fields, canonical lines) is the backend reader's, run in the suite. A disagreement stops the
+    build naming every name, never a quiet publish of whatever is on disk: a page is published
+    because its name is covered, not because its folder exists."""
+    if not COVERAGE.is_file():
+        raise SystemExit(f"no coverage roster at {COVERAGE} — the mirror publishes covered names")
+    latest: dict[str, str] = {}
+    for line in COVERAGE.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            move = json.loads(line)
+            latest[str(move["ticker"])] = str(move["status"])
+    covered = {t for t, s in latest.items() if s in ("active", "watch")}
+    paged = {p.parent.name for p in DOSS.glob("*/dossier.json")}
+    problems = ([f"{t} has a committed page and no line in the roster" for t in sorted(paged)
+                 if t not in latest]
+                + [f"{t} is {latest[t]} on the roster and has no committed page"
+                   for t in sorted(covered - paged)]
+                + [f"{t} is retired on the roster and still has a committed page"
+                   for t in sorted(paged) if latest.get(t) == "retired"])
+    if problems:
+        raise SystemExit(f"the committed pages disagree with {COVERAGE.relative_to(ROOT)}: "
+                         + "; ".join(problems))
+    # an `intake` name is published once its first page is committed, and needs none before
+    return sorted(covered | {t for t in paged if latest.get(t) == "intake"})
+
+
 def _git_sha() -> str | None:
     try:
         return subprocess.check_output(
@@ -768,6 +803,9 @@ def main(argv: list[str] | None = None) -> None:
     )
     ap.parse_args(argv)
 
+    # THE COVERED NAMES ARE CHECKED BEFORE THE MIRROR IS CLEARED (W27): a roster the pages
+    # disagree with stops the build with the served mirror still as it was, never wiped.
+    covered = _covered_pages()
     for d in (OUT_SNAP, OUT_DOSS):
         if d.exists():
             shutil.rmtree(d)
@@ -812,31 +850,31 @@ def main(argv: list[str] | None = None) -> None:
     # grid reads — without it a quality name is indistinguishable from an overshoot one until you
     # open it, and its BUY/PASS vocabulary and different question then arrive unexplained.
     sleeves: dict[str, str] = {}
-    if DOSS.exists():
-        for folder in sorted(p for p in DOSS.iterdir() if p.is_dir()):
-            f = folder / "dossier.json"
-            if f.is_file():
-                ticker = folder.name.upper()
-                shutil.copyfile(f, OUT_DOSS / f"{ticker}.json")
-                # the rendered markdown rides the mirror too, so the dossier page can offer it as
-                # a download. Same licensing status as the JSON beside it — DERIVED analysis, not
-                # reproduced CIQ — so it is committed under exactly the same rule.
-                md = folder / "dossier.md"
-                if md.is_file():
-                    shutil.copyfile(md, OUT_DOSS / f"{ticker}.md")
-                tickers.append(ticker)
-                doc = json.loads(f.read_text())
-                ind = doc.get("industry") or {}
-                if ind.get("status") == "present" and (ind.get("value") or "").strip():
-                    labels[ticker] = {"industry": ind["value"].strip(), "source": "ciq-gics",
-                                      "source_ref": ind.get("source_ref") or ""}
-                eb = ((doc.get("synthesis") or {}).get("evidence_balance") or "").strip()
-                if eb:
-                    reads[ticker] = eb
-                # ABSENT == the default book, exactly as the model reads it: every dossier
-                # committed before the tag existed is overshoot, which is truthful (the screen was
-                # their only route). Emitted for every name so the shelf never has to guess.
-                sleeves[ticker] = str(doc.get("sleeve") or "overshoot")
+    # THE COVERED NAMES, FROM THE ROSTER (W27): each one's page was checked present before the
+    # mirror was cleared, so the folder no longer decides what is published.
+    for ticker in covered:
+        folder = DOSS / ticker
+        f = folder / "dossier.json"
+        shutil.copyfile(f, OUT_DOSS / f"{ticker}.json")
+        # the rendered markdown rides the mirror too, so the dossier page can offer it as
+        # a download. Same licensing status as the JSON beside it — DERIVED analysis, not
+        # reproduced CIQ — so it is committed under exactly the same rule.
+        md = folder / "dossier.md"
+        if md.is_file():
+            shutil.copyfile(md, OUT_DOSS / f"{ticker}.md")
+        tickers.append(ticker)
+        doc = json.loads(f.read_text())
+        ind = doc.get("industry") or {}
+        if ind.get("status") == "present" and (ind.get("value") or "").strip():
+            labels[ticker] = {"industry": ind["value"].strip(), "source": "ciq-gics",
+                              "source_ref": ind.get("source_ref") or ""}
+        eb = ((doc.get("synthesis") or {}).get("evidence_balance") or "").strip()
+        if eb:
+            reads[ticker] = eb
+        # ABSENT == the default book, exactly as the model reads it: every dossier
+        # committed before the tag existed is overshoot, which is truthful (the screen was
+        # their only route). Emitted for every name so the shelf never has to guess.
+        sleeves[ticker] = str(doc.get("sleeve") or "overshoot")
     # EVERY FOLLOWED NAME AND ITS BOOK, read verbatim from the committed follow file — the file
     # `vinci log-verdict` itself reads to open its ticker door. The page needs it to print a
     # command the CLI accepts: a followed name logs by TICKER, not by a candidate id it never had.

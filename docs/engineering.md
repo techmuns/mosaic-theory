@@ -138,6 +138,12 @@ PR (CLAUDE.md: coin-time translation).
   build, and runs the downstream readers the change reaches — then stamps the result with the PR's
   own diff (`git patch-id`), so a re-sync that only merges main keeps it*. `vinci/impact/`,
   RUNBOOKS §o, `docs/records/2026-11-11-impact-check-cross-setup-validation.md`.
+- **Coverage roster / intake · active · watch · retired** (2026-11-17, W27, #1004 item 6).
+  Plain words: *the one dated list of which names the fund covers — each name's latest move says
+  whether it is being taken in with no page yet (intake), worked and rebuilt (active), kept with
+  its committed page and no paid rebuild (watch), or out of coverage with no page (retired); never
+  a verdict*. A coverage `watch` is not a scenario record's
+  `watch` status. `data/coverage_roster.jsonl`, read by `vinci/coverage_roster.py`.
 - **Reaffirmation** (2026-11-13, #1004 item 5). Plain words: *a later decision on the same name,
   book and route, making the same call, entered inside the earlier call's scoring window — it is
   not a new observation, so it is in no count, spread or curve (one observation per name)*.

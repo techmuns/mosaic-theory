@@ -20,6 +20,7 @@ import argparse
 import ast
 import inspect
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -39,10 +40,19 @@ class _FakeDossier:
 def _run(monkeypatch: pytest.MonkeyPatch, *, done: list[str], errors: list[str]) -> tuple[int, int]:
     """Drive `_cmd_dossier` with a stubbed cohort. Returns (exit code, mirror call count)."""
     calls = {"mirror": 0}
-    monkeypatch.setattr(cli, "load_finalists", lambda *a, **k: [object()], raising=False)
+    # a name the committed roster has ACTIVE now, so the run reaches the cohort (W27: assembly
+    # refuses a name that is not buildable before any model call — tests/test_coverage_roster.py);
+    # read from the roster, never named, so it does not break when that name moves (#1092, R8)
+    from vinci import coverage_roster as roster
+
+    active = next(t for t, m in sorted(roster.current(ROOT / "data").items())
+                  if m.status == "active")
+    fin = SimpleNamespace(data_record=SimpleNamespace(identity=SimpleNamespace(ticker=active)))
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setattr(cli, "load_finalists", lambda *a, **k: [fin], raising=False)
     import vinci.dossier.assemble as da
     import vinci.dossier.refresh as dr
-    monkeypatch.setattr(da, "load_finalists", lambda *a, **k: [object()])
+    monkeypatch.setattr(da, "load_finalists", lambda *a, **k: [fin])
     monkeypatch.setattr(da, "assemble_cohort",
                         lambda *a, **k: ([_FakeDossier(t) for t in done], list(errors)))
 
