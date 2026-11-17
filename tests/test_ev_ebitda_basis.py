@@ -24,7 +24,7 @@ from typing import Any
 
 import pytest
 
-from tests.frozen_support import covered_where, frozen_doc
+from tests.frozen_support import covered_where, frozen_doc, frozen_page
 from vinci.dossier import anchor as an
 from vinci.dossier import ev_ebitda_basis as eb
 from vinci.dossier import render as dr
@@ -175,10 +175,13 @@ def test_the_brief_states_the_basis_where_it_matters_md_e2e() -> None:
 
 def test_the_web_states_the_same_lines_e2e() -> None:
     """THE TWIN: dossier.js's valuation card prints the same two sentences on TJX, and neither on
-    NFLX (a multiple of reported EBITDA)."""
+    NFLX (a multiple of reported EBITDA). It renders the pages as frozen at the cut, as its md
+    siblings read them: a web mirror is its page's `dossier.json`, byte for byte (A's review of
+    #1107: the driver read the living `frontend/dossiers/` mirrors by name)."""
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    pages = json.dumps({t: str(frozen_page(t) / "dossier.json") for t in ("TJX", "NFLX")})
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
 const stub = new Proxy(function(){{}}, handler);
@@ -186,8 +189,9 @@ for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub
 import {{ readFileSync, existsSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
 const out = {{}};
+const pages = {pages};   // the pages as frozen at the cut, as the md siblings read them
 for (const t of ["TJX", "NFLX"]) {{
-  const d = JSON.parse(readFileSync(`frontend/dossiers/${{t}}.json`));
+  const d = JSON.parse(readFileSync(pages[t]));
   const cp = `frontend/scenarios/${{t}}.json`;
   const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
   out[t] = {{ divides: h.includes("What CIQ&#39;s EV/EBITDA divides")
@@ -200,6 +204,21 @@ console.log(JSON.stringify(out));
                                     capture_output=True, text=True, check=True).stdout)
     assert res["TJX"] == {"divides": True, "atPrice": True}, res
     assert res["NFLX"]["divides"] is False, res
+
+
+def test_the_web_twin_runs_in_a_checkout_with_no_mirror_of_its_pages(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A RETIREMENT EDITS NO TEST: in a checkout whose `frontend/dossiers/` holds no mirror of TJX
+    or NFLX, the twin above still renders both (A's review of #1107: its driver read the living
+    mirrors by name). The renderer and the scenario cards are this checkout's, linked."""
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    front = tmp_path / "frontend"
+    (front / "dossiers").mkdir(parents=True)   # no page mirrored
+    for name in ("views", "scenarios"):
+        (front / name).symlink_to(Path("frontend", name).resolve())
+    monkeypatch.chdir(tmp_path)
+    test_the_web_states_the_same_lines_e2e()
 
 
 def _fixture(t: str) -> dict[str, object]:

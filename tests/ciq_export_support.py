@@ -151,6 +151,33 @@ def archived_bundles(ticker: str, kind: str, sha: str, *,
                 yield bundle
 
 
+def retired_checkout(ticker: str, root: Path) -> Path:
+    """A SCRATCH CHECKOUT at ``root`` in which ``ticker`` is retired. Its CIQ folder holds no
+    ``ticker``, and every folder this machine holds for it, the live one and each archived one, is
+    linked file by file under `ciq-archive/` beside it, never copied. Run the test from ``root``
+    (`monkeypatch.chdir`): `Config.data_dir` is relative, so the store is then this one. SKIPS
+    when the machine holds no folder for ``ticker``. Returns ``root``.
+
+    A's review of #1106 and #1107 found pins that built their bundle from the live folder first,
+    and skipped there before the archive was searched: with no live folder, a retirement's
+    likeliest state, a pin whose export the archive held never ran."""
+    live = Path(LocalFolderStore.from_config(get_config()).location(ticker))
+    held = [live] if live.is_dir() else []
+    for arch in archive_roots(ticker):
+        held += sorted(p for p in arch.rglob(ticker.upper()) if p.is_dir())
+    if not held:
+        pytest.skip(f"no CIQ folder for {ticker} on this machine (never committed)")
+    manual = root / "data" / "manual"
+    (manual / "ciq").mkdir(parents=True)   # the live folder, holding no `ticker`
+    for i, folder in enumerate(held):
+        into = manual / "ciq-archive" / f"held-{i:02d}" / ticker.upper()
+        into.mkdir(parents=True)
+        for p in folder.iterdir():
+            if p.is_file() and not p.name.startswith("."):
+                (into / p.name).symlink_to(p.resolve())
+    return root
+
+
 def skip_unless_export(ticker: str, kind: str, sha: str, *, why: str, freq: str | None = None,
                        bundle: CiqBundle | None = None) -> CiqBundle:
     """The bundle to run a pin on whose value is verified on the ``kind`` export with sha256

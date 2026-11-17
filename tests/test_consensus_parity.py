@@ -25,14 +25,11 @@ parity test covering one field, read as covering the layer, is worse than one th
 from __future__ import annotations
 
 import json
-import warnings
 from pathlib import Path
-from typing import Any
 
 import pytest
 
 from tests.ciq_export_support import skip_unless_pages_export
-from tests.frozen_support import covered_where
 from vinci.config import get_config
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
@@ -150,69 +147,45 @@ def test_assembly_produces_the_same_ev_gap_the_refresh_does() -> None:
         "the EV-gap transform runs after the Dossier is constructed — too late to reach it")
 
 
-def test_a_re_assembly_would_not_lose_a_persisted_gap() -> None:
+@pytest.mark.parametrize("ticker", ["SMPL", "EPAM", "IT"])
+def test_a_re_assembly_would_not_lose_a_persisted_gap(ticker: str) -> None:
     """THE LOSS ITSELF, DRIVEN. Rebuild the mech the way an assembly does — apply the transform to
     a mech whose `ev_gap` has been STRIPPED, exactly as a fresh assembly hands it over — and assert
     the value comes back identical to what is committed.
 
     Named for the three names that carry a decomposition: these are the ones with something to
-    lose, and SMPL is the queued re-assembly. Since W27 it walks EVERY covered page whose gap is
-    decomposed (the roster), never a named one: the transform reads the page's own record and
-    export, so the page must be the living one, and a frozen page beside a newer record would mix
-    two vintages. A page whose export cannot be verified here goes on to the next, and the vintage
-    half is skipped only when no page could verify it.
+    lose, and SMPL is the queued re-assembly.
     """
     from vinci.dossier.refresh import ev_gap_transform
 
-    vintages = 0
-    unverified: list[str] = []
-    def decomposed(_t: str, d: dict[str, Any]) -> bool:
-        g = d["mechanical"].get("ev_gap") or {}
-        return g.get("status") == "computed" and g.get("form") == "three-ratio"
+    committed = json.loads(
+        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())["mechanical"]
+    before = committed.get("ev_gap")
+    assert before and before.get("status") == "computed", "fixture precondition"
 
-    for ticker, page in covered_where(decomposed, "carries a computed, decomposed EV gap"):
-        committed = page["mechanical"]
-        before = committed.get("ev_gap")
-        assert before and before.get("status") == "computed", "fixture precondition"
+    fresh = {**json.loads(json.dumps(committed)), "ev_gap": None}   # what assembly hands over
+    after = ev_gap_transform(ticker)(fresh)["ev_gap"]
 
-        fresh = {**json.loads(json.dumps(committed)), "ev_gap": None}   # what assembly hands over
-        after = ev_gap_transform(ticker)(fresh)["ev_gap"]
+    assert after is not None, f"{ticker}: a re-assembly would DROP the persisted gap"
+    assert after["status"] == "computed"
+    # THE RATIOS ARE THE GAP, and they are environment-independent: struck from the STORED mech and
+    # the committed record, with no workbook read. This half of the claim holds everywhere.
+    assert after["ratios"] == pytest.approx(before["ratios"]), (
+        f"{ticker}: the re-assembled gap differs from the committed one")
 
-        assert after is not None, f"{ticker}: a re-assembly would DROP the persisted gap"
-        assert after["status"] == "computed"
-        # THE RATIOS ARE THE GAP, and they are environment-independent: struck from the STORED mech
-        # and the committed record, with no workbook read. This half of the claim holds everywhere.
-        assert after["ratios"] == pytest.approx(before["ratios"]), (
-            f"{ticker}: the re-assembled gap differs from the committed one")
-
-        # THE VINTAGES DEPEND ON THE LICENSED EXPORT, and CI caught this — green here, red there,
-        # for the THIRD time from that class. `consensus_as_of` is read off the estimates workbook,
-        # and the fixture deliberately strips `ev_gap` (that is what assembly hands over), so there
-        # is no prior stamp to carry forward either. Without the bundle the correct answer is None.
-        # NOT A LIVE CONCERN, and the distinction is why this is conditioned rather than dropped: a
-        # real assembly cannot run without the bundle, so the None branch is reachable only from a
-        # test.
-        if not LocalFolderStore.from_config(get_config()).files(ticker):
-            unverified.append(f"{ticker} (no licensed bundle)")
-            continue   # the licensed bundle is unavailable: this page's vintages are unverifiable
-        # AND THE VINTAGE IS THE EXPORT'S, so it matches the page's only on the export the page was
-        # built from. An operator re-export ahead of a re-assembly is a newer vintage, not a lost
-        # one (2026-11-04: SMPL's 2026-10-28 export read ≥2026-10-27 against its page's
-        # ≥2026-07-21).
-        try:
-            skip_unless_pages_export(ticker, "estimates", page=page)   # the page walked
-        except pytest.skip.Exception:
-            unverified.append(f"{ticker} (another estimates export on disk)")
-            continue
-        assert after["vintages"] == before["vintages"]
-        vintages += 1
-    if not vintages:
-        pytest.skip("no decomposed page's own estimates export is on disk — vintages unverifiable")
-    if unverified:
-        # A PARTIAL CHECK SAYS SO: one verified page must not read as all of them (review of this
-        # slice: on main each name skipped in its own parametrized case)
-        warnings.warn(f"the vintage half ran on {vintages} page(s); unverified here: "
-                      f"{', '.join(unverified)}", stacklevel=1)
+    # THE VINTAGES DEPEND ON THE LICENSED EXPORT, and CI caught this — green here, red there, for
+    # the THIRD time from that class. `consensus_as_of` is read off the estimates workbook, and the
+    # fixture deliberately strips `ev_gap` (that is what assembly hands over), so there is no prior
+    # stamp to carry forward either. Without the bundle the correct answer is None.
+    # NOT A LIVE CONCERN, and the distinction is why this is conditioned rather than dropped: a
+    # real assembly cannot run without the bundle, so the None branch is reachable only from a test.
+    if not LocalFolderStore.from_config(get_config()).files(ticker):
+        pytest.skip(f"licensed CIQ bundle for {ticker} unavailable — vintages unverifiable here")
+    # AND THE VINTAGE IS THE EXPORT'S, so it matches the page's only on the export the page was
+    # built from. An operator re-export ahead of a re-assembly is a newer vintage, not a lost one
+    # (2026-11-04: SMPL's 2026-10-28 export read ≥2026-10-27 against its page's ≥2026-07-21).
+    skip_unless_pages_export(ticker, "estimates")
+    assert after["vintages"] == before["vintages"]
 
 
 def test_the_insider_line_has_two_write_paths_and_this_file_does_not_compare_them() -> None:

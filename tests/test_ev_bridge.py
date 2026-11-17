@@ -24,15 +24,17 @@ from __future__ import annotations
 import inspect
 import json
 import pathlib
+import sys
 from typing import Any
 
 import pytest
 
-from tests.ciq_export_support import archived_bundles, export_sha
+from tests.ciq_export_support import archived_bundles, export_sha, retired_checkout
 from tests.frozen_support import frozen_doc, frozen_page
+from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import manual_store as ms
-from vinci.dossier.ciq import CiqAmbiguousError
+from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
 from vinci.dossier.schemas import Dossier, EvBridge, dossier_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -268,7 +270,7 @@ def test_a_bridge_off_ciqs_current_figure_says_so(monkeypatch: pytest.MonkeyPatc
     assert isinstance(got, EvBridge) and got.note is not None and "DISAGREES" in got.note
 
 
-def _the_pages_exports(doc: dict[str, Any], b: Any, ticker: str,
+def _the_pages_exports(doc: dict[str, Any], ticker: str,
                        monkeypatch: pytest.MonkeyPatch) -> Any:
     """THE FROZEN PAGE NAMES BOTH ITS EXPORTS: the Estimates export its `forward_consensus` stamps
     and the quarterly Financials export its trailing bands stamp. The pin runs on the folder that
@@ -278,10 +280,19 @@ def _the_pages_exports(doc: dict[str, Any], b: Any, ticker: str,
     re-export of the other kind, so it sits in several archived folders, and the first may hold
     the other kind's older export (an Estimates-only re-export, then a Financials-only one). The
     transform reads that same folder. It SKIPS, naming both sha256s, when no folder holds both (a
-    skip, never a looser assertion). RUN THE PIN ON THE BUNDLE THIS RETURNS."""
-    est = str(doc["forward_consensus"]["source_sha256"])
-    stamps = sorted({str(x.get("source_sha256"))
-                     for x in doc["mechanical"]["valuation"]["own_history"]["value"] or []})
+    skip, never a looser assertion). It builds the live bundle itself, None with no live folder:
+    the pin first built it with `_bundle`, which skipped there before the archive was searched
+    (A's review of #1107). RUN THE PIN ON THE BUNDLE THIS RETURNS."""
+    raw_est = (doc.get("forward_consensus") or {}).get("source_sha256")
+    raw = [x.get("source_sha256")
+           for x in doc["mechanical"]["valuation"]["own_history"]["value"] or []]
+    if not raw_est or not raw or not all(raw):
+        # A MISSING STAMP IS NO EXPORT: read as the string "None" it named one no folder holds,
+        # and the pin skipped on a page with no provenance (Codex on #1107)
+        pytest.fail(f"{ticker}: the frozen page records no Estimates export stamp or no bands' "
+                    "Financials stamp, so this pin cannot tell which exports it was built from")
+    est = str(raw_est)
+    stamps = sorted({str(x) for x in raw})
     if len(stamps) != 1:   # as `test_forward_multiple_history._the_bands_export`: a frozen page
         pytest.fail(f"{ticker}: the frozen page's bands name {len(stamps)} exports ({stamps}), "
                     "so no one export is the page's")
@@ -291,7 +302,9 @@ def _the_pages_exports(doc: dict[str, Any], b: Any, ticker: str,
         return (export_sha(ticker, "estimates", bundle=cand) == est
                 and export_sha(ticker, "financials", freq="quarterly", bundle=cand) == fin)
 
-    got = b if holds_both(b) else None
+    files = ms.LocalFolderStore.from_config(get_config()).files(ticker)
+    b = CiqBundle.from_files(ticker, files) if files else None
+    got = b if b is not None and holds_both(b) else None
     for cand in ([] if got is not None else
                  archived_bundles(ticker, "financials", fin, freq="quarterly")):
         try:
@@ -301,10 +314,12 @@ def _the_pages_exports(doc: dict[str, Any], b: Any, ticker: str,
         except CiqAmbiguousError:
             continue   # an archived folder of two exports of one kind is no page's
     if got is None:
+        live = ("there is no live folder" if b is None else
+                f"the live folder holds {export_sha(ticker, 'estimates', bundle=b)} and "
+                f"{export_sha(ticker, 'financials', freq='quarterly', bundle=b)}")
         pytest.skip(f"{ticker}: no folder, live or under ciq-archive/, holds both the frozen "
                     f"page's Estimates export ({est}) and its bands' Financials export ({fin}); "
-                    f"the live folder holds {export_sha(ticker, 'estimates', bundle=b)} and "
-                    f"{export_sha(ticker, 'financials', freq='quarterly', bundle=b)}")
+                    f"{live}")
     folder = got.workbooks[0].path.parent
     monkeypatch.setattr(ms.LocalFolderStore, "from_config",
                         staticmethod(lambda _cfg=None: ms.LocalFolderStore(folder.parent)))
@@ -318,7 +333,6 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     NEGATIVE: another Estimates export, or no stamped bands, leaves the page alone."""
     from vinci.dossier.refresh import ev_bridge_transform, refresh_dossier
 
-    b = _bundle("AMZN")
     src = frozen_page("AMZN")   # the page as frozen at the cut
     folder = tmp_path / "AMZN"
     folder.mkdir()
@@ -326,7 +340,7 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
         (folder / name).write_text((src / name).read_text())
     path = folder / "dossier.json"
     before = json.loads(path.read_text())
-    b = _the_pages_exports(before, b, "AMZN", monkeypatch)
+    b = _the_pages_exports(before, "AMZN", monkeypatch)
     step = ev_bridge_transform("AMZN")
     other = json.loads(json.dumps(before))
     other["forward_consensus"]["source_sha256"] = "0000000000"
@@ -354,3 +368,47 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     for key in ("mechanical", "synthesis", "anchor", "forward_consensus"):
         assert after[key] == before[key], f"{key} moved"
     assert list(after)[-1] == "anchor"
+
+
+@pytest.mark.parametrize("unstamped", ["bands", "estimates"])
+def test_a_page_with_no_export_stamp_fails_the_pin_and_never_skips_it(
+        unstamped: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    """(−) Codex on #1107: a null `source_sha256` read as the stamp "None", which no export holds,
+    so the refresh pin SKIPPED on a page with no provenance. A page that cannot say which exports
+    it was built from fails the pin, as `ciq_export_support.page_export_sha` does."""
+    doc: dict[str, Any] = frozen_doc("AMZN")
+    if unstamped == "bands":
+        for band in doc["mechanical"]["valuation"]["own_history"]["value"]:
+            band["source_sha256"] = None
+    else:
+        doc["forward_consensus"]["source_sha256"] = None
+    with pytest.raises(BaseException) as got:
+        _the_pages_exports(doc, "AMZN", monkeypatch)
+    assert got.errisinstance(pytest.fail.Exception), got.value
+
+
+def test_the_refresh_pin_runs_from_the_archive_when_no_live_folder_holds_the_name(
+        tmp_path: pathlib.Path) -> None:
+    """THE STATE AFTER A RETIREMENT: no live AMZN folder, and every AMZN folder this machine holds
+    kept under `ciq-archive/` (`ciq_export_support.retired_checkout`). The refresh pin runs there
+    as it runs on this machine's own store, and never skips before the archive is searched (A's
+    review of #1107: `_bundle` skipped first). The checkout is the store's root both ways: the
+    configured folder is relative to the working directory, and `_bundle` reads under `ROOT`."""
+    pin = test_the_refresh_lands_the_layer_only_from_the_pages_own_exports
+    own = tmp_path / "own"
+    own.mkdir()
+    with pytest.MonkeyPatch.context() as mp:   # this machine's own store: the exports are held
+        try:
+            pin(own, mp)
+        except pytest.skip.Exception as exc:
+            pytest.skip(f"no folder on this machine holds the frozen page's exports: {exc}")
+    checkout = retired_checkout("AMZN", tmp_path / "checkout")
+    retired = tmp_path / "retired"
+    retired.mkdir()
+    with pytest.MonkeyPatch.context() as mp:
+        mp.chdir(checkout)
+        mp.setattr(sys.modules[__name__], "ROOT", checkout)
+        try:
+            pin(retired, mp)
+        except pytest.skip.Exception as exc:
+            pytest.fail(f"skipped where ciq-archive/ holds the frozen page's exports: {exc}")
