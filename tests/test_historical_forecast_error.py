@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.ciq_export_support import skip_unless_pages_export
 from tests.frozen_support import frozen_page
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, clean_num
@@ -230,6 +231,9 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_export(tmp_path: Pa
         (folder / name).write_text((src / name).read_text())
     path = folder / "dossier.json"
     before = json.loads(path.read_text())
+    # the frozen page beside the LIVE export: run only while the export on disk is the one the
+    # page names, else skip naming both (a skip, never a looser assertion: ciq_export_support)
+    skip_unless_pages_export("AMZN", "estimates", page=before, bundle=b)
     step = historical_forecast_error_transform("AMZN")
     other = json.loads(json.dumps(before))
     other["forward_consensus"]["as_of"] = "≥1999-01-01"
