@@ -25,6 +25,7 @@ from __future__ import annotations
 import re
 import shutil
 import subprocess
+from collections import Counter
 from pathlib import Path
 
 from tests.frozen_support import ROOT
@@ -44,23 +45,25 @@ def card_problems(root: Path) -> tuple[list[str], int]:
     have: dict[Path, str] = {}
     for cut in sorted(root.glob("cut-*")):
         sha8 = cut.name.removeprefix("cut-")
-        try:
-            sha = _git("rev-parse", "--verify", "--quiet", f"{sha8}^{{commit}}").strip()
-        except subprocess.CalledProcessError:
-            problems.append(f"{cut.name}: no commit {sha8} in this checkout")
-            continue
         files = _cut_files(cut)
         nested = [p for p in files if p.parent != cut]
         problems += [f"{p.relative_to(root)}: a cut holds cards only, never a folder"
                      for p in nested]
         cards = [p for p in files if p.parent == cut]
+        # the copies are held whether or not the commit resolves, so a README row for one is
+        # never reported as heading a copy that is not there
+        blobs = _blob_of(cards) if cards else {}
+        have.update(blobs)
+        try:
+            sha = _git("rev-parse", "--verify", "--quiet", f"{sha8}^{{commit}}").strip()
+        except subprocess.CalledProcessError:
+            problems.append(f"{cut.name}: no commit {sha8} in this checkout")
+            continue
         if not cards:
             continue
         specs = [f"{sha}:frontend/scenarios/{p.name}" for p in cards]
         batch = _git("cat-file", "--batch-check=%(objectname) %(objecttype)",
                      stdin="".join(f"{s}\n" for s in specs)).splitlines()
-        blobs = _blob_of(cards)
-        have.update(blobs)
         for p, spec, line in zip(cards, specs, batch, strict=True):
             checked += 1
             if not line.endswith(" blob"):
@@ -76,8 +79,11 @@ def _header_problems(root: Path, have: dict[Path, str]) -> list[str]:
     readme = root / "README.md"
     if not readme.exists():
         return ["no README.md heading the copies"]
-    rows = {m["copy"]: m for ln in readme.read_text().splitlines() if (m := _ROW.match(ln))}
+    matched = [m for ln in readme.read_text().splitlines() if (m := _ROW.match(ln))]
+    rows = {m["copy"]: m for m in matched}
     out: list[str] = []
+    seen = Counter(m["copy"] for m in matched)
+    out += [f"{c}: the README heads it more than once" for c in sorted(seen) if seen[c] > 1]
     copies = {p.relative_to(root).as_posix(): p for p in have}
     out += [f"{c}: a copy the README does not head" for c in sorted(set(copies) - set(rows))]
     out += [f"{c}: the README heads it, and there is no such copy"
@@ -151,6 +157,35 @@ def test_a_cut_of_an_unknown_commit_is_refused(tmp_path: Path) -> None:
     (root / "cut-f2c6e7aa").rename(root / "cut-0000dead")
     problems, _ = card_problems(root)
     assert "cut-0000dead: no commit 0000dead in this checkout" in problems, problems
+
+
+@needs_git
+def test_a_headed_cut_of_an_unknown_commit_is_not_called_missing(tmp_path: Path) -> None:
+    """(−) A cut whose commit this checkout lacks (a shallow clone) still HOLDS its copies: the
+    refusal names the commit, and never claims the README heads a copy that is not there."""
+    root = _copy(tmp_path)
+    (root / "cut-f2c6e7aa").rename(root / "cut-0000dead")
+    readme = root / "README.md"
+    readme.write_text(readme.read_text()
+                      .replace("`cut-f2c6e7aa/", "`cut-0000dead/")
+                      .replace("`f2c6e7aa763bf3b5cb32da7759551d502c212aef`",
+                               "`0000dead763bf3b5cb32da7759551d502c212aef`"))
+    problems, _ = card_problems(root)
+    assert "cut-0000dead: no commit 0000dead in this checkout" in problems, problems
+    assert not any("no such copy" in p for p in problems), problems
+
+
+@needs_git
+def test_a_copy_its_readme_heads_twice_is_refused(tmp_path: Path) -> None:
+    """(−) Two README rows for one copy: the second silently replaced the first, so a stale row
+    beside a correct one passed."""
+    root = _copy(tmp_path)
+    readme = root / "README.md"
+    lines = readme.read_text().splitlines()
+    row = next(ln for ln in lines if ln.startswith("| `cut-f2c6e7aa/SMPL.json`"))
+    readme.write_text("\n".join([*lines, row]) + "\n")
+    problems, _ = card_problems(root)
+    assert "cut-f2c6e7aa/SMPL.json: the README heads it more than once" in problems, problems
 
 
 @needs_git
