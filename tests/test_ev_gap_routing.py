@@ -18,7 +18,7 @@ import pathlib
 
 import pytest
 
-from tests.frozen_support import frozen_page
+from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier.ev_gap import (
     EvGapInputs,
     Route,
@@ -161,6 +161,13 @@ def test_every_name_routes_and_the_split_is_the_measured_one() -> None:
             unrouted.add(f.parent.name)
             continue
         got[f.parent.name] = route_for(lv["EBITDA"][0])[0]
+    # the two NAMED routes are values, so they are read off the pages as frozen at the cut
+    # (tests/frozen_support.py): the walk above stays the living fleet's, and a retirement or a
+    # re-assembly of VITL or SMPL moves nothing here
+    for t in ("VITL", "SMPL"):
+        lv = (frozen_doc(t)["mechanical"]["consensus_context"] or {}).get("consensus_levels")
+        if lv and "EBITDA" in lv:
+            got[t] = route_for(lv["EBITDA"][0])[0]
     assert "VITL" in got, "VITL's living page carries an EBITDA consensus block"
     assert got["MVST"] == Route.PRICE_IMPLIED_ONLY
     assert got["SMPL"] == Route.FULL
