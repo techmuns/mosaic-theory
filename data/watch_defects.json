@@ -1,0 +1,32 @@
+{
+  "ORKA": [
+    {
+      "defect": "Its insider line counts a sale made after the page's 2026-10-16 reference date (its last sale is dated 2026-10-20): it reads 98 sells and $335.55M where a read bounded at that date gives 93 and $334.85M, and a bear point quotes the 98",
+      "state_row": 35,
+      "record": "docs/records/2026-10-28-insider-line-own-issuer-to-its-date.md",
+      "page_field": "/mechanical/catalyst_path/insider_activity/value",
+      "page_value": "Open-market buys 0 · sells 98 (7 insiders, $335.55M) — in the last 182 days · last purchase $1.02M, 10% owner, 2025-02-14 (~20mo ago) · last sale $0.03M, General Counsel, 2026-10-20 (~0mo ago) · largest sale $300.01M, director, 2026-07-01 (~4mo ago) · grants 8 · last filing 2026-10-20 · other C×1/J×1/M×49",
+      "measured": "2026-11-17, main 4889ddba"
+    }
+  ],
+  "PARR": [
+    {
+      "defect": "Its credit agreement's interest line prints LIBOR + 225 bps, which is one level of a pricing grid: the quote the page stores names no level in force",
+      "state_row": 34,
+      "record": "docs/records/2026-10-28-a-label-names-its-own-year-and-a-rate-its-own-quote.md",
+      "page_field": "/mechanical/capital_structure/covenant_term_rows/value/2/margin_bps",
+      "page_value": 225.0,
+      "measured": "2026-11-17, main 4889ddba"
+    }
+  ],
+  "UBER": [
+    {
+      "defect": "Its R4 valuation is not priceable: its Financials and comps exports sit on different balance sheets, so the comps are owed a re-export",
+      "state_row": 28,
+      "record": "docs/records/2026-11-12-rebuild-prep-prechecks-on-all-27-pages.md",
+      "page_field": "/valuation_basis/priceable",
+      "page_value": false,
+      "measured": "2026-11-17, main 4889ddba"
+    }
+  ]
+}

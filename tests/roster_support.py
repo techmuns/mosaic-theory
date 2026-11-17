@@ -1,7 +1,9 @@
 """Test support: write a coverage roster into a synthetic tree, through the one line writer.
 
 A synthetic tree that holds pages now holds a roster too: every reader that walks the covered names
-reads `data/coverage_roster.jsonl` and refuses a page it does not cover (W27)."""
+reads `data/coverage_roster.jsonl` and refuses a page it does not cover (W27). It holds a
+known-defect file beside it, listing none: a watch page's line names its defects from
+`data/watch_defects.json`, and a tree with a roster and no such file is refused (row 41 (b))."""
 from __future__ import annotations
 
 from datetime import date
@@ -18,4 +20,7 @@ def write_roster(data_dir: Path, statuses: dict[str, str], *, on: str = "2026-11
     data_dir.mkdir(parents=True, exist_ok=True)
     path = roster.roster_path(data_dir)
     path.write_text("".join(line + "\n" for line in lines), encoding="utf-8")
+    defects = roster.defects_path(data_dir)
+    if not defects.exists():
+        defects.write_text(roster.render_defects({}), encoding="utf-8")
     return path

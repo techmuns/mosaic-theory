@@ -52,6 +52,8 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
                 tmp_path / "vinci/dossier/extraction_version.py")
     # the fleet and the mirror both walk the coverage roster's names (W27)
     shutil.copy(ROOT / "data" / "coverage_roster.jsonl", tmp_path / "data")
+    # and a watch page's line names its known defects from the file beside it (STATE row 41 (b))
+    shutil.copy(ROOT / "data" / "watch_defects.json", tmp_path / "data")
     (tmp_path / "frontend" / "build.py").write_text(
         (ROOT / "frontend" / "build.py").read_text())
 

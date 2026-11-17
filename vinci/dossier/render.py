@@ -19,6 +19,7 @@ from itertools import groupby
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ParamSpec
 
+from vinci import coverage_roster
 from vinci.config import get_config
 from vinci.dossier.anchor import DQ_LEASE_BASIS, PLACEHOLDER_HINTS, SHARES_REFUSED, Anchor
 from vinci.dossier.covenant_extract import (
@@ -51,6 +52,7 @@ from vinci.dossier.schemas import (
     SourceStatus,
     StockInfo,
     Synthesis,
+    dossier_json,
 )
 from vinci.dossier.verdict import COMMITTED_LEANS, MachineProposal, derive_proposal, split_lean
 from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, require_sleeve
@@ -4791,6 +4793,37 @@ def _known_wrong_lines(ticker: str, root: Path | None = None) -> list[str]:
     return out
 
 
+def _watch_lines(d: Dossier, root: Path | None = None) -> list[str]:
+    """The WATCH line (STATE row 41 (b)), or nothing for a page whose name is not on watch.
+
+    READ FROM THE ROSTER BESIDE THE TREE BEING RENDERED, at render time, never stored in the
+    page: ``root`` is the dossiers folder a writer writes into (its parent holds
+    ``coverage_roster.jsonl`` and ``watch_defects.json``), as for the known-wrong banner and for
+    the same reason. So a name moved to active loses the line at its next render with no page
+    edit, and a watch page's ``dossier.json`` never churns for it. Twin: dossier.js ``watchLine``.
+
+    A TREE WITH NO ROSTER RENDERS NO LINE: that is a scratch copy (a test, a probe), never the
+    data tree, whose roster every fleet reader and ``vinci dossier`` already refuse to run
+    without. Read from the configured tree instead, it would paste the live roster onto a copy
+    built to differ from it — the known-wrong banner's two-sources defect. The line on a
+    COMMITTED watch page is held by the suite (the live-render drift pin, and
+    ``tests/test_watch_frozen_line.py`` over every committed md and its mirror). A tree WITH a
+    roster refuses a watch page whose defect file is absent or no longer matches the page."""
+    data_dir = Path(root).parent if root is not None else get_config().data_dir
+    if not coverage_roster.roster_path(data_dir).is_file():
+        return []
+    notice = coverage_roster.watch_notice(data_dir, d.ticker, json.loads(dossier_json(d)))
+    if notice is None:
+        return []
+    out = [f"> **{notice.head()}** {notice.ruling()} {notice.kept()}", ">"]
+    if notice.defects:
+        out += [f"> **{notice.defects_head()}**", ">"]
+        out += [f"> {i}. {x.sentence()}" for i, x in enumerate(notice.defects, 1)]
+        out.append(">")
+    out[-1:] = [""]
+    return out
+
+
 @_endnote_scope
 def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False,
                     card: ScenarioRecord | None = None,
@@ -4828,6 +4861,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         stamp_line,
         "",
     ]
+    # (STATE row 41 (b)) a WATCH page says so beside its date — what the page is, before what it
+    # says — with the move's date and ruling and the known defects it keeps until active
+    out += _watch_lines(d, dossiers_root)
     # BEFORE the brief: a known-wrong marker has to reach the reader before the numbers do.
     # THE BANNER MUST COME FROM BESIDE THE RECORD BEING RENDERED, not from the configured tree.
     # `refresh_dossier` decides a record is SEALED from `path.parent/known_wrong.json` — a

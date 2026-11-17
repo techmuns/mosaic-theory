@@ -566,6 +566,24 @@ export async function getScenarioCard(ticker) {
   }
 }
 
+// getCoverage() -> {names: {TICKER: {status, date, ruling, source, record, defects?}}} — each
+// published name's latest COVERAGE ROSTER move, and a watch name's known defects (STATE row 41
+// (b)), or null when the deploy did not emit it. build.py writes it on every deploy from
+// data/coverage_roster.jsonl and data/watch_defects.json, so the dossier page's watch line
+// follows the roster and no page carries it. A null is shown as such on the page
+// (dossier.js watchLine) — never read as "not on watch".
+export async function getCoverage() {
+  return _once("coverage", () =>
+    _json(`${SNAPSHOTS}/coverage.json`).then((t) =>
+      t && t.names && typeof t.names === "object" ? t : null,
+    )).catch((e) => {
+      // Never fatal, as for the extraction-version table: the page renders and says the roster
+      // did not load. Caught OUTSIDE _once, so a failed fetch is retried on the next page.
+      if (e.status !== 404) console.error("coverage roster unreadable:", e);
+      return null;
+    });
+}
+
 // getExtractionVersions() -> {versions: {version: what it names}, follows: {version: [parents]}}
 // for every declared extraction vintage, or null when the deploy did not emit the table. build.py
 // writes it on every deploy from vinci/dossier/ (the frozen rows plus one file per vintage), so

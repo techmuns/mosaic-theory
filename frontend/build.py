@@ -788,6 +788,36 @@ def _covered_pages() -> list[str]:
     return sorted(covered | {t for t in paged if latest.get(t) == "intake"})
 
 
+WATCH_DEFECTS = ROOT / "data" / "watch_defects.json"
+
+
+def _coverage_snapshot(covered: list[str]) -> dict[str, Any]:
+    """Each published name's latest roster move, and a watch name's known defects: what the
+    dossier page prints as its WATCH line (STATE row 41 (b); dossier.js ``watchLine``). Written to
+    ``snapshots/coverage.json`` on every deploy, never committed, so the line follows the roster
+    and no page churns. Stdlib twin of `vinci.coverage_roster.watch_notice` (the build fence
+    forbids the import): this copies the move and the defect text; the strict readers, and the
+    check that each defect's page field still holds its value, are the backend's, run on every
+    md render and in the suite (`tests/test_watch_frozen_line.py` pins the two twins)."""
+    if not WATCH_DEFECTS.is_file():
+        raise SystemExit(f"no known-defect file at {WATCH_DEFECTS} — a watch page names its "
+                         "known defects from it, so none can be shown as absent without it")
+    defects = json.loads(WATCH_DEFECTS.read_text(encoding="utf-8"))
+    latest: dict[str, dict[str, Any]] = {}
+    for line in COVERAGE.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            move = json.loads(line)
+            latest[str(move["ticker"])] = move
+    names: dict[str, dict[str, Any]] = {}
+    for t in covered:
+        move = latest[t]
+        names[t] = {k: move[k] for k in ("status", "date", "ruling", "source", "record")}
+        if move["status"] == "watch":
+            names[t]["defects"] = [{k: d[k] for k in ("defect", "state_row", "record")}
+                                   for d in defects.get(t, [])]
+    return {"names": names}
+
+
 def _git_sha() -> str | None:
     try:
         return subprocess.check_output(
@@ -819,6 +849,11 @@ def main(argv: list[str] | None = None) -> None:
     # `vinci.screens.annotations` (tests); copied here as written.
     (OUT_SNAP / "screen_annotations.json").write_text(
         json.dumps(_screen_annotations(SNAP), indent=2) + "\n")
+    # COVERAGE (STATE row 41 (b)) — each published name's roster move, and a watch page's known
+    # defects: the dossier page's WATCH line. Derived on every deploy, never committed.
+    (OUT_SNAP / "coverage.json").write_text(
+        json.dumps(_coverage_snapshot(covered), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8")
     # EXTRACTION VINTAGES — what each page's stamp names, read by the dossier page's Record &
     # reproduce row. Derived from vinci/dossier/ on every deploy, never committed (the function).
     (OUT_SNAP / "extraction_versions.json").write_text(
