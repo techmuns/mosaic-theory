@@ -47,19 +47,28 @@ superseded-by:
     `dossier.json`), `page_value` (what the page holds there) and `measured` (the date and commit).
   - `vinci.coverage_roster.read_defects` reads it strictly, in one canonical form. A roster
     with no defect file beside it is refused, and so is a malformed file.
-  - `watch_notice` prints only the defects the page being rendered still `holds`, read as its one
-    writer (`dossier_json`) writes it. `frontend/build.py` does the same from the committed page,
-    so the line never names a defect the page no longer has, on either surface.
-  - The suite (`defect_problems`, over every committed page) refuses:
-    - an entry whose committed page no longer holds its value;
-    - an entry listed for a name that is neither watch nor active.
+  - **A page that no longer holds a listed defect is refused where it is SAVED or PUBLISHED, never
+    at render** (the operator's ruling, review round 1, below):
+    - **render** (`watch_notice`, both surfaces): prints only the defects the page being rendered
+      still `holds`, read as its one writer (`dossier_json`) writes it. The renderer stays side-
+      effect free, and the line never names a defect the page no longer has.
+    - **save** (`refresh_dossier`): refuses to write a watch page `coverage_roster.write_problems`
+      names, before either artifact is written, with `RefreshRefusedError` naming the field, the
+      defect and the entry to remove. `refresh_fleet` lists the page under `refused` and carries
+      on.
+    - **publish** (`frontend/build.py`): exits naming the field, before the mirror is cleared.
+    - **the suite** (`defect_problems`, over every committed page) refuses an entry whose committed
+      page no longer holds its value, and one listed for a name that is neither watch nor active.
 
-    So a rebuild or a refresh past a defect, or a retirement, goes red until the entry is removed.
-  - **Review round 0 moved that check from the render to the suite.** The first cut refused at
-    render, and two problems followed:
+    So a rebuild or a refresh past a defect, or a retirement, stops or goes red until the entry is
+    removed.
+  - **Review round 0 moved the check off the render; round 1 put it on the save and the publish.**
+    The first cut refused at render, and two problems followed:
     - the cross-setup harness renders a fresh $0 build of every watch name (`vinci/impact/child.py`),
-      which holds none of its committed page's defects (PARR's build has no covenant rows), so
-      every future impact run would have reported a render failure there;
+      which need not hold its committed page's defects. **CORRECTED in round 1:** round 0 named
+      PARR's build here, and that was wrong. PARR's harness build stops at its mislabelled CIQ
+      Financials export (`CiqMislabelledError`) before it renders. The measured case is ORKA's
+      (round 1, below);
     - one stale entry, for example a name retired by its one roster line, stopped every other
       watch page's render.
 
@@ -71,6 +80,69 @@ superseded-by:
   it. That is the two-sources defect `_known_wrong_lines` documents.
 - **If the deploy's coverage table does not load,** the web page says "This deploy's coverage
   roster did not load", never nothing, since nothing reads as "not on watch".
+
+**REVIEW ROUND 1 (A's independent review of `a1e7b2ef`; one commit).**
+- **The operator's ruling, 2026-11-17, in A's session: "Refuse where pages are saved or published
+  (Recommended)".** It REPLACES the preview's approved "the render REFUSES" (Question 2 of the
+  preview; approved 2026-11-17, "Approve as shown (Recommended)"), for one measured reason.
+  - With the refusal back in `watch_notice` (an unpushed probe, never part of this PR), `python -m
+    vinci.impact run` over ORKA, UBER, PARR and BURL (base `a1e7b2ef`, $0) showed:
+    - ORKA's fresh $0 build reads "sells 93 (7 insiders, $334.85M)", where its committed page's
+      bound line reads "sells 98 … $335.55M";
+    - so its head render was refused (`WatchDefectError`), and the report printed "The $0 build's
+      page rendered … 0 of 2 differ — none". It named ORKA nowhere: `vinci/impact/report.py` prints
+      a refused BUILD and never a refused render.
+  - Once merged, both sides would refuse, so every impact run would have dropped ORKA from its
+    rendered-surface check without saying so while its entry stands.
+  - UBER's fresh build holds its bound value, BURL has none, and PARR stops before it renders.
+- **ORKA'S EXPECTED NEXT STEP.** Its committed page keeps the defect. The next save that re-reads
+  its insider line, for example `refresh.insider_transform` through `refresh_dossier`, would write
+  93 where the entry binds 98, so it is REFUSED until the entry is removed.
+  - A save that leaves the line alone, such as the re-render this PR's re-sync runs, is not
+    refused.
+  - **Loud:** `refresh_dossier` raises; `refresh_fleet` lists ORKA under `refused`, writes nothing
+    for it, and still mirrors.
+  - **Actionable:** the error names the field, the defect and its citation, and says to remove or
+    re-measure the entry in `data/watch_defects.json`. Removing it is right: the read the page
+    would then hold is the corrected one the entry's own sentence states (93, $334.85M).
+  - The fleet's summary names the page, not why, as for every refusal kind it reports today (a
+    sealed record, a moved cited figure). The reason is what `refresh_dossier` on ORKA alone
+    raises.
+- **The other findings, each FIX failing first on `a1e7b2ef`:**
+  - The tests hard-coded the marking's 15 and 11, read UBER's entry at collection, and assumed UBER
+    on watch with a defect.
+    - **Measured:** with UBER moved to active and its page re-rendered, 6 of the old module's tests
+      failed; with UBER's entry also removed, the module errored at collection (`KeyError:
+      'UBER'`). The new module passes both, its only failures then being the three round-1
+      refusals not yet built.
+    - **Now:** the committed-tree pins walk the roster's own lists and the file's own entries, and
+      skip, saying so, when either is empty. The lifecycle and guard cases run on a synthetic tree
+      around a FROZEN page (`tests/fixtures/frozen_pages/2026-11-09/UBER`), where the value pins
+      live.
+  - The active branch of the committed-md pin searched for a line dated as the active move, so a
+    stale "Frozen since 2026-11-13" line passed. **Measured:** with UBER moved to active and its md
+    not re-rendered, the old pin passed and the new one fails. It now looks for date-free markers.
+  - **`frontend/build.py` built the coverage table AFTER clearing the served mirror**, so an absent
+    or malformed defect file deleted `frontend/dossiers` and `frontend/snapshots`. That broke W27's
+    own order: check before wipe. The table is now built first. Pinned for an absent file, one
+    that is not JSON, and a defect not held; all three failed on `a1e7b2ef`.
+  - **UBER is bound to `/valuation_basis/conflicts/0`**, the bridge's $5,356.0M against CIQ's TEV
+    less market cap of $8,973.0M, not to `/valuation_basis/priceable`, which is false for any
+    refusal. **Measured** on the committed page with the conflict cleared and `priceable` still
+    false: the old binding reported nothing, and the new one names the missing field. UBER's
+    fresh harness build holds the new binding.
+  - **STATE row 28** said UBER was "one of the six watch pages that keep known errors"; it is
+    corrected to the three measured, as row 34 was.
+- **The extraction-version pin re-pins `vinci/dossier/refresh.py` as a refactor**
+  (`--repin --refactor`). Its change is the save refusal, which writes nothing a saved page would
+  not already hold, so no extraction output moves.
+- **The re-sync onto main `8a71a383`** (#1097's filing-date row on 23 pages, #1102's roster gate,
+  merged as `1e253821`):
+  - `STATE.md` rows 32–41 conflicted as one block and were resolved row by row against the merge
+    base. Every page merged without a conflict.
+  - `refresh_fleet()` with no transform over the merged tree then moved 0 of 26 and left it
+    byte-identical. So each watch page's line beside #1097's stamp and refresh row is what the
+    merged code renders from the merged JSON, and no page file was edited by hand.
 
 **WHY.**
 - **The design.** B's design (issue #1004 comment 6847522000, item 6) gave each watch page "a dated
@@ -124,21 +196,27 @@ superseded-by:
   - the diff is 30 files, +84 −0: 15 `dossier.md` and their 15 byte-identical mirrors;
   - 12 pages gain 2 lines and the 3 with defects gain 6;
   - no `dossier.json` and no `index.json` moved.
-- **Pins:** `tests/test_watch_frozen_line.py`, each on the real roster, defect file and pages.
-  - **md and web:** the line is on every watch page and on no active page, above the Brief or tier
-    tabs. The web text equals the md text word for word.
-  - **Artifacts:** the committed md and its mirror carry the line.
-  - **Citations:** every defect cites an open §5.0 row and an existing record, and still holds its
-    value on its page.
-  - **Going active:** an appended move to active removes the line on both surfaces.
-  - **Guards:**
-    - a listed defect whose field is moved or missing on its page is printed on neither surface,
-      the page keeps its line, and the suite's check names the entry (run on whichever defect
-      is listed first, never a hard-coded value);
-    - an entry for MVST (retired) or an unlisted name is named by the suite's check, and the
-      listed page still renders;
-    - refused: a roster with no defect file, and eight malformed-file shapes;
-    - a roster that did not load on the web is SAID, never silent.
+- **Pins:** `tests/test_watch_frozen_line.py`, two kinds (review round 1).
+  - **On the committed tree**, walking the roster's own watch and active lists and the defect
+    file's own entries:
+    - **md and web:** the line is on every watch page and on no active page, above the Brief or
+      tier tabs. The web text equals the md text word for word.
+    - **Artifacts:** the committed md and its mirror carry the line, and no active page's carries
+      one, whatever date it names.
+    - **Citations:** every defect cites an open §5.0 row and an existing record, and still holds
+      its value on its page.
+  - **On a synthetic tree around a FROZEN page** (`tests/fixtures/frozen_pages/2026-11-09/UBER`,
+    with a roster line and defects written in the test):
+    - **Going active:** an appended move to active removes the line on both surfaces.
+    - **A defect the page no longer holds** (moved, or gone): dropped at render; refused at publish
+      (`frontend/build.py`) and at save (`refresh_dossier`, writing nothing; `refresh_fleet` lists
+      it refused). The suite's check names the entry.
+    - **A deploy the defect file stops** (absent, not JSON, a defect not held) leaves the served
+      mirror as it was.
+    - **Stale entries:** an entry for a retired or an unlisted name is named by the suite's check,
+      and the listed page still renders.
+    - **Refused:** a roster with no defect file, and eight malformed-file shapes.
+    - **The web:** a roster that did not load is SAID, never silent.
 
     The positive pin sits beside each one.
 - **Test trees that gained the file:**
@@ -170,9 +248,11 @@ superseded-by:
 - **The re-render:** the 26 pages the roster covers, at `4889ddba` plus this branch.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-1. **A defect's binding is index-based** (`covenant_term_rows/value/2`). A frozen page does not
-   reorder its rows; if one does, the defect drops from the line and the suite refuses its entry,
-   rather than mis-bind.
+1. **Two bindings are coarse, and tolerable on a frozen page.**
+   - PARR's is index-based (`covenant_term_rows/value/2`). A frozen page does not reorder its rows;
+     if one does, the save and the publish refuse it, rather than mis-bind.
+   - ORKA's is the whole insider string. Any save that re-reads the line moves it, whether or not
+     the defect is fixed (the expected next step, above).
 
    Falsifier: an entry refused while its defect is still on the page.
 2. **An active page with a known defect prints no line.** The line is the watch status, by the
@@ -180,15 +260,34 @@ superseded-by:
    the suite then refuses until the entry is removed.
 
    Falsifier: an active page served for long with a listed defect and no rebuild.
-3. **A scratch tree with no roster renders no line** (above). The data tree's line is held by the
-   suite, not by the renderer, and so is the defect file's agreement with the committed pages.
+3. **A scratch tree with no roster renders no line** (above), and `write_problems` checks
+   nothing there. The data tree's line is held by the suite, and the defect file's agreement with
+   the committed pages by the save, the publish and the suite.
 
    Falsifier: a committed watch page without its line, or naming a defect it no longer holds,
    passing the suite.
-4. **Review round 0, deferred.** `refresh.band_checks_backfill` and `cli._attach_midcycle` write
+4. **Only `refresh_dossier` carries the save refusal, as ruled.** Every other saver writes the JSON
+   through `schemas.write_dossier`:
+   - `band_checks_backfill`, `cli._attach_midcycle`, `driver_pass`, `transcript_run_pass`,
+     `inputs_backfill` and `layer_refresh`;
+   - `assemble`, which `vinci dossier` runs only for an active name.
+
+   None of them moves a bound field today. Were one to, the publish and the suite still refuse the
+   page, after it is saved. The same check in `write_dossier` would close that, and it is the
+   next place to put it.
+
+   Falsifier: a watch page saved past a bound value by one of them.
+5. **The md does not escape ruling or defect text; the web does** (`dossier.js` escapes every
+   field). That is fine today: both files are committed text holding no markdown or HTML
+   metacharacter that changes the line (the `$` in ORKA's sentence prints as written).
+
+   Falsifier: a ruling or defect whose md prints differently from its web line (the word-for-word
+   pin goes red).
+6. **Review round 0, deferred.** `refresh.band_checks_backfill` and `cli._attach_midcycle` write
    `dossier.json` before they render `dossier.md`. Unlike `refresh_dossier`, which renders first,
    they leave the JSON written if the render raises. This change adds two ways for a render to
-   raise: an absent or malformed defect file beside a roster. Each would leave that page's md stale
+   raise: an absent or malformed defect file beside a roster (a stale entry does not raise at
+   render, by the round-1 ruling). Each would leave that page's md stale
    against its JSON, and the drift pins go red. The reorder is in code outside this change, and it
    has its own falsifier: a half-written page from either path.
-5. **$0.** No model call, no vendor call; the pages move by render only.
+7. **$0.** No model call, no vendor call; the pages move by render only.

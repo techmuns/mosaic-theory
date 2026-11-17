@@ -805,10 +805,12 @@ def _coverage_snapshot(covered: list[str]) -> dict[str, Any]:
     dossier page prints as its WATCH line (STATE row 41 (b); dossier.js ``watchLine``). Written to
     ``snapshots/coverage.json`` on every deploy, never committed, so the line follows the roster
     and no page churns. Stdlib twin of `vinci.coverage_roster.watch_notice` (the build fence
-    forbids the import): a watch name's defects are those its committed page still holds (the
-    field at `page_field` holds `page_value`), as the md renderer prints them; the strict file
-    reader and the check that every entry still holds are the backend's, run on every md render
-    and in the suite (`tests/test_watch_frozen_line.py` pins the two twins)."""
+    forbids the import). A WATCH PAGE'S LISTED DEFECT THAT ITS COMMITTED PAGE NO LONGER HOLDS
+    (the field at `page_field` no longer holds `page_value`) STOPS THE DEPLOY, naming the field:
+    served, the line would drop it and the page would look clean. The strict file reader is the
+    backend's, run on every md render and in the suite (`tests/test_watch_frozen_line.py` pins
+    the two twins). Called BEFORE the mirror is cleared (W27's order), so a refusal here leaves
+    the served mirror as it was."""
     if not WATCH_DEFECTS.is_file():
         raise SystemExit(f"no known-defect file at {WATCH_DEFECTS} — a watch page names its "
                          "known defects from it, so none can be shown as absent without it")
@@ -824,8 +826,14 @@ def _coverage_snapshot(covered: list[str]) -> dict[str, Any]:
         names[t] = {k: move[k] for k in ("status", "date", "ruling", "source", "record")}
         if move["status"] == "watch":
             page = json.loads((DOSS / t / "dossier.json").read_text(encoding="utf-8"))
+            listed = defects.get(t, [])
+            gone = [str(d["page_field"]) for d in listed if not _holds(page, d)]
+            if gone:
+                raise SystemExit(f"{t}: its committed page no longer holds the known defect "
+                                 f"bound to {', '.join(gone)} in {WATCH_DEFECTS.name} — remove or "
+                                 "re-measure the entry; served, the watch line would drop it")
             names[t]["defects"] = [{k: d[k] for k in ("defect", "state_row", "record")}
-                                   for d in defects.get(t, []) if _holds(page, d)]
+                                   for d in listed]
     return {"names": names}
 
 
@@ -860,8 +868,11 @@ def main(argv: list[str] | None = None) -> None:
     ap.parse_args(argv)
 
     # THE COVERED NAMES ARE CHECKED BEFORE THE MIRROR IS CLEARED (W27): a roster the pages
-    # disagree with stops the build with the served mirror still as it was, never wiped.
+    # disagree with stops the build with the served mirror still as it was, never wiped. So is
+    # the coverage table (STATE row 41 (b)): an absent or malformed defect file, or a defect a
+    # watch page no longer holds, stops it here, not after the wipe.
     covered = _covered_pages()
+    coverage = _coverage_snapshot(covered)
     for d in (OUT_SNAP, OUT_DOSS):
         if d.exists():
             shutil.rmtree(d)
@@ -878,7 +889,7 @@ def main(argv: list[str] | None = None) -> None:
     # COVERAGE (STATE row 41 (b)) — each published name's roster move, and a watch page's known
     # defects: the dossier page's WATCH line. Derived on every deploy, never committed.
     (OUT_SNAP / "coverage.json").write_text(
-        json.dumps(_coverage_snapshot(covered), indent=2, ensure_ascii=False) + "\n",
+        json.dumps(coverage, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8")
     # EXTRACTION VINTAGES — what each page's stamp names, read by the dossier page's Record &
     # reproduce row. Derived from vinci/dossier/ on every deploy, never committed (the function).

@@ -24,8 +24,8 @@
       "defect": "Its R4 valuation is not priceable: its Financials and comps exports sit on different balance sheets, so the comps are owed a re-export",
       "state_row": 28,
       "record": "docs/records/2026-11-12-rebuild-prep-prechecks-on-all-27-pages.md",
-      "page_field": "/valuation_basis/priceable",
-      "page_value": false,
+      "page_field": "/valuation_basis/conflicts/0",
+      "page_value": "the bridge (5356.0) disagrees with CIQ's TEV less market cap (8973.0) by more than 0.5 ($M)",
       "measured": "2026-11-17, main 4889ddba"
     }
   ]

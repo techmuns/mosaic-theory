@@ -50,11 +50,18 @@ coverage decision and is refused when it repeats a status, so a defect fixed by 
 its name stays on watch could not be recorded on the roster at all; and the roster's six fields
 are strict on every line, so a seventh would rewrite an append-only log. A defect is a fact about
 a PAGE: each entry names its STATE row and record, and the page field it lives in with the value
-it holds there. ``watch_notice`` prints only the defects the page being rendered still holds, so
-the line never names a defect the page no longer has — a fresh build of a watch name (the
-cross-setup harness renders one) holds none of its committed page's defects — and the suite
-refuses an entry the COMMITTED page no longer holds (``defect_problems``), so a rebuild or a
-refresh past a defect turns it red until the entry is removed.
+it holds there.
+
+A PAGE THAT NO LONGER HOLDS ONE IS REFUSED WHERE IT IS SAVED OR PUBLISHED, NEVER AT RENDER
+(operator, 2026-11-17: "Refuse where pages are saved or published (Recommended)"). The renderer
+stays side-effect free: ``watch_notice`` prints only the defects the page being rendered still
+holds, so the line never names one the page no longer has, and a fresh build of a watch name (the
+cross-setup harness renders one; ORKA's reads 93 sells where its committed page's bound line reads
+98) renders. Saved, the line would drop the defect and the page would look clean, so
+``refresh_dossier`` refuses to write a watch page ``write_problems`` names; ``frontend/build.py``
+refuses to publish one, before the mirror is cleared; and the suite refuses an entry the COMMITTED
+page no longer holds (``defect_problems``). A rebuild or refresh past a defect stops until the
+entry is removed.
 """
 
 from __future__ import annotations
@@ -457,6 +464,24 @@ def defect_problems(latest: Mapping[str, Move], defects: Mapping[str, tuple[Defe
     return out
 
 
+def write_problems(data_dir: Path, ticker: str, page: Mapping[str, Any]) -> list[str]:
+    """Why ``page`` may not be SAVED: each defect listed for its watch name that it no longer
+    holds, as ``defect_problems`` words it; [] when it may be. ``page`` is the JSON about to be
+    written, as its one writer writes it (``dossier_json``).
+
+    Only a WATCH page is checked: it is the one whose line would drop the defect and look clean.
+    An active name's entry waits for its rebuild, and the suite holds it to its committed page. A
+    tree with no roster is a scratch copy and is not checked, as the renderer prints no line there;
+    a tree WITH one reads the defect file strictly, so an absent or malformed one raises."""
+    if not roster_path(data_dir).is_file():
+        return []
+    move = current(data_dir).get(ticker.upper())
+    if move is None or move.status != "watch":
+        return []
+    listed = read_defects(data_dir).get(move.ticker, ())
+    return defect_problems({move.ticker: move}, {move.ticker: listed}, {move.ticker: page})
+
+
 def watch_notice(data_dir: Path, ticker: str,
                  page: Mapping[str, Any]) -> WatchNotice | None:
     """The notice a page prints near its top, or None when its name is not on watch.
@@ -465,9 +490,10 @@ def watch_notice(data_dir: Path, ticker: str,
     only the defects listed for this name that the page still ``holds``: a watch page never
     prints a defect it no longer has, and a fresh build of the name (the cross-setup harness
     renders one) prints none of its committed page's. The file itself is read strictly, so an
-    absent or malformed one still raises; whether every entry still holds on its COMMITTED page,
-    and names a covered name, is the suite's check (``defect_problems``), so one stale entry
-    never stops another page's render. Read at render time from the tree being rendered."""
+    absent or malformed one still raises. A page that no longer holds a listed defect is refused
+    where it is saved (``write_problems``, in ``refresh_dossier``) or published
+    (``frontend/build.py``), never here, and one stale entry never stops another page's render.
+    Read at render time from the tree being rendered."""
     move = current(data_dir).get(ticker.upper())
     if move is None or move.status != "watch":
         return None
