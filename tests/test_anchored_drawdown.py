@@ -26,6 +26,7 @@ from typing import Any, cast
 
 import pytest
 
+from vinci import coverage_roster as roster
 from vinci.dossier import prespend
 from vinci.dossier.mechanical import AnchorDate, _drawdown_cause, drawdown_anchor_date
 from vinci.dossier.schemas import Dossier, DrawdownCause, SourceStatus, dossier_json
@@ -314,7 +315,9 @@ def test_every_committed_page_round_trips_with_no_new_drawdown_key() -> None:
     exactly what is on disk, so a page with no anchor gains no null key. Not "no page carries an
     anchor" — the artifact pass re-assembles anchored names, and that would red on the first."""
     pages = sorted(Path("data/dossiers").glob("*/dossier.json"))
-    assert len(pages) >= 26  # 27 until MVST was retired (2026-11-12)
+    # every covered page (27 until MVST was retired, 2026-11-12): the roster's count, never a
+    # literal here, so a retirement does not edit it (W27)
+    assert [p.parent.name for p in pages] == roster.covered_pages(Path("data"))
     for p in pages:
         raw = json.loads(p.read_text())["mechanical"]["drawdown_cause"]
         assert json.loads(DrawdownCause.model_validate(raw).model_dump_json()) == raw, p

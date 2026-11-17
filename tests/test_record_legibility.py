@@ -14,11 +14,13 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 import pytest
 
+from vinci import coverage_roster as roster
 from vinci import scenarios as sc
 from vinci import seal
 
@@ -254,15 +256,27 @@ def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
 
 
 # --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
-#: ARCHIVED BECAUSE THE NAME LEFT COVERAGE, not because a record replaced it (2026-11-09). A
-#: retired name's record has no successor to point at, and writing one would invent it, so each is
-#: named here beside the record of the operator's ruling. An archive that points nowhere for any
-#: other reason still fails, and so does a "retired" one that names a successor or a live record.
-RETIRED_ARCHIVES: dict[str, str] = {
-    "AORT-2026-07-22": "docs/records/2026-11-09-aort-retired.md",  # "retire AORT fully"
-    # "we want to drop/remove MVST altogether from our list for future as well"
-    "MVST-2026-07-22": "docs/records/2026-11-13-mvst-retired.md",
-}
+_ARCHIVE_KEY = re.compile(r"(.+)-\d{4}-\d{2}-\d{2}")
+
+
+def _retired_archives(archived: dict[str, sc.ScenarioRecord]) -> dict[str, roster.Move]:
+    """ARCHIVED BECAUSE THE NAME LEFT COVERAGE, not because a record replaced it (2026-11-09). A
+    retired name's record has no successor to point at, and writing one would invent it. So the
+    archives of every name the COVERAGE ROSTER retires are named here, keyed as the seal manifest
+    and the archive folder key them, beside the move that retired the name (W27: the list was kept
+    here by hand, so each retirement edited it). Derived from the ROSTER's names and the SEAL's
+    keys, never from the archives' own pointers, so a retired name's archive that names a
+    successor, or one the seal names and the folder lacks, is still caught (review of #1092, R5).
+    An archive that points nowhere for any other reason still fails."""
+    gone = roster.retired(ROOT / "data")
+    keys = set(seal.load_manifest(ROOT)) | set(archived)
+    out: dict[str, roster.Move] = {}
+    for key in sorted(keys):
+        m = _ARCHIVE_KEY.fullmatch(key)
+        ticker = archived[key].ticker.upper() if key in archived else (m.group(1) if m else "")
+        if m and ticker in gone:
+            out[key] = gone[ticker]
+    return out
 
 
 def _paged_tickers() -> set[str]:
@@ -273,7 +287,7 @@ def _paged_tickers() -> set[str]:
 
 def _archive_pointer_problems(
     live: dict[str, sc.ScenarioRecord], archived: dict[str, sc.ScenarioRecord],
-    retired: dict[str, str], paged: set[str],
+    retired: dict[str, roster.Move], paged: set[str],
 ) -> list[str]:
     out: list[str] = []
     for key, rec in archived.items():
@@ -281,7 +295,9 @@ def _archive_pointer_problems(
             if not rec.superseded_by:
                 out.append(f"{key} is archived but points nowhere")
             continue
-        if rec.superseded_by:
+        # an older archive of a retired name may point at the next archive of its own chain;
+        # anything else it names is a successor that does not exist, since the name has no record
+        if rec.superseded_by and rec.superseded_by not in archived:
             out.append(f"{key} names a successor ({rec.superseded_by}) — superseded, not retired")
         if rec.ticker.upper() in live:
             out.append(f"{key}: {rec.ticker} still has a LIVE record — a retired name has none")
@@ -302,12 +318,18 @@ def test_archived_records_leave_the_live_set_but_stay_in_the_seal_sweep() -> Non
     archived = sc.all_archived(root=ROOT)
     assert archived, "the committed book carries at least one archived record"
     assert set(live) & set(archived) == set(), "an archive key must never collide with a ticker"
-    assert _archive_pointer_problems(live, archived, RETIRED_ARCHIVES, _paged_tickers()) == []
+    retired = _retired_archives(archived)
+    assert {"AORT-2026-07-22", "MVST-2026-07-22"} <= set(retired)
+    assert _archive_pointer_problems(live, archived, retired, _paged_tickers()) == []
+    for t in roster.retired(ROOT / "data"):   # whatever its archives point at
+        assert t not in live, f"{t} is retired on the coverage roster and has a LIVE record"
     for key in archived:
         assert key not in live, f"{key} is in the LIVE set — audit/spread would double-count"
-    # a retired name's ruling is on the record
-    for key, record in RETIRED_ARCHIVES.items():
-        assert (ROOT / record).is_file(), f"{key}: the ruling's record {record} is missing"
+    # a retired name's ruling is on the roster, and the record its move names exists
+    for key, move in retired.items():
+        assert move.ruling.strip() and move.source.strip(), f"{key}: {move.cite()}"
+        assert move.record is None or (ROOT / move.record).is_file(), (
+            f"{key}: the ruling's record {move.record} is missing")
     # the seal sweep DOES cover them, keyed as the manifest keys them
     sealable = seal.load_all_sealable(ROOT)
     for key in archived:
@@ -322,7 +344,7 @@ def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: st
     record), each changed in the one way the case names. The positive pin is the test above."""
     live = sc.all_records(root=ROOT)
     archived = sc.all_archived(root=ROOT)
-    retired = dict(RETIRED_ARCHIVES)
+    retired = _retired_archives(archived)
     paged = _paged_tickers()
     key = "AORT-2026-07-22"
     if case == "unnamed":
@@ -344,21 +366,47 @@ def test_an_archive_with_no_successor_passes_only_as_a_named_retirement(case: st
     assert any(want in p for p in problems), problems
 
 
+@pytest.mark.parametrize("case", ["names_a_successor", "not_archived"])
+def test_the_retired_set_is_the_rosters_so_a_derived_read_still_refuses(case: str) -> None:
+    """R5 (review of #1092). The guard's retired set is DERIVED, and a derivation that read the
+    archives' own pointers (`not superseded_by`) could never see the two shapes it exists to
+    refuse: a retired name's archive that names a successor dropped out of the set, and so did an
+    archive the folder lost. Here the set is derived AFTER the change, as the positive test derives
+    it on the committed tree, and both still refuse."""
+    live = sc.all_records(root=ROOT)
+    archived = sc.all_archived(root=ROOT)
+    key = "MVST-2026-07-22"
+    if case == "names_a_successor":
+        archived[key] = archived[key].model_copy(update={"superseded_by": "MVST-2026-11-12"})
+        want = "superseded, not retired"
+    else:
+        archived.pop(key)
+        want = "is not archived"
+    problems = _archive_pointer_problems(live, archived, _retired_archives(archived),
+                                         _paged_tickers())
+    assert any(want in p and key in p for p in problems), problems
+
+
 def test_a_retired_name_leaves_the_monitors_freshness_set(tmp_path: Path) -> None:
     """THE MONITOR'S FRESHNESS SET HOLDS NO RETIRED NAME (2026-11-12, MVST). A monitor day writes
     a freshness row for each live ledger decision and each `watch` / `pending_analyst` record, and
     both doors need `scenarios/<T>.json`: `_watch_tickers` globs the live records, and the day
-    skips a name with none. Archiving a retired name's record is what takes it out, so the set is
-    pinned on the committed book. NEGATIVE: the same check on a scratch copy of the book with
-    MVST's archived record put back live sees MVST. The sealed archive is only read."""
+    skips a name with none. Archiving a retired name's record is what takes it out, and the
+    archive guard above refuses a name the COVERAGE ROSTER retires that still has a live record
+    (W27). The monitor reads no roster: it marks decisions and records, which coverage is kept
+    apart from, and a live decision on a retired name is still scored to its horizon. So the set
+    is pinned against the roster's retired names on the committed book. NEGATIVE: the same check
+    on a scratch copy of the book with MVST's archived record put back live sees MVST. The sealed
+    archive is only read."""
     from vinci.cli import _watch_tickers
 
     archived = sc.all_archived(root=ROOT)
-    retired = {archived[key].ticker.upper(): key for key in RETIRED_ARCHIVES}
-    assert {"AORT", "MVST"} <= set(retired)
+    retired = {archived[key].ticker.upper(): key for key in _retired_archives(archived)}
+    assert {"AORT", "MVST"} <= set(retired) <= set(roster.retired(ROOT / "data"))
     book = _watch_tickers(ROOT)
     assert book, "the committed book carries a watch name, so the check is not vacuous"
-    assert book & set(retired) == set(), sorted(book & set(retired))
+    gone = set(roster.retired(ROOT / "data"))
+    assert book & gone == set(), sorted(book & gone)
     scratch = tmp_path / "scenarios"
     scratch.mkdir()
     for p in (ROOT / "scenarios").glob("*.json"):

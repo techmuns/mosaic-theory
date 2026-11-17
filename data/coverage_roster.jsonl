@@ -1,0 +1,28 @@
+{"date": "2026-11-09", "ticker": "AORT", "status": "retired", "ruling": "retire AORT fully", "source": "#942", "record": "docs/records/2026-11-09-aort-retired.md"}
+{"date": "2026-11-12", "ticker": "MVST", "status": "retired", "ruling": "we want to drop/remove MVST altogether from our list for future as well", "source": "#1044", "record": "docs/records/2026-11-13-mvst-retired.md"}
+{"date": "2026-11-13", "ticker": "AMZN", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "BRBR", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "BURL", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "CNXC", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "EPAM", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "FUBO", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "GOOGL", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "IT", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "LLY", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "MCK", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "NCNO", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "NFLX", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "NKE", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "ORKA", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "PARR", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "ROST", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "SMPL", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "TECX", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "TGT", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "TJX", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "UBER", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "V", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "VITL", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "VRRM", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "WERN", "status": "active", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}
+{"date": "2026-11-13", "ticker": "WLK", "status": "watch", "ruling": "go ahead", "source": "issue #1004 comment 6847554747", "record": "docs/records/2026-11-13-fix2-bookkeeping-batch-8.md"}

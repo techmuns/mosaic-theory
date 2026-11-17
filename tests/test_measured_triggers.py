@@ -11,6 +11,7 @@ import pathlib
 
 import pytest
 
+from tests.sealed_corpus import live_records
 from vinci.scenarios import MeasuredTrigger
 from vinci.triggers import FIRED, NOT_FIRED, UNKNOWN, evaluate
 
@@ -203,7 +204,8 @@ def test_a_record_stating_no_measured_trigger_carries_no_key_for_one() -> None:
             assert isinstance(got, list) and got, f"{f.name} dropped a STATED measured trigger"
         else:
             assert got == "ABSENT", f"{f.name} gained an empty measured_triggers key"
-    assert seen >= 7, f"walked only {seen} committed records"  # 8 until MVST was archived
+    # every live record: sealed (the seal names them) plus pending (8 until MVST was archived; W27)
+    assert seen == len(live_records(ROOT)), f"walked only {seen} committed records"
 
 
 def test_a_record_that_states_one_keeps_it() -> None:

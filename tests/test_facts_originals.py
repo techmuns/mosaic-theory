@@ -18,6 +18,7 @@ from typing import Any
 
 import pytest
 
+from tests.roster_support import write_roster
 from tests.test_facts_remote import FakeBucket, _client
 from vinci.edgar.concepts import facts_as_of
 from vinci.facts import FILED, FactStore, Period
@@ -65,6 +66,7 @@ def _ingested(tmp: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
         (tmp / "data" / "dossiers" / ticker).mkdir(parents=True)
         (tmp / "data" / "dossiers" / ticker / "dossier.json").write_text(
             json.dumps({"cik": cik, "reference_date": "2026-11-02"}))
+    write_roster(tmp / "data", {"IT": "active", "NFLX": "watch"})   # the scope reads it (W27)
     monkeypatch.chdir(tmp)
     monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
     assert main(["ingest", "--cache-dir", str(cache)]) == 0

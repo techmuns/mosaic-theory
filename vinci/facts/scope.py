@@ -23,11 +23,14 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from vinci import coverage_roster as roster
 from vinci.facts.edgar_ingest import NotInCacheError, cik_for_ticker, pad_cik
 from vinci.facts.store import FactsStoreError
 from vinci.followed import follow_records
 
-RULE = "committed pages (data/dossiers/*/dossier.json) plus followed names (data/followed.json)"
+RULE = ("the coverage roster's active and watch names (data/coverage_roster.jsonl), each checked "
+        "against its committed page (data/dossiers/*/dossier.json), plus followed names "
+        "(data/followed.json)")
 SCREEN_RULE = ("the universe of screen run {run_id}: its candidate rows "
                "(data/snapshots/screen_runs/{run_id}.jsonl), each ticker's CIK from "
                "data/snapshots/securities.jsonl through data/snapshots/universe_snapshot.jsonl at "
@@ -49,8 +52,12 @@ def page_path(dossiers_dir: Path, ticker: str) -> Path:
 
 def scope_names(dossiers_dir: Path, followed_path: Path, cache_dir: Path, *,
                 exclude: frozenset[str] = frozenset()) -> tuple[list[ScopeName], int]:
-    """The names the rule selects, minus ``exclude``; and how many the exclusion removed."""
-    pages = {p.parent.name for p in dossiers_dir.glob("*/dossier.json")}
+    """The names the rule selects, minus ``exclude``; and how many the exclusion removed. The
+    coverage roster is read beside ``dossiers_dir``, in its parent (the data directory), as the
+    committed tree lays them out."""
+    # THE COVERED NAMES ARE THE ROSTER'S (W27), the pages checked against it: this rule was where
+    # "a covered name" was written down before the roster existed, as "whatever page is committed"
+    pages = set(roster.covered_pages(dossiers_dir.parent))
     # the follow list's own strict reader: a tombstoned name (`followed_until` set) is no longer
     # followed, and a malformed entry raises rather than being skipped
     followed = {r.ticker for r in follow_records(followed_path) if r.held_on(date.today())}
