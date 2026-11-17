@@ -92,6 +92,15 @@ def test_guard_asks_before_the_proposal_mapping_is_edited() -> None:
     assert "vinci/dossier/verdict.py" in decision["permissionDecisionReason"]
 
 
+def test_guard_names_the_approval_line_the_gate_will_want() -> None:
+    """2026-11-17 (#1097): a granted prompt is a click nothing durable records, so the ask says
+    what the gate will refuse the branch without — the operator's words, in a commit message."""
+    reason = json.loads(_edit("vinci/dossier/schemas.py", _session()).stdout)[
+        "hookSpecificOutput"]["permissionDecisionReason"]
+    assert 'Operator-approved: vinci/dossier/schemas.py "' in reason
+    assert ".github/scripts/protected_approval.py" in reason
+
+
 def test_guard_leaves_an_ordinary_module_alone() -> None:
     out = _edit("vinci/dossier/assemble.py", _session())
     assert out.returncode == 0 and out.stdout == ""
@@ -120,6 +129,21 @@ def test_guard_protects_the_gates_configuration_and_the_grader() -> None:
         assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask", path
     for path in ("tests/test_sleeves.py", "tests/fixtures/ciq_reader_contract.json",
                  "vinci/evalsx.py"):
+        assert _edit(path, _session()).stdout == "", path
+
+
+def test_guard_protects_a_shadowing_package_the_gates_overriding_configs_and_its_lock() -> None:
+    """#1104 review round 1, item 5. A package of a protected module's name is imported in its
+    place; pytest, ruff and mypy each read a config beside or below pyproject.toml's, at any depth;
+    gate.yml installs its tools from requirements.lock. NEGATIVE: a near name is not protected."""
+    for path in ("vinci/seal/__init__.py", "vinci/dossier/verdict/core.py",
+                 "vinci/dossier/schemas/__init__.py", "conftest.py", "tests/sub/conftest.py",
+                 "pytest.ini", ".pytest.ini", "pytest.toml", "tox.ini", "setup.cfg", "ruff.toml",
+                 "vinci/.ruff.toml", "mypy.ini", ".mypy.ini", "requirements.lock"):
+        out = _edit(path, _session())
+        assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask", path
+    for path in ("vinci/sealer.py", "vinci/dossier/verdict_helpers.py", "tests/conftest_helpers.py",
+                 "requirements.txt", "vinci/seal_test/x.py"):
         assert _edit(path, _session()).stdout == "", path
 
 
