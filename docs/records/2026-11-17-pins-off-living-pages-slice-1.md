@@ -2,7 +2,7 @@
 id:
 status: shipped
 date: 2026-11-17
-prs: []
+prs: [1098]
 supersedes:
 superseded-by:
 ---
@@ -122,7 +122,7 @@ test files and its own record.
   slice's `6c60282e`, against the same run of `4889ddba` on the same machine:
   - **74 → 77 failing**, every one of the base's 74 a local-data failure (CIQ exports re-pulled
     since a pin was verified, date-dependent live reads) that CI does not run;
-  - **7 new.** `test_records_ledger` (this record's PR number, filled at the PR); `test_evidence_same_passage`
+  - **7 new.** `test_records_ledger` (this record's PR number, filled once #1098 opened); `test_evidence_same_passage`
     (LibreOffice failed to convert a GOOGL transcript RTF, an environment failure that also
     fails alone); `test_theme_intelligence_group3` ×2 (browser tests); `test_transcript_run_guard` ×3;
   - **4 gone**, all of `test_transcript_run_guard` or `test_tracked_files_…`: the set of its
