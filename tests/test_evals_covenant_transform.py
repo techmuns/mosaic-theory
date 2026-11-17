@@ -17,7 +17,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from tests.frozen_support import covered_where, frozen_doc, living_doc
+from tests.frozen_support import CUT, covered_pages, frozen_doc, living_doc
 from vinci.dossier import covenant_extract as ce
 from vinci.dossier.schemas import CapitalStructure, MechanicalLayer, SourceStatus
 from vinci.evals import variants
@@ -51,18 +51,25 @@ def _rows(page: dict[str, Any]) -> list[Any]:
 
 
 def _quoted() -> list[str]:
-    """The equality's population: every covered panel page with a PRESENT quoted covenant term.
-    Walked inside the test, never at import: a roster the pages disagree with, or an empty walk,
-    fails this test rather than interrupting the whole suite's collection."""
-    panel = load_panel_file()["panel"]
+    """The equality's population: the synthesis panel's pages (`vinci/evals/synthesis_panel.json`)
+    that the roster covers and that carried a PRESENT quoted covenant term AT THE CUT
+    (`tests/frozen_support.py`): BURL, CNXC, MCK and SMPL, the four the parametrize named. The
+    population is read off the frozen pages and the equality off the living ones, so a living page
+    that loses its quoted terms fails its `assert checked` rather than dropping out of the walk
+    (review round 1 of #1098, item 3: selecting by the living page's own terms made that assert
+    unfailable). Walked inside the test, never at import, so a roster the pages disagree with
+    fails this test rather than the suite's collection."""
+    covered = set(covered_pages())
 
-    def quoted(t: str, page: dict[str, Any]) -> bool:
-        return t in panel and any(
-            r.value.status is SourceStatus.PRESENT and (r.value.note or "").startswith(_LEAD)
-            for r in _rows(page))
+    def quoted(page: dict[str, Any]) -> bool:
+        return any(r.value.status is SourceStatus.PRESENT
+                   and (r.value.note or "").startswith(_LEAD) for r in _rows(page))
 
-    return [t for t, _ in covered_where(
-        quoted, "on the synthesis panel carries a PRESENT quoted covenant term")]
+    names = [t for t in load_panel_file()["panel"]
+             if t in covered and (CUT / t).is_dir() and quoted(frozen_doc(t))]
+    assert names, ("no covered panel page carried a PRESENT quoted covenant term at the cut — "
+                   "the equality would walk nothing")
+    return names
 
 
 def test_each_fenced_row_is_the_extractors_row_for_the_same_answer() -> None:
