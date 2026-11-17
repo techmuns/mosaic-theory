@@ -20,7 +20,10 @@ from typing import Any
 
 from vinci.edgar.client import compute_fundamental_snapshot
 from vinci.edgar.concepts import (
+    ANNUAL_MAX_DAYS,
+    ANNUAL_MIN_DAYS,
     FLOW_CONCEPTS,
+    IFRS_FLOW_TAGS,
     StaleAnnual,
     current_annual,
     extract_points,
@@ -44,9 +47,33 @@ def _facts(ticker: str) -> dict[str, Any]:
 
 def _ifrs_annual_ends(facts: dict[str, Any], tag: str) -> set[date]:
     rows = [r for unit in facts["facts"]["ifrs-full"][tag]["units"].values() for r in unit]
-    return {date.fromisoformat(r["end"]) for r in rows
-            if r.get("start") and 350 <= (date.fromisoformat(r["end"])
-                                          - date.fromisoformat(r["start"])).days <= 380}
+    spans = [(date.fromisoformat(r["start"]), date.fromisoformat(r["end"]))
+             for r in rows if r.get("start")]
+    return {end for start, end in spans
+            if ANNUAL_MIN_DAYS <= (end - start).days <= ANNUAL_MAX_DAYS}
+
+
+def test_every_flow_concept_has_its_ifrs_lines() -> None:
+    """`filer_fiscal_year` reads `IFRS_FLOW_TAGS[concept]` for each of `FLOW_CONCEPTS`: a flow
+    concept added without its IFRS lines would raise KeyError in every snapshot, and one dropped
+    from `FLOW_CONCEPTS` would silently stop dating the year. The two lists move together."""
+    assert tuple(IFRS_FLOW_TAGS) == FLOW_CONCEPTS
+    assert all(IFRS_FLOW_TAGS.values())
+
+
+def test_the_page_fixture_builder_keeps_the_ifrs_lines() -> None:
+    """Every annual reader on a page reads `filer_fiscal_year`, so the IFRS lines are tags the
+    dossier fixtures' pins read: `scripts/build_companyfacts_fixture.py` must freeze them, or a
+    page filer that carries ifrs-full would date an older year offline than in production (none
+    does on 2026-11-17)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "bcf", ROOT / "scripts" / "build_companyfacts_fixture.py")
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    wanted = {t for tags in IFRS_FLOW_TAGS.values() for t in tags}
+    assert wanted <= mod.FIXTURE_TAGS, sorted(wanted - mod.FIXTURE_TAGS)
 
 
 # --- POSITIVE: a us-gaap annual years behind the filer's IFRS statements is withheld ------------

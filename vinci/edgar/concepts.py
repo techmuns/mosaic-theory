@@ -15,6 +15,7 @@ from collections import Counter
 from collections.abc import Iterable, Sequence
 from datetime import date, timedelta
 from decimal import ROUND_HALF_EVEN, Decimal
+from itertools import chain
 from typing import Any, NamedTuple
 
 from pydantic import BaseModel
@@ -776,9 +777,10 @@ def filer_fiscal_year(facts: dict[str, Any]) -> ConceptPoint | None:
     does (the 122nd tags no IFRS flow annual, and its us-gaap year is that day's). Only the period
     is read; every unit counts, since a period's dates carry no currency."""
     newest: ConceptPoint | None = None
-    for p in [*(p for concept in FLOW_CONCEPTS for tag in CONCEPT_ALIASES[concept]
-                for p in points_for_tag(facts, tag, concept=concept)),
-              *(p for concept in FLOW_CONCEPTS for p in _ifrs_flow_points(facts, concept))]:
+    gaap = (q for concept in FLOW_CONCEPTS for tag in CONCEPT_ALIASES[concept]
+            for q in points_for_tag(facts, tag, concept=concept))
+    ifrs = (q for concept in FLOW_CONCEPTS for q in _ifrs_flow_points(facts, concept))
+    for p in chain(gaap, ifrs):
         if not p.is_annual or p.period_end > p.filed:
             continue
         if newest is None or p.period_end > newest.period_end:

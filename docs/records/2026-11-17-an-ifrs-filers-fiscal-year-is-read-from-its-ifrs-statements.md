@@ -104,7 +104,10 @@ us-gaap annual is 365d behind and served; at the next 20-F it is 730d behind and
 - **The 26 committed pages: none can move.** None of their 26 filers carries an ifrs-full fact, so
   no page's fiscal year can change; `python -m vinci.impact run` (the PR body) builds them at both
   refs.
-- **Pins: 9, on 6 frozen real filers** (`tests/test_ifrs_fiscal_year.py`;
+- **Pins: 11.** Two are structural, both from `/code-review high` (round 0): `IFRS_FLOW_TAGS`
+  covers exactly `FLOW_CONCEPTS`, and the page fixture builder
+  (`scripts/build_companyfacts_fixture.py`) freezes the IFRS lines, which the dossier fixtures'
+  pins now read. **Nine are on 6 frozen real filers** (`tests/test_ifrs_fiscal_year.py`;
   `tests/fixtures/ifrs_movers/`, README there). Each subset reads as its full blob at main and at
   this branch: fiscal year, all eight `current_annual`, and the snapshot, uncut and cut at
   2026-10-16.
@@ -119,8 +122,9 @@ us-gaap annual is 365d behind and served; at the next 20-F it is 730d behind and
       nothing;
     - IAMGOLD (IFRS only), whose year is now dated, with every annual field still the
       plain-absence reading and no IFRS figure served.
-  - **Fail first:** 7 of the 9 fail on main's `vinci/`. The other two pass on both, as negatives
-    should: enCore, and Amber's half-year.
+  - **Fail first:** 7 of the 9 on real filers fail on main's `vinci/`. The other two pass on
+    both, as negatives should: enCore, and Amber's half-year. The two structural pins name
+    `IFRS_FLOW_TAGS`, which main lacks.
 - **Mutation, 6 mutants on this branch's `concepts.py`, in a scratch tree; 5 killed:**
   1. IFRS points dropped (main's rule): killed;
   2. IFRS read in dollars only: killed, by National Steel's BRL year;
