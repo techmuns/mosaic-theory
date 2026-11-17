@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# PINS OFF LIVING PAGES, SLICE 3 OF 5 (W27 follow-up, STATE row 41 (a)): 23 valuation, anchor, EV-gap, lease and consensus test files read the cut or walk the roster, every assertion unchanged but one read through another page reader; nine invariants now hold on every covered page with the property, each measured first; the scan's named-living-page pairs fall 389 → 273 (80 → 59 files) ($0)
+# PINS OFF LIVING PAGES, SLICE 3 OF 5 (W27 follow-up, STATE row 41 (a)): 23 valuation, anchor, EV-gap, lease and consensus test files read the cut or walk the roster, every assertion unchanged but one read through another page reader; nine invariants now hold on every covered page with the property, each measured first; the scan's named-living-page pairs fall 423 → 307 (83 → 62 files) ($0)
 
 **WHAT.**
 - **Slice 3 of the plan A approved on 2026-11-17** (slice 1:
@@ -53,34 +53,32 @@ superseded-by:
   only from the page's own exports: Financials for the bands, and Estimates for the bridge too. The
   frozen page now runs only while the exports on disk are the ones it names, and otherwise SKIPS,
   naming both shas (a skip, never a looser assertion).
-- **The checker tells a reader swap apart.** `scripts/asserts_unchanged.py` now lists READER-ONLY
-  an assert that differs only in which page reader it calls: `_page("BRBR")[...]` →
-  `frozen_doc("BRBR")[...]`. The readers are `tests/frozen_support.py`'s and the module's own
-  functions that read a page. A changed argument still reads CHANGED, as the mutation below shows.
 
 **WHY.** A retirement re-points every test reading the retired name's living page by name (STATE
 row 41 (a)). This slice moves that cost off the valuation group, which had the most value pins
-(76 of 211 at the base).
+(76 of the 208 value pairs at main `8a71a383`).
 
 **HOW VERIFIED.**
-- **No assertion changed.** `python scripts/asserts_unchanged.py 0069cd39` (slice 1's head) over 23
-  files and 433 functions: 0 changed, 0 vanished, and 1 reader-only
+- **No assertion changed.** `python scripts/asserts_unchanged.py 8a71a383` (main, with slice 1
+  merged) over 23 files and 433 functions: 0 changed, 0 disabled, 0 vanished; 1 reader-only
   (`test_valuation_basis::test_the_ids_and_formulas_are_the_engines`, `_page("BRBR")` →
-  `frozen_doc("BRBR")` inside the assert). Mutation: the same assert reading `frozen_doc("BURL")`
-  is CHANGED, and the checker exits 1.
+  `frozen_doc("BRBR")` inside the assert, the READER category #1098 added); 8 population (the
+  walks above); and 1 control, `test_consensus_parity`'s per-page `continue`s (above), an exit
+  added by design. Mutation: the same assert reading `frozen_doc("BURL")` is CHANGED, and the
+  checker exits 1.
 - **Each walk was run on every page it walks before it moved** (the populations above). No page
   failed one.
 - **The files.** The 23 changed files, offline: 15 failures, every one of them failing on the
   unchanged base too (the mislabelled PARR workbook, re-exported CIQ data).
-- **The scan** (`named_page_pins.py HEAD`, on top of slice 1): 389 → 273 pairs (value 183 → 107,
-  invariant 206 → 166), 337 → 245 functions, 80 → 59 files. Left in these files: a `tmp_path`
+- **The scan** (`named_page_pins.py HEAD`, against main at `8a71a383`): 423 → 307 pairs (value
+  208 → 132, invariant 215 → 175), 366 → 274 functions, 83 → 62 files. Left in these files: a `tmp_path`
   writer (`test_lease_basis`) and the fleet split's subscript keys (`test_ev_gap_routing`), whose
   named routes now read the cut. Both are scan false positives, for slice 5.
 - **The suite.** {SUITE}
 - **The impact check.** {IMPACT}
 
 **BOUNDARY.**
-- **Counts:** at this slice's commit, on top of slice 1 (`0069cd39`).
+- **Counts:** at this slice's commit, against main at `8a71a383` (slice 1 merged as #1098).
 - **"Pages":** the roster's 26 covered names at the cut.
 - **"Pairs" / "functions" / "files":** `scripts/named_page_pins.py`, a lower bound.
 
