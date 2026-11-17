@@ -27,15 +27,17 @@ WHAT IT DOES NOT CATCH: a line an agent writes with words the operator never sai
 operator share one GitHub account, so nothing here can tell them apart; the check turns a SILENT
 change into a public, permanent CLAIM that the person merging reads and can refute.
 
-THE LIST IS THE GUARD'S OWN — `PROTECTED`, loaded from the hook file by path, never a copy.
+THE LIST IS THE GUARD'S OWN — `PROTECTED`, loaded from the hook file by path, never a copy —
+together with the list as the BASE has it, so a branch cannot drop an entry and change its file.
 Standard library only, Python 3.9+: bin/commit runs it under the system `python3`, as the hooks run.
 
     protected_approval.py [--root DIR] [--base REF] [--head REF] [-- <git commit arguments>]
 
 With `--head` (CI): the change is `merge-base(base, head)..head`. Without it (bin/commit): the
 change is the INDEX against the branch's merge base, and the message being committed is read from
-the `-m`/`-F` arguments after `--`. While a merge is being concluded the base is taken against
-MERGE_HEAD, so a re-sync from main is never read as the branch changing what main changed.
+the `-m`/`-F` arguments after `--` (with `--amend` and a new message, HEAD's own no longer
+counts). While a merge is being concluded the base is taken against HEAD and MERGE_HEAD
+together, so a re-sync from main is never read as the branch changing what main changed.
 Exit 0 approved or nothing protected; 1 refused; 2 the check could not run (a refusal too).
 """
 from __future__ import annotations
@@ -50,11 +52,12 @@ from pathlib import Path
 from types import ModuleType
 from typing import Iterable, NamedTuple, Optional
 
-GUARD = Path(__file__).resolve().parents[2] / ".claude" / "hooks" / "decision_path_guard.py"
+GUARD_REL = ".claude/hooks/decision_path_guard.py"
+GUARD = Path(__file__).resolve().parents[2] / GUARD_REL
 
 #: The one form an approval takes: a whole line, the operator's own words in double quotes, the day
 #: they said them.
-APPROVAL = re.compile(r'^Operator-approved: (?P<path>\S+) "(?P<words>[^"]*\S[^"]*)" '
+APPROVAL = re.compile(r'^Operator-approved: (?P<path>\S+) "(?P<words>[^"\n]*\S[^"\n]*)" '
                       r'(?P<date>\d{4}-\d{2}-\d{2})[ \t]*$', re.MULTILINE)
 FORM = 'Operator-approved: <path> "<the operator\'s words>" <YYYY-MM-DD>'
 
@@ -74,8 +77,40 @@ def load_guard() -> ModuleType:
     if spec is None or spec.loader is None:
         raise CannotRun(f"cannot load the guard's list from {GUARD}")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    try:
+        spec.loader.exec_module(module)
+    except Exception as e:  # a guard that cannot load is a check that cannot run: exit 2
+        raise CannotRun(f"cannot load the guard's list from {GUARD}: {e!r}") from e
     return module
+
+
+def guard_at(root: Path, base: str) -> Optional[ModuleType]:
+    """The guard as the BASE commit has it, so a branch cannot shrink what main protects by
+    editing its own copy of the list. None when the base has no guard file."""
+    if subprocess.run(["git", "-C", str(root), "cat-file", "-e", f"{base}:{GUARD_REL}"],
+                      capture_output=True).returncode != 0:
+        return None
+    module = ModuleType("decision_path_guard_at_base")   # its __name__ is not "__main__"
+    try:
+        exec(compile(_git(root, "show", f"{base}:{GUARD_REL}"), f"{base}:{GUARD_REL}", "exec"),
+             module.__dict__)
+    except CannotRun:
+        raise
+    except Exception as e:
+        raise CannotRun(f"cannot load the guard's list at {base[:8]}: {e!r}") from e
+    if not (hasattr(module, "PROTECTED") and hasattr(module, "protected_reason")):
+        raise CannotRun(f"the guard at {base[:8]} has no PROTECTED list or protected_reason")
+    return module
+
+
+def protected_reason(guards: Iterable[ModuleType], rel: str) -> Optional[str]:
+    """What ``rel`` is, by the first guard whose OWN rule protects it — the branch's guard, then
+    the base's. The guard's matching rule is called, never re-implemented here."""
+    for guard in guards:
+        why: Optional[str] = guard.protected_reason(rel)
+        if why is not None:
+            return why
+    return None
 
 
 def _git(root: Path, *args: str) -> str:
@@ -98,8 +133,12 @@ def changed_files(root: Path, base: str, head: Optional[str]) -> list[str]:
     return [p for p in _git(root, *args).split("\0") if p]
 
 
-def branch_messages(root: Path, base: str, head: str) -> list[str]:
-    raw = _git(root, "log", "--format=%B%x00", f"{base}..{head}")
+def branch_messages(root: Path, base: str, tips: Iterable[str]) -> list[str]:
+    """Every commit message reachable from ``tips`` and not from ``base``."""
+    tips = list(tips)
+    if not tips:
+        return []
+    raw = _git(root, "log", "--format=%B%x00", *tips, f"^{base}")
     return [m for m in raw.split("\0") if m.strip()]
 
 
@@ -115,20 +154,21 @@ def approvals(texts: Iterable[str]) -> list[Approval]:
     return found
 
 
-def commit_arg_messages(args: list[str]) -> list[str]:
+def commit_arg_messages(args: list[str], trailers: bool = True) -> list[str]:
     """The message a `git commit` invocation writes, from its -m/--message and -F/--file options,
-    clustered short flags included (`-qm`, `-am`). A message given any other way (the editor, -C,
-    -c, `-F -`) is not read; the check then reads only the branch's earlier commits."""
+    clustered short flags included (`-qm`, `-am`), and each `--trailer` git appends to it as its
+    own line. A message given any other way (the editor, -C, -c, `-F -`) is not read; the check
+    then reads only the branch's earlier commits."""
     out: list[str] = []
     i = 0
     while i < len(args):
         a, nxt = args[i], (args[i + 1] if i + 1 < len(args) else None)
-        if a in ("-m", "--message", "-F", "--file"):
-            if nxt is not None:
-                out.append(nxt if a in ("-m", "--message") else _read(nxt))
+        if a in ("-m", "--message", "-F", "--file", "--trailer"):
+            if nxt is not None and (trailers or a != "--trailer"):
+                out.append(_read(nxt) if a in ("-F", "--file") else nxt)
             i += 2
             continue
-        if a.startswith("--message="):
+        if a.startswith("--message=") or (trailers and a.startswith("--trailer=")):
             out.append(a.split("=", 1)[1])
         elif a.startswith("--file="):
             out.append(_read(a.split("=", 1)[1]))
@@ -155,9 +195,16 @@ def _read(path: str) -> str:
         return ""
 
 
-def approval_for(guard: ModuleType, rel: str, found: Iterable[Approval]) -> Optional[Approval]:
-    """The approval naming ``rel`` itself, or one of the guard's own directory entries holding it."""
-    dirs = {p for p, _ in guard.PROTECTED if p.endswith("/") and rel.startswith(p)}
+def unread_lines(texts: Iterable[str]) -> list[str]:
+    """Lines that name an approval but are not in the form, so a refusal can say why."""
+    return [ln.strip() for t in texts for ln in t.splitlines()
+            if "operator-approved:" in ln.lower() and not approvals([ln])]
+
+
+def approval_for(guards: Iterable[ModuleType], rel: str,
+                 found: Iterable[Approval]) -> Optional[Approval]:
+    """The approval naming ``rel`` itself, or one of the guards' own directory entries holding it."""
+    dirs = {p for g in guards for p, _ in g.PROTECTED if p.endswith("/") and rel.startswith(p)}
     return next((a for a in found if a.path == rel or a.path in dirs), None)
 
 
@@ -173,19 +220,31 @@ def main(argv: Optional[list[str]] = None) -> int:
     root = Path(ns.root).resolve()
     try:
         guard = load_guard()
-        tip = ns.head or ("MERGE_HEAD" if _merging(root) else "HEAD")
-        base = _git(root, "merge-base", ns.base, tip).strip()
+        if ns.head:
+            tips = [ns.head]
+        else:
+            # Concluding a merge, the result is HEAD and MERGE_HEAD together: `merge-base A B C` is
+            # A's base with a merge of B and C, so main's commits on either side are main's.
+            tips = ["HEAD", "MERGE_HEAD"] if _merging(root) else ["HEAD"]
+        base = _git(root, "merge-base", ns.base, *tips).strip()
+        at_base = guard_at(root, base)
+        guards = [guard] if at_base is None else [guard, at_base]
         changed = changed_files(root, base, ns.head)
-        texts = branch_messages(root, base, ns.head or "HEAD") + commit_arg_messages(commit_args)
+        message = commit_arg_messages(commit_args)
+        if "--amend" in commit_args and commit_arg_messages(commit_args, trailers=False):
+            # a -m/-F message REPLACES HEAD's (a trailer alone is added to it), so HEAD's no
+            # longer counts
+            tips = ["HEAD^@" if t == "HEAD" else t for t in tips]
+        texts = branch_messages(root, base, tips) + message
     except CannotRun as e:
         print(f"── REFUSED: the protected-file approval check could not run against "
               f"`{ns.base}`: {e} ──", file=sys.stderr)
         return 2
     found = approvals(texts)
-    protected = [(p, why) for p in changed if (why := guard.protected_reason(p)) is not None]
+    protected = [(p, why) for p in changed if (why := protected_reason(guards, p)) is not None]
     missing = []
     for p, why in protected:
-        a = approval_for(guard, p, found)
+        a = approval_for(guards, p, found)
         if a is None:
             missing.append((p, why))
         else:
@@ -208,6 +267,12 @@ def main(argv: Optional[list[str]] = None) -> int:
           f"    {FORM}\n"
           "  (.github/scripts/protected_approval.py; the list is .claude/hooks/decision_path_guard.py's)",
           file=sys.stderr)
+    unread = unread_lines(texts)
+    if unread:
+        print(f"  {len(unread)} line(s) name an approval but are not in that form (a whole line, "
+              "words quoted on it, a real date):", file=sys.stderr)
+        for ln in unread:
+            print(f"    {ln}", file=sys.stderr)
     return 1
 
 

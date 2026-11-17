@@ -63,9 +63,12 @@ jobs:
       # prompt is a click nothing durable records, and a Bash edit never reaches it; this reads the
       # PR's diff, whatever wrote it. Against the fetched base branch rather than the payload's
       # base sha, which can lag the tip the merge commit was built on: the merge base is right
-      # either way. PRs only: a push to main is a squash that already carries its branch's lines.
-      # Before the install, so a refusal costs seconds. bin/commit runs the same script on the
-      # staged change: docs/records/2026-11-17-a-protected-file-change-names-the-operators-approval.md
+      # either way. PRs only: branch protection takes every change to main through a PR, where
+      # this ran; an admin's direct push (protection is not enforced for admins) is not checked.
+      # A PR runs its OWN copy of this file and of the script, so a PR that rewrites either can
+      # pass itself: that rewrite is a protected change the person merging sees, not one CI
+      # refuses. Before the install, so a refusal costs seconds. bin/commit runs the same script
+      # on the staged change: docs/records/2026-11-17-a-protected-file-change-names-the-operators-approval.md
       - name: protected files carry the operator's approval
         if: github.event_name == 'pull_request'
         env:

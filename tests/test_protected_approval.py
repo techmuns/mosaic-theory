@@ -273,3 +273,104 @@ def test_bin_commit_runs_the_check_before_the_suite() -> None:
     call = text.index(".github/scripts/protected_approval.py")
     assert call < text.index("-m ruff check")
     assert '-- "$@"' in text[call:text.index("\n", call)]
+
+
+# ── review round 0 (/code-review high --fix) ──────────────────────────────────────────────────
+
+def test_the_words_never_span_lines(tmp_path: Path) -> None:
+    """An unclosed quote ran on to a later line's `"`: the approval is ONE line."""
+    repo = _repo(tmp_path)
+    _change(repo, "vinci/dossier/verdict.py",
+            'a change\n\nOperator-approved: vinci/dossier/verdict.py "Yes\n'
+            'see the card" 2026-11-17\n')
+    assert _ci(repo).returncode == 1
+
+
+def test_an_entry_on_mains_list_is_checked_though_the_branch_drops_it(tmp_path: Path) -> None:
+    """The branch's own copy of the list cannot shrink what main protects: an entry the base guard
+    carries is checked whatever the head's list says."""
+    repo = _repo(tmp_path)
+    _git(repo, "checkout", "-q", "main")
+    guard = repo / ".claude" / "hooks" / "decision_path_guard.py"
+    guard.parent.mkdir(parents=True)
+    head = "PROTECTED: tuple[tuple[str, str], ...] = (\n"
+    real = GUARD.read_text()
+    assert real.count(head) == 1
+    # main's guard is the real one, carrying one entry the branch's copy does not
+    guard.write_text(real.replace(
+        head, head + '    ("vinci/dossier/assemble.py", "a file main protects"),\n'))
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-qm", "main protects assemble.py")
+    _git(repo, "update-ref", "refs/remotes/origin/main", "main")
+    _git(repo, "checkout", "-q", "work")
+    _git(repo, "merge", "-q", "--no-edit", "main")
+    _change(repo, "vinci/dossier/assemble.py", "a change")
+    out = _ci(repo)
+    assert out.returncode == 1, out.stdout + out.stderr
+    assert "vinci/dossier/assemble.py — a file main protects" in out.stderr
+
+
+def test_concluding_a_merge_of_another_branch_counts_only_the_branchs_change(
+        tmp_path: Path) -> None:
+    """MERGE_HEAD is a side branch cut from an older main: main's later protected change, already
+    merged into the branch, is not the branch's."""
+    repo = _repo(tmp_path)
+    _git(repo, "checkout", "-qb", "side", "main")
+    _change(repo, "vinci/dossier/assemble.py", "the side branch's change")
+    _git(repo, "checkout", "-q", "main")
+    _change(repo, "vinci/seal.py", "main moves the seal")
+    _git(repo, "update-ref", "refs/remotes/origin/main", "main")
+    _git(repo, "checkout", "-q", "work")
+    _git(repo, "merge", "-q", "--no-edit", "main")
+    _git(repo, "merge", "-q", "--no-commit", "--no-ff", "side")
+    out = _check(repo, "--base", "origin/main", "--", "-m", "merge side")
+    assert out.returncode == 0, out.stdout + out.stderr
+
+
+def test_an_amend_with_a_new_message_does_not_count_the_message_it_replaces(
+        tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    _change(repo, "vinci/dossier/verdict.py", f"a change\n\n{APPROVED}\n")
+    assert _check(repo, "--base", "origin/main", "--", "--amend", "--no-edit").returncode == 0
+    out = _check(repo, "--base", "origin/main", "--", "--amend", "-m", "a change")
+    assert out.returncode == 1, out.stdout + out.stderr
+
+
+def test_a_refusal_names_a_line_that_is_not_in_the_form(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    near = '    Operator-approved: vinci/dossier/verdict.py "Yes" 2026-11-17'
+    _change(repo, "vinci/dossier/verdict.py", f"a change\n\n{near}\n")
+    out = _ci(repo)
+    assert out.returncode == 1 and near.strip() in out.stderr, out.stderr
+
+
+def test_a_guard_that_cannot_load_is_exit_2(tmp_path: Path) -> None:
+    repo = _repo(tmp_path)
+    check = _load(CHECK)
+    bad = tmp_path / "guard.py"
+    bad.write_text("this is not python(\n")
+    check.GUARD = bad
+    assert check.main(["--root", str(repo), "--base", "origin/main", "--head", "HEAD"]) == 2
+
+
+def test_a_trailer_is_read_as_part_of_the_message_being_committed(tmp_path: Path) -> None:
+    """`git commit --trailer` writes its line into the message, so CI reads it there; bin/commit's
+    reading of the arguments must too, or the two gates disagree."""
+    repo = _repo(tmp_path)
+    (repo / "vinci/dossier/verdict.py").write_text("# rewritten\n")
+    _git(repo, "add", "-A")
+    assert _check(repo, "--base", "origin/main", "--", "-m", "x", "--trailer",
+                  APPROVED).returncode == 0
+    assert _check(repo, "--base", "origin/main", "--", "-m", "x",
+                  f"--trailer={APPROVED}").returncode == 0
+    read = _load(CHECK).commit_arg_messages
+    assert read(["-m", "x", "--trailer", "T"]) == ["x", "T"]
+    assert read(["-m", "x", "--trailer", "T"], trailers=False) == ["x"]
+
+
+def test_an_amend_adding_only_a_trailer_keeps_the_message_it_amends(tmp_path: Path) -> None:
+    """A trailer is appended to HEAD's message, never a replacement for it."""
+    repo = _repo(tmp_path)
+    _change(repo, "vinci/dossier/verdict.py", f"a change\n\n{APPROVED}\n")
+    out = _check(repo, "--base", "origin/main", "--", "--amend", "--no-edit", "--trailer", "X: y")
+    assert out.returncode == 0, out.stderr

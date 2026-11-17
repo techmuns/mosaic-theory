@@ -22,13 +22,20 @@ commit message on the branch carries one line of a fixed form:
 Two gates run it:
 - **`gate.yml`**, on every pull request, before the install. It reads against `origin/<base_ref>`.
 - **`bin/commit`**, after the tree-equals-index check and before ruff. It reads the staged change
-  and the `-m`/`-F` message being committed.
+  and the message being committed: `-m`, `-F` and `--trailer`. With `--amend` and a new message,
+  HEAD's old message no longer counts.
 
 How the diff is read:
+- **The list is the branch's guard AND the base's.** Each guard's own `protected_reason` is
+  called; the rule is never re-implemented. A branch that drops an entry from its copy and changes
+  that file is still checked against main's list.
 - Renames are not detected, so a protected file moved away or deleted counts under its old name.
-- A re-sync from main is not read as the branch's own change. That holds in CI and while
-  bin/commit concludes a merge, where the base is taken against MERGE_HEAD.
-- A missing base is a refusal (exit 2), never a pass.
+- A re-sync from main is not read as the branch's own change. That holds in CI, and while
+  bin/commit concludes a merge, where the base is taken against HEAD and MERGE_HEAD together. A
+  merge of a side branch cut from an older main counts only the branch's change.
+- An approval is one whole line; quoted words never run over a line break.
+- A refusal names any line that mentions `Operator-approved:` but is not in the form.
+- A missing base, or a guard that cannot load, exits 2. That is a refusal, never a pass.
 
 The guard still asks. Its reason now names the line the gate will want, and its docstring says what
 the prompt is and is not. Operator ruling 2026-11-17, relayed by the coordinator: "Approve as
@@ -90,8 +97,8 @@ The hook is NOT made to deny:
 - **The same five Bash edits, staged**, under the system Python 3.9.6: exit 1, "REFUSED: 5 of 5",
   each named with the guard's own reason.
 - **#1097's branch** (`origin/claude/financials-filed-through`): exit 1, `vinci/dossier/schemas.py`.
-- **Every open PR**, 2026-11-17: #1097 is refused; #1094, #1096, #1098, #1100 and #1102 change no
-  protected file and pass.
+- **Every open PR**, 2026-11-17: #1097 was refused; #1094, #1096, #1098, #1100 and #1102 change
+  no protected file and pass. After the coordinator added #1097's line (`433237a9`), it passes.
 - **This branch before its commit**: exit 1 on its four protected files. With the four lines in the
   commit message it passes through bin/commit's full gate.
 
@@ -115,6 +122,19 @@ Also:
   it committed.
 - `tests/test_claude_hooks.py`: the ask names the line.
 
+**Review round 0** (`/code-review high --fix`): 10 findings, 8 fixed. Each fix has a pin, which
+brings the file to 48. 7 of the new pins failed on the pre-review commit `d81de4de`:
+- the words spanning lines;
+- an entry on main's list that the branch drops;
+- concluding a merge of a side branch;
+- an amend with a new message;
+- a line not in the form, named;
+- a guard that cannot load, exit 2;
+- a `--trailer`.
+
+The 8th, an amend that adds only a trailer, passes there. It catches the mutant that lets any
+message, a trailer included, replace HEAD's.
+
 **Mutations, each run against the pins:**
 - any approval approving any file;
 - MERGE_HEAD ignored;
@@ -122,9 +142,10 @@ Also:
 - any prefix approving;
 - the date unvalidated;
 - messages read from all of history;
-- a copied list missing `scenarios/`.
+- a copied list missing `scenarios/`;
+- any message replacing HEAD's on an amend.
 
-7 of 7 were caught.
+8 of 8 were caught.
 
 **BOUNDARY.**
 - **The census** is every transcript present under `~/.claude/projects` on 2026-11-17 that names
@@ -150,10 +171,21 @@ coordinator.
 Agents and the operator share one GitHub account, so no check can tell them apart. The check turns
 a SILENT change into a public, permanent CLAIM that the person merging reads and can refute.
 
+**Accepted: a PR can pass itself.** Review round 0 found that a `pull_request` run executes the
+PR's OWN copy of `gate.yml` and of the script. A PR that rewrites either, or deletes the step, can
+therefore pass. The rewrite is itself a protected change, in the diff the person merging reads, but
+CI does not refuse it. Closing that needs a check that runs from main's copy, such as a ruleset's
+required workflow or `pull_request_target`. That is the operator's call, and it is not built here.
+
+**Accepted: an admin's direct push to main is not checked.** Branch protection takes every change
+to main through a PR, but it is not enforced for admins.
+
 **Open PRs that predate the check.** A PR whose gate went green before this merged keeps that
 green until its next push. `gate` is a required check but not `strict`. On its next push it is
-checked like any other. The coordinator adds the line from the operator's recorded words (#1097 is
-the one open PR this refuses).
+checked like any other. The coordinator adds the line from the operator's recorded words. #1097
+was the one open PR this refused. Its review-round-1 commit `433237a9` now carries
+`Operator-approved: vinci/dossier/schemas.py "Approve the edit (Recommended)" 2026-11-17`, and
+it passes.
 
 **Falsifiers.**
 - If lines start appearing whose quoted words no operator said, or the operator's words become a
