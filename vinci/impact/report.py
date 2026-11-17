@@ -91,8 +91,8 @@ def fail_first_lines(ff: dict[str, Any], k: int, code_changed: bool = True) -> l
             and c["head"]["outcome"] == "passed"]
     red = [c for c in cases if c["head"]["outcome"] in ("failed", "error")]
     skip = [c for c in cases if "skipped" in (c["base"]["outcome"], c["head"]["outcome"])]
-    where = ("each in a detached git worktree of head's commit, base's with its `vinci/` "
-             "swapped in" if ff.get("checkout") == "worktree" else
+    where = ("each in its own clone of the repository at head's commit, base's with its "
+             "`vinci/` swapped in" if ff.get("checkout") == "clone" else
              "both in head's tree, a `git archive` extract with no `.git`: a test that asks git "
              "about its checkout did not run there as in a checkout")
     lines = [f"### 1. Fail first — {len(first)} of {len(cases)} test(s) fail on base code and "

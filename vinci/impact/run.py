@@ -4,8 +4,8 @@ Each part is measured, never asserted (`vinci.impact` names the five). The run l
 repository (captured requests carry licensed transcript text):
 
     <out>/code/<side>/            the side's ``vinci/`` and ``frontend/build.py`` (git archive)
-    <out>/failfirst/              part 1's logs and junit files; its two checkouts are detached
-                                  git worktrees there while its tests run (`fail_first`)
+    <out>/failfirst/              part 1's logs and junit files; its two checkouts are clones of
+                                  the repository there while its tests run (`fail_first`)
     <out>/inputs-src/             the DATA REF's committed ``data/``, ``scenarios/``, ``frontend/``
     <out>/<side>/impact-inputs/   a clone of it, the side's cwd, with the git-ignored inputs linked:
                                   ``data/manual/ciq`` and ``data/cache`` (shared, read through the
@@ -21,6 +21,7 @@ from __future__ import annotations
 import concurrent.futures as cf
 import datetime as dt
 import difflib
+import functools
 import hashlib
 import json
 import os
@@ -344,9 +345,33 @@ def pytest_configure(config):
 _CANNOT_IMPORT = re.compile(r"cannot import name '(\w+)' from '([\w.]+)'")
 
 
+@functools.cache
+def _local_git_env() -> frozenset[str]:
+    """The variables git itself names REPOSITORY-LOCAL (``git rev-parse --local-env-vars``:
+    ``GIT_DIR``, ``GIT_WORK_TREE``, ``GIT_INDEX_FILE``, ``GIT_COMMON_DIR`` …), read from git, never
+    copied. Git sets some of them for a hook it runs, and they override ``git -C``: started inside a
+    hook, base's ``git rm -r vinci`` ran on the hook's repository and index, and each side's tests
+    asked git about that repository instead of their checkout (review round 1 of #1110, item 5)."""
+    done = subprocess.run(["git", "rev-parse", "--local-env-vars"], capture_output=True, text=True)
+    if done.returncode != 0 or not done.stdout.split():
+        raise ImpactError(f"git rev-parse --local-env-vars exited {done.returncode}: "
+                          f"{done.stderr.strip()[-800:]}")
+    return frozenset(done.stdout.split())
+
+
+def _git(cwd: Path, *args: str) -> str:
+    """git for part 1's checkouts, run with no repository-local variable (`_local_git_env`)."""
+    env = {k: v for k, v in os.environ.items() if k not in _local_git_env()}
+    done = subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True, env=env)
+    if done.returncode != 0:
+        raise ImpactError(f"git {' '.join(args)} exited {done.returncode}: "
+                          f"{done.stderr.strip()[-800:]}")
+    return done.stdout
+
+
 def _pytest(s: Settings, tree: Path, tests: Sequence[str], log: Path, junit: Path,
             missing: Sequence[tuple[str, str]] = ()) -> subprocess.Popen[bytes]:
-    env = child_env(tree, None, TEST_SECRET_ENV)
+    env = child_env(tree, None, (*TEST_SECRET_ENV, *sorted(_local_git_env())))
     shim: list[str] = []
     if missing:
         # BESIDE the checkout, never in it: git there would list it as an untracked file at base
@@ -365,12 +390,25 @@ def _pytest(s: Settings, tree: Path, tests: Sequence[str], log: Path, junit: Pat
 
 
 #: How part 1's checkouts are made, recorded in its result so the report states it.
-CHECKOUT = "worktree"
+CHECKOUT = "clone"
+#: Where a test's ``git push`` from part 1's checkout goes: nowhere (no helper serves the scheme).
+NO_PUSH = "no-push://the-impact-check-never-pushes"
 
 
-def _worktree(repo: Path, ref: str, dest: Path) -> None:
-    """A DETACHED GIT WORKTREE of ``ref`` at ``dest``: a real checkout, with the repository's
-    history and refs, as in the gate's CI (``fetch-depth: 0``) and in an operator's own checkout.
+def _checkout(repo: Path, ref: str, dest: Path) -> None:
+    """A THROWAWAY CLONE of the repository at ``ref``, checked out detached: a checkout of its own,
+    with the repository's history and refs, as in the gate's CI (``fetch-depth: 0``).
+
+    - ``--shared``: it borrows the repository's objects (``objects/info/alternates``), so nothing is
+      copied, and an object a test writes stays in the clone.
+    - Its ``origin/*`` is the repository's own ``refs/remotes/origin/*`` (``--prune``d to exactly
+      those). A plain clone names the repository's LOCAL branches ``origin/*``, and a stale local
+      ``main`` read as ``origin/main``: 12 ``.py`` files under ``tests/`` read it at ``e15659ba``.
+    - Its push URL is ``NO_PUSH``, so a test's push never reaches the repository.
+    - Nothing is registered in the repository, as a linked worktree was (review round 1 of #1110,
+      items 2 and 3). A run killed mid-stage leaves two folders under ``--out`` and nothing in any
+      session's ``git worktree list``, and a test's tag or config write stays in its own clone,
+      where one side's could fail the other's on timing.
 
     Never a ``git archive`` extract (the follow-up to #1104): an extract has no ``.git``, so a test
     that asks git about its own checkout could not run there. 7 nodes of
@@ -378,41 +416,35 @@ def _worktree(repo: Path, ref: str, dest: Path) -> None:
     skips by design, while all of them pass in a checkout. Neither outcome said whether the test
     fails first, and the report printed them as if it had run them."""
     dest.parent.mkdir(parents=True, exist_ok=True)
-    st.git(repo, "worktree", "add", "--detach", "--quiet", str(dest), ref)
-
-
-def _drop_worktrees(repo: Path, root: Path) -> None:
-    """Unregister and delete every worktree of ``repo`` under ``root``, including one a killed run
-    left behind, so a run leaves no entry in the shared repository's ``git worktree list``. Only
-    these: a ``git worktree prune`` would act on other sessions' entries too. ``--force`` TWICE: a
-    run killed during ``git worktree add`` leaves its worktree locked ("initializing"), and one
-    ``--force`` refuses a locked worktree."""
-    here = root.resolve()
-    for line in st.git(repo, "worktree", "list", "--porcelain").splitlines():
-        if line.startswith("worktree "):
-            path = Path(line.removeprefix("worktree ")).resolve()
-            if here in path.parents:
-                st.git(repo, "worktree", "remove", "--force", "--force", str(path))
+    _git(dest.parent, "clone", "--quiet", "--shared", "--no-checkout", str(repo), str(dest))
+    _git(dest, "fetch", "--quiet", "--prune", "origin",
+         "+refs/remotes/origin/*:refs/remotes/origin/*")
+    _git(dest, "remote", "set-url", "--push", "origin", NO_PUSH)
+    _git(dest, "checkout", "--quiet", "--detach", ref)
 
 
 def _checkouts(s: Settings, shas: dict[str, str], root: Path) -> dict[str, Path]:
-    """Both checkouts are HEAD's commit. Base's then swaps ``vinci/`` for base's, in its index as
-    well as its files, so git there lists, diffs and reads base's code. A file only head has is
-    then absent from ``git ls-files`` too, not listed as a file that is missing on disk."""
+    """Both checkouts are HEAD's commit (`_checkout`). Base's then swaps ``vinci/`` for base's, in
+    its index as well as its files, so git there lists, diffs and reads base's code. A file only
+    head has is then absent from ``git ls-files`` too, not listed as a file missing on disk.
+
+    ACCEPTED, AND PINNED (`test_bases_checkout_is_heads_commit_with_bases_vinci_staged`): base's
+    ``HEAD`` is head's sha, and ``git status`` / ``git diff HEAD`` there show base's ``vinci/`` as
+    staged, so a test asserting a clean checkout fails at base alone, for no reason in the code."""
     trees = {"head": root / "head-tree", "base": root / "base-tree"}
     for side in SIDES:
-        _worktree(s.repo, shas["head"], trees[side])
+        _checkout(s.repo, shas["head"], trees[side])
     base = trees["base"]
-    if st.git(s.repo, "ls-tree", "--name-only", shas["head"], "vinci").strip():
-        st.git(base, "rm", "-r", "-q", "vinci")
-    if st.git(s.repo, "ls-tree", "--name-only", shas["base"], "vinci").strip():
-        st.git(base, "checkout", shas["base"], "--", "vinci")
+    if _git(base, "ls-tree", "--name-only", shas["head"], "vinci").strip():
+        _git(base, "rm", "-r", "-q", "vinci")
+    if _git(base, "ls-tree", "--name-only", shas["base"], "vinci").strip():
+        _git(base, "checkout", shas["base"], "--", "vinci")
     return trees
 
 
 def fail_first(s: Settings, shas: dict[str, str]) -> dict[str, Any]:
-    """Head's changed test files, run on base's ``vinci/`` and on head's, each in a real checkout
-    of head (`_worktree`, `_checkouts`).
+    """Head's changed test files, run on base's ``vinci/`` and on head's, each in a clone of the
+    repository at head's commit (`_checkout`, `_checkouts`).
 
     A test file that imports a name base's code does not define fails to COLLECT at base, which
     would report one error for the file and no test. Each such name gets a placeholder that raises
@@ -424,25 +456,23 @@ def fail_first(s: Settings, shas: dict[str, str]) -> dict[str, Any]:
         return {"tests": [], "cases": [], "note": "the PR changes no test file"}
     t0 = time.monotonic()
     root = s.out / "failfirst"
-    _drop_worktrees(s.repo, root)
     if root.exists():
         shutil.rmtree(root)
-    try:
-        trees = _checkouts(s, shas, root)
-        procs = {side: _pytest(s, tree, tests, root / f"pytest-{side}.log",
-                               root / f"junit-{side}.xml") for side, tree in trees.items()}
-        codes = {side: p.wait() for side, p in procs.items()}
-        missing: list[tuple[str, str]] = []
-        for _ in range(8):
-            found = {(m.group(2), m.group(1)) for m in _CANNOT_IMPORT.finditer(
-                (root / "pytest-base.log").read_text(errors="replace"))} - set(missing)
-            if not found:
-                break
-            missing += sorted(found)
-            codes["base"] = _pytest(s, trees["base"], tests, root / "pytest-base.log",
-                                    root / "junit-base.xml", missing).wait()
-    finally:   # the logs and junit files stay in root; the checkouts do not
-        _drop_worktrees(s.repo, root)
+    trees = _checkouts(s, shas, root)
+    procs = {side: _pytest(s, tree, tests, root / f"pytest-{side}.log",
+                           root / f"junit-{side}.xml") for side, tree in trees.items()}
+    codes = {side: p.wait() for side, p in procs.items()}
+    missing: list[tuple[str, str]] = []
+    for _ in range(8):
+        found = {(m.group(2), m.group(1)) for m in _CANNOT_IMPORT.finditer(
+            (root / "pytest-base.log").read_text(errors="replace"))} - set(missing)
+        if not found:
+            break
+        missing += sorted(found)
+        codes["base"] = _pytest(s, trees["base"], tests, root / "pytest-base.log",
+                                root / "junit-base.xml", missing).wait()
+    for tree in trees.values():   # the logs and junit files stay in root; the checkouts go
+        shutil.rmtree(tree)
     res = {side: _junit(root / f"junit-{side}.xml") for side in SIDES}
     # a file that did not collect at base: each of its tests failed there, at the import
     uncollected = {n.removesuffix(" (collection)"): r for n, r in res["base"].items()
