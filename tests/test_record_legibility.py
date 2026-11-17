@@ -255,7 +255,7 @@ def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
 
 
 # --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
-def _retired_archives(archived: dict[str, sc.ScenarioRecord]) -> dict[str, str]:
+def _retired_archives(archived: dict[str, sc.ScenarioRecord]) -> dict[str, roster.Move]:
     """ARCHIVED BECAUSE THE NAME LEFT COVERAGE, not because a record replaced it (2026-11-09). A
     retired name's record has no successor to point at, and writing one would invent it, so each
     archive that points nowhere is accepted only for a name the COVERAGE ROSTER retires, beside the
@@ -263,8 +263,7 @@ def _retired_archives(archived: dict[str, sc.ScenarioRecord]) -> dict[str, str]:
     so each retirement edited it). An archive that points nowhere for any other reason still
     fails, and so does a "retired" one that names a successor or a live record."""
     gone = roster.retired(ROOT / "data")
-    return {key: gone[rec.ticker.upper()].record or gone[rec.ticker.upper()].source
-            for key, rec in sorted(archived.items())
+    return {key: gone[rec.ticker.upper()] for key, rec in sorted(archived.items())
             if rec.ticker.upper() in gone and not rec.superseded_by}
 
 
@@ -276,7 +275,7 @@ def _paged_tickers() -> set[str]:
 
 def _archive_pointer_problems(
     live: dict[str, sc.ScenarioRecord], archived: dict[str, sc.ScenarioRecord],
-    retired: dict[str, str], paged: set[str],
+    retired: dict[str, roster.Move], paged: set[str],
 ) -> list[str]:
     out: list[str] = []
     for key, rec in archived.items():
@@ -312,9 +311,11 @@ def test_archived_records_leave_the_live_set_but_stay_in_the_seal_sweep() -> Non
         assert t not in live, f"{t} is retired on the coverage roster and has a LIVE record"
     for key in archived:
         assert key not in live, f"{key} is in the LIVE set — audit/spread would double-count"
-    # a retired name's ruling is on the record
-    for key, record in retired.items():
-        assert (ROOT / record).is_file(), f"{key}: the ruling's record {record} is missing"
+    # a retired name's ruling is on the roster, and the record its move names exists
+    for key, move in retired.items():
+        assert move.ruling.strip() and move.source.strip(), f"{key}: {move.cite()}"
+        assert move.record is None or (ROOT / move.record).is_file(), (
+            f"{key}: the ruling's record {move.record} is missing")
     # the seal sweep DOES cover them, keyed as the manifest keys them
     sealable = seal.load_all_sealable(ROOT)
     for key in archived:

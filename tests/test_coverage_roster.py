@@ -66,29 +66,35 @@ def test_the_operators_marking_and_the_two_retirements_are_on_the_roster() -> No
 
 
 def _mutated(lines: list[str], case: str) -> str:
-    first = json.loads(lines[0])
+    """The committed roster's lines with ONE change, built from the parsed moves, so each case
+    changes the file whatever its lines say."""
+    first, last = json.loads(lines[0]), json.loads(lines[-1])
+
+    def line(move: dict[str, Any], **kw: Any) -> str:
+        return json.dumps(move | kw, ensure_ascii=False)
+
     if case == "unknown_status":
-        lines[0] = lines[0].replace('"status": "retired"', '"status": "dropped"')
+        lines[0] = line(first, status="dropped")
     elif case == "missing_field":
         lines[0] = json.dumps({k: v for k, v in first.items() if k != "record"},
                               ensure_ascii=False)
     elif case == "extra_field":
-        lines[0] = json.dumps(first | {"note": "x"}, ensure_ascii=False)
-    elif case == "out_of_order":
-        lines[0], lines[1] = lines[1], lines[0]
+        lines[0] = line(first, note="x")
+    elif case == "out_of_order":         # a move inserted above an earlier-dated one
+        lines.insert(0, line(last))
     elif case == "twice_one_day":
-        lines.insert(1, lines[0].replace('"status": "retired"', '"status": "watch"'))
-    elif case == "repeats_its_status":
-        moved = first | {"date": "2026-11-20"}
-        lines.append(json.dumps(moved, ensure_ascii=False))
+        other = "watch" if first["status"] != "watch" else "active"
+        lines.insert(1, line(first, status=other))
+    elif case == "repeats_its_status":   # the last move again, a week on: it records nothing
+        lines.append(line(last, date="2099-01-01"))
     elif case == "not_canonical":
         lines[0] = json.dumps(first, ensure_ascii=False, separators=(",", ":"))
     elif case == "lower_case_ticker":
-        lines[0] = lines[0].replace('"ticker": "AORT"', '"ticker": "aort"')
+        lines[0] = line(first, ticker=str(first["ticker"]).lower())
     elif case == "record_not_a_record":
-        lines[0] = lines[0].replace('"docs/records/2026-11-09-aort-retired.md"', '"STATE.md"')
+        lines[0] = line(first, record="STATE.md")
     elif case == "blank_ruling":
-        lines[0] = lines[0].replace('"ruling": "retire AORT fully"', '"ruling": " "')
+        lines[0] = line(first, ruling=" ")
     elif case == "blank_line":
         lines.insert(1, "")
     return "\n".join(lines) + "\n"
