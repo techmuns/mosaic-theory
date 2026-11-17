@@ -7,14 +7,14 @@ supersedes:
 superseded-by:
 ---
 
-# PINS OFF LIVING PAGES, SLICE 4 OF 5 (W27 follow-up, STATE row 41 (a)): 14 dossier-render and refresh test files and the shared `stripped_pages.committed_page` read the cut or walk the roster; three invariants now hold on every covered page with the property; four assertions change, each for a stated reason; the scan's named-living-page pairs fall 423 → 357 (83 → 76 files); 14 render tests were found dormant since #407 and are reported, not fixed ($0)
+# PINS OFF LIVING PAGES, SLICE 4 OF 5 (W27 follow-up, STATE row 41 (a)): 14 dossier-render and refresh test files and the shared `stripped_pages.committed_page` read the cut or walk the roster; three invariants now hold on every covered page with the property; four assertions change, each for a stated reason; the scan's named-living-page pairs fall 423 → 358 (83 → 76 files); 14 render tests were found dormant since #407 and are reported, not fixed ($0)
 
 **WHAT.**
 - **Slice 4 of the plan A approved on 2026-11-17** (slice 1:
   `docs/records/2026-11-17-pins-off-living-pages-slice-1.md`). It reads through slice 1's cut
   (`tests/fixtures/frozen_pages/cut-4889ddba/`) and `tests/frozen_support.py`, and adds no fixture.
 - **To the cut.** Each of these reads a page by name as a host, a value or a page's own shape:
-  - `test_dossier`: 18 functions on SMPL, VRRM, CNXC, IT and BRBR. Their 16 skips of the form
+  - `test_dossier`: 17 functions on SMPL, VRRM, CNXC, IT and BRBR. Their 15 skips of the form
     "no committed <T> dossier" are gone, because a frozen copy always exists. A skip removed, never
     one added.
   - `tests/stripped_pages.committed_page`, the shared host reader. Its callers in four files this
@@ -56,10 +56,13 @@ row 41 (a)). This slice moves that cost off the dossier render and refresh group
   (`test_an_export_not_on_disk_is_named_never_reported_unchanged`, `_living` → `_at_cut`), 2
   population (the R1 walk, the cap-line walk), and **4 changed, each reviewed**:
   1. and 2. `test_anchor_off_headline`'s two decision pins, md and web. The floor `decided >= 4`
-     became `decided >= _decisions_at_the_cut_still_covered()`: the recorded decisions the cut's
-     pages carry (AMZN, CNXC, GOOGL, UBER), counted on the names the roster still covers. It reads
-     4 today. A retirement lowers it by that name's own decision, never by a test edit, and a
-     decision a covered page loses still goes red. The message now says "at the cut".
+     became `decided >= _decisions_at_the_cut_still_covered()`, a floor BY NAME: the set of names
+     whose cut pages carry a recorded decision (AMZN, CNXC, GOOGL, UBER), on the names the roster
+     still covers, must be a subset of the names whose living pages carry one. It is those 4
+     today. A retirement lowers it by that name's own decision, never by a test edit, and a
+     decision a covered page loses goes red even when another page gains one, which a count would
+     net (code review, round 0: mutation, AMZN's decision dropped from the md walk → red, naming
+     the 3 it saw). The message now says "at the cut" and lists the names.
   3. `test_layer_refreshes::test_a_refresh_that_moves_a_layer_records_it`. A reader swap through a
      path expression: `DOSS / "UBER"` → `frozen_page("UBER")`. The checker normalizes a reader only
      when it is a call, so it reads this as CHANGED. `_copy` writes the same frozen page into the
@@ -73,16 +76,20 @@ row 41 (a)). This slice moves that cost off the dossier render and refresh group
 - **The files.** The 14 changed test files, offline, with the CIQ link present: 642 passed, 17
   skipped, 2 xfailed, 0 failed.
 - **The scan** (`python scripts/named_page_pins.py HEAD`, the same 26 pages, against main at
-  `8a71a383`): 423 → 357 pairs (value 208 → 180, invariant 215 → 177), 366 → 310 functions, 83 →
-  76 files. What it still finds in these files, 26 pairs in 23 functions:
+  `8a71a383`): 423 → 358 pairs (value 208 → 181, invariant 215 → 177), 366 → 311 functions, 83 →
+  76 files. What it still finds in these files, 27 pairs in 24 functions:
   - **scan false positives, 18 pairs in 15 functions:** `tmp_path` trees built from a frozen copy.
     `test_benchmark_figures_refresh` (6, TECX from its 2026-09-28 copy), `test_input_manifest`
     (3, NFLX and BURL), `test_layer_refreshes` (2), `test_surprise_listing_block`'s writer pins
     (2, PARR) and `test_analysis_as_of_skips_and_filings` (2, IT and NKE);
-  - **record-class residue, 8 pairs in 8 `test_dossier` functions:** each pairs a named page
-    with that name's `frontend/scenarios/<T>.json` record (IT ×4, SMPL ×2, BRBR ×2). Under A's
-    option (1) they stay, with slice 5's record writing up the class. All 8 are dormant today
-    (below).
+  - **record-class residue, 9 pairs in 9 `test_dossier` functions:** each pairs a named page
+    with that name's record. 8 read `frontend/scenarios/<T>.json` (IT ×4, SMPL ×2, BRBR ×2) and
+    are dormant today (below). The ninth,
+    `test_catalyst_calendar_render_placement_b_and_crux_line`, renders SMPL's page with SMPL's
+    `scenarios/SMPL.json` record (`read_record`) and runs. It was moved to the cut and then put
+    back on the living page (code review, round 0): a frozen page beside a living record mixes
+    two vintages, and SMPL's retirement would archive the record it reads in any case. Under A's
+    option (1) the 9 stay, with slice 5's record writing up the class.
 
   Slice 5 fixes the scan's false positives and records the residue.
 - **The suite.** {SUITE}
@@ -116,4 +123,8 @@ false positives; the ratchet; the AMZN replay; STATE row 41.
    decision and the pin stays green.
 3. **The tripwires still read living pages.** NFLX's and PARR's strict xfails watch for the living
    page's re-read, so they still name it, behind a roster skip.
-4. **$0.** No model call, no vendor call, and no page rebuilt or re-rendered.
+4. **Seventeen moved reads name the cut by path** (`tests/fixtures/frozen_pages/cut-4889ddba/<T>/`,
+   two of them inside JS driver strings), not through `frozen_page(T)`, so the
+   `grep 'frozen_doc("T")'` that `tests/frozen_support.py` names as the index misses them.
+   They are found by `grep 'cut-4889ddba/T'`. Slice 5 widens the index's grep.
+5. **$0.** No model call, no vendor call, and no page rebuilt or re-rendered.

@@ -2114,8 +2114,9 @@ def test_smpl_pltm_basis_caveat_present_in_committed_artifact_e2e() -> None:
 
 
 def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
-    """(P6, relayered for the HYBRID — TEST-LAYER invariant-only) On the LIVING committed
-    dossiers, assert the PHRASING-INDEPENDENT invariants the hybrid `_ordered_points` guards —
+    """(P6, relayered for the HYBRID — TEST-LAYER invariant-only) On the committed pages (MVST's
+    frozen copy, VRRM's as frozen at the cut since W27), assert the PHRASING-INDEPENDENT invariants
+    the hybrid `_ordered_points` guards —
     never any LLM claim's tier (a classifier result on LLM text is an LLM-string pin IN DISGUISE).
     (a) BEAR: side-rank is non-decreasing — the survival-first guarantee (a T1 fact can never sit
     below a narrative point); within an equal-rank run, crux-linked points precede non-crux.
@@ -9838,7 +9839,9 @@ def test_catalyst_calendar_render_placement_b_and_crux_line() -> None:
     ONE Next-catalyst line (the earliest entry). A dossier WITHOUT the field (every pre-build
     artifact) renders NO section and NO crux line — old JSON round-trips without a phantom."""
     import vinci.scenarios as sc
-    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/SMPL/dossier.json")
+    p = Path("data/dossiers/SMPL/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed SMPL dossier.json")
     d = ds.Dossier.model_validate_json(p.read_text())
     cal = ds.CatalystCalendar(rows=[ds.CatalystRow(
         event="Next results print", expected_date="2026-10-08", date_basis="cadence-estimate",

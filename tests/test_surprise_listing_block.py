@@ -107,6 +107,9 @@ _AWAITS_REREAD = pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
 #: The pages `_AWAITS_REREAD` watches. A strict xfail flips on its LIVING page's re-read, so it
 #: reads the living page, and only while the coverage roster covers the name (a retired name's page
 #: awaits nothing); every other pin reads the page as frozen at the cut (`tests/frozen_support.py`).
+#: THE SAME EDIT TAKES BOTH OFF: when a re-read lands and a pin loses its marker, its name leaves
+#: this set, and its page is cut anew (the cut predates the re-read), or the landed pin would go on
+#: reading the living page.
 _AWAITING = frozenset({"NFLX", "PARR"})
 
 

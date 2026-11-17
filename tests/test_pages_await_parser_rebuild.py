@@ -19,7 +19,9 @@ Facts only: every pin is a value a filing states, read by deterministic code —
 SINCE W27 (2026-11-17) every pin here has landed and carries no marker, so each is an ordinary
 value pin and reads its page as frozen at the cut (`tests/frozen_support.py`): a re-assembly or a
 retirement of the living page moves nothing. A NEW awaiting pin watches a living page by design (its
-strict xfail flips on that page's rebuild), so it reads `living_doc`, never the cut.
+strict xfail flips on that page's rebuild), so it must read `tests.frozen_support.living_doc`
+directly: `_ps`, `_release` and `_filing` below read the cut, whose state never changes, and a pin
+reading them would stay an expected failure for good.
 """
 from __future__ import annotations
 
