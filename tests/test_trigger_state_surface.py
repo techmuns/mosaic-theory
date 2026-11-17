@@ -2,8 +2,9 @@
 
 The evaluator shipped in #548 and rendered nowhere. A state computed and not surfaced is the
 unwired-capability shape this repo has now recorded twice — `dilution.py` (imported only by its
-own test) and `stale_served` (no caller since it shipped). These pins bind the whole path: typed
-on the row, carried into the committed artifact, and rendered as three DIFFERENT things.
+own test) and `stale_served` (no caller since it shipped; since 2026-11-17 by decision, pinned
+below). These pins bind the whole path: typed on the row, carried into the committed artifact,
+and rendered as three DIFFERENT things.
 """
 from __future__ import annotations
 
@@ -240,7 +241,12 @@ def test_the_retired_stale_tag_row_has_no_surface() -> None:
     assert "stale_tags" not in mon.FreshnessRow.model_fields, (
         f"FreshnessRow carries stale_tags again: read {_RETIRED} before reporting staleness here")
     assert not hasattr(mon, "_stale_tags"), f"the monitor scans for stale tags again: {_RETIRED}"
-    assert "stale_tags" not in _panel_src(), f"the panel renders stale tags again: {_RETIRED}"
+    src = _panel_src()
+    assert "stale_tags" not in src and "served but not current" not in src, (
+        f"the panel renders stale tags again: {_RETIRED}")
+    views = sorted(str(p.relative_to(ROOT)) for p in (ROOT / "frontend" / "views").rglob("*.js")
+                   if "stale_tags" in p.read_text())
+    assert views == [], f"a frontend view reads stale_tags again {views}: {_RETIRED}"
     # and a row built from real committed inputs writes no such key into the day
     rec, mech = _record_and_mech()
     row = freshness_row(ticker="SMPL", verdict="BUY", record=rec, filings=[], today=TODAY,
@@ -266,18 +272,37 @@ def test_a_committed_day_reads_back_without_the_retired_field() -> None:
                     f"drop them: {_RETIRED}")
             back = mon.FreshnessRow.model_validate(raw).model_dump(mode="json")
             assert "stale_tags" not in back
+            lost = object()
             assert {k: v for k, v in raw.items() if k != "stale_tags"} == {
-                k: back[k] for k in raw if k != "stale_tags"}, f"{day.name} {raw.get('ticker')}"
+                k: back.get(k, lost) for k in raw if k != "stale_tags"}, (
+                f"{day.name} {raw.get('ticker')}")
     # the real shape this reader must accept is in the corpus, not only in a fixture
-    assert carried, "no committed day carries stale_tags — this pin exercises nothing"
-    assert rows >= carried
+    assert carried, (
+        f"no committed day carries stale_tags ({rows} rows read) — this pin exercises nothing")
 
 
 def test_stale_served_has_no_production_reader() -> None:
     """`stale_served` stays a MEASUREMENT. Its clock is the filer's frontier of any tag, which a
     forward-dated context moves years ahead (92 of the 129 flow flags the annual readers serve,
-    in the record), so a reader or report built on it would print false staleness."""
-    home = ROOT / "vinci" / "edgar" / "concepts.py"
-    readers = sorted(str(p.relative_to(ROOT)) for p in (ROOT / "vinci").rglob("*.py")
-                     if p != home and "stale_served" in p.read_text())
+    in the record), so a reader or report built on it would print false staleness.
+
+    Read in the AST, not as text: a docstring may name it, and a call inside its own module
+    (`concepts.py`) or in `scripts/` is a reader as much as one anywhere else. An IMPORT of it
+    counts too, so a reader cannot pass under an alias (`import stale_served as s`)."""
+    import ast
+
+    readers: list[str] = []
+    for top in ("vinci", "scripts"):
+        for p in sorted((ROOT / top).rglob("*.py")):
+            for node in ast.walk(ast.parse(p.read_text())):
+                if isinstance(node, ast.ImportFrom):
+                    hit = any(a.name == "stale_served" for a in node.names)
+                elif isinstance(node, ast.Call):
+                    f = node.func
+                    hit = (f.id if isinstance(f, ast.Name) else
+                           f.attr if isinstance(f, ast.Attribute) else None) == "stale_served"
+                else:
+                    continue
+                if hit:
+                    readers.append(f"{p.relative_to(ROOT)}:{node.lineno}")
     assert readers == [], f"stale_served gained a production reader {readers}: {_RETIRED}"
