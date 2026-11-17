@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# PINS OFF LIVING PAGES, SLICE 5 OF 5 (W27 follow-up, STATE row 41 (a) CLOSED): the propose, template, trigger and recipe pins read the cut or walk the roster; the scan's false positives are fixed and three blind spots added; a ratchet holds the 69 (test, page) pairs that remain, each with its reason; retiring AMZN with the whole suite touches 1 test file, from 31 at the cut, and that one is a corpus floor failing loud by A's ruling, not a named read ($0)
+# PINS OFF LIVING PAGES, SLICE 5 OF 5 (W27 follow-up, STATE row 41 (a) CLOSED): the propose, template, trigger and recipe pins read the cut or walk the roster; the scan's false positives are fixed and three blind spots added; a ratchet holds the 68 (test, page) pairs that remain, each with its reason; retiring AMZN with the whole suite touches 1 test file, from 31 at the cut, and that one is a corpus floor failing loud by A's ruling, not a named read ($0)
 
 **WHAT.**
 - **Slice 5 of the plan A approved on 2026-11-17**, the last (slice 1:
@@ -66,11 +66,11 @@ superseded-by:
   working tree and fails on any (test, page) pair `RESIDUE` does not name, and on a named pair the
   scan no longer finds while its page is living: the ratchet only shrinks. A named pair for a
   name with no living page is never stale, so a retirement edits nothing there either (pinned).
-  `RESIDUE` is seeded with the 69 pairs left, each with its reason:
+  `RESIDUE` is seeded with the 68 pairs left, each with its reason (69 before #1109 merged, below):
 
   | reason | pairs | functions |
   |---|---|---|
-  | record class: the page beside its living record | 47 | 44 |
+  | record class: the page beside its living record | 46 | 43 |
   | watches the living page by design (FUBO's live sentence; NFLX's and PARR's tripwires) | 3 | 3 |
   | scan false positive: a scratch checkout or tree (`test_gate_on_workers` ×7, `test_impact_run` ×1) | 8 | 8 |
   | scan false positive: a path handed to a classifier (`test_impact_run`, `test_review_process`) | 2 | 2 |
@@ -117,6 +117,7 @@ plan.
   | the cut, `4889ddba` | 450 / 385 / 98 | 467 / 400 / 99 | 70 pairs in 25 files |
   | slices 1–4 merged, `6110795d` | 224 / 200 / 44 | 189 / 168 / 29 | 24 in 6 |
   | this slice, `2b442c8a` | 111 / 101 / 35 | 69 / 63 / 16 | 7 in 1 (`test_gate_on_workers`, scratch) |
+  | this slice with #1109 merged (`b2102256`) | | 68 / 62 / 16 | 7 in 1 |
 
   At the cut this scanner reads 17 more, net: the mirrors, the driver templates and the support
   helpers it now sees, less the false positives it now drops. After the moves it reads fewer. Every pair it finds at this slice is in
@@ -163,7 +164,7 @@ plan.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 1. **A residue name's retirement still reaches its record-class and living-by-design tests.** By
-   the scan, retiring SMPL reaches 18 named functions in 5 files, GOOGL 16 in 4 and IT 8 in 3;
+   the scan, retiring SMPL reaches 17 named functions in 5 files, GOOGL 16 in 4 and IT 8 in 3;
    BRBR 2, and EPAM, FUBO, NCNO, NFLX, PARR and WERN 1 each; AMZN none. Only AMZN's retirement is
    replayed here, so these are the scan's counts, a lower bound. Under A's option (1) each
    stays, named in `RESIDUE`. Falsifier: a residue test that reads only a page,
@@ -184,10 +185,11 @@ plan.
    iterates the cut's pages in a list comprehension; the checker reads only `for` statements round
    an assert, so it lists no POPULATION row. Falsifier: a moved pin's population changes inside a
    comprehension and no record names it.
-5. **#1109 and this slice both describe `test_dossier`.** `RESIDUE` names 10 `test_dossier` pairs,
-   several of which #1109 (the dormant pending tests, frozen records) may move. Whichever merges
-   second reconciles `RESIDUE`: the ratchet fails on each pair it names that the scan no longer
-   finds. Falsifier: the second to merge goes green with a stale entry.
+5. **#1109 and this slice both describe `test_dossier`.** #1109 (the dormant pending tests, on
+   frozen records) merged first, as `b2102256`. Merged here, the ratchet failed on the one named
+   pair it moved, `test_one_8k_explaining_two_gap_downs_renders_once_e2e` / SMPL, and found no new
+   one. The entry is deleted, and `RESIDUE` now names 9 `test_dossier` pairs. A later PR that
+   moves one reconciles the same way. Falsifier: a PR merges green with a stale entry.
 6. **The checker compares a skip by its callee and its guard, never its arguments**, so a reason
    reworded is not a new skip. The cost (code review): `pytest.importorskip("json")` changed to
    a module that is missing always skips and reads unchanged. Falsifier: a moved test gains a

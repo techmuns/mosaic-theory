@@ -173,7 +173,7 @@ CLASSIFIER = "scan false positive: a path string handed to a path classifier, ne
 HISTORY = "scan false positive: pages read at a past commit; at head a missing file is skipped"
 FIXTURE = "scan false positive: the helper reads the cut here, or refuses before any read"
 
-#: Every (test, page) pair the scan may find, and why. Measured on slice 5's tree (W27), 69 pairs.
+#: Every (test, page) pair the scan may find, and why. Measured on slice 5's tree (W27), 68 pairs.
 RESIDUE: dict[str, dict[str, str]] = {
     # the helper reads through `ces.ROOT`, which `_pages_at_the_cut` points at the cut, or is
     # handed its page, or refuses before it reads one
@@ -201,8 +201,6 @@ RESIDUE: dict[str, dict[str, str]] = {
     "tests/test_dossier.py::test_caveats_collapse_dejargon_and_acronyms_committed_brbr_e2e":
         {"BRBR": RECORD},
     "tests/test_dossier.py::test_dossier_page_logs_anchor_and_scenario_panels": {"IT": RECORD},
-    "tests/test_dossier.py::test_one_8k_explaining_two_gap_downs_renders_once_e2e":
-        {"SMPL": RECORD},
     "tests/test_dossier.py::test_opener_narrative_slot_rationale_once_and_conditional_warning_node":
         {"IT": RECORD},
     "tests/test_dossier.py::test_what_broke_restructure_and_survival_columns_e2e_node":
