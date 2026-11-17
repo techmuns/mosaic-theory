@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-17.a-paid-build-reads-every-call",
+  "follows": [
+    "2026-11-17.a-financials-filing-date-counts",
+    "2026-11-17.synthesis-prompt-fix-4b"
+  ],
+  "names": "a paid build reads every earnings call on file or spends nothing: a call that does not read refuses the build before its first model call, where it was left out and flagged after the spend (VRRM run 6043fb83 read 1 of 2 calls for $5.15); each LibreOffice conversion runs under a user profile of its own, removed after, so two conversions at once no longer lose one, and one still running at 120 s is killed with every process it started and is a call that did not read. No text moves: a call that reads gives the same text (VRRM's two calls, sha256 identical either way); the $0 build keeps the flag"
+}

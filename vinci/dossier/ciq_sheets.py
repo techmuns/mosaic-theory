@@ -5702,6 +5702,16 @@ _TRANSCRIPTS_CUT = "transcript cut at the ceiling"
 _SLICE_CALL = re.compile(r"^--- (.+) ---$", re.MULTILINE)
 
 
+def unread_calls(bundle: CiqBundle, transcript_slice: str | None) -> list[str]:
+    """Every call ON FILE missing from the slice the caller computed, by file name in file order:
+    a call whose read failed, or that read to no prose. A call cut at the ceiling is in the slice,
+    so it is not missing. THE ONE READER of "missing": the QA flag below names these, and the paid
+    build refuses on them before it spends (`assemble._refuse_unread_calls`)."""
+    present = set(_SLICE_CALL.findall(transcript_slice or ""))
+    return [wb.path.name for wb in bundle.all_workbooks("transcript")
+            if wb.path.name not in present]
+
+
 def unparsed_transcript_flag(bundle: CiqBundle, transcript_slice: str | None) -> str | None:
     """Fail-loud on the transcript slice the caller already computed (zero re-parse): a QA flag
     naming every call ON FILE that is MISSING from it, and every call it CUT at the ceiling. None
@@ -5722,8 +5732,7 @@ def unparsed_transcript_flag(bundle: CiqBundle, transcript_slice: str | None) ->
         return (f"{_TRANSCRIPTS_UNPARSED} (LibreOffice missing?) — synthesis received no "
                 f"earnings-call text for {bundle.ticker}")
     heads = list(_SLICE_CALL.finditer(transcript_slice))
-    present = {h.group(1) for h in heads}
-    missing = [wb.path.name for wb in wbs if wb.path.name not in present]
+    missing = unread_calls(bundle, transcript_slice)
     cut = [h.group(1) for k, h in enumerate(heads)
            if _CUT_MARKER in transcript_slice[h.end():(heads[k + 1].start() if k + 1 < len(heads)
                                                        else len(transcript_slice))]]
