@@ -84,7 +84,8 @@ def test_a_fleet_refresh_updates_the_frontend_mirror(tmp_path: Path) -> None:
         assert sentinel not in mirror.read_text(), (
             f"{t}: a fleet refresh left the web mirror stale — mirror_to_frontend is not wired "
             f"into the pass")
-        assert mirror.read_text() == (tmp_path / f"data/dossiers/{t}/dossier.md").read_text()
+        assert mirror.read_text() == (tmp_path / f"data/dossiers/{t}/dossier.md").read_text(), (
+            f"{t}: the web mirror is not its page's markdown after a fleet refresh")
 
 
 def test_the_mirror_is_called_from_the_orchestrator_not_merely_defined() -> None:

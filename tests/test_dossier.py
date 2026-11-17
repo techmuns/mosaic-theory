@@ -4256,20 +4256,33 @@ def test_stock_performance_committed_cnxc_artifact_invariants() -> None:
     stock_performance: both series start at exactly 100 (the rebase anchor), dates are strictly
     ascending, the name symbol IS the ticker, IWM is the benchmark, and name_return reconciles with
     the last plotted point. Phrasing/value-INDEPENDENT — the exact returns live on the frozen unit
-    fixture above, never on the re-drawn artifact (CLAUDE.md TEST-LAYER rule)."""
-    import pathlib
-    p = pathlib.Path("tests/fixtures/frozen_pages/cut-4889ddba/CNXC/dossier.json")
-    d = ds.Dossier.model_validate_json(p.read_text())
-    sp = d.mechanical.stock_performance
-    assert sp is not None and len(sp.points) >= 2
-    assert sp.name_symbol == d.ticker and sp.benchmark_symbol == "IWM"
-    assert sp.points[0].name == 100.0  # the rebase anchor — always 100 at the window start
-    if sp.points[0].benchmark is not None:
-        assert sp.points[0].benchmark == 100.0
-    dates = [pt.date for pt in sp.points]
-    assert dates == sorted(dates) and len(set(dates)) == len(dates)  # strictly ascending, unique
-    # reconciles with the last plotted point (which is rounded to 2 dp → allow that rounding slack)
-    assert sp.name_return == pytest.approx(sp.points[-1].name / 100.0 - 1.0, abs=1e-3)
+    fixture above, never on the re-drawn artifact (CLAUDE.md TEST-LAYER rule).
+
+    A LIVING INVARIANT, SO IT WALKS THE LIVING PAGES (W27): every covered page with a
+    stock_performance, through `covered_where`, which fails loud on an empty population. The
+    first cut of slice 4 moved it to CNXC's frozen copy, where it could not fail (A's review of
+    #1108). Every one of the 26 covered pages met it before the move. The benchmark is a value
+    (IWM for CNXC, SPY or MDY for 17 of the others), so it is pinned on CNXC's page as frozen at
+    the cut."""
+    from tests.frozen_support import covered_where, frozen_doc
+
+    def has(_t: str, doc: dict[str, Any]) -> bool:
+        return bool(doc["mechanical"].get("stock_performance"))
+
+    for t, page in covered_where(has, "carries a stock_performance"):
+        d = ds.Dossier.model_validate(page)
+        sp = d.mechanical.stock_performance
+        assert sp is not None and len(sp.points) >= 2, t
+        assert sp.name_symbol == d.ticker, t
+        assert sp.points[0].name == 100.0, t  # the rebase anchor — always 100 at the window start
+        if sp.points[0].benchmark is not None:
+            assert sp.points[0].benchmark == 100.0, t
+        dates = [pt.date for pt in sp.points]
+        assert dates == sorted(dates) and len(set(dates)) == len(dates), t  # ascending, unique
+        # reconciles with the last plotted point (rounded to 2 dp → allow that rounding slack)
+        assert sp.name_return == pytest.approx(sp.points[-1].name / 100.0 - 1.0, abs=1e-3), t
+    cut = ds.Dossier.model_validate(frozen_doc("CNXC")).mechanical.stock_performance
+    assert cut is not None and cut.benchmark_symbol == "IWM"
 
 
 def test_own_history_chart_low_confidence_threshold_matches_string() -> None:
@@ -8553,15 +8566,24 @@ def test_md_brief_crux_block_and_case_dedup() -> None:
     """(buy-side cover, md twin) The committed IT markdown carries the crux block inside
     'At a glance' (the question; pre-teaser-removal artifacts may still carry ≤2 unknowns until
     the next re-render — this test asserts only the shape-stable invariants) and 'The case'
-    carries neither the question nor an unknowns list — content parity with the web cover."""
-    p = Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.md")   # frozen at the cut
-    md = p.read_text()
-    j = json.loads(Path("tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json").read_text())
-    q = j["synthesis"]["decisive_question"]["question"]
-    glance = md.split("## At a glance")[1].split("\n## ")[0]
-    assert "The crux — what decides this" in glance and q in glance
-    case = md.split("## The case")[1].split("\n## ")[0]
-    assert q not in case and "_Key unknowns:_" not in case
+    carries neither the question nor an unknowns list — content parity with the web cover.
+
+    A LIVING INVARIANT, SO IT WALKS THE LIVING PAGES (W27): every covered page whose synthesis
+    asks a decisive question, through `covered_where`, which fails loud on an empty population.
+    The first cut of slice 4 moved it to IT's frozen copy, where it could not fail (A's review of
+    #1108). Every one of the 26 covered pages met it before the move."""
+    from tests.frozen_support import ROOT, covered_where
+
+    def has(_t: str, doc: dict[str, Any]) -> bool:
+        return bool(((doc.get("synthesis") or {}).get("decisive_question") or {}).get("question"))
+
+    for t, j in covered_where(has, "asks a decisive question"):
+        md = (ROOT / "data" / "dossiers" / t / "dossier.md").read_text()
+        q = j["synthesis"]["decisive_question"]["question"]
+        glance = md.split("## At a glance")[1].split("\n## ")[0]
+        assert "The crux — what decides this" in glance and q in glance, t
+        case = md.split("## The case")[1].split("\n## ")[0]
+        assert q not in case and "_Key unknowns:_" not in case, t
 
 
 def test_md_crux_ku_teaser_removed_render_level() -> None:
