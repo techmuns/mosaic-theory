@@ -91,8 +91,17 @@ row 41 (a)). This slice moves that cost off the valuation group, which had the m
   `tmp_path` writer (`test_lease_basis`) and the fleet split's subscript keys
   (`test_ev_gap_routing`), whose named routes now read the cut. Both are scan false positives, for
   slice 5.
-- **The suite.** {SUITE}
-- **The impact check.** {IMPACT}
+- **The suite.** The full offline suite (`-m "not network" -n 8`, the CIQ folder linked) at
+  `3b4e7c08`, against the same run of main `8a71a383` on the same machine: **74 → 80 failing**.
+  Every one of main's 74 is a local-data failure CI does not run. Of the differences:
+  - named noise: `test_records_ledger` (this record's PR number, filled once the PR opened) and
+    `test_transcript_run_guard`, 4 new and 4 gone (a different subset of its cases on every run);
+  - `test_claude_hooks` ×3 and `test_fix_log` ×2, files this slice does not touch. Run alone they
+    pass, 104 of 104, on this tree and on main. The run took 55 minutes, against main's 15,
+    while another session's suite and this slice's review ran beside it.
+- **The impact check.** `python -m vinci.impact run --base origin/main --head HEAD` at
+  `3b4e7c08`: 0 of 761 tests fail on base code and pass on head code (502 pass at both, 259
+  skipped), and `verify` reads VALID. The PR body carries the report.
 
 **BOUNDARY.**
 - **Counts:** at this slice's commit, against main at `8a71a383` (slice 1 merged as #1098).
@@ -108,9 +117,11 @@ the proof, the ratchet and STATE row 41.
    empty population.
 2. **CIQ-paired refresh pins skip when neither the folder nor `ciq-archive/` holds their page's
    exports.** Falsifier: one skips while either holds them.
-3. **The checker cannot see a skip inside a helper.** `_the_bands_export` and `_the_pages_exports`
-   skip from inside a function the test calls, so `asserts_unchanged.py`'s "0 disabled" does not
-   cover them. Slice 5 teaches it the repo's skip helpers.
+3. **The checker could not see a skip inside a helper.** `_the_bands_export` and
+   `_the_pages_exports` skip from inside a function the test calls, which `asserts_unchanged.py`
+   did not count. Slice 5's checker counts them, and reads this slice as 1 disabled:
+   `test_ev_bridge::test_the_refresh_lands_the_layer_only_from_the_pages_own_exports`, whose
+   export gate skips when no folder holds the frozen page's exports, by design (cost 2).
 4. **`test_ev_bridge`'s `if not step(before): pytest.skip(...)` now guards only a transform
    regression**, since the gate above it guarantees the page's exports. It hid one on main in the
    same form. Left for a follow-up: as an assertion it would change what the test asserts.
