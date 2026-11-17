@@ -20,7 +20,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
-from tests.frozen_support import frozen_doc
+from tests.frozen_support import frozen_doc, living_doc
 from vinci.dossier.midcycle import MULTIPLE_BASIS
 from vinci.dossier.propose import (
     AXIS_LEG_FIELD,
@@ -124,10 +124,11 @@ def test_propose_counts_the_cells_the_r3_recipe_reads(
 
 # --- (+) create, through the CLI -----------------------------------------------------------------
 
-def _stage(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
-    """GOOGL's committed page in a scratch tree with an EMPTY `scenarios/` — so create runs into
-    the scratch directory and never near the committed record."""
-    doc = _r3_page()
+def _stage(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+           doc: dict[str, Any] | None = None) -> dict[str, Any]:
+    """GOOGL's committed page (as frozen at the cut, or ``doc``) in a scratch tree with an EMPTY
+    `scenarios/` — so create runs into the scratch directory and never near the committed record."""
+    doc = _r3_page() if doc is None else doc
     (tmp_path / "data" / "dossiers" / "GOOGL").mkdir(parents=True)
     (tmp_path / "data" / "dossiers" / "GOOGL" / "dossier.json").write_text(json.dumps(doc))
     (tmp_path / "scenarios").mkdir()
@@ -172,7 +173,9 @@ def test_propose_then_create_writes_the_r3_record_with_no_hand_edit(
     #658), so the fill names the base leg's own year, a TEST value labelled as one."""
     from vinci.cli import _cmd_scenario_create, _cmd_scenario_propose
 
-    _stage(tmp_path, monkeypatch)
+    # the LIVING page beside the committed record: a frozen page beside a living record would mix
+    # two vintages, so this pair stays living and named (the record class, W27 slice 5's residue)
+    _stage(tmp_path, monkeypatch, living_doc("GOOGL"))
     committed = json.loads((ROOT / "scenarios" / "GOOGL.json").read_text())
     assert committed["recipe_id"] == sc.RECIPE_R3
     out = tmp_path / "tpl.json"
