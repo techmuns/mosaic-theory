@@ -1,13 +1,13 @@
 ---
 id:
-status: open
+status: recorded
 date: 2026-11-17
 prs: [1094, 1095]
 supersedes:
 superseded-by:
 ---
 
-# Fix 4b, the last synthesis-prompt fix: rule 7 hands the model no rebuttal to copy, rule 9 says what a path word claims, rule 13's example is neutral, and the drawdown anchor is asked only about a cause it names. Built and registered no-worsening on the panel ($0 so far); the draw waits for the registration's row to reach main
+# Fix 4b, the last synthesis-prompt fix, measured on the panel, no-worsening only ($30.74 of $35): no class metric worsens (M-LABEL nearest, 48 → 57 at p_upper 0.060); bear and bull points closed by a rebuttal fall from 23 of 398 in 13 of 30 draws to 0 of 399 (descriptive, pre-declared); the score's decision is "ships once the moves listed are explained in writing": LLY's lean (its BUY proposal goes to none) and SMPL's, explained here as within noise; the new no-cause ASK leads 2 of 5 MCK draws to call the move a "gradual bleed"
 
 **WHAT.** Four prompt edits in `vinci/dossier/synthesis.py` (board item W11; issue #1004's split
 table), each checked against main `4889ddba` before it was made (VERIFY-AT-BUILD):
@@ -104,5 +104,183 @@ counts: the 14 committed pages with a drawdown anchor at main `4889ddba`, read f
 `data/dossiers/*/dossier.json` (`drawdown_cause.anchor.at_anchor.gaps`). No page is rebuilt for this fix: each carries it at its next
 paid build.
 
-**WHAT IT COSTS / WHAT IS ACCEPTED.** $0 so far. The panel draw is expected at about $26–30 of the
-$35 approval. No target, so the run can show that nothing worsened, never that the fix helped.
+---
+
+## RESULT (drawn once, 2026-11-17)
+
+**THE GO-AHEAD.** The registration's row reached main in #1095 (`47da911d`, 07:50:26Z). Operator,
+verbatim: **"Yes, start the draw"** (07:50Z). Coordinator B announced the draw on #1004
+(issuecomment-6942084762). Pr-feedback round 1 ran first (Codex at its usage limit;
+`/code-review high` in its place): two prose fixes and a dismissal. `compare --base 38c170fa --cand
+6250ccc2` refused with all six pages IDENTICAL, so the bytes drawn are the bytes that ship.
+
+**THE RUN** (`run-compare --paid`, drawn once).
+- **Where from:** a clean checkout of main `47da911d`. Main differed from the registered scorer ref
+  `4889ddba` by the registration row alone, so the scorer fingerprint is the registered `f4d14ee0…`.
+  `vinci` imported from that checkout (printed before the run). Its `.env` was a symlink made for
+  the run and removed after it.
+- **The draws:** 60 of 60 returned. All 60 stopped on `tool_use`, `claude-opus-4-8` served every one,
+  and all 60 rows state `anthropic` 2.6.0, so both arms ran on one SDK. No draw failed.
+- **When:** 07:52:14Z to 09:25:06Z; the draws record 5,539.1 s of their own.
+- **The cost: $30.7382 of $35,** from the run's own ledger. BASE $15.2301, CAND $15.5081. Cache writes
+  2,214,356 tokens, cache reads 8,857,424, uncached input 1,420, output 498,505.
+
+  | page | BASE | CAND |
+  |---|---|---|
+  | BURL | $2.4353 | $2.5862 |
+  | CNXC | $2.1689 | $2.2727 |
+  | LLY | $3.2059 | $3.1755 |
+  | MCK | $2.4731 | $2.5030 |
+  | ROST | $2.5266 | $2.4730 |
+  | SMPL | $2.4203 | $2.4976 |
+
+**THE SCORE, at $0** (`python -m vinci.evals score` from the same checkout, one score-log line at
+2026-11-17T14:55:52+0530, scorer `f4d14ee0…`).
+
+| metric | BASE → CAND (units, 30 draws each) | p_lower | p_upper | held out (BURL, CNXC, ROST) |
+|---|---|---|---|---|
+| M-ABSENT | 56 → 62 | 0.751 | 0.315 | 32 → 38 |
+| M-LABEL | 48 → 57 | 0.975 | **0.060** | 21 → 23 |
+| M-PATH | 3 → 6 | 0.891 | 0.276 | 2 → 1 |
+| M-SIGN | 0 → 0 | 1 | 1 | 0 → 0 |
+| M-GAP (barred, reported) | 8 → 9 | 0.704 | 0.500 | 2 → 2 |
+| M-ECHO (reported) | 52 → 46 | 0.269 | 0.806 | 26 → 18 |
+
+- **No class metric worsens at p_upper ≤ 0.05.** The nearest is M-LABEL at 0.060, close to the line,
+  and it is not a worsening by the registered rule. Its rise is read below.
+- **The decision, verbatim:** "ships once the moves listed are explained in writing" (`ships: False`).
+  It lists two moves:
+  - "LLY: the lean moved ({'strongly-bullish': 5} → {'strongly-bullish': 4, 'mixed': 1}; proposal
+    BUY → None)";
+  - "SMPL: the lean moved ({'mixed': 4, 'strongly-bearish': 1} → {'strongly-bearish': 4, 'mixed': 1};
+    proposal None → None)".
+- **The panel's committed-lean draws: 10 → 10.** The score lists no panel shift.
+
+**PER PAGE** (a $0 script on the registered scorer's own functions, `panel_inputs`, `arm_layer`,
+`draw_units` and `score_units`, writing no score log; it reproduces all six totals and the
+committed-lean count exactly).
+
+| page | M-ABSENT | M-LABEL | M-PATH | M-ECHO | M-GAP | leans BASE → CAND | committed |
+|---|---|---|---|---|---|---|---|
+| BURL (held out) | 12 → 17 | 11 → 11 | 0 → 0 | 7 → 5 | 0 → 0 | bullish 2, mixed 3 → mixed 5 | 2 → 0 |
+| CNXC (held out) | 13 → 15 | 5 → 7 | 0 → 1 | 13 → 10 | 1 → 1 | mixed 5 → mixed 4, bearish 1 | 0 → 1 |
+| LLY | 3 → 2 | 6 → 8 | 0 → 2 | 11 → 15 | 2 → 2 | bullish 5 → bullish 4, mixed 1 | 5 → 4 |
+| MCK | 20 → 20 | 12 → 16 | 1 → 1 | 4 → 7 | 3 → 2 | bullish 2, mixed 3 → mixed 5 | 2 → 0 |
+| ROST (held out) | 7 → 6 | 5 → 5 | 2 → 0 | 6 → 3 | 1 → 1 | mixed 5 → mixed 4, bullish 1 | 0 → 1 |
+| SMPL | 1 → 2 | 9 → 10 | 0 → 2 | 11 → 6 | 1 → 3 | mixed 4, bearish 1 → bearish 4, mixed 1 | 1 → 4 |
+
+**WHAT THE FIX DID, read as the note pre-declared (descriptive; no decision reads these).**
+- **Item 1, the rebuttal pattern.** Bull and bear points matching #920's M3 regex
+  (`outweigh\w*|genuine…but`):
+
+  | | draws with one | points with one | points |
+  |---|---|---|---|
+  | BASE | 13 of 30 (BURL 3, LLY 5, MCK 4, ROST 1) | 23 | 398 |
+  | CAND | 0 of 30 | 0 | 399 |
+
+  Fisher's exact on the draws, two-sided: p 4.6 × 10⁻⁵. #920's V3 (the example alone) moved this
+  3/5 → 2/5; removing rule 7's template takes it to zero. The phrase rule 7 now prescribes ("what
+  would have to be true …") appears 4 times in CAND (CNXC 3, ROST 1) and never in BASE.
+- **Item 2, the ASK, on MCK** (the one panel page whose ASK moves). "Cause named" and "played out"
+  appear in 2 BASE draws and in no CAND draw; "no cause" appears in 1 CAND draw. **One side effect,
+  attributable:** 2 of the 5 CAND draws restate the new ASK ("no discrete gap-down, so no drawdown
+  cause is named") and then fill it with "a gradual bleed" ("bleed/run-up", "bleed/rise"), in a key
+  unknown. That is the label fix 3a removed, on a page whose price is near its 52-week high. It is
+  MCK's whole M-LABEL `bleed` rise (0 → 2). "Has not reversed"-type wording: 1 → 2 draws.
+- **Item 3, path words.** M-PATH 3 → 6 (p_upper 0.276). Read hit by hit:
+  - BASE's 3: MCK's "~2% every year" margin; ROST's "second consecutive quarter" of comps, twice
+    (a quarterly claim the annual series cannot judge).
+  - CAND's 6: LLY "compounded without interruption … rising every reported year" and an
+    "uninterrupted" `evidence_balance` (3 hits, one draw), over EBITDA that dips FY2018 → FY2019;
+    MCK "rising every year from $3,858M (FY18)" over a dip FY2019 → FY2020; SMPL's bear point "rose
+    every year from FY15 … then FELL in FY26" over a dip FY2016 → FY2017; SMPL's twin "wrote down
+    acquired assets every year" (not the revenue series); CNXC's "second consecutive quarter"
+    (quarterly).
+  - **So rule 9's clause did not stop path overreach on this panel.** Real annual overreaches are
+    BASE 1 (MCK) and CAND 3 (LLY, MCK, SMPL). The words the clause names are still written.
+    Inside noise either way.
+- **Item 4, the example.** The old example's words cannot echo from CAND: its request no longer
+  carries them ("and x net leverage leaving" was #953's LLY echo). The new example's own words do
+  echo, on LLY: "fcf was m against m" and
+  "interest coverage is x and" are CAND-only M-ECHO phrases. M-ECHO overall fell 52 → 46.
+
+**M-LABEL's rise, 48 → 57 (p_upper 0.060), read by family** (unit-family pairs over 30 draws per
+arm): no-adjusted-forward 31 → 33, trailing-only 16 → 17, bleed 10 → 11, segment-undisclosed 5 → 6,
+runway-not-derivable 1 → 1.
+- The rise is spread across families and pages: MCK 12 → 16, CNXC 5 → 7, LLY 6 → 8, SMPL 9 → 10,
+  BURL and ROST level.
+- **Fix 4b reaches one of them:** MCK's bleed 0 → 2, through the new ASK, as above. MCK's
+  trailing-only 1 → 4 and the gap-statement family's 31 → 33 are not in any span fix 4b moves.
+  This record does not explain them; at 5 draws an arm they read as noise.
+
+**THE TWO LEAN MOVES THE RULE LISTS, EXPLAINED.**
+- **LLY: bullish 5 → bullish 4, mixed 1; the proposal goes from BUY to none.**
+  - LLY's request differs only in SYSTEM and the tool schema (fix 4b's text); its facts are
+    byte-identical.
+  - **Within noise.** One dissent in ten draws, landing in CAND, has probability 0.5. LLY has read
+    3/2, 4/1 and 5/0 bullish/mixed across #930's, #931's and #953's runs, the last on byte-identical
+    requests. The proposal flips because production proposes only on five of five (row 53
+    item 5): the unanimity gate, the operator's to rule on.
+  - **A direction the fix could cause, not shown:** LLY's BASE draws closed bear points with a
+    bullish rebuttal in 5 of 5 draws (12 points), and its CAND draws in none. A bear point left
+    standing could read a draw toward mixed. One draw cannot show it.
+- **SMPL: mixed 4, bearish 1 → bearish 4, mixed 1; no proposal in either arm.**
+  - SMPL's request also differs only in SYSTEM and the tool schema; its anchor span is byte-equal.
+    It had no rebuttal-closed point in either arm, so item 1 cannot act through that route here.
+  - **Within its own range.** Given 5 committed of 10, four or more landing in CAND has probability
+    0.103. SMPL read bearish 3 / mixed 2 and 4 / 1 in #953's two arms.
+- **Exploratory, chosen after seeing the result (not a test):** the three pages where BASE wrote
+  rebuttals most (BURL, LLY, MCK: 12 of the 13 draws) moved committed-bullish 9 → 4. The other
+  three (CNXC, ROST, SMPL) read 1 → 6 committed. The panel total is level at 10 → 10. Rule 7's template may have been carrying
+  bullish weight inside bear points. This run cannot separate that from noise, and nothing here is
+  registered to.
+
+**W34, READ AGAIN ON THESE DRAWS.**
+- **The committed-lean count #953 left unexplained (8 → 15).** On this run it is 10 → 10, and the
+  score lists no panel shift.
+  - This is not a re-measurement of #953. #953 drew fresh builds of its own two commits
+    (`--from-impact`). This run replays the frozen panel pages at main and at the fix. Its BASE is
+    main, #953 included: 10 committed of 30.
+  - What it adds to "watch leans": on the next panel run, the count did not move past the line.
+    The same caveat as #953's holds: each page's five BASE draws ran before its five CAND draws, so
+    arm and time order coincide.
+- **BURL's candidate arm (1 usable of 5 in #953):** all 5 of 5 returned here, and all 60 draws in the
+  run did. #953's four failures ("credential validation failed") were transient, not tied to the
+  request. BURL reads bullish 2 / mixed 3 → mixed 5 here; in #953 its BASE read mixed 5.
+
+**FOUND, NOT FIXED.**
+- **The no-cause ASK's wording invites "bleed".** "Shows no discrete gap-down" is restated and filled
+  with "gradual bleed" in 2 of 5 MCK CAND draws. A rewording (one that does not name the absence of
+  a gap-down as a shape) is a prompt change with its own panel check. It is the operator's call
+  whether this ships first.
+- **Path overreach is not reduced by rule 9's clause** on this panel (above).
+- **Review round 0's two skips** stand (the `_OUTWEIGHED` guard; M-ECHO on the prescribed phrase,
+  which appeared 4 times).
+
+**THE `drawn` ROW.** The claim appended one `drawn` row (claimed 2026-11-17T07:52:45Z, approval
+`fb38e46c…`). It is appended to `docs/evals/registrations.jsonl`, byte for byte, after the
+`registered` row #1095 merged.
+
+**BOUNDARY.**
+- **Pages:** the frozen panel v2 (freeze `bcda7ce3`).
+- **Draws:** 5 per page per arm, 60 in all, drawn once under registration `e309bd25…`, claimed
+  2026-11-17T07:52:45Z, run from main `47da911d`.
+- **Code:** base `4889ddba`, cand `38c170fa`; scorer fingerprint `f4d14ee0…`.
+- **Units:** units with a hit, summed over a page-arm's draws. A committed lean is a strongly-bullish
+  or strongly-bearish draw.
+- **M3, the prescribed phrase and the MCK words:** case-insensitive regex over each draw's decoded
+  bull and bear claims (M3) or whole decoded output (the others).
+- **p-values:** the metrics' from the registered stratified exact test. The lean probabilities are
+  hypergeometric per page, as stated beside each. Fisher's two-sided for M3.
+- **Kept outside the repo:** the requests, draws, score log, ledger and breakdown.
+
+**WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **$30.7382 of the $35 approval;** $4.26 unspent. The cap was not raised.
+- **Accepted, with its falsifier: LLY's and SMPL's lean moves are noise.** Falsified if the next
+  panel run on main with fix 4b reads LLY below 4 bullish of 5 again, or SMPL at 4+ bearish of 5
+  again, on requests this change moved.
+- **Accepted: MCK's "bleed" restatement ships with the fix unless the operator rules otherwise.** It
+  is a key-unknown wording on one page, inside the registered rule (M-LABEL p_upper 0.060).
+  Falsified as minor if a rebuilt anchored page whose at-anchor part names no cause carries
+  "bleed" in a bull or bear point.
+
