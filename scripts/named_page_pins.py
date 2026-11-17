@@ -37,10 +37,15 @@ WHAT DOES NOT COUNT (each was a false positive of the first scan, slices 1–4 o
 A read inside a helper or at module level is charged to each test function that calls the helper
 or names the module-level binding, and takes that test's kind. A read the AST cannot see is not
 counted, so every count is a LOWER BOUND: `tests/test_named_page_pins.py`'s ratchet holds it, and
-a retirement replayed with the whole suite is the proof. Not seen today (code review of slice 5):
-a ticker built at run time; a page reached through a module outside `tests/`
-(`frontend/build.py`); a test method in a class, or an `async` test; a support helper that reads a
-fixed ticker rather than a parameter; and a ticker passed to a helper by keyword.
+a retirement replayed with the whole suite is the proof. Not seen today (the code review of slice
+5 and A's review of #1111; `tests/test_named_page_pins.BLIND` lists them with an example each): a
+ticker built at run time, or held in a module constant; a loop or parametrize over a module
+constant; a fixture that reads a page; `+` or `.format`, and JavaScript concatenation; a test
+method in a class, or an `async` test; a support helper that reads a fixed ticker rather than a
+parameter; a ticker passed to a helper by keyword; and a page reached through a module outside
+`tests/` (`frontend/build.py`). Seen since A's review: a parameter that DEFAULTS to the living
+folder (`def _page(t, root=DOSS)`), a ticker bound in the function itself, tuple assignment, and
+multi-argument `Path`, `joinpath` and `os.path.join`.
 
 Usage: python scripts/named_page_pins.py [REF] [--names T,U] [--list] [--worktree]
 REF defaults to HEAD. Read only: it reads git objects at REF (or the working tree with
@@ -116,6 +121,11 @@ def _assigned(scope: ast.AST) -> tuple[tuple[str, ast.AST], ...]:
     for n in ast.walk(scope):
         if isinstance(n, ast.Assign):
             out += [(t.id, n.value) for t in n.targets if isinstance(t, ast.Name)]
+            # `DOSS, OTHER = Path("data/dossiers"), …`: each name takes its own element
+            out += [(e.id, v) for t in n.targets if isinstance(t, ast.Tuple | ast.List)
+                    and isinstance(n.value, ast.Tuple | ast.List)
+                    and len(t.elts) == len(n.value.elts)
+                    for e, v in zip(t.elts, n.value.elts, strict=True) if isinstance(e, ast.Name)]
         elif (isinstance(n, ast.AnnAssign) and n.value is not None
               and isinstance(n.target, ast.Name)) or isinstance(n, ast.NamedExpr):
             assert n.value is not None and isinstance(n.target, ast.Name)
@@ -132,6 +142,35 @@ def _docstrings(tree: ast.AST) -> set[int]:
                 and _const_str(n.body[0].value) is not None:
             out.add(id(n.body[0].value))
     return out
+
+
+def _param_defaults(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[tuple[int | None, str,
+                                                                         ast.AST]]:
+    """(positional index or None for keyword-only, name, default) of every defaulted parameter."""
+    pos = [*fn.args.posonlyargs, *fn.args.args]
+    out: list[tuple[int | None, str, ast.AST]] = [
+        (len(pos) - len(fn.args.defaults) + i, a.arg, d) for i, (a, d) in enumerate(
+            zip(pos[len(pos) - len(fn.args.defaults):], fn.args.defaults, strict=True))]
+    out += [(None, a.arg, d) for a, d in zip(fn.args.kwonlyargs, fn.args.kw_defaults, strict=True)
+            if d is not None]
+    return out
+
+
+def _join(node: ast.AST) -> tuple[ast.AST | None, list[ast.expr]] | None:
+    """(the base, the parts) of a path join that is not `/`: `Path(a, b, …)` (base None),
+    `x.joinpath(a, …)` (base x), `os.path.join(a, b, …)` (base None); else None."""
+    if not isinstance(node, ast.Call) or node.keywords:
+        return None
+    f = node.func
+    if (isinstance(f, ast.Name) and f.id in ("Path", "PurePath")) or (
+            isinstance(f, ast.Attribute) and f.attr in ("Path", "PurePath")):
+        return None, list(node.args)
+    if isinstance(f, ast.Attribute) and f.attr == "joinpath":
+        return f.value, list(node.args)
+    if isinstance(f, ast.Attribute) and f.attr == "join" and isinstance(f.value, ast.Attribute) \
+            and f.value.attr == "path":
+        return None, list(node.args)
+    return None
 
 
 def _tmp_closure(scope: ast.AST, start: set[str]) -> set[str]:
@@ -210,9 +249,18 @@ class Module:
         pairs = _assigned(scope)
         own = {t for t, _ in pairs}
         known = outer - own
+        if isinstance(scope, ast.FunctionDef | ast.AsyncFunctionDef):
+            # a parameter whose DEFAULT is the living folder (`def _page(t, root=DOSS)`) is one;
+            # a call that hands it another root reads that root instead (`default_roots`)
+            known |= {n for _, n, d in _param_defaults(scope)
+                      if n not in own and self.is_doss(d, known, tmp)}
         for _ in range(3):   # a name assigned from another dossiers name
             known |= {t for t, v in pairs if self.is_doss(v, known, tmp)}
         return known
+
+    def default_roots(self, fn: ast.FunctionDef) -> list[tuple[int | None, str]]:
+        """(index, name) of each parameter whose default is the living dossiers folder."""
+        return [(i, n) for i, n, d in _param_defaults(fn) if self.is_doss(d)]
 
     def _tmp_rooted(self, node: ast.AST, tmp: set[str] | None = None) -> bool:
         while isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
@@ -236,6 +284,14 @@ class Module:
         if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", "")) \
                 == "Path" and len(node.args) == 1:
             return self.is_doss(node.args[0], known, tmp)
+        joined = _join(node)
+        if joined is not None and joined[1]:
+            base, parts = joined
+            last = _const_str(parts[-1])
+            text = ast.unparse(node)
+            rooted = base if base is not None else parts[0]
+            return last is not None and last.rstrip("/").endswith("dossiers") and \
+                "frozen_pages" not in text and not self._tmp_rooted(rooted, tmp)
         return False
 
     def known_in(self, scope: ast.AST) -> set[str]:
@@ -268,6 +324,23 @@ class Module:
                             not GITREV.search(_const_str(a) or "") and \
                             isinstance(b, ast.FormattedValue) and isinstance(b.value, ast.Name):
                         vars_.add(b.value.id)
+            joined = _join(n)
+            if joined is not None and "frozen_pages" not in ast.unparse(n):
+                base, parts = joined
+                at = base is not None and self.is_doss(base, known, tmp)
+                for k, part in enumerate(parts):
+                    if at:   # the part after a dossiers folder is the page
+                        c = _const_str(part)
+                        if c in self.names:
+                            lits.add(c)
+                        elif isinstance(part, ast.Name):
+                            vars_.add(part.id)
+                        break
+                    c = _const_str(part)
+                    at = (c is not None and c.rstrip("/").endswith("dossiers")) or \
+                        (k == 0 and self.is_doss(part, known, tmp))
+                    if k == 0 and self._tmp_rooted(part, tmp):
+                        break
             if isinstance(n, ast.BinOp) and isinstance(n.op, ast.Div) and \
                     self.is_doss(n.left, known, tmp):
                 r = _const_str(n.right)
@@ -306,8 +379,10 @@ class Module:
         return pv
 
     def bound(self, scope: ast.AST, var: str) -> set[str]:
-        """Literal tickers `var` is bound to in scope: a for-loop or a parametrize decorator."""
-        out = set()
+        """Literal tickers `var` is bound to in scope: a for-loop, a parametrize decorator, or an
+        assignment in the scope itself (`t = "AMZN"`, `a, t = …, "AMZN"`)."""
+        out = {v for t, val in _assigned(scope)
+               if t == var and (v := _const_str(val)) in self.names}
         for n in ast.walk(scope):
             if isinstance(n, ast.For) and isinstance(n.target, ast.Name) and n.target.id == var \
                     and isinstance(n.iter, ast.List | ast.Tuple | ast.Set):
@@ -469,6 +544,19 @@ def _scan_module(path: str, tree: ast.Module, names: set[str], found: Found,
             and isinstance(f.value, ast.Name) else "")
         return None, ext_calls.get(key, set())
 
+    roots = {n: mod.default_roots(f) for n, f in funcs.items()}
+
+    def elsewhere(n: ast.Call, callee: str, fn: ast.FunctionDef) -> bool:
+        """The call hands ``callee`` a root other than the living folder its parameter defaults to
+        (`_page("NCNO", FROZEN_0818)`), so it reads no living page through that parameter."""
+        known, tmp = mod.known_in(fn), mod.tmp_in(fn)
+        for i, p in roots.get(callee, []):
+            arg = n.args[i] if i is not None and i < len(n.args) else next(
+                (k.value for k in n.keywords if k.arg == p), None)
+            if arg is not None and not mod.is_doss(arg, known, tmp):
+                return True
+        return False
+
     def reads_of(name: str, seen: frozenset[str] = frozenset()) -> set[str]:
         fn, out = funcs[name], set(own[name])
         for n in ast.walk(fn):
@@ -477,6 +565,8 @@ def _scan_module(path: str, tree: ast.Module, names: set[str], found: Found,
             local, idx = call_params(n)
             if local is not None:
                 if local in seen | {name}:
+                    continue
+                if roots.get(local) and elsewhere(n, local, fn):
                     continue
                 out |= reads_of(local, seen | {name}) if not helper[local] else set(own[local])
             for i in idx:

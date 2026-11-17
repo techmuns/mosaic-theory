@@ -17,7 +17,7 @@ import pathlib
 
 import pytest
 
-from tests.frozen_support import covered_where, frozen_doc
+from tests.frozen_support import CUT, covered_where, frozen_doc
 from vinci.dossier.schemas import Dossier
 from vinci.dossier.synthesis import _primary_source_digest
 
@@ -69,7 +69,7 @@ def test_the_smpl_case_that_produced_p2_is_now_marked() -> None:
         return {f"{g.low}–{g.high}" for r in ps.releases if r.filed == on
                 for g in (r.guidance or []) if not g.qualitative}
 
-    lines = _digest("SMPL").splitlines()
+    lines = _digest("SMPL", CUT).splitlines()   # the same page as above, never the living one
     cur = [x for x in lines if f"[CURRENT GUIDE, filed {newest}]" in x]
     sup = [x for x in lines if f"[SUPERSEDED — filed {older}" in x]
     assert cur and sup, lines[:12]

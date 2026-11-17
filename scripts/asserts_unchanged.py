@@ -11,15 +11,23 @@ tree. It classifies each difference:
   included), or a `pytest.fail(...)` call. `ast.dump` carries no line numbers, so a move that
   shifts lines compares equal, and a renamed variable, a changed literal or a dropped assert does
   not.
-- **DISABLED** (fails): the test can now stop running. Either a skip, skipif, xfail or
-  importorskip decorator appears or changes (one only REMOVED runs the test more, and is not
-  DISABLED), or a skip call appears that BASE did not make. A skip call is `pytest.skip` /
-  `pytest.xfail` / `pytest.importorskip`, or a call to a SKIP HELPER: an imported `skip_unless_*`
-  (`tests/ciq_export_support.py`'s), or a function of the module that makes a skip call, itself
-  or through another skip helper, to any depth. The calls are compared by WHAT they call, never
-  counted: one skip traded for another is DISABLED, as a count would net it. Slices 2–4 of W27
-  each added a helper skip that the first cut, counting bare calls only, missed, and A's review
-  of #1106 and #1107 found two more: a skip two calls down, and a swap the count read as none.
+- **DISABLED** (fails): the test can now stop running. It reads, each against BASE (one only
+  REMOVED runs the test more, and is not DISABLED):
+  - a skip, skipif or xfail decorator, and a skip mark on one `pytest.param` case;
+  - a skip call: `pytest.skip` / `pytest.xfail` / `pytest.importorskip`, or a call to a SKIP
+    HELPER, which is a function of the module, or of a `tests` support module it imports (any
+    name, as `retired_checkout`; an unread one is still known by the `skip_unless` prefix), that
+    makes a skip call itself or through another skip helper, to any depth within those modules.
+    Calls are compared by WHAT they call and UNDER WHAT conditions, never counted: one skip traded
+    for another, or a guard dropped, is DISABLED, as a count would net it;
+  - a fixture that skips, taken as a parameter or by `usefixtures`, if the module or an imported
+    support module defines it;
+  - a module-level `pytestmark` skip or `importorskip`, reported on the row `<module>`.
+  NOT read: a skip through a lambda or an alias (`s = pytest.skip`), a fixture defined in a
+  `conftest.py`, a plugin, and a skip call's arguments (a reason reworded is not a new skip, so
+  `importorskip` of a module that is missing reads unchanged). Slices 2–4 of W27 each added a
+  helper skip that the first cut, counting bare calls only, missed; A's reviews of #1106, #1107
+  and #1111 and the code review of slice 5 found the rest.
 - **CONTROL** (fails): an assertion's enclosing conditions differ, or the function gains an early
   exit. A condition is each enclosing `if` (its test), `while` or `try`. An early exit is a new
   `return`, `continue`, `break` or `raise`. A wrapped or bypassable assert reads like an unchanged
@@ -199,6 +207,15 @@ def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[st
             out.marks.append(ast.dump(d))
         elif name == "parametrize":
             out.params.append(ast.dump(d))
+            # a mark on ONE case (`pytest.param("UBER", marks=pytest.mark.skip)`) stops that case
+            out.marks += [f"param {ast.dump(k.value)}" for c in ast.walk(d)
+                          if isinstance(c, ast.Call) and _is_pytest_call(c, ("param",))
+                          for k in c.keywords if k.arg == "marks"]
+        elif name == "usefixtures" and isinstance(d, ast.Call):
+            out.skips += [f"fixture {v}" for a in d.args if (v := _const(a)) in helpers]
+    # a fixture parameter whose fixture skips stops the test before its body runs
+    out.skips += [f"fixture {a.arg}" for a in [*fn.args.posonlyargs, *fn.args.args,
+                                               *fn.args.kwonlyargs] if a.arg in helpers]
     for n in _own_nodes(fn):
         if isinstance(n, ast.Call) and (_is_pytest_call(n, SKIP_CALLS)
                                         or _is_skip_helper_call(n, helpers)):
@@ -261,6 +278,25 @@ def assertions(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
     return facts(fn, frozenset()).asserts
 
 
+def _const(node: ast.AST) -> str | None:
+    return node.value if isinstance(node, ast.Constant) and isinstance(node.value, str) else None
+
+
+def module_skips(source: str) -> list[str]:
+    """The module-level statements that skip the whole file: a `pytestmark` carrying a skip,
+    skipif or xfail mark, and a `pytest.skip(…)` / `pytest.importorskip(…)` at module level."""
+    out: list[str] = []
+    for n in (ast.parse(source).body if source else []):
+        if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "pytestmark"
+                                             for t in n.targets):
+            if any(isinstance(c, ast.Attribute) and c.attr in SKIP_MARKS for c in ast.walk(n)):
+                out.append(ast.dump(n.value))
+        elif isinstance(n, ast.Expr | ast.Assign) and any(
+                _is_pytest_call(c, SKIP_CALLS) for c in ast.walk(n)):
+            out.append(ast.dump(n))
+    return out
+
+
 def compare_sources(before_src: str, after_src: str, path: str,
                     support: dict[str, frozenset[str]] | None = None) -> dict[str, list[str]]:
     """Every difference between BASE's and the working tree's functions in one file, by category
@@ -278,13 +314,16 @@ def compare_sources(before_src: str, after_src: str, path: str,
         row = f"{path}::{k}"
         if b.asserts != a.asserts:
             out["READER" if b.reader_asserts == a.reader_asserts else "CHANGED"].append(row)
-        if set(a.marks) - set(b.marks) or Counter(a.skips) - Counter(b.skips):
+        if Counter(a.marks) - Counter(b.marks) or Counter(a.skips) - Counter(b.skips):
             out["DISABLED"].append(row)
         same = b.reader_asserts == a.reader_asserts
         if (same and b.conditions != a.conditions) or a.exits > b.exits:
             out["CONTROL"].append(row)
         if b.params != a.params or (same and b.loops != a.loops):
             out["POPULATION"].append(row)
+    # a module-level `pytestmark` skip or `importorskip` stops every test in the file
+    if Counter(module_skips(after_src)) - Counter(module_skips(before_src)):
+        out["DISABLED"].append(f"{path}::<module>")
     out["VANISHED"] = [f"{path}::{k}" for k in sorted(before.keys() - after.keys())
                        if k.rsplit(".", 1)[-1].startswith("test") or assertions(before[k])]
     out["new"] = [f"{path}::{k}" for k in sorted(after.keys() - before.keys())]

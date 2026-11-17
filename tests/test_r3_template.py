@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import sys
 from typing import Any
 
 import pytest
@@ -241,8 +242,15 @@ def test_r1_and_r4_templates_keep_their_shape_across_the_corpus() -> None:
     """Every committed page that builds a template and is not R3-tagged keeps main's shape: an
     R1-shaped page writes R1's basis — the validator's constant, `midcycle.MULTIPLE_BASIS` — with
     R1's cells and facts, and an R4 page writes R4's. Measured byte-identical on 25 of the 26
-    pages before this shipped (GOOGL, the R3 page, is the one that moved)."""
+    pages before this shipped (GOOGL, the R3 page, is the one that moved).
+
+    AMZN'S PAGE AS FROZEN AT THE CUT IS WALKED BESIDE THE LIVING ONES: it is the only covered R4
+    page whose template builds (UBER's step refuses), so the R4 shape is exercised whatever the
+    living corpus holds, and a retirement of AMZN moves nothing here (A's ruling on #1111, as the
+    `test_propose` walks carry SMPL's frozen page)."""
     built = _built()
+    amzn = frozen_doc("AMZN")
+    built.append((str(amzn["anchor"]["recipe_hint"]), build_template(amzn)))
     seen = {"r1": 0, "r4": 0}
     for hint, tpl in built:
         if hint == sc.RECIPE_R3:
@@ -327,3 +335,18 @@ def test_the_r4_band_line_is_unmarked_where_its_band_is_admissible() -> None:
     line = next(ln for ln in build_template(doc)["_evidence"]["multiple"]
                 if ln.startswith("own history EV/NTM EBIT"))
     assert "CONTEXT ONLY" not in line, line
+
+
+def test_the_r4_shape_is_exercised_with_no_living_r4_page(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE STATE AFTER AMZN'S RETIREMENT: a checkout whose living pages hold no AMZN, the only
+    covered R4 page whose template builds. The corpus check above still exercises both shapes,
+    through AMZN's frozen page (A's review of #1111: its floor failed loud in the retirement
+    replay). Every other committed page is linked in, never copied."""
+    pages = tmp_path / "data" / "dossiers"
+    pages.mkdir(parents=True)
+    for folder in sorted((ROOT / "data" / "dossiers").iterdir()):
+        if folder.is_dir() and folder.name != "AMZN":
+            (pages / folder.name).symlink_to(folder.resolve())
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
+    test_r1_and_r4_templates_keep_their_shape_across_the_corpus()

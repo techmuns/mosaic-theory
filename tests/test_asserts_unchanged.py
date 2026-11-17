@@ -226,3 +226,43 @@ def test_an_imported_skip_helper_without_the_prefix_is_disabled() -> None:
     after = (imp + BASE).replace(read, '    retired_checkout("BRBR", Path("x"))\n' + read)
     got = chk.compare_sources(imp + BASE, after, "tests/test_x.py", support)
     assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], got
+
+
+#: WHAT A SKIP CAN HIDE IN BESIDES A CALL OR A DECORATOR (A's review of #1111, item 5): a mark on
+#: one `pytest.param` case, a fixture parameter whose fixture skips, and a module-level
+#: `pytestmark` or `importorskip`. Each stops a test as surely and must read DISABLED.
+_ELSEWHERE = [
+    ("a skip mark on one pytest.param case", BASE.replace(
+        '@pytest.mark.parametrize("t", ["AMZN", "UBER"])',
+        '@pytest.mark.parametrize("t", ["AMZN", pytest.param("UBER", marks=pytest.mark.skip)])'),
+     "tests/test_x.py::test_the_tag"),
+    ("a fixture parameter whose fixture skips", BASE.replace(
+        "def test_the_count():",
+        "@pytest.fixture\ndef need():\n    pytest.skip('gone')\n\n\n"
+        "def test_the_count(need):"),
+     "tests/test_x.py::test_the_count"),
+    ("a module-level pytestmark", BASE.replace(
+        "DOSS = Path(", "pytestmark = pytest.mark.skipif(True, reason='x')\nDOSS = Path("),
+     "tests/test_x.py::<module>"),
+    ("a module-level importorskip", BASE.replace(
+        "DOSS = Path(", "pytest.importorskip('not_a_module')\nDOSS = Path("),
+     "tests/test_x.py::<module>"),
+]
+
+
+@pytest.mark.parametrize(("name", "after", "row"), _ELSEWHERE, ids=[m[0] for m in _ELSEWHERE])
+def test_a_skip_outside_the_tests_body_is_disabled(name: str, after: str, row: str) -> None:
+    """(−) Each shape reads DISABLED on the row it stops, and the checker exits red."""
+    got = _diff(after)
+    assert row in got["DISABLED"], (name, got)
+    assert _failing(got), (name, got)
+
+
+def test_a_param_mark_removed_is_not_disabled() -> None:
+    """(+) A case that LOSES its mark runs more, as a decorator removed does (slice 4's tripwires
+    lose theirs when the re-read lands)."""
+    marked = BASE.replace(
+        '@pytest.mark.parametrize("t", ["AMZN", "UBER"])',
+        '@pytest.mark.parametrize("t", ["AMZN", pytest.param("UBER", marks=pytest.mark.xfail)])')
+    got: dict[str, list[str]] = _checker().compare_sources(marked, BASE, "tests/test_x.py")
+    assert not got["DISABLED"], got

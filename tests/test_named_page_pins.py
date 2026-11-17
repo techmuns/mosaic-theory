@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+import warnings
 from pathlib import Path
 from types import ModuleType
 
@@ -164,6 +165,43 @@ def test_a_support_modules_page_reader_counts_where_it_is_called() -> None:
         ("tests/test_x.py::test_a", "AAA"), ("tests/test_x.py::test_b", "BBB")}
 
 
+def test_a_helper_whose_root_defaults_to_the_living_folder_reads_it() -> None:
+    """(+) `_page("AAA")` reads the living page through `root=DOSS`, its default (A's review of
+    #1111: `test_net_debt_as_of`'s `_page("NCNO")`, `test_guidance_vintage`'s `_digest("SMPL")`);
+    (−) the same helper handed a frozen root, by position or keyword, reads that root."""
+    src = HEAD + ('FROZEN = Path("tests/fixtures/frozen_pages/2026-08-18")\n\n\n'
+                  'def _page(t, root=DOSS):\n'
+                  '    return (root / t / "dossier.json").read_text()\n\n\n'
+                  'def test_a():\n    _page("AAA")\n\n\n'
+                  'def test_b():\n    _page("BBB", FROZEN)\n    _page("BBB", root=FROZEN)\n')
+    assert _one(src) == {("tests/test_x.py::test_a", "AAA")}
+
+
+def test_a_ticker_bound_in_the_function_or_a_tuple_is_read() -> None:
+    """(+) a ticker held in a local name (`t = "AAA"; DOSS / t`), and a dossiers folder bound by
+    tuple assignment (`DOSS, X = Path("data/dossiers"), …`), are reads (A's review of #1111)."""
+    local = HEAD + 'def test_a():\n    t = "AAA"\n    (DOSS / t / "dossier.json").read_text()\n'
+    assert _one(local) == {("tests/test_x.py::test_a", "AAA")}
+    tup = ('from pathlib import Path\nPAGES, OTHER = Path("data/dossiers"), Path("x")\n\n\n'
+           'def test_a():\n    (PAGES / "BBB" / "dossier.json").read_text()\n')
+    assert _one(tup) == {("tests/test_x.py::test_a", "BBB")}
+
+
+def test_a_page_joined_by_path_joinpath_or_os_path_join_is_read() -> None:
+    """(+) `Path("data", "dossiers", "AAA")`, `ROOT.joinpath("data", "dossiers", "BBB")` and
+    `os.path.join(ROOT, "data", "dossiers", "AAA")` read a page as `/` does (A's review of #1111);
+    (−) the same joins under a tmp directory or a frozen copy do not."""
+    src = ('import os\nfrom pathlib import Path\nROOT = Path(".")\n\n\n'
+           'def test_a():\n    Path("data", "dossiers", "AAA", "dossier.json").read_text()\n\n\n'
+           'def test_b():\n    ROOT.joinpath("data", "dossiers", "BBB").exists()\n\n\n'
+           'def test_c():\n'
+           '    open(os.path.join(ROOT, "data", "dossiers", "AAA", "dossier.json"))\n\n\n'
+           'def test_d(tmp_path):\n    Path(tmp_path, "data", "dossiers", "AAA").mkdir()\n'
+           '    Path("tests/fixtures/frozen_pages/x", "dossiers", "BBB").exists()\n')
+    assert _one(src) == {("tests/test_x.py::test_a", "AAA"), ("tests/test_x.py::test_b", "BBB"),
+                         ("tests/test_x.py::test_c", "AAA")}
+
+
 # --- the ratchet --------------------------------------------------------------------------------
 
 RECORD = "record class: the page beside its LIVING record; a frozen page would mix two vintages"
@@ -285,6 +323,21 @@ RESIDUE: dict[str, dict[str, str]] = {
 }
 
 
+#: What the scan cannot see, one example each: a read of these forms passes the ratchet unseen
+#: (A's review of #1111 and the code review of slice 5). The whole-suite replay is the proof.
+BLIND = (
+    "THE SCAN IS A LOWER BOUND; a read of these forms passes here unseen: "
+    "a ticker in a module constant (`T = \"AMZN\"` then `DOSS / T`); "
+    "a loop or parametrize over a module constant (`for t in NAMES:`); "
+    "a fixture that reads a page (`@pytest.fixture def page(): ...`, used as a parameter); "
+    "`+` or `.format` (`\"data/dossiers/\" + t`); "
+    "JavaScript concatenation in a node driver (`\"frontend/dossiers/\" + t + \".json\"`); "
+    "a test method in a class, or an `async` test; "
+    "a support helper that reads a fixed ticker (`def smpl(): ...` in a support module); "
+    "a ticker passed by keyword (`_page(t=\"AAA\")`); "
+    "and a page reached through a module outside `tests/` (`frontend/build.py`).")
+
+
 def _ratchet(found: set[tuple[str, str]], pages: set[str],
              residue: dict[str, dict[str, str]]) -> tuple[list[tuple[str, str]],
                                                           list[tuple[str, str]]]:
@@ -295,9 +348,41 @@ def _ratchet(found: set[tuple[str, str]], pages: set[str],
     return sorted(found - allowed), sorted(p for p in allowed - found if p[1] in pages)
 
 
+#: The pairs RESIDUE names. Growing it fails here; shrinking it means updating this number in the
+#: same change, so a residue is never added or dropped silently (A's review of #1111).
+RESIDUE_PAIRS = 68
+REASONS = frozenset({RECORD, LIVING, SCRATCH, CLASSIFIER, HISTORY, FIXTURE})
+
+
+def test_residue_holds_its_stated_count_and_each_reason_is_one_of_the_six() -> None:
+    pairs = sum(len(v) for v in RESIDUE.values())
+    assert pairs == RESIDUE_PAIRS, (
+        f"RESIDUE names {pairs} pairs where RESIDUE_PAIRS says {RESIDUE_PAIRS}: a residue added "
+        "or dropped updates the number in the same change")
+    odd = sorted((fn, t) for fn, ts in RESIDUE.items() for t, why in ts.items()
+                 if why not in REASONS)
+    assert not odd, f"each reason is one of the six named constants: {odd}"
+
+
+def _retired_entries(residue: dict[str, dict[str, str]], statuses: dict[str, str]
+                     ) -> list[tuple[str, str]]:
+    """The named pairs for a name the roster lists as retired."""
+    return sorted((fn, t) for fn, ts in residue.items() for t in ts
+                  if statuses.get(t) == "retired")
+
+
 def test_no_test_reads_a_living_page_by_name_unless_it_is_named() -> None:
+    """The ratchet. A pair named for a name the roster lists as retired WARNS, never fails: a
+    retirement must edit no test, this one included, and the warning names the entry for the next
+    change to delete (A's review of #1111 asked for a fail or a warning, and why)."""
+    from vinci import coverage_roster as roster
     npp = _scanner()
     pages, sources = npp.worktree(ROOT)
+    retired = _retired_entries(RESIDUE, {t: m.status for t, m in
+                                         roster.current(ROOT / "data").items()})
+    if retired:
+        warnings.warn(f"RESIDUE names pairs for retired names, to delete: {retired}",
+                      stacklevel=1)
     found: set[tuple[str, str]] = npp.pairs(npp.scan_sources(sources, pages))
     assert found, "the scan found no pair at all: it is broken, or every residue is gone"
     new, stale = _ratchet(found, pages, RESIDUE)
@@ -307,11 +392,18 @@ def test_no_test_reads_a_living_page_by_name_unless_it_is_named() -> None:
         + ". Move a value pin to the cut (tests/frozen_support.frozen_doc) and an invariant to a "
         "roster walk (covered_where). Only a page read beside its living record, a test that "
         "watches the living page by design, or a scan false positive is named in RESIDUE, with "
-        "its reason. THE SCAN IS A LOWER BOUND: a read it cannot see passes here.")
+        "its reason. " + BLIND)
     assert not stale, (
         f"{len(stale)} pair(s) named in RESIDUE are no longer found: "
         + "; ".join(f"{fn} / {t}" for fn, t in stale)
         + ". Delete each entry: the ratchet only shrinks.")
+
+
+def test_a_retired_names_entries_are_found_for_the_warning() -> None:
+    """(+) An entry for a name the roster retired is listed; (−) an active one is not."""
+    residue = {"tests/test_x.py::test_a": {"AAA": RECORD, "BBB": RECORD}}
+    assert _retired_entries(residue, {"AAA": "retired", "BBB": "active"}) == [
+        ("tests/test_x.py::test_a", "AAA")]
 
 
 def test_a_retired_names_residue_is_never_stale_and_a_new_read_is_refused() -> None:

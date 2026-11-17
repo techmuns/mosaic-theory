@@ -33,6 +33,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import CUT
 from vinci.dossier import anchor as anc
 from vinci.edgar import net_debt as nd
 from vinci.edgar.concepts import facts_as_of
@@ -201,15 +202,25 @@ def test_every_leg_of_the_anchor_reads_the_facts_as_filed_by_the_price_date() ->
         assert got == _values(anc.compute_anchor(mech, facts=_filed_later(facts, cut),
                                                  computed_at=NOW, reference_date=ref)), t
         compared.append(t)
-    assert len(compared) >= 20 and {"LLY", "NCNO"} <= set(compared), compared
+    assert len(compared) >= 20, compared
+    # THE TWO CASES ROUND 1 CAUGHT, on their pages as frozen at the cut, beside the walk: the walk
+    # no longer names them, so a retirement of LLY or NCNO moves nothing (A's review of #1111)
+    for name in ("LLY", "NCNO"):
+        mech, facts, ref, cut = _page(name, CUT)
+        got = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref))
+        assert got == _values(anc.compute_anchor(mech, facts=facts_as_of(facts, cut),
+                                                 computed_at=NOW, reference_date=ref)), name
+        assert got == _values(anc.compute_anchor(mech, facts=_filed_later(facts, cut),
+                                                 computed_at=NOW, reference_date=ref)), name
 
 
 def test_ncnos_filings_after_its_price_date_reach_every_leg_unless_cut() -> None:
-    """NON-VACUITY, on the living page. Read uncut (no stored close, no reference date), the later
+    """NON-VACUITY, on NCNO's page as frozen at the cut (`tests/frozen_support.py`), never the
+    living one (A's review of #1111). Read uncut (no stored close, no reference date), the later
     filings move every leg the anchor reads from EDGAR — so the equality above tests each of them,
     not only net debt. The later filings are `_filed_later`'s synthetic ones: since the 2026-11-14
     rebuild priced NCNO at 2026-11-11, no real filing in its fixture falls after the price date."""
-    mech, facts, ref, cut = _page("NCNO")
+    mech, facts, ref, cut = _page("NCNO", CUT)
     later = _filed_later(facts, cut)
     cut_read = anc.compute_anchor(mech, facts=later, computed_at=NOW, reference_date=ref)
     uncut = {**mech, "stock_info": {**mech["stock_info"], "as_of": None}}
@@ -313,7 +324,14 @@ def test_the_at_price_ex_lease_multiple_reads_its_share_count_as_filed_by_the_pr
         assert whole == read(m, facts_as_of(facts, cut)), t
         assert whole == read(m, _filed_later(facts, cut)), t
         compared.append(t)
-    assert len(compared) >= 10 and "NCNO" in compared, compared
+    assert len(compared) >= 10, compared
+    # NCNO's page as frozen at the cut, beside the walk, which no longer names it (A's review)
+    mech, facts, _ref, cut = _page("NCNO", CUT)
+    m = MechanicalLayer.model_validate(mech)
+    whole = read(m, facts)
+    assert whole is not None, "NCNO's frozen page states no at-price ex-lease multiple"
+    assert whole == read(m, facts_as_of(facts, cut)), "NCNO"
+    assert whole == read(m, _filed_later(facts, cut)), "NCNO"
 
 
 def test_ncnos_share_count_moves_with_a_filing_after_its_price_date_unless_cut() -> None:
@@ -333,7 +351,7 @@ def test_an_undated_close_strikes_no_ex_lease_multiple() -> None:
     from vinci.dossier.ev_ebitda_basis import ex_lease_at_price
     from vinci.dossier.schemas import MechanicalLayer
 
-    mech, facts, _ref, _cut = _page("NCNO")
+    mech, facts, _ref, _cut = _page("NCNO", CUT)   # NCNO's page as frozen at the cut
     m = MechanicalLayer.model_validate(mech)
     assert m.stock_info is not None and m.stock_info.price.value
     assert ex_lease_at_price(m, facts) is not None

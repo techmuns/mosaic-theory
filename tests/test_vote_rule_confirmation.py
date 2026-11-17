@@ -160,6 +160,22 @@ def test_the_layer_is_read_as_the_replay_harness_reads_it() -> None:
                 == pre_synthesis_mech(page).model_dump_json()), p.parent.name
 
 
+def _transcript_drift(t: str, page: dict[str, typing.Any], bundle: typing.Any) -> str | None:
+    """Why the folder's calls are not the page's, naming both sets, or None. The condition is
+    `confirmation.page_transcripts`' own refusal: a page that records its calls, or whose build
+    record is complete, against a folder holding another set (names or sha256)."""
+    from vinci.dossier.confirmation import _sha256
+    got = {w.path.name: _sha256(w.path) for w in bundle.all_workbooks("transcript")}
+    inputs = page.get("inputs") or {}
+    recorded = {c["file"]: c["sha256"] for c in (inputs.get("ciq") or [])
+                if c.get("kind") == "transcript"}
+    complete = inputs.get("recorded") == "build" and not any(
+        str(u.get("input", "")).startswith("ciq:") for u in (inputs.get("unrecorded") or []))
+    if (complete or recorded) and got != recorded:
+        return f"{t}: the page records {sorted(recorded)}, the folder holds {sorted(got)}"
+    return None
+
+
 def test_the_transcripts_are_read_as_the_replay_harness_reads_them(
         monkeypatch: pytest.MonkeyPatch) -> None:
     """(+) Parity with `replay.transcript_for` on the pages whose transcripts are on this machine
@@ -190,6 +206,10 @@ def test_the_transcripts_are_read_as_the_replay_harness_reads_them(
             continue
         page = frozen_doc(t)   # the page as frozen at the cut: both readers read the same one
         bundle = CiqBundle.from_files(t, sorted(p for p in (ciq / t).iterdir() if p.is_file()))
+        drift = _transcript_drift(t, page, bundle)
+        if drift:   # THE CIQ RULE: a call landed since the cut is another vintage, never a failure
+            busy.append(drift)
+            continue
         unread = []
         for wb in bundle.all_workbooks("transcript"):
             for _try in range(3):
@@ -209,6 +229,34 @@ def test_the_transcripts_are_read_as_the_replay_harness_reads_them(
     if not done:
         pytest.skip("no page compared: " + ("; ".join(busy) if busy
                                             else "none of the three pages' CIQ folders is here"))
+
+
+def test_a_call_landed_since_the_page_skips_it_naming_both_sets(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE CIQ RULE (A's review of #1111). The pin above pairs each page as frozen at the cut with
+    the folder on disk, and `page_transcripts` refuses a folder whose calls are not the ones the
+    page records. A call landed since the cut is another vintage, so that page is SKIPPED, naming
+    the page's calls and the folder's, never failed. Staged: GOOGL's own folder, linked in, plus
+    one call its page does not record."""
+    import sys
+    src = ROOT / "data" / "manual" / "ciq" / "GOOGL"
+    if not src.is_dir():
+        pytest.skip("no licensed CIQ folder on this machine")
+    held = tmp_path / "data" / "manual" / "ciq" / "GOOGL"
+    held.mkdir(parents=True)
+    calls = []
+    for f in sorted(src.iterdir()):
+        if f.is_file() and not f.name.startswith("."):
+            (held / f.name).symlink_to(f.resolve())
+            if "Earnings Call" in f.name:
+                calls.append(f)
+    if not calls:
+        pytest.skip("GOOGL's folder holds no call")
+    (held / "Alphabet Inc., Q4 2026 Earnings Call, Feb 03, 2027.rtf").symlink_to(
+        calls[-1].resolve())
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
+    with pytest.raises(pytest.skip.Exception, match="GOOGL: the page records"):
+        test_the_transcripts_are_read_as_the_replay_harness_reads_them(monkeypatch)
 
 
 # ------------------------------------------------------------------- log-verdict's seal
