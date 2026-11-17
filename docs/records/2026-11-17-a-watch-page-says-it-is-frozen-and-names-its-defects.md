@@ -143,7 +143,16 @@ superseded-by:
     The positive pin sits beside each one.
 - **Test trees that gained the file:**
   - `tests/roster_support.write_roster` writes an empty defect file beside the roster;
-  - `test_refresh_fleet_and_bridge_guards` copies the committed one.
+  - `test_refresh_fleet_and_bridge_guards` copies the committed one;
+  - `test_refresh_path::test_a_noop_refresh_is_byte_identical` now lays its copy out as the data
+    tree, with the roster and defect file beside the pages. In a tree with no roster, the 15
+    committed watch pages re-rendered without their line and read as churn. It failed on the
+    re-rendered pages at `29924075` and passes at `b2bcf8c1`.
+- **Suite at `29924075`** (8 workers, `-m "not network"`): 4 failures.
+  - `test_records_ledger` (this record's empty `prs:`, filled once the PR exists) and the no-op
+    refresh pin above are this PR's.
+  - Two `test_theme_intelligence_group3` browser tests failed under machine load (load average
+    10–22, other sessions' suites running) and pass alone, 2 of 2.
 
 **BOUNDARY.**
 - **The defect measurement:**
