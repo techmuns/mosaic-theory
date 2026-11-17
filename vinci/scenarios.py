@@ -187,7 +187,10 @@ LADDER_FIELDS: tuple[str, ...] = (
 #: underwrite*, and every committed record stays byte-identical.
 #: NOT `margin_basis`/`bear_basis`, which ARE null across the committed corpus today — adding
 #: those would churn every record the mechanism exists to leave alone.
-LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps", "ebit", "revenue", "margin")
+#: `miss_case` (2026-11-17, recipe 3a) for the `ebit` reason: absent says *this bear states no
+#: miss*, and every committed record stays byte-identical.
+LEG_FIELDS_DROPPED_WHEN_NONE: tuple[str, ...] = ("leg_fy", "eps", "ebit", "revenue", "margin",
+                                                 "miss_case")
 # The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
 # structure. Kept beside the model, not in a consumer: a renderer must never need these.
 # DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
@@ -376,6 +379,46 @@ class AssumptionDerivation(BaseModel):
         return v
 
 
+class MissCase(BaseModel):
+    """(R3, recipe 3a) A bear EPS above today's NTM consensus, stated as the earnings MISS it
+    models.
+
+    The bear's EPS is at its exit, so it can sit above TODAY'S NTM consensus while still missing the
+    consensus for its own period — that is a bear on earnings. What it may not be is unstated: a
+    bear whose EPS beats consensus with nothing said is pure multiple compression (GOOGL's, struck
+    2026-09-01 at $15.388 against an NTM $13.29 and breached in about ten weeks). A NUMBER, not a
+    sentence, because a sentence is satisfied by boilerplate (the `entry_denominator` precedent):
+    the bear EPS must sit BELOW ``consensus_eps``, so the miss is arithmetic anyone can check."""
+
+    consensus_eps: float   # $/share — the consensus EPS for the period the bear EPS is struck at
+    period: str            # that consensus's period, e.g. "FY2027"
+    source: str            # where it was read (a page field, a CIQ sheet and cell)
+    reason: str            # why the bear's earnings fall short of it
+
+    model_config = {"frozen": True}
+
+    @field_validator("period", "source", "reason")
+    @classmethod
+    def _miss_not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("a miss case with no period/source/reason cannot be reviewed — "
+                             "refusing to record it")
+        return v
+
+
+class ConsensusEps(BaseModel):
+    """(R3, recipe 3a) THE NTM CONSENSUS EPS a record's bear is bounded by, STAMPED from the page at
+    the point of decision (`scenario-create`, `scenario-supersede`) — never typed, never parsed out
+    of a leg's prose. `propose.ntm_consensus_eps` is the one reader; see it for the field."""
+
+    value: float           # $/share
+    line: str              # the EPS line CIQ's NTM P/E is struck on (pe_eps_basis.ntm), verbatim
+    source_ref: str
+    as_of: str             # the consensus's knowable date as the page states it (`≥` = floor)
+
+    model_config = {"frozen": True}
+
+
 class ScenarioInput(BaseModel):
     """One analyst-supplied leg. ``margin`` is a DECIMAL fraction (0.0625 = 6.25%)."""
 
@@ -426,6 +469,9 @@ class ScenarioInput(BaseModel):
     #: that conflicts with the anchor. A record cannot be faulted for lacking a field that did not
     #: exist when it was written.
     leg_fy: str | None = None
+    #: (R3 bear only, recipe 3a) the earnings miss a bear EPS above the NTM consensus models — see
+    #: :class:`MissCase`. Absent on every committed record, and dropped when None, so none churns.
+    miss_case: MissCase | None = None
 
     @field_validator("bear_basis")
     @classmethod
@@ -1008,6 +1054,10 @@ class ScenarioRecord(BaseModel):
     #:
     #: Dropped when None, the same absent-vs-null rule as `entry_basis`.
     entry_denominator: float | None = None
+    #: (R3, recipe 3a) the NTM consensus EPS the bear is bounded by, stamped from the page at the
+    #: point of decision — :class:`ConsensusEps`, :func:`bear_consensus_problems`. Dropped when
+    #: None, the absent-vs-null rule above: no committed record carries one, and none churns.
+    ntm_consensus_eps: ConsensusEps | None = None
     facts: dict[str, Fact]                 # d_and_a, net_debt, diluted_shares (+ any recipe extras)
     scenarios: dict[str, ScenarioInput]    # bear | base | bull
     # per-AXIS methodology (revenue | margin | multiple for R1): how each modeled input was
@@ -1666,6 +1716,60 @@ def horizon_problems(rec: ScenarioRecord) -> list[str]:
     return []
 
 
+def bear_consensus_problems(rec: ScenarioRecord) -> list[str]:
+    """(R3, recipe 3a) The bear-EPS bound, as `horizon_problems` returns problems — empty when met.
+
+    THE RULE: an R3 bear's EPS is at or below the NTM consensus EPS stamped on the record
+    (:class:`ConsensusEps`), or the bear states the earnings miss it models (:class:`MissCase`) and
+    its EPS sits below that miss case's consensus. A bear above consensus with no miss is a
+    multiple-compression case only: GOOGL's bear was $15.388 against an NTM $13.29 at underwrite
+    and was breached in about ten weeks (diagnosis 2026-11-13 §5).
+
+    DOES THIS SELECT ON FORM? No (CLAUDE.md requires the answer in writing). It compares an
+    earnings LEVEL — the bear's EPS — with a consensus LEVEL in the same unit ($/share), from a
+    field the page computes from CIQ's own P/E: substance, whatever words the record uses. The miss
+    case is a number checked the same way, never a sentence.
+
+    AT THE POINT OF DECISION ONLY — `scenario-create` and `scenario-supersede` refuse on it; load,
+    `run_recipe` and render never do, so a committed record is FLAGGED (`_warn_admissibility`, the
+    dry run) and never rewritten. NOT VERSION-GATED, unlike `_require_bear_basis`: a supersede
+    keeps its payload's own `schema_version` (`supersede_record` sets only the links), so a gate at
+    a new version is escaped by copying the live record — GOOGL's is 1.5. A face-validity rule
+    with no tuned number: it reads no forward return.
+    """
+    out: list[str] = []
+    for name, leg in (rec.scenarios or {}).items():
+        if leg.miss_case is not None and (name != "bear" or rec.recipe_id != RECIPE_R3):
+            out.append(f"{name}.miss_case is read only on an R3 bear leg — on {rec.recipe_id} "
+                       f"{name} it bounds nothing, so it is refused rather than carried")
+    if rec.recipe_id != RECIPE_R3:
+        return out
+    bear = (rec.scenarios or {}).get("bear")
+    if bear is None or bear.eps is None:
+        return out                 # a missing leg or EPS is `validate_legs`' and `_run_r3`'s
+    stamp = rec.ntm_consensus_eps
+    if stamp is None:
+        return out + [
+            "the record carries no NTM consensus EPS (ntm_consensus_eps), so its bear EPS "
+            f"{bear.eps:g} cannot be bounded — `scenario-create` and `scenario-supersede` stamp it "
+            "from the page's forward_consensus.pe_eps_basis, and refuse a page that states none"]
+    if bear.eps <= stamp.value:
+        return out
+    mc = bear.miss_case
+    if mc is None:
+        return out + [
+            f"bear.eps {bear.eps:g} is ABOVE the NTM consensus EPS {stamp.value:g} ({stamp.line} "
+            f"line, {stamp.as_of}) and states no miss case — a bear whose earnings beat consensus "
+            "is a multiple-compression case only. Strike the bear EPS at or below consensus, or "
+            "state bear.miss_case: the consensus EPS for the bear's own period, its period and "
+            "source, and why the bear falls short of it"]
+    if not bear.eps < mc.consensus_eps:
+        return out + [
+            f"bear.miss_case states a {mc.period} consensus of {mc.consensus_eps:g}, and bear.eps "
+            f"{bear.eps:g} is not below it — a miss case the bear does not miss bounds nothing"]
+    return out
+
+
 def _with_irr_gate(res: Result, rec: ScenarioRecord) -> Result:
     """Stamp the horizon, the base IRR and the CONJUNCTION onto a computed Result.
 
@@ -2117,7 +2221,11 @@ def _warn_admissibility(rec: ScenarioRecord) -> None:
     today is a downside case that assumes a re-rating upward, and an own-history bear basis on a
     growth-era-only band is a floor that has never seen the state it is standing in for. Both were
     present in a recorded BUY and neither surfaced until an external review forced a re-underwrite.
-    Warned, not blocked — the analyst may have a reason, and must be the one to state it."""
+    Warned, not blocked — the analyst may have a reason, and must be the one to state it.
+
+    (R3, recipe 3a) The bear-EPS bound joins it as a FLAG: a committed record is never rewritten
+    to meet a rule written after it, so the point-of-decision refusal
+    (:func:`bear_consensus_problems`) is a warning on every other write."""
     bear = (rec.scenarios or {}).get("bear")
     if bear is None:
         return
@@ -2125,6 +2233,7 @@ def _warn_admissibility(rec: ScenarioRecord) -> None:
     if bear.bear_basis == "own-history":
         notes.append("bear_basis is 'own-history' — confirm the band contains a bear-state visit "
                      "(vinci audit r1)")
+    notes.extend(bear_consensus_problems(rec))
     if notes:
         warnings.warn(f"{rec.ticker}: " + "; ".join(notes), AdmissibilityWarning, stacklevel=3)
 
@@ -2177,6 +2286,8 @@ def _version_scoped(rec: ScenarioRecord) -> dict[str, Any]:
         out.pop("entry_basis", None)
     if out.get("entry_denominator") is None:
         out.pop("entry_denominator", None)
+    if out.get("ntm_consensus_eps") is None:
+        out.pop("ntm_consensus_eps", None)
     # the leg level: a leg that states no fiscal year carries no key for one
     for _leg in (out.get("scenarios") or {}).values():
         for field in LEG_FIELDS_DROPPED_WHEN_NONE:

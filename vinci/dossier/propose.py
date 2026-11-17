@@ -6,11 +6,20 @@ record in this repo's history was hand-authored. So the one place analyst judgme
 bypassed every guard the rest of the pipeline is built out of.
 
 WHAT IT PROPOSES, AND WHAT IT REFUSES TO. Of the nine modelled numbers (three legs × revenue /
-margin / multiple) **exactly three have a safe computed anchor, and all three are MEDIANS**:
+margin / multiple) **exactly three have a safe computed anchor**:
 
     revenue base   consensus median at the anchor FY   (`consensus_levels`)
     margin  base   operating-margin median over 8 FY   (`anchor.margin`)
-    multiple base  own-history trailing median         (`valuation.own_history`)
+    multiple base  own-history CURRENT multiple        (the band R1 prices on, `current`)
+
+**The base multiple is TODAY'S, with the trailing median printed beside it (recipe 3a, W25,
+2026-11-17).** It was the median, and on the de-rated pages the median sat far above where the
+name trades: measured at `4889ddba` over the 22 committed pages with an R1 band, the median is
+2.4x-3.9x the current on BRBR, EPAM, IT, SMPL and VRRM. So the proposal is what the market pays
+now — R3's anchor-and-
+displace (RUNBOOKS §m) — and moving off it, to the median or anywhere, needs a stated
+`multiple_adjustment`. A band with no usable current proposes NOTHING (`multiple_base_refusal`):
+the median is never the silent fallback, because a silent median is the bias this removes.
 
 **The other six are REQUIRED INPUTS with no proposal**, for two different reasons:
 
@@ -37,6 +46,8 @@ structurally impossible: `14%` can no longer be written as a bare number, only a
 """
 from __future__ import annotations
 
+import math
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -53,7 +64,14 @@ from vinci.dossier.synthesis import (
     guidance_vintage_mark,
     newest_guidance_date,
 )
-from vinci.scenarios import BASIS_EV_NTM_EBIT, BASIS_PE, RECIPE_R3, RECIPE_R4, RefPoint
+from vinci.scenarios import (
+    AXES_BY_RECIPE,
+    BASIS_EV_NTM_EBIT,
+    BASIS_PE,
+    RECIPE_R3,
+    RECIPE_R4,
+    RefPoint,
+)
 
 #: A supplied leg value further than this from its anchor is a DEVIATION and must state why.
 #: Relative, so it reads the same on a 1,330 revenue and a 12.5x multiple. Not tuned on outcomes —
@@ -192,26 +210,88 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
                           str(mg.get("source")), f"{mg.get('anchor_years')} FY through the "
                           "latest reported fiscal year"))
 
-    # multiple base — the trailing median of the history the ANCHOR prices on (2026-10-19): the
-    # record takes its net debt from the anchor, so its multiple must come from the same side of
-    # the lease line. Read off the anchor, not re-decided from the page's lease basis, which can
-    # land before the anchor is re-derived (review of #750); when the two disagree, or the page
-    # refuses R1, nothing is proposed. The band LOW is deliberately NOT proposed even though it
-    # sits in the same object: see UNPROPOSED_REASON.
+    # multiple base — the CURRENT multiple of the history the ANCHOR prices on (recipe 3a,
+    # 2026-11-17; the band itself since 2026-10-19): the record takes its net debt from the
+    # anchor, so its multiple must come from the same side of the lease line. The median is
+    # printed BESIDE it (`multiple_base_corroborator`), never as the proposal; a band whose current
+    # is absent or NM proposes nothing (`multiple_base_refusal`). The band LOW is deliberately NOT
+    # proposed even though it sits in the same object: see UNPROPOSED_REASON.
+    oh, where = _r1_proposal_band(doc)
+    cur = _usable_multiple(oh.get("current")) if oh is not None else None
+    if oh is not None and cur is not None:
+        out.append(Anchor("multiple", "base", round(cur, 4), "x", cur, "current",
+                          f"{oh.get('metric')} current multiple",  # basis= below
+                          f"{where}.current {oh.get('metric')} (latest close {oh.get('as_of')}, "
+                          f"{oh.get('source_file')})",
+                          str(oh.get("as_of")), basis=str(oh.get("metric") or "") or None))
+    return out
+
+
+def _r1_proposal_band(doc: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
+    """The band R1's base multiple is proposed from, and where it sits on the page — or None.
+
+    Read off the anchor, not re-decided from the page's lease basis, which can land before the
+    anchor is re-derived (review of #750); when the two disagree, or the page refuses R1, there is
+    no band to propose from. One reader for the proposal, its refusal and its corroborator, so the
+    three cannot describe different bands."""
     mech = _get(doc, "mechanical") or {}
     sel = r1_multiple_band(mech)
     ex = anchor_prices_ex_lease(_get(doc, "anchor"))
     oh = (None if lease_basis_mismatch(doc) is not None or sel.refusal is not None
           else sel.band if ex else ciq_ebitda_band(mech))
     where = "valuation.lease_basis.ex_lease_band" if ex else "valuation.own_history"
-    if isinstance(oh, dict) and isinstance(oh.get("median"), (int, float)):
-        out.append(Anchor("multiple", "base", round(float(oh["median"]), 4), "x",
-                          float(oh["median"]), "median",
-                          f"{oh.get('metric')} trailing median",  # basis= below
-                          f"{where} {oh.get('metric')} "
-                          f"({oh.get('n_closes')} closes, {oh.get('source_file')})",
-                          str(oh.get("as_of")), basis=str(oh.get("metric") or "") or None))
-    return out
+    return (oh if isinstance(oh, dict) else None), where
+
+
+def _usable_multiple(v: Any) -> float | None:
+    """`v` as a multiple a proposal can stand on, or None: a finite positive number. A missing,
+    NM (CIQ prints NM where the EBITDA is not positive; midcycle's D-D3 note) or non-positive
+    current is not a multiple, and it is never replaced by another statistic."""
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    f = float(v)
+    return f if math.isfinite(f) and f > 0 else None
+
+
+def multiple_base_refusal(doc: dict[str, Any]) -> str | None:
+    """Why R1's base multiple is NOT proposed on this page, when its band carries no usable current
+    — or None (there is a proposal, or there is no band to refuse on).
+
+    FAIL LOUD, NEVER THE MEDIAN (recipe 3a). The median used to BE the proposal, so the obvious
+    fallback is to propose it when the current is missing — which would restore, silently and on
+    exactly the pages where the data is weakest, the bias this default removes. The cell arrives
+    empty with this reason, and the analyst states the number's derivation."""
+    oh, where = _r1_proposal_band(doc)
+    if oh is None or _usable_multiple(oh.get("current")) is not None:
+        return None
+    med = oh.get("median")
+    return (f"the band R1 prices on ({where}, {oh.get('metric')}) carries no usable current "
+            f"multiple (current={oh.get('current')!r}: absent, NM or not positive), and the "
+            "proposal is the current multiple — the trailing median"
+            + (f" ({float(med):g}x)" if isinstance(med, (int, float)) else "")
+            + " is never put in its place, because a silent median is the bias this default "
+            "removes. State where this number comes from in multiple_derivation.")
+
+
+def multiple_base_corroborator(doc: dict[str, Any]) -> RefPoint | None:
+    """The band's trailing MEDIAN, printed beside the proposed current — a corroborator, never the
+    proposal (recipe 3a). None where there is no proposed current to stand beside.
+
+    A frame-level reference (`leg=None`), so no consumer can read it as the base leg's anchor:
+    `validate_legs` measures the deviation against the current alone. RUNBOOKS §m's use for it:
+    a reference that may not GENERATE a target can still DETECT a distorted anchor."""
+    oh, where = _r1_proposal_band(doc)
+    if oh is None or _usable_multiple(oh.get("current")) is None:
+        return None
+    med = _usable_multiple(oh.get("median"))
+    if med is None:
+        return None
+    return RefPoint(label=f"{oh.get('metric')} trailing median — beside the current, not the "
+                          "proposal",
+                    value=round(med, 4), unit="x",
+                    source=f"{where}.median {oh.get('metric')} ({oh.get('n_closes')} closes, "
+                           f"{oh.get('source_file')})",
+                    vintage=str(oh.get("as_of")), role="median", leg=None)
 
 
 def check_tier_agreement(doc: dict[str, Any], recipe_id: str) -> None:
@@ -300,9 +380,39 @@ def _anchors_on_basis(anchors: list[Anchor], basis: str | None) -> list[Anchor]:
     return [a for a in anchors if not a.basis or names_the_same_multiple(a.basis)]
 
 
+def unproposed_reasons(*, axes: tuple[str, ...] | None = None,
+                       doc: dict[str, Any] | None = None) -> dict[tuple[str, str], str]:
+    """WHY each unproposed cell is empty, for the recipe whose axes these are — the table a
+    refusal cites.
+
+    R1'S TABLE ON R1'S AXES ONLY (STATE §5.0 row 10, deferred from the review of #1083).
+    `validate_legs` cited `UNPROPOSED_REASON` on every recipe, so an empty R3 or R4 bear multiple
+    was refused "because own-history band-low is defined by ONE close" — R1's EV/EBITDA band, a
+    multiple neither recipe reads. The refusal was right and its reason was not. The axes decide,
+    as `scenarios.axes_for` defines them: R3 cites its EPS and P/E reasons, R4 its EBIT and
+    EV/EBIT ones, and R1/R2 keep R1's six (plus the base-multiple refusal when the page's band has
+    no usable current). With ``doc`` the R3/R4 multiple reason reads the page, as their templates
+    do.
+    """
+    ax = tuple(axes or AXES)
+    if ax == AXES_BY_RECIPE[RECIPE_R3]:
+        mult = _r3_multiple_why(doc) if doc is not None else R3_MULTIPLE_WHY
+        return {**{("earnings", leg): R3_EPS_WHY for leg in LEGS},
+                **{("multiple", leg): mult for leg in LEGS}}
+    if ax == AXES_BY_RECIPE[RECIPE_R4]:
+        mult = _r4_multiple_why(doc or {})
+        return {**{("ebit", leg): R4_EBIT_WHY for leg in LEGS},
+                **{("multiple", leg): mult for leg in LEGS}}
+    out = dict(UNPROPOSED_REASON)
+    if doc is not None and (why := multiple_base_refusal(doc)) is not None:
+        out[("multiple", "base")] = why
+    return out
+
+
 def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor],
                   *, axes: tuple[str, ...] | None = None,
-                  basis: str | None = None) -> list[str]:
+                  basis: str | None = None,
+                  reasons: Mapping[tuple[str, str], str] | None = None) -> list[str]:
     """Every problem with a supplied leg set, as a list — never the first one only.
 
     A partial answer sends the analyst round the loop once per defect; the whole list is one pass.
@@ -317,8 +427,12 @@ def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor],
     record — a create path that cannot create. The caller supplies
     ``scenarios.axes_for(recipe_id, multiple_basis)`` rather than this module deciding, so there is
     one definition of a recipe's axes and not a second one here to drift from it.
+
+    ``reasons`` is the table an absent cell's refusal cites; `None` reads :func:`unproposed_reasons`
+    for these axes, so an R3 or R4 refusal never cites R1's band (STATE §5.0 row 10).
     """
     axes = axes or AXES
+    why_table = unproposed_reasons(axes=axes) if reasons is None else reasons
     by: dict[tuple[str, str], Anchor] = {(a.axis, a.leg): a
                                          for a in _anchors_on_basis(anchors, basis)}
     problems: list[str] = []
@@ -332,7 +446,7 @@ def validate_legs(supplied: dict[str, dict[str, Any]], anchors: list[Anchor],
         for axis in axes:
             field = AXIS_LEG_FIELD.get(axis, axis)
             if s.get(field) is None:
-                why = UNPROPOSED_REASON.get((axis, leg))
+                why = why_table.get((axis, leg))
                 problems.append(
                     f"{leg}.{field} is required and absent"
                     + (f" — not proposed because {why}" if why else ""))
@@ -747,6 +861,8 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
     if (why := lease_basis_mismatch(doc)) is not None:
         raise ProposalRefusedError(f"{ticker}: {why}")
     ancs = {(a.axis, a.leg): a for a in propose_anchors(doc)}
+    why_empty = unproposed_reasons(doc=doc)
+    beside = multiple_base_corroborator(doc)
     shares, sh_basis, sh_source = resolve_shares(doc)
     ev = evidence_for(doc)
 
@@ -779,6 +895,12 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
                 cell[axis] = a.schema_value
                 cell[f"{COMMENTARY_PREFIX}{axis}_anchor"] = (
                     f"{a.value:g}{a.unit} — {a.label} · {a.source} · vintage {a.vintage}")
+                if axis == "multiple" and beside is not None:
+                    # THE MEDIAN BESIDE THE CURRENT (recipe 3a): shown, never proposed — moving the
+                    # cell to it is a deviation like any other, and states its adjustment
+                    cell[f"{COMMENTARY_PREFIX}multiple_median_beside"] = (
+                        f"{beside.value:g}{beside.unit} — {beside.label} · {beside.source} · "
+                        f"vintage {beside.vintage}")
                 cell[f"{axis}_adjustment"] = ""      # only needed if the value is moved
             else:
                 cell[axis] = None
@@ -788,7 +910,7 @@ def build_template(doc: dict[str, Any]) -> dict[str, Any]:
                 # now catches the known cause (an inapplicable anchor) far earlier — this is the
                 # backstop for a base axis that goes missing for some OTHER reason, where refusing
                 # the whole template would be too blunt but a crash is never the right answer.
-                cell[f"{COMMENTARY_PREFIX}{axis}_why_no_anchor"] = UNPROPOSED_REASON.get(
+                cell[f"{COMMENTARY_PREFIX}{axis}_why_no_anchor"] = why_empty.get(
                     (axis, leg),
                     f"no anchor was computed for {leg}.{axis} and no standing reason is recorded "
                     f"for that combination — state where this number comes from in "
@@ -1278,6 +1400,42 @@ def r3_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
     return ev
 
 
+def ntm_consensus_eps(doc: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None]:
+    """The page's NTM consensus EPS, as the stamp an R3 record's bear is bounded by — or None and
+    why the page states none (recipe 3a (2), 2026-11-17).
+
+    THE SUPPLYING LAYER, settled in writing before the guard (brief §3a (2)): the R3 record holds
+    no structured consensus — GOOGL's $13.29 lives only in its bear leg's `reason`, and a rendered
+    string is never load-bearing — so `scenario-create` and `scenario-supersede` stamp it from the
+    page. The field is `forward_consensus.pe_eps_basis.fits[].ntm_implied_eps`: the NTM EPS CIQ's
+    own NTM P/E is struck on (the FY-row price ÷ the NTM P/E), the denominator of the multiple an
+    R3 leg is displaced from. ONE READER PER FIGURE: `valuation_basis` already reads it as "the
+    NTM EPS CIQ's NTM P/E implies", and only when every fitted line gives ONE value; this reads it
+    on the same rule. Two values (the lines' prices disagree) or none (the FY rows name no price)
+    is no stamp, and the write refuses rather than pick one.
+    """
+    fc = doc.get("forward_consensus") or {}
+    pb = fc.get("pe_eps_basis") or {}
+    if not pb:
+        return None, ("the page carries no forward_consensus.pe_eps_basis, so it states no NTM "
+                      "consensus EPS to bound the bear by")
+    vals = {round(float(e), 6) for f in pb.get("fits") or [] if isinstance(f, dict)
+            and isinstance(e := f.get("ntm_implied_eps"), (int, float))
+            and not isinstance(e, bool)}
+    if len(vals) != 1:
+        return None, (f"forward_consensus.pe_eps_basis gives {len(vals)} NTM implied EPS values "
+                      f"({sorted(vals)}) — one is needed, and the write never picks between them"
+                      + (f"; its note: {pb['note']}" if pb.get("note") else ""))
+    v = vals.pop()
+    if not math.isfinite(v) or v <= 0:
+        return None, f"the page's NTM implied EPS is {v:g}, not a positive consensus"
+    return {"value": v, "line": str(pb.get("ntm") or "undetermined"),
+            "source_ref": (f"forward_consensus.pe_eps_basis.fits[].ntm_implied_eps — the NTM EPS "
+                           f"CIQ's NTM P/E implies · {fc.get('source_file')} · sha256 "
+                           f"{fc.get('source_sha256')}"),
+            "as_of": str(fc.get("as_of"))}, None
+
+
 def build_r3_template(doc: dict[str, Any]) -> dict[str, Any]:
     """The R3 (forward P/E) underwrite template: the recipe's two axes and its evidence, no facts.
 
@@ -1318,6 +1476,19 @@ def build_r3_template(doc: dict[str, Any]) -> dict[str, Any]:
         if leg == "bear":
             # NO `margin_basis`: `_require_bear_basis` refuses one on a leg with no margin
             cell["bear_basis"] = ""
+            # (recipe 3a) THE BOUND the create checks this leg's EPS against, and the one way past
+            # it: a stated miss case. Empty, never proposed — whether the bear misses is the case
+            cell["miss_case"] = None
+            stamp, no_stamp = ntm_consensus_eps(doc)
+            cell[f"{COMMENTARY_PREFIX}eps_bound"] = (
+                (f"bear.eps must be at or below the NTM consensus EPS {stamp['value']:g} "
+                 f"({stamp['line']} line, {stamp['as_of']}; {stamp['source_ref']}), which "
+                 "scenario-create stamps on the record") if stamp else
+                f"scenario-create REFUSES this page's R3 record: {no_stamp}") + (
+                ". A bear EPS above it states `miss_case` {consensus_eps, period, source, "
+                "reason}: the consensus EPS for the bear's own period, which the bear EPS must "
+                "sit below — a bear whose earnings beat today's consensus is a multiple-"
+                "compression case only.")
         scenarios[leg] = cell
     return {
         "ticker": str(doc.get("ticker") or ""),
@@ -1402,6 +1573,11 @@ def assumptions_from(doc: dict[str, Any], legs: dict[str, dict[str, Any]],
                 if drv:
                     said.append(f"{leg}: {drv}")
         refs = [a.as_refpoint().model_dump() for (ax, _lg), a in by.items() if ax == axis]
+        # THE MEDIAN TRAVELS BESIDE THE CURRENT into the record (recipe 3a) — only where the
+        # current itself survived the basis filter, so a P/E record never carries R1's EV/EBITDA
+        if axis == "multiple" and ("multiple", "base") in by and (
+                beside := multiple_base_corroborator(doc)) is not None:
+            refs.append(beside.model_dump())
         out[axis] = {
             "method": " · ".join(said) or f"{axis}: stated per leg in the leg reasons.",
             "references": refs,

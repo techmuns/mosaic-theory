@@ -2296,7 +2296,9 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
         assumptions_from,
         check_tier_agreement,
         legs_from_template,
+        ntm_consensus_eps,
         propose_anchors,
+        unproposed_reasons,
         validate_legs,
     )
 
@@ -2335,7 +2337,15 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
     _rid = str(tpl.get("recipe_id") or "")
     _basis = str(tpl.get("multiple_basis") or "") or None
     problems = validate_legs(legs_from_template(tpl), propose_anchors(doc),
-                             axes=sc.axes_for(_rid, _basis), basis=_basis)
+                             axes=sc.axes_for(_rid, _basis), basis=_basis,
+                             reasons=unproposed_reasons(axes=sc.axes_for(_rid, _basis), doc=doc))
+    # (R3, recipe 3a) THE NTM CONSENSUS EPS, stamped from the page here and never typed: the bear's
+    # bound. A page that states none refuses the write, in the same list as everything else.
+    _stamp: dict[str, Any] | None = None
+    if _rid == sc.RECIPE_R3:
+        _stamp, _no_stamp = ntm_consensus_eps(doc)
+        if _stamp is None:
+            problems = problems + [f"ntm_consensus_eps cannot be stamped — {_no_stamp}"]
     # THE HORIZON, checked on the TEMPLATE rather than after construction: `ScenarioInput` accepts
     # `years_to_terminal=None` (R2 legacy records need it nullable), so a record built first would
     # validate and only fail later — the analyst deserves it in the same refusal list as everything
@@ -2425,7 +2435,12 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                 # recipe the create path cannot reach (found by a real create on AMZN, 2026-10-08)
                 ebit=(float(c["ebit"]) if c.get("ebit") is not None else None),
                 bear_basis=(c.get("bear_basis") or None),
-                margin_basis=(c.get("margin_basis") or None)) for leg, c in legs.items()},
+                margin_basis=(c.get("margin_basis") or None),
+                # (R3, recipe 3a) carried from the template, never defaulted — the bound below
+                # reads it, and a field the template cannot set is a field no record can carry
+                miss_case=(sc.MissCase(**c["miss_case"]) if c.get("miss_case") else None))
+                for leg, c in legs.items()},
+            ntm_consensus_eps=(sc.ConsensusEps(**_stamp) if _stamp else None),
             # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
             # schema-1.4 record whose assumptions do not cover all three axes, so a create path
             # that built the record first could never write at all.
@@ -2436,6 +2451,13 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                                               basis=_basis).items()},
         )
         rec = sc.run_recipe(rec)
+        # (R3, recipe 3a) the bear-EPS bound, on the BUILT record, so it reads the same leg values
+        # and the same stamp a supersede of this record would — one rule, one function
+        if bound := sc.bear_consensus_problems(rec):
+            print(f"=== scenario-create {t}: REFUSED ({len(bound)}) ===")
+            for p in bound:
+                print(f"  - {p}")
+            return 1
         path = sc.write_record(rec)
     except (ValueError, KeyError, TypeError) as exc:
         print(f"REFUSED: {type(exc).__name__}: {exc}")
@@ -2772,8 +2794,10 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
     from vinci.dossier.propose import (
         ProposalRefusedError,
         check_tier_agreement,
+        ntm_consensus_eps,
         propose_anchors,
         record_legs_for_validation,
+        unproposed_reasons,
         validate_legs,
     )
 
@@ -2793,8 +2817,24 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
         return 2
     _axes = sc.axes_for(incoming.recipe_id, incoming.multiple_basis)
     problems = validate_legs(record_legs_for_validation(incoming, axes=_axes), anchors,
-                             axes=_axes, basis=incoming.multiple_basis)
+                             axes=_axes, basis=incoming.multiple_basis,
+                             reasons=unproposed_reasons(axes=_axes, doc=doc))
     problems += sc.horizon_problems(incoming)     # no new record lands without a realisation date
+    # (R3, recipe 3a) THE NTM CONSENSUS EPS, stamped from the page at this decision, whatever the
+    # payload carried: the page is the one source, and a payload's own stamp is never trusted over
+    # it. No page, or a page that states none, refuses — the bear cannot be bounded.
+    if incoming.recipe_id == sc.RECIPE_R3:
+        _stamp, _no_stamp = (ntm_consensus_eps(doc) if doc is not None
+                             else (None, "no committed dossier to stamp it from"))
+        if _stamp is None:
+            problems.append(f"ntm_consensus_eps cannot be stamped — {_no_stamp}")
+        else:
+            _stamped = sc.ConsensusEps(**_stamp)
+            if (_had := incoming.ntm_consensus_eps) is not None and _had != _stamped:
+                print(f"  ⚠ the payload's ntm_consensus_eps {_had.value:g} is replaced by the "
+                      f"page's {_stamped.value:g} ({_stamped.as_of})")
+            incoming = incoming.model_copy(update={"ntm_consensus_eps": _stamped})
+    problems += sc.bear_consensus_problems(incoming)
     # ...and none lands struck at a year the decomposition does not use, unexplained. `doc` is
     # None when the name has no committed dossier (WERN), and `leg_fy_problems` treats a missing
     # anchor as nothing-to-check rather than a refusal — same non-forcing rule as the anchors above.
