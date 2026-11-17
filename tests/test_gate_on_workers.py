@@ -153,8 +153,11 @@ def _step_script(name: str) -> str:
 
 
 def _git(repo: Path, *args: str) -> str:
+    """Git in the fixture's repo, with auto-maintenance and auto-gc off: a commit otherwise starts
+    a detached `git maintenance run --auto` that writes into `.git/` while `_checkout` walks it."""
     return subprocess.run(["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t",
-                           *args], capture_output=True, text=True, check=True).stdout
+                           "-c", "maintenance.auto=false", "-c", "gc.auto=0", *args],
+                          capture_output=True, text=True, check=True).stdout
 
 
 def _wait_past(ns: int, probe: Path) -> None:
@@ -222,6 +225,24 @@ def test_the_guard_sits_between_the_mark_and_the_mirror_build() -> None:
     i = names.index("pytest (offline)")
     assert names[i - 1:i + 3] == [_MARK, "pytest (offline)", _GUARD,
                                   "frontend mirror is in sync with committed data"], names
+
+
+def test_the_checkout_starts_no_git_maintenance_beside_its_walk(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The fixture's commit starts no `git maintenance run --auto` (nor, on a git older than
+    maintenance, `gc --auto`). A recent git starts it DETACHED (`--detach`, as the trace shows on
+    git 2.50), so it can outlive the commit and create and remove `.git/objects/maintenance.lock`
+    while `_checkout` walks the repo: CI gate run 44051868311 (PR #1099's head d33f45ca,
+    2026-11-17) failed with FileNotFoundError on that lock, listed by `rglob` and gone by `lstat`.
+    Read from git's own trace of the run, so it holds whether the race lands or not; the trace
+    must show the commit, or it saw nothing."""
+    trace = tmp_path / "git-trace"
+    monkeypatch.setenv("GIT_TRACE", str(trace))
+    _checkout(tmp_path)
+    lines = trace.read_text().splitlines()
+    assert any("built-in: git commit" in line for line in lines), lines
+    started = [line for line in lines if "maintenance run" in line or "gc --auto" in line]
+    assert started == [], started
 
 
 def test_a_committed_file_rewritten_and_restored_trips_the_guard(tmp_path: Path) -> None:

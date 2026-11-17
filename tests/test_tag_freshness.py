@@ -76,7 +76,9 @@ def test_a_stale_alias_is_skipped_only_when_a_fresher_one_exists() -> None:
 def test_every_alias_stale_still_serves_rather_than_manufacturing_a_hole() -> None:
     """A tag also stops being reported when the FACT ceases — a company that repaid its current
     debt stops tagging it. Refusing there would turn "nothing to report" into UNKNOWN, which is a
-    different claim. The guard fixes what a fresher alias can fix and NAMES the rest.
+    different claim. The guard fixes what a fresher alias can fix, and `stale_served` MEASURES
+    the rest. It has no production reader: the share count it measures here is withheld by the
+    dossier's age bound. Why: docs/records/2026-11-17-the-monitors-stale-tag-row-is-retired.md
     """
     facts = _facts("V")
     served = extract_points(facts, "shares")
@@ -90,7 +92,7 @@ def test_every_alias_stale_still_serves_rather_than_manufacturing_a_hole() -> No
 
 
 def test_a_current_tag_is_never_flagged() -> None:
-    """Non-vacuous: the sweep must be quiet on names whose tags are live."""
+    """Non-vacuous: the measurement must be quiet on names whose tags are live."""
     facts = _facts("GOOGL")
     assert stale_served(facts, "capex") is None
 

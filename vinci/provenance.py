@@ -43,8 +43,11 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import ParamSpec, TypeVar
+from typing import TYPE_CHECKING, ParamSpec, TypeVar
 from urllib.parse import unquote, urlsplit, urlunsplit
+
+if TYPE_CHECKING:   # a model the record carries; no runtime import, so no cycle
+    from vinci.dossier.inputs_schema import FiledThrough
 
 _P = ParamSpec("_P")
 _R = TypeVar("_R")
@@ -133,6 +136,9 @@ class FileRead:
     #: the export date the file STATES of itself, ISO (`inputs.export_dates`); None when it
     #: states none
     export_date: str | None = None
+    #: a Financials export's latest stated column filing date, or why none is read
+    #: (`inputs.filed_through`); None on any other file
+    filed_through: FiledThrough | None = None
 
 
 #: How a whole-history price read is identified (`series_rows_sha256`): its rows' columns, in
@@ -315,7 +321,8 @@ def note_series_read(internal_id: str, rows: list[PriceRow], *, via: str) -> Non
 
 
 def note_file(role: str, path: Path, *, kind: str | None = None,
-              freq: str | None = None, export_date: str | None = None) -> None:
+              freq: str | None = None, export_date: str | None = None,
+              filed_through: FiledThrough | None = None) -> None:
     """Hash and record one file a build reads. An unreadable file is recorded with its error and
     no hash. Nothing happens (and nothing is read) with no recorder."""
     rec = _ACTIVE.get()
@@ -323,7 +330,8 @@ def note_file(role: str, path: Path, *, kind: str | None = None,
         return
     try:
         sha, size = file_sha256(path)
-        read = FileRead(role, str(path), sha, size, kind, freq, export_date=export_date)
+        read = FileRead(role, str(path), sha, size, kind, freq, export_date=export_date,
+                        filed_through=filed_through)
     except OSError as exc:
         # the error's CLASS and reason only: an OSError's text carries the full local path, and
         # the record lands on a committed page in a public repository

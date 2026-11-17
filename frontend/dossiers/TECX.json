@@ -8900,7 +8900,13 @@
         "file": "Tectonic Therapeutic Inc NasdaqGM TECX Financials_Annual.xls",
         "sha256": "958e5598bebfbfd955e320d75f73bd069dfa7f886b6f5c1142eebdbf72bc8218",
         "bytes": 202250,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-05",
+          "source_ref": "CIQ Financials (annual)→Balance Sheet, 'Filing Date' row 78, column 7 [Sep-30-2026], workbook sha256 958e5598bebfbfd955e320d75f73bd069dfa7f886b6f5c1142eebdbf72bc8218",
+          "status": "present",
+          "note": null
+        }
       },
       {
         "kind": "financials",
@@ -8908,7 +8914,13 @@
         "file": "Tectonic Therapeutic Inc NasdaqGM TECX Financials_Quarterly.xls",
         "sha256": "ae31d487c83a09fd74174af78fbaf26151ef304e76fe1ba80947e46c02cada23",
         "bytes": 281098,
-        "stamped_by": null
+        "stamped_by": null,
+        "filed_through": {
+          "value": "2026-11-05",
+          "source_ref": "CIQ Financials (quarterly)→Balance Sheet, 'Filing Date' row 74, column 17 [Q3 Sep-30-2026], workbook sha256 ae31d487c83a09fd74174af78fbaf26151ef304e76fe1ba80947e46c02cada23",
+          "status": "present",
+          "note": "passed over, never read as a filing date: Balance Sheet: 2 columns, [Q1 Mar-31-2023] to [Q2 Jun-30-2023] read 'NA', stating no filing date"
+        }
       },
       {
         "kind": "key_developments",
@@ -9067,6 +9079,14 @@
       "writer": "refresh",
       "layers": [
         "date_semantics",
+        "inputs"
+      ]
+    },
+    {
+      "date": "2026-11-17",
+      "extraction_version": "2026-11-17.a-financials-filing-date-counts",
+      "writer": "refresh",
+      "layers": [
         "inputs"
       ]
     }

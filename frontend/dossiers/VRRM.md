@@ -1,6 +1,6 @@
 # Dossier — VERRA MOBILITY Corp (Nasdaq: VRRM)
 
-_November 9, 2026 · extraction 2026-11-09.asof-cut · layers refreshed to 2026-11-16.a-ciq-fact-dates-from-its-export_
+_November 9, 2026 · extraction 2026-11-09.asof-cut · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
 
 # Brief — first cut
 
@@ -616,6 +616,7 @@ _Source §: 8-K 0001564590-21-015880 · vrrm-ex101_62.htm_
   - 2026-11-10 · mechanical.capital_allocation — refresh at 2026-11-10.dated-headroom
   - 2026-11-10 · mechanical.operating_drivers — driver-facts-pass at 2026-11-10.driver-text-filed
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
+  - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
 - **Price store:** `artifacts-order1-rebuilds-6a7a7b` · reaching 2026-11-06
 - **Panel age:** oldest panel 3d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-09 build
 - **Consensus age:** consensus 6d old (2026-11-03, valuation.implied_expectations.multiples_as_of) — within the ceiling
