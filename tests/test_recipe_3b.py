@@ -306,3 +306,15 @@ def test_legs_on_two_lines_are_refused() -> None:
                for p in sc.bear_consensus_problems(mixed))
     assert not any(p.startswith("the legs state different EPS lines")
                    for p in sc.bear_consensus_problems(rec))
+
+
+def test_the_r3_templates_bound_instruction_names_the_line() -> None:
+    """(−, review round 1) The template tells the analyst what a miss case is: since 3b it carries
+    a `line`, and the stamp bounds only a bear on its own line. An instruction that omits `line`
+    sends the analyst into a refusal the template itself caused."""
+    from vinci.dossier.propose import build_template
+
+    doc = json.loads((ROOT / "data" / "dossiers" / "GOOGL" / "dossier.json").read_text())
+    bound = build_template(doc)["scenarios"]["bear"]["_eps_bound"]
+    assert "consensus_eps, line, period, source, reason" in bound, bound
+    assert "only on a matching line" in bound, bound

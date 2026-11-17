@@ -1493,12 +1493,13 @@ def build_r3_template(doc: dict[str, Any]) -> dict[str, Any]:
             cell[f"{COMMENTARY_PREFIX}eps_bound"] = (
                 (f"bear.eps must be at or below the NTM consensus EPS {stamp['value']:g} "
                  f"({stamp['line']} line, {stamp['as_of']}; {stamp['source_ref']}), which "
-                 "scenario-create stamps on the record") if stamp else
+                 "scenario-create stamps on the record — compared only on a matching line "
+                 "(`eps_line`), or where the stamp reads indistinguishable") if stamp else
                 f"scenario-create REFUSES this page's R3 record: {no_stamp}") + (
-                ". A bear EPS above it states `miss_case` {consensus_eps, period, source, "
-                "reason}: the consensus EPS for the bear's own period, which the bear EPS must "
-                "sit below — a bear whose earnings beat today's consensus is a multiple-"
-                "compression case only.")
+                ". A bear EPS above it, or on another line, states `miss_case` {consensus_eps, "
+                "line, period, source, reason}: the consensus EPS for the bear's own period on "
+                "its own line, which the bear EPS must sit below — a bear whose earnings beat "
+                "today's consensus is a multiple-compression case only.")
         scenarios[leg] = cell
     return {
         "ticker": str(doc.get("ticker") or ""),
