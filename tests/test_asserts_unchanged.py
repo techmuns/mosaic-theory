@@ -126,3 +126,38 @@ def test_an_exit_inside_a_nested_helper_is_not_an_early_exit() -> None:
         '    doc = _page("BRBR")\n',
         '    def has(_t, d):\n        return bool(d)\n    doc = _page("BRBR")\n')
     assert not _failing(_diff(after)), _diff(after)
+
+
+#: A SKIP RAISED INSIDE A HELPER (slices 2–4 of W27, each slice's review): `skip_unless_export(...)`
+#: or a module function that calls `pytest.skip` stops the test as surely as a bare `pytest.skip`,
+#: and the first cut counted only the bare call, so each slice's "0 disabled" missed one.
+_HELPER_SKIPS = [
+    ("a call to an imported skip helper", BASE.replace(
+        '    doc = _page("BRBR")\n',
+        '    skip_unless_export("BRBR", "estimates", "0" * 10, why="w")\n'
+        '    doc = _page("BRBR")\n')),
+    ("a call to a module helper that skips", BASE.replace(
+        "def test_the_count():",
+        "def _need(t):\n    if t:\n        pytest.skip('gone')\n\n\ndef test_the_count():").replace(
+        '    doc = _page("BRBR")\n', '    _need("BRBR")\n    doc = _page("BRBR")\n')),
+]
+
+
+@pytest.mark.parametrize(("name", "after"), _HELPER_SKIPS, ids=[m[0] for m in _HELPER_SKIPS])
+def test_a_skip_raised_inside_a_helper_is_disabled(name: str, after: str) -> None:
+    """(−) A new call to a skip helper is DISABLED, and the checker exits red on it."""
+    got = _diff(after)
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], (name, got)
+    assert _failing(got), (name, got)
+
+
+def test_a_removed_skip_mark_is_not_disabled() -> None:
+    """(+) A test that LOSES a skip runs more, never less: only a mark added or changed is
+    DISABLED (slice 4 of W27 dropped 15 skips that a frozen copy can no longer meet)."""
+    before = BASE.replace("def test_the_count():",
+                          "@pytest.mark.skipif(True, reason='x')\ndef test_the_count():")
+    got: dict[str, list[str]] = _checker().compare_sources(before, BASE, "tests/test_x.py")
+    assert not got["DISABLED"], got
+    changed = before.replace("skipif(True,", "skipif(False,")
+    assert _checker().compare_sources(before, changed, "tests/test_x.py")["DISABLED"], (
+        "a changed mark is still DISABLED")

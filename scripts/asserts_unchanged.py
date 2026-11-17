@@ -12,8 +12,11 @@ tree. It classifies each difference:
   shifts lines compares equal, and a renamed variable, a changed literal or a dropped assert does
   not.
 - **DISABLED** (fails): the test can now stop running. Either a skip, skipif, xfail or
-  importorskip decorator appears or changes, or a `pytest.skip` / `pytest.xfail` /
-  `pytest.importorskip` call appears where BASE had fewer.
+  importorskip decorator appears or changes (one only REMOVED runs the test more, and is not
+  DISABLED), or a skip call appears where BASE had fewer. A skip call is `pytest.skip` /
+  `pytest.xfail` / `pytest.importorskip`, or a call to a SKIP HELPER: an imported `skip_unless_*`
+  (`tests/ciq_export_support.py`'s), or a function of the module whose own body makes a skip call.
+  Slices 2–4 of W27 each added a helper skip that the first cut, counting bare calls only, missed.
 - **CONTROL** (fails): an assertion's enclosing conditions differ, or the function gains an early
   exit. A condition is each enclosing `if` (its test), `while` or `try`. An early exit is a new
   `return`, `continue`, `break` or `raise`. A wrapped or bypassable assert reads like an unchanged
@@ -54,6 +57,9 @@ def _git(*args: str) -> str:
 #: to one name only for the READER-ONLY test.
 SUPPORT_READERS = frozenset({"frozen_doc", "frozen_page", "living_doc"})
 SKIP_CALLS = frozenset({"skip", "xfail", "importorskip"})
+#: The prefix of the imported skip helpers (`tests/ciq_export_support.py`): their bodies are in
+#: another module, so they are known by name.
+SKIP_HELPER_PREFIXES = ("skip_unless", "_skip_unless")
 SKIP_MARKS = frozenset({"skip", "skipif", "xfail"})
 FAILING = ("CHANGED", "DISABLED", "CONTROL", "VANISHED")
 
@@ -99,7 +105,24 @@ class Facts:
     exits: int = 0
 
 
-def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[str]) -> Facts:
+def skippers(source: str) -> frozenset[str]:
+    """The module's own skip helpers: its functions whose own body makes a pytest skip call."""
+    tree = ast.parse(source)
+    return frozenset(n.name for n in ast.walk(tree)
+                     if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef)
+                     and any(_is_pytest_call(c, SKIP_CALLS) for c in _own_nodes(n)))
+
+
+def _is_skip_helper_call(node: ast.AST, helpers: frozenset[str]) -> bool:
+    if not isinstance(node, ast.Call):
+        return False
+    f = node.func
+    name = f.id if isinstance(f, ast.Name) else f.attr if isinstance(f, ast.Attribute) else ""
+    return name in helpers or name.startswith(SKIP_HELPER_PREFIXES)
+
+
+def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[str],
+          helpers: frozenset[str] = frozenset()) -> Facts:
     parent = _parents(fn)
     norm = _Reader(reader_names)
     found: list[tuple[int, int, ast.AST]] = []
@@ -139,7 +162,8 @@ def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[st
         elif name == "parametrize":
             out.params.append(ast.dump(d))
     for n in _own_nodes(fn):
-        if isinstance(n, ast.Call) and _is_pytest_call(n, SKIP_CALLS):
+        if isinstance(n, ast.Call) and (_is_pytest_call(n, SKIP_CALLS)
+                                        or _is_skip_helper_call(n, helpers)):
             out.skip_calls += 1
         elif isinstance(n, ast.Return | ast.Continue | ast.Break | ast.Raise):
             out.exits += 1
@@ -184,13 +208,15 @@ def compare_sources(before_src: str, after_src: str, path: str) -> dict[str, lis
     after = functions(after_src) if after_src else {}
     names = (readers(before_src) if before_src else SUPPORT_READERS) | (
         readers(after_src) if after_src else SUPPORT_READERS)
+    helpers = (skippers(before_src) if before_src else frozenset()) | (
+        skippers(after_src) if after_src else frozenset())
     out: dict[str, list[str]] = {k: [] for k in (*FAILING, "READER", "POPULATION", "new")}
     for k in sorted(before.keys() & after.keys()):
-        b, a = facts(before[k], names), facts(after[k], names)
+        b, a = facts(before[k], names, helpers), facts(after[k], names, helpers)
         row = f"{path}::{k}"
         if b.asserts != a.asserts:
             out["READER" if b.reader_asserts == a.reader_asserts else "CHANGED"].append(row)
-        if b.marks != a.marks or a.skip_calls > b.skip_calls:
+        if set(a.marks) - set(b.marks) or a.skip_calls > b.skip_calls:
             out["DISABLED"].append(row)
         same = b.reader_asserts == a.reader_asserts
         if (same and b.conditions != a.conditions) or a.exits > b.exits:
