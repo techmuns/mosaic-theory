@@ -2346,17 +2346,12 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
         _stamp, _no_stamp = ntm_consensus_eps(doc)
         if _stamp is None:
             problems = problems + [f"ntm_consensus_eps cannot be stamped — {_no_stamp}"]
-    # THE HORIZON, checked on the TEMPLATE rather than after construction: `ScenarioInput` accepts
-    # `years_to_terminal=None` (R2 legacy records need it nullable), so a record built first would
-    # validate and only fail later — the analyst deserves it in the same refusal list as everything
-    # else, on one pass rather than round the loop again.
+    # THE HORIZON IS OWED ONLY BY A CALL OF RECORD (recipe 3b (2), operator 2026-11-16: "yes,
+    # exempt watch"). It was refused here on every template; create writes the default verdict,
+    # `pending_analyst`, which holds no position, so `sc.horizon_problems` — run on the BUILT record
+    # below, one rule for create and supersede — owes none. The refusal that matters is at
+    # `log-verdict` (`ledger.workflow.require_underwrite`), where a position is taken.
     _base = (legs_from_template(tpl).get("base") or {})
-    if _base.get("years_to_terminal") is None:
-        problems = problems + [
-            "base.years_to_terminal is required — the house convention is nominal 2:1 AND a "
-            "base-case IRR floor AND a stated horizon, and without a realisation date no IRR "
-            "exists to test. State it in years (1.5 = 18 months); it is never defaulted, because "
-            "a guessed horizon sets the return the record is then graded on."]
     # THE LEG-YEAR GUARD ON THIS PATH TOO. It was wired into `scenario-supersede` only, which left
     # the field unreachable from the path that CREATES records: no template cell, never read, never
     # enforced — so a created record could only ever read "unstated". Declared and readable but not
@@ -2438,7 +2433,10 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
                 margin_basis=(c.get("margin_basis") or None),
                 # (R3, recipe 3a) carried from the template, never defaulted — the bound below
                 # reads it, and a field the template cannot set is a field no record can carry
-                miss_case=(sc.MissCase(**c["miss_case"]) if c.get("miss_case") else None))
+                miss_case=(sc.MissCase(**c["miss_case"]) if c.get("miss_case") else None),
+                # (R3, recipe 3b (3)) the line the analyst states for the leg's EPS — carried,
+                # never assumed; the bound above refuses an R3 leg without one
+                eps_line=(c.get("eps_line") or None))
                 for leg, c in legs.items()},
             ntm_consensus_eps=(sc.ConsensusEps(**_stamp) if _stamp else None),
             # PASSED AT CONSTRUCTION, not patched in after: ScenarioRecord itself refuses a
@@ -2453,7 +2451,7 @@ def _cmd_scenario_create(args: argparse.Namespace) -> int:
         rec = sc.run_recipe(rec)
         # (R3, recipe 3a) the bear-EPS bound, on the BUILT record, so it reads the same leg values
         # and the same stamp a supersede of this record would — one rule, one function
-        if bound := sc.bear_consensus_problems(rec):
+        if bound := sc.bear_consensus_problems(rec) + sc.horizon_problems(rec):
             print(f"=== scenario-create {t}: REFUSED ({len(bound)}) ===")
             for p in bound:
                 print(f"  - {p}")
@@ -2835,6 +2833,20 @@ def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
                       f"page's {_stamped.value:g} ({_stamped.as_of})")
             incoming = incoming.model_copy(update={"ntm_consensus_eps": _stamped})
     problems += sc.bear_consensus_problems(incoming)
+    # (R2, recipe 3b (1)) A SUPERSEDED R2 RECORD IS STRUCK NOMINAL. A payload copied from the live
+    # record carries today's stamp, under which `_run_r2` would keep the PV ratio; cleared here, so
+    # the recompute below stamps the nominal chain. Never a reword: the outgoing record keeps its
+    # own stamp, archived as it was, and a payload that STATES the old result is refused below.
+    try:
+        _r2_legacy = (list(sc.r2_formula(incoming.multiple_basis, nominal=False))
+                      if incoming.recipe_id == sc.RECIPE_R2 else None)
+    except ValueError:                 # an unknown R2 basis: `run_recipe` below refuses it
+        _r2_legacy = None
+    if _r2_legacy is not None and incoming.recipe_formula == _r2_legacy:
+        print("  ⚠ R2: the payload carries the PV-ratio stamp; the reissue is struck NOMINAL "
+              "(on value_T) under the new chain — a result the payload STATES was struck on the "
+              "PV, so drop it and let the recipe compute it")
+        incoming = incoming.model_copy(update={"recipe_formula": []})
     # ...and none lands struck at a year the decomposition does not use, unexplained. `doc` is
     # None when the name has no committed dossier (WERN), and `leg_fy_problems` treats a missing
     # anchor as nothing-to-check rather than a refusal — same non-forcing rule as the anchors above.
