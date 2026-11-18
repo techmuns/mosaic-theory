@@ -124,6 +124,10 @@ FIXTURE_TAGS: frozenset[str] = frozenset({
     "OtherLongTermDebt",
     "OtherLongTermDebtNoncurrent",
     "OtherLongTermDebtCurrent",
+    # net debt: the total whose newest instant dates the filer's newest balance sheet, at which
+    # its cash is read (`net_debt.balance_sheet_date`, STATE.md §5.0 row 11 (b), 2026-11-19).
+    # Fixtures cut before it lack it, so their cash is read as the alias walk serves it.
+    "Assets",
     # free cash flow
     "NetCashProvidedByUsedInOperatingActivities",
     "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations",

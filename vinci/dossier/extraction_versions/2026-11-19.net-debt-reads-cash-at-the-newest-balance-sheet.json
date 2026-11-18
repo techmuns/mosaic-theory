@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet",
+  "follows": [
+    "2026-11-17.ifrs-statements-date-the-filers-fiscal-year",
+    "2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect"
+  ],
+  "names": "net debt reads its cash at the filer's newest balance sheet (its newest Assets instant, us-gaap or ifrs-full), from the first cash alias that carries that instant in dollars, and every other line at that date; only where no alias carries it is the walk's latest cash read, within 180 days of it, and older is refused as a past balance sheet naming both dates; a combined annual figure withheld one IFRS year behind is worded for its pair"
+}
