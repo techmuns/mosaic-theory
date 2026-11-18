@@ -21,7 +21,13 @@ from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci import coverage_roster
 from vinci.config import get_config
-from vinci.dossier.anchor import DQ_LEASE_BASIS, PLACEHOLDER_HINTS, SHARES_REFUSED, Anchor
+from vinci.dossier.anchor import (
+    DQ_LEASE_BASIS,
+    MULTIPLE_CURRENT,
+    PLACEHOLDER_HINTS,
+    SHARES_REFUSED,
+    Anchor,
+)
 from vinci.dossier.covenant_extract import (
     VALUE_REFUSED_NOTE_PREFIX,
     GoverningTerm,
@@ -384,7 +390,18 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
                f"operating leases over reported EBITDA — the median is {b.median:,.1f}x over "
                f"{b.n_closes} quarters (current {b.current:,.1f}x at the {b.as_of} filing; "
                f"{b.percentile:.0%} of the history at or below it).")
-    if priced_ex:
+    if priced_ex and _screens_at_current(anchor) and anchor is not None \
+            and anchor.multiple is not None and anchor.multiple.value is None:
+        # (W50) the statistic is the current, but the band carries no usable one: nothing priced
+        tail = (" R1 prices nothing on it: the history carries no usable current multiple, and "
+                "the median is never put in its place. The level and percentile above are CIQ's "
+                "own series.")
+    elif priced_ex and _screens_at_current(anchor):
+        # (W50) the anchor prices the history's current, not its median. No twin: dossier.js
+        # prints no sentence on what R1 prices here.
+        tail = (" R1 prices that history's current multiple, the median beside it, with net debt "
+                "excluding operating leases. The level and percentile above are CIQ's own series.")
+    elif priced_ex:
         tail = (" R1 prices that median with net debt excluding operating leases. The level and "
                 "percentile above are CIQ's own series.")
     elif anchor is None or anchor.multiple is None:
@@ -3821,6 +3838,21 @@ _SCREEN_SUBTITLE = (
     "A mechanical re-rate to the median multiple of this name's own trading history, on its naive "
     "reported median margin. An attention filter only — it applies no structural adjustment, so a "
     "cheap-looking screen still has to survive the full bear/base/bull underwrite.")
+#: (W50, 2026-11-17) The same two lines for an anchor that prices TODAY'S multiple — chosen by the
+#: anchor's own `multiple.statistic`, never assumed: every page committed before W50 priced the
+#: median and prints the lines above until it is re-derived. Twin: anchorInner() in dossier.js.
+_SCREEN_METHOD_R1_CURRENT = "mid-cycle margin × today's multiple of its own history"
+_SCREEN_SUBTITLE_CURRENT = (
+    "This name's naive reported median margin, priced at the multiple it trades on today — the "
+    "latest close of its own trading history, the history's median printed beside it and never "
+    "priced. An attention filter only — it applies no structural adjustment, so a cheap-looking "
+    "screen still has to survive the full bear/base/bull underwrite.")
+
+
+def _screens_at_current(anchor: Anchor | None) -> bool:
+    """Whether this anchor prices the band's current multiple (W50) — its structured statistic."""
+    return (anchor is not None and anchor.multiple is not None
+            and anchor.multiple.statistic == MULTIPLE_CURRENT)
 #: (#1004 item 3c, 2026-11-13) What the Brief's Scenario analysis section says where the screening
 #: anchor went, on a name with no scenario record. Twin: SCREEN_POINTER in dossier.js. It names no
 #: multiple (operator, 2026-11-13: "Drop that clause (Recommended)"): 6 of the 19 pages carrying it
@@ -3886,7 +3918,9 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     if anchor is None:
         return []
     is_r1 = anchor.recipe_hint.startswith("R1")
-    method = _SCREEN_METHOD_R1 if is_r1 else (anchor.recipe_hint or "—")
+    current = _screens_at_current(anchor)
+    method = ((_SCREEN_METHOD_R1_CURRENT if current else _SCREEN_METHOD_R1) if is_r1
+              else (anchor.recipe_hint or "—"))
     # WHOSE BIT IS `applicable` (2026-10-09). It is R1's — whether R1's arithmetic, the rows below,
     # can anchor — but it printed beside whatever recipe is TAGGED, so UBER's page read
     # "R4_forward_ev_ebit | NOT applicable", a verdict on R4 that the bit never made. Beside an R1
@@ -3902,10 +3936,19 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         # THE BASIS NAMES THE LEASE CONVENTION when the history is the ex-lease rebuild
         # (2026-10-19): "EV/EBITDA" alone read as CIQ's series. Twin: anchorInner().
         ex = mu.source.startswith(_EX_LEASE_SOURCE_PREFIX)
-        rows.append(f"| Median multiple, own history | "
-                    f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
-                    f"{mu.history_quarters} closes · {mu.confidence} · "
-                    f"{_md_cell(anchor.multiple_basis)}{_EX_LEASE_LABEL if ex else ''} |")
+        tail = (f"{mu.history_quarters} closes · {mu.confidence} · "
+                f"{_md_cell(anchor.multiple_basis)}{_EX_LEASE_LABEL if ex else ''} |")
+        if current:
+            # (W50) today's multiple, its close date, and the median BESIDE it — never the
+            # screen's multiple. Twin: anchorInner().
+            med = "—" if mu.median is None else f"{mu.median:.1f}x"
+            rows.append(f"| Current multiple, own history | "
+                        f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
+                        f"latest close {mu.as_of or '—'} · median {med} beside it, not used · "
+                        + tail)
+        else:
+            rows.append(f"| Median multiple, own history | "
+                        f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | " + tail)
     base = anchor.anchor_base_value_per_share
     if base is not None:
         ev = anchor.anchor_ev_ebit
@@ -3927,7 +3970,7 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
                         f"shares (diluted less basic weighted average, latest 10-Q) |")
     rows.append(f"| Overall confidence | {anchor.overall_confidence or '—'} |  |")
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
-           f"_{_SCREEN_SUBTITLE}_", "",
+           f"_{_SCREEN_SUBTITLE_CURRENT if current else _SCREEN_SUBTITLE}_", "",
            "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
     # The operator's decision on this name's recipe renders on the Brief
     # (`_operator_decision_lines`, #1004 item 3c round 1); this block keeps the machine's own read,

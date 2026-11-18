@@ -567,7 +567,23 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
             unvalued.add(p.name)
             continue
         compared += 1
-        if abs(fresh.anchor_base_value_per_share / committed - 1) > 0.001:
+        # (W50, 2026-11-17) THE MULTIPLE IS HELD AT THE COMMITTED ONE. This pin watches the
+        # anchor's INPUTS; W50 moved WHICH statistic of the band the screen prices (the median →
+        # the current) on every page, by design and on the record. Striking the fresh inputs at
+        # the committed multiple keeps the pin on what it guards; at the committed page's own
+        # statistic the two are the same number, so the pin reads as before once pages refresh.
+        from vinci.dossier import midcycle as mc
+        from vinci.dossier.anchor import per_share_shares
+        held = ((d.get("anchor") or {}).get("multiple") or {}).get("value")
+        fa = fresh
+        assert fa.ltm_revenue and fa.margin and fa.d_and_a and fa.net_debt and held is not None
+        shares = per_share_shares(fa.model_dump(mode="json"))
+        assert shares, p.name
+        sv = mc.scenario_value(
+            mc.Scenario(name="base", revenue=fa.ltm_revenue.value, margin=fa.margin.value,
+                        multiple=float(held), source="anchor default", d_and_a=fa.d_and_a.value),
+            net_debt=fa.net_debt.value, shares=shares)
+        if abs((sv.equity * 1e6 / shares) / committed - 1) > 0.001:
             diverged.add(p.name)
     assert compared >= 5, f"only {compared} anchors reached the comparison — near-vacuous"
     assert unvalued <= BRIDGE_ONLY_ANCHORS, (

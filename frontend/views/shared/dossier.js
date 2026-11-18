@@ -1420,8 +1420,9 @@ function whatHappened(m, sleeve, refDate) {
 }
 
 // (log-a) SCREENING ANCHOR — the committed R1 anchor block (vinci/dossier/anchor.py), read-only.
-// A mechanical re-rate of the name to its OWN-history median multiple on a NAIVE reported median
-// margin: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
+// A NAIVE reported median margin priced at the multiple the name trades on today (its own
+// history's latest close, the median beside it) since W50 — the OWN-history median on an anchor
+// written before: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
 // adjustment. Absent anchor → renders nothing, so pre-anchor dossiers are untouched.
 function anchorInner(a) {
   if (!a) return "";
@@ -1431,8 +1432,14 @@ function anchorInner(a) {
   const mg = a.margin, mu = a.multiple;
   const base = a.anchor_base_value_per_share;
   const isR1 = String(a.recipe_hint || "").startsWith("R1");
+  // (W50, 2026-11-17) an anchor derived since prices TODAY'S multiple and says so in
+  // `multiple.statistic`; a page committed before priced the median and keeps its words.
+  // Twin of _screens_at_current() in render.py.
+  const current = !!(mu && mu.statistic === "current");
   const methodName = isR1
-    ? "mid-cycle margin × the median multiple of its own history" : (a.recipe_hint || "—");
+    ? (current ? "mid-cycle margin × today's multiple of its own history"
+               : "mid-cycle margin × the median multiple of its own history")
+    : (a.recipe_hint || "—");
   // WHOSE BIT IS `applicable` (2026-10-09) — R1's, so beside any other tag it says so; beside an
   // R1 tag the plain word stays. Twin of _screening_context_lines() in render.py.
   const fit = a.applicable ? "applicable" : "NOT applicable";
@@ -1441,8 +1448,9 @@ function anchorInner(a) {
     mg ? row("Mid-cycle margin", mg.value != null ? `${(mg.value * 100).toFixed(1)}%` : "—",
              `${mg.anchor_years}y history · ${conf(mg.confidence)}`) : "",
     // the ex-lease history names its lease convention (2026-10-19). Twin of _screening_context_lines()
-    mu ? row("Median multiple, own history", mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
-             `${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}${
+    mu ? row(current ? "Current multiple, own history" : "Median multiple, own history",
+             mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
+             `${current ? `latest close ${escapeHtml(mu.as_of || "—")} · median ${mu.median != null ? `${mu.median.toFixed(1)}x` : "—"} beside it, not used · ` : ""}${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}${
                String(mu.source || "").startsWith("valuation.lease_basis")
                  ? " ex-lease (TEV less operating leases; net debt likewise)" : ""}`) : "",
     base != null ? row("Screen value / share", `$${base.toFixed(2)}`,
@@ -1475,7 +1483,9 @@ function anchorInner(a) {
   // decision exists. Twin of _screening_context_lines() in render.py.
   const why = a.reason ? `<div class="muted" style="margin-top:6px;">${a.operator_decision ? "The machine’s read: " : ""}${escapeHtml(a.reason)}</div>` : "";
   return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
-    <div class="subtitle muted" style="margin:2px 0 8px;">A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite.</div>
+    <div class="subtitle muted" style="margin:2px 0 8px;">${current
+      ? "This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."
+      : "A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."}</div>
     <table class="data"><tbody>${rows}</tbody></table>${mid}${dq}${why}</div>`;
 }
 
