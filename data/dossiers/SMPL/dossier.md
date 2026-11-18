@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
 
 # Brief — first cut
 
@@ -169,7 +169,7 @@ _table shows the last 4 fiscal years · 9 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 6.1x as-of 2026-11-03 — trailing range 5.0–28.9x (median 17.6x) over 36 closes → 6%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [34]
 - **vs peers:** EV/EBITDA 6.1x vs peer median 7.6x (-20%); P/E NM vs peer median 17 [35]
 - **Forward multiples:** P/FY27E (normalized) 8.3x (EPS $1.52); P/FY27E (GAAP) 9.1x (EPS $1.39); P/FY28E (normalized) 7.7x (EPS $1.64); P/FY28E (GAAP) 8.5x (EPS $1.48) — at $12.64 as-of 2026-11-11 [36]
-- **Multiple basis — read before the level:** rent is 6.5% of EBITDA (FY ending 2026-08-29). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 18.2x over 34 quarters (current 5.1x at the 2026-10-27 filing; 0% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [37]
+- **Multiple basis — read before the level:** rent is 6.5% of EBITDA (FY ending 2026-08-29). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 18.2x over 34 quarters (current 5.1x at the 2026-10-27 filing; 0% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [37]
 - **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $12.64 close (2026-11-11): ($12.64 × 86,861,967 shares outstanding + net debt $209M excluding operating leases) ÷ LTM EBITDA $206M (four quarters to 2026-08-29) = 6.4x
 - **Comparability:** market caps span $13M–$29.1B (2203x); the name is $1.1B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [38]
 - **The street, for contrast (target · ratings):** Target price: mean $12.00, median $11.00, high/low 18.00/10.00, N 8/8; Ratings: Buy 2, Outperform 0, Hold 8, Underperform 0, Sell 0, No Opinion 1  [data ≥ 2026-10-29 · export date unverified] [39]
@@ -330,16 +330,30 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Method | mid-cycle margin × today's multiple of its own history | applicable |
 | Mid-cycle margin | 15.4% | 9y history · firm |
-| Median multiple, own history | 18.2x | 34 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $46.48 | spot-independent · EV/EBIT 20.3x · on 86,861,967 shares outstanding |
-| Dilution test / share | $46.48 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Current multiple, own history | 5.1x | latest close 2026-10-27 · median 18.2x beside it, not used · 34 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
+| Screen value / share | $11.37 | spot-independent · EV/EBIT 5.7x · on 86,861,967 shares outstanding |
+| Dilution test / share | $11.37 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
+
+**How the screen value splits.** Screen value $11.37 at today's 5.1x = $9.75 on current EBITDA ($206M) + $1.62 margin reversion (mid-cycle 1.13× current). Median 18.2x: $35.11 higher (not used).
+
+_The split's arithmetic:_
+
+- m = 5.1351x, today's multiple (the close of 2026-10-27); M = 18.2256x, the median beside it, never used.
+- E_mid = 1,356.5 × 15.3855% + 24.3 = $233M — LTM revenue × the median margin + D&A, the anchor's EBITDA.
+- E_cur = $206M — valuation.lease_basis.observations (the observation of 2026-10-27): CIQ Income Statement 'EBITDA' over four quarters to 2026-08-29, the denominator of the ex-lease multiple 5.13509x = (TEV 1,106.0 − leases 50.3) ÷ 205.6.
+- V0 = (5.1351 × 205.6 − net debt 208.8) ÷ 86,861,967 shares = $9.75.
+- margin effect = 5.1351 × (233.0 − 205.6) ÷ 86,861,967 = $1.62.
+- multiple effect = (18.2256 − 5.1351) × 233.0 ÷ 86,861,967 = $35.11, beside the anchor, never in it.
+- V0 + margin effect = $11.37, the screen value; + multiple effect = $46.48, the value at the median.
+- net debt ÷ EV = 208.8 ÷ 1,055.7 = 0.198; flagged above 0.5.
+- the multiple's close 2026-10-27, the page's stored close 2026-11-11: 15 days; stale above 30.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [51]  <!-- ds-table -->
@@ -708,6 +722,7 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
 - **Refreshed since assembly** (oldest first):
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
+  - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 11d old — 2026-11-03 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 16d old (2026-10-29, valuation.implied_expectations.multiples_as_of) — within the ceiling

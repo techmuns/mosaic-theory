@@ -19736,13 +19736,21 @@
       "layers": [
         "inputs"
       ]
+    },
+    {
+      "date": "2026-11-18",
+      "extraction_version": "2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-14T13:01:03.797087Z",
+    "computed_at": "2026-11-18T15:50:54.272740Z",
     "reason": null,
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
@@ -19757,11 +19765,14 @@
       "confidence": "weak"
     },
     "multiple": {
-      "value": 25.682746,
+      "value": 27.85306,
       "unit": "EV/EBITDA",
-      "source": "valuation.own_history.median",
+      "source": "valuation.own_history.current",
       "history_quarters": 39,
-      "confidence": "firm"
+      "confidence": "firm",
+      "statistic": "current",
+      "as_of": "2026-11-02",
+      "median": 25.682746
     },
     "d_and_a": {
       "value": 2174.0,
@@ -19805,7 +19816,7 @@
       "basis": "trailing twelve months to 2026-09-30 (vendor basis)",
       "source": "CIQ Financials->Cash Flow operating cash flow less capital expenditure [Eli Lilly and Company NYSE LLY Financials_Annual.xls sha 0fa91cd481]"
     },
-    "anchor_base_value_per_share": 752.2356,
+    "anchor_base_value_per_share": 820.1522,
     "midcycle_gap": {
       "ltm_margin": 0.512537,
       "median_margin": 0.298207,
@@ -19818,9 +19829,9 @@
       "basis_ciq_margin": null,
       "same_source": true,
       "basis": "LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: financial_summary (short history) — EBIT/Revenue reported median; flagged at ≥5 points; sources said to agree within 2",
-      "read": "The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount."
+      "read": "The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount."
     },
-    "anchor_ev_ebit": 27.8482,
+    "anchor_ev_ebit": 30.2016,
     "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
     "band_checks": {
@@ -19829,6 +19840,45 @@
       "d_and_a_source": "edgar"
     },
     "ciq_scale_check": "agree",
+    "gap_split": {
+      "current_multiple": 27.85306,
+      "median_multiple": 25.682746,
+      "multiple_close": "2026-11-02",
+      "price_date": "2026-11-11",
+      "close_age_days": 9,
+      "stale_close": false,
+      "midcycle_ebitda": 27957.573,
+      "midcycle_ebitda_source": "anchor ltm_revenue × margin + d_and_a: 86,462.000 × 0.298207 + 2,174.000 ($M)",
+      "current_ebitda": 46489.0,
+      "current_ebitda_source": "mechanical.financial_summary LTM 'EBITDA ($M)' (CIQ), which CIQ's TEV ÷ 27.9x reproduces (valuation.ev_ebitda_basis: indistinguishable; $46,829M implied, TEV as of 2026-10-30)",
+      "current_ebitda_through": null,
+      "net_debt": 45980.0,
+      "shares": 893400000.0,
+      "value_at_current_ebitda": 1397.8967,
+      "margin_effect": -577.7445,
+      "multiple_effect": -67.9166,
+      "anchor_at_current": 820.1522,
+      "anchor_at_median": 752.2356,
+      "net_debt_to_ev": 0.03551,
+      "equity_sensitivity": 1.0368,
+      "leverage_flag": false,
+      "refusal": null,
+      "basis": "V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = (M − m) × E_mid / S. The anchor at today's multiple = V0 + margin effect; at the median = V0 + margin effect + multiple effect. m and M are the band's current and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No term reads a price. The margin effect carries every difference between E_mid and E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.",
+      "read": "Screen value $820.15 at today's 27.9x = $1,397.90 on current EBITDA ($46,489M) − $577.74 margin reversion (mid-cycle 0.60× current). Median 25.7x: $67.92 lower (not used).",
+      "stale_line": null,
+      "leverage_line": null,
+      "arithmetic": [
+        "m = 27.8531x, today's multiple (the close of 2026-11-02); M = 25.6827x, the median beside it, never used.",
+        "E_mid = 86,462.0 × 29.8207% + 2,174.0 = $27,958M — LTM revenue × the median margin + D&A, the anchor's EBITDA.",
+        "E_cur = $46,489M — mechanical.financial_summary LTM 'EBITDA ($M)' (CIQ), which CIQ's TEV ÷ 27.9x reproduces (valuation.ev_ebitda_basis: indistinguishable; $46,829M implied, TEV as of 2026-10-30).",
+        "V0 = (27.8531 × 46,489.0 − net debt 45,980.0) ÷ 893,400,000 shares = $1,397.90.",
+        "margin effect = 27.8531 × (27,957.6 − 46,489.0) ÷ 893,400,000 = −$577.74.",
+        "multiple effect = (25.6827 − 27.8531) × 27,957.6 ÷ 893,400,000 = −$67.92, beside the anchor, never in it.",
+        "V0 + margin effect = $820.15, the screen value; + multiple effect = $752.24, the value at the median.",
+        "net debt ÷ EV = 45,980.0 ÷ 1,294,860.9 = 0.036; flagged above 0.5.",
+        "the multiple's close 2026-11-02, the page's stored close 2026-11-11: 9 days; stale above 30."
+      ]
+    },
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

@@ -266,9 +266,13 @@ const anchorInner = new Function("escapeHtml", "a", body).bind(null, escapeHtml)
 const ENT = {"&#39;": "'", "&#x27;": "'", "&quot;": '"', "&lt;": "<", "&gt;": ">", "&amp;": "&"};
 const strip = (h) => h.replace(/<[^>]*>/g, " ")
   .replace(/&(#39|#x27|quot|lt|gt|amp);/g, (m) => ENT[m]).replace(/\\s+/g, " ");
-console.log(JSON.stringify(__A__.map((a) => strip(anchorInner(a)))));
-""".replace("__A__", json.dumps([a for _, a in anchors]))
+// the anchors arrive on stdin, never in argv: Linux caps ONE argument at 128 KiB, and the
+// committed corpus passed it once W61's split landed on the refreshed pages (#1119's gate)
+const anchors = JSON.parse(readFileSync(0, "utf8"));
+console.log(JSON.stringify(anchors.map((a) => strip(anchorInner(a)))));
+"""
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         input=json.dumps([a for _, a in anchors]),
                          capture_output=True, text=True, check=True, cwd=ROOT)
     web = json.loads(out.stdout)
 
