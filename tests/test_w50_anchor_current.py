@@ -205,21 +205,37 @@ def test_committed_pages_round_trip_and_state_what_they_priced() -> None:
     seen = 0
     for t in covered_pages():
         raw = (PAGES / t / "dossier.json").read_text()
-        doc = Dossier.model_validate_json(raw)
-        if doc.anchor is None or doc.anchor.multiple is None:
-            continue
-        seen += 1
-        out = dossier_json(doc)
-        mult = json.loads(out)["anchor"]["multiple"]
-        if doc.anchor.multiple.statistic is None:
-            assert not {"statistic", "as_of", "median"} & set(mult), t
-        else:
-            assert doc.anchor.multiple.statistic == anc.MULTIPLE_CURRENT, t
-            assert mult.get("statistic") == anc.MULTIPLE_CURRENT, t
-            assert mult.get("median") is not None, t
-            assert mult.get("as_of", "absent") is not None, t     # absent is allowed; null never
-        assert out == raw, f"{t} does not round-trip byte-identically"
+        if _round_trips_by_its_kind(t, raw):
+            seen += 1
     assert seen, "no covered page carries an anchor multiple — the round-trip checked nothing"
+
+
+def _round_trips_by_its_kind(t: str, raw: str) -> bool:
+    """The per-kind rule on one page's text; False when the page has no anchor multiple."""
+    doc = Dossier.model_validate_json(raw)
+    if doc.anchor is None or doc.anchor.multiple is None:
+        return False
+    out = dossier_json(doc)
+    mult = json.loads(out)["anchor"]["multiple"]
+    if doc.anchor.multiple.statistic is None:
+        assert not {"statistic", "as_of", "median"} & set(mult), t
+    else:
+        assert doc.anchor.multiple.statistic == anc.MULTIPLE_CURRENT, t
+        assert mult.get("statistic") == anc.MULTIPLE_CURRENT, t
+        assert mult.get("median") is not None, t
+        assert mult.get("as_of", "absent") is not None, t     # absent is allowed; null never
+    assert out == raw, f"{t} does not round-trip byte-identically"
+    return True
+
+
+def test_a_w50_anchor_round_trips_by_the_same_rule() -> None:
+    """(+) The W50 branch of the rule above, run on main as well as after a refresh. SMPL's frozen
+    page carries the anchor W50 derives for it, is written by the one writer, and is held to the
+    same rule. Main's pages carry no W50 anchor yet, so without this the branch ran on no page
+    (review round 1 of #1117: a mutant breaking it passed on main)."""
+    page = {**_doc("SMPL"), "anchor": json.loads(_derive(_doc("SMPL")).model_dump_json())}
+    raw = dossier_json(Dossier.model_validate(page))
+    assert _round_trips_by_its_kind("SMPL", raw)
 
 
 def _md(a: anc.Anchor | None) -> str:
