@@ -110,17 +110,19 @@ class Basis(enum.StrEnum):
 #: debt and cash are face lines and are read at the balance-sheet date or not at all.
 LEASE_MAX_AGE_DAYS = 400
 
-#: The cash instant may trail the filer's NEWEST balance sheet (:func:`balance_sheet_date`) by at
-#: most this; older, and every line read at it is a past balance sheet, refused (STATE.md §5.0 row
-#: 11 (b)). The share count's bound (`vinci.dossier.mechanical._SHARES_MAX_AGE_DAYS`), for the
-#: same reason: cash is a face line restated in every 10-Q, so two quarters with no cash line on
-#: the tags read means that line stopped being read, not that the filer is slow. Measured against
-#: the filer's OWN newest balance sheet, as the annual readers measure against its own newest
-#: fiscal year, so a late filer is never refused and an annual filer (whose newest balance sheet
-#: is its year end) needs no wider bound. MEASURED 2026-11-17 on the primary's 1,078 cached
-#: companyfacts, the 580 net debts served: 571 read cash at the newest balance sheet, 4 one
-#: quarter behind (90–91d), NOTHING from 92d to 181d, then 182–183d (3), 280d (1) and
-#: PennyMac Mortgage's 2,830d. Set by that gap and the precedent — never by what a reading paid.
+#: THE BACKSTOP (STATE.md §5.0 row 11 (b)). Net debt reads its cash AT the filer's newest balance
+#: sheet (:func:`_cash_at_newest`). Only where no cash alias carries that instant is the walk's
+#: latest cash read, and then only if it trails the newest balance sheet by at most this; older,
+#: and every line read at it is a past balance sheet, refused. The share count's bound
+#: (`vinci.dossier.mechanical._SHARES_MAX_AGE_DAYS`), for the same reason: cash is a face line
+#: restated in every 10-Q, so two quarters with no cash line on the tags read means that line
+#: stopped being read, not that the filer is slow. Measured against the filer's OWN newest balance
+#: sheet, as the annual readers measure against its own newest fiscal year, so a late filer is
+#: never refused and an annual filer (whose newest balance sheet is its year end) needs no wider
+#: bound. MEASURED 2026-11-17 on the primary's 1,078 cached companyfacts, the walk's cash date
+#: for the 580 net debts served: 571 at the newest balance sheet, 4 one quarter behind (90–91d),
+#: NOTHING from 92d to 181d, then 182–183d (3), 280d (1) and PennyMac Mortgage's 2,830d. Set by
+#: that gap and the precedent — never by what a reading paid.
 CASH_MAX_AGE_DAYS = 180
 
 #: The balance-sheet total whose newest instant dates the filer's newest balance sheet, in either
@@ -197,7 +199,8 @@ def balance_sheet_date(facts: dict[str, Any]) -> date | None:
     """The filer's newest balance-sheet date: the newest instant :data:`_BALANCE_SHEET_TOTAL`
     carries in us-gaap or ifrs-full, of any unit (a date carries no currency), ending on or before
     the day it was filed (a later one is a forward-dated context, as `concepts.concept_frontier`
-    skips). None when the filer tags no total: then the cash instant's age is not measured, as
+    skips). Net debt reads its cash at this date (:func:`_cash_at_newest`). None when the filer
+    tags no total: then the cash is read as the alias walk serves it, with no backstop, as
     `concepts.behind_filer` judges nothing without a fiscal year.
 
     MEASURED 2026-11-17 on the primary's 1,078 cached companyfacts: of the 961 with a dollar cash
@@ -217,6 +220,26 @@ def balance_sheet_date(facts: dict[str, Any]) -> date | None:
                 if end <= filed and (newest is None or end > newest):
                     newest = end
     return newest
+
+
+def _cash_at_newest(facts: dict[str, Any], newest: date) -> ConceptPoint | None:
+    """The cash AT the filer's newest balance sheet: the first :data:`CONCEPT_ALIASES` ``cash``
+    alias, in order, that carries ``newest`` in dollars; None when none does.
+
+    NOT THE ALIAS WALK'S PICK (option 2, the coordinator's ruling on STATE.md §5.0 row 11 (b)). The
+    walk (`concepts._walk`) keeps an alias while a sibling leads it by at most
+    `concepts.SIBLING_LAG_DAYS` (200d), which is right for choosing a SERIES and wrong for a
+    balance-sheet DATE. Eastman, Olin, Andersons, APEI and Everforth tag
+    `CashAndCashEquivalentsAtCarryingValue` only in their 10-K and the restricted-cash total in
+    every 10-Q, so after Q1 (90d) and Q2 (181d) the walk kept the year end and net debt read a
+    balance sheet two quarters old; after Q3 (273d) it switched. A 180d bound on the walk's date
+    (option 1) refused them at 181d instead. Read at the newest balance sheet, each is current,
+    and every other line is read at that date as before. The walk is unchanged for every other
+    reader."""
+    for tag in CONCEPT_ALIASES["cash"]:
+        if (p := _at(facts, tag, newest)) is not None:
+            return p
+    return None
 
 
 def _usd(facts: dict[str, Any], tag: str) -> list[ConceptPoint]:
@@ -435,8 +458,9 @@ class NetDebt:
     witness: tuple[float, str, str] | None
     #: a standard debt tag the filer last reported BEFORE ``at`` — set only when none is at ``at``
     stale_debt: ConceptPoint | None
-    #: the filer's newest balance-sheet date, set only when ``at`` trails it by more than
-    #: :data:`CASH_MAX_AGE_DAYS`: then no other line is read at ``at``
+    #: the filer's newest balance-sheet date, set only when no cash alias carries it and ``at``
+    #: (the walk's latest cash) trails it by more than :data:`CASH_MAX_AGE_DAYS`: then no other
+    #: line is read at ``at``
     stale_cash: date | None = None
 
     @property
@@ -465,9 +489,10 @@ class NetDebt:
         tagged a debt line; every other reason is one the depth stage (CIQ) can settle."""
         if self.stale_cash is not None:
             c = self.cash
-            return (f"the cash line read, {c.tag}, was last reported ${c.value / 1e6:,.0f}M at "
-                    f"{self.at}, {(self.stale_cash - self.at).days}d before the filer's "
-                    f"{self.stale_cash} balance sheet — a past balance sheet, not read as current")
+            return (f"no cash line is tagged at the filer's {self.stale_cash} balance sheet, and "
+                    f"the one read, {c.tag}, was last reported ${c.value / 1e6:,.0f}M at "
+                    f"{self.at}, {(self.stale_cash - self.at).days}d before it — a past balance "
+                    f"sheet, not read as current")
         if self.witness_text is not None:
             return f"EDGAR debt under-captured: {self.witness_text}"
         if self.borrowings is None and self.stale_debt is not None:
@@ -518,18 +543,23 @@ def net_debt(facts: dict[str, Any], *, as_of: date | None = None) -> NetDebt | N
     LPL read 3.26 trillion "dollars" of net debt before this, review of #749."""
     if as_of is not None:
         facts = facts_as_of(facts, as_of)
-    cash = latest_instant([p for p in extract_points(facts, "cash") if p.unit == "USD"])
-    if cash is None:
-        return None
-    at = cash.period_end
-    # THE CASH INSTANT MUST BE A CURRENT BALANCE SHEET (STATE.md §5.0 row 11 (b)): every line is
-    # read at it, so a cash tag the filer stopped years ago served a whole past balance sheet —
-    # PennyMac Mortgage's net debt read at 2018-12-31 beside 10-Qs to 2026-09-30
+    # THE CASH IS READ AT THE FILER'S NEWEST BALANCE SHEET (STATE.md §5.0 row 11 (b), option 2):
+    # every line is read at the cash instant, so a cash tag the filer stopped served a whole past
+    # balance sheet — PennyMac Mortgage's net debt read at 2018-12-31 beside 10-Qs to 2026-09-30,
+    # Eastman's at its year end two quarters after it (`_cash_at_newest`)
     newest = balance_sheet_date(facts)
-    if newest is not None and (newest - at).days > CASH_MAX_AGE_DAYS:
-        return NetDebt(at=at, cash=cash, borrowings=None, finance_leases=0.0,
-                       finance_lease_points=(), operating_leases=0.0, operating_lease_points=(),
-                       securities=None, witness=None, stale_debt=None, stale_cash=newest)
+    cash = _cash_at_newest(facts, newest) if newest is not None else None
+    if cash is None:
+        cash = latest_instant([p for p in extract_points(facts, "cash") if p.unit == "USD"])
+        if cash is None:
+            return None
+        # no alias carries the newest balance sheet: the walk's cash, within the backstop
+        if newest is not None and (newest - cash.period_end).days > CASH_MAX_AGE_DAYS:
+            return NetDebt(at=cash.period_end, cash=cash, borrowings=None, finance_leases=0.0,
+                           finance_lease_points=(), operating_leases=0.0,
+                           operating_lease_points=(), securities=None, witness=None,
+                           stale_debt=None, stale_cash=newest)
+    at = cash.period_end
     b = _borrowings(facts, at)
     stale = None
     if b is None:

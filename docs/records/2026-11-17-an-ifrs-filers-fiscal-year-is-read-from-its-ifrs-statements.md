@@ -350,3 +350,27 @@ PRESENT. Its negative passes at both refs. Round-2 mutants, against this file,
    `current_annual`. It contradicts "no reader serves an IFRS figure" in this one corner. A fix
    would refuse a us-gaap flow annual filed in an accession whose statements are ifrs-full. No
    owner and no row: it moves nothing a reader prints today.
+## Amendments
+
+**2026-11-19 — Americas Gold & Silver's sign flip was paired with the wrong IFRS line, and the
+accepted risk now has a STATE entry.** Found by the independent review of 9f86e4d7, which
+deferred it to the next PR because this record is merged.
+- **The pairing.** ROUND 2 (its stray-tag table) and WHAT IT COSTS 5 set the served us-gaap
+  `NetIncomeLoss` FY2021, +160.6M, against "IFRS −157.674M". That is
+  `ifrs-full:ProfitLossAttributableToOwnersOfParent`, a different line. The +160.6M is
+  `ifrs-full:ProfitLossFromContinuingOperations`, −160,576,000, with its sign flipped and rounded,
+  in the same 6-K (0000891092-22-000987). Re-measured on the primary's SEC cache on 2026-11-19:
+  among that 6-K's FY2021 facts between $150M and $170M, the ifrs-full lines are
+  `ProfitLossFromContinuingOperations` −160,576,000, `ProfitLossAttributableToOwnersOfParent`
+  −157,674,000, `ComprehensiveIncome` −159,828,000 and
+  `ComprehensiveIncomeAttributableToOwnersOfParent` −157,705,000. enCore's pairing (+16,515,389
+  against `ifrs-full:ProfitLoss` −16,515,389) stands.
+- **The accepted risk.** WHAT IT COSTS 5 said "No owner and no row". The INVARIANT RULE wants
+  either a machine check or a STATE entry, so STATE row 11 now carries it as ACCEPTED RISK: no
+  production reader serves `net_income`. Its falsifier is a reader that does.
+- **The tie count's wording** (the review's nit 1, in `filer_fiscal_year`'s docstring, not in this
+  record): 20 of the 21 tie days are stray us-gaap tags. The 21st is Nano Dimension's own US GAAP
+  6-K of 2025-08-20 (0001410578-25-001862, 425 us-gaap facts, no ifrs-full), on its return to US
+  GAAP. ROUND 2 above says "each a stray us-gaap tag" only of the five movers, which holds.
+
+Carried in `docs/records/2026-11-19-net-debt-reads-its-cash-at-the-newest-balance-sheet.md`'s PR.
