@@ -305,7 +305,8 @@ def ex_lease_next_due(mechanical: dict[str, Any]) -> tuple[date, str] | None:
     would otherwise read as a 184-day "quarter" (WLK)."""
     obs = [o for o in ((mechanical.get("valuation") or {}).get("lease_basis") or {}).get(
         "observations") or [] if isinstance(o, dict)]
-    if not obs or _iso_day(obs[-1].get("pricing_date")) is None:
+    if not obs or _iso_day(obs[-1].get("pricing_date")) is None \
+            or _iso_day(obs[-1].get("balance_sheet_date")) is None:
         return None   # the band's current is the last observation; an older one never stands in
     pairs = [(b, p) for o in obs if (b := _iso_day(o.get("balance_sheet_date"))) is not None
              and (p := _iso_day(o.get("pricing_date"))) is not None]

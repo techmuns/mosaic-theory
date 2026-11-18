@@ -246,6 +246,16 @@ def test_an_undated_last_observation_never_lets_an_older_one_set_the_due_date() 
     assert anc.ex_lease_next_due(d["mechanical"]) is None
 
 
+def test_a_last_observation_without_its_balance_sheet_date_never_sets_an_older_due_date() -> None:
+    """Review round 1 (/code-review high, PR #1122): the same for the last observation's balance
+    sheet date. Dropped from the pairs, it let the quarter before set the due date (TJX's would
+    read 2026-09-30, and its fresh 2026-08-28 multiple would be withheld on 2026-11-11). The
+    cadence is not measurable instead, and the value is withheld for that reason, said so."""
+    d = _copy(frozen_doc("TJX"))
+    d["mechanical"]["valuation"]["lease_basis"]["observations"][-1]["balance_sheet_date"] = None
+    assert anc.ex_lease_next_due(d["mechanical"]) is None
+
+
 # --- (+/−) undated -----------------------------------------------------------------------------
 def test_an_undated_close_or_page_withholds_and_a_reference_date_dates_the_page() -> None:
     """(+) An undated close, or a page that states no price date at all, cannot be shown to be
