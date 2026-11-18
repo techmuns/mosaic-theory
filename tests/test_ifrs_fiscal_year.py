@@ -18,6 +18,7 @@ import pathlib
 from datetime import date
 from typing import Any
 
+from vinci.dossier.anchor import _dep_amort_point
 from vinci.edgar.client import compute_fundamental_snapshot
 from vinci.edgar.concepts import (
     ANNUAL_MAX_DAYS,
@@ -25,6 +26,7 @@ from vinci.edgar.concepts import (
     FLOW_CONCEPTS,
     IFRS_FLOW_TAGS,
     StaleAnnual,
+    currency_withheld,
     current_annual,
     extract_points,
     facts_as_of,
@@ -168,19 +170,96 @@ def test_a_mover_with_no_current_ifrs_revenue_line_is_dated_by_its_other_lines()
 # --- NEGATIVE: what must still be served ----------------------------------------------------
 
 
-def test_one_fiscal_year_behind_the_ifrs_year_stays() -> None:
-    """As filed by Himax's FIRST IFRS 20-F (2019-03-28, FY2018), its FY2017 us-gaap annual is one
-    fiscal year behind the IFRS year (365d) and is still served: the newest figure the filer gives
-    for the concept in us-gaap, as for any filer one year behind. As filed by the next 20-F
-    (2020-03-25, FY2019) it is two years behind (730d) and withheld. The threshold sits between."""
-    facts = _facts("HIMX")
-    first = facts_as_of(facts, date(2019, 3, 28))
-    fy = filer_fiscal_year(first)
+def test_the_day_before_the_first_ifrs_year_the_last_us_gaap_annual_is_served() -> None:
+    """As filed the day before Himax's first IFRS 20-F (2019-03-27), no IFRS fiscal year is past
+    its FY2017 us-gaap annuals: its newest fiscal year IS FY2017, and every one of the eight is
+    served, as for any filer. The ruling below starts only once an IFRS year past them is filed."""
+    facts = facts_as_of(_facts("HIMX"), date(2019, 3, 27))
+    fy = filer_fiscal_year(facts)
+    assert fy is not None and fy.period_end == date(2017, 12, 31)
+    assert not fy.tag.startswith("ifrs-full:")
+    for concept in FLOW_CONCEPTS:
+        point, stale = current_annual(facts, concept)
+        assert stale is None and point is not None, concept
+        assert point.period_end == date(2017, 12, 31), concept
+    snap = compute_fundamental_snapshot("0001342338", facts)
+    assert snap.op_income_sign.coverage_status is CoverageStatus.PRESENT
+
+
+# --- THE FIRST IFRS YEAR (operator ruling 2026-11-18, "Withhold it (Recommended)") -------------
+
+
+def test_the_first_ifrs_year_withholds_the_last_us_gaap_annual() -> None:
+    """OPERATOR RULING 2026-11-18 ("Withhold it (Recommended)"): in the year a filer first reports
+    under IFRS, its last us-gaap annual is withheld, reading UNKNOWN, once an IFRS fiscal year past
+    it is filed. It is no longer served as current.
+
+    Himax's first IFRS 20-F, filed 2019-03-28, is for FY2018 (`ifrs-full:Revenue`). As filed that
+    day its FY2017 us-gaap annuals are one fiscal year behind it (365d), and round 0 of #1112 still
+    served all eight, the operating-income sign among them. Each is withheld now, naming both years;
+    one filer year behind a us-gaap year still stays (`test_annual_pairs.py`). Its FY2018
+    `ProfitLossFromOperatingActivities` was first filed 2020-03-25, so it is the FILER's IFRS year
+    that withholds the operating income, not that concept's own IFRS line."""
+    facts = facts_as_of(_facts("HIMX"), date(2019, 3, 28))
+    assert "ProfitLossFromOperatingActivities" not in facts["facts"]["ifrs-full"], \
+        "the operating-income line is not in the first IFRS 20-F"
+    fy = filer_fiscal_year(facts)
     assert fy is not None and (fy.period_end, fy.tag) == (date(2018, 12, 31), "ifrs-full:Revenue")
-    point, stale = current_annual(first, "operating_income")
-    assert stale is None and point is not None and point.period_end == date(2017, 12, 31)
-    point, stale = current_annual(facts_as_of(facts, date(2020, 3, 25)), "operating_income")
+    point, stale = current_annual(facts, "operating_income")
+    assert point is None
+    assert stale == StaleAnnual(
+        concept="operating_income", tag="OperatingIncomeLoss", period_end=date(2017, 12, 31),
+        newer_tag="ifrs-full:Revenue", newer_end=date(2018, 12, 31), lag_days=365,
+        against_filer=True)
+    assert "filed under IFRS" in stale.note and "more than one" not in stale.note, stale.note
+    for concept in FLOW_CONCEPTS:
+        point, stale = current_annual(facts, concept)
+        assert point is None and stale is not None and stale.against_filer, concept
+        assert (stale.period_end, stale.lag_days) == (date(2017, 12, 31), 365), concept
+    snap = compute_fundamental_snapshot("0001342338", facts)
+    for field in (snap.op_income_sign, snap.fcf_sign, snap.ebitda_annual,
+                  snap.eps_diluted_annual):
+        assert field.coverage_status is CoverageStatus.UNKNOWN
+        note = field.note or ""
+        assert "2017-12-31" in note and "ifrs-full:Revenue to 2018-12-31" in note, note
+        assert "filed under IFRS" in note and "more than one" not in note, note
+    # the anchor's D&A, which must be the filer's newest year, is refused as it was at round 0
+    refused = _dep_amort_point(facts)
+    assert isinstance(refused, str) and "ifrs-full:Revenue to 2018-12-31" in refused, refused
+    # as filed by the next 20-F (FY2019) it is two years behind, the rule since round 0
+    point, stale = current_annual(facts_as_of(_facts("HIMX"), date(2020, 3, 25)),
+                                  "operating_income")
     assert point is None and stale is not None and stale.lag_days == 730
+    assert "more than one fiscal year behind" in stale.note
+
+
+# --- THE FISCAL YEAR IS A DATE, NEVER A FIGURE (review of #1112, item 3) --------------------------
+
+
+def test_the_fiscal_year_carries_no_figure() -> None:
+    """The point that dates National Steel's year is a BRL revenue. `filer_fiscal_year` returns
+    its period and where it was read, and NO value: a reader can never take it for revenue, in
+    dollars or in reais."""
+    fy = filer_fiscal_year(_facts("SID"))
+    assert fy is not None and (fy.period_end, fy.tag, fy.unit) == (
+        date(2024, 12, 31), "ifrs-full:Revenue", "BRL")
+    assert not hasattr(fy, "value")
+
+
+def test_a_us_gaap_year_in_another_currency_dates_the_year() -> None:
+    """Canopy Growth filed IFRS 40-Fs in CAD to FY2019 and US GAAP 10-Ks in CAD since. Round 0 of
+    #1112 dated its us-gaap half in dollars only and its IFRS half in every currency, so its
+    newest fiscal year read as `ifrs-full:Revenue` to 2019-03-31, seven years old. Both halves
+    read every unit for the DATE: its year is its FY2026 10-K. Nothing it serves moves: its
+    figures are CAD, and the snapshot withholds every one by currency (FPI1a)."""
+    facts = _facts("CGC")
+    fy = filer_fiscal_year(facts)
+    assert fy is not None and (fy.period_end, fy.unit, fy.form) == (
+        date(2026, 3, 31), "CAD", "10-K")
+    assert not fy.tag.startswith("ifrs-full:")
+    snap = compute_fundamental_snapshot("0001737927", facts)
+    assert snap.op_income_sign.coverage_status is CoverageStatus.UNKNOWN
+    assert snap.op_income_sign.note == currency_withheld("CAD")
 
 
 def test_an_ifrs_half_year_does_not_date_the_fiscal_year() -> None:

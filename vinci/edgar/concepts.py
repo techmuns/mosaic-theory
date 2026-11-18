@@ -670,12 +670,21 @@ class StaleAnnual(NamedTuple):
     against_filer: bool = False
 
     @property
+    def why_behind_filer(self) -> str:
+        """Why an annual this far behind the filer's newest fiscal year is not current: more
+        than one fiscal year, or (under :data:`FILER_STALE_DAYS`) one, past which the filer has
+        reported its year under IFRS (:func:`behind_filer`)."""
+        if self.lag_days >= FILER_STALE_DAYS or not self.newer_tag.startswith(f"{IFRS_NAMESPACE}:"):
+            return "more than one fiscal year behind"
+        return "filed under IFRS, so the last US GAAP year is not current"
+
+    @property
     def note(self) -> str:
         if self.against_filer:
             return (f"stale annual {self.concept}: {self.tag} for the year to "
                     f"{self.period_end.isoformat()}, {self.lag_days}d behind the filer's newest "
-                    f"fiscal year ({self.newer_tag} to {self.newer_end.isoformat()}) — more "
-                    f"than one fiscal year behind")
+                    f"fiscal year ({self.newer_tag} to {self.newer_end.isoformat()}) — "
+                    f"{self.why_behind_filer}")
         return (f"stale annual {self.concept}: {self.tag} for the year to "
                 f"{self.period_end.isoformat()}, {self.lag_days}d behind {self.newer_tag} to "
                 f"{self.newer_end.isoformat()} — not the current year")
@@ -757,10 +766,32 @@ def _ifrs_flow_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]
                                   currency=EVERY, as_of=None)]
 
 
-def filer_fiscal_year(facts: dict[str, Any]) -> ConceptPoint | None:
-    """The point with the newest ANNUAL period any alias of any :data:`FLOW_CONCEPTS` carries —
-    the filer's newest reported fiscal year. A tie goes to the concept, then alias, first in order,
-    and a us-gaap alias before an IFRS tag.
+class FiscalYear(NamedTuple):
+    """The filer's newest fiscal year (:func:`filer_fiscal_year`): the annual period that dates
+    it, and the tag, unit and filing it was read from.
+
+    A DATE, NEVER A FIGURE: it carries no value (review of #1112, item 3). The point that dates
+    the year may be in any currency — National Steel's is a BRL revenue, Canopy Growth's a CAD one
+    — and is never read as revenue or as anything else."""
+
+    tag: str  # namespace-stamped when IFRS (``ifrs-full:Revenue``)
+    unit: str
+    period_start: date | None
+    period_end: date
+    filed: date
+    form: str | None
+    accession: str | None
+
+    @property
+    def ifrs(self) -> bool:
+        """The year is dated by the filer's IFRS statements (:data:`IFRS_FLOW_TAGS`)."""
+        return self.tag.startswith(f"{IFRS_NAMESPACE}:")
+
+
+def filer_fiscal_year(facts: dict[str, Any]) -> FiscalYear | None:
+    """The newest ANNUAL period any alias of any :data:`FLOW_CONCEPTS` carries — the filer's
+    newest reported fiscal year. A tie goes to a us-gaap alias before an IFRS tag, then to the
+    concept, then the alias, first in order (0 ties between the two on the 2026-11-17 cache).
 
     Its annual periods only, never the filer's frontier of any tag (``filer_frontier``), which
     counts quarters, instants and contexts dated years ahead (Innodata's reaches 2034). A period
@@ -774,27 +805,49 @@ def filer_fiscal_year(facts: dict[str, Any]) -> ConceptPoint | None:
     Steel's operating-income sign for FY2009 and Himax's for FY2017, both with 20-Fs to 2024 and
     2025 in ifrs-full. MEASURED 2026-11-17 on the primary's 1,078 cached companyfacts: 122 carry
     ifrs-full, and on 121 of them these tags date the same newest year as any annual ifrs-full fact
-    does (the 122nd tags no IFRS flow annual, and its us-gaap year is that day's). Only the period
-    is read; every unit counts, since a period's dates carry no currency."""
+    does (the 122nd tags no IFRS flow annual, and its us-gaap year is that day's).
+
+    ONLY THE PERIOD IS READ, IN EVERY UNIT, on BOTH halves: a period's dates carry no currency.
+    Round 0 of #1112 read its us-gaap half in dollars only, so a filer whose US GAAP statements
+    are in another currency was dated by its older IFRS years alone: Canopy Growth's year read as
+    its FY2019 IFRS 40-F (CAD) beside US GAAP 10-Ks in CAD to FY2026. Nothing moved, since every
+    such filer's figures are withheld by currency (FPI1a), but the date was seven years wrong."""
     newest: ConceptPoint | None = None
     gaap = (q for concept in FLOW_CONCEPTS for tag in CONCEPT_ALIASES[concept]
-            for q in points_for_tag(facts, tag, concept=concept))
+            for q in points_for_tag(facts, tag, concept=concept, currency=EVERY))
     ifrs = (q for concept in FLOW_CONCEPTS for q in _ifrs_flow_points(facts, concept))
     for p in chain(gaap, ifrs):
         if not p.is_annual or p.period_end > p.filed:
             continue
         if newest is None or p.period_end > newest.period_end:
             newest = p
-    return newest
+    if newest is None:
+        return None
+    return FiscalYear(tag=newest.tag, unit=newest.unit, period_start=newest.period_start,
+                      period_end=newest.period_end, filed=newest.filed, form=newest.form,
+                      accession=newest.accession)
 
 
-def behind_filer(annual: ConceptPoint, fiscal_year: ConceptPoint | None) -> StaleAnnual | None:
+def behind_filer(annual: ConceptPoint, fiscal_year: FiscalYear | None) -> StaleAnnual | None:
     """``annual`` judged against the filer's newest fiscal year — a :class:`StaleAnnual` when it
-    is more than one fiscal year behind (:data:`FILER_STALE_DAYS`), else ``None``."""
+    is more than one fiscal year behind (:data:`FILER_STALE_DAYS`), or one behind a year the filer
+    reports under IFRS (:data:`ANNUAL_STALE_DAYS`), else ``None``.
+
+    ONE FISCAL YEAR BEHIND AN IFRS YEAR IS WITHHELD (operator ruling 2026-11-18, "Withhold it
+    (Recommended)"): in the year a filer first reports under IFRS, its last us-gaap annual is
+    withheld once an IFRS fiscal year past it (:data:`ANNUAL_STALE_DAYS`) is filed. One year behind
+    a us-gaap year stays, as the filer's newest word on the concept; behind an IFRS year it is
+    not, since the filer has reported that year in other statements. Himax's first IFRS 20-F
+    (FY2018, filed 2019-03-28) left its eight FY2017 us-gaap annuals served for a year, the
+    operating-income sign among them, whose own IFRS line it first tagged in 2020. MEASURED
+    2026-11-18 on the primary's SEC cache (1,078 companyfacts, fetched 2026-06-17..11-18), cut at
+    every day one of its 122 ifrs-full filers filed a flow or balance-sheet total: 13 annuals in 6
+    filers were served one IFRS year behind, each for 340–380 days until the next annual report;
+    none is today."""
     if fiscal_year is None:
         return None
     lag = (fiscal_year.period_end - annual.period_end).days
-    if lag < FILER_STALE_DAYS:
+    if lag < (ANNUAL_STALE_DAYS if fiscal_year.ifrs else FILER_STALE_DAYS):
         return None
     return StaleAnnual(concept=annual.concept, tag=annual.tag, period_end=annual.period_end,
                        newer_tag=fiscal_year.tag, newer_end=fiscal_year.period_end,
@@ -921,7 +974,7 @@ def annual_line(facts: dict[str, Any], concept: str) -> AnnualLine:
 
 
 def current_annual(
-    facts: dict[str, Any], concept: str, fiscal_year: ConceptPoint | None = None
+    facts: dict[str, Any], concept: str, fiscal_year: FiscalYear | None = None
 ) -> tuple[ConceptPoint | None, StaleAnnual | None]:
     """The latest annual an annual reader may serve AS CURRENT: ``(point, None)``; ``(None, why)``
     when it is stale; ``(None, None)`` when the concept has no annual at all.
@@ -946,7 +999,8 @@ def current_annual(
     the first check, since its newest period IS the served annual's: Johnson & Johnson's
     `OperatingIncomeLoss` ends at FY2014 and SL Green's capex at FY2019, each served beside FY2025
     figures. So the annual must also be at most one fiscal year behind the filer's newest fiscal
-    year. One year behind stays: that is the newest figure the filer gives for the concept.
+    year. One year behind a us-gaap year stays: that is the newest figure the filer gives for the
+    concept. One behind a year the filer reports under IFRS does not (:func:`behind_filer`).
 
     The annual read is the concept's :func:`annual_line`: a substitute the filer proved to be the
     same line continues it, and is judged by both checks exactly as an alias is.
@@ -985,13 +1039,13 @@ class StalePair(NamedTuple):
                 f"{self.period_end.isoformat()}")
         if self.behind:
             head += (f", {self.behind.lag_days}d behind the filer's newest fiscal year "
-                     f"({self.behind.newer_tag} to {self.behind.newer_end.isoformat()}) — more "
-                     f"than one fiscal year behind")
+                     f"({self.behind.newer_tag} to {self.behind.newer_end.isoformat()}) — "
+                     f"{self.behind.why_behind_filer}")
         return "; ".join([head, *(s.note for s in self.legs)])
 
 
 def current_pair(
-    facts: dict[str, Any], first: str, second: str, fiscal_year: ConceptPoint | None = None
+    facts: dict[str, Any], first: str, second: str, fiscal_year: FiscalYear | None = None
 ) -> tuple[tuple[ConceptPoint, ConceptPoint] | None, StalePair | None]:
     """Both legs of a combined annual figure (FCF = operating cash flow − capex, EBITDA =
     operating income + D&A) for ONE fiscal year: ``((first, second), None)``; ``(None, why)``

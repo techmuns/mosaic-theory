@@ -20,7 +20,9 @@ Other namespaces (`srt`, `invest`) are dropped.
 **Checked at cut time, against the full blob, at main 6110795d and at this branch:**
 `filer_fiscal_year`, `current_annual` for each of the eight flow concepts and
 `compute_fundamental_snapshot` read the same on the subset as on the full blob, both on the whole
-blob and cut at 2026-10-16 (screen run 2026-10-16-01's price date).
+blob and cut at 2026-10-16 (screen run 2026-10-16-01's price date). `CGC.json` was cut on
+2026-11-18 for round 1 of #1112. All seven were checked again then, at round 0 (2dd8f49e) and at
+round 1, uncut and cut at 2026-10-16, 2019-03-27, 2019-03-28 and 2020-03-25: 0 differences.
 
 | file | filer (CIK) | fetched | shape | newest fiscal year (this branch) |
 |---|---|---|---|---|
@@ -29,4 +31,15 @@ blob and cut at 2026-10-16 (screen run 2026-10-16-01's price date).
 | `PPBT.json` | Purple Biotech (1614744) | 2026-06-18 | us-gaap 20-Fs to FY2021, IFRS 20-Fs (USD) since; its IFRS `Revenue` stops at FY2020 | 2025-12-31, `ifrs-full:ProfitLoss` |
 | `AMBR.json` | Amber International (1697818) | 2026-06-18 | us-gaap 20-F to FY2024; IFRS half-years in 6-Ks to 2025-06-30, no IFRS annual | 2024-12-31, `RevenueFromContractWithCustomerExcludingAssessedTax` |
 | `EU.json` | enCore Energy (1500881) | 2026-07-06 | IFRS 40-Fs to FY2023, US GAAP 10-Ks since: the other direction | 2025-12-31, `Revenues` |
-| `IAG.json` | IAMGOLD (1203464) | 2026-07-06 | IFRS only (USD); it tags none of the us-gaap tags kept, so the subset has no us-gaap namespace | 2025-12-31, `ifrs-full:Revenue` |
+| `IAG.json` | IAMGOLD (1203464) | 2026-07-06 | IFRS statements (USD); its blob's one us-gaap tag, `AmortizationOfDeferredCharges` (FY2023), is none of the tags kept, so the subset has no us-gaap namespace | 2025-12-31, `ifrs-full:Revenue` |
+| `CGC.json` | Canopy Growth (1737927) | 2026-07-06 | IFRS 40-Fs (CAD) to FY2019, US GAAP 10-Ks (CAD) since: a us-gaap year in another currency | 2026-03-31, `RevenueFromContractWithCustomerExcludingAssessedTax` (CAD) |
+
+**Two frozen fixtures elsewhere date another year than their full blob** (measured 2026-11-18,
+the primary's SEC cache). Neither keeps ifrs-full, and no test result turns on either's year:
+- `net_debt_shapes/LPL.json` (LG Display) keeps balance-sheet lines only, so it dates no year,
+  where its blob is dated by `ifrs-full:Revenue` to 2024-12-31. Like every `net_debt_shapes`
+  blob, it is read for its balance sheet.
+- `fpi1a_companyfacts/CGC.json` (Canopy Growth) keeps only diluted EPS and the balance-sheet
+  lines, cut from an older response. Round 0 of #1112 dated its blob by `ifrs-full:Revenue` to
+  2019-03-31 and the fixture by nothing; round 1 dates both by their US GAAP lines (the blob's
+  FY2026, the fixture's FY2025). Its figures are CAD, and every reader withholds them by currency.
