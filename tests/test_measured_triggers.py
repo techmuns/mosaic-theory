@@ -11,6 +11,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from tests.sealed_corpus import live_records
 from vinci.scenarios import MeasuredTrigger
 from vinci.triggers import FIRED, NOT_FIRED, UNKNOWN, evaluate
@@ -19,10 +20,9 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 def _mech(ticker: str) -> dict:
-    p = ROOT / "data" / "dossiers" / ticker / "dossier.json"
-    if not p.is_file():
-        pytest.skip(f"no committed dossier for {ticker}")
-    return json.loads(p.read_text())["mechanical"]
+    """``ticker``'s mechanical layer as frozen at the cut (`tests/frozen_support.py`): the pins on
+    it are values, so a re-assembly or a retirement of the living page moves none."""
+    return json.loads((frozen_page(ticker) / "dossier.json").read_text())["mechanical"]
 
 
 def _t(**kw: object) -> MeasuredTrigger:

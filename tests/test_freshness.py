@@ -18,6 +18,7 @@ import re
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import freshness as fr
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -47,6 +48,12 @@ def _fleet() -> dict[str, dict]:
     return out
 
 
+def _frozen_assembled(ticker: str) -> str:
+    """A NAMED dossier's assembly stamp, read off its page as frozen at the cut
+    (`tests/frozen_support.py`), beside that page's own mechanical layer."""
+    return str(frozen_doc(ticker)["assembled_at"])
+
+
 def _assembled(ticker: str) -> str:
     """A dossier's own assembly stamp — what panel age is measured against, so a committed artifact
     reports the age it had WHEN BUILT rather than ageing every time it is re-read."""
@@ -63,13 +70,13 @@ def test_a_value_borne_date_is_not_a_panel_arrival() -> None:
     oldest panel is 8 days old, the TIGHTEST in the fleet, and puts it top of a list it should be
     bottom of.
     """
-    mech = _fleet()["SMPL"]
+    mech = frozen_doc("SMPL")["mechanical"]   # SMPL's page, as frozen at the cut
     keys = {k for k, _ in fr.panel_dates(mech)}
     assert keys, "no panel dates found on SMPL — the harvester is looking in the wrong place"
     assert not [k for k in keys if "own_history" in k or "stock_performance" in k], (
         f"value-borne dates leaked into the panel set: {sorted(keys)}")
 
-    age = fr.panel_age(mech, _assembled("SMPL"), kind="export")
+    age = fr.panel_age(mech, _frozen_assembled("SMPL"), kind="export")
     assert age is not None and age.days <= 15, (
         f"SMPL's oldest PANEL is {age.days if age else '?'}d old — a much larger number here means "
         "value-borne dates are being counted as arrivals again")
@@ -476,14 +483,14 @@ def test_a_lease_basis_date_is_not_a_panel_arrival() -> None:
     at (TJX's 2026-08-28 filing) — value-borne, like `own_history`'s. On TJX's real page with its
     real lease basis it must not enter the panel set or move the panel age; a panel date beside it
     still does."""
-    mech = json.loads(json.dumps(_fleet()["TJX"]))
-    before = fr.panel_age(mech, _assembled("TJX"), kind="export")
+    mech = frozen_doc("TJX")["mechanical"]   # TJX's page, as frozen at the cut
+    before = fr.panel_age(mech, _frozen_assembled("TJX"), kind="export")
     lb = json.loads((ROOT / "tests" / "fixtures" / "lease_basis" / "TJX.json").read_text())
     assert lb["ex_lease_band"]["as_of"], "the fixture must carry the dated band this pins"
     mech["valuation"]["lease_basis"] = lb
     keys = {k for k, _ in fr.panel_dates(mech)}
     assert not [k for k in keys if "lease_basis" in k], sorted(keys)
-    assert fr.panel_age(mech, _assembled("TJX"), kind="export") == before
+    assert fr.panel_age(mech, _frozen_assembled("TJX"), kind="export") == before
     assert keys, "the panel dates beside it are still harvested"
 
 

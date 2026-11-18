@@ -24,6 +24,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_doc
 from vinci.dossier import terminal_margin as tm
 from vinci.dossier.propose import ntm_consensus_eps
 
@@ -90,6 +91,8 @@ def test_a_misstated_r2_stamp_is_still_refused() -> None:
 
 def _stage(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch, t: str,
            payload: dict[str, Any]) -> argparse.Namespace:
+    # THE RECORD CLASS (W27): the name's LIVING record beside its LIVING page, as the supersede
+    # reads them. A frozen page beside a living record would mix two vintages, so this stays living.
     (tmp_path / "scenarios").mkdir()
     shutil.copy(ROOT / "scenarios" / f"{t}.json", tmp_path / "scenarios" / f"{t}.json")
     doss = ROOT / "data" / "dossiers" / t
@@ -186,7 +189,9 @@ def test_it_and_wern_load_run_and_write_byte_identical(t: str, tmp_path: pathlib
 def _googl_new(line: str | None, *, stamp_line: str | None = None,
                miss: dict[str, Any] | None = None) -> sc.ScenarioRecord:
     """GOOGL's committed legs as a NEW record: today's page stamp at the page's spot date, every leg
-    on ``line``; ``stamp_line`` overrides the stamp's line (a real stamp, one field changed)."""
+    on ``line``; ``stamp_line`` overrides the stamp's line (a real stamp, one field changed).
+    THE RECORD CLASS (W27): the LIVING page's stamp beside GOOGL's LIVING record, never a frozen
+    page beside it, which would mix two vintages."""
     doc = json.loads((ROOT / "data" / "dossiers" / "GOOGL" / "dossier.json").read_text())
     stamp, _ = ntm_consensus_eps(doc)
     assert stamp is not None
@@ -285,10 +290,10 @@ def test_every_r3_leg_states_its_line_and_no_other_record_carries_one() -> None:
 
 def test_the_r3_template_asks_for_the_line_and_names_the_pages() -> None:
     """(+) The R3 template carries an empty `eps_line` cell per leg — never proposed: R3 fills no
-    EPS — and names the line the page's NTM P/E is struck on."""
+    EPS — and names the line the page's NTM P/E is struck on. GOOGL's page as frozen at the cut."""
     from vinci.dossier.propose import build_template
 
-    doc = json.loads((ROOT / "data" / "dossiers" / "GOOGL" / "dossier.json").read_text())
+    doc = frozen_doc("GOOGL")
     tpl = build_template(doc)
     for leg in ("bear", "base", "bull"):
         cell = tpl["scenarios"][leg]
@@ -314,7 +319,7 @@ def test_the_r3_templates_bound_instruction_names_the_line() -> None:
     sends the analyst into a refusal the template itself caused."""
     from vinci.dossier.propose import build_template
 
-    doc = json.loads((ROOT / "data" / "dossiers" / "GOOGL" / "dossier.json").read_text())
+    doc = frozen_doc("GOOGL")   # GOOGL's page, as frozen at the cut
     bound = build_template(doc)["scenarios"]["bear"]["_eps_bound"]
     assert "consensus_eps, line, period, source, reason" in bound, bound
     assert "only on a matching line" in bound, bound

@@ -11,9 +11,23 @@ tree. It classifies each difference:
   included), or a `pytest.fail(...)` call. `ast.dump` carries no line numbers, so a move that
   shifts lines compares equal, and a renamed variable, a changed literal or a dropped assert does
   not.
-- **DISABLED** (fails): the test can now stop running. Either a skip, skipif, xfail or
-  importorskip decorator appears or changes, or a `pytest.skip` / `pytest.xfail` /
-  `pytest.importorskip` call appears where BASE had fewer.
+- **DISABLED** (fails): the test can now stop running. It reads, each against BASE (one only
+  REMOVED runs the test more, and is not DISABLED):
+  - a skip, skipif or xfail decorator, and a skip mark on one `pytest.param` case;
+  - a skip call: `pytest.skip` / `pytest.xfail` / `pytest.importorskip`, or a call to a SKIP
+    HELPER, which is a function of the module, or of a `tests` support module it imports (any
+    name, as `retired_checkout`; an unread one is still known by the `skip_unless` prefix), that
+    makes a skip call itself or through another skip helper, to any depth within those modules.
+    Calls are compared by WHAT they call and UNDER WHAT conditions, never counted: one skip traded
+    for another, or a guard dropped, is DISABLED, as a count would net it;
+  - a fixture that skips, taken as a parameter or by `usefixtures`, if the module or an imported
+    support module defines it;
+  - a module-level `pytestmark` skip or `importorskip`, reported on the row `<module>`.
+  NOT read: a skip through a lambda or an alias (`s = pytest.skip`), a fixture defined in a
+  `conftest.py`, a plugin, and a skip call's arguments (a reason reworded is not a new skip, so
+  `importorskip` of a module that is missing reads unchanged). Slices 2–4 of W27 each added a
+  helper skip that the first cut, counting bare calls only, missed; A's reviews of #1106, #1107
+  and #1111 and the code review of slice 5 found the rest.
 - **CONTROL** (fails): an assertion's enclosing conditions differ, or the function gains an early
   exit. A condition is each enclosing `if` (its test), `while` or `try`. An early exit is a new
   `return`, `continue`, `break` or `raise`. A wrapped or bypassable assert reads like an unchanged
@@ -41,6 +55,7 @@ import ast
 import copy
 import subprocess
 import sys
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -54,6 +69,9 @@ def _git(*args: str) -> str:
 #: to one name only for the READER-ONLY test.
 SUPPORT_READERS = frozenset({"frozen_doc", "frozen_page", "living_doc"})
 SKIP_CALLS = frozenset({"skip", "xfail", "importorskip"})
+#: The prefix of the imported skip helpers (`tests/ciq_export_support.py`): their bodies are in
+#: another module, so they are known by name.
+SKIP_HELPER_PREFIXES = ("skip_unless", "_skip_unless")
 SKIP_MARKS = frozenset({"skip", "skipif", "xfail"})
 FAILING = ("CHANGED", "DISABLED", "CONTROL", "VANISHED")
 
@@ -95,11 +113,74 @@ class Facts:
     loops: list[str]                         # per assertion: its enclosing loops' iterables
     marks: list[str] = field(default_factory=list)       # skip/skipif/xfail decorators
     params: list[str] = field(default_factory=list)      # parametrize decorators
-    skip_calls: int = 0
+    skips: list[str] = field(default_factory=list)       # what each skip call calls
     exits: int = 0
 
 
-def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[str]) -> Facts:
+def skippers(source: str) -> frozenset[str]:
+    """The module's own skip helpers: its functions whose own body makes a skip call, a pytest
+    one or a call to a skip helper, to any depth (`_the_bands_export` skips only through
+    `skip_unless_export`)."""
+    tree = ast.parse(source)
+    fns = [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef | ast.AsyncFunctionDef)]
+    found: frozenset[str] = frozenset()
+    while True:
+        more = frozenset(n.name for n in fns if n.name not in found and any(
+            _is_pytest_call(c, SKIP_CALLS) or _is_skip_helper_call(c, found)
+            for c in _own_nodes(n)))
+        if not more:
+            return found
+        found |= more
+
+
+def imported_skippers(source: str, support: dict[str, frozenset[str]]) -> frozenset[str]:
+    """The skip helpers ``source`` imports from a `tests` support module, by the name it calls
+    them: ``support`` maps a module (`tests.ciq_export_support`) to its `skippers`. An imported
+    helper whose name carries no `skip_unless` prefix (`retired_checkout`) is known only so."""
+    out: set[str] = set()
+    for n in ast.walk(ast.parse(source)):
+        if isinstance(n, ast.ImportFrom) and n.module and n.module.split(".")[0] == "tests":
+            for a in n.names:
+                if n.module == "tests":
+                    out |= support.get(f"tests.{a.name}", frozenset())
+                elif a.name in support.get(n.module, frozenset()):
+                    out.add(a.asname or a.name)
+        elif isinstance(n, ast.Import):
+            for a in n.names:
+                if a.name.split(".")[0] == "tests":
+                    out |= support.get(a.name, frozenset())
+    return frozenset(out)
+
+
+def support_skippers(root: Path) -> dict[str, frozenset[str]]:
+    """Every `tests` support module (not `test_*`, not under `tests/fixtures/`) in the working
+    tree at ``root``, mapped to its `skippers`."""
+    out: dict[str, frozenset[str]] = {}
+    for p in sorted((root / "tests").rglob("*.py")):
+        rel = p.relative_to(root)
+        if p.name.startswith("test_") or "fixtures" in rel.parts:
+            continue
+        out[rel.with_suffix("").as_posix().replace("/", ".")] = skippers(p.read_text())
+    return out
+
+
+def _callee(node: ast.Call) -> str:
+    f = node.func
+    if isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name) and f.value.id == "pytest":
+        return f"pytest.{f.attr}"
+    return f.id if isinstance(f, ast.Name) else f.attr if isinstance(f, ast.Attribute) else ""
+
+
+def _is_skip_helper_call(node: ast.AST, helpers: frozenset[str]) -> bool:
+    if not isinstance(node, ast.Call):
+        return False
+    f = node.func
+    name = f.id if isinstance(f, ast.Name) else f.attr if isinstance(f, ast.Attribute) else ""
+    return name in helpers or name.startswith(SKIP_HELPER_PREFIXES)
+
+
+def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[str],
+          helpers: frozenset[str] = frozenset()) -> Facts:
     parent = _parents(fn)
     norm = _Reader(reader_names)
     found: list[tuple[int, int, ast.AST]] = []
@@ -116,19 +197,7 @@ def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[st
     for *_, node in found:
         out.asserts.append(ast.dump(node))
         out.reader_asserts.append(ast.dump(norm.visit(copy.deepcopy(node))))
-        conds: list[str] = []
-        loops: list[str] = []
-        cur: ast.AST = node
-        while cur is not fn:
-            up = parent[cur]
-            if isinstance(up, ast.If | ast.While) and cur is not up.test:
-                conds.append(f"{type(up).__name__}:{ast.dump(up.test)}"
-                             f":{'else' if cur in up.orelse else 'body'}")
-            elif isinstance(up, ast.Try):
-                conds.append("Try")
-            elif isinstance(up, ast.For | ast.AsyncFor | ast.comprehension):
-                loops.append(ast.dump(up.iter))
-            cur = up
+        conds, loops = _enclosing(node, fn, parent)
         out.conditions.append(repr(conds))
         out.loops.append(repr(loops))
     for d in fn.decorator_list:
@@ -138,12 +207,44 @@ def facts(fn: ast.FunctionDef | ast.AsyncFunctionDef, reader_names: frozenset[st
             out.marks.append(ast.dump(d))
         elif name == "parametrize":
             out.params.append(ast.dump(d))
+            # a mark on ONE case (`pytest.param("UBER", marks=pytest.mark.skip)`) stops that case
+            out.marks += [f"param {ast.dump(k.value)}" for c in ast.walk(d)
+                          if isinstance(c, ast.Call) and _is_pytest_call(c, ("param",))
+                          for k in c.keywords if k.arg == "marks"]
+        elif name == "usefixtures" and isinstance(d, ast.Call):
+            out.skips += [f"fixture {v}" for a in d.args if (v := _const(a)) in helpers]
+    # a fixture parameter whose fixture skips stops the test before its body runs
+    out.skips += [f"fixture {a.arg}" for a in [*fn.args.posonlyargs, *fn.args.args,
+                                               *fn.args.kwonlyargs] if a.arg in helpers]
     for n in _own_nodes(fn):
-        if isinstance(n, ast.Call) and _is_pytest_call(n, SKIP_CALLS):
-            out.skip_calls += 1
+        if isinstance(n, ast.Call) and (_is_pytest_call(n, SKIP_CALLS)
+                                        or _is_skip_helper_call(n, helpers)):
+            # WHAT it calls and UNDER WHAT conditions: a skip whose guard is dropped or widened
+            # (`if not p.exists(): pytest.skip(…)` → `pytest.skip(…)`) is a new skip
+            out.skips.append(f"{_callee(n)} {_enclosing(n, fn, parent)[0]!r}")
         elif isinstance(n, ast.Return | ast.Continue | ast.Break | ast.Raise):
             out.exits += 1
     return out
+
+
+def _enclosing(node: ast.AST, fn: ast.AST,
+               parent: dict[ast.AST, ast.AST]) -> tuple[list[str], list[str]]:
+    """(the conditions enclosing ``node`` in ``fn``: each `if`/`while` test and its branch, and
+    each `try`; the iterables of its enclosing loops), innermost first."""
+    conds: list[str] = []
+    loops: list[str] = []
+    cur: ast.AST = node
+    while cur is not fn:
+        up = parent[cur]
+        if isinstance(up, ast.If | ast.While) and cur is not up.test:
+            conds.append(f"{type(up).__name__}:{ast.dump(up.test)}"
+                         f":{'else' if cur in up.orelse else 'body'}")
+        elif isinstance(up, ast.Try):
+            conds.append("Try")
+        elif isinstance(up, ast.For | ast.AsyncFor | ast.comprehension):
+            loops.append(ast.dump(up.iter))
+        cur = up
+    return conds, loops
 
 
 def _own_nodes(fn: ast.AST) -> list[ast.AST]:
@@ -177,26 +278,52 @@ def assertions(fn: ast.FunctionDef | ast.AsyncFunctionDef) -> list[str]:
     return facts(fn, frozenset()).asserts
 
 
-def compare_sources(before_src: str, after_src: str, path: str) -> dict[str, list[str]]:
+def _const(node: ast.AST) -> str | None:
+    return node.value if isinstance(node, ast.Constant) and isinstance(node.value, str) else None
+
+
+def module_skips(source: str) -> list[str]:
+    """The module-level statements that skip the whole file: a `pytestmark` carrying a skip,
+    skipif or xfail mark, and a `pytest.skip(…)` / `pytest.importorskip(…)` at module level."""
+    out: list[str] = []
+    for n in (ast.parse(source).body if source else []):
+        if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "pytestmark"
+                                             for t in n.targets):
+            if any(isinstance(c, ast.Attribute) and c.attr in SKIP_MARKS for c in ast.walk(n)):
+                out.append(ast.dump(n.value))
+        elif isinstance(n, ast.Expr | ast.Assign) and any(
+                _is_pytest_call(c, SKIP_CALLS) for c in ast.walk(n)):
+            out.append(ast.dump(n))
+    return out
+
+
+def compare_sources(before_src: str, after_src: str, path: str,
+                    support: dict[str, frozenset[str]] | None = None) -> dict[str, list[str]]:
     """Every difference between BASE's and the working tree's functions in one file, by category
-    (the module docstring). Pure: it reads no file and runs no git."""
+    (the module docstring). ``support`` is `support_skippers`, for the skip helpers the file
+    imports. Pure: it reads no file and runs no git."""
     before = functions(before_src) if before_src else {}
     after = functions(after_src) if after_src else {}
     names = (readers(before_src) if before_src else SUPPORT_READERS) | (
         readers(after_src) if after_src else SUPPORT_READERS)
+    helpers = frozenset[str]().union(*(skippers(src) | imported_skippers(src, support or {})
+                                       for src in (before_src, after_src) if src))
     out: dict[str, list[str]] = {k: [] for k in (*FAILING, "READER", "POPULATION", "new")}
     for k in sorted(before.keys() & after.keys()):
-        b, a = facts(before[k], names), facts(after[k], names)
+        b, a = facts(before[k], names, helpers), facts(after[k], names, helpers)
         row = f"{path}::{k}"
         if b.asserts != a.asserts:
             out["READER" if b.reader_asserts == a.reader_asserts else "CHANGED"].append(row)
-        if b.marks != a.marks or a.skip_calls > b.skip_calls:
+        if Counter(a.marks) - Counter(b.marks) or Counter(a.skips) - Counter(b.skips):
             out["DISABLED"].append(row)
         same = b.reader_asserts == a.reader_asserts
         if (same and b.conditions != a.conditions) or a.exits > b.exits:
             out["CONTROL"].append(row)
         if b.params != a.params or (same and b.loops != a.loops):
             out["POPULATION"].append(row)
+    # a module-level `pytestmark` skip or `importorskip` stops every test in the file
+    if Counter(module_skips(after_src)) - Counter(module_skips(before_src)):
+        out["DISABLED"].append(f"{path}::<module>")
     out["VANISHED"] = [f"{path}::{k}" for k in sorted(before.keys() - after.keys())
                        if k.rsplit(".", 1)[-1].startswith("test") or assertions(before[k])]
     out["new"] = [f"{path}::{k}" for k in sorted(after.keys() - before.keys())]
@@ -215,6 +342,7 @@ def main(argv: list[str]) -> int:
         files = sorted(p for p in diffed
                        if p.endswith(".py") and not p.startswith("tests/fixtures/"))
     total: dict[str, list[str]] = {}
+    support = support_skippers(root)
     compared = asserts = 0
     for path in files:
         try:
@@ -222,7 +350,7 @@ def main(argv: list[str]) -> int:
         except subprocess.CalledProcessError:
             src_before = ""
         src_after = (root / path).read_text() if (root / path).exists() else ""
-        for k, rows in compare_sources(src_before, src_after, path).items():
+        for k, rows in compare_sources(src_before, src_after, path, support).items():
             total.setdefault(k, []).extend(rows)
         if src_before and src_after:
             compared += len(functions(src_before).keys() & functions(src_after).keys())

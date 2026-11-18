@@ -27,6 +27,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_doc
 from vinci.dossier.propose import (
     LEGS,
     UNPROPOSED_REASON,
@@ -48,6 +49,10 @@ R4_AXES = sc.AXES_BY_RECIPE[sc.RECIPE_R4]
 
 
 def _doc(t: str) -> dict[str, Any]:
+    """A LIVING page. Since W27 only the record-class pins read one by name: each pairs GOOGL's
+    page with GOOGL's living record (`_stamped`, `_stage_googl`), and a frozen page beside a
+    living record would mix two vintages. Every other named page is read as frozen at the cut
+    (`frozen_doc`, `tests/frozen_support.py`)."""
     return json.loads((DOSS / t / "dossier.json").read_text())
 
 
@@ -90,8 +95,11 @@ def test_the_living_pages_propose_the_band_current_never_its_median(ticker: str)
     """(+) On the five pages where the median sat 2.4x-3.9x above today's multiple (measured at
     `4889ddba`), the proposal is the selected band's `current` — read off the page, an invariant a
     re-assembly cannot rot (TEST-LAYER rule: no value pin on a living page) — and the median is
-    beside it, not in the cell."""
-    doc = _doc(ticker)
+    beside it, not in the cell. Since W27 the five pages are read as frozen at the cut, which is
+    `4889ddba`, where the five were measured. It is no roster walk: on every covered page with
+    an R1 band it fails on AMZN and GOOGL, whose R4/R3 recipes propose another multiple, and the
+    template refuses LLY, NCNO, NFLX, UBER and V (measured 2026-11-17)."""
+    doc = frozen_doc(ticker)
     band, _ = _r1_proposal_band(doc)
     assert band is not None
     a = _base_multiple(doc)
@@ -165,8 +173,9 @@ def test_the_band_low_stays_unproposed() -> None:
 def test_googl_r3_template_refusals_cite_r3_not_r1s_band() -> None:
     """(−) GOOGL's REAL R3 template, empty as proposed: its bear and bull multiples are refused
     (right) and the reason was R1's own-history band-low and p75 (wrong — a P/E is not that band).
-    Pinned on the default path and on the CLI's doc-aware path."""
-    doc = _doc("GOOGL")
+    Pinned on the default path and on the CLI's doc-aware path, on GOOGL's page as frozen at the
+    cut."""
+    doc = frozen_doc("GOOGL")
     tpl = build_template(doc)
     assert tpl["recipe_id"] == sc.RECIPE_R3
     for reasons in (None, unproposed_reasons(axes=R3_AXES, doc=doc)):
@@ -180,7 +189,7 @@ def test_googl_r3_template_refusals_cite_r3_not_r1s_band() -> None:
 
 def test_r4_axes_cite_r4s_reasons() -> None:
     """(−) The same text defect on R4 since #691: an empty EV/EBIT multiple cited R1's band."""
-    table = unproposed_reasons(axes=R4_AXES, doc=_doc("AMZN"))
+    table = unproposed_reasons(axes=R4_AXES, doc=frozen_doc("AMZN"))   # as frozen at the cut
     for leg in LEGS:
         assert "EV/EBIT" in table[("multiple", leg)]
         assert table[("multiple", leg)] not in UNPROPOSED_REASON.values()
@@ -191,8 +200,9 @@ def test_r4_axes_cite_r4s_reasons() -> None:
 
 def test_googl_page_states_one_ntm_consensus_eps() -> None:
     """(+) THE SUPPLYING LAYER: `forward_consensus.pe_eps_basis.fits[].ntm_implied_eps`, one value
-    across the fitted lines (the `valuation_basis` rule), with its line, source and date."""
-    doc = _doc("GOOGL")
+    across the fitted lines (the `valuation_basis` rule), with its line, source and date. GOOGL's
+    page as frozen at the cut: no walk, since 6 covered pages state no implied EPS at all."""
+    doc = frozen_doc("GOOGL")
     stamp, why = ntm_consensus_eps(doc)
     assert why is None and stamp is not None
     pb = doc["forward_consensus"]["pe_eps_basis"]
@@ -204,7 +214,7 @@ def test_googl_page_states_one_ntm_consensus_eps() -> None:
 def test_a_page_with_no_or_two_consensus_values_states_none() -> None:
     """(−) No `pe_eps_basis`, or two different implied values: no stamp, and the reason says why —
     the write never picks between two consensus figures."""
-    doc = _doc("GOOGL")
+    doc = frozen_doc("GOOGL")   # GOOGL's page, as frozen at the cut
     gone = copy.deepcopy(doc)
     gone["forward_consensus"].pop("pe_eps_basis")
     assert ntm_consensus_eps(gone)[0] is None and "no forward_consensus.pe_eps_basis" in str(
@@ -374,7 +384,8 @@ def test_a_stamp_on_a_non_r3_record_is_refused() -> None:
     bound no rule reads. SMPL's committed R1 record, with GOOGL's page stamp put on it."""
     rec = sc.read_record("SMPL", root=ROOT)
     assert rec.recipe_id != sc.RECIPE_R3
-    stamp, _ = ntm_consensus_eps(_doc("GOOGL"))
+    # any real R3 stamp does: GOOGL's, as frozen at the cut — the subject is SMPL's record
+    stamp, _ = ntm_consensus_eps(frozen_doc("GOOGL"))
     assert stamp is not None
     probs = sc.bear_consensus_problems(
         rec.model_copy(update={"ntm_consensus_eps": sc.ConsensusEps(**stamp)}))

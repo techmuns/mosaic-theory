@@ -17,6 +17,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import CUT, covered_where, frozen_doc
 from vinci.dossier.schemas import Dossier
 from vinci.dossier.synthesis import _primary_source_digest
 
@@ -35,7 +36,6 @@ def _digest(t: str, root: pathlib.Path = DOSS) -> str:
     return _primary_source_digest(ps)
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_smpl_case_that_produced_p2_is_now_marked() -> None:
     """THE ORIGINAL DEFECT, pinned on the name it happened to. The older guide must still appear —
     dropping it would lose the cut sequence — and must be marked superseded by the newest.
@@ -47,8 +47,9 @@ def test_the_smpl_case_that_produced_p2_is_now_marked() -> None:
     on a routine data event rather than on a defect (TEST-LAYER RULE: a value-level pin belongs on
     a frozen fixture, never on the re-drawn artifact). Reading the two dates and their guide values
     off `primary_source` keeps the defect coverage identical — a guide was marked, not dropped —
-    while surviving every future guide."""
-    d = Dossier.model_validate(json.loads((DOSS / "SMPL" / "dossier.json").read_text()))
+    while surviving every future guide. Since W27 the page is SMPL's as frozen at the cut, never
+    the living one: the case is that one page's (`tests/frozen_support.py`)."""
+    d = Dossier.model_validate(frozen_doc("SMPL"))
     ps = d.mechanical.primary_source
     assert ps is not None
     # WITHIN THE DIGEST'S OWN WINDOW (corrected 2026-08-12). This took the OLDEST dated
@@ -68,7 +69,7 @@ def test_the_smpl_case_that_produced_p2_is_now_marked() -> None:
         return {f"{g.low}–{g.high}" for r in ps.releases if r.filed == on
                 for g in (r.guidance or []) if not g.qualitative}
 
-    lines = _digest("SMPL").splitlines()
+    lines = _digest("SMPL", CUT).splitlines()   # the same page as above, never the living one
     cur = [x for x in lines if f"[CURRENT GUIDE, filed {newest}]" in x]
     sup = [x for x in lines if f"[SUPERSEDED — filed {older}" in x]
     assert cur and sup, lines[:12]
@@ -173,7 +174,6 @@ def test_supersession_is_computed_over_all_releases_not_the_shown_window() -> No
     assert all("2026-01-05" in x for x in lines if "[SUPERSEDED" in x), lines
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_only_guidance_carries_a_vintage_mark_never_a_reported_actual() -> None:
     """THE DEFECT THE FIRST CUT SHIPPED, now pinned. The mark began life as a section header —
     `--- SUPERSEDED … history, NOT the company's current outlook ---` — which visually scoped over
@@ -185,11 +185,15 @@ def test_only_guidance_carries_a_vintage_mark_never_a_reported_actual() -> None:
     A per-line mark has no scope to creep and nothing to bleed into. Reconciliations, one-offs and
     event impacts must carry NO vintage mark at all.
 
-    The per-line rule holds on the living page AND the frozen one; the $60.9M impairment is a
-    VALUE, so it is read from the frozen 2026-08-18 page only."""
+    The per-line rule holds on every covered living page with a primary source (the roster,
+    since W27: all 26 on 2026-11-17), through `covered_where`, which fails loud on an empty
+    population, AND on SMPL's frozen one; the $60.9M impairment is a VALUE, so it is read from the
+    frozen 2026-08-18 page only."""
     marks = ("[CURRENT GUIDE,", "[SUPERSEDED", "VINTAGE UNDATED")
-    for root in (DOSS, FROZEN):
-        for line in _digest("SMPL", root).splitlines():
+    for t, root in [*((t, DOSS) for t, _d in covered_where(
+            lambda _t, d: bool(d["mechanical"].get("primary_source")), "carries a primary source")),
+                    ("SMPL", FROZEN)]:
+        for line in _digest(t, root).splitlines():
             if any(m in line for m in marks):
                 assert line.startswith("guidance "), (
                     f"a vintage mark landed on a non-guidance line — a reported actual is not "
@@ -201,7 +205,6 @@ def test_only_guidance_carries_a_vintage_mark_never_a_reported_actual() -> None:
         f"the impairment 19c forces the synthesis to cite is marked as stale: {imp}")
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
     """P2 IN THE DECISION AID, closed. The template read `drawdown_cause.revised_guidance` and
     printed whatever it held under the label "current guidance". On SMPL that field holds the APRIL
@@ -335,7 +338,6 @@ def test_the_drawdown_mark_is_undated_rather_than_guessed_when_no_release_matche
     assert "VINTAGE UNDATED" in v and "do not read as current" in v, v
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_mark_reaches_the_prompt_synthesize_actually_builds() -> None:
     """THE CALL SITE, not the helper — and this file needed it because the first cut of the pin
     above called `_mark_drawdown_guidance` ITSELF.
@@ -365,7 +367,7 @@ def test_the_mark_reaches_the_prompt_synthesize_actually_builds() -> None:
         def model(self) -> str:
             return "capture"
 
-    d = Dossier.model_validate(json.loads((DOSS / "SMPL" / "dossier.json").read_text()))
+    d = Dossier.model_validate(frozen_doc("SMPL"))   # SMPL's page, as frozen at the cut
     ps = d.mechanical.primary_source
     assert ps is not None
     cap = _Capture()

@@ -29,6 +29,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from tests.test_analysis_as_of_knowable import _frozen
 from tests.test_analysis_as_of_skips_and_filings import _fleet, _no_local_path
 from vinci import provenance
@@ -320,9 +321,10 @@ def test_a_missing_financials_filing_date_is_named_never_imputed() -> None:
 # --- the backfill: from the export the page records, by sha256 -----------------------------------
 
 def _unfiled(t: str) -> dict[str, Any]:
-    """The living page with every Financials row's `filed_through` taken off: the page as a build
-    wrote it before this field, which the pass exists to fill."""
-    page: dict[str, Any] = json.loads((DOSS / t / "dossier.json").read_text())
+    """The page as frozen at the cut (`tests/frozen_support.py`), never the living one, with every
+    Financials row's `filed_through` taken off: the page as a build wrote it before this field,
+    which the pass exists to fill (W27: a retirement of the name moves nothing here)."""
+    page: dict[str, Any] = frozen_doc(t)
     for r in page["inputs"]["ciq"]:
         r.pop("filed_through", None)
     return page

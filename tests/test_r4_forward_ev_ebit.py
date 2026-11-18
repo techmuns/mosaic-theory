@@ -20,6 +20,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_doc
 from vinci.dossier.propose import (
     ProposalRefusedError,
     check_tier_agreement,
@@ -145,7 +146,7 @@ def test_scenario_create_writes_an_r4_record_end_to_end(
     operator makes), and a template built from its real figures goes through `scenario-create`."""
     from vinci.cli import _cmd_scenario_create
 
-    page = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    page = frozen_doc("AMZN")   # AMZN's page, as frozen at the cut
     page["anchor"]["recipe_hint"] = sc.RECIPE_R4
     (tmp_path / "data" / "dossiers" / "AMZN").mkdir(parents=True)
     (tmp_path / "data" / "dossiers" / "AMZN" / "dossier.json").write_text(json.dumps(page))
@@ -182,9 +183,8 @@ def test_the_supersede_guard_sees_the_ebit_axis() -> None:
 
 
 def _page(ticker: str) -> dict[str, Any]:
-    doc: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
-    return doc
+    """``ticker``'s page as frozen at the cut (`tests/frozen_support.py`), never the living one."""
+    return frozen_doc(ticker)
 
 
 def test_a_record_across_the_pages_forward_recipe_is_refused() -> None:

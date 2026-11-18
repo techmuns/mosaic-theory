@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import covered_where, frozen_doc
 from vinci.edge_basis import (
     BASIS_BY_KEY,
     EDGE_BASES,
@@ -29,6 +30,12 @@ def gap(ticker: str) -> object:
     return (doc.get("mechanical") or {}).get("ev_gap")
 
 
+def frozen_gap(ticker: str) -> object:
+    """A NAMED page's gap, as frozen at the cut (`tests/frozen_support.py`), never the living one;
+    `gap` reads the living pages the corpus lists below walk."""
+    return (frozen_doc(ticker).get("mechanical") or {}).get("ev_gap")
+
+
 COMPUTED = sorted(t.name for t in (ROOT / "data" / "dossiers").iterdir()
                   if (t / "dossier.json").exists()
                   and isinstance(gap(t.name), dict)
@@ -42,7 +49,7 @@ def test_silence_is_refused_and_the_refusal_lists_the_honest_alternatives() -> N
     answer does real damage. The message must show the five escapes, or the gate makes the problem
     it exists to prevent."""
     with pytest.raises(EdgeBasisError) as exc:
-        require_edge_basis(None, ev_gap=gap("SMPL"))
+        require_edge_basis(None, ev_gap=frozen_gap("SMPL"))
     msg = str(exc.value)
     for b in EDGE_BASES:
         assert b.key in msg, f"the refusal does not offer {b.key}"
@@ -52,7 +59,7 @@ def test_silence_is_refused_and_the_refusal_lists_the_honest_alternatives() -> N
 
 def test_an_unknown_basis_is_refused() -> None:
     with pytest.raises(EdgeBasisError, match="unknown edge basis"):
-        require_edge_basis("gut-feel", ev_gap=gap("SMPL"))
+        require_edge_basis("gut-feel", ev_gap=frozen_gap("SMPL"))
 
 
 @pytest.mark.parametrize("ticker", COMPUTED)
@@ -77,20 +84,22 @@ def test_a_variant_claim_is_refused_where_no_gap_is_stated(ticker: str) -> None:
 
 
 @pytest.mark.parametrize("key", [b.key for b in EDGE_BASES if not b.requires_variant])
-@pytest.mark.parametrize("ticker", ["SMPL", "VITL", "FUBO"])
-def test_every_no_variant_option_passes_regardless_of_the_gap(key: str, ticker: str) -> None:
+def test_every_no_variant_option_passes_regardless_of_the_gap(key: str) -> None:
     """AGREEMENT IS ALLOWED, on ANY name. These five say "no variant" out loud; conditioning them
-    on the gap would make honesty conditional on data the name may never have."""
+    on the gap would make honesty conditional on data the name may never have. On every covered
+    page (the roster), never a named one, through `covered_where`, which fails loud on an empty
+    roster: a walk of nothing would pass."""
     # A NOTE IS NOW REQUIRED for these five — `needs` is enforced (review of #322). Supplying one
     # here is the point: the claim under test is that agreement is ALLOWED, not that it is free.
-    line = require_edge_basis(key, ev_gap=gap(ticker), note="2026-11-14 — the stated evidence")
-    assert line and "No variant" in line
+    for ticker, _page in covered_where(lambda _t, _d: True, "to check"):
+        line = require_edge_basis(key, ev_gap=gap(ticker), note="2026-11-14 — the stated evidence")
+        assert line and "No variant" in line
 
 
 def test_the_cross_section_option_renders_as_pending_until_a5() -> None:
     """A SLOT ONLY. The machine cannot verify a cross-sectional claim yet, and a slot that read as
     verified would be the false-confirmation defect — worse than not having the option."""
-    line = require_edge_basis("variant-vs-cross-section", ev_gap=gap("SMPL"),
+    line = require_edge_basis("variant-vs-cross-section", ev_gap=frozen_gap("SMPL"),
                               note="cheapest decile on EV/S with above-median growth")
     assert PENDING_MARK in line
 
@@ -156,7 +165,7 @@ def test_a_basis_without_its_evidence_is_refused_through_the_cli_surface(key: st
     exists without recording it, which is the non-actionable edge this gate refuses."""
     args = _cli_args([*BASE, "--edge-basis", key])
     with pytest.raises(EdgeBasisError) as exc:
-        require_edge_basis(args.edge_basis, ev_gap=gap("SMPL"), note=args.edge_note)
+        require_edge_basis(args.edge_basis, ev_gap=frozen_gap("SMPL"), note=args.edge_note)
     assert BASIS_BY_KEY[key].needs in str(exc.value), "the refusal does not say what is needed"
 
 
@@ -167,7 +176,7 @@ def test_a_placeholder_note_is_refused_like_a_blank_one(key: str, blank: str) ->
     loudly. Same rule the Form-4 role derivation applies to EDGAR's "See Remarks"."""
     args = _cli_args([*BASE, "--edge-basis", key, "--edge-note", blank])
     with pytest.raises(EdgeBasisError):
-        require_edge_basis(args.edge_basis, ev_gap=gap("SMPL"), note=args.edge_note)
+        require_edge_basis(args.edge_basis, ev_gap=frozen_gap("SMPL"), note=args.edge_note)
 
 
 @pytest.mark.parametrize("key", NEEDS_A_NOTE)
@@ -175,14 +184,14 @@ def test_a_real_note_passes(key: str) -> None:
     """NEGATIVE CONTROL — the enforcement must not be satisfiable by refusing everything, which
     would push every verdict into the one option that takes no note."""
     args = _cli_args([*BASE, "--edge-basis", key, "--edge-note", "2026-11-14 FDA decision"])
-    line = require_edge_basis(args.edge_basis, ev_gap=gap("SMPL"), note=args.edge_note)
+    line = require_edge_basis(args.edge_basis, ev_gap=frozen_gap("SMPL"), note=args.edge_note)
     assert "2026-11-14 FDA decision" in line
 
 
 def test_the_variant_option_needs_no_note_because_the_gate_checks_its_evidence() -> None:
     """Its `needs` is the persisted EV gap, which the machine already holds. Demanding a note would
     make the human retype a number the row can read — and a retyped number can disagree."""
-    line = require_edge_basis("variant-expectation", ev_gap=gap("SMPL"))
+    line = require_edge_basis("variant-expectation", ev_gap=frozen_gap("SMPL"))
     assert "total gap" in line
 
 
