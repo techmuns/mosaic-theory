@@ -1410,14 +1410,14 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
                 "the gap is STRUCTURAL — a changed mix or model — that history understates it; if "
                 "it is a cyclical PEAK, reverting is right. Today's multiple is struck on these "
                 "above-median earnings, so it reads lower than the same price would on median "
-                "earnings, and the value can understate on that count too.")
+                "earnings, and an R1 value can understate on that count too.")
         where = "ABOVE"
     else:
         tail = ("so an R1 value assumes a recovery to what the business was. If the decline is "
                 "STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting "
                 "recovery is right. Today's multiple is struck on these below-median earnings, so "
-                "it reads higher than the same price would on median earnings, and the value can "
-                "overstate on that count too.")
+                "it reads higher than the same price would on median earnings, and an R1 value "
+                "can overstate on that count too.")
         where = "BELOW"
     med_src = "CIQ EBIT" if median_from_ciq else "EDGAR GAAP operating income"
     if median_from_ciq:

@@ -103,7 +103,9 @@ def test_every_covered_page_prices_the_current_its_template_proposes() -> None:
         if prop and anc.lease_basis_mismatch(doc) is None:
             assert prop[0].schema_value == pytest.approx(a.multiple.value), doc["ticker"]
         compared.append(doc["ticker"])
-    assert len(compared) >= 15, f"only {len(compared)} pages reached the multiple leg: {compared}"
+    # no fixed floor: `covered_where` fails loud when nothing qualifies, and a retirement edits no
+    # test (tests/test_named_page_pins.py); this asserts only that the walk reached the leg once
+    assert compared, "no covered page reached the multiple leg — the invariant walked nothing"
 
 
 def test_smpl_strikes_its_screen_value_on_the_current_not_the_median() -> None:
@@ -207,7 +209,7 @@ def test_committed_pages_round_trip_without_the_new_keys() -> None:
         mult = json.loads(out)["anchor"]["multiple"]
         assert not {"statistic", "as_of", "median"} & set(mult), t
         assert out == raw, f"{t} does not round-trip byte-identically"
-    assert seen >= 15, seen
+    assert seen, "no covered page carries an anchor multiple — the round-trip checked nothing"
 
 
 def _md(a: anc.Anchor | None) -> str:
@@ -283,3 +285,16 @@ def test_the_lease_line_never_says_r1_prices_a_current_it_does_not_have() -> Non
     assert "R1 prices that history's current multiple" in ok
     gone = lease_line(_without_current(_doc("SMPL"), -1.0))
     assert "R1 prices nothing on it" in gone and "prices that history's current" not in gone
+
+
+# --- review round 1 (`/code-review high`, Codex failed at its usage limit) -------------------
+@pytest.mark.parametrize("ticker", ["WLK", "NFLX"])
+def test_the_gap_sentence_never_points_at_the_value(ticker: str) -> None:
+    """(-) The gap flag also rides on an R1 anchor that publishes NO value (inputs incomplete), so
+    the sentence says "an R1 value", never "the value" or "this value" — the rule the code comment
+    beside the tails states, and the W50 tails first broke."""
+    a = _derive(_doc(ticker))
+    assert a.midcycle_gap is not None
+    read = a.midcycle_gap.read
+    assert "the value" not in read and "this value" not in read, read
+    assert "an R1 value can" in read

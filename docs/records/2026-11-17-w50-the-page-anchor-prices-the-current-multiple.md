@@ -2,12 +2,12 @@
 id:
 status: open
 date: 2026-11-17
-prs: []
+prs: [1114]
 supersedes:
 superseded-by:
 ---
 
-# W50: the page's R1 screening anchor prices its band's CURRENT multiple, the median printed beside it and never priced; a band with no usable current anchors nothing and says why; IN CODE, no committed page re-rendered — the preview is stopped for the operator ($0)
+# W50: the page's R1 screening anchor prices its band's CURRENT multiple, the median printed beside it and never priced; a band with no usable current anchors nothing and says why; IN CODE, no committed page re-rendered; the preview APPROVED by the operator 2026-11-18 ("Approve as shown") ($0)
 
 **WHAT.**
 - **The anchor.** `compute_anchor` strikes the screen value at the `current` of the band R1 prices
@@ -61,21 +61,25 @@ superseded-by:
   NM (non-positive EBITDA), or ≤ 0. It never reads how a filer discloses.
 
 **HOW VERIFIED.**
-- **Pins** (`tests/test_w50_anchor_current.py`), built from the real committed pages and their
-  committed companyfacts fixtures.
+- **Pins** (`tests/test_w50_anchor_current.py`), built from real committed pages and their
+  committed companyfacts fixtures. The value pins read the frozen cut (`cut-4889ddba`, through
+  `frozen_doc`). The invariants walk the coverage roster (`covered_where`), with no fixed page
+  floor, so a retirement edits no test (`tests/test_named_page_pins.py`).
   - **Positive.** Every page whose anchor reaches the multiple leg prices its band's current, and
     that is the 3a proposal's base multiple. SMPL's base is R1's arithmetic at the current, not at
     the median. BRBR cites `own_history.current`.
-  - **Negative.** On SMPL's real page, a current that is dropped, None, "NM", 0, negative,
+  - **Negative.** On SMPL's frozen page, a current that is dropped, None, "NM", 0, negative,
     infinite or True prices nothing and never the median, and `check_tier_agreement` then
     refuses an R1 record. The gap sentence names the unmatched pair on WLK (below the median) and
     NFLX (above). Committed pages round-trip with no new keys. Both renderers print the median
     words for SMPL's committed anchor and today's words for its derived one (md, and node on
-    dossier.js).
-  - **Mutation.** 10 of 10 mutants turn their pin red: median fallback, null keys, md or JS
+    dossier.js). The md lease line never claims a current the band lacks (review round 0). The gap
+    sentence says "an R1 value", never "the value" (review round 1).
+  - **Mutation.** 11 of 11 mutants turn their pin red. Ten were run before review round 0, and
+    the lease-line mutant in round 0. They are: median fallback, null keys, md or JS
     always printing the median words, gap tails swapped, backfill assuming current, a `float()`
-    band read, the base or the block priced at the median, and the gate ignoring a missing
-    current.
+    band read, the base or the block priced at the median, the gate ignoring a missing current,
+    and the lease line's no-current branch removed.
 - **Existing pins moved**, each from the median to the current, with the reason stated in the
   test:
   - four lease-basis pins;
@@ -83,8 +87,28 @@ superseded-by:
   - the parity pin, which now also binds the current-multiple method and subtitle;
   - `test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names`. It strikes the
     fresh inputs at the COMMITTED multiple, which keeps it a guard on the INPUTS it watches. Its
-    recorded set is unchanged.
-- **The preview** (PREVIEW RULE) is stopped for the operator. Each AFTER page goes through the
+    recorded set is unchanged. `test_anchor_assembly_ciq_bridge` holds its frozen block the
+    same way, and pins the W50 move apart (`_assert_w50_move`).
+- **A new extraction vintage,** `2026-11-18.the-screening-anchor-prices-the-current-multiple`,
+  re-pins `anchor.py` and `refresh.py`.
+- **The impact run** (base `322c6caa`, head `d94def19`, $0, verify VALID):
+  - 24 of 177 test nodes fail at base and pass at head, and 0 fail at head.
+  - 25 of 26 pages are built. PARR does not build at base, because its CIQ quarterly export is
+    mislabelled.
+  - 20 of the 25 move, only in `anchor.*` fields:
+    - the multiple's value, source, statistic, as_of and median on all 20;
+    - the base value and EV/EBIT on 18 (V and VITL publish no base at either ref);
+    - the diluted base on 17;
+    - the gap sentence on 7.
+  - `applicable`, `reason`, `recipe_hint`, `valuation_basis` and `ev_gap` move nowhere.
+  - The synthesis requests of 0 of 25 pages differ.
+  - 0 of 26 committed pages re-render differently. Node on all 26 committed pages with base's and
+    head's `dossier.js` gives 26 identical.
+  - The decision ledger, the scoring report and the monitor are identical at both refs.
+- **The preview** (PREVIEW RULE) was APPROVED by the operator on 2026-11-18, in these words,
+  relayed by coordinator B: "Approve as shown". The approval covers the side-by-side
+  `compare.html` (SMPL, GOOGL, NKE, and BRBR's no-current case) and the stated cost of pairing
+  today's multiple with mid-cycle margins. It approves the preview, not the merge. Each AFTER page goes through the
   `anchor-backfill` path (head code, the committed companyfacts fixture, the CIQ export read-only,
   `write_recorded`), written only into a scratch folder. A control strikes the fresh inputs at the
   committed multiple, and it reproduces each committed base, so each move is the multiple alone:
@@ -112,5 +136,5 @@ superseded-by:
   of that pairing, against the median-margin multiple read beside it.
 - **The current can be a percentile extreme** (SMPL: the 0th percentile, stated in its lease
   line). As in 3a, no threshold is added.
-- **No page carries this yet.** The page refresh waits for the operator's preview approval AND
-  for coordinator A's open page PRs (#1098, #1100, #1102) to land.
+- **No page carries this yet.** The preview is approved. The $0 refresh of the 26 pages is a
+  separate step after this PR merges, started on coordinator B's word.
