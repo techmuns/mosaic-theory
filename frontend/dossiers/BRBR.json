@@ -12953,6 +12953,40 @@
       }
     ]
   },
+  "input_checks": {
+    "schema_version": 1,
+    "results": [
+      {
+        "id": "inputs_recorded",
+        "what": "The page cannot say everything it was built from, so it cannot be re-checked anywhere else",
+        "level": "FLAG",
+        "outcome": "flag",
+        "reads": [
+          "inputs.recorded",
+          "inputs.unrecorded",
+          "inputs.inputs_id"
+        ],
+        "summary": "the record was resolved afterwards from the page's own export stamps (backfill), not recorded by its build: 3 inputs unrecorded (ciq:unstamped, prices, responses)",
+        "findings": [
+          "ciq:unstamped — a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded",
+          "prices — the page records only the store's newest bar across every name (price_store.frontier = 2026-10-23), not which series it read",
+          "responses — no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read"
+        ]
+      },
+      {
+        "id": "one_export_per_kind",
+        "what": "A block on the page was not built from the export the page records for its kind",
+        "level": "FLAG",
+        "outcome": "pass",
+        "reads": [
+          "the page's export stamps",
+          "inputs.ciq"
+        ],
+        "summary": "each of the page's 2 export stamps is the record's one export of its kind",
+        "findings": []
+      }
+    ]
+  },
   "layer_refreshes": [
     {
       "date": "2026-10-27",

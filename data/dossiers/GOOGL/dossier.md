@@ -679,6 +679,9 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 15d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 13d old (2026-11-01, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Input checks** (run on what this page records it was built from; 0 of 2 flag):
+  - `inputs_recorded` · **PASS** (a FLAG check) — every input the build read is recorded (inputs-ee6688b7c3bbc604)
+  - `one_export_per_kind` · **PASS** (a FLAG check) — each of the page's 3 export stamps is the record's one export of its kind
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001652044` · Nasdaq : GOOGL
 - **Assembly log:** primary-source: 8-K 0001193125-26-449835 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-26-342390 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-26-234488 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001193125-26-216986 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)

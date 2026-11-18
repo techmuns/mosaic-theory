@@ -738,6 +738,9 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm_
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 8d old (2026-11-06, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Input checks** (run on what this page records it was built from; 0 of 2 flag):
+  - `inputs_recorded` · **PASS** (a FLAG check) — every input the build read is recorded (inputs-56e6e94c19d758b2)
+  - `one_export_per_kind` · **PASS** (a FLAG check) — each of the page's 3 export stamps is the record's one export of its kind
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000749251` · NYSE : IT
 - **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)
