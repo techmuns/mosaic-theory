@@ -32,7 +32,7 @@ superseded-by:
   - TJX ($136.20) and PARR ($13.14): value unchanged; W61's notice no longer prints.
   - SMPL and IT: the anchor diff is `computed_at` only.
   - Preview collapsed and force-open on both renderers.
-- `tests/test_w62_anchor_stale_multiple.py`: 22 tests on the frozen cut (4889ddba). The "not priced" row is pinned end to end on GOOGL's page, md and web, as a positive; the negatives are a priced page, GOOGL held open, and GOOGL where R1 cannot price. GOOGL is priced through the real `CiqFacts` type carrying the vendor D&A its committed page records it read.
+- `tests/test_w62_anchor_stale_multiple.py`: 23 tests on the frozen cut (4889ddba), one of them review round 1's (an ex-lease history whose last observation states no balance-sheet date has no measurable cadence; the quarter before never sets the due date). The "not priced" row is pinned end to end on GOOGL's page, md and web, as a positive; the negatives are a priced page, GOOGL held open, and GOOGL where R1 cannot price. GOOGL is priced through the real `CiqFacts` type carrying the vendor D&A its committed page records it read.
 - 27 of 27 mutants red, among them a flat clock on the ex-lease history, `applicable` flipping, the cadence read over priced observations only, the gap wording not passed, the split's flat clock back, and the row removed from either renderer or set where R1 cannot price.
 - 853 neighbouring tests green.
 - Pins about other subjects that used a stale page derive with the check held open (`tests/stale_gate_support.py`): BRBR for W61's flags, GOOGL for the CIQ bridge, the dilution input watch. That is how W50's pins hold the multiple. `test_band_guards`' synthetic layer gains the two dates every committed page carries.
