@@ -27,10 +27,11 @@ superseded-by:
 - **VRRM was written by its own rebuild, not here** (coordinator B, 2026-11-18). A's paid rebuild
   (#1121, run `c0629902`) ran on `8ea51e99`, which carries the gate. Its page and its run record
   (schema 4) both carry `inputs_recorded` PASS (`inputs-0be3f3c88a3131e1`, nothing unrecorded)
-  and `one_export_per_kind` PASS. Its run record is the first of schema 4, the first that carries the checks: every run record on main
-  `9fb22d7d` is schema 3 or older. This counts committed run records only.
-  VRRM's page files are untouched here, so the two PRs share no file. Once both merge, all 11
-  active pages carry the block.
+  and `one_export_per_kind` PASS. Its run record is the first of schema 4, the first that
+  carries the checks: every run record on main `9fb22d7d` is schema 3 or older. This counts
+  committed run records only. VRRM's page files are untouched here, so the two PRs share no file.
+  #1121 merged first, as `55b92b52`, and this branch merged it, so all 11 active pages carry the
+  block.
 - **The 15 watch pages are left as committed** (operator 2026-11-18: "active pages only"): AMZN,
   BURL, CNXC, FUBO, MCK, NFLX, NKE, ORKA, PARR, ROST, TECX, TGT, UBER, V and WLK. A watch page gets
   the block at its next build, because every build runs the gate. `--all` was not used, since it
@@ -54,6 +55,10 @@ PRs never rewrite the same page files.
     `frontend/dossiers/index.json` and VRRM's files are unchanged.
 - **The write is idempotent.** After the commit, a second `--write` on all 10 pages and a second `frontend/build.py` left 0 files changed.
 - **VRRM's result read from #1121's head** `6bc15dd5`, from both its page and its run record.
+- **After merging main `55b92b52` (#1121)**, exactly 11 committed pages carry an `input_checks`
+  block. They are the 11 active pages: BRBR flags `inputs_recorded`, and the other 10 pass both
+  checks. No watch page carries one. A dry run on VRRM's merged page re-derives its stored result.
+  `bin/commit` ran the full offline suite again on the merge.
 - **The full offline suite passed** (`bin/commit`) on the committed artifacts `21643b43` before
   the push: 12,248 passed, 666 skipped, 7 xfailed, 0 failed. The counts come from its progress
   marks, because the gate's `-q` stacked on addopts' `-q` hides pytest's totals line.
@@ -61,8 +66,8 @@ PRs never rewrite the same page files.
 **BOUNDARY.**
 - **Roster:** `data/coverage_roster.jsonl` at `9fb22d7d`, with 11 active, 15 watch and 2 retired
   (AORT, MVST).
-- **Count:** 10 pages are written here. 1 (VRRM) carries the block through its own rebuild, #1121,
-  which is open as of this record. 15 watch pages carry none. That makes 26 committed pages.
+- **Count:** 10 pages are written here. 1 (VRRM) carries the block through its own rebuild,
+  #1121, merged as `55b92b52`. 15 watch pages carry none. That makes 26 committed pages.
 - **Checks:** the 2 in `input_checks.REGISTRY` at `9fb22d7d`, both FLAG. Checks 3–11 are not built.
 - **Stamps:** the count per page is the distinct 10-hex export stamps on that page.
 
