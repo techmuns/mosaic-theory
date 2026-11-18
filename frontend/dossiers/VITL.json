@@ -13290,13 +13290,21 @@
       "layers": [
         "inputs"
       ]
+    },
+    {
+      "date": "2026-11-18",
+      "extraction_version": "2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-14T06:49:00.006215Z",
+    "computed_at": "2026-11-18T15:50:54.923970Z",
     "reason": "rent is material and the ex-lease EV/EBITDA history is not usable — the latest quarter (2026-09-27) has no positive LTM EBITDA, so the history has no current — an older quarter is not one. CIQ's TEV/LTM EBITDA history puts operating leases in TEV and rent back in EBITDA since ASC 842 and did neither before, so its median cannot price reported EBITDA; multiple UNUSABLE until the ex-lease history is built",
     "data_quality": "band_incoherent+lease_basis_unresolved",
     "data_quality_detail": [
@@ -13313,11 +13321,14 @@
       "confidence": "firm"
     },
     "multiple": {
-      "value": 3.880202,
+      "value": 1.443876,
       "unit": "EV/EBITDA",
-      "source": "valuation.own_history.median",
+      "source": "valuation.own_history.current",
       "history_quarters": 25,
-      "confidence": "weak"
+      "confidence": "weak",
+      "statistic": "current",
+      "as_of": "2026-11-06",
+      "median": 3.880202
     },
     "d_and_a": {
       "value": 10.407,
@@ -13374,7 +13385,7 @@
       "basis_ciq_margin": 0.116365,
       "same_source": false,
       "basis": "LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 8 FY; flagged at ≥5 points; sources said to agree within 2",
-      "read": "The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source."
+      "read": "The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. Today's multiple is struck on these below-median earnings, so it reads higher than the same price would on median earnings, and an R1 value can overstate on that count too. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source."
     },
     "anchor_ev_ebit": null,
     "overall_confidence": "weak",

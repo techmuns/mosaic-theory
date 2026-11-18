@@ -1,6 +1,6 @@
 # Dossier — Alphabet Inc. (Nasdaq: GOOGL)
 
-_November 14, 2026 · extraction 2026-11-14.a-passage-is-filed-as-the-call-prints-it · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
+_November 14, 2026 · extraction 2026-11-14.a-passage-is-filed-as-the-call-prints-it · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
 
 # Brief — first cut
 
@@ -310,23 +310,35 @@ _No gap is struck for this name: shares unavailable. The consensus side alone st
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
 | Method | R3_forward_pe | R1 screen: applicable |
 | Mid-cycle margin | 26.3% | 9y history · firm |
-| Median multiple, own history | 17.5x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $225.54 | spot-independent · EV/EBIT 21.5x · on 12,294,000,000 shares outstanding |
-| Dilution test / share | $223.50 | + 112,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
+| Current multiple, own history | 22.9x | latest close 2026-09-30 · median 17.5x beside it, not used · 38 closes · firm · EV/EBITDA |
+| Screen value / share | $292.90 | spot-independent · EV/EBIT 28.2x · on 12,294,000,000 shares outstanding |
+| Dilution test / share | $290.25 | + 112,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.3% (CIQ EBIT) sits 7.0 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
+**How the screen value splits.** The screen value, $292.90 at 22.9x, is not split: CIQ's 22.9x divides TEV $3,316,548M by $144,827M: neither reported LTM EBITDA nor that plus rent (valuation.ev_ebitda_basis: not_reproduced), so the EBITDA it is struck on is not identified. At the 17.5x median it would be $67.36 lower, not used.
+
+**Stale multiple.** Today's multiple is the close of 2026-09-30, 42 days before the page's stored close of 2026-11-11.
+
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.3% (CIQ EBIT) sits 7.0 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
 
 **data_quality: vendor_bridge**
 - vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag
 
 _The machine’s read: EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 16.6x · R1 cannot anchor: EBITDA basis divergent: consensus-implied D&A 5.75× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block._
+
+_The split's arithmetic:_
+
+- m = 22.8888x, today's multiple (the close of 2026-09-30); M = 17.4518x, the median beside it, never used.
+- E_mid = 471,098.0 × 26.2717% + 28,540.0 = $152,306M — LTM revenue × the median margin + D&A, the anchor's EBITDA.
+- E_cur: not identified — CIQ's 22.9x divides TEV $3,316,548M by $144,827M: neither reported LTM EBITDA nor that plus rent (valuation.ev_ebitda_basis: not_reproduced), so the EBITDA it is struck on is not identified.
+- multiple effect = (17.4518 − 22.8888) × 152,305.5 ÷ 12,294,000,000 shares = −$67.36, beside the anchor.
+- screen value = (22.8888 × 152,305.5 − net debt −114,767.0) ÷ 12,294,000,000 = $292.90; at the median $225.54.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [49]  <!-- ds-table -->
@@ -663,6 +675,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Refreshed since assembly** (oldest first):
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
+  - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 15d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 13d old (2026-11-01, valuation.implied_expectations.multiples_as_of) — within the ceiling
