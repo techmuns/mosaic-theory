@@ -748,6 +748,9 @@ _Source §: 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm_
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 8d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 6d old (2026-11-08, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Input checks** (run on what this page records it was built from; 0 of 2 flag):
+  - `inputs_recorded` · **PASS** (a FLAG check) — every input the build read is recorded (inputs-5375cded686fdecd)
+  - `one_export_per_kind` · **PASS** (a FLAG check) — each of the page's 2 export stamps is the record's one export of its kind
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001352010` · NYSE : EPAM
 - **Assembly log:** primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)

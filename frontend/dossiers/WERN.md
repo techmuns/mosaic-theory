@@ -749,6 +749,9 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm · amended by 0000
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 9d old (2026-11-05, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Input checks** (run on what this page records it was built from; 0 of 2 flag):
+  - `inputs_recorded` · **PASS** (a FLAG check) — every input the build read is recorded (inputs-51d9e829bb0432d1)
+  - `one_export_per_kind` · **PASS** (a FLAG check) — each of the page's 3 export stamps is the record's one export of its kind
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000793074` · Nasdaq : WERN
 - **Assembly log:** primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.7s fetch)

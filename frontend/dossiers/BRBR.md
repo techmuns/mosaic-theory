@@ -2,6 +2,10 @@
 
 _October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-11-17.a-financials-filing-date-counts_
 
+> **Input check — FLAG, 1 of 2 checks.** A FLAG refuses nothing; every finding is listed under Record & reproduce.
+>
+> - **The page cannot say everything it was built from, so it cannot be re-checked anywhere else** (`inputs_recorded`): the record was resolved afterwards from the page's own export stamps (backfill), not recorded by its build: 3 inputs unrecorded (ciq:unstamped, prices, responses).
+
 # Brief — first cut
 
 ## At a glance
@@ -671,6 +675,12 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus is 61d old (2026-08-26, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.
+- **Input checks** (run on what this page records it was built from; 1 of 2 flag):
+  - `inputs_recorded` · **FLAG** (a FLAG check) — the record was resolved afterwards from the page's own export stamps (backfill), not recorded by its build: 3 inputs unrecorded (ciq:unstamped, prices, responses)
+    - ciq:unstamped — a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix of its sha256; any other export it read (comps, transcripts, capital structure, credit health …) was never recorded
+    - prices — the page records only the store's newest bar across every name (price_store.frontier = 2026-10-23), not which series it read
+    - responses — no build before 2026-11-05 recorded which SEC, Polygon or FINRA responses it read, and the cache rewrites an entry in place, so the copy there now is no evidence of the copy read
+  - `one_export_per_kind` · **PASS** (a FLAG check) — each of the page's 2 export stamps is the record's one export of its kind
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001772016` · NYSE : BRBR
 - **Assembly log:** primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.1s fetch)
