@@ -46,14 +46,14 @@ superseded-by:
   - the return-ratio table gains its dividend row;
   - the quarterly summary, the surprise history and the gap-down window move.
 
-  The 13 block leaves are the screening anchor and what prices it: W50 and W61 (#1114, #1118) on main `8ea51e99`, first carried by this page.
+  The 13 block leaves: 9 are the screening anchor, W50 and W61 (#1114, #1118) on main `8ea51e99`, first carried by this page; 3 move with the price; 1 is a code change since 2026-11-09.
   - 9 are under `anchor.*`.
     - `anchor_base_value_per_share` goes $23.2328 → $1.3435, below the $1.66 price.
     - `anchor.multiple` goes 13.8659x → 3.5566x, statistic `current`, with the median beside it.
     - `gap_split` is new: V0 $1.90, margin effect −$0.55, multiple effect $21.89.
     - Also moved: `anchor_ev_ebit` and the diluted base.
-  - 3 are under `valuation_basis.current_multiple`.
-  - 1 is `ev_bridge.note`.
+  - 3 are under `valuation_basis.current_multiple`, and move with the price: the page price, its date and the value at it.
+  - 1 is `ev_bridge.note`, which gains the code's line that the claims total sums only the legs CIQ states.
 
   The anchor is the page's largest valuation move. It is not in the synthesis's input: the prompt serialises only the mechanical layer (`synthesis.py:2730`), so it is no candidate cause of the lean (below).
 - **The covenant table, row by row.**
@@ -92,6 +92,8 @@ superseded-by:
 - **PR #1119 rewrites the same four VRRM files.** It is the $0 W50/W61 refresh of 2026-11-09 pages, still LIBO + 3.25% on VRRM's. This page already carries both layers. Whichever merges second conflicts on VRRM, and resolving toward #1119 would revert this paid build. So:
   - if this PR merges first, #1119 drops VRRM (its 9 refreshed pages become 8);
   - if #1119 merges first, this branch is re-synced keeping this page.
+
+  Both PRs also rewrite STATE row 10's W50/W61 clauses, so either re-sync merges row 10 by hand and checks `git diff origin/main -- STATE.md` (CLAUDE.md session ritual, step 5).
 
 **WHY.** The held build (`docs/records/2026-11-17-vrrm-check-build-held.md`) showed both covenant fixes on real model output. But it read 1 of 2 calls, because LibreOffice refused the conversion while another conversion ran. So its page would have lost 12 driver rows, and it was held. #1105 gives each conversion a profile of its own, and #1089 moved the checkout out of iCloud. This build is the rebuild ruled for after the move, and it is the move's soak: the first paid build from `~/dev`.
 
