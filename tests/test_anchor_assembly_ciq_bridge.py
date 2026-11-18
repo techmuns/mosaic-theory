@@ -102,6 +102,47 @@ def _assembled(t: str, ciq: CiqFacts | None, monkeypatch: pytest.MonkeyPatch) ->
     return kept
 
 
+#: (W50, 2026-11-17) the fields the CURRENT multiple moves: the frozen cut priced the median. This
+#: pin's subject is the CIQ bridge, so they are compared apart (`_assert_w50_move`), never dropped.
+W50_MOVED = ("multiple", "anchor_base_value_per_share", "anchor_base_value_per_share_diluted",
+             "anchor_ev_ebit", "midcycle_gap")
+
+
+def _assert_w50_move(t: str, got: Anchor, committed: Anchor) -> None:
+    """The W50 move, pinned rather than skipped: the multiple is the cut page's band current, the
+    committed (median) multiple is printed beside it, the gap is the same gap in new words, and
+    the fresh inputs struck at the COMMITTED multiple reproduce the committed base — so the bridge
+    this test guards did not move."""
+    from vinci.dossier import midcycle as mc
+    from vinci.dossier.anchor import per_share_shares, r1_multiple_band
+    if committed.multiple is None:
+        assert got.multiple is None, t
+        return
+    band = r1_multiple_band(CUT[t]["page"]["mechanical"]).band or {}
+    assert got.multiple is not None and got.multiple.value == pytest.approx(band["current"]), t
+    assert got.multiple.median == pytest.approx(committed.multiple.value), t
+    g, c = got.midcycle_gap, committed.midcycle_gap
+    assert (g is None) == (c is None), t
+    if g is not None and c is not None:
+        assert g.model_dump(exclude={"read"}) == c.model_dump(exclude={"read"}), t
+    base = committed.anchor_base_value_per_share
+    assert (got.anchor_base_value_per_share is None) == (base is None), t
+    if base is None:
+        return
+    assert got.ltm_revenue and got.margin and got.d_and_a and got.net_debt
+    assert committed.multiple.value is not None and got.ltm_revenue.value is not None
+    assert got.margin.value is not None and got.d_and_a.value is not None
+    assert got.net_debt.value is not None
+    shares = per_share_shares(got.model_dump(mode="json"))
+    assert shares, t
+    sv = mc.scenario_value(
+        mc.Scenario(name="base", revenue=got.ltm_revenue.value, margin=got.margin.value,
+                    multiple=committed.multiple.value, source="anchor default",
+                    d_and_a=got.d_and_a.value),
+        net_debt=got.net_debt.value, shares=shares)
+    assert round(sv.equity * 1e6 / shares, 4) == pytest.approx(base, abs=1e-3), t
+
+
 # --- POSITIVE: the fresh assembly writes the backfilled block ---------------------------------
 
 @pytest.mark.parametrize("t", sorted(VENDOR_INPUT))
@@ -111,10 +152,11 @@ def test_a_fresh_assembly_writes_the_backfilled_anchor(
     GOOGL's operator decision and base value included, because its D&A is what makes R1 applicable
     there."""
     got = _assembled(t, _ciq(t), monkeypatch)
-    moved = MOVED_BY_THE_DA_GUARD.get(t, ())
+    moved = (*MOVED_BY_THE_DA_GUARD.get(t, ()), *W50_MOVED)
     fresh, committed = _fields(got), _fields(_committed(t))
     assert {k: v for k, v in fresh.items() if k not in moved} == {
         k: v for k, v in committed.items() if k not in moved}
+    _assert_w50_move(t, got, _committed(t))
     if moved:   # the recorded move, pinned rather than skipped
         assert got.d_and_a is not None and got.d_and_a.basis == (
             "consolidated trailing twelve months to 2026-06-30 (CIQ workbook, vendor basis)")

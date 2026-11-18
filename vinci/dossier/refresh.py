@@ -2270,6 +2270,7 @@ def band_checks_backfill(path: Path, *, refused: list[str], unreached: list[str]
         _band_read,
         _ltm_ebit_from_fs,
         _market_cap_from_mechanical,
+        priced_band_value,
         r1_multiple_band,
     )
     from vinci.dossier.assemble import _read_scenario_card
@@ -2294,8 +2295,11 @@ def band_checks_backfill(path: Path, *, refused: list[str], unreached: list[str]
     sel = r1_multiple_band(mech)
     mult = _band_read(sel.band) or {}
     held = a.get("multiple") or {}
-    if (mult.get("median") != held.get("value") or mult.get("n_closes") != held.get(
-            "history_quarters") or sel.source != held.get("source")):
+    # WHICH STATISTIC THE ANCHOR PRICED is its own field (W50): the median before 2026-11-17, the
+    # band's current since — a committed anchor of either kind is on this band when it matches
+    want, want_source = priced_band_value(held, mult, ex_lease=sel.ex_lease)
+    if (want != held.get("value") or mult.get("n_closes") != held.get(
+            "history_quarters") or want_source != held.get("source")):
         refused.append(f"{t}: the band the page holds is not the one its anchor priced")
         return False
     detail = list(a.get("data_quality_detail") or [])
