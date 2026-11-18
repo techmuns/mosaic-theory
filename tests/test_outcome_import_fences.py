@@ -33,13 +33,33 @@ readers by attribute name; and `decision_ledger` named in code (raw SQL, or the 
 by path), docstrings excepted. A path built from parts, `getattr` with a computed name, or a read
 of `data/monitor/*.json` or the scoring report is NOT caught. None of the four does today (grep,
 2026-10-26).
+
+THE DECISION MODULES THE OLDER FENCES HELD DIRECT-ONLY, OR NOT AT ALL (2026-11-18). The ranker
+(`vinci.rank`), the sleeve registry (`vinci.sleeves`), the proposal mapping
+(`vinci.dossier.verdict`), the cap-band universe gate (`vinci.universe`) and the edge-basis gate
+(`vinci.edge_basis`) each set a weight, a band, a vocabulary, a requirement or the proposal itself.
+The ranker's, the registry's and the dossier's fences read `node.module` only, so
+`from vinci import scoring` left them green (#800's hand-over showed it), and they never walk
+through another module. The universe and the edge-basis gate had no fence. All five join `FENCED`,
+measured green on main `322c6caa` before they joined. The whole dossier package is held
+transitively against the scoring harness and the ledger. The monitor is the one outcome module it
+may reach: the dossier takes the cap-band policy from it (the walker test below names that edge).
+
+ONE NAMED ALLOWANCE. `vinci/dossier/verdict.py` imports `Verdict` from `vinci.schemas.ledger`.
+`Verdict` is the label set its proposals are written in, an enum with no price on it, not the row
+type. That one name is allowed in that one module; any other name from the ledger schema is
+refused there, and a pin fails when the import goes, so the allowance cannot outlive its use.
 """
 
 from __future__ import annotations
 
 import ast
 import functools
+import importlib.util
 import pathlib
+import re
+import shutil
+import types
 
 import pytest
 
@@ -56,7 +76,18 @@ LEDGER_WRITE_PATHS = ("vinci.ledger", "vinci.store")
 #: `Store` is a legitimate import of the screen (prices, candidates), and it also READS the ledger.
 STORE_LEDGER_READERS = frozenset({"iter_ledger", "get_ledger_entry"})
 
-FENCED = ("vinci.screens", "vinci.cohort", "vinci.triggers", "vinci.scenarios")
+#: The decision modules the older fences held direct-only, or not at all (2026-11-18, docstring).
+DECISION_MODULES = ("vinci.rank", "vinci.sleeves", "vinci.dossier.verdict", "vinci.universe",
+                    "vinci.edge_basis")
+FENCED = ("vinci.screens", "vinci.cohort", "vinci.triggers", "vinci.scenarios", *DECISION_MODULES)
+
+#: A name the direct ban would refuse, allowed in ONE module, with its reason (docstring).
+DIRECT_ALLOWED: dict[str, frozenset[str]] = {
+    "vinci.dossier.verdict": frozenset({"vinci.schemas.ledger.Verdict"}),
+}
+
+#: The dossier package's barrier: the monitor is the one outcome module it may reach (docstring).
+DOSSIER_BARRED = ("vinci.scoring", "vinci.ledger", SCREEN_BASELINE)
 
 
 def _module_name(path: pathlib.Path) -> str:
@@ -209,6 +240,20 @@ def _chain(via: dict[str, str | None], end: str) -> str:
     return " <- ".join(links)
 
 
+def _allowed(module: str, name: str) -> bool:
+    """Whether ``name`` is ``module``'s one named allowance: the allowed name, an attribute of it,
+    or the module the allowed name is imported from (`from M import X` also yields `M`)."""
+    return any(name == a or name.startswith(a + ".") or name == a.rpartition(".")[0]
+               for a in DIRECT_ALLOWED.get(module, frozenset()))
+
+
+def _direct_hits(src: str, *, module: str, is_package: bool = False) -> list[str]:
+    """The outcome-side names ``src`` imports directly, less ``module``'s named allowance."""
+    return sorted(m for m in imported_names(src, module=module, is_package=is_package)
+                  if (_under(m, OUTCOME_LAYER + DIRECT_ONLY) or m in LEDGER_SCHEMA_REEXPORTS)
+                  and not _allowed(module, m))
+
+
 # --- the fences ---------------------------------------------------------------------------------
 
 @pytest.mark.parametrize("target", FENCED)
@@ -218,10 +263,8 @@ def test_no_gate_or_threshold_module_imports_the_outcome_layer(target: str) -> N
     files = _files(target)
     assert files, f"{target}: the fence walked no file"
     for path in files:
-        name = _module_name(path)
-        hits = sorted(m for m in imported_names(path.read_text(), module=name,
-                                                is_package=path.name == "__init__.py")
-                      if _under(m, OUTCOME_LAYER + DIRECT_ONLY) or m in LEDGER_SCHEMA_REEXPORTS)
+        hits = _direct_hits(path.read_text(), module=_module_name(path),
+                            is_package=path.name == "__init__.py")
         assert not hits, (f"{path.relative_to(ROOT)} imports {hits} — a gate, threshold or "
                           f"trigger must never be able to read forward returns (§7)")
 
@@ -236,6 +279,36 @@ def test_no_gate_or_threshold_module_reaches_the_outcome_layer_through_another(
         crossed = sorted(m for m in via if _under(m, OUTCOME_LAYER))
         assert not crossed, ("forward-return data is reachable: "
                              + "; ".join(_chain(via, m) for m in crossed))
+
+
+def test_no_dossier_module_reaches_the_scoring_harness_or_the_ledger() -> None:
+    """The dossier's own fence (`tests/test_dossier.py`) reads `node.module` only and stops at the
+    file. This one walks. The dossier assembles, cites and proposes; reaching the spread or the
+    ledger's write path is how it would start concluding from outcomes."""
+    files = _files("vinci.dossier")
+    assert len(files) > 40, f"the dossier fence walked {len(files)} files"
+    for path in files:
+        via = reach(_module_name(path))
+        crossed = sorted(m for m in via if _under(m, DOSSIER_BARRED))
+        assert not crossed, ("the dossier reaches the scoring harness or the ledger: "
+                             + "; ".join(_chain(via, m) for m in crossed))
+
+
+def test_the_proposal_mappings_one_allowance_is_in_use_and_names_only_the_labels() -> None:
+    """`Verdict` is allowed in `vinci.dossier.verdict` and nothing else from the ledger schema is.
+    The allowance must be in use (when the import goes, remove the allowance), and the row type
+    planted beside it is refused."""
+    src = MODULES["vinci.dossier.verdict"].read_text()
+    assert "vinci.schemas.ledger.Verdict" in imported_names(src, module="vinci.dossier.verdict"), (
+        "verdict.py no longer imports Verdict from the ledger schema: drop its allowance")
+    assert _direct_hits(src, module="vinci.dossier.verdict") == []
+    planted = src + "\nfrom vinci.schemas.ledger import LedgerEntry\n"
+    assert _direct_hits(planted, module="vinci.dossier.verdict") == [
+        "vinci.schemas.ledger.LedgerEntry"]
+    # the allowance is the proposal mapping's alone: the same import from the ranker is refused
+    assert _direct_hits("from vinci.schemas.ledger import Verdict\n",
+                        module="vinci.rank.ranker") == [
+        "vinci.schemas.ledger", "vinci.schemas.ledger.Verdict"]
 
 
 def test_the_screen_basket_baseline_is_inside_the_fence() -> None:
@@ -257,7 +330,8 @@ def _docstring_nodes(tree: ast.Module) -> set[int]:
             and isinstance(o.body[0].value, ast.Constant)}
 
 
-@pytest.mark.parametrize("target", FENCED)
+#: The dossier too: it may reach the monitor, but a ledger row read through the Store is the ledger.
+@pytest.mark.parametrize("target", (*FENCED, "vinci.dossier"))
 def test_no_gate_or_threshold_module_reads_the_ledger_through_the_store(target: str) -> None:
     """`vinci.screens.run` imports `Store` for prices and candidates, and `Store` also reads every
     logged verdict and close. The import is allowed; the two ledger readers are not, and neither is
@@ -304,6 +378,80 @@ def test_the_fences_scan_the_modules_they_name() -> None:
     scanned = {p.name for t in FENCED for p in _files(t)}
     assert {"screen2.py", "run.py", "assemble.py", "retention.py", "annotations.py",
             "cohort.py", "triggers.py", "scenarios.py"} <= scanned
+    # the decision modules of 2026-11-18, by file: the ranker's three, then one file each
+    assert {"ranker.py", "structural.py", "profile.py", "sleeves.py", "verdict.py",
+            "universe.py", "edge_basis.py"} <= scanned
+
+
+# --- a planted import in a COPY of the tree is refused (the fence run on a real tree, not a string)
+
+def _copy_tree(dest: pathlib.Path) -> pathlib.Path:
+    """``vinci/``'s Python files and this test file, copied under ``dest`` as a repo holds them."""
+    def not_python(folder: str, names: list[str]) -> list[str]:
+        return [n for n in names if n == "__pycache__"
+                or (not n.endswith(".py") and not pathlib.Path(folder, n).is_dir())]
+    shutil.copytree(VINCI, dest / "vinci", ignore=not_python)
+    (dest / "tests").mkdir()
+    shutil.copy2(pathlib.Path(__file__), dest / "tests" / pathlib.Path(__file__).name)
+    return dest
+
+
+def _load_fence(root: pathlib.Path, tag: str) -> types.ModuleType:
+    """This fence, imported from the copy under ``root``: ROOT, VINCI and MODULES are the copy's."""
+    spec = importlib.util.spec_from_file_location(
+        f"_fence_copy_{tag}", root / "tests" / pathlib.Path(__file__).name)
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _plant(root: pathlib.Path, rel: str, line: str) -> None:
+    with (root / rel).open("a") as fh:
+        fh.write(f"\n{line}\n")
+
+
+@pytest.mark.parametrize(("target", "rel"), [
+    ("vinci.rank", "vinci/rank/ranker.py"),
+    ("vinci.sleeves", "vinci/sleeves.py"),
+    ("vinci.dossier.verdict", "vinci/dossier/verdict.py"),
+    ("vinci.universe", "vinci/universe.py"),
+    ("vinci.edge_basis", "vinci/edge_basis.py"),
+])
+def test_a_planted_import_in_a_copy_of_a_decision_module_is_refused(
+        target: str, rel: str, tmp_path: pathlib.Path) -> None:
+    """POSITIVE then NEGATIVE, on a copy of the real tree. The copy passes as copied; then
+    `from vinci import scoring` — the shape the older fences could not see — is appended to the
+    decision module's own file, and both of its fences refuse it."""
+    root = _copy_tree(tmp_path)
+    clean = _load_fence(root, "clean")
+    assert target in clean.FENCED, f"{target} is not fenced"
+    clean.test_no_gate_or_threshold_module_imports_the_outcome_layer(target)
+    clean.test_no_gate_or_threshold_module_reaches_the_outcome_layer_through_another(target)
+    _plant(root, rel, "from vinci import scoring")
+    planted = _load_fence(root, "planted")
+    with pytest.raises(AssertionError, match=re.escape(f"{rel} imports ['vinci.scoring']")):
+        planted.test_no_gate_or_threshold_module_imports_the_outcome_layer(target)
+    with pytest.raises(AssertionError, match=r"vinci\.scoring <- "):
+        planted.test_no_gate_or_threshold_module_reaches_the_outcome_layer_through_another(target)
+
+
+def test_a_planted_import_one_module_away_is_refused_by_the_walk_alone(
+        tmp_path: pathlib.Path) -> None:
+    """THE TRANSITIVE HALF. `vinci.schemas.cohort` is fenced by nothing, and the ranker's profile
+    imports it. Plant the outcome import there and every direct check of the ranker stays green
+    while the walk names the path, through the ranker and through the dossier."""
+    root = _copy_tree(tmp_path)
+    _plant(root, "vinci/schemas/cohort.py", "from vinci import scoring")
+    planted = _load_fence(root, "one_away")
+    planted.test_no_gate_or_threshold_module_imports_the_outcome_layer("vinci.rank")
+    with pytest.raises(AssertionError, match=r"vinci\.scoring <- vinci\.schemas\.cohort <- .*"
+                                             r"vinci\.rank"):
+        planted.test_no_gate_or_threshold_module_reaches_the_outcome_layer_through_another(
+            "vinci.rank")
+    with pytest.raises(AssertionError, match=r"vinci\.scoring <- vinci\.schemas\.cohort <- .*"
+                                             r"vinci\.dossier"):
+        planted.test_no_dossier_module_reaches_the_scoring_harness_or_the_ledger()
 
 
 # --- the parser: every import shape that crosses the line is seen -------------------------------
