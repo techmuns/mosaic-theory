@@ -89,11 +89,10 @@ superseded-by:
   - one fewer "draws DISAGREED" flag, since the draws now agree.
 
   The false-balance flag bears on the lean that moved the proposal. It is printed for the human.
-- **PR #1119 rewrites the same four VRRM files.** It is the $0 W50/W61 refresh of 2026-11-09 pages, still LIBO + 3.25% on VRRM's. This page already carries both layers. Whichever merges second conflicts on VRRM, and resolving toward #1119 would revert this paid build. So:
-  - if this PR merges first, #1119 drops VRRM (its 9 refreshed pages become 8);
-  - if #1119 merges first, this branch is re-synced keeping this page.
-
-  Both PRs also rewrite STATE row 10's W50/W61 clauses, so either re-sync merges row 10 by hand and checks `git diff origin/main -- STATE.md` (CLAUDE.md session ritual, step 5).
+- **PR #1119 and this PR overlapped on VRRM.** #1119 is the $0 W50/W61 refresh of the other active pages.
+  - It was opened on VRRM's 2026-11-09 page, still LIBO + 3.25%.
+  - It merged first (`9fb22d7d`), on 8 of 11 active pages, with VRRM left to this rebuild ("VRRM's rides its rebuild, #1121").
+  - This branch then merged main. The VRRM files did not conflict. STATE row 10 did: both PRs rewrote its W50/W61 clauses. Row 10 was resolved by hand from main's text, with VRRM's page added, and `git diff origin/main -- STATE.md` shows this PR's five rows (10, 32, 48, 55, 63).
 
 **WHY.** The held build (`docs/records/2026-11-17-vrrm-check-build-held.md`) showed both covenant fixes on real model output. But it read 1 of 2 calls, because LibreOffice refused the conversion while another conversion ran. So its page would have lost 12 driver rows, and it was held. #1105 gives each conversion a profile of its own, and #1089 moved the checkout out of iCloud. This build is the rebuild ruled for after the move, and it is the move's soak: the first paid build from `~/dev`.
 
