@@ -85,6 +85,11 @@ reads inside its covenant phase — and prints them against the committed page's
 per class, which inputs are the page's and which moved. It decides nothing: the exit code is the
 regressions' and the refusals' alone. ``--inputs-json`` writes the record in full.
 
+THE INPUT CHECKS (2026-11-18, `vinci.dossier.input_checks`, workstream B slice 2). The $0 build
+runs the gate the paid build runs on its page before the write, and its results print as INPUT
+CHECKS, every FLAG's findings in full. No check is HARD, so none changes the exit code; a HARD one,
+once ruled, would refuse the $0 build at the same point and exit 1 as any refused build does.
+
 THE DRAWDOWN'S DATED PARTS (2026-11-04, `DrawdownAnchor`). The current window rolls with the
 page's date, so a rebuild moves an old gap-down OUT of it; on an anchored name the at-the-anchor
 part now carries that event, dated. A current-window field (``MOVABLE``) that leaves the window is
@@ -108,6 +113,7 @@ from typing import TYPE_CHECKING, Any, TypeGuard
 
 from vinci import provenance
 from vinci.config import Config
+from vinci.dossier import input_checks
 from vinci.dossier import inputs as page_inputs
 from vinci.dossier.freshness import MAX_PANEL_AGE_DAYS, PanelAge, panel_age
 from vinci.dossier.schemas import Dossier, MechanicalLayer, SourceStatus, dossier_json
@@ -654,7 +660,7 @@ def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
     driver row's `locator` carries three full sha256s (the call's file, the quote, the stated
     value; RG-D19), and counting them listed each as an export missing from disk."""
     from vinci.dossier.ciq_balance import stamps_in_text
-    from vinci.dossier.inputs import _STAMP
+    from vinci.dossier.input_checks import NOT_STAMPS, STAMP
 
     seen: Counter[str] = Counter()
 
@@ -662,7 +668,7 @@ def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
         if isinstance(node, dict):
             for key, child in node.items():
                 if str(key).endswith("sha256") and isinstance(child, str):
-                    if _STAMP.fullmatch(child):
+                    if STAMP.fullmatch(child):
                         seen[child] += 1
                 else:
                     walk(child)
@@ -672,8 +678,9 @@ def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
         elif isinstance(node, str):
             seen.update(stamps_in_text(node))
 
-    # the page's input record names full sha256s of its own; those are no export stamps
-    walk({k: v for k, v in doc.items() if k != "inputs"})
+    # the page's input record names full sha256s of its own, and the input checks' findings name
+    # stamps; neither is an export stamp (`input_checks.NOT_STAMPS`)
+    walk({k: v for k, v in doc.items() if k not in NOT_STAMPS})
     return seen
 
 
@@ -844,8 +851,12 @@ def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print,
     recorded = (page_inputs.InputManifest.model_validate(committed["inputs"])
                 if committed is not None and committed.get("inputs") else None)
     lines = report(t, committed, fresh, result, exports, post)
-    # the INPUTS block sits before the verdict, which stays the last line
-    for line in [*lines[:-1], *page_inputs.summary_lines(present, recorded), lines[-1]]:
+    # the INPUTS and INPUT CHECKS blocks sit before the verdict, which stays the last line. The
+    # checks are the gate the paid build runs on its page before the write (`input_checks`),
+    # here on the $0 build's: a FLAG is said, never a stop, so the exit code is unchanged
+    gate = input_checks.lines(built.input_checks) if built.input_checks is not None else [
+        "INPUT CHECKS — not run: this $0 build's page carries no result"]
+    for line in [*lines[:-1], *page_inputs.summary_lines(present, recorded), *gate, lines[-1]]:
         emit(line)
     if inputs_json is not None:
         page_inputs.write_json(present, inputs_json)

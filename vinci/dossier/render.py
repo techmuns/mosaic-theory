@@ -4924,6 +4924,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # the FUBO defect exactly (banner in one artifact, absent from the served one), re-created by
     # the fix meant to serve it. Every writer passes the root it is writing into.
     out += _known_wrong_lines(d.ticker, dossiers_root)
+    # (2026-11-18, workstream B slice 2) a FLAGGED INPUT CHECK, before the brief: what the page
+    # records it was built from is in doubt, which changes how every number below is read
+    out += _input_check_flag_lines(d)
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
     # case + valuation snapshot. The derived proposal is SEALED at assembly but hidden here
     # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
@@ -5060,6 +5063,35 @@ def _price_store_line(stamp: PriceStoreStamp | None) -> str:
     return f"`{where}` · {reach}"
 
 
+def _input_check_flag_lines(d: Dossier) -> list[str]:
+    """The first screen's INPUT CHECK block (`vinci.dossier.input_checks`): one line per check that
+    flagged, its meaning and its summary — or nothing, on a page whose checks all pass or that
+    carries none. Every finding is in Record & reproduce. Twin: dossier.js ``inputCheckFlags``."""
+    checks = d.input_checks
+    if checks is None or not (flagged := checks.flagged):
+        return []
+    out = [f"> **Input check — FLAG, {len(flagged)} of {len(checks.results)} checks.** A FLAG "
+           "refuses nothing; every finding is listed under Record & reproduce.", ">"]
+    out += [f"> - **{r.what}** (`{r.id}`): {r.summary}." for r in flagged]
+    out.append("")
+    return out
+
+
+def _input_check_record_lines(d: Dossier) -> list[str]:
+    """Record & reproduce's INPUT CHECKS: every check, its level, outcome and summary, and every
+    finding of one that did not pass, in full. Twin: dossier.js ``inputCheckRow``."""
+    checks = d.input_checks
+    if checks is None:
+        return []
+    out = ["- **Input checks** (run on what this page records it was built from; "
+           f"{len(checks.flagged)} of {len(checks.results)} flag):"]
+    for r in checks.results:
+        out.append(f"  - `{r.id}` · **{r.outcome.upper()}** (a {r.level} check) — {r.summary}")
+        if r.outcome != "pass":
+            out += [f"    - {f}" for f in r.findings]
+    return out
+
+
 def _record_reproduce_lines(d: Dossier) -> list[str]:
     """RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs
     the old header meta (assembly stamp, model), the assembly-log caveat line, and the identifiers.
@@ -5090,6 +5122,9 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # of eleven committed dossiers pair fundamentals 30+ days older than their price with
         # nothing on the page saying so.
         *_panel_age_line(d),
+        # (2026-11-18) the input checks' every result and finding — the audit tier of the first
+        # screen's FLAG block, after the panel age as on the web. Absent on a page carrying none
+        *_input_check_record_lines(d),
         "- **Synthesis:** " + (
             f"model `{d.llm_model}` — facts assembled mechanically; the synthesis frames, "
             "the analyst decides"

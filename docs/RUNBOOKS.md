@@ -296,6 +296,10 @@ is the 3.9 system one).
      other block leaf that moved are LISTED (`LEFT THEIR LIST`, `CHANGED`, `CHANGED IN A BLOCK`,
      25 a block with the cut said; `--changes-json <path>` writes every row), not a stop — read
      them before spending. The last line counts them; it never says nothing was lost.
+   - It prints **INPUT CHECKS** (2026-11-18, workstream B slice 2): the gate the paid build runs
+     on its page before the write (`vinci/dossier/input_checks.py`), here on the $0 build's page,
+     each FLAG with every finding. A FLAG is not a stop and never changes the exit code; read it
+     before spending, since the paid page will print it above its Brief. No check is HARD.
    - It writes nothing to `data/dossiers/` and no `assembly_runs` line. A first assembly (no
      committed page) has no field to compare, but its post-spend refusals still run, and any one
      that fires exits 1.

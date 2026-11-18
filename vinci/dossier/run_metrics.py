@@ -19,7 +19,7 @@ the outcome a loop most needs to count. ``outcome`` says which: ``written``, ``r
 
 THE RECORD — shape contract, one literal example (abridged to one call):
 
-    {"schema": 3, "run_id": "3f9c2a1b", "ticker": "VRRM", "outcome": "written", "error": null,
+    {"schema": 4, "run_id": "3f9c2a1b", "ticker": "VRRM", "outcome": "written", "error": null,
      "started_at": "2026-10-23T13:40:12Z", "finished_at": "2026-10-23T13:44:57Z", "seconds": 285.0,
      "model": "claude-opus-4-8", "sdk_version": "2.6.0", "extraction_version": "…",
      "calls": [{"phase": "assemble_dossier_framing", "ok": true, "error": null,
@@ -63,6 +63,14 @@ installed `anthropic` SDK every call of the build went through (`graph.llm.sdk_v
 on a build that made no call (no LLM client, or refused before its first), and when none is
 installed. Records before it do not say: the theme desk's four Actions runs (three of them paid)
 installed 1.16.0, 1.17.0, 2.3.0 and 2.6.0, read back from CI logs, while local builds ran 0.112.0.
+
+``checks`` (schema 4, 2026-11-18, workstream B slice 2) is the input-check gate's result
+(`vinci.dossier.input_checks`): every check on what the page records it was built from, as the
+written page carries it (``input_checks``) — ``{"schema_version": 1, "results": [{"id":
+"inputs_recorded", "level": "FLAG", "outcome": "pass", "summary": "…", "findings": [], …}, …]}``.
+On a build a HARD check refused, the refusal's own results; ``null`` when no page was built for
+any other reason (the gate runs only on a page about to be written). Records before schema 4 do
+not say.
 """
 
 from __future__ import annotations
@@ -82,7 +90,7 @@ from vinci.dossier.schemas import Dossier
 from vinci.dossier.verdict import split_lean
 from vinci.graph.llm import MeteredLlmClient, cost_usd, sdk_version
 
-SCHEMA = 3
+SCHEMA = 4
 RUNS_DIR = "assembly_runs"
 ERROR_CAP = 300
 _TOKEN_FIELDS = ("input_tokens", "output_tokens", "cache_creation_input_tokens",
@@ -141,6 +149,9 @@ def name_record(
     from vinci.dossier.assemble import DossierAssemblyError
 
     calls = [{**c, "error": _capped(c["error"])} for c in (meter.calls if meter else [])]
+    # the gate's result: the written page's, or the one a HARD check refused the write with
+    checks = (dossier.input_checks if dossier is not None
+              else getattr(error, "input_checks", None) if error is not None else None)
     metered = [c["usage"] for c in calls if c["usage"] is not None]
     model = meter.model if meter else None
     # THE PRICE IS A PROPERTY OF THE MODEL, decided before looking at a single call: an unpriced
@@ -169,6 +180,7 @@ def name_record(
         "flags": ({"caveats": len(dossier.caveats), "qa_flags": len(dossier.qa_flags)}
                   if dossier is not None else None),
         "inputs": inputs.model_dump(mode="json") if inputs is not None else None,
+        "checks": checks.model_dump(mode="json") if checks is not None else None,
     }
 
 

@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-18.input-checks",
+  "follows": [
+    "2026-11-17.a-paid-build-reads-every-call"
+  ],
+  "names": "The input-check gate (workstream B slice 2): a page built from now carries input_checks, each check's result on what the page records it was built from (inputs_recorded: every input recorded; one_export_per_kind: every export stamp is the record's one export of its kind); a FLAG prints on the page's first screen and every finding under Record & reproduce; no extracted value changes"
+}

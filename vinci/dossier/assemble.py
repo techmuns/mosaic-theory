@@ -50,6 +50,7 @@ from vinci.dossier.covenant_extract import (
 )
 from vinci.dossier.driver_extract import extract_transcript_drivers, transcript_sha256s
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
+from vinci.dossier.inputs_schema import InputChecks
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import (
     COVENANT_SEARCH_FOUND_NOTHING,
@@ -1529,7 +1530,32 @@ def assemble_one(
             json.loads(dossier_json(dossier)), dossier.anchor)})
     # WHAT THIS PAGE WAS BUILT FROM — every read up to here, LLM phases included
     dossier = dossier.model_copy(update={"inputs": _page_inputs(reads.reads(), cfg)})
+    # THE INPUT-CHECK GATE (workstream B slice 2): every check on what the page records it was
+    # built from, BEFORE the write. A FLAG lands on the page and in the run record and refuses
+    # nothing; a HARD check that finds something refuses here (none is HARD — `input_checks`)
+    dossier = _input_check_gate(dossier)
     return _write(dossier, llm_log, out_root)
+
+
+class InputCheckRefusedError(DossierAssemblyError):
+    """A HARD input check found something, so the page is not written. Carries every check's
+    result, so the run record keeps them (`run_metrics.name_record`). No check is HARD today."""
+
+    def __init__(self, message: str, checks: InputChecks) -> None:
+        super().__init__(message)
+        self.input_checks = checks
+
+
+def _input_check_gate(dossier: Dossier) -> Dossier:
+    """``dossier`` carrying its input checks' results (`input_checks.run` on its own JSON), or
+    :class:`InputCheckRefusedError` when a HARD check found something. The results are re-derived by
+    `dossier_json` when the page is written, so the block always describes the page as written."""
+    from vinci.dossier import input_checks
+
+    checks = input_checks.run(json.loads(dossier_json(dossier)))
+    if refused := input_checks.refusals(checks):
+        raise InputCheckRefusedError(input_checks.refusal_message(dossier.ticker, refused), checks)
+    return dossier.model_copy(update={"input_checks": checks})
 
 
 def _page_inputs(reads: provenance.Reads, cfg: Config) -> page_inputs.InputManifest:
