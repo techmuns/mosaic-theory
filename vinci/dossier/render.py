@@ -21,7 +21,13 @@ from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci import coverage_roster
 from vinci.config import get_config
-from vinci.dossier.anchor import DQ_LEASE_BASIS, PLACEHOLDER_HINTS, SHARES_REFUSED, Anchor
+from vinci.dossier.anchor import (
+    DQ_LEASE_BASIS,
+    MULTIPLE_CURRENT,
+    PLACEHOLDER_HINTS,
+    SHARES_REFUSED,
+    Anchor,
+)
 from vinci.dossier.covenant_extract import (
     VALUE_REFUSED_NOTE_PREFIX,
     GoverningTerm,
@@ -384,7 +390,18 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
                f"operating leases over reported EBITDA — the median is {b.median:,.1f}x over "
                f"{b.n_closes} quarters (current {b.current:,.1f}x at the {b.as_of} filing; "
                f"{b.percentile:.0%} of the history at or below it).")
-    if priced_ex:
+    if priced_ex and _screens_at_current(anchor) and anchor is not None \
+            and anchor.multiple is not None and anchor.multiple.value is None:
+        # (W50) the statistic is the current, but the band carries no usable one: nothing priced
+        tail = (" R1 prices nothing on it: the history carries no usable current multiple, and "
+                "the median is never put in its place. The level and percentile above are CIQ's "
+                "own series.")
+    elif priced_ex and _screens_at_current(anchor):
+        # (W50) the anchor prices the history's current, not its median. No twin: dossier.js
+        # prints no sentence on what R1 prices here.
+        tail = (" R1 prices that history's current multiple, the median beside it, with net debt "
+                "excluding operating leases. The level and percentile above are CIQ's own series.")
+    elif priced_ex:
         tail = (" R1 prices that median with net debt excluding operating leases. The level and "
                 "percentile above are CIQ's own series.")
     elif anchor is None or anchor.multiple is None:
@@ -3821,6 +3838,21 @@ _SCREEN_SUBTITLE = (
     "A mechanical re-rate to the median multiple of this name's own trading history, on its naive "
     "reported median margin. An attention filter only — it applies no structural adjustment, so a "
     "cheap-looking screen still has to survive the full bear/base/bull underwrite.")
+#: (W50, 2026-11-17) The same two lines for an anchor that prices TODAY'S multiple — chosen by the
+#: anchor's own `multiple.statistic`, never assumed: every page committed before W50 priced the
+#: median and prints the lines above until it is re-derived. Twin: anchorInner() in dossier.js.
+_SCREEN_METHOD_R1_CURRENT = "mid-cycle margin × today's multiple of its own history"
+_SCREEN_SUBTITLE_CURRENT = (
+    "This name's naive reported median margin, priced at the multiple it trades on today — the "
+    "latest close of its own trading history, the history's median printed beside it and never "
+    "priced. An attention filter only — it applies no structural adjustment, so a cheap-looking "
+    "screen still has to survive the full bear/base/bull underwrite.")
+
+
+def _screens_at_current(anchor: Anchor | None) -> bool:
+    """Whether this anchor prices the band's current multiple (W50) — its structured statistic."""
+    return (anchor is not None and anchor.multiple is not None
+            and anchor.multiple.statistic == MULTIPLE_CURRENT)
 #: (#1004 item 3c, 2026-11-13) What the Brief's Scenario analysis section says where the screening
 #: anchor went, on a name with no scenario record. Twin: SCREEN_POINTER in dossier.js. It names no
 #: multiple (operator, 2026-11-13: "Drop that clause (Recommended)"): 6 of the 19 pages carrying it
@@ -3886,7 +3918,9 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     if anchor is None:
         return []
     is_r1 = anchor.recipe_hint.startswith("R1")
-    method = _SCREEN_METHOD_R1 if is_r1 else (anchor.recipe_hint or "—")
+    current = _screens_at_current(anchor)
+    method = ((_SCREEN_METHOD_R1_CURRENT if current else _SCREEN_METHOD_R1) if is_r1
+              else (anchor.recipe_hint or "—"))
     # WHOSE BIT IS `applicable` (2026-10-09). It is R1's — whether R1's arithmetic, the rows below,
     # can anchor — but it printed beside whatever recipe is TAGGED, so UBER's page read
     # "R4_forward_ev_ebit | NOT applicable", a verdict on R4 that the bit never made. Beside an R1
@@ -3902,10 +3936,19 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         # THE BASIS NAMES THE LEASE CONVENTION when the history is the ex-lease rebuild
         # (2026-10-19): "EV/EBITDA" alone read as CIQ's series. Twin: anchorInner().
         ex = mu.source.startswith(_EX_LEASE_SOURCE_PREFIX)
-        rows.append(f"| Median multiple, own history | "
-                    f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
-                    f"{mu.history_quarters} closes · {mu.confidence} · "
-                    f"{_md_cell(anchor.multiple_basis)}{_EX_LEASE_LABEL if ex else ''} |")
+        tail = (f"{mu.history_quarters} closes · {mu.confidence} · "
+                f"{_md_cell(anchor.multiple_basis)}{_EX_LEASE_LABEL if ex else ''} |")
+        if current:
+            # (W50) today's multiple, its close date, and the median BESIDE it — never the
+            # screen's multiple. Twin: anchorInner().
+            med = "—" if mu.median is None else f"{mu.median:.1f}x"
+            rows.append(f"| Current multiple, own history | "
+                        f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
+                        f"latest close {mu.as_of or '—'} · median {med} beside it, not used · "
+                        + tail)
+        else:
+            rows.append(f"| Median multiple, own history | "
+                        f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | " + tail)
     base = anchor.anchor_base_value_per_share
     if base is not None:
         ev = anchor.anchor_ev_ebit
@@ -3927,12 +3970,24 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
                         f"shares (diluted less basic weighted average, latest 10-Q) |")
     rows.append(f"| Overall confidence | {anchor.overall_confidence or '—'} |  |")
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
-           f"_{_SCREEN_SUBTITLE}_", "",
+           f"_{_SCREEN_SUBTITLE_CURRENT if current else _SCREEN_SUBTITLE}_", "",
            "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
     # The operator's decision on this name's recipe renders on the Brief
     # (`_operator_decision_lines`, #1004 item 3c round 1); this block keeps the machine's own read,
     # labelled as such when a decision exists. Twin: anchorInner() in dossier.js.
     dec = anchor.operator_decision
+    # (W61, 2026-11-18) THE SCREEN VALUE SPLIT INTO ITS CAUSES, under the row it splits: the line,
+    # its two flags and the arithmetic are written ONCE, in vinci/dossier/anchor_split.py, and
+    # both renderers print them verbatim. Levels only, the fence above holding: no term is set
+    # against the stock's quote. The markdown has no <details>, so the arithmetic prints in full
+    # at the block's end, as the web's force-opens in print. Twin: anchorInner() in dossier.js.
+    gs = anchor.gap_split
+    if gs is not None:
+        out += [f"**How the screen value splits.** {gs.read}", ""]
+        if gs.leverage_line:
+            out += [f"**Leverage.** {gs.leverage_line}", ""]
+        if gs.stale_line:
+            out += [f"**Stale multiple.** {gs.stale_line}", ""]
     # the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
     if anchor.midcycle_gap is not None:
         out += [f"**Mid-cycle assumption under strain.** {anchor.midcycle_gap.read}", ""]
@@ -3942,6 +3997,8 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         out.append("")
     if anchor.reason:
         out += [f"_{'The machine’s read: ' if dec is not None else ''}{anchor.reason}_", ""]
+    if gs is not None:
+        out += ["_The split's arithmetic:_", "", *[f"- {x}" for x in gs.arithmetic], ""]
     return out
 
 
@@ -4881,6 +4938,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # the FUBO defect exactly (banner in one artifact, absent from the served one), re-created by
     # the fix meant to serve it. Every writer passes the root it is writing into.
     out += _known_wrong_lines(d.ticker, dossiers_root)
+    # (2026-11-18, workstream B slice 2) a FLAGGED INPUT CHECK, before the brief: what the page
+    # records it was built from is in doubt, which changes how every number below is read
+    out += _input_check_flag_lines(d)
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
     # case + valuation snapshot. The derived proposal is SEALED at assembly but hidden here
     # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
@@ -5017,6 +5077,35 @@ def _price_store_line(stamp: PriceStoreStamp | None) -> str:
     return f"`{where}` · {reach}"
 
 
+def _input_check_flag_lines(d: Dossier) -> list[str]:
+    """The first screen's INPUT CHECK block (`vinci.dossier.input_checks`): one line per check that
+    flagged, its meaning and its summary — or nothing, on a page whose checks all pass or that
+    carries none. Every finding is in Record & reproduce. Twin: dossier.js ``inputCheckFlags``."""
+    checks = d.input_checks
+    if checks is None or not (flagged := checks.flagged):
+        return []
+    out = [f"> **Input check — FLAG, {len(flagged)} of {len(checks.results)} checks.** A FLAG "
+           "refuses nothing; every finding is listed under Record & reproduce.", ">"]
+    out += [f"> - **{r.what}** (`{r.id}`): {r.summary}." for r in flagged]
+    out.append("")
+    return out
+
+
+def _input_check_record_lines(d: Dossier) -> list[str]:
+    """Record & reproduce's INPUT CHECKS: every check, its level, outcome and summary, and every
+    finding of one that did not pass, in full. Twin: dossier.js ``inputCheckRow``."""
+    checks = d.input_checks
+    if checks is None:
+        return []
+    out = ["- **Input checks** (run on what this page records it was built from; "
+           f"{len(checks.flagged)} of {len(checks.results)} flag):"]
+    for r in checks.results:
+        out.append(f"  - `{r.id}` · **{r.outcome.upper()}** (a {r.level} check) — {r.summary}")
+        if r.outcome != "pass":
+            out += [f"    - {f}" for f in r.findings]
+    return out
+
+
 def _record_reproduce_lines(d: Dossier) -> list[str]:
     """RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs
     the old header meta (assembly stamp, model), the assembly-log caveat line, and the identifiers.
@@ -5047,6 +5136,9 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # of eleven committed dossiers pair fundamentals 30+ days older than their price with
         # nothing on the page saying so.
         *_panel_age_line(d),
+        # (2026-11-18) the input checks' every result and finding — the audit tier of the first
+        # screen's FLAG block, after the panel age as on the web. Absent on a page carrying none
+        *_input_check_record_lines(d),
         "- **Synthesis:** " + (
             f"model `{d.llm_model}` — facts assembled mechanically; the synthesis frames, "
             "the analyst decides"

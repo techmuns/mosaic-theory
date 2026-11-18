@@ -133,6 +133,19 @@ FIXTURE_TAGS: frozenset[str] = frozenset({
     "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations",
     "PaymentsToAcquirePropertyPlantAndEquipment",
     "PaymentsToAcquireProductiveAssets",
+    # the filer's IFRS flow lines, which date its newest fiscal year for every annual reader
+    # (`vinci.edgar.concepts.IFRS_FLOW_TAGS`, STATE.md §5.0 row 11 (a), 2026-11-17). No committed
+    # page's filer carries ifrs-full on that day, so no frozen fixture lacks one it needs.
+    "Revenue",
+    "RevenueFromContractsWithCustomers",
+    "ProfitLossFromOperatingActivities",
+    "ProfitLossBeforeTax",
+    "ProfitLoss",
+    "ProfitLossAttributableToOwnersOfParent",
+    "DilutedEarningsLossPerShare",
+    "CashFlowsFromUsedInOperatingActivities",
+    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+    "DepreciationAndAmortisationExpense",
 })
 
 

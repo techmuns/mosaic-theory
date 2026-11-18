@@ -103,6 +103,37 @@ function watchLine(ticker, table = coverageTable) {
     + `${list}</div>`;
 }
 
+// (2026-11-18, workstream B slice 2) a FLAGGED INPUT CHECK, under the date and the watch line: what
+// the page records it was built from is in doubt. One line per check that flagged — its meaning and
+// its summary, both written by `vinci/dossier/input_checks.py` — or nothing on a page whose checks
+// all pass or that carries none. Twin of render.py `_input_check_flag_lines`.
+function inputCheckFlags(d) {
+  const ic = d.input_checks;
+  if (!ic || !Array.isArray(ic.results)) return "";
+  const flagged = ic.results.filter((r) => r.outcome !== "pass");
+  if (!flagged.length) return "";
+  return `<div class="ds-input-flag"><div><b>${escapeHtml(`Input check — FLAG, ${flagged.length} of ${ic.results.length} checks.`)}</b> `
+    + `${escapeHtml("A FLAG refuses nothing; every finding is listed under Record & reproduce.")}</div>`
+    + `<ul>${flagged.map((r) => `<li><b>${escapeHtml(r.what)}</b> (<span class="mono">${escapeHtml(r.id)}</span>): ${escapeHtml(r.summary)}.</li>`).join("")}</ul></div>`;
+}
+
+// Record & reproduce's INPUT CHECKS: every check's level, outcome and summary; a check that did not
+// pass lists every finding in an on-demand <details> (collapsed on screen, force-open in print by
+// T1). Twin of render.py `_input_check_record_lines`.
+function inputCheckRow(d, row) {
+  const ic = d.input_checks;
+  if (!ic || !Array.isArray(ic.results)) return "";
+  const flagged = ic.results.filter((r) => r.outcome !== "pass").length;
+  const items = ic.results.map((r) => {
+    const head = `<span class="mono">${escapeHtml(r.id)}</span> · <b>${escapeHtml(String(r.outcome).toUpperCase())}</b> ${escapeHtml(`(a ${r.level} check) — ${r.summary}`)}`;
+    const fs = r.outcome !== "pass" ? (r.findings || []) : [];
+    return fs.length
+      ? `<li>${head}<details style="margin-top:2px;"><summary class="muted" style="font-size:11.5px;">${escapeHtml(`Every finding (${fs.length})`)}</summary><ul style="font-size:11.5px; margin-top:2px;">${fs.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul></details></li>`
+      : `<li>${head}</li>`;
+  }).join("");
+  return row("Input checks", `${escapeHtml(`run on what this page records it was built from; ${flagged} of ${ic.results.length} flag`)}<ul class="kv-list" style="margin-top:4px;">${items}</ul>`);
+}
+
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
 // meaningful name ("VRRM · dossier · Nostra Vinci") and restore it afterward. Wiring it to the
@@ -1020,6 +1051,7 @@ function recordAndReproduce(d, verdict, card = null, followed = {}, voidedCall =
       (d.layer_refreshes || []).length ? row("Refreshed since assembly",
         d.layer_refreshes.map((e) => escapeHtml(refreshLine(e))).join("<br>")) : ""}
     ${(() => { const n = panelAgeNote(d.mechanical, d.assembled_at); return n ? row("Panel age", escapeHtml(n)) : ""; })()}
+    ${inputCheckRow(d, row)}
     ${row("Synthesis", d.synthesis
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
       : "not assembled — mechanical layer only")}
@@ -1420,8 +1452,9 @@ function whatHappened(m, sleeve, refDate) {
 }
 
 // (log-a) SCREENING ANCHOR — the committed R1 anchor block (vinci/dossier/anchor.py), read-only.
-// A mechanical re-rate of the name to its OWN-history median multiple on a NAIVE reported median
-// margin: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
+// A NAIVE reported median margin priced at the multiple the name trades on today (its own
+// history's latest close, the median beside it) since W50 — the OWN-history median on an anchor
+// written before: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
 // adjustment. Absent anchor → renders nothing, so pre-anchor dossiers are untouched.
 function anchorInner(a) {
   if (!a) return "";
@@ -1431,8 +1464,14 @@ function anchorInner(a) {
   const mg = a.margin, mu = a.multiple;
   const base = a.anchor_base_value_per_share;
   const isR1 = String(a.recipe_hint || "").startsWith("R1");
+  // (W50, 2026-11-17) an anchor derived since prices TODAY'S multiple and says so in
+  // `multiple.statistic`; a page committed before priced the median and keeps its words.
+  // Twin of _screens_at_current() in render.py.
+  const current = !!(mu && mu.statistic === "current");
   const methodName = isR1
-    ? "mid-cycle margin × the median multiple of its own history" : (a.recipe_hint || "—");
+    ? (current ? "mid-cycle margin × today's multiple of its own history"
+               : "mid-cycle margin × the median multiple of its own history")
+    : (a.recipe_hint || "—");
   // WHOSE BIT IS `applicable` (2026-10-09) — R1's, so beside any other tag it says so; beside an
   // R1 tag the plain word stays. Twin of _screening_context_lines() in render.py.
   const fit = a.applicable ? "applicable" : "NOT applicable";
@@ -1441,8 +1480,9 @@ function anchorInner(a) {
     mg ? row("Mid-cycle margin", mg.value != null ? `${(mg.value * 100).toFixed(1)}%` : "—",
              `${mg.anchor_years}y history · ${conf(mg.confidence)}`) : "",
     // the ex-lease history names its lease convention (2026-10-19). Twin of _screening_context_lines()
-    mu ? row("Median multiple, own history", mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
-             `${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}${
+    mu ? row(current ? "Current multiple, own history" : "Median multiple, own history",
+             mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
+             `${current ? `latest close ${escapeHtml(mu.as_of || "—")} · median ${mu.median != null ? `${mu.median.toFixed(1)}x` : "—"} beside it, not used · ` : ""}${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}${
                String(mu.source || "").startsWith("valuation.lease_basis")
                  ? " ex-lease (TEV less operating leases; net debt likewise)" : ""}`) : "",
     base != null ? row("Screen value / share", `$${base.toFixed(2)}`,
@@ -1474,9 +1514,24 @@ function anchorInner(a) {
   // #1004 item 3c round 1); this block keeps the machine's own read, labelled as such when a
   // decision exists. Twin of _screening_context_lines() in render.py.
   const why = a.reason ? `<div class="muted" style="margin-top:6px;">${a.operator_decision ? "The machine’s read: " : ""}${escapeHtml(a.reason)}</div>` : "";
+  // (W61, 2026-11-18) THE SCREEN VALUE SPLIT INTO ITS CAUSES, under the row it splits: the line,
+  // its two flags and the arithmetic are written ONCE, in vinci/dossier/anchor_split.py, and both
+  // renderers print them verbatim. Levels only (the fence on this block): no term is set against
+  // the stock's quote. The arithmetic is on demand — collapsed on screen, force-open in print.
+  // Twin of _screening_context_lines() in render.py.
+  const gs = a.gap_split;
+  const split = gs
+    ? `<div class="uw-screen-split" style="margin-top:8px; font-size:12.5px;"><b>How the screen value splits.</b> ${escapeHtml(gs.read)}</div>${
+        gs.leverage_line ? `<div class="notice" style="margin-top:8px;"><b>Leverage.</b> ${escapeHtml(gs.leverage_line)}</div>` : ""}${
+        gs.stale_line ? `<div class="notice" style="margin-top:8px;"><b>Stale multiple.</b> ${escapeHtml(gs.stale_line)}</div>` : ""}` : "";
+  const splitMath = gs
+    ? `<details class="uw-screen-split-math" style="margin-top:8px;"><summary class="muted" style="font-size:11.5px;">The split's arithmetic</summary>${
+        (gs.arithmetic || []).map((x) => `<div class="mono" style="font-size:11px; margin-top:2px;">${escapeHtml(x)}</div>`).join("")}</details>` : "";
   return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
-    <div class="subtitle muted" style="margin:2px 0 8px;">A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite.</div>
-    <table class="data"><tbody>${rows}</tbody></table>${mid}${dq}${why}</div>`;
+    <div class="subtitle muted" style="margin:2px 0 8px;">${current
+      ? "This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."
+      : "A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."}</div>
+    <table class="data"><tbody>${rows}</tbody></table>${split}${mid}${dq}${why}${splitMath}</div>`;
 }
 
 // THE OPERATOR'S DECISION on this name's recipe (2026-10-22) — the recipe and any divergence lead;
@@ -3338,6 +3393,7 @@ function header(d) {
       <div class="ds-meta">${fmtDate(d.assembled_at)} · extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}</span>${
         refreshedTo(d.layer_refreshes) ? ` · layers refreshed to <span class="mono">${escapeHtml(refreshedTo(d.layer_refreshes))}</span>` : ""}</div>
       ${watchLine(d.ticker)}
+      ${inputCheckFlags(d)}
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"

@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_page
 from vinci.config import Config
 from vinci.dossier import prespend
 from vinci.dossier.prespend import (
@@ -529,7 +530,7 @@ def test_no_financials_export_is_refused_at_zero() -> None:
     Statement to read, and the paid build refuses only after spending."""
     from vinci.dossier.ciq import CiqBundle
 
-    page = Dossier.model_validate_json((DOSS / "GOOGL" / "dossier.json").read_text())
+    page = Dossier.model_validate_json((frozen_page("GOOGL") / "dossier.json").read_text())
     post = post_spend_checks(page, CiqBundle.from_files("GOOGL", []))
     assert [(r.check, r.error) for r in post.refusals] == [
         ("_materiality_check", "MaterialityUnavailableError")]
@@ -550,13 +551,13 @@ def test_a_material_item_the_summary_omits_is_left_to_the_synthesis(
         raise MaterialityError("GOOGL: 1 material UNUSUAL ITEM(s) appear in neither …")
 
     monkeypatch.setattr(assemble, "_materiality_check", material)
-    page = Dossier.model_validate_json((DOSS / "GOOGL" / "dossier.json").read_text())
+    page = Dossier.model_validate_json((frozen_page("GOOGL") / "dossier.json").read_text())
     gate = gate_layer(page)
     refusal = materiality_refusal(gate, CiqBundle.from_files("GOOGL", []), ticker="GOOGL")
     assert refusal is not None and not refusal.at_zero
     target = tmp_path / "dossiers" / "GOOGL" / "dossier.json"
     target.parent.mkdir(parents=True)
-    target.write_bytes((DOSS / "GOOGL" / "dossier.json").read_bytes())
+    target.write_bytes((frozen_page("GOOGL") / "dossier.json").read_bytes())
     monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: page)
     monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})
     out: list[str] = []
@@ -585,7 +586,7 @@ def test_googls_page_passes_every_post_spend_check_on_its_export() -> None:
     # the bundle holding the export this is verified on: the folder's, or an archived one (#897)
     pinned = skip_unless_export("GOOGL", "financials", "482debf275", freq="annual",
                                 why="the materiality guard reads the annual Income Statement")
-    page = Dossier.model_validate_json((DOSS / "GOOGL" / "dossier.json").read_text())
+    page = Dossier.model_validate_json((frozen_page("GOOGL") / "dossier.json").read_text())
     post = post_spend_checks(page, pinned)
     assert (post.refusals, post.undecided) == ((), ())
     assert post.age is not None and post.age.days <= 45
@@ -596,7 +597,7 @@ def test_googls_page_run_against_itself_exits_zero(
 ) -> None:
     target = tmp_path / "dossiers" / "GOOGL" / "dossier.json"
     target.parent.mkdir(parents=True)
-    target.write_bytes((DOSS / "GOOGL" / "dossier.json").read_bytes())
+    target.write_bytes((frozen_page("GOOGL") / "dossier.json").read_bytes())
     page = Dossier.model_validate_json(target.read_text())
     monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: page)
     monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})

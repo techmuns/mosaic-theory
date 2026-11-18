@@ -520,6 +520,14 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
         return backfill_inputs(
             get_config(), tickers=[args.ticker] if args.ticker else [], exclude=args.exclude,
             roots=[Path(r) for r in args.ciq_root] or None, write=args.write)
+    if getattr(args, "mode", "assemble") == "input-checks":
+        if not (args.ticker or args.all_pages):
+            print("input-checks requires --ticker or --all")
+            return 1
+        from vinci.dossier.input_checks_backfill import run as check_pages
+
+        return check_pages(get_config(), tickers=[args.ticker] if args.ticker else [],
+                           write=args.write)
     if getattr(args, "mode", "assemble") == "requirements":
         from vinci.dossier import requirements
 
@@ -3901,14 +3909,17 @@ def build_parser() -> argparse.ArgumentParser:
     p_dossier = sub.add_parser("dossier", help="assemble per-finalist dossiers (never concludes)")
     p_dossier.add_argument(
         "mode", nargs="?", default="assemble",
-        choices=("assemble", "requirements", "precheck", "inputs-backfill"),
+        choices=("assemble", "requirements", "precheck", "inputs-backfill", "input-checks"),
         help="'assemble' (default) builds dossiers; 'requirements' prints the canonical manual-CIQ "
         "manifest (export checklist; the MISSING-manifest path reads the same definition); "
         "'precheck' builds --ticker's page at $0 (no LLM, nothing written) and exits non-zero on "
         "any field the committed page has and the build would lose, or on any refusal the paid "
         "build would make only after its LLM calls — run it before a paid build; "
         "'inputs-backfill' gives each committed page that predates its input record one, from its "
-        "own CIQ stamps and the files on this machine (dry run unless --write)",
+        "own CIQ stamps and the files on this machine (dry run unless --write); "
+        "'input-checks' runs the input-check gate on --ticker's or every (--all) committed page, "
+        "printing each FLAG in full, and with --write saves the result onto the page and "
+        "re-renders it",
     )
     p_dossier.add_argument("--top", type=int, default=10, help="top N of the queue (default: 10)")
     p_dossier.add_argument(
@@ -3918,7 +3929,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-llm", action="store_true", dest="no_llm", help="mechanical layer only; skip synthesis"
     )
     p_dossier.add_argument("--all", action="store_true", dest="all_pages",
-                           help="with 'inputs-backfill': every committed page")
+                           help="with 'inputs-backfill' or 'input-checks': every committed page")
     p_dossier.add_argument("--exclude", action="append", default=[],
                            help="with 'inputs-backfill': a page to skip (repeatable)")
     p_dossier.add_argument("--ciq-root", action="append", default=[], dest="ciq_root",
@@ -3926,7 +3937,8 @@ def build_parser() -> argparse.ArgumentParser:
                            "(a live folder or a ciq-archive); repeatable; default: the "
                            "assembler's folder and its ciq-archive")
     p_dossier.add_argument("--write", action="store_true",
-                           help="with 'inputs-backfill': save the records (default: dry run)")
+                           help="with 'inputs-backfill' or 'input-checks': save the records "
+                           "(default: dry run)")
     p_dossier.add_argument(
         "--changes-json", dest="changes_json",
         help="with 'precheck': write every comparison row (regressions, value changes, block "

@@ -18,7 +18,10 @@ repository. `tests/test_frozen_pages_are_cuts.py` holds each copy to the commit 
 and the cut's own README to the copies. A cut is never regenerated or edited. When a page moves on
 main and a pin on it is re-pinned to the new state, the page gets a NEW cut. The old copy stays.
 
-Which pins read a copy is derived, never listed (`grep 'frozen_doc("T")'`), so no list rots.
+Which pins read a copy is derived, never listed, so no list rots:
+`grep -rn -e 'frozen_doc("T")' -e 'frozen_page("T")' -e 'cut-4889ddba/T' tests/`. The third
+finds the reads that name the cut by path, two of them inside JavaScript driver strings (slice 4
+of W27). Which tests still read a LIVING page by name is `tests/test_named_page_pins.py`'s ratchet.
 """
 from __future__ import annotations
 
@@ -106,7 +109,9 @@ def roster_names(status: str, data_dir: Path = DATA) -> list[str]:
 
 
 def living_doc(ticker: str, data_dir: Path = DATA) -> dict[str, Any]:
-    """A covered name's LIVING page, parsed. Use it only on a name a roster walk handed back."""
+    """A covered name's LIVING page, parsed. Use it only on a name a roster walk handed back, or
+    in a test `tests/test_named_page_pins.RESIDUE` names: a page read beside its living record,
+    or one that watches the living page by design."""
     doc: dict[str, Any] = json.loads(
         (data_dir / "dossiers" / ticker / "dossier.json").read_text())
     return doc

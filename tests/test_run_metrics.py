@@ -365,7 +365,7 @@ def test_a_run_record_states_the_sdk_its_calls_went_through() -> None:
             "finished": dt.datetime(2026, 11, 13, 0, 1, tzinfo=dt.UTC)}
     record = run_metrics.name_record(run_id="r", ticker="X", meter=meter, **when)
     assert record["sdk_version"] == anthropic.__version__
-    assert record["schema"] == run_metrics.SCHEMA == 3
+    assert record["schema"] == run_metrics.SCHEMA == 4
     # (−) a build that made no call names no SDK: no LLM client, or refused before its first
     none = run_metrics.name_record(run_id="r", ticker="X", meter=None, **when)
     unused = MeteredLlmClient(_client(lambda **kw: _msg(1000)))
