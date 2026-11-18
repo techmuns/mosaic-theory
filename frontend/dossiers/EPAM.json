@@ -16776,13 +16776,21 @@
       "layers": [
         "inputs"
       ]
+    },
+    {
+      "date": "2026-11-18",
+      "extraction_version": "2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-14T06:27:40.973308Z",
+    "computed_at": "2026-11-18T15:50:53.385396Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [
@@ -16798,11 +16806,14 @@
       "confidence": "firm"
     },
     "multiple": {
-      "value": 23.834747,
+      "value": 9.886188,
       "unit": "EV/EBITDA",
-      "source": "valuation.lease_basis.ex_lease_band.median — TEV less operating leases over reported LTM EBITDA, the basis of the EBITDA R1 prices",
+      "source": "valuation.lease_basis.ex_lease_band.current — TEV less operating leases over reported LTM EBITDA, the basis of the EBITDA R1 prices",
       "history_quarters": 35,
-      "confidence": "firm"
+      "confidence": "firm",
+      "statistic": "current",
+      "as_of": "2026-11-05",
+      "median": 23.834747
     },
     "d_and_a": {
       "value": 127.047,
@@ -16846,9 +16857,9 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 391.7766,
-    "anchor_base_value_per_share_diluted": 391.462,
-    "anchor_ev_ebit": 28.3396,
+    "anchor_base_value_per_share": 173.2847,
+    "anchor_base_value_per_share_diluted": 173.1456,
+    "anchor_ev_ebit": 11.7547,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
     "band_checks": {
@@ -16857,6 +16868,45 @@
       "d_and_a_source": "edgar"
     },
     "ciq_scale_check": "agree",
+    "gap_split": {
+      "current_multiple": 9.886188,
+      "median_multiple": 23.834747,
+      "multiple_close": "2026-11-05",
+      "price_date": "2026-11-11",
+      "close_age_days": 6,
+      "stale_close": false,
+      "midcycle_ebitda": 799.236,
+      "midcycle_ebitda_source": "anchor ltm_revenue × margin + d_and_a: 5,648.806 × 0.118997 + 127.047 ($M)",
+      "current_ebitda": 760.149,
+      "current_ebitda_source": "valuation.lease_basis.observations (the observation of 2026-11-05): CIQ Income Statement 'EBITDA' over four quarters to 2026-09-30, the denominator of the ex-lease multiple 9.88619x = (TEV 7,636.3 − leases 121.3) ÷ 760.1",
+      "current_ebitda_through": "2026-09-30",
+      "net_debt": -940.173,
+      "shares": 51023335.0,
+      "value_at_current_ebitda": 165.7114,
+      "margin_effect": 7.5733,
+      "multiple_effect": 218.4919,
+      "anchor_at_current": 173.2847,
+      "anchor_at_median": 391.7766,
+      "net_debt_to_ev": -0.125107,
+      "equity_sensitivity": 0.8888,
+      "leverage_flag": false,
+      "refusal": null,
+      "basis": "V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = (M − m) × E_mid / S. The anchor at today's multiple = V0 + margin effect; at the median = V0 + margin effect + multiple effect. m and M are the band's current and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No term reads a price. The margin effect carries every difference between E_mid and E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.",
+      "read": "Screen value $173.28 at today's 9.9x = $165.71 on current EBITDA ($760M) + $7.57 margin reversion (mid-cycle 1.05× current). Median 23.8x: $218.49 higher (not used).",
+      "stale_line": null,
+      "leverage_line": null,
+      "arithmetic": [
+        "m = 9.8862x, today's multiple (the close of 2026-11-05); M = 23.8347x, the median beside it, never used.",
+        "E_mid = 5,648.8 × 11.8997% + 127.0 = $799M — LTM revenue × the median margin + D&A, the anchor's EBITDA.",
+        "E_cur = $760M — valuation.lease_basis.observations (the observation of 2026-11-05): CIQ Income Statement 'EBITDA' over four quarters to 2026-09-30, the denominator of the ex-lease multiple 9.88619x = (TEV 7,636.3 − leases 121.3) ÷ 760.1.",
+        "V0 = (9.8862 × 760.1 − net debt −940.2) ÷ 51,023,335 shares = $165.71.",
+        "margin effect = 9.8862 × (799.2 − 760.1) ÷ 51,023,335 = $7.57.",
+        "multiple effect = (23.8347 − 9.8862) × 799.2 ÷ 51,023,335 = $218.49, beside the anchor, never in it.",
+        "V0 + margin effect = $173.28, the screen value; + multiple effect = $391.78, the value at the median.",
+        "net debt ÷ EV = −940.2 ÷ 7,515.0 = −0.125; flagged above 0.5.",
+        "the multiple's close 2026-11-05, the page's stored close 2026-11-11: 6 days; stale above 30."
+      ]
+    },
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [
