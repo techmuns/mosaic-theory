@@ -1,6 +1,6 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-17
 prs: [1101]
 supersedes:
@@ -81,3 +81,6 @@ superseded-by:
 
   Not from this session: its spend is finished. Until the build path has a LibreOffice profile of its own, a VRRM build runs while no other conversion runs on the machine.
 - Until then main's 2026-11-09 page stands. It still prints the 2021 term-loan terms, and it carries no `covenant_exhibit_outcomes` (STATE row 63).
+## Amendments
+
+**2026-11-18 — the rebuild ran and its page shipped.** One build after the move (#1089), run `c0629902`, $5.49 of the $7.76 cap, read both calls; `docs/records/2026-11-18-vrrm-rebuilt-after-the-move.md`.
