@@ -23,8 +23,10 @@ from vinci import coverage_roster
 from vinci.config import get_config
 from vinci.dossier.anchor import (
     DQ_LEASE_BASIS,
+    DQ_STALE_MULTIPLE,
     MULTIPLE_CURRENT,
     PLACEHOLDER_HINTS,
+    SCREEN_VALUE_WITHHELD,
     SHARES_REFUSED,
     Anchor,
 )
@@ -396,6 +398,14 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
         tail = (" R1 prices nothing on it: the history carries no usable current multiple, and "
                 "the median is never put in its place. The level and percentile above are CIQ's "
                 "own series.")
+    elif priced_ex and _screens_at_current(anchor) and anchor is not None \
+            and DQ_STALE_MULTIPLE in (anchor.data_quality or ""):
+        # (W62) the current is there, but a newer quarter could be in the history by the page's
+        # price date (`anchor.close_age`): R1 still applies and prices no value. No twin:
+        # dossier.js prints no sentence on what R1 prices here.
+        tail = (" R1 prices no value on it: a newer quarter than that current could be in the "
+                "history by the page's price date, so it is not today's multiple, and the median "
+                "is never put in its place. The level and percentile above are CIQ's own series.")
     elif priced_ex and _screens_at_current(anchor):
         # (W50) the anchor prices the history's current, not its median. No twin: dossier.js
         # prints no sentence on what R1 prices here.
@@ -3968,6 +3978,12 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         if dil is not None and inc is not None and inc.value is not None:
             rows.append(f"| Dilution test / share | ${dil:,.2f} | + {inc.value:,.0f} dilutive "
                         f"shares (diluted less basic weighted average, latest 10-Q) |")
+    elif anchor.value_withheld is not None:
+        # (W62; operator 2026-11-18: "Approve, add the row") R1 applies but its multiple is not
+        # today's: the row stays, its value withheld, its note the cause and what clears it —
+        # dates and days only. Twin: anchorInner() in dossier.js.
+        rows.append(f"| Screen value / share | {SCREEN_VALUE_WITHHELD} | "
+                    f"{_md_cell(anchor.value_withheld)} |")
     rows.append(f"| Overall confidence | {anchor.overall_confidence or '—'} |  |")
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
            f"_{_SCREEN_SUBTITLE_CURRENT if current else _SCREEN_SUBTITLE}_", "",

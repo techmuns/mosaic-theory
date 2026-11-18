@@ -24,6 +24,7 @@ from typing import Any
 
 import pytest
 
+from tests.stale_gate_support import stale_gate_held_open
 from vinci.dossier import assemble as asm
 from vinci.dossier import ciq_balance, recipe_proposal
 from vinci.dossier.anchor import DQ_VENDOR_BRIDGE, Anchor, preserve_operator_tag
@@ -95,9 +96,13 @@ def _assembled(t: str, ciq: CiqFacts | None, monkeypatch: pytest.MonkeyPatch) ->
     if ciq is not None:
         monkeypatch.setattr(ciq_balance, "extract", lambda _bundle, _ticker: ciq)
     page = CUT[t]["page"]
-    fresh = asm._assembly_anchor(page["mechanical"], facts=CUT[t]["companyfacts"],
-                                 bundle=CiqBundle.from_files(t, []), ticker=t, computed_at=T0,
-                                 reference_date=REF)
+    # (W62) GOOGL's close is past the stale-close limit on this cut; this pin's subject is the
+    # bridge, so the limit is held open and W62's move is pinned in its own file
+    # (`tests/test_w62_anchor_stale_multiple.py`, on this same assembly)
+    with stale_gate_held_open():
+        fresh = asm._assembly_anchor(page["mechanical"], facts=CUT[t]["companyfacts"],
+                                     bundle=CiqBundle.from_files(t, []), ticker=t,
+                                     computed_at=T0, reference_date=REF)
     kept, _notes = preserve_operator_tag(_committed(t), recipe_proposal.propose(page, fresh))
     return kept
 
@@ -205,8 +210,9 @@ def test_the_backfill_reads_the_same_bridge(monkeypatch: pytest.MonkeyPatch,
             model_dump=lambda mode, m=page["mechanical"]: m), reference_date=REF)
         resolver = SimpleNamespace(resolve_ticker=lambda _t: SimpleNamespace(cik="0"))
         edgar = SimpleNamespace(companyfacts=lambda _cik, f=CUT[t]["companyfacts"]: f)
-        machine = cli._machine_anchor(t, d, json.dumps(page), SimpleNamespace(data_dir=tmp_path),
-                                      resolver, edgar)
+        with stale_gate_held_open():   # (W62) as `_assembled` derives it: one bridge compared
+            machine = cli._machine_anchor(t, d, json.dumps(page),
+                                          SimpleNamespace(data_dir=tmp_path), resolver, edgar)
         assert machine is not None
         backfilled, _notes = preserve_operator_tag(_committed(t), machine)
         assert _fields(backfilled) == _fields(_assembled(t, ciq, monkeypatch)), t

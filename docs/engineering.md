@@ -712,6 +712,7 @@ PR (CLAUDE.md: coin-time translation).
   what has happened from the next day to the page's price date.* NOT the R1 screening `anchor`
   (`vinci/dossier/anchor.py`), nor the price refresh's anchor session.
 - **Gap split / V0 / margin effect / multiple effect** (2026-11-18, W61, `anchor_split.py`, `anchor.gap_split`) — plain words: *the R1 screen value stated as the value today's EV/EBITDA multiple puts on the EBITDA it is struck on (V0) plus what reverting the margin to its median adds or takes away (the margin effect), with what re-rating to the median multiple would add beside it, never in it (the multiple effect); levels only, never a gap to the share price.*
+- **Stale multiple / `multiple_stale` / value withheld** (2026-11-18, W62, `anchor.close_age`, `anchor.value_withheld`) — plain words: *the R1 screen value is not shown because the multiple it would use is not today's, judged by how often its series updates: CIQ's own history when its close is over 30 days before the page's date, the ex-lease history once its next quarterly observation is due; R1 still applies, and the row says "not priced" and what clears it.*
 
 ## Local setup (every laptop, every contributor)
 

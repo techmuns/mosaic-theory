@@ -141,12 +141,24 @@ def test_net_debt_beyond_the_ev_flags_and_states_no_sensitivity() -> None:
     assert s.leverage_flag is True and s.equity_sensitivity is None
 
 
-def test_a_close_past_thirty_days_is_stale() -> None:
-    """TJX's ex-lease current is the 2026-08-28 quarterly close, 75 days before its 2026-11-11
-    price date: stale, and V0 is that day's value. LLY's 9 days are not."""
+def test_the_stale_notice_states_the_anchors_cadence_verdict() -> None:
+    """(W62, 2026-11-18; coordinator: "the split's stale notice follows the anchor's cadence
+    verdict") TJX's ex-lease current is the 2026-08-28 quarterly close, 75 days before its
+    2026-11-11 price date, and the newest its history could carry (its next observation is due
+    2026-12-29): NOT stale, no notice, and the arithmetic says why. BRBR's CIQ close is 32 days
+    old, past CIQ's 30: stale, the notice printed. LLY's 9 days are not. Until W62 the notice ran
+    on a flat 30-day clock, so it called TJX's multiple stale while the anchor priced on it."""
     s = _split(frozen_doc("TJX"))
     assert (s.multiple_close, s.price_date, s.close_age_days, s.stale_close) == (
-        "2026-08-28", "2026-11-11", 75, True)
+        "2026-08-28", "2026-11-11", 75, False)
+    assert s.stale_line is None
+    assert s.arithmetic[-1].startswith("the multiple's close 2026-08-28, the page's stored close "
+                                       "2026-11-11: 75 days; not stale by its history's cadence: "
+                                       "the next quarterly observation is due by 2026-12-29")
+    b = _split(frozen_doc("BRBR"))
+    assert (b.close_age_days, b.stale_close) == (32, True) and b.stale_line is not None
+    assert b.arithmetic[-1].endswith(
+        "32 days; stale by its history's cadence: CIQ's history is stale past 30 days.")
     assert sp.STALE_CLOSE_DAYS == 30
     assert _split(frozen_doc("LLY")).stale_close is False
 
@@ -299,7 +311,9 @@ def test_review_round_0_a_close_in_another_shape_or_after_the_page_never_mislead
     assert not any("-3 days" in x for x in after.arithmetic)
     # the impact run's $0 builds carry a 1-day close on both sides of the page's (WERN, IT)
     one = sp.gap_split(doc["mechanical"], close="2026-11-10", price_date=date(2026, 11, 11), **kw)
-    assert any(x.endswith(": 1 day; stale above 30.") for x in one.arithmetic), one.arithmetic
+    # (W62) a caller that states no cadence verdict gets no verdict, never a flat clock's
+    assert any(x.endswith(": 1 day.") for x in one.arithmetic), one.arithmetic
+    assert one.stale_close is None and one.stale_line is None
     ahead = sp.gap_split(doc["mechanical"], close="2026-11-12", price_date=date(2026, 11, 11),
                          **kw)
     assert any("is 1 day AFTER it" in x for x in ahead.arithmetic), ahead.arithmetic

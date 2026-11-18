@@ -1489,7 +1489,12 @@ function anchorInner(a) {
                        `spot-independent · EV/EBIT ${a.anchor_ev_ebit != null ? a.anchor_ev_ebit.toFixed(1) : "—"}x${
                          a.shares_outstanding && a.shares_outstanding.value
                            ? ` · on ${Math.round(a.shares_outstanding.value).toLocaleString("en-US")} shares outstanding`
-                           : " · on the diluted weighted average"}`) : "",
+                           : " · on the diluted weighted average"}`)
+    // (W62; operator 2026-11-18: "Approve, add the row") R1 applies but its multiple is not
+    // today's: the row stays, its value withheld, its note the cause and what clears it, written
+    // once in anchor.py. Twin of _screening_context_lines() in render.py.
+      : a.value_withheld ? row("Screen value / share", "not priced", escapeHtml(a.value_withheld),
+                               { prose: true }) : "",
     // a REFUSED point-in-time count is stated (LLY's trust shares, 2026-10-21). Twin of
     // _screening_context_lines() in render.py.
     base != null && a.shares_outstanding && a.shares_outstanding.value == null

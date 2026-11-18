@@ -50,10 +50,12 @@ from pydantic import BaseModel
 
 _USD_M = 1e6
 
-#: How many days the multiple's close may sit before the page's price date and still be "today's".
-#: Face validity: a month is the shortest gap over which a share price commonly moves by as much as
-#: the effects this split separates (a 30% annual volatility is about 9% a month), so past it V0 is
-#: the value at that close, not at the page's date, and the page says so.
+#: How many days CIQ's own history's close may sit before the page's price date and still be
+#: "today's". Face validity: a month is the shortest gap over which a share price commonly moves by
+#: as much as the effects this split separates (a 30% annual volatility is about 9% a month).
+#: (W62, 2026-11-18) It is CIQ's history's limit only: whether a close is today's is the ANCHOR's
+#: verdict by its band's own cadence (`anchor.close_age`), and the split states that verdict — the
+#: ex-lease history, one observation a quarter, is judged by when its next one is due.
 STALE_CLOSE_DAYS = 30
 #: Net debt's share of the EV the current multiple puts on current EBITDA, above which the split
 #: FLAGS leverage (a flag, never a refusal). Face validity: past a half, debt is the larger claim
@@ -90,7 +92,7 @@ class AnchorGapSplit(BaseModel, frozen=True):
     multiple_close: str | None           # the close m is struck at
     price_date: str | None               # the page's price date, the cut the anchor reads
     close_age_days: int | None           # price_date − multiple_close
-    stale_close: bool | None             # close_age_days > STALE_CLOSE_DAYS
+    stale_close: bool | None             # the anchor's cadence verdict (W62); None: not stated
     midcycle_ebitda: float               # E_mid, $M
     midcycle_ebitda_source: str
     current_ebitda: float | None         # E_cur, $M
@@ -142,8 +144,8 @@ def _n(v: float) -> str:
     return f"{'−' if v < 0 else ''}{abs(v):,.1f}"
 
 
-def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float) -> tuple[
-        str, str | None, str | None, list[str]]:
+def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float,
+           stale_rule: str | None = None) -> tuple[str, str | None, str | None, list[str]]:
     """The main-body line, the stale and leverage flags (None when unset) and the arithmetic
     tier, from the split's own numbers. Levels only: no term is set against a price (the
     ImpliedValuation fence)."""
@@ -203,10 +205,14 @@ def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float) 
         f"flagged above {LEVERAGE_FLAG_NET_DEBT_TO_EV:g}.",
         f"the multiple's close {s.multiple_close or 'unstated'}, the page's stored close "
         f"{s.price_date or 'unstated'}: "
-        + (f"the multiple's close is {_days(-s.close_age_days)} AFTER it; stale above "
-           f"{STALE_CLOSE_DAYS}." if s.close_age_days is not None and s.close_age_days < 0 else
-           f"{_days(s.close_age_days)}; stale above {STALE_CLOSE_DAYS}."
-           if s.close_age_days is not None else "no age measured."),
+        + (f"the multiple's close is {_days(-s.close_age_days)} AFTER it"
+           if s.close_age_days is not None and s.close_age_days < 0 else
+           _days(s.close_age_days) if s.close_age_days is not None else "no age measured")
+        # (W62) the anchor's verdict by its band's cadence, never a flat clock of this module's
+        + ("" if s.stale_close is None else
+           f"; {'stale' if s.stale_close else 'not stale'} by its history's cadence"
+           + (f": {stale_rule}" if stale_rule else ""))
+        + ".",
     ]
     return read, stale, lev, lines
 
@@ -277,9 +283,16 @@ def current_ebitda(mechanical: dict[str, Any], *, ex_lease: bool, current: float
 
 def gap_split(mechanical: dict[str, Any], *, ex_lease: bool, current: float, median: float,
               close: str | None, revenue: float, margin: float, d_and_a: float,
-              net_debt: float, shares: float, price_date: date | None) -> AnchorGapSplit:
+              net_debt: float, shares: float, price_date: date | None,
+              stale: bool | None = None, stale_rule: str | None = None) -> AnchorGapSplit:
     """The split, from the anchor's own inputs ($M; ``shares`` a count) and the committed
-    mechanical layer. Pure arithmetic: never fetches, never reads a price."""
+    mechanical layer. Pure arithmetic: never fetches, never reads a price.
+
+    ``stale`` and ``stale_rule`` are the ANCHOR's verdict on whether its current is today's, by its
+    band's cadence (`anchor.close_age`, W62): the notice and the arithmetic state it, and a caller
+    that states none gets neither. Never re-decided here on a flat clock: TJX's 75-day ex-lease
+    close is the newest its history could carry, and a notice calling it stale would contradict
+    the anchor priced on it."""
     if shares <= 0:
         raise ValueError("shares must be > 0")
     e_mid = revenue * margin + d_and_a
@@ -310,7 +323,7 @@ def gap_split(mechanical: dict[str, Any], *, ex_lease: bool, current: float, med
     split = AnchorGapSplit(
         current_multiple=current, median_multiple=median, multiple_close=close,
         price_date=_iso(price_date), close_age_days=age,
-        stale_close=None if age is None else age > STALE_CLOSE_DAYS,
+        stale_close=None if age is None else stale,
         midcycle_ebitda=round(e_mid, 3),
         midcycle_ebitda_source=(f"anchor ltm_revenue × margin + d_and_a: {revenue:,.3f} × "
                                 f"{margin:.6f} + {d_and_a:,.3f} ($M)"),
@@ -323,9 +336,9 @@ def gap_split(mechanical: dict[str, Any], *, ex_lease: bool, current: float, med
         net_debt_to_ev=None if nd_ev is None else round(nd_ev, 6),
         equity_sensitivity=None if sens is None else round(sens, 4), leverage_flag=lev,
         refusal=refusal)
-    read, stale, lev_line, lines = _words(split, revenue=revenue, margin=margin,
-                                          d_and_a=d_and_a)
-    return split.model_copy(update={"read": read, "stale_line": stale, "leverage_line": lev_line,
+    read, stale_ln, lev_line, lines = _words(split, revenue=revenue, margin=margin,
+                                             d_and_a=d_and_a, stale_rule=stale_rule)
+    return split.model_copy(update={"read": read, "stale_line": stale_ln, "leverage_line": lev_line,
                                     "arithmetic": lines})
 
 
