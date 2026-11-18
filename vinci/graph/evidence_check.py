@@ -126,6 +126,10 @@ class EdgeCheck:
     newest: str | None  # the newest original candidate, the report the extractor would read
     in_excerpts: tuple[str, ...] = ()  # a not_found phrase that IS a span of these excerpts
     note: str = ""  # why there is no candidate to check, or what the feed does not list
+    feed_held: bool = True  # whether the focal's submissions feed is in the cache (structured)
+    #: where a found phrase is, read off the reports themselves: "newest" (the newest original
+    #: among them), "older" (an older original, no newest), "amendment" (only /As), "" (not found)
+    found_where: str = ""
 
 
 def candidates(submissions: Mapping[str, Any], cik: str, *, filed_by: date,
@@ -159,12 +163,14 @@ def check_edges(edges: Sequence[Mapping[str, Any]], http: _HeldOnly, *,
     by_focal: dict[str, tuple[list[Report], dict[str, str]]] = {}
     keys: dict[tuple[str, str], SourceText] = {}  # (accession, "doc" | "excerpts") -> its key
     notes: dict[str, str] = {}
+    feeds_held: dict[str, bool] = {}
     out: list[EdgeCheck] = []
     for e in edges:
         cik = str(e["focal_cik"])
         if cik not in by_focal:
             raw = http.held_text(_SUBMISSIONS.format(cik10=f"{int(cik):010d}"))
             feed = None if raw is None else json.loads(raw)
+            feeds_held[cik] = feed is not None
             reports = ([] if feed is None else candidates(
                 feed, cik, filed_by=filed_by, held=lambda u: http.fetched_at(u) is not None))
             originals = sum(1 for r in reports if not r.form.endswith("/A"))
@@ -183,8 +189,12 @@ def check_edges(edges: Sequence[Mapping[str, Any]], http: _HeldOnly, *,
             by_focal[cik] = (reports, texts)
         reports, texts = by_focal[cik]
         evidence = str(e.get("evidence") or "")
-        found = tuple(r.label for r in reports
-                      if r.accession in texts and keys[(r.accession, "doc")].match(evidence).found)
+        hits = [r for r in reports
+                if r.accession in texts and keys[(r.accession, "doc")].match(evidence).found]
+        found = tuple(r.label for r in hits)
+        first = next((r for r in reports if not r.form.endswith("/A")), None)
+        found_where = ("" if not hits else "newest" if first in hits
+                       else "amendment" if all(r.form.endswith("/A") for r in hits) else "older")
         in_excerpts: tuple[str, ...] = ()
         if not found:
             for r in reports:
@@ -197,13 +207,14 @@ def check_edges(edges: Sequence[Mapping[str, Any]], http: _HeldOnly, *,
         not_held = tuple(r.label for r in reports if r.accession not in texts)
         # UNCACHED is what the cache lacks: the feed, or a candidate original. A feed that lists
         # no annual report by the cut-off is held and has nothing to check: NOT_FOUND, noted.
-        originals_missing = notes[cik] == "no submissions feed in the cache" or any(
+        originals_missing = not feeds_held[cik] or any(
             r.accession not in texts and not r.form.endswith("/A") for r in reports)
         outcome = FOUND if found else (UNCACHED if originals_missing else NOT_FOUND)
-        newest = next((r.label for r in reports if not r.form.endswith("/A")), None)
+        newest = None if first is None else first.label
         out.append(EdgeCheck(focal=str(e["focal_ticker"]), counterparty=str(e["counterparty_name"]),
                              outcome=outcome, found_in=found, checked=checked, not_held=not_held,
-                             newest=newest, in_excerpts=in_excerpts, note=notes[cik]))
+                             newest=newest, in_excerpts=in_excerpts, note=notes[cik],
+                             feed_held=feeds_held[cik], found_where=found_where))
     return out
 
 
@@ -232,11 +243,13 @@ def report_lines(results: Sequence[EdgeCheck], *, map_path: str, map_sha256: str
                      + (" — " + "; ".join(f"{k} {v}" for k, v in sorted(
                          where.items(), key=lambda kv: kv[0].split("(")[-1], reverse=True))
                         if where else ""))
-    prior = [r for r in results if r.outcome == FOUND and r.newest not in r.found_in]
-    lines.append(f"  found only in a report older than the newest: {len(prior)}")
-    for r in prior:
-        lines.append(f"    {r.focal} → {r.counterparty}: in {'; '.join(r.found_in)}; "
-                     f"newest {r.newest}")
+    for label, place in (("found only in a report older than the newest", "older"),
+                         ("found only in an amendment of a candidate", "amendment")):
+        rows = [r for r in results if r.found_where == place]
+        lines.append(f"  {label}: {len(rows)}")
+        for r in rows:
+            lines.append(f"    {r.focal} → {r.counterparty}: in {'; '.join(r.found_in)}; "
+                         f"newest {r.newest}")
     for outcome in (NOT_FOUND, UNCACHED):
         rows = [r for r in results if r.outcome == outcome]
         joined = sum(1 for r in rows if r.in_excerpts)

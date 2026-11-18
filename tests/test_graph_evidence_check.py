@@ -213,3 +213,41 @@ def test_the_cli_prints_every_miss_with_its_boundary(tmp_path: pathlib.Path,
     assert "not_found: 3, of which 1 are a span of a report's excerpts" in out
     for c in cases[1:]:
         assert f"{c['ticker']} → {c['item']}" in out, c["id"]
+
+
+def test_a_phrase_found_only_in_a_newer_amendment_is_not_called_older(
+        tmp_path: pathlib.Path) -> None:
+    """(review round 1) KLIC's original 10-K is held with another filing's text, and a held 10-K/A
+    filed after it carries KLIC's window. The phrase is found in the /A alone, which is NEWER than
+    the newest original: the printout counts it as found in an amendment, never as "older"."""
+    klic, bkti = _CASES["klic-quote-marks"], _CASES["bkti-typo-corrected"]
+    other = dict(klic, window=bkti["window"])          # the original holds text without the phrase
+    root = _cache(tmp_path, [other])
+    amend = ("10-K/A", "2025-12-01", "0000056978-25-999998", "amend.htm")
+    writer = CachedHttp(cache_dir=root, user_agent="test", min_interval_sec=0.0, namespace="sec")
+    writer._write_cache(gec._ARCHIVE.format(cik=int(klic["cik"]), acc=amend[2].replace("-", ""),  # noqa: SLF001
+                                            doc=amend[3]),
+                        f"<html><body><p>{klic['window']}</p></body></html>")
+    feed = {"filings": {"recent": {
+        "form": ["10-K", amend[0]], "filingDate": [_FILED[klic["id"]], amend[1]],
+        "accessionNumber": [_accession_doc(klic)[0], amend[2]],
+        "primaryDocument": [_accession_doc(klic)[1], amend[3]]}}}
+    writer._write_cache(gec._SUBMISSIONS.format(cik10=f"{int(klic['cik']):010d}"),  # noqa: SLF001
+                        json.dumps(feed))
+    results = gec.check_edges([_edge(klic)], gec.held_reader(root), filed_by=_FILED_BY)
+    assert [(r.outcome, r.found_in, r.found_where) for r in results] == [
+        (gec.FOUND, ("10-K/A 0000056978-25-999998 (2025-12-01)",), "amendment")]
+    lines = gec.report_lines(results, map_path="m", map_sha256="0" * 64, filed_by=_FILED_BY,
+                             cache_root=root)
+    assert "  found only in a report older than the newest: 0" in lines
+    assert "  found only in an amendment of a candidate: 1" in lines
+
+
+def test_the_outcome_reads_a_structured_feed_flag_not_the_note(tmp_path: pathlib.Path) -> None:
+    """(review round 1; CLAUDE.md: display formatting is never load-bearing) Whether the focal's
+    feed is held is a field of the row, and the outcome reads it. The note is only its words."""
+    klic, atom = _CASES["klic-quote-marks"], _CASES["atom-sentences-reordered"]
+    root = _cache(tmp_path, [atom], withhold_docs=frozenset({atom["id"]}))
+    got = _check(root, [atom, klic])
+    assert got[f"KLIC:{klic['item']}"].feed_held is False
+    assert got[f"ATOM:{atom['item']}"].feed_held is True

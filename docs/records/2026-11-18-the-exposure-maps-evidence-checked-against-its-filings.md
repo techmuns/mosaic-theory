@@ -66,7 +66,7 @@ superseded-by:
   - PENG's phrase was a span of the old text.
   - So the difference is the converter (#829) together with whole-document matching, not a defect
     of either check. **The answer is relative to `html_to_text` at the commit it runs on.**
-- **Pins.** `tests/test_graph_evidence_check.py`, 7 tests, every edge a real committed one taken
+- **Pins.** `tests/test_graph_evidence_check.py`, 9 tests, every edge a real committed one taken
   from a frozen fixture:
   - the five graph cases of `fixtures/verbatim/real_cases.json`;
   - ATKR → Wesco, cut from ATKR's 10-K into `fixtures/graph_evidence/atkr_window.json` (320
@@ -76,7 +76,7 @@ superseded-by:
     (the cut-off, two originals, an /A, the prior year's report); the reader's two send guards; the
     CLI printing every miss.
   - An autouse fixture fails any test that opens a socket.
-- **Mutation: 11 of 11 killed.**
+- **Mutation: 12 of 12 killed.**
   1. matched against the excerpts instead of the filing;
   2. an unheld original read as not_found;
   3. the cut-off dropped;
@@ -88,12 +88,18 @@ superseded-by:
   8. the miss rows cut to the first;
   9. the per-focal accession lines cut to the first focal;
   10. a held feed with no report by the cut-off read as uncached (review round 0);
-  11. an /A of another form kept as a candidate (review round 0).
+  11. an /A of another form kept as a candidate (review round 0);
+  12. a find in an amendment alone counted as "older" (review round 1).
 - **Review round 0** (`/code-review high --fix`). Fixed: a held feed with no annual report by the
   cut-off now reads `not_found`, with a `note`, because the cache lacks nothing; only /As of the
   original's form are candidates; and a feed that pages older filings out of `recent` is noted.
   Skipped: each held document is parsed twice, and every focal's text is held to the end. Both cost
   time or memory, never correctness.
+- **Review round 1** (`/code-review high`, Codex at its usage limit). Fixed, each behind a test that
+  failed on the PR head: a phrase found only in an /A newer than the newest original was printed as
+  "older"; and the uncached outcome read the note's display text. Rows now carry structured
+  `found_where` and `feed_held` fields, and the outcome reads those. The corpus is unchanged
+  (318 / 21 / 0), and 0 finds are in an amendment alone.
 
 **BOUNDARY.**
 - Population: the 339 edges of `data/graph_coverage.json` (git blob `4b151d1f`, file sha256
