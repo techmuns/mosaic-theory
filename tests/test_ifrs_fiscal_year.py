@@ -26,6 +26,7 @@ from vinci.edgar.concepts import (
     FLOW_CONCEPTS,
     IFRS_FLOW_TAGS,
     StaleAnnual,
+    behind_filer,
     currency_withheld,
     current_annual,
     extract_points,
@@ -211,7 +212,7 @@ def test_the_first_ifrs_year_withholds_the_last_us_gaap_annual() -> None:
         concept="operating_income", tag="OperatingIncomeLoss", period_end=date(2017, 12, 31),
         newer_tag="ifrs-full:Revenue", newer_end=date(2018, 12, 31), lag_days=365,
         against_filer=True)
-    assert "filed under IFRS" in stale.note and "more than one" not in stale.note, stale.note
+    assert "reports under IFRS" in stale.note and "more than one" not in stale.note, stale.note
     for concept in FLOW_CONCEPTS:
         point, stale = current_annual(facts, concept)
         assert point is None and stale is not None and stale.against_filer, concept
@@ -222,7 +223,7 @@ def test_the_first_ifrs_year_withholds_the_last_us_gaap_annual() -> None:
         assert field.coverage_status is CoverageStatus.UNKNOWN
         note = field.note or ""
         assert "2017-12-31" in note and "ifrs-full:Revenue to 2018-12-31" in note, note
-        assert "filed under IFRS" in note and "more than one" not in note, note
+        assert "reports under IFRS" in note and "more than one" not in note, note
     # the anchor's D&A, which must be the filer's newest year, is refused as it was at round 0
     refused = _dep_amort_point(facts)
     assert isinstance(refused, str) and "ifrs-full:Revenue to 2018-12-31" in refused, refused
@@ -231,6 +232,59 @@ def test_the_first_ifrs_year_withholds_the_last_us_gaap_annual() -> None:
                                   "operating_income")
     assert point is None and stale is not None and stale.lag_days == 730
     assert "more than one fiscal year behind" in stale.note
+
+
+# --- A US-GAAP TAG TYING THE IFRS YEAR (review of f1adee46, should-fix 1) -----------------------
+
+
+def _eu_profit_loss(end: date) -> Any:
+    """enCore's us-gaap `ProfitLoss` annual to ``end``, as its 40-F of 2023-04-28 tagged it."""
+    facts = facts_as_of(_facts("EU"), date(2023, 4, 28))
+    (point,) = [p for p in extract_points(facts, "net_income")
+                if p.is_annual and p.period_end == end and p.tag == "ProfitLoss"]
+    return point
+
+
+def test_a_us_gaap_tag_tying_the_ifrs_year_does_not_hide_it() -> None:
+    """A REAL TIE. enCore's 40-F filed 2023-04-28 (IFRS, FY2022) also tags us-gaap `ProfitLoss`
+    for FY2022 and FY2021 — the IFRS figures with their sign flipped. The us-gaap FY2022 ends the
+    day the IFRS year does and wins the tie, so it names the filer's year; round 1 then judged
+    the year as us-gaap and let a figure one IFRS year behind stand (700d, not 350d). The IFRS
+    year is kept beside the winner, and the ruling is judged against it: the FY2021 figure is
+    withheld, 365d behind it. 21 census days in 9 ifrs-full filers tie so (review of f1adee46)."""
+    facts = facts_as_of(_facts("EU"), date(2023, 4, 28))
+    fy = filer_fiscal_year(facts)
+    assert fy is not None and (fy.period_end, fy.tag) == (date(2022, 12, 31), "ProfitLoss"), \
+        "the tie is in the data: a us-gaap tag names the year"
+    assert (fy.ifrs_end, fy.ifrs_tag) == (
+        date(2022, 12, 31), "ifrs-full:ProfitLossFromOperatingActivities")
+    stale = behind_filer(_eu_profit_loss(date(2021, 12, 31)), fy)
+    assert stale == StaleAnnual(
+        concept="net_income", tag="ProfitLoss", period_end=date(2021, 12, 31),
+        newer_tag="ifrs-full:ProfitLossFromOperatingActivities", newer_end=date(2022, 12, 31),
+        lag_days=365, against_filer=True)
+    # end to end, on Himax's first IFRS 20-F with a us-gaap `ProfitLoss` row copied from its own
+    # IFRS FY2018 row, so that a us-gaap tag ties the IFRS year as enCore's does: the FY2017
+    # operating-income sign is still withheld, never PRESENT
+    himax = facts_as_of(_facts("HIMX"), date(2019, 3, 28))
+    (row,) = [r for r in himax["facts"]["ifrs-full"]["ProfitLoss"]["units"]["USD"]
+              if (r.get("start"), r["end"]) == ("2018-01-01", "2018-12-31")]
+    himax["facts"]["us-gaap"].setdefault("ProfitLoss", {"units": {"USD": []}})
+    himax["facts"]["us-gaap"]["ProfitLoss"]["units"].setdefault("USD", []).append(dict(row))
+    tied = filer_fiscal_year(himax)
+    assert tied is not None and (tied.tag, tied.ifrs_end) == ("ProfitLoss", date(2018, 12, 31))
+    sign = compute_fundamental_snapshot("0001342338", himax).op_income_sign
+    assert sign.coverage_status is CoverageStatus.UNKNOWN, sign
+    assert "ifrs-full:Revenue to 2018-12-31" in (sign.note or ""), sign.note
+
+
+def test_the_tying_figure_itself_is_not_behind_the_ifrs_year() -> None:
+    """The negative beside it: enCore's us-gaap FY2022 `ProfitLoss` ends the day the IFRS year
+    does, 0d behind it, so the ruling does not withhold it. (That it is served, with its sign
+    flipped against the IFRS figure, is FOUND NOT FIXED in the record; no production reader
+    serves `net_income` through `current_annual`.)"""
+    fy = filer_fiscal_year(facts_as_of(_facts("EU"), date(2023, 4, 28)))
+    assert behind_filer(_eu_profit_loss(date(2022, 12, 31)), fy) is None
 
 
 # --- THE FISCAL YEAR IS A DATE, NEVER A FIGURE (review of #1112, item 3) --------------------------

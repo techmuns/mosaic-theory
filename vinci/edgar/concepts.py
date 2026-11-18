@@ -670,21 +670,24 @@ class StaleAnnual(NamedTuple):
     against_filer: bool = False
 
     @property
-    def why_behind_filer(self) -> str:
-        """Why an annual this far behind the filer's newest fiscal year is not current: more
-        than one fiscal year, or (under :data:`FILER_STALE_DAYS`) one, past which the filer has
-        reported its year under IFRS (:func:`behind_filer`)."""
-        if self.lag_days >= FILER_STALE_DAYS or not self.newer_tag.startswith(f"{IFRS_NAMESPACE}:"):
-            return "more than one fiscal year behind"
-        return "filed under IFRS, so the last US GAAP year is not current"
+    def behind_filer_words(self) -> str:
+        """How far behind the filer an annual is, and why that is not current
+        (:func:`behind_filer`): more than one fiscal year behind its newest, or one behind a year
+        it reports under IFRS. The IFRS wording fits both shapes the ruling reaches — a filer that
+        moved its statements to IFRS (Himax) and a stray us-gaap tag inside an IFRS filing
+        (Avino's `ProfitLoss`) — so it names no US GAAP year the filer may never have had."""
+        end = self.newer_end.isoformat()
+        if self.lag_days < FILER_STALE_DAYS and self.newer_tag.startswith(f"{IFRS_NAMESPACE}:"):
+            return (f"{self.lag_days}d behind the newest fiscal year the filer reports under IFRS "
+                    f"({self.newer_tag} to {end}), so this US GAAP figure is not current")
+        return (f"{self.lag_days}d behind the filer's newest fiscal year ({self.newer_tag} to "
+                f"{end}) — more than one fiscal year behind")
 
     @property
     def note(self) -> str:
         if self.against_filer:
             return (f"stale annual {self.concept}: {self.tag} for the year to "
-                    f"{self.period_end.isoformat()}, {self.lag_days}d behind the filer's newest "
-                    f"fiscal year ({self.newer_tag} to {self.newer_end.isoformat()}) — "
-                    f"{self.why_behind_filer}")
+                    f"{self.period_end.isoformat()}, {self.behind_filer_words}")
         return (f"stale annual {self.concept}: {self.tag} for the year to "
                 f"{self.period_end.isoformat()}, {self.lag_days}d behind {self.newer_tag} to "
                 f"{self.newer_end.isoformat()} — not the current year")
@@ -781,17 +784,21 @@ class FiscalYear(NamedTuple):
     filed: date
     form: str | None
     accession: str | None
-
-    @property
-    def ifrs(self) -> bool:
-        """The year is dated by the filer's IFRS statements (:data:`IFRS_FLOW_TAGS`)."""
-        return self.tag.startswith(f"{IFRS_NAMESPACE}:")
+    #: The newest year the filer's IFRS statements date (:data:`IFRS_FLOW_TAGS`), and the tag
+    #: that dates it; None when it tags none. KEPT BESIDE THE WINNER, whichever tag names the year:
+    #: a us-gaap tag ending the same day wins the tie (enCore's 40-F of 2023-04-28 tags us-gaap
+    #: `ProfitLoss` for its IFRS year), and :func:`behind_filer` judges against this year anyway.
+    ifrs_end: date | None = None
+    ifrs_tag: str | None = None
 
 
 def filer_fiscal_year(facts: dict[str, Any]) -> FiscalYear | None:
     """The newest ANNUAL period any alias of any :data:`FLOW_CONCEPTS` carries — the filer's
     newest reported fiscal year. A tie goes to a us-gaap alias before an IFRS tag, then to the
-    concept, then the alias, first in order (0 ties between the two on the 2026-11-17 cache).
+    concept, then the alias, first in order. The tie names the year and decides nothing else: the
+    newest IFRS year is kept beside the winner (``ifrs_end``), and :func:`behind_filer` judges
+    against it. Ties between the two: 0 on the uncut cache, 21 days in 9 ifrs-full filers on its
+    history (2026-11-18), each a stray us-gaap tag in an IFRS filing (enCore's `ProfitLoss`).
 
     Its annual periods only, never the filer's frontier of any tag (``filer_frontier``), which
     counts quarters, instants and contexts dated years ahead (Innodata's reaches 2034). A period
@@ -816,16 +823,22 @@ def filer_fiscal_year(facts: dict[str, Any]) -> FiscalYear | None:
     gaap = (q for concept in FLOW_CONCEPTS for tag in CONCEPT_ALIASES[concept]
             for q in points_for_tag(facts, tag, concept=concept, currency=EVERY))
     ifrs = (q for concept in FLOW_CONCEPTS for q in _ifrs_flow_points(facts, concept))
+    newest_ifrs: ConceptPoint | None = None
     for p in chain(gaap, ifrs):
         if not p.is_annual or p.period_end > p.filed:
             continue
         if newest is None or p.period_end > newest.period_end:
             newest = p
+        if p.tag.startswith(f"{IFRS_NAMESPACE}:") and (
+                newest_ifrs is None or p.period_end > newest_ifrs.period_end):
+            newest_ifrs = p
     if newest is None:
         return None
     return FiscalYear(tag=newest.tag, unit=newest.unit, period_start=newest.period_start,
                       period_end=newest.period_end, filed=newest.filed, form=newest.form,
-                      accession=newest.accession)
+                      accession=newest.accession,
+                      ifrs_end=newest_ifrs.period_end if newest_ifrs else None,
+                      ifrs_tag=newest_ifrs.tag if newest_ifrs else None)
 
 
 def behind_filer(annual: ConceptPoint, fiscal_year: FiscalYear | None) -> StaleAnnual | None:
@@ -837,21 +850,35 @@ def behind_filer(annual: ConceptPoint, fiscal_year: FiscalYear | None) -> StaleA
     (Recommended)"): in the year a filer first reports under IFRS, its last us-gaap annual is
     withheld once an IFRS fiscal year past it (:data:`ANNUAL_STALE_DAYS`) is filed. One year behind
     a us-gaap year stays, as the filer's newest word on the concept; behind an IFRS year it is
-    not, since the filer has reported that year in other statements. Himax's first IFRS 20-F
+    not, since the filer has reported that year in other statements. The IFRS year is the newest
+    its IFRS statements date (``fiscal_year.ifrs_end``), whichever tag names the filer's year: a
+    us-gaap tag ending the same day must not hide it (review of f1adee46).
+
+    TWO SHAPES REACH IT. A filer that moved its statements to IFRS: Himax's first IFRS 20-F
     (FY2018, filed 2019-03-28) left its eight FY2017 us-gaap annuals served for a year, the
-    operating-income sign among them, whose own IFRS line it first tagged in 2020. MEASURED
+    operating-income sign among them, whose own IFRS line it first tagged in 2020. And a stray
+    us-gaap tag inside an IFRS filing, a year later superseded by the next IFRS year: Avino's
+    `ProfitLoss` for FY2019, in a 20-F of 328 ifrs-full facts and 6 us-gaap ones. MEASURED
     2026-11-18 on the primary's SEC cache (1,078 companyfacts, fetched 2026-06-17..11-18), cut at
     every day one of its 122 ifrs-full filers filed a flow or balance-sheet total: 13 annuals in 6
-    filers were served one IFRS year behind, each for 340–380 days until the next annual report;
-    none is today."""
+    filers were served one IFRS year behind, each for 340–380 days until the next annual report,
+    Himax's 8 the one switch and 5 stray net-income tags; none is today."""
     if fiscal_year is None:
         return None
     lag = (fiscal_year.period_end - annual.period_end).days
-    if lag < (ANNUAL_STALE_DAYS if fiscal_year.ifrs else FILER_STALE_DAYS):
+    if lag >= FILER_STALE_DAYS:
+        return StaleAnnual(concept=annual.concept, tag=annual.tag, period_end=annual.period_end,
+                           newer_tag=fiscal_year.tag, newer_end=fiscal_year.period_end,
+                           lag_days=lag, against_filer=True)
+    # the IFRS year, whichever tag won the tie for the filer's year (review of f1adee46)
+    if fiscal_year.ifrs_end is None or fiscal_year.ifrs_tag is None:
+        return None
+    ifrs_lag = (fiscal_year.ifrs_end - annual.period_end).days
+    if ifrs_lag < ANNUAL_STALE_DAYS:
         return None
     return StaleAnnual(concept=annual.concept, tag=annual.tag, period_end=annual.period_end,
-                       newer_tag=fiscal_year.tag, newer_end=fiscal_year.period_end,
-                       lag_days=lag, against_filer=True)
+                       newer_tag=fiscal_year.ifrs_tag, newer_end=fiscal_year.ifrs_end,
+                       lag_days=ifrs_lag, against_filer=True)
 
 
 #: Where a filer may move a concept's annual line once its aliases stop: each entry is one tag,
@@ -1038,9 +1065,7 @@ class StalePair(NamedTuple):
         head = (f"newest year both {self.first} and {self.second} carry ends "
                 f"{self.period_end.isoformat()}")
         if self.behind:
-            head += (f", {self.behind.lag_days}d behind the filer's newest fiscal year "
-                     f"({self.behind.newer_tag} to {self.behind.newer_end.isoformat()}) — "
-                     f"{self.behind.why_behind_filer}")
+            head += f", {self.behind.behind_filer_words}"
         return "; ".join([head, *(s.note for s in self.legs)])
 
 
