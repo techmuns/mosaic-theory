@@ -297,6 +297,12 @@ def test_review_round_0_a_close_in_another_shape_or_after_the_page_never_mislead
     assert after.close_age_days == -3
     assert any("3 days AFTER" in x for x in after.arithmetic)
     assert not any("-3 days" in x for x in after.arithmetic)
+    # the impact run's $0 builds carry a 1-day close on both sides of the page's (WERN, IT)
+    one = sp.gap_split(doc["mechanical"], close="2026-11-10", price_date=date(2026, 11, 11), **kw)
+    assert any(x.endswith(": 1 day; stale above 30.") for x in one.arithmetic), one.arithmetic
+    ahead = sp.gap_split(doc["mechanical"], close="2026-11-12", price_date=date(2026, 11, 11),
+                         **kw)
+    assert any("is 1 day AFTER it" in x for x in ahead.arithmetic), ahead.arithmetic
     # SMPL with its stored close's DATE cut (a cut from the real page) and that same day given as
     # the reference date: the facts read the same filings, but there is no stored close to name
     facts = json.loads((FACTS / "SMPL.json").read_text())

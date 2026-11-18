@@ -105,6 +105,13 @@ superseded-by:
     and web. On the web the line and flags sit outside the collapsed tier and the arithmetic
     inside it. A flag that is unset prints nothing, and an anchor with no split renders none.
   - **Mutation:** 18 of 18 production mutants and 8 of 8 renderer mutants red.
+  - **Impact check** (`python -m vinci.impact run --workers 3`, base `ba8fc282` → head
+    `6afc71cb`, $0): 25 of 26 pages built at both refs (PARR not, a mislabelled CIQ export at
+    base, pre-existing). 18 of 25 move, one field each, `anchor.gap_split` absent → present.
+    The head build splits 17 and refuses 1 (GOOGL). Synthesis requests and committed
+    re-renders are identical at both refs, and so are the ledger and scoring consumers. Its builds carried a
+    1-day close on both sides of the page's (WERN, IT), which printed "1 days". Fixed before
+    the PR (`_days`), pinned, and the pin is red on `6afc71cb`.
   - **Review round 0** (`/code-review high --fix`, 5 findings, 3 fixed): `compute_anchor` stamps
     the STORED close, never the reference-date fallback, as `committed_gap_split` reads it (its
     pin is red on the old line); a close in another shape states no age and never raises; a close

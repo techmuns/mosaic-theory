@@ -132,6 +132,11 @@ def _m(v: Any, digits: int = 1) -> str:
     return "unstated" if x is None else f"{x:,.{digits}f}"
 
 
+def _days(n: int) -> str:
+    """A day count in words: 1 day, 2 days."""
+    return f"{n} day{'' if n == 1 else 's'}"
+
+
 def _n(v: float) -> str:
     """A $M figure in the arithmetic, the minus a true one: −114,767.0, never -114,767.0."""
     return f"{'−' if v < 0 else ''}{abs(v):,.1f}"
@@ -146,8 +151,9 @@ def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float) 
     at_median = (f"At the {mm:.1f}x median it would be {_ps(abs(s.multiple_effect))} "
                  f"{'lower' if s.multiple_effect < 0 else 'higher'}, not used.")
     stale = lev = None
-    if s.stale_close:
-        stale = (f"Today's multiple is the close of {s.multiple_close}, {s.close_age_days} days "
+    if s.stale_close and s.close_age_days is not None:   # stale is set only from a measured age
+        stale = (f"Today's multiple is the close of {s.multiple_close}, "
+                 f"{_days(s.close_age_days)} "
                  f"before the page's stored close of {s.price_date}"
                  + (": the value on current EBITDA is that day's." if s.refusal is None else "."))
     if s.leverage_flag and s.net_debt_to_ev is not None:
@@ -197,9 +203,9 @@ def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float) 
         f"flagged above {LEVERAGE_FLAG_NET_DEBT_TO_EV:g}.",
         f"the multiple's close {s.multiple_close or 'unstated'}, the page's stored close "
         f"{s.price_date or 'unstated'}: "
-        + (f"the multiple's close is {-s.close_age_days} days AFTER it; stale above "
+        + (f"the multiple's close is {_days(-s.close_age_days)} AFTER it; stale above "
            f"{STALE_CLOSE_DAYS}." if s.close_age_days is not None and s.close_age_days < 0 else
-           f"{s.close_age_days} days; stale above {STALE_CLOSE_DAYS}."
+           f"{_days(s.close_age_days)}; stale above {STALE_CLOSE_DAYS}."
            if s.close_age_days is not None else "no age measured."),
     ]
     return read, stale, lev, lines
