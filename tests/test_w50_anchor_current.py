@@ -195,8 +195,12 @@ def test_the_gap_sentence_names_the_unmatched_pair(ticker: str, side: str, word:
 
 # --- (-) committed pages keep what they priced, on both surfaces ------------------------------
 def test_committed_pages_round_trip_without_the_new_keys() -> None:
-    """(-) Every committed anchor predates W50: re-serialised, it gains no `statistic`, `as_of` or
-    `median` (absent, never null), so the code lands without a page moving."""
+    """(-) Every committed anchor round-trips byte-identically, whichever statistic it priced. One
+    written before W50 carries no `statistic` and gains none of `statistic`, `as_of` or `median`
+    (absent, never null). One written since states all three. The fleet holds both kinds while
+    the watch pages wait for their next build, so the pin states the rule for each kind, never a
+    count of either (the first cut asserted every page predated W50, which held only until the
+    refresh)."""
     seen = 0
     for t in covered_pages():
         raw = (PAGES / t / "dossier.json").read_text()
@@ -204,10 +208,15 @@ def test_committed_pages_round_trip_without_the_new_keys() -> None:
         if doc.anchor is None or doc.anchor.multiple is None:
             continue
         seen += 1
-        assert doc.anchor.multiple.statistic is None, t
         out = dossier_json(doc)
         mult = json.loads(out)["anchor"]["multiple"]
-        assert not {"statistic", "as_of", "median"} & set(mult), t
+        if doc.anchor.multiple.statistic is None:
+            assert not {"statistic", "as_of", "median"} & set(mult), t
+        else:
+            assert doc.anchor.multiple.statistic == anc.MULTIPLE_CURRENT, t
+            assert mult.get("statistic") == anc.MULTIPLE_CURRENT, t
+            assert mult.get("median") is not None, t
+            assert "as_of" in mult, t
         assert out == raw, f"{t} does not round-trip byte-identically"
     assert seen, "no covered page carries an anchor multiple — the round-trip checked nothing"
 
