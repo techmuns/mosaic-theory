@@ -31,7 +31,7 @@ from pydantic import (
 )
 
 from vinci.dossier.anchor import Anchor, check_decision_write, committed_anchor_block
-from vinci.dossier.inputs_schema import InputManifest
+from vinci.dossier.inputs_schema import InputChecks, InputManifest
 from vinci.dossier.midcycle import MidCycle
 from vinci.dossier.verdict import DrawGate
 from vinci.schemas.listing import AdsRatio
@@ -3471,6 +3471,12 @@ class Dossier(BaseModel):
     # predates it until backfilled, so those round-trip byte-identically. Declared before
     # `layer_refreshes`, which must stay immediately before `anchor`.
     inputs: InputManifest | None = None
+    # (input checks, 2026-11-18) the gate's results on what the page records it was built from
+    # (`vinci.dossier.input_checks`, workstream B slice 2): a FLAG prints on the first screen. A
+    # PURE FUNCTION of the page, RE-DERIVED by `dossier_json` on every write of a page carrying
+    # it; ABSENT on a page that predates it, so those round-trip byte-identically. Declared before
+    # `layer_refreshes`, which must stay immediately before `anchor`.
+    input_checks: InputChecks | None = None
     # (layer refreshes) the writers that changed this page since its assembly, each with the code
     # vintage that ran it (`LayerRefresh`). ABSENT until a writer records one, and dropped by the
     # next full assembly, whose stamp then covers the whole page. Declared IMMEDIATELY BEFORE
@@ -3621,6 +3627,15 @@ def dossier_json(doc: Dossier) -> str:
     from vinci.dossier.valuation_basis import with_derived  # cycle: it imports these models
 
     doc = with_derived(doc)
+    # (2026-11-18) the input checks, the same rule: re-derived wherever the page carries them, so a
+    # refresh that restamps a block or a backfill that rewrites the record cannot leave a stale
+    # result. A page without them is left without them — never a result no build or backfill asked
+    # for (`vinci dossier input-checks --write` gives a committed page one)
+    if doc.input_checks is not None:
+        from vinci.dossier import input_checks  # fence-clean; lazy for the import cycle
+
+        doc = doc.model_copy(update={"input_checks": input_checks.run(
+            doc.model_dump(mode="json"))})
     mech = doc.mechanical
     root: dict[str, Any] = {}
     for parent, key in DROP_WHEN_NONE:
@@ -3660,6 +3675,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["ev_bridge"] = True
     if doc.ev_bridge_unbuilt is None:
         excl["ev_bridge_unbuilt"] = True
+    if doc.input_checks is None:
+        excl["input_checks"] = True
     if doc.inputs is None:
         excl["inputs"] = True
     # the same rule PER ROW for a CIQ export's stated export date (2026-11-15) and a Financials

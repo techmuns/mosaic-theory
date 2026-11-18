@@ -24,6 +24,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.frozen_support import frozen_doc
+
 ROOT = Path(__file__).resolve().parents[1]
 
 _LEANS = {
@@ -281,7 +283,7 @@ def test_the_markdown_and_the_web_print_the_same_split(labels: dict[str, int], w
     from vinci.dossier.render import _draw_agreement_md
     from vinci.dossier.schemas import Synthesis
     from vinci.dossier.verdict import DrawGate
-    doc = _with_gate(json.loads((ROOT / "data/dossiers/LLY/dossier.json").read_text()), labels)
+    doc = _with_gate(frozen_doc("LLY"), labels)   # LLY's page, as frozen at the cut
     split = DrawGate.from_record(doc["synthesis"]["draw_agreement"]).split
     md = "\n".join(_draw_agreement_md(Synthesis.model_validate(doc["synthesis"])))
     assert split in md and want in md

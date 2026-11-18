@@ -422,14 +422,16 @@ def test_edgars_lease_cost_is_read_beside_ciqs_rent() -> None:
 
 # --- the anchor: one basis, multiple and bridge together -----------------------------------------
 
-def test_a_lease_material_anchor_prices_the_ex_lease_median_against_ex_lease_net_debt() -> None:
+def test_a_lease_material_anchor_prices_the_ex_lease_current_against_ex_lease_net_debt() -> None:
     """(+) TJX, the committed page with the lease basis production built from its real export.
-    The multiple is the ex-lease median, the bridge leaves out EXACTLY the EDGAR operating leases,
-    and the value is the R1 arithmetic on those two, recomputed here from the block's fields."""
+    The multiple is the ex-lease history's CURRENT (W50, 2026-11-17; its median before, now printed
+    beside it), the bridge leaves out EXACTLY the EDGAR operating leases, and the value is the R1
+    arithmetic on those two, recomputed here from the block's fields."""
     lb = _lb("TJX")
     a = _anchor("TJX", lb)
     assert a.applicable and a.multiple is not None and a.net_debt is not None
-    assert a.multiple.value == pytest.approx(lb["ex_lease_band"]["median"])
+    assert a.multiple.value == pytest.approx(lb["ex_lease_band"]["current"])
+    assert a.multiple.median == pytest.approx(lb["ex_lease_band"]["median"])
     assert a.multiple.source.startswith("valuation.lease_basis")
     assert a.net_debt.basis == NET_DEBT_EX_LEASE
     facts = _facts("TJX")
@@ -457,7 +459,8 @@ def test_without_a_lease_basis_the_anchor_is_unchanged() -> None:
     """(-) A page assembled before the block keeps CIQ's history and the lease-inclusive bridge —
     nothing moves until the page carries a measured lease basis."""
     a = _anchor("TJX", None)
-    assert a.multiple is not None and a.multiple.source == "valuation.own_history.median"
+    # (W50) the CIQ history's current, so the citation names it; still CIQ's own history
+    assert a.multiple is not None and a.multiple.source == "valuation.own_history.current"
     assert a.net_debt is not None and a.net_debt.basis == "lease-inclusive net debt (latest 10-Q)"
 
 
@@ -494,7 +497,7 @@ def test_vitls_incoherent_band_was_ciqs_rent_add_back() -> None:
     after = _anchor("VITL", _lb("VITL"))
     assert "band_incoherent" not in (after.data_quality or "")
     assert after.multiple is not None and after.multiple.value == pytest.approx(
-        _lb("VITL")["ex_lease_band"]["median"])
+        _lb("VITL")["ex_lease_band"]["current"])     # W50: the current, the median beside it
 
 
 # --- the template, the basis block and the page read the same choice ----------------------------
@@ -603,11 +606,12 @@ def test_an_immaterial_page_keeps_its_line() -> None:
 def test_the_screening_table_names_the_ex_lease_basis_in_both_renderers() -> None:
     """(+) md and web: the multiple row says ex-lease when the anchor read the ex-lease history.
     (-) A CIQ-history anchor's row is unchanged. The web twin carries the same words."""
+    # (W50) a derived anchor prices the current, so its row is the current-multiple row
     ex = Dossier.model_validate(_page_doc("TJX", _lb("TJX"), _lb("TJX")))
-    row = next(r for r in rend._screening_context_lines(ex.anchor) if "Median multiple" in r)
+    row = next(r for r in rend._screening_context_lines(ex.anchor) if "Current multiple" in r)
     assert rend._EX_LEASE_LABEL.strip() in row
     ciq = Dossier.model_validate(_page_doc("TJX", None, None))
-    row = next(r for r in rend._screening_context_lines(ciq.anchor) if "Median multiple" in r)
+    row = next(r for r in rend._screening_context_lines(ciq.anchor) if "Current multiple" in r)
     assert "ex-lease" not in row
     js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
     assert rend._EX_LEASE_LABEL.strip() in js and rend._EX_LEASE_SOURCE_PREFIX in js

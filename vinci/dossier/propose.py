@@ -56,6 +56,7 @@ from vinci.dossier.anchor import (
     ciq_ebitda_band,
     lease_basis_mismatch,
     r1_multiple_band,
+    usable_multiple,
 )
 from vinci.dossier.midcycle import MULTIPLE_BASIS as R1_BASIS
 from vinci.dossier.schemas import PrimarySource
@@ -243,14 +244,9 @@ def _r1_proposal_band(doc: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
     return (oh if isinstance(oh, dict) else None), where
 
 
-def _usable_multiple(v: Any) -> float | None:
-    """`v` as a multiple a proposal can stand on, or None: a finite positive number. A missing,
-    NM (CIQ prints NM where the EBITDA is not positive; midcycle's D-D3 note) or non-positive
-    current is not a multiple, and it is never replaced by another statistic."""
-    if isinstance(v, bool) or not isinstance(v, (int, float)):
-        return None
-    f = float(v)
-    return f if math.isfinite(f) and f > 0 else None
+#: `v` as a multiple a proposal can stand on, or None — the ONE reader, shared with the page's
+#: screening anchor since W50 (`anchor.usable_multiple`), so the two cannot disagree on a current.
+_usable_multiple = usable_multiple
 
 
 def multiple_base_refusal(doc: dict[str, Any]) -> str | None:

@@ -65,11 +65,16 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         "band_checks",
         # (2026-10-27) the CIQ bridge's scale-check outcome — absent where the bridge was not read
         "ciq_scale_check",
+        # (W61, 2026-11-18) the screen value split into a margin and a multiple effect — absent
+        # where there is no screen value and on every anchor written before
+        "gap_split",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}
+    # (W50) which statistic was priced, its close date and the median beside it — absent on a
+    # committed pre-W50 anchor (`anchor_absent_fields`)
     assert set(AnchorMultiple.model_fields) == {"value", "unit", "source", "history_quarters",
-                                                "confidence"}
+                                                "confidence", "statistic", "as_of", "median"}
     assert set(AnchorInput.model_fields) == {"value", "unit", "basis", "source"}
     # optional on the Dossier, default None (byte-identical round-trip of pre-anchor JSON)
     assert Dossier.model_fields["anchor"].default is None

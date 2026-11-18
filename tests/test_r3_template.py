@@ -15,11 +15,13 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import sys
 from typing import Any
 
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_doc, living_doc
 from vinci.dossier.midcycle import MULTIPLE_BASIS
 from vinci.dossier.propose import (
     AXIS_LEG_FIELD,
@@ -45,9 +47,8 @@ R1_CELL_INPUTS = {"revenue", "revenue_adjustment", "revenue_derivation", "margin
 
 
 def _page(ticker: str) -> dict[str, Any]:
-    doc: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
-    return doc
+    """``ticker``'s page as frozen at the cut (`tests/frozen_support.py`), never the living one."""
+    return frozen_doc(ticker)
 
 
 def _r3_page() -> dict[str, Any]:
@@ -125,10 +126,11 @@ def test_propose_counts_the_cells_the_r3_recipe_reads(
 
 # --- (+) create, through the CLI -----------------------------------------------------------------
 
-def _stage(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
-    """GOOGL's committed page in a scratch tree with an EMPTY `scenarios/` — so create runs into
-    the scratch directory and never near the committed record."""
-    doc = _r3_page()
+def _stage(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+           doc: dict[str, Any] | None = None) -> dict[str, Any]:
+    """GOOGL's committed page (as frozen at the cut, or ``doc``) in a scratch tree with an EMPTY
+    `scenarios/` — so create runs into the scratch directory and never near the committed record."""
+    doc = _r3_page() if doc is None else doc
     (tmp_path / "data" / "dossiers" / "GOOGL").mkdir(parents=True)
     (tmp_path / "data" / "dossiers" / "GOOGL" / "dossier.json").write_text(json.dumps(doc))
     (tmp_path / "scenarios").mkdir()
@@ -175,7 +177,9 @@ def test_propose_then_create_writes_the_r3_record_with_no_hand_edit(
     #658), so the fill names the base leg's own year, a TEST value labelled as one."""
     from vinci.cli import _cmd_scenario_create, _cmd_scenario_propose
 
-    _stage(tmp_path, monkeypatch)
+    # the LIVING page beside the committed record: a frozen page beside a living record would mix
+    # two vintages, so this pair stays living and named (the record class, W27 slice 5's residue)
+    _stage(tmp_path, monkeypatch, living_doc("GOOGL"))
     committed = json.loads((ROOT / "scenarios" / "GOOGL.json").read_text())
     assert committed["recipe_id"] == sc.RECIPE_R3
     out = tmp_path / "tpl.json"
@@ -238,8 +242,15 @@ def test_r1_and_r4_templates_keep_their_shape_across_the_corpus() -> None:
     """Every committed page that builds a template and is not R3-tagged keeps main's shape: an
     R1-shaped page writes R1's basis — the validator's constant, `midcycle.MULTIPLE_BASIS` — with
     R1's cells and facts, and an R4 page writes R4's. Measured byte-identical on 25 of the 26
-    pages before this shipped (GOOGL, the R3 page, is the one that moved)."""
+    pages before this shipped (GOOGL, the R3 page, is the one that moved).
+
+    AMZN'S PAGE AS FROZEN AT THE CUT IS WALKED BESIDE THE LIVING ONES: it is the only covered R4
+    page whose template builds (UBER's step refuses), so the R4 shape is exercised whatever the
+    living corpus holds, and a retirement of AMZN moves nothing here (A's ruling on #1111, as the
+    `test_propose` walks carry SMPL's frozen page)."""
     built = _built()
+    amzn = frozen_doc("AMZN")
+    built.append((str(amzn["anchor"]["recipe_hint"]), build_template(amzn)))
     seen = {"r1": 0, "r4": 0}
     for hint, tpl in built:
         if hint == sc.RECIPE_R3:
@@ -324,3 +335,18 @@ def test_the_r4_band_line_is_unmarked_where_its_band_is_admissible() -> None:
     line = next(ln for ln in build_template(doc)["_evidence"]["multiple"]
                 if ln.startswith("own history EV/NTM EBIT"))
     assert "CONTEXT ONLY" not in line, line
+
+
+def test_the_r4_shape_is_exercised_with_no_living_r4_page(
+        tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE STATE AFTER AMZN'S RETIREMENT: a checkout whose living pages hold no AMZN, the only
+    covered R4 page whose template builds. The corpus check above still exercises both shapes,
+    through AMZN's frozen page (A's review of #1111: its floor failed loud in the retirement
+    replay). Every other committed page is linked in, never copied."""
+    pages = tmp_path / "data" / "dossiers"
+    pages.mkdir(parents=True)
+    for folder in sorted((ROOT / "data" / "dossiers").iterdir()):
+        if folder.is_dir() and folder.name != "AMZN":
+            (pages / folder.name).symlink_to(folder.resolve())
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
+    test_r1_and_r4_templates_keep_their_shape_across_the_corpus()

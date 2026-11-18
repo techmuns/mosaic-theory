@@ -757,6 +757,10 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .ds-frozen-defects { margin-top: 6px; }
 .ds-frozen-defects ol { margin: 4px 0 0 0; padding-left: 20px; }
 .ds-frozen-unknown { color: var(--ink-3); background: var(--surface-2); border-color: var(--line-2); }
+/* (2026-11-18) a flagged input check (workstream B slice 2): the same warn tier as the watch line */
+.ds-input-flag { margin-top: 8px; padding: 8px 12px; border: 1px solid var(--warn-border); border-radius: var(--r); background: var(--conditional-bg); color: var(--warn-text); font-size: 12.5px; line-height: 1.5; }
+.ds-input-flag b { color: var(--warn-text); }
+.ds-input-flag ul { margin: 4px 0 0 0; padding-left: 20px; }
 .ds-section { margin-bottom: 14px; }
 .ds-section .ds-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink); font-weight: 700; margin: 0 0 2px; }
 .ds-sub { margin: 0 0 12px !important; }

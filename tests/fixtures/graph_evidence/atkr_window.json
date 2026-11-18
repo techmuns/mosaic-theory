@@ -1,0 +1,11 @@
+{
+ "_about": "A verbatim slice of ATKR's 10-K 0001628280-25-054049 (atkr-20250930.htm, filed 2025-11-26) as html_to_text reads it on main 322c6caa, cut from the operator's SEC cache. EDGAR filings are public domain. The committed map's ATKR → Wesco edge quotes across a gap the excerpt cut makes: a span of relevant_excerpts(window), not of the window.",
+ "id": "atkr-excerpt-join",
+ "ticker": "ATKR",
+ "cik": "0001666138",
+ "item": "Wesco International, Inc.",
+ "source": "10-K 0001628280-25-054049 · atkr-20250930.htm",
+ "filing_date": "2025-11-26",
+ "quote": "Our customers include global electrical distributors (such as Consolidated Electrical Distributors, Inc. and Wesco International, Inc.)",
+ "window": "4 and 2023, one customer, Sonepar USA, accounted for more than 10% of sales. Our customers include global electrical distributors (such as Consolidated Electrical Distributors, Inc. (“CED”), Graybar Electric Company, Rexel, Sonepar S.A. and Wesco International, Inc.), independent electrical distributors including super"
+}

@@ -126,3 +126,143 @@ def test_an_exit_inside_a_nested_helper_is_not_an_early_exit() -> None:
         '    doc = _page("BRBR")\n',
         '    def has(_t, d):\n        return bool(d)\n    doc = _page("BRBR")\n')
     assert not _failing(_diff(after)), _diff(after)
+
+
+#: A SKIP RAISED INSIDE A HELPER (slices 2–4 of W27, each slice's review): `skip_unless_export(...)`
+#: or a module function that calls `pytest.skip` stops the test as surely as a bare `pytest.skip`,
+#: and the first cut counted only the bare call, so each slice's "0 disabled" missed one.
+_HELPER_SKIPS = [
+    ("a call to an imported skip helper", BASE.replace(
+        '    doc = _page("BRBR")\n',
+        '    skip_unless_export("BRBR", "estimates", "0" * 10, why="w")\n'
+        '    doc = _page("BRBR")\n')),
+    ("a call to a module helper that skips", BASE.replace(
+        "def test_the_count():",
+        "def _need(t):\n    if t:\n        pytest.skip('gone')\n\n\ndef test_the_count():").replace(
+        '    doc = _page("BRBR")\n', '    _need("BRBR")\n    doc = _page("BRBR")\n')),
+]
+
+
+@pytest.mark.parametrize(("name", "after"), _HELPER_SKIPS, ids=[m[0] for m in _HELPER_SKIPS])
+def test_a_skip_raised_inside_a_helper_is_disabled(name: str, after: str) -> None:
+    """(−) A new call to a skip helper is DISABLED, and the checker exits red on it."""
+    got = _diff(after)
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], (name, got)
+    assert _failing(got), (name, got)
+
+
+def test_a_removed_skip_mark_is_not_disabled() -> None:
+    """(+) A test that LOSES a skip runs more, never less: only a mark added or changed is
+    DISABLED (slice 4 of W27 dropped 15 skips that a frozen copy can no longer meet)."""
+    before = BASE.replace("def test_the_count():",
+                          "@pytest.mark.skipif(True, reason='x')\ndef test_the_count():")
+    got: dict[str, list[str]] = _checker().compare_sources(before, BASE, "tests/test_x.py")
+    assert not got["DISABLED"], got
+    changed = before.replace("skipif(True,", "skipif(False,")
+    assert _checker().compare_sources(before, changed, "tests/test_x.py")["DISABLED"], (
+        "a changed mark is still DISABLED")
+
+
+#: A SKIP TWO CALLS DOWN, AND A SKIP SWAPPED FOR ANOTHER (A's review of #1107, item 5; of #1106,
+#: item 2). `_the_bands_export` skips only through `skip_unless_export`, so a checker that read one
+#: level saw no skip in it. And a count nets a swap: the AMZN refresh pins traded `_bundle`'s skip
+#: (no live folder) for an export gate's (a re-export), one for one, so on main a drift FAILED and
+#: on the slice's head it SKIPPED, while the count read 0 disabled.
+_NESTED = BASE.replace(
+    "def test_the_count():",
+    "def _gate(t):\n    return skip_unless_export(t, 'estimates', '0' * 10, why='w')\n\n\n"
+    "def _export(t):\n    return _gate(t)\n\n\ndef test_the_count():").replace(
+    '    doc = _page("BRBR")\n', '    _export("BRBR")\n    doc = _page("BRBR")\n')
+_SWAP_BASE = BASE.replace(
+    "def test_the_count():",
+    "def _bundle(t):\n    if not t:\n        pytest.skip('no folder')\n\n\n"
+    "def _gate(t):\n    return skip_unless_export(t, 'estimates', '0' * 10, why='w')\n\n\n"
+    "def test_the_count():").replace(
+    '    doc = _page("BRBR")\n', '    _bundle("BRBR")\n    doc = _page("BRBR")\n')
+
+
+def test_a_skip_raised_two_calls_down_is_disabled() -> None:
+    """(−) A module helper that skips only through another helper still skips the test."""
+    got = _diff(_NESTED)
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], got
+
+
+def test_a_skip_swapped_for_another_is_disabled_and_the_same_one_is_not() -> None:
+    """(−) one skip traded for another is DISABLED, though the count is unchanged; (+) the same
+    skip kept, and one only removed, are not."""
+    swapped = _SWAP_BASE.replace('    _bundle("BRBR")\n', '    _gate("BRBR")\n')
+    cmp = _checker().compare_sources
+    got = cmp(_SWAP_BASE, swapped, "tests/test_x.py")
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], got
+    kept = _SWAP_BASE.replace('    doc = _page("BRBR")\n', '    doc = _page("BRBR")  # moved\n')
+    assert not cmp(_SWAP_BASE, kept, "tests/test_x.py")["DISABLED"]
+    removed = _SWAP_BASE.replace('    _bundle("BRBR")\n', "")
+    assert not cmp(_SWAP_BASE, removed, "tests/test_x.py")["DISABLED"]
+
+
+def test_a_skip_whose_guard_is_dropped_is_disabled() -> None:
+    """(−) The same skip call with its guard dropped skips the test every time: DISABLED, though it
+    calls what it called before; (+) the same guarded skip, moved, is not."""
+    guarded = BASE.replace('    doc = _page("BRBR")\n',
+                           '    if not DOSS.is_dir():\n        pytest.skip("no pages")\n'
+                           '    doc = _page("BRBR")\n')
+    cmp = _checker().compare_sources
+    bare = guarded.replace('    if not DOSS.is_dir():\n        pytest.skip("no pages")\n',
+                           '    pytest.skip("no pages")\n')
+    assert cmp(guarded, bare, "tests/test_x.py")["DISABLED"] == ["tests/test_x.py::test_the_count"]
+    moved = guarded.replace('    doc = _page("BRBR")\n', '    doc = _page("BRBR")  # moved\n')
+    assert not cmp(guarded, moved, "tests/test_x.py")["DISABLED"]
+
+
+def test_an_imported_skip_helper_without_the_prefix_is_disabled() -> None:
+    """(−) `ciq_export_support.retired_checkout` skips when the machine holds no folder, and its
+    name carries no `skip_unless` prefix: a new call to it is DISABLED once the checker reads the
+    support module it is imported from; (+) the real support modules name it a skip helper."""
+    chk = _checker()
+    support = chk.support_skippers(ROOT)
+    assert "retired_checkout" in support["tests.ciq_export_support"], support
+    imp = "from tests.ciq_export_support import retired_checkout\n"
+    read = '    doc = _page("BRBR")\n'
+    after = (imp + BASE).replace(read, '    retired_checkout("BRBR", Path("x"))\n' + read)
+    got = chk.compare_sources(imp + BASE, after, "tests/test_x.py", support)
+    assert got["DISABLED"] == ["tests/test_x.py::test_the_count"], got
+
+
+#: WHAT A SKIP CAN HIDE IN BESIDES A CALL OR A DECORATOR (A's review of #1111, item 5): a mark on
+#: one `pytest.param` case, a fixture parameter whose fixture skips, and a module-level
+#: `pytestmark` or `importorskip`. Each stops a test as surely and must read DISABLED.
+_ELSEWHERE = [
+    ("a skip mark on one pytest.param case", BASE.replace(
+        '@pytest.mark.parametrize("t", ["AMZN", "UBER"])',
+        '@pytest.mark.parametrize("t", ["AMZN", pytest.param("UBER", marks=pytest.mark.skip)])'),
+     "tests/test_x.py::test_the_tag"),
+    ("a fixture parameter whose fixture skips", BASE.replace(
+        "def test_the_count():",
+        "@pytest.fixture\ndef need():\n    pytest.skip('gone')\n\n\n"
+        "def test_the_count(need):"),
+     "tests/test_x.py::test_the_count"),
+    ("a module-level pytestmark", BASE.replace(
+        "DOSS = Path(", "pytestmark = pytest.mark.skipif(True, reason='x')\nDOSS = Path("),
+     "tests/test_x.py::<module>"),
+    ("a module-level importorskip", BASE.replace(
+        "DOSS = Path(", "pytest.importorskip('not_a_module')\nDOSS = Path("),
+     "tests/test_x.py::<module>"),
+]
+
+
+@pytest.mark.parametrize(("name", "after", "row"), _ELSEWHERE, ids=[m[0] for m in _ELSEWHERE])
+def test_a_skip_outside_the_tests_body_is_disabled(name: str, after: str, row: str) -> None:
+    """(−) Each shape reads DISABLED on the row it stops, and the checker exits red."""
+    got = _diff(after)
+    assert row in got["DISABLED"], (name, got)
+    assert _failing(got), (name, got)
+
+
+def test_a_param_mark_removed_is_not_disabled() -> None:
+    """(+) A case that LOSES its mark runs more, as a decorator removed does (slice 4's tripwires
+    lose theirs when the re-read lands)."""
+    marked = BASE.replace(
+        '@pytest.mark.parametrize("t", ["AMZN", "UBER"])',
+        '@pytest.mark.parametrize("t", ["AMZN", pytest.param("UBER", marks=pytest.mark.xfail)])')
+    got: dict[str, list[str]] = _checker().compare_sources(marked, BASE, "tests/test_x.py")
+    assert not got["DISABLED"], got

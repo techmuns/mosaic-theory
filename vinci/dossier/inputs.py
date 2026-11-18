@@ -43,7 +43,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -52,6 +51,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from vinci import provenance
+
+# THE ONE PAGE-STAMP WALKER lives in the gate's fence-clean module (`schemas` reaches it, and
+# this module reaches the price store); re-exported here under the names the backfill used
+from vinci.dossier.input_checks import STAMP, stamps
 from vinci.dossier.inputs_schema import (
     CiqExport,
     FiledThrough,
@@ -63,7 +66,7 @@ from vinci.dossier.inputs_schema import (
 )
 
 __all__ = ["CiqExport", "FiledThrough", "InputManifest", "PriceSeries", "Response",
-           "ResponsesDigest", "Unrecorded"]
+           "ResponsesDigest", "Unrecorded", "stamps"]
 
 if TYPE_CHECKING:
     from vinci.dossier.ciq import CiqBundle
@@ -85,9 +88,8 @@ NOT_COVERED = (
     "redacted (`provenance.redact_url`); no client in this repository sends either",
 )
 _ID_PREFIX = "inputs-"
-#: A page's CIQ export stamp: the first 10 hex of the file's sha256 (`ciq_sheets.file_provenance`).
-#: Any other hash a page carries is no export stamp.
-_STAMP = re.compile(r"[0-9a-f]{10}")
+#: A page's CIQ export stamp (`input_checks.STAMP`, re-exported under its old name).
+_STAMP = STAMP
 
 
 # --- recording -------------------------------------------------------------------------------
@@ -406,39 +408,6 @@ UNRECORDED_UNSTAMPED_CIQ = (
     "a page built before 2026-11-05 stamps an export only where a block records a 10-hex prefix "
     "of its sha256; any other export it read (comps, transcripts, capital structure, credit "
     "health …) was never recorded")
-
-
-def stamps(doc: Mapping[str, Any]) -> dict[str, list[str]]:
-    """``{10-hex stamp: [page sites]}`` for EVERY export stamp a page carries, outside its own
-    ``inputs`` block, the site a dotted path with list positions dropped:
-
-    - a key ending ``sha256`` whose value is a 10-hex stamp (`_STAMP`; any other hash a page
-      carries is no export stamp);
-    - a stamp written into a string — an anchor input's ``source``, the bridge's claims source —
-      read through the ONE shared reader, `ciq_balance.stamps_in_text` (review round 2: four
-      pages' anchors named exports no key stamped, and the backfill never saw them)."""
-    from vinci.dossier.ciq_balance import stamps_in_text
-
-    out: dict[str, set[str]] = {}
-
-    def walk(node: Any, path: str) -> None:
-        if isinstance(node, Mapping):
-            for key, child in node.items():
-                here = f"{path}.{key}" if path else str(key)
-                if (str(key).endswith("sha256") and isinstance(child, str)
-                        and _STAMP.fullmatch(child)):
-                    out.setdefault(child, set()).add(here)
-                else:
-                    walk(child, here)
-        elif isinstance(node, list):
-            for child in node:
-                walk(child, path)
-        elif isinstance(node, str):
-            for stamp in stamps_in_text(node):
-                out.setdefault(stamp, set()).add(path)
-
-    walk({k: v for k, v in doc.items() if k != "inputs"}, "")
-    return {k: sorted(v) for k, v in out.items()}
 
 
 @dataclass(frozen=True)

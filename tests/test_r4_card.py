@@ -27,6 +27,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_doc
 from vinci.dossier.render import (
     _assumption_methodology_lines,
     _card_thousands,
@@ -88,7 +89,7 @@ def r4(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
     from vinci.cli import _cmd_scenario_create, _cmd_scenario_propose
 
     root = tmp_path_factory.mktemp("r4card")
-    doc = json.loads((ROOT / "data" / "dossiers" / "AMZN" / "dossier.json").read_text())
+    doc = frozen_doc("AMZN")   # AMZN's page, as frozen at the cut
     doc["anchor"]["recipe_hint"] = sc.RECIPE_R4
     (root / "data" / "dossiers" / "AMZN").mkdir(parents=True)
     (root / "data" / "dossiers" / "AMZN" / "dossier.json").write_text(json.dumps(doc))

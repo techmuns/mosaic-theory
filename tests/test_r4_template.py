@@ -22,6 +22,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.frozen_support import frozen_page
 from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
 from vinci.dossier.propose import (
     ProposalRefusedError,
@@ -49,7 +50,7 @@ _FROZEN = {"SMPL": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" /
 
 
 def _page(ticker: str, *, tag: str | None = sc.RECIPE_R4) -> dict[str, Any]:
-    folder = _FROZEN.get(ticker, ROOT / "data" / "dossiers" / ticker)
+    folder = _FROZEN[ticker] if ticker in _FROZEN else frozen_page(ticker)   # never a living page
     doc: dict[str, Any] = json.loads((folder / "dossier.json").read_text())
     if tag is not None:
         doc["anchor"]["recipe_hint"] = tag

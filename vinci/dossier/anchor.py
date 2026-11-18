@@ -6,13 +6,16 @@ D&A) × multiple) — this module only GATHERS the source-bound inputs and CALLS
 the arithmetic. Every input is cited; a gap is FLAGGED and the anchor marked inapplicable, never
 fabricated (a silently-zeroed D&A would understate EBITDA → understate the anchor).
 
-An ATTENTION FILTER, not a verdict: it re-rates the name to its OWN-history median multiple on a
-NAIVE reported-median margin — cycle / one-off / mix adjustments are the analyst's job in the full
-2:1 underwrite. Spot and reward-to-base are computed LIVE at triage, never stored here.
+An ATTENTION FILTER, not a verdict: it prices a NAIVE reported-median margin at the multiple the
+name trades on TODAY — its own history's latest close, the trailing median printed beside it and
+never priced (W50, 2026-11-17; it re-rated to the median before, the bias recipe 3a removed from the
+proposal). Cycle / one-off / mix adjustments are the analyst's job in the full 2:1 underwrite. Spot
+and reward-to-base are computed LIVE at triage, never stored here.
 """
 from __future__ import annotations
 
 import json
+import math
 import re
 import statistics as st
 from datetime import date, datetime
@@ -23,6 +26,7 @@ from pydantic import BaseModel, ValidationError, computed_field
 
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
+from vinci.dossier.anchor_split import AnchorGapSplit, gap_split, reproduces
 from vinci.edgar.asof import page_price_date
 from vinci.edgar.concepts import (
     ANNUAL_STALE_DAYS,
@@ -128,9 +132,11 @@ BASIS_AGREE_PTS = 2.0
 class AnchorMidcycleGap(BaseModel, frozen=True):
     """R1's central assumption, stated where it is being STRETCHED — never a correction to it.
 
-    R1 reverts the operating margin to its own history's median and re-rates it at the median
-    multiple of the SAME history. The two are a matched pair, so the anchor is internally
-    consistent: it answers "what is this worth if the business is still what it was?". That
+    R1 reverts the operating margin to its own history's median. Until 2026-11-17 it re-rated it
+    at the median multiple of the SAME history, a matched pair; since W50 it prices it at TODAY'S
+    multiple (the band's latest close), struck on the last twelve months' EBITDA, so the pair is
+    matched only where the twelve months sit near the median — the ``read`` says which way it is
+    not. It answers "what is this worth, at today's multiple, if its margin is what it was?". That
     answer is only as good as the history, and when the last twelve months sit far from the
     median the page has to say so — because the machine cannot tell a structural change (a new
     mix, a new model: history misleads) from a cyclical excursion (a peak or a trough: reverting
@@ -181,14 +187,56 @@ class AnchorMargin(BaseModel, frozen=True):
 
 
 class AnchorMultiple(BaseModel, frozen=True):
-    """The own-history median EV/EBITDA — READ from the committed valuation block, never
-    recomputed (same series/statistic the valuation own-history band already committed)."""
+    """The own-history EV/EBITDA the screen prices — READ from the committed band R1 reads, never
+    recomputed.
+
+    WHICH STATISTIC IS A FIELD (W50, 2026-11-17). An anchor derived since prices the band's CURRENT
+    multiple — its latest close, dated by ``as_of`` — with the trailing ``median`` beside it, never
+    priced, and says so in ``statistic``. Every anchor committed before carries no ``statistic`` and
+    priced the median (its ``source`` ends ``.median``): the renderers read the field, so those
+    pages print what they priced until each is re-derived. The three are written ABSENT, never null,
+    where unset (`anchor_absent_fields`). ``history_quarters`` and ``confidence`` describe the band
+    the current sits in, as before."""
 
     value: float | None
     unit: str = "EV/EBITDA"
     source: str = "valuation.own_history.median"
     history_quarters: int
     confidence: str  # firm | weak
+    statistic: str | None = None        # MULTIPLE_CURRENT on an anchor derived since W50
+    as_of: str | None = None            # the latest close the current is struck at
+    median: float | None = None         # the band's trailing median, beside it — never priced
+
+
+#: What an anchor derived since W50 prices: the band's latest close (`AnchorMultiple.statistic`).
+MULTIPLE_CURRENT = "current"
+
+
+def usable_multiple(v: Any) -> float | None:
+    """`v` as a multiple a screen or a proposal can stand on, or None: a finite positive number.
+
+    ONE READER for the anchor and recipe 3a's proposal (`propose._usable_multiple`), so the two
+    cannot disagree about which current is usable. A missing, NM (CIQ prints NM where the EBITDA is
+    not positive; midcycle's D-D3 note), non-finite or non-positive current is not a multiple, and
+    it is never replaced by another statistic."""
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    f = float(v)
+    return f if math.isfinite(f) and f > 0 else None
+
+
+def no_current_reason(ex_lease: bool, raw: Any, median: float | None) -> str:
+    """Why an anchor publishes no screen value: the band R1 prices on has no usable current.
+
+    FAIL LOUD, NEVER THE MEDIAN (W50, recipe 3a's rule on the page). The median priced the screen
+    until 2026-11-17, so it is the obvious stand-in — which would restore, on exactly the pages
+    whose data is weakest, the bias this removes."""
+    where = "valuation.lease_basis.ex_lease_band" if ex_lease else "valuation.own_history"
+    return (f"the band R1 prices on ({where}) carries no usable current multiple (current={raw!r}: "
+            "absent, NM, non-finite or not positive) — the screen prices today's multiple, and the "
+            "trailing "
+            "median" + (f" ({median:g}x)" if median is not None else "")
+            + " is never priced in its place; no screen value until the band carries one")
 
 
 class AnchorInput(BaseModel, frozen=True):
@@ -336,6 +384,10 @@ class Anchor(BaseModel, frozen=True):
     # type is `band_guards.BandOutcome`, the same three states, because `schemas` imports this
     # module and its `CrossCheck` cannot be imported here.
     ciq_scale_check: bg.BandOutcome | None = None
+    # (W61, 2026-11-18) the screen value as the value today's multiple puts on current EBITDA plus
+    # a margin effect, the multiple effect beside it (`anchor_split`). Set wherever a screen value
+    # is; absent, never null, elsewhere and on every anchor written before it.
+    gap_split: AnchorGapSplit | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -367,10 +419,12 @@ def _band_read(ev: Any) -> dict[str, Any] | None:
         return None
     span = ev.get("window_span_years")
     da_margin = ev.get("implied_d_and_a_margin")
-    cur = ev.get("current")
     return {
         "median": float(ev["median"]),
-        "current": float(cur) if cur is not None else None,
+        # None unless USABLE (`usable_multiple`): a float() of an NM cell raised here before
+        "current": usable_multiple(ev.get("current")),
+        "current_raw": ev.get("current"),
+        "as_of": ev.get("as_of"),
         "n_closes": int(ev.get("n_closes") or 0),
         "span_years": float(span) if span is not None else None,
         "periodicity": ev.get("periodicity"),
@@ -384,9 +438,27 @@ NET_DEBT_EX_LEASE = "net debt excluding operating leases (latest 10-Q)"
 #: Leases are material and the ex-lease history could not be built or reconciled: the multiple has
 #: no basis R1's arithmetic can use, so the anchor refuses rather than fall back to CIQ's history.
 DQ_LEASE_BASIS = "lease_basis_unresolved"
-_CIQ_BAND_SOURCE = "valuation.own_history.median"
-_EX_LEASE_SOURCE = ("valuation.lease_basis.ex_lease_band.median — TEV less operating leases over "
+# (W50) the CURRENT of each band — the statistic the screen prices. The `valuation.lease_basis`
+# prefix is what `anchor_prices_ex_lease` and the renderers key the lease convention on: kept.
+_CIQ_BAND_SOURCE = "valuation.own_history.current"
+_EX_LEASE_SOURCE = ("valuation.lease_basis.ex_lease_band.current — TEV less operating leases over "
                     "reported LTM EBITDA, the basis of the EBITDA R1 prices")
+#: What an anchor committed before W50 cites (it priced the median): the band-identity check of a
+#: writer that reads a committed anchor (`refresh.band_checks_backfill`) must still recognise it.
+_LEGACY_CIQ_BAND_SOURCE = "valuation.own_history.median"
+_LEGACY_EX_LEASE_SOURCE = ("valuation.lease_basis.ex_lease_band.median — TEV less operating leases "
+                           "over reported LTM EBITDA, the basis of the EBITDA R1 prices")
+
+
+def priced_band_value(held: dict[str, Any], band: dict[str, Any], *, ex_lease: bool
+                      ) -> tuple[Any, str]:
+    """The (value, source) a committed anchor multiple must carry if it priced ``band`` — read off
+    the anchor's own ``statistic``: since W50 the band's current, before it the median. Reading the
+    field, not assuming the new statistic, is what lets a writer re-derive a block on a page whose
+    anchor predates W50 without calling its band foreign."""
+    if held.get("statistic") == MULTIPLE_CURRENT:
+        return band.get("current"), (_EX_LEASE_SOURCE if ex_lease else _CIQ_BAND_SOURCE)
+    return band.get("median"), (_LEGACY_EX_LEASE_SOURCE if ex_lease else _LEGACY_CIQ_BAND_SOURCE)
 
 
 class R1Band(NamedTuple):
@@ -1331,17 +1403,26 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
     if abs(gap) < MIDCYCLE_GAP_PTS:
         return None
     yrs = f"{median_years}-year" if median_years else "historical"
+    # (W50, 2026-11-17) THE PAIR IS NO LONGER MATCHED, and this is where the page says so. R1 paired
+    # the median margin with the median multiple of the same history; it now prices TODAY'S
+    # multiple, which the market struck on these twelve months' EBITDA. Arithmetic, not a forecast:
+    # at one price a multiple struck on above-median EBITDA reads lower than on median EBITDA, and
+    # on below-median EBITDA higher — so a gap this size moves the screen's multiple too.
     if gap > 0:
         # "an R1 value", never "this value": the flag also rides on an R1 anchor that publishes NO
         # value (GOOGL, NFLX — inputs incomplete), and "this value" there points at nothing
         tail = ("so an R1 value answers what the business is worth if it is still what it was. If "
                 "the gap is STRUCTURAL — a changed mix or model — that history understates it; if "
-                "it is a cyclical PEAK, reverting is right.")
+                "it is a cyclical PEAK, reverting is right. Today's multiple is struck on these "
+                "above-median earnings, so it reads lower than the same price would on median "
+                "earnings, and an R1 value can understate on that count too.")
         where = "ABOVE"
     else:
         tail = ("so an R1 value assumes a recovery to what the business was. If the decline is "
                 "STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting "
-                "recovery is right.")
+                "recovery is right. Today's multiple is struck on these below-median earnings, so "
+                "it reads higher than the same price would on median earnings, and an R1 value "
+                "can overstate on that count too.")
         where = "BELOW"
     med_src = "CIQ EBIT" if median_from_ciq else "EDGAR GAAP operating income"
     if median_from_ciq:
@@ -1387,8 +1468,8 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
                           f"understates it.")
     read = (f"The last twelve months' operating margin of {_margin_words(ltm)} (CIQ EBIT) sits "
             f"{abs(gap):.1f} points {where} the {yrs} median of {_margin_words(median_margin)} "
-            f"({med_src}) that R1 reverts to. R1 pairs that median with the median multiple "
-            f"from the same history, {tail}{bsent}")
+            f"({med_src}) that R1 reverts to. R1 prices that median at the multiple the name "
+            f"trades on today, {tail}{bsent}")
     basis_txt = (f"LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: "
                  f"{median_source or 'the anchor margin'}; flagged at ≥{MIDCYCLE_GAP_PTS:g} "
                  f"points; sources said to agree within {BASIS_AGREE_PTS:g}")
@@ -1483,6 +1564,10 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
             recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=computed_at,
             reason="own-history multiple missing (valuation.own_history.median absent)"), bridge)
     mult_median, mult_qtrs = mult["median"], mult["n_closes"]
+    # (W50, 2026-11-17) THE SCREEN PRICES TODAY'S MULTIPLE — the band's latest close, the multiple
+    # recipe 3a proposes for the record's base. The median prices nothing: it is printed beside it,
+    # and a band with no usable current anchors no value (never the median in its place).
+    mult_cur = mult["current"]
     mult_span, mult_period, mult_dq = mult["span_years"], mult["periodicity"], mult["data_quality"]
 
     # margin — median operating margin over the years the TOTAL-revenue tag covers. EBIT is aligned
@@ -1590,27 +1675,37 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
 
     margin_blk = AnchorMargin(value=round(margin_val, 6), basis="operating margin (EBIT / revenue)",
                               source=margin_source, anchor_years=margin_years, confidence=m_conf)
-    multiple_blk = AnchorMultiple(value=mult_median, history_quarters=mult_qtrs, confidence=x_conf,
-                                  source=sel.source)
+    multiple_blk = AnchorMultiple(value=mult_cur, history_quarters=mult_qtrs, confidence=x_conf,
+                                  source=sel.source, statistic=MULTIPLE_CURRENT,
+                                  as_of=None if mult["as_of"] is None else str(mult["as_of"]),
+                                  median=mult_median)
 
     # anchor base — the #150 block's EBITDA-basis value math; needs a complete bridge AND a multiple
     # that survived the band guards. A tripped guard means the multiple's denominator is provably
     # not this company's EBITDA, so re-rating to it would publish a fabricated fundamental — the one
     # outcome the fail-loud rule exists to prevent. UNUSABLE until cleared, not merely "weak".
     base = base_diluted = ev_ebit = None
+    split: AnchorGapSplit | None = None
     # THE DENOMINATOR: the corroborated point-in-time count, else the diluted weighted average the
     # base was struck on before 2026-10-21 — a refused count never silently becomes the divisor.
     out, inc, dil = bridge["out"], bridge["inc"], bridge["dil"]
     shares = out or (dil.value if dil and dil.value > 0 else None)
-    if (da and nd_val is not None and shares and ltm_rev is not None and not band_tripped):
+    if (da and nd_val is not None and shares and ltm_rev is not None and not band_tripped
+            and mult_cur is not None):
         sv = mc.scenario_value(
-            mc.Scenario(name="base", revenue=ltm_rev, margin=margin_val, multiple=mult_median,
+            mc.Scenario(name="base", revenue=ltm_rev, margin=margin_val, multiple=mult_cur,
                         source="anchor default", d_and_a=da[0] / _USD_M),
             net_debt=nd_val / _USD_M, shares=shares)
         base = round(sv.equity * _USD_M / shares, 4)
         if out and inc is not None:
             base_diluted = round(sv.equity * _USD_M / (out + inc), 4)
         ev_ebit = round(sv.ev_ebit, 4) if sv.ev_ebit is not None else None
+        # (W61) the same arithmetic split into its causes: price-free, from the inputs just used
+        split = gap_split(mechanical, ex_lease=sel.ex_lease, current=mult_cur,
+                          median=mult_median, close=None if mult["as_of"] is None
+                          else str(mult["as_of"]), revenue=ltm_rev, margin=margin_val,
+                          d_and_a=da[0] / _USD_M, net_debt=nd_val / _USD_M, shares=shares,
+                          price_date=on_close)   # the STORED close, as committed_gap_split reads
 
     # a periodicity mismatch or a band-guard trip is its own fail-loud data-quality event; raise it
     # on the anchor (joining any revenue-tag conflict) so the flag rides with the number it taints.
@@ -1635,6 +1730,8 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     elif band_tripped:
         reason = ("own-history EV/EBITDA band failed a coherence guard — the multiple's "
                   "denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced")
+    elif mult_cur is None:
+        reason = no_current_reason(sel.ex_lease, mult["current_raw"], mult_median)
     elif base is None:
         reason = "R1 inputs incomplete — see per-input source stamps"
     return Anchor(
@@ -1655,7 +1752,42 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                                   ltm_revenue=ltm_rev, median_source=margin_source,
                                   basis=(None if median_from_ciq
                                          else basis_check(ma.by_year, mechanical)),
-                                  median_from_ciq=median_from_ciq))
+                                  median_from_ciq=median_from_ciq),
+        gap_split=split)
+
+
+def committed_gap_split(doc: dict[str, Any]) -> AnchorGapSplit | None:
+    """The split of a COMMITTED page's screen value, from its committed fields alone: no fetch, $0.
+
+    It splits around the band's current (today's multiple) and median whichever the anchor priced,
+    and refuses (ValueError) a split that does not rebuild the published value at the statistic the
+    anchor records: at today's multiple since W50, at the median before (`anchor_split.reproduces`).
+    None where the anchor publishes no screen value or the band carries no usable current, since
+    then there is nothing to split around."""
+    a = doc.get("anchor") or {}
+    base = a.get("anchor_base_value_per_share")
+    mech = doc.get("mechanical") or {}
+    sel = r1_multiple_band(mech)
+    band = _band_read(sel.band)
+    if base is None or band is None or band["current"] is None:
+        return None
+    def val(k: str) -> Any:
+        return (a.get(k) or {}).get("value")
+    rev, margin, da, nd = val("ltm_revenue"), val("margin"), val("d_and_a"), val("net_debt")
+    shares = per_share_shares(a)
+    if None in (rev, margin, da, nd) or shares is None:
+        return None
+    statistic = (a.get("multiple") or {}).get("statistic")
+    split = gap_split(mech, ex_lease=sel.ex_lease, current=band["current"],
+                      median=band["median"], close=None if band["as_of"] is None
+                      else str(band["as_of"]), revenue=float(rev), margin=float(margin),
+                      d_and_a=float(da), net_debt=float(nd), shares=shares,
+                      price_date=price_as_of(mech))
+    if not reproduces(split, float(base), statistic):
+        want = split.anchor_at_current if statistic == MULTIPLE_CURRENT else split.anchor_at_median
+        raise ValueError(f"the split rebuilds {want} where the anchor publishes {base} — it would "
+                         "be splitting another number")
+    return split
 
 
 def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
@@ -1666,11 +1798,16 @@ def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
     decision only where a record says what it was). A pydantic `exclude` mapping."""
     out: dict[str, Any] = {k: True for k in ("midcycle_gap", "anchor_base_value_per_share_diluted",
                                              "operator_decision", "machine_recipe_hint",
-                                             "band_checks", "ciq_scale_check")
+                                             "band_checks", "ciq_scale_check", "gap_split")
                            if getattr(anchor, k) is None}
     if anchor.operator_decision is not None \
             and anchor.operator_decision.machine_recipe_at_decision is None:
         out["operator_decision"] = {"machine_recipe_at_decision": True}
+    # (W50) the multiple's statistic, its close date and the median beside it: absent on every
+    # anchor committed before, so those pages round-trip byte-identically
+    if anchor.multiple is not None and (mx := {k: True for k in ("statistic", "as_of", "median")
+                                              if getattr(anchor.multiple, k) is None}):
+        out["multiple"] = mx
     return out
 
 

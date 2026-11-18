@@ -296,6 +296,10 @@ is the 3.9 system one).
      other block leaf that moved are LISTED (`LEFT THEIR LIST`, `CHANGED`, `CHANGED IN A BLOCK`,
      25 a block with the cut said; `--changes-json <path>` writes every row), not a stop — read
      them before spending. The last line counts them; it never says nothing was lost.
+   - It prints **INPUT CHECKS** (2026-11-18, workstream B slice 2): the gate the paid build runs
+     on its page before the write (`vinci/dossier/input_checks.py`), here on the $0 build's page,
+     each FLAG with every finding. A FLAG is not a stop and never changes the exit code; read it
+     before spending, since the paid page will print it above its Brief. No check is HARD.
    - It writes nothing to `data/dossiers/` and no `assembly_runs` line. A first assembly (no
      committed page) has no field to compare, but its post-spend refusals still run, and any one
      that fires exits 1.
@@ -882,7 +886,12 @@ inputs, at $0 (no model call). Code: `vinci/impact/`; record:
 4. **Read it, part by part:**
    1. **Fail first** — head's changed tests on base's `vinci/` and on head's. A fix needs ≥ 1 node
       that fails at base; ANY failure at head is a red PR. A name the tests import that base lacks
-      is stood in by a placeholder, so each node fails at the line that uses it.
+      is stood in by a placeholder, so each node fails at the line that uses it. Each side runs in
+      its own clone of the repository at head's commit (`git clone --shared`, the repository's
+      `origin/*`, pushes refused; base's with its `vinci/` swapped in, index too), so a test that
+      asks git runs as it does in a checkout and nothing it writes reaches the repository. The
+      clones are removed when the tests end; a killed run leaves them as folders under `--out`.
+      Base's checkout is head's commit, so a test asserting a clean checkout fails at base alone.
    2. **Pages** — every committed page built at $0 (`prespend.mechanical_build`) at both refs:
       "N of M pages move" and every moved field with its `source_ref`. The moves must be the ones
       the PR claims; a page whose inputs differ between the sides is named (not a code effect).

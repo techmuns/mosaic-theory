@@ -28,6 +28,7 @@ import pathlib
 
 import pytest
 
+from tests.frozen_support import CUT
 from vinci.dossier.mechanical import _release_revenue_guide
 from vinci.dossier.schemas import Dossier
 from vinci.edgar.primary_source import guide_verification
@@ -49,7 +50,7 @@ def _releases(ticker: str, root: pathlib.Path = DOSSIERS) -> list:
 def test_brbrs_net_sales_guide_reaches_the_cross_check() -> None:
     """THE REGRESSION, on BRBR's committed releases. The guide was parsed all along — the consumer
     could not see it, so the page said there was no outlook."""
-    lo, hi, qual, basis, period = _release_revenue_guide(_releases("BRBR"))
+    lo, hi, qual, basis, period = _release_revenue_guide(_releases("BRBR", CUT))
     assert (lo, hi) == (2335.0, 2375.0), "the net-sales guide is still invisible to the cross-check"
     assert not qual and basis == "level"
     assert period == "2026"
@@ -58,7 +59,7 @@ def test_brbrs_net_sales_guide_reaches_the_cross_check() -> None:
 def test_brbr_now_verifies_instead_of_declining_to_look() -> None:
     """THE POINT OF FINDING IT. CIQ and the release state the SAME range, so the check does not
     merely run — it PASSES. The page was reporting no outlook on a name whose outlook agrees."""
-    lo, hi, _q, _b, period = _release_revenue_guide(_releases("BRBR"))
+    lo, hi, _q, _b, period = _release_revenue_guide(_releases("BRBR", CUT))
     out = guide_verification("revenue", 2335.0, 2375.0, release_low=lo, release_high=hi,
                              ciq_period="FY 2026", release_period=period)
     assert "cross-source VERIFIED" in out
