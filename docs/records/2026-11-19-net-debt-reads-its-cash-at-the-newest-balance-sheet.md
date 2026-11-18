@@ -87,7 +87,8 @@ bound only for the case where none does. Eastman's pin shows both halves of the 
   - uncut: HIVE Digital's under-capture refusal, 2026-06-30 → 2026-09-30; Greenwich
     LifeSciences, 2025-12-31 → 2026-03-31, and Unusual Machines, 2026-03-31 → 2026-09-30, both
     under "no debt/cash";
-  - at the cut: Greenwich LifeSciences and Unusual Machines (2026-03-31 → 2026-06-30).
+  - at the cut: Greenwich LifeSciences, 2025-12-31 → 2026-03-31, and Unusual Machines,
+    2026-03-31 → 2026-06-30, both under "no debt/cash".
 
   And the 13 backstop refusals at each cut name the stale cash; 10 of them were UNKNOWN on main
   for another reason.
@@ -110,7 +111,8 @@ bound only for the case where none does. Eastman's pin shows both halves of the 
   - **no gate moves.** `vinci/screens/screen2.py` and `vinci/rank/` read no net-debt field. Their
     one reader is their writer, `screens/assemble.py`.
 - **The committed pages:** the impact run, in the PR body.
-- **Pins: 14** in `tests/test_net_debt_cash_age.py`, on 11 frozen real filers
+- **Pins: 13 tests** in `tests/test_net_debt_cash_age.py` (round 2: the count said 14,
+  AdaptHealth's two halves counted twice), on 11 frozen real filers
   (`tests/fixtures/cash_age/`, README there).
   - **Subset check.** Each subset reads as its full blob at main and at this branch: net debt and
     the balance-sheet date, uncut and cut at 2026-10-16 and 2009-11-30, 0 of 33 readings differing.
@@ -153,8 +155,9 @@ No blocker. It reproduced every count above and re-derived Morningstar, Diebold 
   - 4: the #1112 amendment lists all six ifrs-full lines;
   - 5 and 6 are FOUND NOT FIXED (WHAT IT COSTS 4);
   - 7: the PR body's fail-first count is corrected. With `balance_sheet_date` and `stale_cash`
-    loaded into main's code, Visa, TAT and Roper pass. The real fail-firsts are 10 cash-age pins
-    and the pair-wording pin;
+    loaded into main's code, Visa, TAT and Roper pass, and ATEC fails only on the attribute. The
+    real fail-firsts are 9 cash-age tests (13 failing at base, less those 4) and the pair-wording
+    pin, 10 in all (round 2: this line said 10 cash-age pins plus that one);
   - 8: the moves among refused readings are named above.
 - **What moves, e71ec3f8 → round 1:** only words. The 13 backstop refusals are reworded at each
   cut, and nothing else in any net-debt reading moves. In the replay of run 2026-10-16-01, 7
@@ -186,9 +189,10 @@ No blocker. It reproduced every count above and re-derived Morningstar, Diebold 
    cash in it is preferred to a stale one without. **MEASURED (round 1):** restricted cash =
    alias 2 − alias 1 at the last date both carry, on the filers this branch serves through alias 2
    where main read alias 1.
-   - **At the 2026-10-16 cut, 14 filers:** $0 to $15.0M, at most 2.2% of net debt. Diebold
-     $15.0M (2.2% of its $687.3M), APEI $2.4M (1.8% of −$135.4M), Papa John's $2.4M (0.3%), and
-     US Antimony $0.16M against −$3.2M. The other 10 are $0.
+   - **At the 2026-10-16 cut, 14 filers:** ≤$15.0M; ≤2.2% of net debt except US Antimony,
+     $0.16M, 5.1% of a −$3.2M net cash (round 2: this line said "at most 2.2%" of all 14).
+     Diebold $15.0M (2.2% of its $687.3M), APEI $2.4M (1.8% of −$135.4M), Papa John's $2.4M
+     (0.3%). The other 10 are $0.
    - **Uncut, 7 filers:** 3 nonzero, Diebold $15.0M (1.9% of $791.2M), Papa John's $2.4M and
      US Antimony $0.16M; the other 4 are $0.
 
@@ -215,8 +219,9 @@ No blocker. It reproduced every count above and re-derived Morningstar, Diebold 
    - **A walk cash dated after the newest balance sheet passes the backstop** with a negative age.
      `balance_sheet_date` skips a forward-dated `Assets` row, and the backstop does not skip a
      forward-dated cash. There are 0 cases at both cuts: no filer's walked cash is later than its
-     newest balance sheet, and the walk picks none of the 12 forward-dated cash points the
-     aliases carry. The right reading depends on the shape. A forward-dated context should be
+     newest balance sheet, and the walk picks none of the 6 forward-dated cash rows the aliases
+     carry, in 3 filers, the same 6 at each cut (Marzetti 2011-06-30 ×2, Walmart 2012-12-31,
+     Roper 2009-12-31 and 2015-12-31 ×2; round 2: this said 12, both cuts summed). The right reading depends on the shape. A forward-dated context should be
      refused, while a cash instant on a date the filer tags no `Assets` is current. No real filer
      shows either, so a pin would choose on a synthetic shape. DEFERRED; an `abs(...)` mutant
      survives.
