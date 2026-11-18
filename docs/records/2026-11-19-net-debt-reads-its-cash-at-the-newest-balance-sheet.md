@@ -18,9 +18,10 @@ superseded-by:
 - **THE BACKSTOP.** Where no alias carries the newest balance sheet, the alias walk's latest cash
   is read, and only if it is at most `CASH_MAX_AGE_DAYS` (180, two quarters) behind. Older is
   refused as a past balance sheet, and the refusal names both dates. PennyMac's reads: "no cash
-  line is tagged at the filer's 2026-09-30 balance sheet, and the one read,
-  CashAndCashEquivalentsAtCarryingValue, was last reported $60M at 2018-12-31, 2830d before it — a
-  past balance sheet, not read as current".
+  line net debt reads (CONCEPT_ALIASES['cash']) is tagged at the filer's 2026-09-30 balance sheet,
+  and the one read, CashAndCashEquivalentsAtCarryingValue, was last reported $60M at 2018-12-31,
+  2830d before it — a past balance sheet, not read as current". It claims only the tags it
+  checked: PennyMac tags `Cash` $161.5M at that instant (round 1, below).
 - **The walk is unchanged.** `extract_points` and `_walk`, with their 200d sibling rule, are
   untouched for every other concept and reader.
 - **Readers.** Net debt's readers move with it: the screen's snapshot and its `net_leverage` and
@@ -81,6 +82,15 @@ bound only for the case where none does. Eastman's pin shows both halves of the 
   - 3 go served → refused: Jack in the Box, PennyMac, and BorgWarner, whose Q2 10-Q tags no cash
     line at 2026-06-30, so its year-end cash is 181d behind;
   - 1 goes refused → served: Phreesia.
+- **Moves among refused readings** (round 1; the passes above counted served pairs only). A
+  refusal re-dated while it stays UNKNOWN:
+  - uncut: HIVE Digital's under-capture refusal, 2026-06-30 → 2026-09-30; Greenwich
+    LifeSciences, 2025-12-31 → 2026-03-31, and Unusual Machines, 2026-03-31 → 2026-09-30, both
+    under "no debt/cash";
+  - at the cut: Greenwich LifeSciences and Unusual Machines (2026-03-31 → 2026-06-30).
+
+  And the 13 backstop refusals at each cut name the stale cash; 10 of them were UNKNOWN on main
+  for another reason.
 - **Option 1 → this branch, at the cut:** 7 of option 1's 10 refusals are served: Eastman, Olin,
   Andersons, Everforth, APEI, Sunoco and Perrigo. Phreesia is also served, refused under option 1
   for its other reason. The 3 others stay refused.
@@ -131,6 +141,25 @@ bound only for the case where none does. Eastman's pin shows both halves of the 
   4. the backstop at a year: killed by Jack in the Box and AdaptHealth;
   5. the backstop at one quarter (89d): killed by AdaptHealth.
 
+**ROUND 1 (2026-11-19): coordinator A's independent review of 1f3fadcb; Codex found nothing.**
+No blocker. It reproduced every count above and re-derived Morningstar, Diebold and Phreesia.
+- **Should-fix 1, FIXED:** the backstop refusal claimed an absence that is false. It now says no
+  cash line net debt reads is tagged there (WHAT IT COSTS 3 has the other tags), and the PennyMac
+  pins fail on the old words.
+- **Should-fix 2, FIXED:** the restricted cash is measured (WHAT IT COSTS 1).
+- **Nits:**
+  - 3: the PR title says 0 RECORD fields go PRESENT → UNKNOWN. PennyMac's snapshot `net_debt`
+    goes PRESENT → UNKNOWN in the same replay;
+  - 4: the #1112 amendment lists all six ifrs-full lines;
+  - 5 and 6 are FOUND NOT FIXED (WHAT IT COSTS 4);
+  - 7: the PR body's fail-first count is corrected. With `balance_sheet_date` and `stale_cash`
+    loaded into main's code, Visa, TAT and Roper pass. The real fail-firsts are 10 cash-age pins
+    and the pair-wording pin;
+  - 8: the moves among refused readings are named above.
+- **What moves, e71ec3f8 → round 1:** only words. The 13 backstop refusals are reworded at each
+  cut, and nothing else in any net-debt reading moves. In the replay of run 2026-10-16-01, 7
+  names' notes are reworded (BMI, HIMX, PMT, RCAT, SFBS, SID, USAS), and no status changes.
+
 **BOUNDARY.**
 - **Cache:** the primary checkout's SEC cache, read directly, with no TTL and no network: 1,078
   companyfacts blobs, one per CIK, fetched 2026-06-17..2026-11-18. A cash-line filer is one with
@@ -154,15 +183,44 @@ bound only for the case where none does. Eastman's pin shows both halves of the 
    `CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents` carries the newest balance
    sheet, net debt nets restricted cash. That is the alias list's own order, and the walk already
    served that alias whenever it led by more than 200d. A current balance sheet with restricted
-   cash in it is preferred to a stale one without. Falsifier: a filer whose restricted cash is
-   material against its net debt on a balance sheet read so. It is not measured: the restricted
-   part is not split out by these tags.
+   cash in it is preferred to a stale one without. **MEASURED (round 1):** restricted cash =
+   alias 2 − alias 1 at the last date both carry, on the filers this branch serves through alias 2
+   where main read alias 1.
+   - **At the 2026-10-16 cut, 14 filers:** $0 to $15.0M, at most 2.2% of net debt. Diebold
+     $15.0M (2.2% of its $687.3M), APEI $2.4M (1.8% of −$135.4M), Papa John's $2.4M (0.3%), and
+     US Antimony $0.16M against −$3.2M. The other 10 are $0.
+   - **Uncut, 7 filers:** 3 nonzero, Diebold $15.0M (1.9% of $791.2M), Papa John's $2.4M and
+     US Antimony $0.16M; the other 4 are $0.
+
+   It is real where alias 2 alone is read: Visa's two aliases differ by $6,180M at 2026-09-30, and
+   the first is read there (pinned). Falsifier: a filer read through alias 2 whose restricted cash,
+   so measured, is material against its net debt. None is today.
 2. **The backstop's 180d is option 1's bound**, measured then on the walk's date: 571 at the
    newest, 4 at 90–91d, nothing from 92d to 181d. Under option 2 the backstop applies to 15
    filers today, 2 read at 90d and 13 refused at 181d or more. It is set by that gap and by the
    share count's precedent, never by outcomes.
-3. **A filer whose newest 10-Q tags no cash line is refused** once its last cash is two quarters
-   old. That is BorgWarner at the cut: its Q2 10-Q carries `Assets` at 2026-06-30 and no cash
-   tag. Fail loud: CIQ can settle it at the depth stage.
-4. **Not touched:** the 52 combined annual figures whose legs stop a year apart stay refused,
+3. **A filer whose newest balance sheet carries no cash alias is refused** once its last aliased
+   cash is two quarters old. The common case is cash moved to a tag net debt does not read: on
+   2026-11-19, 12 of the 13 filers the backstop refuses (uncut) tag cash at that exact instant
+   under another tag. 8 use the disposal-group total
+   (`...RestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations`; AdaptHealth's
+   $80.7M), 6 `us-gaap:Cash` (PennyMac $161.5M, Jack in the Box $43.0M), 4
+   `ifrs-full:CashAndCashEquivalents`, 2 `ifrs-full:Cash` and 1 `CashAndDueFromBanks`. Only
+   CoinShares Bitcoin ETF carries none, and at the cut BorgWarner, whose Q2 10-Q tags `Assets` at
+   2026-06-30 and no cash line at all. The refusal says only that no cash line net debt READS is
+   tagged there. Reading those tags as aliases is a scope change, not made here: a possible
+   follow-up, which would have to show each is the same line. Fail loud: CIQ can settle it at the
+   depth stage.
+4. **FOUND, NOT FIXED (round 1):**
+   - **A walk cash dated after the newest balance sheet passes the backstop** with a negative age.
+     `balance_sheet_date` skips a forward-dated `Assets` row, and the backstop does not skip a
+     forward-dated cash. There are 0 cases at both cuts: no filer's walked cash is later than its
+     newest balance sheet, and the walk picks none of the 12 forward-dated cash points the
+     aliases carry. The right reading depends on the shape. A forward-dated context should be
+     refused, while a cash instant on a date the filer tags no `Assets` is current. No real filer
+     shows either, so a pin would choose on a synthetic shape. DEFERRED; an `abs(...)` mutant
+     survives.
+   - **`balance_sheet_date` accepts `Assets` from any form.** It is latent: all 961 newest
+     instants come from a 10-Q (885 uncut, 868 at the cut), 10-K, 10-KT, 20-F, 40-F or 6-K.
+5. **Not touched:** the 52 combined annual figures whose legs stop a year apart stay refused,
    pending the operator's reading (STATE row 11's owner column).

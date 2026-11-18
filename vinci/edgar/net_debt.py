@@ -489,10 +489,13 @@ class NetDebt:
         tagged a debt line; every other reason is one the depth stage (CIQ) can settle."""
         if self.stale_cash is not None:
             c = self.cash
-            return (f"no cash line is tagged at the filer's {self.stale_cash} balance sheet, and "
-                    f"the one read, {c.tag}, was last reported ${c.value / 1e6:,.0f}M at "
-                    f"{self.at}, {(self.stale_cash - self.at).days}d before it — a past balance "
-                    f"sheet, not read as current")
+            # what was CHECKED, never more: 12 of the 13 filers refused here on 2026-11-19 tag
+            # cash at that instant under a tag net debt does not read (PennyMac's `Cash`)
+            return (f"no cash line net debt reads (CONCEPT_ALIASES['cash']) is tagged at the "
+                    f"filer's {self.stale_cash} balance sheet, and the one read, {c.tag}, was "
+                    f"last reported ${c.value / 1e6:,.0f}M at {self.at}, "
+                    f"{(self.stale_cash - self.at).days}d before it — a past balance sheet, not "
+                    f"read as current")
         if self.witness_text is not None:
             return f"EDGAR debt under-captured: {self.witness_text}"
         if self.borrowings is None and self.stale_debt is not None:

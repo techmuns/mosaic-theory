@@ -48,16 +48,22 @@ def _facts(ticker: str, where: pathlib.Path = FIXTURES) -> dict[str, Any]:
 def test_pennymac_net_debt_is_no_longer_read_off_its_2018_balance_sheet() -> None:
     """PennyMac's cash aliases stop at 2018-12-31; its balance sheets run to 2026-09-30. Net debt
     was $5,958M, every line read at 2018-12-31. It is refused now, naming the cash line, both
-    dates and the 2,830d between them."""
+    dates and the 2,830d between them.
+
+    THE REFUSAL CLAIMS ONLY WHAT IT CHECKED (review of 1f3fadcb, should-fix 1): no cash line net
+    debt READS is tagged at the newest balance sheet. PennyMac does tag cash there, as `Cash`
+    $161.5M at 2026-09-30 (10-Q filed 2026-11-03), a tag outside `CONCEPT_ALIASES["cash"]`; 12 of
+    the 13 filers the backstop refuses on 2026-11-19 tag cash at that instant under another tag."""
     facts = _facts("PMT")
     assert balance_sheet_date(facts) == date(2026, 9, 30)
     nd = net_debt(facts)
     assert nd is not None and nd.at == date(2018, 12, 31)
     assert nd.value(Basis.LEVERAGE) is None and not nd.nothing_to_read
     assert nd.refusal == (
-        "no cash line is tagged at the filer's 2026-09-30 balance sheet, and the one read, "
-        "CashAndCashEquivalentsAtCarryingValue, was last reported $60M at 2018-12-31, 2830d "
-        "before it — a past balance sheet, not read as current")
+        "no cash line net debt reads (CONCEPT_ALIASES['cash']) is tagged at the filer's "
+        "2026-09-30 balance sheet, and the one read, CashAndCashEquivalentsAtCarryingValue, was "
+        "last reported $60M at 2018-12-31, 2830d before it — a past balance sheet, not read as "
+        "current")
 
 
 def test_pennymacs_committed_screen_row_names_the_stale_cash() -> None:
@@ -78,12 +84,13 @@ def test_pennymacs_committed_screen_row_names_the_stale_cash() -> None:
                         reference_date=row.reference_date)
     snap = got["snapshot.net_debt"]
     assert snap["coverage_status"] == "unknown" and snap["value"] is None
-    assert snap["note"].startswith("no cash line is tagged at the filer's 2026-06-30 balance "
-                                   "sheet, and the one read, CashAndCashEquivalentsAtCarryingValue"
-                                   ", was last reported $60M at 2018-12-31, 2738d before it")
+    assert snap["note"].startswith("no cash line net debt reads (CONCEPT_ALIASES['cash']) is "
+                                   "tagged at the filer's 2026-06-30 balance sheet, and the one "
+                                   "read, CashAndCashEquivalentsAtCarryingValue, was last "
+                                   "reported $60M at 2018-12-31, 2738d before it")
     for key in ("fundamentals.net_leverage", "fundamentals.net_debt_to_ocf"):
         assert got[key]["coverage_status"] == "unknown", key
-        assert got[key]["note"].startswith("no net-debt — no cash line is tagged at"), key
+        assert got[key]["note"].startswith("no net-debt — no cash line net debt reads"), key
 
 
 def test_three_quarters_behind_is_refused() -> None:
@@ -156,7 +163,8 @@ def test_an_ifrs_balance_sheet_dates_the_filers_newest() -> None:
     nd = net_debt(_facts("HIMX"))
     assert nd is not None and nd.at == date(2017, 12, 31)
     assert nd.stale_cash == date(2025, 12, 31)
-    assert (nd.refusal or "").startswith("no cash line is tagged at the filer's 2025-12-31")
+    assert (nd.refusal or "").startswith(
+        "no cash line net debt reads (CONCEPT_ALIASES['cash']) is tagged at the filer's 2025-12-31")
 
 
 def test_an_ifrs_balance_sheet_in_another_currency_still_dates_it() -> None:

@@ -360,10 +360,11 @@ deferred it to the next PR because this record is merged.
   `ifrs-full:ProfitLossAttributableToOwnersOfParent`, a different line. The +160.6M is
   `ifrs-full:ProfitLossFromContinuingOperations`, −160,576,000, with its sign flipped and rounded,
   in the same 6-K (0000891092-22-000987). Re-measured on the primary's SEC cache on 2026-11-19:
-  among that 6-K's FY2021 facts between $150M and $170M, the ifrs-full lines are
-  `ProfitLossFromContinuingOperations` −160,576,000, `ProfitLossAttributableToOwnersOfParent`
-  −157,674,000, `ComprehensiveIncome` −159,828,000 and
-  `ComprehensiveIncomeAttributableToOwnersOfParent` −157,705,000. enCore's pairing (+16,515,389
+  among that 6-K's FY2021 facts between $150M and $170M in absolute value, the ifrs-full lines are
+  `ProfitLossFromContinuingOperations` −160,576,000, `ProfitLossBeforeTax` −162,186,000,
+  `ProfitLossAttributableToOwnersOfParent` −157,674,000, `ComprehensiveIncome` −159,828,000,
+  `ComprehensiveIncomeAttributableToOwnersOfParent` −157,705,000 and
+  `WritedownsReversalsOfInventories` +151,000,000. enCore's pairing (+16,515,389
   against `ifrs-full:ProfitLoss` −16,515,389) stands.
 - **The accepted risk.** WHAT IT COSTS 5 said "No owner and no row". The INVARIANT RULE wants
   either a machine check or a STATE entry, so STATE row 11 now carries it as ACCEPTED RISK: no
