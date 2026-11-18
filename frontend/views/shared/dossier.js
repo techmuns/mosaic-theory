@@ -103,6 +103,37 @@ function watchLine(ticker, table = coverageTable) {
     + `${list}</div>`;
 }
 
+// (2026-11-18, workstream B slice 2) a FLAGGED INPUT CHECK, under the date and the watch line: what
+// the page records it was built from is in doubt. One line per check that flagged — its meaning and
+// its summary, both written by `vinci/dossier/input_checks.py` — or nothing on a page whose checks
+// all pass or that carries none. Twin of render.py `_input_check_flag_lines`.
+function inputCheckFlags(d) {
+  const ic = d.input_checks;
+  if (!ic || !Array.isArray(ic.results)) return "";
+  const flagged = ic.results.filter((r) => r.outcome !== "pass");
+  if (!flagged.length) return "";
+  return `<div class="ds-input-flag"><div><b>${escapeHtml(`Input check — FLAG, ${flagged.length} of ${ic.results.length} checks.`)}</b> `
+    + `${escapeHtml("A FLAG refuses nothing; every finding is listed under Record & reproduce.")}</div>`
+    + `<ul>${flagged.map((r) => `<li><b>${escapeHtml(r.what)}</b> (<span class="mono">${escapeHtml(r.id)}</span>): ${escapeHtml(r.summary)}.</li>`).join("")}</ul></div>`;
+}
+
+// Record & reproduce's INPUT CHECKS: every check's level, outcome and summary; a check that did not
+// pass lists every finding in an on-demand <details> (collapsed on screen, force-open in print by
+// T1). Twin of render.py `_input_check_record_lines`.
+function inputCheckRow(d, row) {
+  const ic = d.input_checks;
+  if (!ic || !Array.isArray(ic.results)) return "";
+  const flagged = ic.results.filter((r) => r.outcome !== "pass").length;
+  const items = ic.results.map((r) => {
+    const head = `<span class="mono">${escapeHtml(r.id)}</span> · <b>${escapeHtml(String(r.outcome).toUpperCase())}</b> ${escapeHtml(`(a ${r.level} check) — ${r.summary}`)}`;
+    const fs = r.outcome !== "pass" ? (r.findings || []) : [];
+    return fs.length
+      ? `<li>${head}<details style="margin-top:2px;"><summary class="muted" style="font-size:11.5px;">${escapeHtml(`Every finding (${fs.length})`)}</summary><ul style="font-size:11.5px; margin-top:2px;">${fs.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul></details></li>`
+      : `<li>${head}</li>`;
+  }).join("");
+  return row("Input checks", `${escapeHtml(`run on what this page records it was built from; ${flagged} of ${ic.results.length} flag`)}<ul class="kv-list" style="margin-top:4px;">${items}</ul>`);
+}
+
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
 // meaningful name ("VRRM · dossier · Nostra Vinci") and restore it afterward. Wiring it to the
@@ -1020,6 +1051,7 @@ function recordAndReproduce(d, verdict, card = null, followed = {}, voidedCall =
       (d.layer_refreshes || []).length ? row("Refreshed since assembly",
         d.layer_refreshes.map((e) => escapeHtml(refreshLine(e))).join("<br>")) : ""}
     ${(() => { const n = panelAgeNote(d.mechanical, d.assembled_at); return n ? row("Panel age", escapeHtml(n)) : ""; })()}
+    ${inputCheckRow(d, row)}
     ${row("Synthesis", d.synthesis
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
       : "not assembled — mechanical layer only")}
@@ -3348,6 +3380,7 @@ function header(d) {
       <div class="ds-meta">${fmtDate(d.assembled_at)} · extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}</span>${
         refreshedTo(d.layer_refreshes) ? ` · layers refreshed to <span class="mono">${escapeHtml(refreshedTo(d.layer_refreshes))}</span>` : ""}</div>
       ${watchLine(d.ticker)}
+      ${inputCheckFlags(d)}
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"

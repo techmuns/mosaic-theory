@@ -148,3 +148,39 @@ class InputManifest(BaseModel):
     @property
     def complete(self) -> bool:
         return self.recorded == "build" and not self.unrecorded
+
+
+class CheckResult(BaseModel):
+    """One input check's result on one page (`vinci.dossier.input_checks`, workstream B slice 2).
+
+    ``outcome``: ``pass``; ``flag`` (a FLAG check found something — said on the page's first
+    screen and in the run record, refusing nothing); ``refuse`` (a HARD check found something —
+    the page is not written, and only the run record keeps the result). ``summary`` is the one
+    line the first screen prints; ``findings`` is every finding in full, for the audit tier."""
+
+    id: str
+    #: what a FLAG means for the page, in plain English — printed beside the summary
+    what: str
+    level: Literal["FLAG", "HARD"]
+    outcome: Literal["pass", "flag", "refuse"]
+    #: the recorded fields the check reads (its supplying layer)
+    reads: list[str]
+    summary: str
+    findings: list[str] = []
+
+    model_config = {"frozen": True}
+
+
+class InputChecks(BaseModel):
+    """Every input check's result on the page, in registry order. A PURE FUNCTION of the page — its
+    ``inputs`` record and its export stamps — so `schemas.dossier_json` re-derives it on every
+    write of a page that carries it, and no writer can leave a stale result (no clock is read)."""
+
+    schema_version: Literal[1] = 1
+    results: list[CheckResult]
+
+    model_config = {"frozen": True}
+
+    @property
+    def flagged(self) -> list[CheckResult]:
+        return [r for r in self.results if r.outcome != "pass"]

@@ -291,8 +291,10 @@ def test_assemble_one_records_its_reads_onto_the_page_it_writes() -> None:
     ret = fn.body[-1]
     assert isinstance(ret, ast.Return) and ast.unparse(ret) == (
         "return _write(dossier, llm_log, out_root)")
-    last = ast.unparse(fn.body[-2])
+    last = ast.unparse(fn.body[-3])
     assert "'inputs': _page_inputs(reads.reads(), cfg)" in last
+    # (workstream B slice 2) the input-check gate reads that record, then the one write
+    assert ast.unparse(fn.body[-2]) == "dossier = _input_check_gate(dossier)"
 
 
 def test_a_refused_build_still_records_what_it_read(
@@ -324,7 +326,7 @@ def test_a_refused_build_still_records_what_it_read(
     (path,) = (tmp_path / "snapshots" / run_metrics.RUNS_DIR).glob("*.jsonl")
     lines = [json.loads(x) for x in path.read_text().splitlines()]
     by_outcome = {r["outcome"]: r for r in lines}
-    assert {r["schema"] for r in lines} == {run_metrics.SCHEMA} == {3}   # 3: sdk_version
+    assert {r["schema"] for r in lines} == {run_metrics.SCHEMA} == {4}   # 4: checks
     refused = by_outcome["refused"]["inputs"]
     assert refused["recorded"] == "build"
     assert [r["source_url"] for r in refused["responses"]] == [url]

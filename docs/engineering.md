@@ -192,6 +192,12 @@ PR (CLAUDE.md: coin-time translation).
   SEC/Polygon/FINRA response (hashed as the fact layer hashes it), every price series — or
   `unrecorded` with why*; `inputs_id` is that list's own hash, set only when nothing is unrecorded.
   `vinci/dossier/inputs.py`, `docs/records/2026-11-05-every-page-records-what-it-was-built-from.md`.
+- **Input checks / the gate / FLAG and HARD** (2026-11-18, workstream B slice 2). Plain words:
+  *checks run on what a page records it was built from — does the page name every input it read
+  (`inputs_recorded`), and is every export a block is stamped from the page's one recorded export
+  of that kind (`one_export_per_kind`)? A FLAG prints above the Brief and refuses nothing; a HARD
+  check would stop the page being written, and none is HARD.* The page's `input_checks` block,
+  `vinci/dossier/input_checks.py`, `docs/records/2026-11-18-the-input-check-gate.md`.
 - **Filed tiebreak / filed LTM** (2026-11-04, operator approval). Plain words: *when a MATERIAL
   annual-summary row's LTM in CIQ's annual export disagrees with its four quarters in CIQ's
   quarterly export, the filer's own XBRL figure for the same four quarters (as filed by the page's
