@@ -3976,6 +3976,18 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     # (`_operator_decision_lines`, #1004 item 3c round 1); this block keeps the machine's own read,
     # labelled as such when a decision exists. Twin: anchorInner() in dossier.js.
     dec = anchor.operator_decision
+    # (W61, 2026-11-18) THE SCREEN VALUE SPLIT INTO ITS CAUSES, under the row it splits: the line,
+    # its two flags and the arithmetic are written ONCE, in vinci/dossier/anchor_split.py, and
+    # both renderers print them verbatim. Levels only, the fence above holding: no term is set
+    # against the stock's quote. The markdown has no <details>, so the arithmetic prints in full
+    # at the block's end, as the web's force-opens in print. Twin: anchorInner() in dossier.js.
+    gs = anchor.gap_split
+    if gs is not None:
+        out += [f"**How the screen value splits.** {gs.read}", ""]
+        if gs.leverage_line:
+            out += [f"**Leverage.** {gs.leverage_line}", ""]
+        if gs.stale_line:
+            out += [f"**Stale multiple.** {gs.stale_line}", ""]
     # the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
     if anchor.midcycle_gap is not None:
         out += [f"**Mid-cycle assumption under strain.** {anchor.midcycle_gap.read}", ""]
@@ -3985,6 +3997,8 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         out.append("")
     if anchor.reason:
         out += [f"_{'The machine’s read: ' if dec is not None else ''}{anchor.reason}_", ""]
+    if gs is not None:
+        out += ["_The split's arithmetic:_", "", *[f"- {x}" for x in gs.arithmetic], ""]
     return out
 
 

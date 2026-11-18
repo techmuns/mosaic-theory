@@ -1514,11 +1514,24 @@ function anchorInner(a) {
   // #1004 item 3c round 1); this block keeps the machine's own read, labelled as such when a
   // decision exists. Twin of _screening_context_lines() in render.py.
   const why = a.reason ? `<div class="muted" style="margin-top:6px;">${a.operator_decision ? "The machine’s read: " : ""}${escapeHtml(a.reason)}</div>` : "";
+  // (W61, 2026-11-18) THE SCREEN VALUE SPLIT INTO ITS CAUSES, under the row it splits: the line,
+  // its two flags and the arithmetic are written ONCE, in vinci/dossier/anchor_split.py, and both
+  // renderers print them verbatim. Levels only (the fence on this block): no term is set against
+  // the stock's quote. The arithmetic is on demand — collapsed on screen, force-open in print.
+  // Twin of _screening_context_lines() in render.py.
+  const gs = a.gap_split;
+  const split = gs
+    ? `<div class="uw-screen-split" style="margin-top:8px; font-size:12.5px;"><b>How the screen value splits.</b> ${escapeHtml(gs.read)}</div>${
+        gs.leverage_line ? `<div class="notice" style="margin-top:8px;"><b>Leverage.</b> ${escapeHtml(gs.leverage_line)}</div>` : ""}${
+        gs.stale_line ? `<div class="notice" style="margin-top:8px;"><b>Stale multiple.</b> ${escapeHtml(gs.stale_line)}</div>` : ""}` : "";
+  const splitMath = gs
+    ? `<details class="uw-screen-split-math" style="margin-top:8px;"><summary class="muted" style="font-size:11.5px;">The split's arithmetic</summary>${
+        (gs.arithmetic || []).map((x) => `<div class="mono" style="font-size:11px; margin-top:2px;">${escapeHtml(x)}</div>`).join("")}</details>` : "";
   return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
     <div class="subtitle muted" style="margin:2px 0 8px;">${current
       ? "This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."
       : "A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."}</div>
-    <table class="data"><tbody>${rows}</tbody></table>${mid}${dq}${why}</div>`;
+    <table class="data"><tbody>${rows}</tbody></table>${split}${mid}${dq}${why}${splitMath}</div>`;
 }
 
 // THE OPERATOR'S DECISION on this name's recipe (2026-10-22) — the recipe and any divergence lead;
