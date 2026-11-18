@@ -1,6 +1,6 @@
 ---
 id:
-status: shipped
+status: recorded
 date: 2026-11-17
 prs: [1101]
 supersedes:

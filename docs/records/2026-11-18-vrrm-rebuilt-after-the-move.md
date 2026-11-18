@@ -45,21 +45,53 @@ superseded-by:
   - `current_guide` names the guide's year;
   - the return-ratio table gains its dividend row;
   - the quarterly summary, the surprise history and the gap-down window move.
+
+  The 13 block leaves are the screening anchor and what prices it: W50 and W61 (#1114, #1118) on main `8ea51e99`, first carried by this page.
+  - 9 are under `anchor.*`.
+    - `anchor_base_value_per_share` goes $23.2328 → $1.3435, below the $1.66 price.
+    - `anchor.multiple` goes 13.8659x → 3.5566x, statistic `current`, with the median beside it.
+    - `gap_split` is new: V0 $1.90, margin effect −$0.55, multiple effect $21.89.
+    - Also moved: `anchor_ev_ebit` and the diluted base.
+  - 3 are under `valuation_basis.current_multiple`.
+  - 1 is `ev_bridge.note`.
+
+  The anchor is the page's largest valuation move. It is not in the synthesis's input: the prompt serialises only the mechanical layer (`synthesis.py:2730`), so it is no candidate cause of the lean (below).
 - **The covenant table, row by row.**
   - The 2021 First Lien Term Loan agreement and its LIBO terms leave, and the 2025 restatement's 7 rows replace them. `vrrm-ex10_2.htm` is `extracted` at Term SOFR + 2.00%, floor 0.00%, on $688,804,156.05 of principal.
   - The revolver's own "Interest / coupon rate" row goes PRESENT → UNKNOWN: E5 refused it because its value states the pricing grid's six margins (0.25%–1.75%), which its quote does not.
   - Those margins are now a row of their own, "Applicable Margin (pricing grid)", PRESENT and quoted from the grid.
-  - The revolver gains a borrowing base, an unused-line fee and default-interest rows. The revolver's maturity stays UNKNOWN, refused by E5 on both pages.
+  - The revolver gains 5 rows:
+    - 4 PRESENT: the pricing grid, a borrowing base, an unused-line fee and default interest;
+    - 1 UNKNOWN: "Revolving Commitment Increase (incremental)", refused by E5.
+
+    Its maturity stays UNKNOWN, refused by E5 on both pages.
+  - The 2025 term loan's maturity and mandatory-prepayment rows are UNKNOWN, refused by E5. So the page body's term-loan block prints 2 lines where main's printed 4 (main `dossier.md:439-442`). Main's 4 described the superseded 2021 agreement, so nothing true leaves the page body.
 - **FOUND, NOT FIXED: the page body labels a covenant term by SUBSTRING.**
   - `_SUMMARY_TERMS` maps any governing term whose name contains "interest" to the main-body label "Interest / coupon": `vinci/dossier/render.py:1555-1559`, matched at `:1782` and `:2006` with `key in g.term.lower()`. Its mirror is `frontend/views/shared/dossier.js:2800-2804`.
   - So "Default interest" prints as the coupon. On this page the revolver's own coupon row is UNKNOWN (above), so the only "Interest / coupon" line under the A&R revolver reads "2.00% per annum in excess of otherwise applicable rate" (`data/dossiers/VRRM/dossier.md:460`). That is the default rate, not the coupon.
   - Main's page had the same shape under the 2021 term loan, where it was the second "Interest / coupon" line after the real one.
-  - Across the 26 committed pages (this build's VRRM page, origin/main's for the other 25), 6 agreements on 4 pages print a non-coupon "interest" term under that label: IT, NKE, VRRM and WLK. WLK's two are "Interest Payment Date(s)". On 2 of the 6 (IT's A&R credit agreement and VRRM's revolver), no term named exactly "Interest / coupon rate" is PRESENT.
+  - Across the 26 committed pages (this build's VRRM page, origin/main's for the other 25), 6 agreements on 4 pages print a non-coupon "interest" term under that label: IT, NKE, VRRM and WLK. WLK's two are "Interest Payment Date(s)".
+  - **Only VRRM's revolver prints the default rate as its SOLE coupon line.** IT's A&R credit agreement has no term named exactly "Interest / coupon rate", but its page body prints its two rate rows ("Interest / coupon rate — Eurodollar Loans", "— ABR Loans", IT `dossier.md:502-503`) before the default one (`:504`).
   - The JSON names every row correctly; only the label is wrong. The fix is $0 in both renderers, then a $0 re-render. It is routed to STATE §5.0 row 63, the covenant table's render row.
+  - **For that fix:** an exact-name test would drop IT's two real rate rows from the page body. The match must keep names that start with "Interest / coupon rate" and leave out default interest and payment dates.
   - Not found before this build under `_SUMMARY_TERMS`, "Default interest" or "Interest Payment Date" in STATE.md or `docs/`, nor under `git log --grep="default interest"` or `git log -S_SUMMARY_TERMS`, which shows only the PRs that wrote it (#72, #73).
 - **The lean moves and is not re-rolled.** All 5 draws read strongly-bearish, so the vote rule (R1) passes and the page proposes AVOID_TERMINAL, where main's 3-of-5 mixed proposed nothing.
   - This is the one build the ruling allows, and it stands as drawn (RUNBOOKS §i: a written synthesis is never re-rolled).
   - VRRM's ledger rows (`V-VRRM-screen2-20260617`, read at its correction `R-VRRM-screen2-20260617`) are sealed; a page build writes no ledger row. VRRM is still scored on 2026-12-16 IST (STATE row 38).
+  - **NOT ATTRIBUTED.** The 11 CIQ export sha256s are identical on the 2026-11-09 page and this one, and both builds read both calls. What moved:
+    - the price, −24% ($2.19 → $1.66), with the store's bars to 2026-11-17;
+    - the code, from 2026-11-09 to `8ea51e99`, including the synthesis-prompt changes since. Among them is fix 4b (#1094, STATE row 55), whose first paid page this is.
+
+    One draw set cannot separate the two, and nothing here claims either.
+- **The caveat count, 11 → 22,** is:
+  - 11 more untraceable-figure caveats (2 → 13; 7 of the 13 sit on bear points);
+  - one new "Possible false balance" flag (6 bull points against 10 bear under a strong lean);
+  - one fewer "draws DISAGREED" flag, since the draws now agree.
+
+  The false-balance flag bears on the lean that moved the proposal. It is printed for the human.
+- **PR #1119 rewrites the same four VRRM files.** It is the $0 W50/W61 refresh of 2026-11-09 pages, still LIBO + 3.25% on VRRM's. This page already carries both layers. Whichever merges second conflicts on VRRM, and resolving toward #1119 would revert this paid build. So:
+  - if this PR merges first, #1119 drops VRRM (its 9 refreshed pages become 8);
+  - if #1119 merges first, this branch is re-synced keeping this page.
 
 **WHY.** The held build (`docs/records/2026-11-17-vrrm-check-build-held.md`) showed both covenant fixes on real model output. But it read 1 of 2 calls, because LibreOffice refused the conversion while another conversion ran. So its page would have lost 12 driver rows, and it was held. #1105 gives each conversion a profile of its own, and #1089 moved the checkout out of iCloud. This build is the rebuild ruled for after the move, and it is the move's soak: the first paid build from `~/dev`.
 
@@ -99,5 +131,8 @@ superseded-by:
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $5.49 is spent, and the page lands.
-- Until row 63's label fix ships, VRRM's page body prints the revolver's default rate under "Interest / coupon". The revolver's coupon is in the appendix's pricing-grid row and in the JSON. The falsifier for "label only": a page whose JSON row name is itself wrong. None of the 6 has one.
+- **OPEN, NOT ACCEPTED: a false page-body line ships.** VRRM's page body prints the revolver's default rate under "Interest / coupon", a line main's page did not print: main printed the real coupon there, though it printed the superseded 2021 terms under the term loan.
+  - The fix costs $0 but is a render change. A render change takes a preview and the operator's approval (CLAUDE.md PREVIEW RULE), and an artifact PR carries no code. So it cannot ride this PR, and it is routed to row 63.
+  - The revolver's coupon is in the appendix's pricing-grid row and in the JSON.
+  - The falsifier for "label only": a page whose JSON row name is itself wrong. None of the 6 has one.
 - The untraceable-figure caveats rise from 2 to 13. They are flags printed for the human, not a stop, and per RUNBOOKS §i a flag never earns a re-roll.
