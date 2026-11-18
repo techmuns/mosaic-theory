@@ -21,7 +21,13 @@ from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci import coverage_roster
 from vinci.config import get_config
-from vinci.dossier.anchor import DQ_LEASE_BASIS, PLACEHOLDER_HINTS, SHARES_REFUSED, Anchor
+from vinci.dossier.anchor import (
+    DQ_LEASE_BASIS,
+    MULTIPLE_CURRENT,
+    PLACEHOLDER_HINTS,
+    SHARES_REFUSED,
+    Anchor,
+)
 from vinci.dossier.covenant_extract import (
     VALUE_REFUSED_NOTE_PREFIX,
     GoverningTerm,
@@ -384,7 +390,13 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
                f"operating leases over reported EBITDA — the median is {b.median:,.1f}x over "
                f"{b.n_closes} quarters (current {b.current:,.1f}x at the {b.as_of} filing; "
                f"{b.percentile:.0%} of the history at or below it).")
-    if priced_ex and _screens_at_current(anchor):
+    if priced_ex and _screens_at_current(anchor) and anchor is not None \
+            and anchor.multiple is not None and anchor.multiple.value is None:
+        # (W50) the statistic is the current, but the band carries no usable one: nothing priced
+        tail = (" R1 prices nothing on it: the history carries no usable current multiple, and "
+                "the median is never put in its place. The level and percentile above are CIQ's "
+                "own series.")
+    elif priced_ex and _screens_at_current(anchor):
         # (W50) the anchor prices the history's current, not its median. No twin: dossier.js
         # prints no sentence on what R1 prices here.
         tail = (" R1 prices that history's current multiple, the median beside it, with net debt "
@@ -3839,8 +3851,6 @@ _SCREEN_SUBTITLE_CURRENT = (
 
 def _screens_at_current(anchor: Anchor | None) -> bool:
     """Whether this anchor prices the band's current multiple (W50) — its structured statistic."""
-    # imported here, not in the module header, which an open PR (#1100) edits beside this import
-    from vinci.dossier.anchor import MULTIPLE_CURRENT
     return (anchor is not None and anchor.multiple is not None
             and anchor.multiple.statistic == MULTIPLE_CURRENT)
 #: (#1004 item 3c, 2026-11-13) What the Brief's Scenario analysis section says where the screening

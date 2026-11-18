@@ -264,3 +264,22 @@ process.stdout.write(JSON.stringify(out));
     assert "Current multiple, own history" in html["new"]
     assert "Median multiple, own history" not in html["new"]
     assert f"median {derived.multiple.median:.1f}x beside it, not used" in html["new"]
+
+
+# --- review round 0 (`/code-review high --fix`) -----------------------------------------------
+def test_the_lease_line_never_says_r1_prices_a_current_it_does_not_have() -> None:
+    """(-) SMPL is lease-material: its md lease line names what R1 prices. With a usable current it
+    says the current; with none it says R1 prices nothing — never that it prices a current."""
+    from vinci.dossier.render import render_markdown
+
+    def lease_line(doc: dict[str, Any]) -> str:
+        page = {**doc, "anchor": json.loads(_derive(doc).model_dump_json())}
+        md = render_markdown(Dossier.model_validate(page))
+        lines = [ln for ln in md.splitlines() if "Multiple basis — read before the level" in ln]
+        assert len(lines) == 1, lines
+        return lines[0]
+
+    ok = lease_line(_doc("SMPL"))
+    assert "R1 prices that history's current multiple" in ok
+    gone = lease_line(_without_current(_doc("SMPL"), -1.0))
+    assert "R1 prices nothing on it" in gone and "prices that history's current" not in gone

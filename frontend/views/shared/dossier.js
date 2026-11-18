@@ -1420,8 +1420,9 @@ function whatHappened(m, sleeve, refDate) {
 }
 
 // (log-a) SCREENING ANCHOR — the committed R1 anchor block (vinci/dossier/anchor.py), read-only.
-// A mechanical re-rate of the name to its OWN-history median multiple on a NAIVE reported median
-// margin: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
+// A NAIVE reported median margin priced at the multiple the name trades on today (its own
+// history's latest close, the median beside it) since W50 — the OWN-history median on an anchor
+// written before: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
 // adjustment. Absent anchor → renders nothing, so pre-anchor dossiers are untouched.
 function anchorInner(a) {
   if (!a) return "";

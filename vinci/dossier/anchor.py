@@ -232,7 +232,8 @@ def no_current_reason(ex_lease: bool, raw: Any, median: float | None) -> str:
     whose data is weakest, the bias this removes."""
     where = "valuation.lease_basis.ex_lease_band" if ex_lease else "valuation.own_history"
     return (f"the band R1 prices on ({where}) carries no usable current multiple (current={raw!r}: "
-            "absent, NM or not positive) — the screen prices today's multiple, and the trailing "
+            "absent, NM, non-finite or not positive) — the screen prices today's multiple, and the "
+            "trailing "
             "median" + (f" ({median:g}x)" if median is not None else "")
             + " is never priced in its place; no screen value until the band carries one")
 
