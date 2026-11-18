@@ -194,22 +194,48 @@ def test_the_gap_sentence_names_the_unmatched_pair(ticker: str, side: str, word:
 
 
 # --- (-) committed pages keep what they priced, on both surfaces ------------------------------
-def test_committed_pages_round_trip_without_the_new_keys() -> None:
-    """(-) Every committed anchor predates W50: re-serialised, it gains no `statistic`, `as_of` or
-    `median` (absent, never null), so the code lands without a page moving."""
+def test_committed_pages_round_trip_and_state_what_they_priced() -> None:
+    """(-) Every committed anchor round-trips byte-identically, whichever statistic it priced. One
+    written before W50 carries no `statistic` and gains none of `statistic`, `as_of` or `median`
+    (absent, never null). One written since states `statistic` and `median`, and `as_of` wherever
+    its band dates the close (absent, never null, where it does not). The fleet holds both kinds
+    while the watch pages wait for their next build, so the pin states the rule for each kind,
+    never a count of either (the first cut asserted every page predated W50, which held only
+    until the refresh)."""
     seen = 0
     for t in covered_pages():
         raw = (PAGES / t / "dossier.json").read_text()
-        doc = Dossier.model_validate_json(raw)
-        if doc.anchor is None or doc.anchor.multiple is None:
-            continue
-        seen += 1
-        assert doc.anchor.multiple.statistic is None, t
-        out = dossier_json(doc)
-        mult = json.loads(out)["anchor"]["multiple"]
-        assert not {"statistic", "as_of", "median"} & set(mult), t
-        assert out == raw, f"{t} does not round-trip byte-identically"
+        if _round_trips_by_its_kind(t, raw):
+            seen += 1
     assert seen, "no covered page carries an anchor multiple — the round-trip checked nothing"
+
+
+def _round_trips_by_its_kind(t: str, raw: str) -> bool:
+    """The per-kind rule on one page's text; False when the page has no anchor multiple."""
+    doc = Dossier.model_validate_json(raw)
+    if doc.anchor is None or doc.anchor.multiple is None:
+        return False
+    out = dossier_json(doc)
+    mult = json.loads(out)["anchor"]["multiple"]
+    if doc.anchor.multiple.statistic is None:
+        assert not {"statistic", "as_of", "median"} & set(mult), t
+    else:
+        assert doc.anchor.multiple.statistic == anc.MULTIPLE_CURRENT, t
+        assert mult.get("statistic") == anc.MULTIPLE_CURRENT, t
+        assert mult.get("median") is not None, t
+        assert mult.get("as_of", "absent") is not None, t     # absent is allowed; null never
+    assert out == raw, f"{t} does not round-trip byte-identically"
+    return True
+
+
+def test_a_w50_anchor_round_trips_by_the_same_rule() -> None:
+    """(+) The W50 branch of the rule above, run on main as well as after a refresh. SMPL's frozen
+    page carries the anchor W50 derives for it, is written by the one writer, and is held to the
+    same rule. Main's pages carry no W50 anchor yet, so without this the branch ran on no page
+    (review round 1 of #1117: a mutant breaking it passed on main)."""
+    page = {**_doc("SMPL"), "anchor": json.loads(_derive(_doc("SMPL")).model_dump_json())}
+    raw = dossier_json(Dossier.model_validate(page))
+    assert _round_trips_by_its_kind("SMPL", raw)
 
 
 def _md(a: anc.Anchor | None) -> str:
