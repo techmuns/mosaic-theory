@@ -106,6 +106,22 @@ def _assembled(t: str, ciq: CiqFacts | None, monkeypatch: pytest.MonkeyPatch) ->
 #: pin's subject is the CIQ bridge, so they are compared apart (`_assert_w50_move`), never dropped.
 W50_MOVED = ("multiple", "anchor_base_value_per_share", "anchor_base_value_per_share_diluted",
              "anchor_ev_ebit", "midcycle_gap")
+#: (W61, 2026-11-18) the split a fresh anchor carries and no anchor on the cut does: compared apart
+#: (`_assert_w61_split`), never dropped.
+W61_NEW = ("gap_split",)
+
+
+def _assert_w61_split(t: str, got: Anchor, committed: Anchor) -> None:
+    """The W61 field, pinned rather than skipped: the cut's anchor carries none; a fresh one
+    carries it exactly where it publishes a screen value, and it rebuilds that value at today's
+    multiple."""
+    from vinci.dossier.anchor import MULTIPLE_CURRENT
+    from vinci.dossier.anchor_split import reproduces
+    assert committed.gap_split is None, t
+    base = got.anchor_base_value_per_share
+    assert (got.gap_split is None) == (base is None), t
+    if got.gap_split is not None and base is not None:
+        assert reproduces(got.gap_split, base, MULTIPLE_CURRENT), t
 
 
 def _assert_w50_move(t: str, got: Anchor, committed: Anchor) -> None:
@@ -152,11 +168,12 @@ def test_a_fresh_assembly_writes_the_backfilled_anchor(
     GOOGL's operator decision and base value included, because its D&A is what makes R1 applicable
     there."""
     got = _assembled(t, _ciq(t), monkeypatch)
-    moved = (*MOVED_BY_THE_DA_GUARD.get(t, ()), *W50_MOVED)
+    moved = (*MOVED_BY_THE_DA_GUARD.get(t, ()), *W50_MOVED, *W61_NEW)
     fresh, committed = _fields(got), _fields(_committed(t))
     assert {k: v for k, v in fresh.items() if k not in moved} == {
         k: v for k, v in committed.items() if k not in moved}
     _assert_w50_move(t, got, _committed(t))
+    _assert_w61_split(t, got, _committed(t))
     if moved:   # the recorded move, pinned rather than skipped
         assert got.d_and_a is not None and got.d_and_a.basis == (
             "consolidated trailing twelve months to 2026-06-30 (CIQ workbook, vendor basis)")

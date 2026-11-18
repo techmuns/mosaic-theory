@@ -711,6 +711,7 @@ PR (CLAUDE.md: coin-time translation).
   of the 180 days ending on that date, read only from what was knowable then, and the since part is
   what has happened from the next day to the page's price date.* NOT the R1 screening `anchor`
   (`vinci/dossier/anchor.py`), nor the price refresh's anchor session.
+- **Gap split / V0 / margin effect / multiple effect** (2026-11-18, W61, `anchor_split.py`, `anchor.gap_split`) — plain words: *the R1 screen value stated as the value today's EV/EBITDA multiple puts on the EBITDA it is struck on (V0) plus what reverting the margin to its median adds or takes away (the margin effect), with what re-rating to the median multiple would add beside it, never in it (the multiple effect); levels only, never a gap to the share price.*
 
 ## Local setup (every laptop, every contributor)
 

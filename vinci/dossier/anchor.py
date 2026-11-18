@@ -26,6 +26,7 @@ from pydantic import BaseModel, ValidationError, computed_field
 
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
+from vinci.dossier.anchor_split import AnchorGapSplit, gap_split, reproduces
 from vinci.edgar.asof import page_price_date
 from vinci.edgar.concepts import (
     ANNUAL_STALE_DAYS,
@@ -383,6 +384,10 @@ class Anchor(BaseModel, frozen=True):
     # type is `band_guards.BandOutcome`, the same three states, because `schemas` imports this
     # module and its `CrossCheck` cannot be imported here.
     ciq_scale_check: bg.BandOutcome | None = None
+    # (W61, 2026-11-18) the screen value as the value today's multiple puts on current EBITDA plus
+    # a margin effect, the multiple effect beside it (`anchor_split`). Set wherever a screen value
+    # is; absent, never null, elsewhere and on every anchor written before it.
+    gap_split: AnchorGapSplit | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -1680,6 +1685,7 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # not this company's EBITDA, so re-rating to it would publish a fabricated fundamental — the one
     # outcome the fail-loud rule exists to prevent. UNUSABLE until cleared, not merely "weak".
     base = base_diluted = ev_ebit = None
+    split: AnchorGapSplit | None = None
     # THE DENOMINATOR: the corroborated point-in-time count, else the diluted weighted average the
     # base was struck on before 2026-10-21 — a refused count never silently becomes the divisor.
     out, inc, dil = bridge["out"], bridge["inc"], bridge["dil"]
@@ -1694,6 +1700,12 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         if out and inc is not None:
             base_diluted = round(sv.equity * _USD_M / (out + inc), 4)
         ev_ebit = round(sv.ev_ebit, 4) if sv.ev_ebit is not None else None
+        # (W61) the same arithmetic split into its causes: price-free, from the inputs just used
+        split = gap_split(mechanical, ex_lease=sel.ex_lease, current=mult_cur,
+                          median=mult_median, close=None if mult["as_of"] is None
+                          else str(mult["as_of"]), revenue=ltm_rev, margin=margin_val,
+                          d_and_a=da[0] / _USD_M, net_debt=nd_val / _USD_M, shares=shares,
+                          price_date=on_close)   # the STORED close, as committed_gap_split reads
 
     # a periodicity mismatch or a band-guard trip is its own fail-loud data-quality event; raise it
     # on the anchor (joining any revenue-tag conflict) so the flag rides with the number it taints.
@@ -1740,7 +1752,42 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                                   ltm_revenue=ltm_rev, median_source=margin_source,
                                   basis=(None if median_from_ciq
                                          else basis_check(ma.by_year, mechanical)),
-                                  median_from_ciq=median_from_ciq))
+                                  median_from_ciq=median_from_ciq),
+        gap_split=split)
+
+
+def committed_gap_split(doc: dict[str, Any]) -> AnchorGapSplit | None:
+    """The split of a COMMITTED page's screen value, from its committed fields alone: no fetch, $0.
+
+    It splits around the band's current (today's multiple) and median whichever the anchor priced,
+    and refuses (ValueError) a split that does not rebuild the published value at the statistic the
+    anchor records: at today's multiple since W50, at the median before (`anchor_split.reproduces`).
+    None where the anchor publishes no screen value or the band carries no usable current, since
+    then there is nothing to split around."""
+    a = doc.get("anchor") or {}
+    base = a.get("anchor_base_value_per_share")
+    mech = doc.get("mechanical") or {}
+    sel = r1_multiple_band(mech)
+    band = _band_read(sel.band)
+    if base is None or band is None or band["current"] is None:
+        return None
+    def val(k: str) -> Any:
+        return (a.get(k) or {}).get("value")
+    rev, margin, da, nd = val("ltm_revenue"), val("margin"), val("d_and_a"), val("net_debt")
+    shares = per_share_shares(a)
+    if None in (rev, margin, da, nd) or shares is None:
+        return None
+    statistic = (a.get("multiple") or {}).get("statistic")
+    split = gap_split(mech, ex_lease=sel.ex_lease, current=band["current"],
+                      median=band["median"], close=None if band["as_of"] is None
+                      else str(band["as_of"]), revenue=float(rev), margin=float(margin),
+                      d_and_a=float(da), net_debt=float(nd), shares=shares,
+                      price_date=price_as_of(mech))
+    if not reproduces(split, float(base), statistic):
+        want = split.anchor_at_current if statistic == MULTIPLE_CURRENT else split.anchor_at_median
+        raise ValueError(f"the split rebuilds {want} where the anchor publishes {base} — it would "
+                         "be splitting another number")
+    return split
 
 
 def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
@@ -1751,7 +1798,7 @@ def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
     decision only where a record says what it was). A pydantic `exclude` mapping."""
     out: dict[str, Any] = {k: True for k in ("midcycle_gap", "anchor_base_value_per_share_diluted",
                                              "operator_decision", "machine_recipe_hint",
-                                             "band_checks", "ciq_scale_check")
+                                             "band_checks", "ciq_scale_check", "gap_split")
                            if getattr(anchor, k) is None}
     if anchor.operator_decision is not None \
             and anchor.operator_decision.machine_recipe_at_decision is None:

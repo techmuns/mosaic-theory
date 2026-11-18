@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect",
+  "follows": [
+    "2026-11-18.input-checks",
+    "2026-11-18.the-screening-anchor-prices-the-current-multiple"
+  ],
+  "names": "the page's R1 screening anchor carries anchor.gap_split: the value today's multiple puts on the EBITDA it is struck on (V0, the multiple's own denominator on its own lease basis, never market-implied), the margin effect that takes it to the anchor, and the multiple effect to the median beside it, never priced; each term's source, the multiple's close against the page's price date (stale past 30 days), and net debt's share of that EV (flagged past 0.5); a denominator the page does not identify is refused, never substituted, the multiple effect standing; no term reads a price; an anchor written before carries no gap_split"
+}
