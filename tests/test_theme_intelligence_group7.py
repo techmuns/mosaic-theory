@@ -105,6 +105,73 @@ def test_an_authoring_tools_placeholder_and_a_sentence_opening_by_are_no_authors
     assert r.doc.authors == ()  # main: "Microsoft Office User", "2030" and two clauses
 
 
+def _with_author_metadata(src: Path, dst: Path, author: str) -> Path:
+    """A copy of a synthetic PDF whose Author field holds `author` — an INCREMENTAL UPDATE (a new
+    Info dictionary and trailer appended, the newest trailer wins), as `make_fixtures.with_author`
+    builds the office export. Only the metadata STRING changes; the page text is the fixture's."""
+    data = src.read_bytes()
+    prev = int(re.findall(rb"startxref\s+(\d+)", data)[-1])
+    trailer = re.findall(rb"trailer\s*<<(.*?)>>", data, re.S)[-1]
+    size_m = re.search(rb"/Size\s+(\d+)", trailer)
+    root_m = re.search(rb"/Root\s+(\d+ \d+ R)", trailer)
+    assert size_m is not None and root_m is not None
+    size, root = int(size_m.group(1)), root_m.group(1)
+    pad = b"" if data.endswith(b"\n") else b"\n"
+    at = len(data) + len(pad)
+    obj = b"%d 0 obj\n<< /Title (Synthetic Grid Note) /Author (%s) >>\nendobj\n" % (
+        size, author.encode())
+    xref = at + len(obj)
+    dst.write_bytes(data + pad + obj + b"xref\n%d 1\n%010d 00000 n \n" % (size, at)
+                    + b"trailer\n<< /Size %d /Root %s /Info %d 0 R /Prev %d >>\n"
+                      b"startxref\n%d\n%%%%EOF\n" % (size + 1, root, size, prev, xref))
+    return dst
+
+
+# A LOGIN is the form an operating system or a layout tool gives a user id: one token of
+# lowercase letters and digits, joined by at most "." "_" "-". QuarkXPress wrote its user's login
+# "girquark" into the Author field of four Goldman Sachs reports (2026-11-19 preflight), and the
+# reader credited it as their author — permanently, since a stated `--author` is added BESIDE it
+# (`_finish`) and `author --retract` removes only an operator-stated name.
+@pytest.mark.parametrize("author", [
+    "girquark",  # the observed shape (QuarkXPress 18.61, 2026-11-19); main: read as the author
+    "jsmith",
+    "j.smith",
+    "a_user-2",
+    "Microsoft Office User",  # U30b: still a placeholder
+])
+def test_a_login_or_placeholder_in_the_author_field_is_no_author(tmp_path: Path,
+                                                                author: str) -> None:
+    r = read_document(_with_author_metadata(SYN / "glyph_mixed_synthetic.pdf",
+                                            tmp_path / "x.pdf", author),
+                      Declared(source_id="gs_research"))
+    assert r.meta["Author"] == author  # the field carries it; the reader does not credit it
+    assert r.doc.authors == ()
+
+
+@pytest.mark.parametrize(("author", "names"), [
+    ("Synthetic Strategist", ["Synthetic Strategist"]),
+    ("Reuters", ["Reuters"]),  # NEGATIVE: one word is not enough — a written name has a capital
+    ("e.e. cummings", ["e.e. cummings"]),  # NEGATIVE: lowercase, but a space: written, not a login
+    ("Jan Hatzius and Synthetic Strategist", ["Jan Hatzius", "Synthetic Strategist"]),
+])
+def test_a_written_name_in_the_author_field_is_still_read(tmp_path: Path, author: str,
+                                                         names: list[str]) -> None:
+    r = read_document(_with_author_metadata(SYN / "glyph_mixed_synthetic.pdf",
+                                            tmp_path / "x.pdf", author),
+                      Declared(source_id="gs_research"))
+    assert [a.name for a in r.doc.authors] == names
+
+
+def test_a_login_left_out_lets_the_operator_state_the_author(tmp_path: Path) -> None:
+    """The remedy the preflight asks for: with the login not credited, `--author` fills the gap
+    (main: the login was credited and the stated author added beside it)."""
+    r = read_document(_with_author_metadata(SYN / "glyph_mixed_synthetic.pdf",
+                                            tmp_path / "x.pdf", "girquark"),
+                      Declared(source_id="gs_research", authors=("Goldman Sachs",)))
+    assert [(a.name, a.source_field) for a in r.doc.authors] == [
+        ("Goldman Sachs", "operator-stated")]
+
+
 @pytest.mark.parametrize(("line", "names"), [
     ("By Émile Durand and Jane Doe", ["Émile Durand", "Jane Doe"]),  # review of #725: ASCII-only
     ("By Ángel Ruiz", ["Ángel Ruiz"]),

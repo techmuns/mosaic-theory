@@ -370,6 +370,14 @@ python -m vinci.theme_intelligence documents --status HELD
   NAME --by WHO --reason "…"` removes an operator-stated author (at upload or later), never one the
   page names. A name may not contain `;`. Push the registry right after (`state push`): a pull
   refuses to discard a local run it cannot replay.
+- **A tool's login is no author** (`documents._LOGIN_AUTHOR`, 2026-11-19). A PDF's Author field is
+  often filled by the software that made it: its placeholder user ("Microsoft Office User") or
+  the login it ran under (QuarkXPress wrote "girquark" on four Goldman Sachs reports). A login has
+  the form an operating system gives a user id — one token of lowercase letters and digits,
+  joined by at most `.` `_` `-` — and is never credited. A written name keeps a capital or a space
+  ("Reuters", "e.e. cummings"). Only the PDF Author field is read this way. With the login left
+  out the document names no author, so the upload asks for `--author`; on a PDF a stated author
+  is added BESIDE whatever the document names, so it cannot replace a login once credited.
 - **What is kept.** Text in reading order with a PAGE reference on every block; each table as ONE
   block with its cells and values as printed (`$48.3bn`, `4Q26E`); footnotes; headings (a wrapped
   heading is one heading); title, authors (metadata, front matter or a "By …" byline) and the
