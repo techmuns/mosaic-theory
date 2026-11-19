@@ -98,6 +98,20 @@ superseded-by:
   - A page-wide check (any quoted dollar figure must survive anywhere in the refreshed layer)
     would close the class instead of one more block. It changes every refresh's refusal semantics
     and needs its own corpus measurement: a build of its own.
+- **Review round 1** (Codex at its usage limit: the in-session `/code-review high`, and
+  coordinator B's independent review of `22f90f27`):
+  - **DEFERRED (B):** the shared matcher `_total_cited` misses two forms a megacap basis figure is
+    likely to take: billions with a thousands comma ("$3,316.5bn") and trillions ("$3.3
+    trillion", "$3.32tn"). The basis blocks hold exactly the megacap TEVs (GOOGL $3,316,548M,
+    AMZN $2,789,553M). No committed synthesis writes a basis figure either way at `2ecf6da0`
+    (GOOGL quotes $M, which is why $144,827M is caught), so it is latent. `_total_cited` serves
+    three other guards, so widening it is a build with its own corpus run.
+  - **DISMISSED:** the end-to-end pins pair a frozen page with the living roster. A roster move
+    of GOOGL or IT to watch reds them with `WatchDefectError`, naming the cause: a loud failure,
+    never a silent pass.
+  - **DISMISSED:** a move below printed precision (144,827.424 → 144,827.1) still refuses. That is
+    the safe direction, and the transform re-derives from the same stored inputs at the same
+    rounding: 0 of the 26 pages show such a move.
 - **A paraphrased figure is not caught.** The prose has to write the number ("$144,827M",
   "$144.8bn"). This is the limit `moved_cited_counts` states for its own figures.
 - **Falsifier:** a basis refresh that passes while the page's prose quotes, in dollars, a basis
