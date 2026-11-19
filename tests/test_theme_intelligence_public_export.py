@@ -36,7 +36,7 @@ from vinci.theme_intelligence.schemas import RunStatus
 
 ROOT = Path(__file__).resolve().parents[1]
 AS_OF = date(2026, 11, 19)
-_ABS = re.compile(r"(?<![\w.~])(?:/(?:Users|private|home|var|tmp|Volumes|opt|root)/|[A-Za-z]:\\)")
+_ABS = re.compile(r"(?:^|(?<=[\s'\"(\[=])|(?<=file://))(?:/[\w.-]+/[^\s'\"()\[\]<>,;]|[A-Za-z]:\\)")
 
 
 def violations(obj: Any, where: str) -> list[str]:
@@ -205,6 +205,25 @@ def test_the_export_round_trips_and_a_row_it_leaves_alone_is_written_as_stored(
     exported = {json.loads(x)["thesis_id"]: json.loads(x)["payload"]
                 for x in (export / "theses.jsonl").read_text().splitlines()}
     assert raw == exported
+
+
+def test_a_path_under_any_root_is_scrubbed_and_a_url_or_ratio_is_not() -> None:
+    """Codex on #1143 (P2): the path rule named its roots, so a data folder under /workspace,
+    /mnt, /srv or /data reached the public branch whole."""
+    from vinci.theme_intelligence.public import public_path
+
+    for p in ("/workspace/run/ti/runs/R-1", "/mnt/disk/x/y.txt", "/srv/data/z.json",
+              "/data/ti/documents/a.pdf", '"/opt/hostedtoolcache/py/x.py'):
+        lead = p[:len(p) - len(p.lstrip('"'))]  # a quote before the path stays
+        assert public_path(f"wrote {p} today", Path("/elsewhere/ti")) == (
+            f"wrote {lead}⟨local path⟩/{Path(p).name} today")
+        assert violations({"output_dir": p}, "runs") == ["runs.output_dir: a local path"]
+    # NEGATIVE: a URL's path, a ratio, a word pair and a lone root are not local paths
+    for text in ("https://example.test/hypothetical/a/b", "AI/ML demand", "2026/27 and 3/4",
+                 "rose 5% y/y", "a /tmp folder", "$/kW/month",
+                 "site.test/en/press-detail/-/detail/x"):
+        assert public_path(text, Path("/elsewhere/ti")) == text
+        assert violations({"note": text}, "runs") == []
 
 
 def test_the_guard_reads_every_rule_and_the_committed_fixtures_pass_it() -> None:

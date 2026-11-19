@@ -35,9 +35,14 @@ from vinci.theme_intelligence.documents import HEADING_MAX_CHARS
 
 #: keys whose string value is a SOURCE's own words, wherever they sit in a payload
 SOURCE_TEXT_KEYS = frozenset({"quote", "sentence"})
-#: an absolute path: a POSIX root a machine's files sit under, or a Windows drive
-_ABS_PATH = re.compile(r"(?<![\w.~])(?:/(?:Users|private|home|var|tmp|Volumes|opt|root)/"
-                       r"[^\s'\"()\[\]<>,;]+|[A-Za-z]:\\[^\s'\"()\[\]<>,;]+)")
+#: an absolute path under ANY root (Codex on #1143: a named-root list let /workspace, /mnt, /srv
+#: and /data through): two or more segments after a slash that STARTS a token (the text's start,
+#: whitespace, a quote, "(", "[", "=" or "file://"), so a URL's path ("https://a.test/b/c"), a
+#: unit ("$/kW/month"), a ratio ("2026/27") and a word pair ("AI/ML") are not paths; or a Windows
+#: drive. Measured on a74c4e30: it finds the 78 paths, plus a runner's traceback path in a run
+#: warning, and no unit, URL or identity field
+_ABS_PATH = re.compile(r"(?:^|(?<=[\s'\"(\[=])|(?<=file://))(?:/[\w.-]+(?:/[^\s'\"()\[\]<>,;]+)+"
+                       r"|[A-Za-z]:\\[^\s'\"()\[\]<>,;]+)")
 LOCAL_PATH = "⟨local path⟩"
 
 

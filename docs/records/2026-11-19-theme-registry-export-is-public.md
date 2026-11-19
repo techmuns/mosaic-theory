@@ -95,8 +95,13 @@ characters (24 words), and every longer "section" is a pull-quote or body text (
   "after" is this machine's registry at the same state, exported by this code.
 - A source-text field is a `quote` or `sentence` key at any depth (JSON held as text included), or
   a claims row's `statement`. A section is `article_versions.payload.blocks[].section`.
-- A local path is an absolute POSIX path under /Users, /private, /home, /var, /tmp, /Volumes, /opt
-  or /root, or a Windows drive path.
+- A local path is an absolute path of two or more segments under ANY root, starting a token (the
+  text's start, whitespace, a quote, "(", "[", "=" or "file://"), or a Windows drive path.
+- The first version named its roots (/Users, /private, /home, …). Codex on #1143 (P2) showed a
+  data folder under /workspace, /mnt, /srv or /data passing whole, so the rule was widened.
+- Widened to any slash, it also caught a unit ("$/kW/month") and a URL fragment ("…detail/-/…"),
+  so a path must start a token. On a74c4e30 the anchored rule makes the same cuts as the
+  named-root list, and no unit, URL, `measure_key` or `fingerprint` is touched.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - *A stale hash on one version.* QA hashes a version's content AS STORED. TH-05B1B3DE4A v1's 2 card
