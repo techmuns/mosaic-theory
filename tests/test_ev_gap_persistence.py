@@ -56,11 +56,41 @@ def test_a_sealed_record_did_not_receive_the_form() -> None:
 def test_every_written_form_states_a_status_and_both_vintages(ticker: str) -> None:
     """BOTH VINTAGES ON EVERY NAME, computed or not. The TEV comes off the comps workbook and the
     consensus off the estimates workbook; one stamp over both would be the `financial_summary.as_of`
-    defect — a block date over columns of two vintages."""
+    defect — a block date over columns of two vintages.
+
+    THREE ON A PAGE STRUCK AT ITS CLOSE (#1132, 2026-11-19). `ev_gap_transform` adds
+    `tev_close_date`, the close the cap is struck at, beside `tev_as_of`, CIQ's claims' panel. A
+    page carrying it carries all three, each a real date, and the close is the page's own
+    (`stock_info.as_of`); a page built before carries exactly the old two. #1132's suite read only
+    pages of the old shape, so this went red on the first refreshed page.
+
+    THE SHAPE IS THE PAGE'S, not the gap's own say-so: a page whose cap is struck at its close
+    (`stock_info.market_cap_at_close`) must carry the close date on its gap, or the gap was never
+    re-struck there and still reads the old TEV under the old stamp."""
+    from datetime import date
+
     g = gap(ticker)
     assert g is not None
     assert g["status"] in ("computed", "not-computed")
-    assert set(g["vintages"]) == {"tev_as_of", "consensus_as_of"}
+    doc = json.loads((ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
+    si = (doc.get("mechanical") or {}).get("stock_info") or {}
+    vintages = g["vintages"]
+    if "tev_close_date" not in vintages:
+        assert (si.get("market_cap_at_close") or {}).get("status") != "present", (
+            f"{ticker}: the cap is struck at the close but the gap's TEV carries no close date — "
+            "the gap was not re-struck at the close")
+        assert set(vintages) == {"tev_as_of", "consensus_as_of"}
+        return
+    assert set(vintages) == {"tev_as_of", "consensus_as_of", "tev_close_date"}
+    for key, value in vintages.items():
+        assert isinstance(value, str), f"{ticker}: {key}={value!r} is not a date"
+        # The consensus vintage may be a FLOOR ("≥2026-11-08": the export states no as-of).
+        stated = value.removeprefix("≥") if key == "consensus_as_of" else value
+        assert date.fromisoformat(stated), f"{ticker}: {key}={value!r}"
+    close = si.get("as_of")
+    assert vintages["tev_close_date"] == close, (
+        f"{ticker}: the gap's TEV is dated to the {vintages['tev_close_date']} close, the page's "
+        f"close is {close}")
 
 
 @pytest.mark.parametrize("ticker", WRITTEN)

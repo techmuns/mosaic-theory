@@ -89,8 +89,15 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     # folder the prior stamp is carried and this runs as before.
     skip_unless_pages_export(ticker, "estimates")
     assert after["vintages"] == before["vintages"]
-    assert {k: v for k, v in before["vintages"].items() if k != "tev_close_date"} == (
-        committed["vintages"])
+    # `tev_close_date` STRIPPED ON BOTH SIDES (2026-11-19): a page built before #1132 has none and
+    # the first refresh writes it, so the two other vintages are what must survive. Stripping it
+    # from the refreshed side alone failed on every page that already carried it.
+    def _others(v: dict) -> dict:
+        return {k: x for k, x in v.items() if k != "tev_close_date"}
+
+    assert _others(before["vintages"]) == _others(committed["vintages"])
+    if "tev_close_date" in committed["vintages"]:
+        assert before["vintages"]["tev_close_date"] == committed["vintages"]["tev_close_date"]
 
 
 @pytest.mark.parametrize("ticker", COMPUTED)
