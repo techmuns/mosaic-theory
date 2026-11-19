@@ -47,8 +47,10 @@ JSON named every row correctly; only the label was wrong.
 
 **HOW VERIFIED.**
 - **Every page, both renderers, base against head.** Each of the 26 committed pages was rendered by
-  base code (main 3586a864) and by head code, in Markdown (`render_markdown`) and on the web (node,
-  the production `renderDossier`).
+  base code and by head code, in Markdown (`render_markdown`) and on the web (node, the production
+  `renderDossier`). The base was main 3586a864 for the preview and the merge base 65a8b863 for the
+  impact run's re-render of the committed JSON (its part 4), with the same four pages and six lines
+  at both; #1122 between them moved no page (BOUNDARY).
   - 22 pages are byte-identical in both.
   - The 4 that move lose exactly the six lines above, and nothing else, in both renderers.
   - The base render of every page equals its committed `dossier.md`.
@@ -126,9 +128,12 @@ coordinator, it is not this build's.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $0: no model call and no vendor pull.
-- The coupon prefix is a stated limit. A coupon row the model names otherwise, such as "Interest
-  rate", would no longer get the coupon label in the page body; it would stay in the appendix. On
-  the 26 pages no committed term loses the label except the six above (the base-against-head
-  render diff).
-- Falsifier: a committed term whose name states a coupon and does not start with the target term.
-  `_TARGET_TERMS` makes the model answer the target term on every exhibit.
+- **ACCEPTED RISK: the coupon prefix.** A real coupon row the model names otherwise, such as
+  "Interest rate" or "Interest/coupon rate", would silently lose its page-body line; it would stay
+  in the appendix. The corpus walk cannot catch it, because it derives its expected count from the
+  same rule. Measured 2026-11-19 at main 65a8b863, over the 26 committed pages: 0 such rows. Every
+  PRESENT governing term whose name contains "interest" or "coupon" and does not start with the
+  target term is one of the six removed (6 of 6).
+- Falsifier: a committed governing term naming a coupon that does not start with "Interest /
+  coupon rate". `_TARGET_TERMS` makes the model answer the target term on every exhibit. Recorded
+  in STATE row 63 (INVARIANT RULE).
