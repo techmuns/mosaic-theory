@@ -1,8 +1,8 @@
 ---
 id:
-status: open
+status: shipped
 date: 2026-11-19
-prs: []
+prs: [1127]
 supersedes:
 superseded-by:
 ---
@@ -75,6 +75,6 @@ superseded-by:
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **GOOGL shows no screen value until a fresh CIQ export.** That is W62's intended outcome: a re-export moves CIQ's history to its export date.
-- **BRBR still prices the median** (W50's statistic is not on its page), and was withheld at `8ea51e99` under W62's rule. Both reach it at A's rebuild.
+- **BRBR still prices the median.** W50's current multiple is not on its page, and W62's corpus at `8ea51e99` found its 32-day CIQ close stale. Both rules reach it at A's rebuild, on its new CIQ export.
 - **The 15 watch pages carry neither W62's verdict nor its row** until each is re-derived. The 11 carrying a multiple still price the median and say so in their own words (W50's record).
 - **The known limitations of W62's record stand:** SMPL's 15-day ex-lease close against a moved price; `audit_r1`'s "incomplete anchor" wording; and the `headline_basis` date match (W63).
