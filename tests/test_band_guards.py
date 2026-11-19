@@ -239,7 +239,11 @@ def _synth_mech(*, da_margin: float | None, current: float) -> dict:
         "valuation": {"own_history": {"value": [{
             "metric": "EV/EBITDA (TEV/LTM)", "current": current, "median": 8.0, "n_closes": 40,
             "window_span_years": 9.0, "periodicity": "quarterly", "data_quality": None,
-            "implied_d_and_a_margin": da_margin}]}},
+            "implied_d_and_a_margin": da_margin, "as_of": "2026-02-27"}]}},
+        # the stored close's date, as every committed page carries it (26 of 26 at 89b15307): the
+        # anchor measures the band's close against it (W62) and cuts its facts at it, after the
+        # last filing below (2026-02-01), so nothing is cut away
+        "stock_info": {"as_of": "2026-03-02"},
         "financial_summary": {"annual": {"value": {
             "columns": ["FY25"], "is_estimate": [False],
             "rows": [{"label": "Revenue ($M)", "values": [1000.0]},

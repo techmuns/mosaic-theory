@@ -556,8 +556,13 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
         if committed is None:
             continue  # anchor inapplicable — no base value to compare
         f = facts_for(p.name)  # type: ignore[operator]
-        fresh = compute_anchor(d.get("mechanical") or {}, facts=f,
-                                 computed_at=datetime(2026, 7, 31, tzinfo=UTC), ciq=None)
+        # (W62, 2026-11-18) THE STALE-CLOSE CHECK IS HELD OPEN, for the reason the multiple is held
+        # below: W62 moved WHETHER the screen shows a value (a current not today's by its band's
+        # cadence shows none: BRBR and GOOGL at 89b15307), not the inputs this pin watches
+        from tests.stale_gate_support import stale_gate_held_open
+        with stale_gate_held_open():
+            fresh = compute_anchor(d.get("mechanical") or {}, facts=f,
+                                   computed_at=datetime(2026, 7, 31, tzinfo=UTC), ciq=None)
         # COUNT WHAT WAS ACTUALLY COMPARED (review of #534). `compared` was incremented BEFORE the
         # None-skip, so a name the recompute could not value still raised the floor — the
         # anti-vacuity guard counted anchors it never compared. GOOGL and NFLX are exactly that

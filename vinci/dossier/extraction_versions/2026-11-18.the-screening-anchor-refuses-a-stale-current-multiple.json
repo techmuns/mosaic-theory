@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple",
+  "follows": [
+    "2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect"
+  ],
+  "names": "the page's R1 screening anchor withholds its screen value when the current multiple is not today's by its band's own cadence: CIQ's history (Multiples-sheet closes) past 30 days before the page's price date (the stored close, else the reference date); the ex-lease history (one observation a fiscal quarter) once the page's price date is past the date its next observation could be priced (last balance sheet + the longest of its last four quarters + the slowest of their pricing lags); an undated close or page likewise. No screen value and no split, the main table's \"Screen value / share\" row reading \"not priced\" with its cause and what clears it (anchor.value_withheld, absent where unset); applicable, the recipe and the tier untouched; the dated current on show with the median beside it, never priced in its place; a multiple_stale flag, one detail line and the reason; the mid-cycle sentence says R1 would price the median where the value is withheld (stale, or no usable current); the split's stale notice and its arithmetic state the anchor's cadence verdict, never a flat 30-day clock (TJX's 75-day ex-lease close is not stale); never re-struck at the page's close; an anchor written before carries none of it"
+}
