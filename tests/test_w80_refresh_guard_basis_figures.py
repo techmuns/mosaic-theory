@@ -132,6 +132,21 @@ def test_a_value_the_block_still_carries_is_not_a_move() -> None:
     assert not any(h.startswith("ev_ebitda_basis.reported_ltm_ebitda =") for h in hits), hits
 
 
+def test_the_same_number_in_the_other_block_does_not_mask_a_move() -> None:
+    """Review round 0: "still carried" is per BLOCK. TJX's reported LTM EBITDA and its ex-lease LTM
+    EBITDA are both $8,903M, and its prose quotes the reported one; moving only that one must
+    refuse, though the number still prints as the ex-lease denominator, with another meaning."""
+    doc = frozen_doc("TJX")
+    v = doc["mechanical"]["valuation"]
+    old = v["ev_ebitda_basis"]["reported_ltm_ebitda"]
+    assert v["ev_ebitda_ex_lease_at_price"]["ltm_ebitda"] == old
+    assert rf._total_cited(rf._prose(doc), old)
+    moved = json.loads(json.dumps(doc["mechanical"]))
+    moved["valuation"]["ev_ebitda_basis"]["reported_ltm_ebitda"] = old + 197.0
+    hits = rf.moved_cited_basis_figures(doc["mechanical"], moved, doc)
+    assert "ev_ebitda_basis.reported_ltm_ebitda" in [h.split(" = ")[0] for h in hits], hits
+
+
 # --- the committed pages -------------------------------------------------------------------------
 
 def test_no_committed_page_refuses_where_no_basis_figure_moves_e2e() -> None:

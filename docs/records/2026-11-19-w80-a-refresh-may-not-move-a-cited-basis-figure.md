@@ -19,8 +19,10 @@ superseded-by:
   - `valuation.ev_ebitda_ex_lease_at_price`: `ev`, `net_debt`, `ltm_ebitda`.
   - Reported LTM EBITDA plus rent, the sum the basis line prints ("= $190,600M").
 - **When it refuses:** when a figure moved, or vanished, and the stored prose cites its OLD value.
-  "Cites" is dollar-anchored (`_total_cited`, the release guard's matcher). A value the block
-  still carries under another key is not a move, as for the release actuals.
+  "Cites" is dollar-anchored (`_total_cited`, the release guard's matcher). A value its OWN block
+  still carries under another key is not a move, as for the release actuals. The other block's
+  equal number does not mask one: TJX's reported and ex-lease LTM EBITDA are both $8,903M, with
+  different meanings (review round 0).
 - `refresh.py` is re-pinned as `refactor`: no page's content changes. The refresh writes the same
   page or refuses, as the watch-page refusal (5c9c7eac) was pinned.
 - `moved_cited_claims` itself is unchanged. It reads the financial tables; the basis figures are
@@ -55,7 +57,7 @@ superseded-by:
 - **Corpus before the code.** 21 of the 26 pages' prose cites a basis figure dollar-anchored
   (mostly reported LTM EBITDA; 13 the ex-lease block too). A basis rebuild moves a figure on 2
   pages (AMZN, GOOGL), both `implied_denominator`.
-- **Pins** (`tests/test_w80_refresh_guard_basis_figures.py`, 7, from real committed JSON at the cut):
+- **Pins** (`tests/test_w80_refresh_guard_basis_figures.py`, 8, from real committed JSON at the cut):
   - **Positive:** GOOGL end to end (refused, figure named, file unwritten); only the moved figure
     named; TJX's ex-lease EV and GOOGL's printed sum, each one field moved on a real page.
   - **Negative:** IT end to end (one date: the rebuild moves no figure and the refresh writes the
@@ -63,12 +65,14 @@ superseded-by:
   - **Roster walk:** every refusal names a figure that moved.
   - **6 of the 7 FAIL on main `2ecf6da0`** (a full export of main, with `vinci` asserted to load
     from it). The GOOGL pin fails with `DID NOT RAISE RefreshRefusedError`. The seventh, IT's
-    negative, passes on both, as a negative should.
-- **Mutation: 7 of 7 mutants red:**
+    negative, passes on both, as a negative should. The eighth, from review round 0 (TJX's equal
+    numbers in the two blocks), fails on the PR's first commit `9b46d523`.
+- **Mutation: 8 of 8 mutants red:**
   - the guard not wired into `refresh_dossier`;
   - the quotient, the ex-lease block, or the printed sum not watched;
   - a relabel counted as a move;
   - unmoved figures checked;
+  - the still-carried test spanning both blocks;
   - the citation test ignored.
 - **Gate:** ruff (`vinci tests frontend`), `mypy --strict vinci` and the full
   `pytest -m "not network"` through `bin/commit`; `python -m vinci.impact run` is in the PR body.
@@ -86,6 +90,14 @@ superseded-by:
 - **GOOGL stays as committed until its paid rebuild.** Its page keeps the "neither pairing" line
   and prose until then. The rebuild follows W73's code PR, and its cap is the operator's.
 - **AMZN (watch) stays as committed,** under the operator's standing watch rule.
+- **Review round 0 (`/code-review high --fix`), not applied:**
+  - No money floor, unlike `moved_cited_claims`'s $10M. A small basis figure (NCNO's $8M rent)
+    can match an unrelated "$8M" and refuse spuriously. That is the safe direction: it costs a
+    re-assembly, never a wrong page. The release guard uses the same matcher with no floor, and a
+    floor would also exempt real small figures (NCNO's $98M quotient).
+  - A page-wide check (any quoted dollar figure must survive anywhere in the refreshed layer)
+    would close the class instead of one more block. It changes every refresh's refusal semantics
+    and needs its own corpus measurement: a build of its own.
 - **A paraphrased figure is not caught.** The prose has to write the number ("$144,827M",
   "$144.8bn"). This is the limit `moved_cited_counts` states for its own figures.
 - **Falsifier:** a basis refresh that passes while the page's prose quotes, in dollars, a basis

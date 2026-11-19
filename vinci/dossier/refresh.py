@@ -299,14 +299,20 @@ def moved_cited_basis_figures(before: dict[str, Any], after: dict[str, Any],
     invisible to this file's guards: W65's $0 basis refresh of GOOGL would have nulled the
     $144,827M quotient its kept synthesis quotes ("an implied $144,827M denominator that
     reproduces NEITHER …") and passed, leaving the page with two explanations of one multiple.
-    A figure that vanished counts as moved; a value the block still carries (under any key) does
-    not, as in `moved_cited_release_figures`. Cited means dollar-anchored (`_total_cited`)."""
+    A figure that vanished counts as moved; a value its OWN block still carries (under any key)
+    does not, as in `moved_cited_release_figures`. The other block's equal number does not mask a
+    move: TJX's reported and ex-lease LTM EBITDA are both $8,903M, with different meanings (review
+    round 0). Cited means dollar-anchored (`_total_cited`)."""
     old, new = _basis_figures(before), _basis_figures(after)
-    still = {round(v, 6) for v in new.values()}
+
+    def _block(key: str) -> str:
+        return key.split(".", 1)[0]
+
+    still = {(_block(k), round(v, 6)) for k, v in new.items()}
     prose = _prose(doc)
     hits: list[str] = []
     for key, val in old.items():
-        if new.get(key) == val or round(val, 6) in still:
+        if new.get(key) == val or (_block(key), round(val, 6)) in still:
             continue
         if _total_cited(prose, val):
             now = new.get(key)
