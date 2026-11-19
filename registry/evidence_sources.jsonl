@@ -6,6 +6,7 @@
 {"origin_id": "ES-075927d01d2f", "payload": "{\"origin_id\":\"ES-075927d01d2f\",\"name\":\"Goldman Sachs Marquee MarketView\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-077da998c381", "payload": "{\"origin_id\":\"ES-077da998c381\",\"name\":\"Export-Import Bank of the United States\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-0b88146ab476", "payload": "{\"origin_id\":\"ES-0b88146ab476\",\"name\":\"Google\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-13664bff46c1", "payload": "{\"origin_id\":\"ES-13664bff46c1\",\"name\":\"Goldman Sachs commodity analysts\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-13d6df884ca5", "payload": "{\"origin_id\":\"ES-13d6df884ca5\",\"name\":\"Australian Department of Defence\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-15dc9f5d637e", "payload": "{\"origin_id\":\"ES-15dc9f5d637e\",\"name\":\"ODMs\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-172788df3493", "payload": "{\"origin_id\":\"ES-172788df3493\",\"name\":\"Murata executives\",\"kind\":\"data_vendor\"}"}
@@ -20,6 +21,7 @@
 {"origin_id": "ES-36c0fe609737", "payload": "{\"origin_id\":\"ES-36c0fe609737\",\"name\":\"Stockholm International Peace Research Institute\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-370bfea99a7f", "payload": "{\"origin_id\":\"ES-370bfea99a7f\",\"name\":\"State Council\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-376a4a64f9cb", "payload": "{\"origin_id\":\"ES-376a4a64f9cb\",\"name\":\"The Elec\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-3b1544fee709", "payload": "{\"origin_id\":\"ES-3b1544fee709\",\"name\":\"FactSet + Goldman Sachs Global Investment Research + STOXX\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-3c468eee1d4a", "payload": "{\"origin_id\":\"ES-3c468eee1d4a\",\"name\":\"Chakra\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-42d24ce06fd7", "payload": "{\"origin_id\":\"ES-42d24ce06fd7\",\"name\":\"its financial disclosures\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-434f2bc4de39", "payload": "{\"origin_id\":\"ES-434f2bc4de39\",\"name\":\"a local report\",\"kind\":\"data_vendor\"}"}
@@ -35,11 +37,14 @@
 {"origin_id": "ES-62b1cce840ef", "payload": "{\"origin_id\":\"ES-62b1cce840ef\",\"name\":\"Wall Street Journal\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-64e32a737b2c", "payload": "{\"origin_id\":\"ES-64e32a737b2c\",\"name\":\"Dealogic + Federal Reserve + Goldman Sachs Global Investment Research + Treasury + eMBS\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-64fb15b3322c", "payload": "{\"origin_id\":\"ES-64fb15b3322c\",\"name\":\"Bank for International Settlements (BIS)\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-65d0fd2db14c", "payload": "{\"origin_id\":\"ES-65d0fd2db14c\",\"name\":\"Datastream + FactSet + Goldman Sachs Global Investment Research\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-67dc58af447d", "payload": "{\"origin_id\":\"ES-67dc58af447d\",\"name\":\"Consensus\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-68e13d46ba1d", "payload": "{\"origin_id\":\"ES-68e13d46ba1d\",\"name\":\"TrendForce\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-6985a2d19c7b", "payload": "{\"origin_id\":\"ES-6985a2d19c7b\",\"name\":\"Rheinmetall\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-6aa4f7aaa973", "payload": "{\"origin_id\":\"ES-6aa4f7aaa973\",\"name\":\"LatchBio\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-6b1f443ed62d", "payload": "{\"origin_id\":\"ES-6b1f443ed62d\",\"name\":\"Fleet\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-7157f87b7a71", "payload": "{\"origin_id\":\"ES-7157f87b7a71\",\"name\":\"Goldman Sachs (own analysis)\",\"kind\":\"publisher_own\"}"}
+{"origin_id": "ES-7329b99862e0", "payload": "{\"origin_id\":\"ES-7329b99862e0\",\"name\":\"FactSet + Goldman Sachs Global Investment Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-7365cbaa3e5d", "payload": "{\"origin_id\":\"ES-7365cbaa3e5d\",\"name\":\"TVA\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-73b022c9bbaf", "payload": "{\"origin_id\":\"ES-73b022c9bbaf\",\"name\":\"CSIS\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-755314adafc6", "payload": "{\"origin_id\":\"ES-755314adafc6\",\"name\":\"Bloomberg\",\"kind\":\"data_vendor\"}"}
@@ -65,6 +70,7 @@
 {"origin_id": "ES-af9b7e755d4f", "payload": "{\"origin_id\":\"ES-af9b7e755d4f\",\"name\":\"pymnts.com\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-b1602c290685", "payload": "{\"origin_id\":\"ES-b1602c290685\",\"name\":\"KSE Institute\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-b20f79378f16", "payload": "{\"origin_id\":\"ES-b20f79378f16\",\"name\":\"Citi (own analysis)\",\"kind\":\"publisher_own\"}"}
+{"origin_id": "ES-b21b5fe26b66", "payload": "{\"origin_id\":\"ES-b21b5fe26b66\",\"name\":\"Datastream + Goldman Sachs Global Investment Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-b273a4ebae6e", "payload": "{\"origin_id\":\"ES-b273a4ebae6e\",\"name\":\"market consensus\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-b6260b07e184", "payload": "{\"origin_id\":\"ES-b6260b07e184\",\"name\":\"Datacurve\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-b6e873611107", "payload": "{\"origin_id\":\"ES-b6e873611107\",\"name\":\"Ministry of Defence of Ukraine\",\"kind\":\"data_vendor\"}"}
@@ -78,6 +84,7 @@
 {"origin_id": "ES-c414df565bed", "payload": "{\"origin_id\":\"ES-c414df565bed\",\"name\":\"Tristan Hume on Twitter\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-c568eb67fff3", "payload": "{\"origin_id\":\"ES-c568eb67fff3\",\"name\":\"US v. Liaw indictment\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-c7cceb760f9e", "payload": "{\"origin_id\":\"ES-c7cceb760f9e\",\"name\":\"SIPRI Military Expenditure Database\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-cdefbbcc8185", "payload": "{\"origin_id\":\"ES-cdefbbcc8185\",\"name\":\"Goldman Sachs commodities team\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-ce50707dc1bc", "payload": "{\"origin_id\":\"ES-ce50707dc1bc\",\"name\":\"Living Context\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-d124a419dea1", "payload": "{\"origin_id\":\"ES-d124a419dea1\",\"name\":\"Kristen Severson et al.\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-d357320a33fb", "payload": "{\"origin_id\":\"ES-d357320a33fb\",\"name\":\"TrendForce 2026 Global LED Lighting Market Trends report\",\"kind\":\"data_vendor\"}"}
