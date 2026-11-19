@@ -40,6 +40,7 @@ from vinci.dossier.anchor import (
     compute_anchor,
     lease_inclusive_net_debt,
     preserve_operator_tag,
+    r1_close,
 )
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.covenant_extract import (
@@ -1153,7 +1154,10 @@ def _edgar_cross_check(mech: MechanicalLayer, facts: dict[str, Any], *,
 
 
 def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: CiqBundle,
-                     ticker: str, computed_at: datetime, reference_date: date) -> Anchor:
+                     ticker: str, computed_at: datetime, reference_date: date,
+                     filings: Sequence[FilingEvent] | None,
+                     eod_closes: Sequence[tuple[date, float]] | None,
+                     filings_unread: str | None = None) -> Anchor:
     """The anchor a fresh assembly writes — the deterministic part of assembly that builds it.
 
     It takes the CIQ facts `anchor-backfill` takes, through the same `ciq_bridge` (row 27 (7)).
@@ -1163,7 +1167,10 @@ def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: Ciq
     from vinci.dossier.ciq_balance import scale_outcome
 
     ciq, _note = ciq_bridge(bundle, ticker)
-    anchor = compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq,
+    # (W73) the company's reports after the close R1 prices (the event rule) and the store's EOD
+    # closes (the price-drift flag), both read by the caller: this stays a function of its inputs
+    anchor = compute_anchor(mech, facts=facts, computed_at=computed_at, filings=filings,
+                            eod_closes=eod_closes, filings_unread=filings_unread, ciq=ciq,
                             reference_date=reference_date)
     # the bridge's own read carries the outcome; only a refused one (None) is read again
     scale = ciq.scale_check if ciq is not None else scale_outcome(bundle, ticker)
@@ -1279,6 +1286,10 @@ def assemble_one(
             # the drawdown's anchor: the underwrite, else the follow (`_drawdown_anchor_date`)
             drawdown_anchor=_drawdown_anchor_date(cfg, ticker),
         )
+        # (W73, correction 1) the store's EOD closes for the anchor's price-drift flag, read HERE
+        # while the store is open — the store the page's own close came from. The anchor is
+        # computed after this block closes it, so a read there raised (caught by the impact run).
+        _eod = [(b.bar_date, b.close) for b in store.get_price_history(rec.identity.internal_id)]
     flags += mech_flags
     # (2026-10-30) EACH ANNUAL-SUMMARY LTM AGAINST ITS FOUR QUARTERS, before anything is spent: a
     # row they disagree with, or that carries a '-', is a QA flag; a MATERIAL one that disagrees
@@ -1485,9 +1496,18 @@ def assemble_one(
     try:
         anchor_facts = EdgarClient.from_config(cfg).companyfacts(rec.identity.cik)
         edgar_nd = _edgar_cross_check(mech, anchor_facts, reference_date=fin.reference_date)
+        # (W73) the company's reports after the close R1 prices, and the store's EOD closes —
+        # the store the page's own close came from
+        _mech = mech.model_dump(mode="json")
+        _close = r1_close(_mech)
+        _a_filings, _a_unread = (read_filing_events(
+            EdgarClient.from_config(cfg), rec.identity.cik, _mech, datetime.now(UTC).date(),
+            since=_close) if _close is not None else ([], None))
         anchor = _assembly_anchor(mech.model_dump(mode="json"), facts=anchor_facts, bundle=bundle,
                                   ticker=ticker, computed_at=datetime.now(UTC),
-                                  reference_date=fin.reference_date)
+                                  reference_date=fin.reference_date, filings=_a_filings,
+                                  filings_unread=_a_unread,
+                                  eod_closes=_eod)
     except SecRateLimitedError:
         raise  # SEC refused this run: never a page with an "anchor failed" written over it
     except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier

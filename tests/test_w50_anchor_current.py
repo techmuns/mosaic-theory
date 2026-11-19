@@ -27,7 +27,9 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import covered_pages, covered_where, frozen_doc, frozen_page
+from tests.w73_lly_expected import as_derived
 from vinci.dossier import anchor as anc
 from vinci.dossier import propose
 from vinci.dossier import render as dr
@@ -46,7 +48,8 @@ def _doc(t: str) -> dict[str, Any]:
 
 def _derive(doc: dict[str, Any]) -> anc.Anchor:
     facts = json.loads((FACTS / f"{doc['ticker']}.json").read_text())
-    return anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW)
+    return anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW,
+                              filings=NO_FILINGS, eod_closes=NO_BARS)
 
 
 def _band(doc: dict[str, Any]) -> dict[str, Any]:
@@ -190,7 +193,9 @@ def test_the_gap_sentence_names_the_unmatched_pair(ticker: str, side: str, word:
     assert a.midcycle_gap.ltm_side.upper() == side
     read = a.midcycle_gap.read
     assert "with the median multiple" not in read
-    assert "at the multiple the name trades on today" in read and f"can {word}" in read
+    # (W73) the multiple is the history's latest close, dated, never "today's"
+    assert "at its own history's multiple at the latest close" in read and f"can {word}" in read
+    assert "today" not in read
 
 
 # --- (-) committed pages keep what they priced, on both surfaces ------------------------------
@@ -224,7 +229,8 @@ def _round_trips_by_its_kind(t: str, raw: str) -> bool:
         assert mult.get("statistic") == anc.MULTIPLE_CURRENT, t
         assert mult.get("median") is not None, t
         assert mult.get("as_of", "absent") is not None, t     # absent is allowed; null never
-    assert out == raw, f"{t} does not round-trip byte-identically"
+    # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
+    assert out == as_derived(t, raw), f"{t} does not round-trip byte-identically"
     return True
 
 
@@ -252,9 +258,11 @@ def test_both_renderers_print_what_each_anchor_priced() -> None:
     assert derived.multiple is not None and derived.multiple.median is not None
     old, new = _md(committed), _md(derived)
     assert "Median multiple, own history" in old and dr._SCREEN_METHOD_R1 in old
-    assert "Current multiple, own history" not in old
-    assert "Current multiple, own history" in new and dr._SCREEN_METHOD_R1_CURRENT in new
-    assert f"latest close {derived.multiple.as_of}" in new
+    # (W73) the row is named for the dated close, never "current"
+    assert "Multiple at the latest close, own history" not in old
+    assert "Multiple at the latest close, own history" in new
+    assert dr._SCREEN_METHOD_R1_DATED in new   # (W73) a derived anchor records its verdict
+    assert f"close of {derived.multiple.as_of}" in new
     assert f"median {derived.multiple.median:.1f}x beside it, not used" in new
     assert "Median multiple, own history" not in new and dr._SCREEN_SUBTITLE not in new
 
@@ -288,8 +296,8 @@ process.stdout.write(JSON.stringify(out));
         shutil.rmtree(tmp, ignore_errors=True)
     html = json.loads(res.stdout)
     assert "Median multiple, own history" in html["old"]
-    assert "Current multiple, own history" not in html["old"]
-    assert "Current multiple, own history" in html["new"]
+    assert "Multiple at the latest close, own history" not in html["old"]
+    assert "Multiple at the latest close, own history" in html["new"]
     assert "Median multiple, own history" not in html["new"]
     assert f"median {derived.multiple.median:.1f}x beside it, not used" in html["new"]
 

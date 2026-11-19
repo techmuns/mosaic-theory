@@ -421,8 +421,10 @@ def test_screening_context_prose_is_the_same_on_both_surfaces() -> None:
     from vinci.dossier.render import (
         _SCREEN_METHOD_R1,
         _SCREEN_METHOD_R1_CURRENT,
+        _SCREEN_METHOD_R1_DATED,
         _SCREEN_SUBTITLE,
         _SCREEN_SUBTITLE_CURRENT,
+        _SCREEN_SUBTITLE_DATED,
     )
 
     js = _src("frontend/views/shared/dossier.js")
@@ -430,7 +432,10 @@ def test_screening_context_prose_is_the_same_on_both_surfaces() -> None:
     for const, name in ((_SCREEN_METHOD_R1, "_SCREEN_METHOD_R1"),
                         (_SCREEN_SUBTITLE, "_SCREEN_SUBTITLE"),
                         (_SCREEN_METHOD_R1_CURRENT, "_SCREEN_METHOD_R1_CURRENT"),
-                        (_SCREEN_SUBTITLE_CURRENT, "_SCREEN_SUBTITLE_CURRENT")):
+                        (_SCREEN_SUBTITLE_CURRENT, "_SCREEN_SUBTITLE_CURRENT"),
+                        # (W73) the dated-close pair joins them, chosen by the anchor's verdict
+                        (_SCREEN_METHOD_R1_DATED, "_SCREEN_METHOD_R1_DATED"),
+                        (_SCREEN_SUBTITLE_DATED, "_SCREEN_SUBTITLE_DATED")):
         # the JS source wraps across lines — compare on collapsed whitespace, which is what the
         # rendered surface shows anyway (HTML collapses runs of space; markdown re-flows).
         assert " ".join(const.split()) in " ".join(js.split()), (

@@ -404,12 +404,17 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
                 "own series.")
     elif priced_ex and _screens_at_current(anchor) and anchor is not None \
             and DQ_STALE_MULTIPLE in (anchor.data_quality or ""):
-        # (W62) the current is there, but a newer quarter could be in the history by the page's
-        # price date (`anchor.close_age`): R1 still applies and prices no value. No twin:
+        # (W62; the event rule since W73) the current is there, but the anchor refused its close
+        # (`anchor.close_verdict`): R1 still applies and prices no value. No twin:
         # dossier.js prints no sentence on what R1 prices here.
-        tail = (" R1 prices no value on it: a newer quarter than that current could be in the "
-                "history by the page's price date, so it is not today's multiple, and the median "
-                "is never put in its place. The level and percentile above are CIQ's own series.")
+        tail = ((" R1 prices no value on it: the event rule refuses that close (the screening "
+                 "context names why), and the median is never put in its place. The level and "
+                 "percentile above are CIQ's own series.")
+                if _screens_at_dated_close(anchor) else
+                # (W62) an anchor derived before W73 keeps its own words until re-derived
+                (" R1 prices no value on it: a newer quarter than that current could be in the "
+                 "history by the page's price date, so it is not today's multiple, and the median "
+                 "is never put in its place. The level and percentile above are CIQ's own series."))
     elif priced_ex and _screens_at_current(anchor):
         # (W50) the anchor prices the history's current, not its median. No twin: dossier.js
         # prints no sentence on what R1 prices here.
@@ -3937,6 +3942,24 @@ _SCREEN_SUBTITLE_CURRENT = (
     "latest close of its own trading history, the history's median printed beside it and never "
     "priced. An attention filter only — it applies no structural adjustment, so a cheap-looking "
     "screen still has to survive the full bear/base/bull underwrite.")
+#: (W73, 2026-11-19; operator: "Approve with corrections") The same two lines for an anchor whose
+#: close is DATED and judged by the event rule — chosen by the anchor's own recorded verdict
+#: (`multiple.close_note`), never assumed: a page derived before W73 prints the W50 lines above
+#: until it is re-derived, as a page derived before W50 prints the median's. Twin: anchorInner().
+_SCREEN_METHOD_R1_DATED = "mid-cycle margin × its own history's multiple at the latest close"
+_SCREEN_SUBTITLE_DATED = (
+    "This name's naive reported median margin, priced at the multiple of its own trading "
+    "history's latest close — dated below, and refused once the company reports after it — "
+    "the history's median printed beside it and never priced. An attention filter only — it "
+    "applies no structural adjustment, so a cheap-looking screen still has to survive the full "
+    "bear/base/bull underwrite.")
+
+
+def _screens_at_dated_close(anchor: Anchor | None) -> bool:
+    """Whether this anchor prices a DATED close the event rule judged (W73) — its recorded
+    verdict, never the code's age."""
+    return (_screens_at_current(anchor) and anchor is not None and anchor.multiple is not None
+            and anchor.multiple.close_note is not None)
 
 
 def _screens_at_current(anchor: Anchor | None) -> bool:
@@ -4009,7 +4032,11 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         return []
     is_r1 = anchor.recipe_hint.startswith("R1")
     current = _screens_at_current(anchor)
-    method = ((_SCREEN_METHOD_R1_CURRENT if current else _SCREEN_METHOD_R1) if is_r1
+    dated = _screens_at_dated_close(anchor)
+    subtitle = (_SCREEN_SUBTITLE_DATED if dated else _SCREEN_SUBTITLE_CURRENT if current
+                else _SCREEN_SUBTITLE)
+    method = ((_SCREEN_METHOD_R1_DATED if dated else _SCREEN_METHOD_R1_CURRENT if current
+               else _SCREEN_METHOD_R1) if is_r1
               else (anchor.recipe_hint or "—"))
     # WHOSE BIT IS `applicable` (2026-10-09). It is R1's — whether R1's arithmetic, the rows below,
     # can anchor — but it printed beside whatever recipe is TAGGED, so UBER's page read
@@ -4028,9 +4055,23 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         ex = mu.source.startswith(_EX_LEASE_SOURCE_PREFIX)
         tail = (f"{mu.history_quarters} closes · {mu.confidence} · "
                 f"{_md_cell(anchor.multiple_basis)}{_EX_LEASE_LABEL if ex else ''} |")
-        if current:
+        if dated:
+            # (W73) the close is DATED, never "today's"; the event rule's pass is stated beside
+            # it, written once in anchor.py (a refusal rides on the withheld-value row below)
+            med = "—" if mu.median is None else f"{mu.median:.1f}x"
+            ok = (f" · {_md_cell(mu.close_note)}" if mu.close_stale is False
+                  and mu.close_note else "")
+            # (W73, correction 1) the stock's move since that close, a dated flag beside it,
+            # written once in anchor.py (`close_drift`). Twin: anchorInner()
+            ok += f" · {_md_cell(mu.close_drift_note)}" if mu.close_drift_note else ""
+            rows.append(f"| Multiple at the latest close, own history | "
+                        f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
+                        f"close of {mu.as_of or '—'}{ok} · median {med} beside it, not used · "
+                        + tail)
+        elif current:
             # (W50) today's multiple, its close date, and the median BESIDE it — never the
-            # screen's multiple. Twin: anchorInner().
+            # screen's multiple: an anchor derived before W73 prints these words until it is
+            # re-derived. Twin: anchorInner().
             med = "—" if mu.median is None else f"{mu.median:.1f}x"
             rows.append(f"| Current multiple, own history | "
                         f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
@@ -4066,7 +4107,7 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
                     f"{_md_cell(anchor.value_withheld)} |")
     rows.append(f"| Overall confidence | {anchor.overall_confidence or '—'} |  |")
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
-           f"_{_SCREEN_SUBTITLE_CURRENT if current else _SCREEN_SUBTITLE}_", "",
+           f"_{subtitle}_", "",
            "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
     # The operator's decision on this name's recipe renders on the Brief
     # (`_operator_decision_lines`, #1004 item 3c round 1); this block keeps the machine's own read,

@@ -18,6 +18,7 @@ import json
 import math
 import re
 import statistics as st
+from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, NamedTuple
@@ -26,7 +27,14 @@ from pydantic import BaseModel, ValidationError, computed_field
 
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
-from vinci.dossier.anchor_split import STALE_CLOSE_DAYS, AnchorGapSplit, gap_split, reproduces
+from vinci.dossier.anchor_split import AnchorGapSplit, gap_split, reproduces
+from vinci.dossier.freshness import (
+    EVENT_8K_ITEM,
+    MAX_STORE_LAG_DAYS,
+    FilingEvent,
+    first_event_after,
+    whole_number_ratio,
+)
 from vinci.edgar.asof import page_price_date
 from vinci.edgar.concepts import (
     ANNUAL_STALE_DAYS,
@@ -186,6 +194,36 @@ class AnchorMargin(BaseModel, frozen=True):
     confidence: str  # firm | weak
 
 
+#: (W73, operator 2026-11-19: "Approve with corrections", correction 1) How far the stock may move
+#: from the multiple's close to the page's close before the multiple row FLAGS it. PRICE ÷ PRICE,
+#: never the anchor against either. FACE VALIDITY, set before any page was measured: a tenth of the
+#: price is about one standard deviation of a month's move at a 30% annual volatility, the scale
+#: W61 used for the effects the split separates, so the flag marks a move that large and not
+#: day-to-day noise. Never tuned on outcomes; no forward return is read.
+DRIFT_FLAG_MOVE = 0.10
+
+
+class CloseDrift(BaseModel, frozen=True):
+    """(W73) The stock's move from the close the multiple is struck at to the page's own close:
+    PRICE ÷ PRICE, a DATED FLAG beside the multiple — never a withholding, and never set against
+    the anchor (the 2026-11-13 fence: anchor ÷ price stays unprinted). `cap_cross_check`'s shape
+    (#1132): the two dates, the ratio a share-basis change sits on (`whole_number_ratio`), and
+    whether the move is beyond tolerance. Both closes are the repo's own EOD closes: the page's is
+    `stock_info.price`, the multiple's the store's bar on or before its date, within
+    `freshness.MAX_STORE_LAG_DAYS`."""
+
+    close_date: str              # the multiple's close
+    close_bar_date: str          # the EOD bar read for it
+    close_eod: float             # that bar's close, $ per share
+    page_date: str               # the page's close, `stock_info.as_of`
+    move: float                  # page close ÷ close_eod − 1
+    ratio: float                 # page close ÷ close_eod
+    corporate_action: bool       # a whole-number ratio ≥ 2 either way: a share-basis change
+    beyond_tolerance: bool       # |move| > tolerance and no corporate action — FLAGGED
+    tolerance: float             # DRIFT_FLAG_MOVE
+    source_ref: str
+
+
 class AnchorMultiple(BaseModel, frozen=True):
     """The own-history EV/EBITDA the screen prices — READ from the committed band R1 reads, never
     recomputed.
@@ -206,6 +244,18 @@ class AnchorMultiple(BaseModel, frozen=True):
     statistic: str | None = None        # MULTIPLE_CURRENT on an anchor derived since W50
     as_of: str | None = None            # the latest close the current is struck at
     median: float | None = None         # the band's trailing median, beside it — never priced
+    # (W73, 2026-11-19) the EVENT RULE's verdict on that close at the page's price date
+    # (`close_verdict`): True refused (a report filed after it, or a close after the page's date),
+    # False fresh, None not measurable (refused too). ``close_note`` says it in words, written
+    # once here and printed verbatim by both renderers and by the scenario proposal, which reads
+    # this verdict rather than deciding its own. Both ABSENT on an anchor derived before W73.
+    close_stale: bool | None = None
+    close_note: str | None = None
+    # (W73, correction 1) the stock's move since that close (`close_drift`), and the words both
+    # renderers print beside the multiple — set only when the move is flagged, is a share-basis
+    # change, or cannot be measured. Both ABSENT on an anchor derived before W73.
+    close_drift: CloseDrift | None = None
+    close_drift_note: str | None = None
 
 
 #: What an anchor derived since W50 prices: the band's latest close (`AnchorMultiple.statistic`).
@@ -233,37 +283,45 @@ def no_current_reason(ex_lease: bool, raw: Any, median: float | None) -> str:
     whose data is weakest, the bias this removes."""
     where = "valuation.lease_basis.ex_lease_band" if ex_lease else "valuation.own_history"
     return (f"the band R1 prices on ({where}) carries no usable current multiple (current={raw!r}: "
-            "absent, NM, non-finite or not positive) — the screen prices today's multiple, and the "
-            "trailing "
-            "median" + (f" ({median:g}x)" if median is not None else "")
+            "absent, NM, non-finite or not positive) — the screen prices its history's latest "
+            "close, and the trailing median" + (f" ({median:g}x)" if median is not None else "")
             + " is never priced in its place; no screen value until the band carries one")
 
 
-#: (W62) The anchor's flag when the band's current is not today's: past its cadence's limit before
-#: the page's price date, or at a close whose age cannot be measured. It rides on `data_quality`
-#: beside one detail line, so the cause survives a reason that a later step rewrites
+#: (W62; the event rule since W73) The anchor's flag when the close R1 prices is refused: a report
+#: filed after it by the page's price date, a close after that date, or one that cannot be judged.
+#: It rides on `data_quality` beside one detail line, so the cause survives a reason that a later
+#: step rewrites
 #: (`recipe_proposal.propose` replaces R1's reason on an R4 page).
 DQ_STALE_MULTIPLE = "multiple_stale"
 #: (W62; operator 2026-11-18: "Approve, add the row") The value cell of the "Screen value / share"
 #: row on a page whose value is withheld as stale. Defined here, beside the note it heads
 #: (`Anchor.value_withheld`), and imported by the markdown renderer.
 SCREEN_VALUE_WITHHELD = "not priced"
-#: How many of the ex-lease history's latest observations set its cadence: one fiscal year, so the
-#: window holds one 10-K's pricing lag beside three 10-Qs'.
-EX_LEASE_CADENCE_QUARTERS = 4
+#: (W73) What the anchor says when its caller passed no filing list: the event rule cannot run, so
+#: the value is withheld — a check that cannot see its events reports no pass.
+FILINGS_NOT_PASSED = "no filing list was passed to the anchor"
 
 
-class CloseAge(NamedTuple):
-    """Whether the band's current is today's, by the cadence its series is built on (W62).
+class CloseVerdict(NamedTuple):
+    """Whether the close R1 prices may still be priced at the page's date, by the EVENT RULE (W73).
 
-    ``age`` is days from the close to the page's price date. ``due`` is set for the ex-lease
-    history only: the date its NEXT observation could be priced. ``stale`` is None when the age
-    cannot be measured (refused all the same: an undated close cannot be shown to be today's)."""
+    ``age`` is days from the close to the page's price date (negative: the close is later).
+    ``stale`` True refuses, False passes, None cannot be measured (refused all the same).
+    ``filing`` is the first report the rule counts filed after the close, where one is."""
 
     age: int | None
-    due: date | None
     stale: bool | None
-    rule: str
+    rule: str                  # the verdict in full: data_quality detail and the reason
+    cause: str                 # the row's note, in dates only
+    clears: str | None = None  # what clears a refusal; None on a pass
+    filing: FilingEvent | None = None
+    after_page: bool = False
+
+    @property
+    def note(self) -> str:
+        """The note both renderers print verbatim (the multiple row; the "not priced" row)."""
+        return self.cause if self.clears is None else f"{self.cause}; {self.clears} clears it"
 
 
 def multiple_close_age(close: Any, price_date: date | None) -> int | None:
@@ -292,92 +350,125 @@ def _iso_day(v: Any) -> date | None:
         return None
 
 
-def ex_lease_next_due(mechanical: dict[str, Any]) -> tuple[date, str] | None:
-    """The date the ex-lease history's NEXT observation could be priced, or None when its own
-    observations do not say.
-
-    THE CADENCE IS THE SERIES' OWN (`lease_basis.observations`): one observation per fiscal
-    quarter, at Historical Capitalization's pricing date, about the filing. So a newer observation
-    cannot exist before the next quarter ends AND is filed: the last balance-sheet date, plus the
-    longest of its last `EX_LEASE_CADENCE_QUARTERS` quarters (91–92 days; 98 in a 14-week
-    quarter), plus the slowest of their pricing lags (the window holds a 10-K's, the longest
-    filing). Read over EVERY observation the export carries, priced or not: one unpriced quarter
-    would otherwise read as a 184-day "quarter" (WLK)."""
-    obs = [o for o in ((mechanical.get("valuation") or {}).get("lease_basis") or {}).get(
-        "observations") or [] if isinstance(o, dict)]
-    if not obs or _iso_day(obs[-1].get("pricing_date")) is None \
-            or _iso_day(obs[-1].get("balance_sheet_date")) is None:
-        return None   # the band's current is the last observation; an older one never stands in
-    pairs = [(b, p) for o in obs if (b := _iso_day(o.get("balance_sheet_date"))) is not None
-             and (p := _iso_day(o.get("pricing_date"))) is not None]
-    n = EX_LEASE_CADENCE_QUARTERS
-    if len(pairs) < n + 1:
-        return None
-    bs = [b for b, _p in pairs[-(n + 1):]]
-    quarter = max((later - earlier).days for earlier, later in zip(bs, bs[1:], strict=False))
-    lag = max((p - b).days for b, p in pairs[-n:])
-    last_bs = pairs[-1][0]
-    due = last_bs + timedelta(days=quarter + lag)
-    return due, (f"the next quarterly observation is due by {due.isoformat()} (balance sheet "
-                 f"{last_bs.isoformat()} + the longest of its last {n} quarters, {quarter} days, + "
-                 f"the slowest of their pricing lags, {lag} days)")
+def r1_close(mechanical: dict[str, Any]) -> date | None:
+    """The close R1 prices on this page: its band's latest close, or None. What a caller reads the
+    company's filings from (`read_filing_events(since=…)`), so the list covers every report the
+    event rule could count against it."""
+    band = r1_multiple_band(mechanical).band
+    return _iso_day((band or {}).get("as_of")) if isinstance(band, dict) else None
 
 
-def close_age(mechanical: dict[str, Any], *, ex_lease: bool, close: Any,
-              price_date: date | None) -> CloseAge:
-    """Whether the current R1 prices is today's, by its band's cadence (W62, 2026-11-18).
+def close_verdict(close: Any, price_date: date | None,
+                  filings: Sequence[FilingEvent] | None, *,
+                  unread: str | None = None) -> CloseVerdict:
+    """(W73, 2026-11-19) THE EVENT RULE ON R1'S MULTIPLE, in place of W62's two clocks.
 
-    * CIQ's history (`ciq_sheets._own_history_band`, the Multiples sheet's TEV/LTM EBITDA Close):
-      calendar-quarter columns plus a partial column at the export date wherever CIQ writes one, so
-      its current can be as recent as the export. Stale past `STALE_CLOSE_DAYS` (W61's limit:
-      a month moves a share price about as much as the effects the screen separates). A re-export
-      clears it: GOOGL's 2026-09-22 file closed at 2026-09-21.
-    * The ex-lease history: one observation a fiscal quarter (:func:`ex_lease_next_due`). Stale
-      only once the page's price date is past the date its NEXT observation could be priced,
-      since before then no export could hold a newer one and a refusal would be false by
-      construction. TJX's 2026-08-28 observation is the newest it could carry on 2026-11-11.
+    The multiple is a DATED value: the market's TEV over the EBITDA known at its close. It may be
+    priced until the company reports again — a 10-Q, a 10-K, an 8-K item 2.02 or a foreign or
+    transition filer's report (`freshness.first_event_after`, the rule #1132 judges an export panel
+    by, never a second copy) filed strictly after the close and on or before the page's price
+    date. Then the market has priced news the close has not, so the value is withheld; an export
+    carrying a close after that report clears it. One rule for both bands: CIQ's history (its
+    quarter columns and the partial column at the export date) and the ex-lease history (one
+    observation a quarter, priced about its filing). W62's 30-day clock refused BRBR's close
+    although nothing had been reported since, and its ex-lease due date passed TJX's after TJX had
+    reported (2026-11-18), until 2026-12-29.
 
-    Measured against the page's price date, never an export date: the page records none for the
-    band (only the file's mtime), and the question is whether the multiple is the newest its series
-    could offer at the page's date."""
+    REFUSED, never passed, where it cannot be judged: an undated close or page, a filing list that
+    was not read (``filings`` None), and a close AFTER the page's price date (W68: GOOGL's
+    2026-11-19 export closes on 2026-11-18, against its page's 2026-11-11), which the page's date
+    could not know. Never re-struck at the page's close (the 2026-11-13 fence), never the median."""
     age = multiple_close_age(close, price_date)
     if age is None or price_date is None:
-        return CloseAge(age, None, None, "no measurable age")
-    if not ex_lease:
-        return CloseAge(age, None, age > STALE_CLOSE_DAYS,
-                        f"CIQ's history is stale past {STALE_CLOSE_DAYS} days")
-    nxt = ex_lease_next_due(mechanical)
-    if nxt is None:
-        return CloseAge(age, None, None, "the ex-lease history's cadence is not measurable")
-    due, why = nxt
-    return CloseAge(age, due, price_date > due, why)
+        pd = price_date.isoformat() if price_date is not None else "unstated"
+        return CloseVerdict(age, None, f"no measurable age (the close {close or 'unstated'}, the "
+                                       f"page's price date {pd})",
+                            f"the close ({close or 'unstated'}) cannot be dated against the page's "
+                            f"({pd})", "dating both")
+    cd = (price_date - timedelta(days=age)).isoformat()
+    pd = price_date.isoformat()
+    if age < 0:
+        n = -age
+        return CloseVerdict(
+            age, True, f"the close, {cd}, is {n} day{'' if n == 1 else 's'} AFTER the page's price "
+                       f"date, {pd}: the page's date could not know it",
+            f"the {cd} close is {n} day{'' if n == 1 else 's'} after the page's close of {pd}, "
+            "which could not know it", "a page priced on or after that close", after_page=True)
+    if filings is None:
+        why = unread or FILINGS_NOT_PASSED
+        return CloseVerdict(age, None, f"the event rule could not run — {why}",
+                            f"the event rule could not read the company's filings ({why})",
+                            "reading them")
+    f = first_event_after(cd, filings, upto=price_date)
+    if f is not None:
+        return CloseVerdict(
+            age, True, f"{f.label()} — reported after the {cd} close, on or before the page's "
+                       f"price date, {pd}",
+            f"the company reported after the {cd} close ({f.form}"
+            + (f" item {EVENT_8K_ITEM}" if f.form.startswith("8-K") else "")
+            + f", filed {f.filing_date})",
+            "a CIQ export carrying a close after that filing, on or before the page's close,",
+            filing=f)
+    return CloseVerdict(age, False, f"nothing the event rule counts was filed after the {cd} "
+                                    f"close, on or before the page's price date, {pd}",
+                        f"nothing reported after it by the page's close of {pd}")
 
 
-def withheld_note(ex_lease: bool, close: Any, ca: CloseAge, on_close: date | None,
-                  cut: date | None) -> str:
-    """The note of the "Screen value / share" row when R1 applies but its value is withheld as
-    stale (operator 2026-11-18: "Approve, add the row"): the cause and what clears it, in dates and
-    days only. The page's date is its stored close where it has one, else its reference date."""
-    page = "the page's close" if on_close is not None else "the page's date"
-    pd = cut.isoformat() if cut is not None else "unstated"
-    if ca.stale is None and ca.age is not None:
-        return (f"the multiple is the {close} close, and its history does not state when its next "
-                "quarterly observation is due (it needs five dated observations); an export "
-                "carrying them clears it")
-    if ca.stale is None:
-        return (f"the multiple's close ({close or 'unstated'}) cannot be dated against {page} "
-                f"({pd}); dating both clears it")
-    if ex_lease and ca.due is not None:
-        return (f"the multiple is the {close} close, and its history's next quarterly "
-                f"observation was due by {ca.due.isoformat()}, before {page} of {pd}; a CIQ "
-                "export carrying that quarter clears it")
-    return (f"the multiple is the {close} close, {ca.age} day{'' if ca.age == 1 else 's'} before "
-            f"{page}; a fresh CIQ export clears it")
+def close_drift(eod_closes: Sequence[tuple[date, float]] | None, close: Any,
+                page_price: Any, page_date: date | None, *,
+                unread: str | None = None) -> tuple[CloseDrift | None, str | None]:
+    """(W73, correction 1) The stock's move from the multiple's close to the page's close, and the
+    note the multiple row prints, or (None, None) where there is nothing to state.
+
+    PRICE ÷ PRICE ONLY: the page's close (`stock_info.price`) over the EOD close on the multiple's
+    own date — the last bar on or before it, within `freshness.MAX_STORE_LAG_DAYS` (a weekend plus
+    a holiday). A close ON the page's date is the page's close itself (move 0, no read). A close
+    after the page's date states nothing here: the event rule refuses it (W68). The words carry
+    the direction ("fallen", "risen"), never a signed percentage — the screening block prints
+    none (`test_screening_context_never_differences_the_anchor_against_spot`). A move that cannot
+    be measured says so; it is never taken as no move."""
+    cd = _iso_day(close)
+    price = page_price if isinstance(page_price, (int, float)) and not isinstance(
+        page_price, bool) and page_price > 0 else None
+    if cd is None or page_date is None or cd > page_date:
+        return None, None
+    if price is None:
+        return None, "the stock's move since that close is not measured: the page states no close"
+    if cd == page_date:
+        bar_date, eod, src = cd, float(price), "the page's own close (stock_info.price)"
+    else:
+        if eod_closes is None:
+            return None, ("the stock's move since that close is not measured: "
+                          + (unread or "no EOD closes were passed to the anchor"))
+        bars = [(d, c) for d, c in eod_closes if d <= cd and (cd - d).days <= MAX_STORE_LAG_DAYS
+                and isinstance(c, (int, float)) and c > 0]
+        if not bars:
+            return None, (f"the stock's move since that close is not measured: the EOD store has "
+                          f"no close on or within {MAX_STORE_LAG_DAYS} days before {cd}")
+        bar_date, eod = max(bars)
+        src = (f"EOD close {bar_date.isoformat()} (the store's bar on or before the multiple's "
+               f"close) against stock_info.price at {page_date.isoformat()}")
+    ratio = float(price) / eod
+    move = ratio - 1.0
+    ca = whole_number_ratio(ratio)
+    drift = CloseDrift(close_date=cd.isoformat(), close_bar_date=bar_date.isoformat(),
+                       close_eod=round(eod, 6), page_date=page_date.isoformat(),
+                       move=round(move, 6), ratio=round(ratio, 6), corporate_action=ca,
+                       beyond_tolerance=(not ca) and abs(move) > DRIFT_FLAG_MOVE,
+                       tolerance=DRIFT_FLAG_MOVE, source_ref=src)
+    if ca:
+        return drift, (f"the EOD closes at that close and the page's differ by a whole-number "
+                       f"ratio ({ratio:.2f}), a share-basis change, so no move is stated")
+    if drift.beyond_tolerance:
+        return drift, (f"⚠ the stock has {'risen' if move > 0 else 'fallen'} {abs(move):.1%} "
+                       "since that close")
+    return drift, None
 
 
-def stale_multiple_reason(ex_lease: bool, current: float, close: Any, ca: CloseAge,
-                          price_date: date | None, median: float | None) -> str:
-    """Why an anchor publishes no screen value although R1 applies: its current is not today's.
+def stale_multiple_reason(ex_lease: bool, current: float, close: Any, cv: CloseVerdict,
+                          median: float | None) -> str:
+    """Why an anchor publishes no screen value although R1 applies: the close it prices is outdated
+    by a report, after the page's date, or cannot be judged (W73).
 
     A VALUE'S REFUSAL, NOT THE RECIPE'S (coordinator, 2026-11-18). Staleness is not
     inapplicability, so `applicable`, the recipe and the tier are untouched; only the screen value
@@ -385,26 +476,11 @@ def stale_multiple_reason(ex_lease: bool, current: float, close: Any, ca: CloseA
     current EBITDA the stock's quote exactly, and the margin effect the gap to it, the difference
     the 2026-11-13 fence keeps off — and never the median in its place."""
     where = "valuation.lease_basis.ex_lease_band" if ex_lease else "valuation.own_history"
-    pd = price_date.isoformat() if price_date is not None else "unstated"
-    if ca.stale is None:
-        when = (f"cannot be shown to be today's: {ca.rule} (its close {close or 'unstated'}, the "
-                f"page's price date {pd})")
-        until = ("its history carries five dated observations" if ex_lease and ca.age is not None
-                 else "both dates are on the page")
-    elif ex_lease:
-        when = (f"is the close of {close}, but the page's price date, {pd}, is past the date a "
-                f"newer one could exist: {ca.rule}")
-        until = "a CIQ export carries the newer quarter"
-    else:
-        when = (f"is the close of {close}, {ca.age} day{'' if ca.age == 1 else 's'} before the "
-                f"page's price date, {pd}: past the {STALE_CLOSE_DAYS}-day limit, it is not "
-                "today's")
-        until = "a CIQ export carries a close within the limit"
-    return (f"today's multiple ({where}, current {current:g}x) {when} — the screen prices "
-            "today's multiple, and the trailing median"
+    return (f"the multiple R1 prices ({where}, {current:g}x at the {close or 'undated'} close) "
+            f"is refused by the event rule: {cv.rule} — the trailing median"
             + (f" ({median:g}x)" if median is not None else "")
-            + f" is never priced in its place; R1 still applies, and no screen value is shown "
-              f"until {until}")
+            + " is never priced in its place; R1 still applies, and no screen value is shown: "
+              f"{(cv.clears or 'a close the event rule passes').removesuffix(',')} clears it")
 
 
 class AnchorInput(BaseModel, frozen=True):
@@ -557,7 +633,7 @@ class Anchor(BaseModel, frozen=True):
     # is; absent, never null, elsewhere and on every anchor written before it.
     gap_split: AnchorGapSplit | None = None
     # (W62, 2026-11-18; operator: "Approve, add the row") why R1, which applies, shows no value:
-    # its multiple is not today's by its band's cadence. Both renderers print it verbatim as the
+    # its close is refused by the event rule (W73). Both renderers print it verbatim as the
     # note of a "Screen value / share" row reading `SCREEN_VALUE_WITHHELD`. Dates and days only,
     # never the stock's quote. Absent, never null, wherever a value is shown or R1 cannot price.
     value_withheld: str | None = None
@@ -1565,8 +1641,8 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
     """The mid-cycle gap when it is large enough to state (``MIDCYCLE_GAP_PTS``), else None.
 
     ``value_refused`` is why the anchor withholds its screen value although the band carries a
-    multiple to read (W62: a current that is not today's, or none usable): the sentence then says R1
-    WOULD price the median there, never that it does.
+    multiple to read (a close the event rule refuses, W73, or none usable): the sentence then says
+    R1 WOULD price the median there, never that it does.
 
     Needs both legs: a margin R1 actually computed, and an LTM EBIT over a positive LTM revenue.
     Either missing → None, which is "nothing to say", not "no gap" — the page stays silent rather
@@ -1593,14 +1669,15 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
         # value (GOOGL, NFLX — inputs incomplete), and "this value" there points at nothing
         tail = (f"so an R1 value {answers} what the business is worth if it is still what it was. "
                 "If the gap is STRUCTURAL — a changed mix or model — that history understates it; "
-                "if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these "
-                "above-median earnings, so it reads lower than the same price would on median "
-                "earnings, and an R1 value can understate on that count too.")
+                "if it is a cyclical PEAK, reverting is right. The latest close's multiple is "
+                "struck on these above-median earnings, so it reads lower than the same price "
+                "would on median earnings, and an R1 value can understate on that count too.")
         where = "ABOVE"
     else:
         tail = (f"so an R1 value {assumes} a recovery to what the business was. If the decline is "
                 "STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting "
-                "recovery is right. Today's multiple is struck on these below-median earnings, so "
+                "recovery is right. The latest close's multiple is struck on these "
+                "below-median earnings, so "
                 "it reads higher than the same price would on median earnings, and an R1 value "
                 "can overstate on that count too.")
         where = "BELOW"
@@ -1649,10 +1726,10 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
     read = (f"The last twelve months' operating margin of {_margin_words(ltm)} (CIQ EBIT) sits "
             f"{abs(gap):.1f} points {where} the {yrs} median of {_margin_words(median_margin)} "
             f"({med_src}) that R1 reverts to. "
-            + ("R1 prices that median at the multiple the name trades on today, "
+            + ("R1 prices that median at its own history's multiple at the latest close, "
                if value_refused is None else
-               "R1 would price that median at the multiple the name trades on today, though no "
-               f"screen value is priced here ({value_refused}), ")
+               "R1 would price that median at its own history's multiple at the latest close, "
+               f"though no screen value is priced here ({value_refused}), ")
             + f"{tail}{bsent}")
     basis_txt = (f"LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: "
                  f"{median_source or 'the anchor margin'}; flagged at ≥{MIDCYCLE_GAP_PTS:g} "
@@ -1715,7 +1792,10 @@ def ciq_bridge(bundle: Any, ticker: str) -> tuple[CiqFacts | None, str | None]:
 
 
 def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
-                   computed_at: datetime, ciq: Any = None,
+                   computed_at: datetime, filings: Sequence[FilingEvent] | None,
+                   eod_closes: Sequence[tuple[date, float]] | None,
+                   filings_unread: str | None = None, eod_unread: str | None = None,
+                   ciq: Any = None,
                    reference_date: date | None = None) -> Anchor:
     """The R1 anchor from SOURCE-BOUND inputs. ``mechanical`` is the mechanical layer as a dict
     (``model_dump`` at assembly, committed JSON at backfill); ``facts`` is EDGAR companyfacts.
@@ -1753,13 +1833,18 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # and a band with no usable current anchors no value (never the median in its place).
     mult_cur = mult["current"]
     mult_span, mult_period, mult_dq = mult["span_years"], mult["periodicity"], mult["data_quality"]
-    # (W62, 2026-11-18) TODAY'S MULTIPLE MUST BE TODAY'S, by its band's own cadence (`close_age`).
-    # A stale current withholds the screen VALUE, never the recipe: `applicable`, the tag and the
-    # tier are untouched. Measured at the page's price date (`cut`: the stored close, else the
-    # reference date). The close stays on show with its date; the median is never priced in its
-    # place.
-    ca = close_age(mechanical, ex_lease=sel.ex_lease, close=mult["as_of"], price_date=cut)
+    # (W73, 2026-11-19) THE CLOSE IS A DATED VALUE, judged by the EVENT RULE (`close_verdict`):
+    # refused once the company has reported after it, by the page's price date (`cut`: the stored
+    # close, else the reference date), or when it is after that date. A refusal withholds the
+    # screen VALUE, never the recipe (W62): `applicable`, the tag and the tier are untouched. The
+    # close stays on show with its date; the median is never priced in its place.
+    ca = close_verdict(mult["as_of"], cut, filings, unread=filings_unread)
     stale = mult_cur is not None and ca.stale is not False
+    # (W73, correction 1) the stock's move since that close: a FLAG beside it, never a withholding
+    drift, drift_note = ((None, None) if mult_cur is None else close_drift(
+        eod_closes, mult["as_of"],
+        ((mechanical.get("stock_info") or {}).get("price") or {}).get("value"), on_close,
+        unread=eod_unread))
 
     # margin — median operating margin over the years the TOTAL-revenue tag covers. EBIT is aligned
     # to exactly those years by margin_anchor (it intersects the two series), so the ratio is always
@@ -1869,7 +1954,10 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     multiple_blk = AnchorMultiple(value=mult_cur, history_quarters=mult_qtrs, confidence=x_conf,
                                   source=sel.source, statistic=MULTIPLE_CURRENT,
                                   as_of=None if mult["as_of"] is None else str(mult["as_of"]),
-                                  median=mult_median)
+                                  median=mult_median,
+                                  close_stale=None if mult_cur is None else bool(stale),
+                                  close_note=None if mult_cur is None else ca.note,
+                                  close_drift=drift, close_drift_note=drift_note)
 
     # anchor base — the #150 block's EBITDA-basis value math; needs a complete bridge AND a multiple
     # that survived the band guards. A tripped guard means the multiple's denominator is provably
@@ -1901,7 +1989,7 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                           else str(mult["as_of"]), revenue=ltm_rev, margin=margin_val,
                           d_and_a=da[0] / _USD_M, net_debt=nd_val / _USD_M, shares=shares,
                           price_date=on_close,   # the STORED close, as committed_gap_split reads
-                          stale=ca.stale, stale_rule=ca.rule)   # (W62) the cadence verdict
+                          stale=ca.stale, stale_rule=ca.rule)   # (W73) the event rule
 
     # a periodicity mismatch or a band-guard trip is its own fail-loud data-quality event; raise it
     # on the anchor (joining any revenue-tag conflict) so the flag rides with the number it taints.
@@ -1922,9 +2010,9 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     if stale:
         assert mult_cur is not None   # `stale` is only set on a usable current
         pd = cut.isoformat() if cut is not None else "unstated"
-        apart = ("" if ca.age is None else
+        apart = ("" if ca.age is None or ca.age < 0 else
                  f"{ca.age} day{'' if ca.age == 1 else 's'} apart; ")
-        detail.append(f"{DQ_STALE_MULTIPLE}: the current {mult_cur:g}x is the close of "
+        detail.append(f"{DQ_STALE_MULTIPLE}: the multiple {mult_cur:g}x is the close of "
                       f"{mult['as_of'] or 'unstated'}; the page's price date is {pd}; {apart}"
                       f"{ca.rule} — no screen value is priced on it")
     reason = None
@@ -1942,13 +2030,13 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         reason = "R1 inputs incomplete — see per-input source stamps"
     elif stale:
         assert mult_cur is not None
-        reason = stale_multiple_reason(sel.ex_lease, mult_cur, mult["as_of"], ca, cut, mult_median)
-    withheld = (withheld_note(sel.ex_lease, mult["as_of"], ca, on_close, cut)
-                if priceable and stale else None)
+        reason = stale_multiple_reason(sel.ex_lease, mult_cur, mult["as_of"], ca, mult_median)
+    withheld = ca.note if priceable and stale else None
     # (W62) the value withheld, the mid-cycle sentence says R1 WOULD price it, never that it does
     refused = (None if mult_cur is not None and not stale
                else "its history carries no usable current multiple" if mult_cur is None
-               else f"its current multiple, the {mult['as_of'] or 'undated'} close, is not today's")
+               else f"its multiple, the {mult['as_of'] or 'undated'} close, is refused by the "
+                    "event rule")
     return Anchor(
         recipe_hint=RECIPE_R1, applicable=priceable, computed_at=computed_at, reason=reason,
         margin=margin_blk, multiple=multiple_blk,
@@ -1992,14 +2080,16 @@ def committed_gap_split(doc: dict[str, Any]) -> AnchorGapSplit | None:
     shares = per_share_shares(a)
     if None in (rev, margin, da, nd) or shares is None:
         return None
-    statistic = (a.get("multiple") or {}).get("statistic")
-    # (W62) the notice states the anchor's verdict by its band's cadence, as compute_anchor's does
-    ca = close_age(mech, ex_lease=sel.ex_lease, close=band["as_of"], price_date=price_as_of(mech))
+    held = a.get("multiple") or {}
+    statistic = held.get("statistic")
+    # (W73) the notice states the verdict the committed anchor RECORDED (`close_stale`), never one
+    # re-decided here: this reader has no filing list, and an anchor before W73 records none
     split = gap_split(mech, ex_lease=sel.ex_lease, current=band["current"],
                       median=band["median"], close=None if band["as_of"] is None
                       else str(band["as_of"]), revenue=float(rev), margin=float(margin),
                       d_and_a=float(da), net_debt=float(nd), shares=shares,
-                      price_date=price_as_of(mech), stale=ca.stale, stale_rule=ca.rule)
+                      price_date=price_as_of(mech), stale=held.get("close_stale"),
+                      stale_rule=held.get("close_note"))
     if not reproduces(split, float(base), statistic):
         want = split.anchor_at_current if statistic == MULTIPLE_CURRENT else split.anchor_at_median
         raise ValueError(f"the split rebuilds {want} where the anchor publishes {base} — it would "
@@ -2023,7 +2113,9 @@ def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
         out["operator_decision"] = {"machine_recipe_at_decision": True}
     # (W50) the multiple's statistic, its close date and the median beside it: absent on every
     # anchor committed before, so those pages round-trip byte-identically
-    if anchor.multiple is not None and (mx := {k: True for k in ("statistic", "as_of", "median")
+    if anchor.multiple is not None and (mx := {k: True for k in ("statistic", "as_of", "median",
+                                                                 "close_stale", "close_note",
+                                                                 "close_drift", "close_drift_note")
                                               if getattr(anchor.multiple, k) is None}):
         out["multiple"] = mx
     return out

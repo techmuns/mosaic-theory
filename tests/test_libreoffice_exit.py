@@ -239,7 +239,9 @@ def test_assemble_one_refuses_an_unread_call_and_never_reaches_the_model(
     for name, value in {
         "_price_store_stamp": lambda cfg: None,
         "_with_listing_basis": lambda r, **k: r,
-        "Store": lambda path: contextlib.nullcontext(SimpleNamespace()),
+        # (W73) the build reads the anchor's EOD closes while the store is open: no bars here
+        "Store": lambda path: contextlib.nullcontext(
+            SimpleNamespace(get_price_history=lambda _id: [])),
         "EdgarClient": SimpleNamespace(from_config=lambda cfg: None),
         "build_sec_http": lambda cfg: None,
         "build_finra_http": lambda cfg: None,

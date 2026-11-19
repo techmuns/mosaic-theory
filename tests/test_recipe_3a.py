@@ -27,6 +27,7 @@ from typing import Any
 import pytest
 
 import vinci.scenarios as sc
+from tests.anchor_reads import rederived
 from tests.frozen_support import frozen_doc
 from vinci.dossier.propose import (
     LEGS,
@@ -80,7 +81,9 @@ def test_frozen_smpl_proposes_its_current_multiple_with_the_median_beside_it() -
     R1 prices SMPL on the ex-lease band, current 6.593104x, median 17.924621x. The proposal is the
     current; the median is printed beside it in the template and travels into the record as a
     frame-level reference — never as the base leg's anchor."""
-    doc = json.loads(FROZEN_SMPL.read_text())
+    # (W73) the proposal takes R1's own dated close only where the anchor recorded the event rule
+    # passing it, so the frozen page's anchor (pre-W73) is re-derived through the real path first
+    doc = rederived(json.loads(FROZEN_SMPL.read_text()))
     a = _base_multiple(doc)
     assert a is not None and a.role == "current"
     assert a.schema_value == pytest.approx(6.593104) and a.value == pytest.approx(6.5931)
@@ -99,7 +102,8 @@ def test_the_living_pages_propose_the_band_current_never_its_median(ticker: str)
     `4889ddba`, where the five were measured. It is no roster walk: on every covered page with
     an R1 band it fails on AMZN and GOOGL, whose R4/R3 recipes propose another multiple, and the
     template refuses LLY, NCNO, NFLX, UBER and V (measured 2026-11-17)."""
-    doc = frozen_doc(ticker)
+    # (W73) the anchor's verdict, derived (tests/anchor_reads.py)
+    doc = rederived(frozen_doc(ticker))
     band, _ = _r1_proposal_band(doc)
     assert band is not None
     a = _base_multiple(doc)
@@ -146,7 +150,8 @@ def test_the_refusal_and_the_proposal_never_coexist_on_the_corpus() -> None:
 def test_moving_off_the_current_to_the_median_needs_a_stated_adjustment() -> None:
     """(−/+) The deviation rule now measures from the CURRENT: a base struck at the median — the
     old proposal — with no `multiple_adjustment` is refused, and passes once it states why."""
-    doc = json.loads(FROZEN_SMPL.read_text())
+    # (W73) the anchor's verdict, derived (tests/anchor_reads.py)
+    doc = rederived(json.loads(FROZEN_SMPL.read_text()))
     ancs = propose_anchors(doc)
     band, _ = _r1_proposal_band(doc)
     assert band is not None

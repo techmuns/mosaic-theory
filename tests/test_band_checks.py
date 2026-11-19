@@ -15,8 +15,10 @@ import typing
 from datetime import date
 from pathlib import Path
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import frozen_doc
 from tests.test_band_guards import _now, _synth_facts, _synth_mech
+from tests.w73_lly_expected import as_derived
 from vinci.dossier import band_guards as bg
 from vinci.dossier.anchor import compute_anchor
 from vinci.dossier.schemas import CrossCheck, Dossier, dossier_json
@@ -33,7 +35,7 @@ def test_the_outcome_states_are_the_cross_check_states() -> None:
 def test_a_coherent_band_stores_two_agreements() -> None:
     """(+) Both guards ran and neither tripped: agree, agree — and still no flag."""
     a = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
-                       computed_at=_now())
+                       computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.data_quality is None
     assert a.band_checks == bg.BandChecks(recorded_d_and_a="agree", market_reconciliation="agree",
                                           d_and_a_source="edgar")
@@ -43,11 +45,11 @@ def test_each_guard_that_trips_differs_and_only_that_one() -> None:
     """(−) VITL's 41.9% implied D&A trips the recorded-D&A check alone; a 1.6x multiple with no
     coherence evidence trips the reconciliation alone."""
     da = compute_anchor(_synth_mech(da_margin=0.419146, current=8.0), facts=_synth_facts(),
-                        computed_at=_now())
+                        computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert da.band_checks == bg.BandChecks(recorded_d_and_a="differ",
                                            market_reconciliation="agree", d_and_a_source="edgar")
     mkt = compute_anchor(_synth_mech(da_margin=None, current=1.6), facts=_synth_facts(),
-                         computed_at=_now())
+                         computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert mkt.band_checks is not None and mkt.band_checks.market_reconciliation == "differ"
 
 
@@ -57,14 +59,15 @@ def test_a_guard_that_could_not_run_is_not_run_never_agree() -> None:
     and the outcome says not_run. A market cap of none leaves the reconciliation unrun the same way.
     """
     no_margin = compute_anchor(_synth_mech(da_margin=None, current=8.0), facts=_synth_facts(),
-                               computed_at=_now())
+                               computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert no_margin.data_quality is None
     assert no_margin.band_checks == bg.BandChecks(recorded_d_and_a="not_run",
                                                   market_reconciliation="agree",
                                                   d_and_a_source="edgar")
     mech = _synth_mech(da_margin=0.010, current=8.0)
     mech["implied_valuation"]["market_cap"]["value"] = None
-    no_cap = compute_anchor(mech, facts=_synth_facts(), computed_at=_now())
+    no_cap = compute_anchor(mech, facts=_synth_facts(), computed_at=_now(),
+                            filings=NO_FILINGS, eod_closes=NO_BARS)
     assert no_cap.band_checks == bg.BandChecks(recorded_d_and_a="agree",
                                                market_reconciliation="not_run",
                                                d_and_a_source="edgar")
@@ -92,7 +95,8 @@ def test_an_anchor_that_never_reaches_the_guards_carries_no_block() -> None:
     JSON carries no `band_checks` key (absent, never null)."""
     mech = _synth_mech(da_margin=0.010, current=8.0)
     mech["valuation"]["own_history"]["value"] = []
-    a = compute_anchor(mech, facts=_synth_facts(), computed_at=_now())
+    a = compute_anchor(mech, facts=_synth_facts(), computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.band_checks is None
     page = frozen_doc("AMZN")   # the host page, as frozen at the cut
     page["anchor"] = json.loads(a.model_dump_json())
@@ -108,7 +112,8 @@ def test_a_page_built_before_the_field_round_trips_and_renders() -> None:
     from vinci.dossier.render import render_markdown
 
     for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
-        text = f.read_text()
+        # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
+        text = as_derived(f.parent.name, f.read_text())
         page = json.loads(text)
         if isinstance(page.get("anchor"), dict) and "band_checks" in page["anchor"]:
             page["anchor"].pop("band_checks")
@@ -274,9 +279,10 @@ def test_the_anchor_records_where_its_recorded_d_and_a_came_from() -> None:
     """(+/−) EDGAR's D&A → 'edgar'; a D&A the CIQ workbook filled (no EDGAR tag) → 'ciq', so
     the recorded-D&A guard is known to compare CIQ with CIQ."""
     edgar = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
-                           computed_at=_now())
+                           computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     vendor = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_vendor_da_facts(),
-                            computed_at=_now(), ciq=_ciq_da(10.0))
+                            computed_at=_now(), ciq=_ciq_da(10.0),
+                            filings=NO_FILINGS, eod_closes=NO_BARS)
     assert edgar.band_checks is not None and edgar.band_checks.d_and_a_source == "edgar"
     assert vendor.band_checks is not None and vendor.band_checks.d_and_a_source == "ciq"
     assert vendor.band_checks.recorded_d_and_a == "agree"

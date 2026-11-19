@@ -27,6 +27,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import frozen_doc
 from tests.stale_gate_support import stale_gate_held_open
 from vinci.dossier import anchor as anc
@@ -57,9 +58,16 @@ def _derived(t: str) -> str:
     # committed reading of that page (`committed_gap_split`), whose notice states BRBR's cadence
     # verdict, stale
     with stale_gate_held_open():
-        a = anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW)
+        a = anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW,
+                               filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.gap_split is not None and a.gap_split.refusal is None, t
     doc["anchor"] = json.loads(a.model_dump_json(exclude=anc.anchor_absent_fields(a) or None))
+    # (W73) `committed_gap_split` states the verdict the anchor RECORDED, never one it re-decides.
+    # W73 writes no split beside a refused close, but a page priced before W62 stores one with its
+    # notice (#1119's TJX), and the renderers must still print it: BRBR's recorded verdict is set
+    # to refused here so that path is exercised
+    if t == "BRBR":
+        doc["anchor"]["multiple"]["close_stale"] = True
     a = a.model_copy(update={"gap_split": anc.committed_gap_split(doc)})
     doc["anchor"] = json.loads(a.model_dump_json(exclude=anc.anchor_absent_fields(a) or None))
     return json.dumps(doc)

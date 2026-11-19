@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from vinci.dossier import anchor as an
 from vinci.dossier import assemble as asm
 from vinci.dossier import ciq_balance, ciq_sheets
@@ -91,7 +92,8 @@ def test_assembly_stores_the_scale_outcome_on_the_anchor(
     page = CUT["GOOGL"]["page"]
     got = asm._assembly_anchor(page["mechanical"], facts=CUT["GOOGL"]["companyfacts"],
                                bundle=CiqBundle.from_files("GOOGL", []), ticker="GOOGL",
-                               computed_at=T0, reference_date=REF)
+                               computed_at=T0, reference_date=REF,
+                               filings=NO_FILINGS, eod_closes=NO_BARS)
     assert got.ciq_scale_check == outcome
 
 
@@ -117,5 +119,6 @@ def test_a_bridged_read_carries_its_own_outcome(monkeypatch: pytest.MonkeyPatch)
     page = CUT["GOOGL"]["page"]
     got = asm._assembly_anchor(page["mechanical"], facts=CUT["GOOGL"]["companyfacts"],
                                bundle=CiqBundle.from_files("GOOGL", []), ticker="GOOGL",
-                               computed_at=T0, reference_date=REF)
+                               computed_at=T0, reference_date=REF,
+                               filings=NO_FILINGS, eod_closes=NO_BARS)
     assert got.ciq_scale_check == "agree"

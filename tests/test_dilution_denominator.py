@@ -23,6 +23,7 @@ import pathlib
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from vinci.dossier.dilution import (
     BASIC_WA_TAG,
     DILUTED_WA_TAG,
@@ -119,7 +120,8 @@ def test_at_fiscal_year_end_the_anchor_blocks_carry_the_quarter() -> None:
     page = json.loads((FY_END / "SMPL.page.json").read_text())
     a = compute_anchor(page["mechanical"],
                        facts=json.loads((FY_END / "SMPL.companyfacts.json").read_text()),
-                       computed_at=datetime(2026, 10, 28, tzinfo=UTC), ciq=None)
+                       computed_at=datetime(2026, 10, 28, tzinfo=UTC), ciq=None,
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.diluted_shares.value == 89_940_680, a.diluted_shares
     quarter = "(2026-03-01..2026-05-30)"
     assert a.shares_outstanding.value == 86_861_967
@@ -147,7 +149,8 @@ def test_a_filer_that_tags_no_quarter_gets_no_weighted_average_rather_than_its_y
 
     page = json.loads((FY_END / "SMPL.page.json").read_text())
     a = compute_anchor(page["mechanical"], facts=year_only,
-                       computed_at=datetime(2026, 10, 28, tzinfo=UTC), ciq=None)
+                       computed_at=datetime(2026, 10, 28, tzinfo=UTC), ciq=None,
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.diluted_shares.value is None
     assert "longer than a quarter (latest 2025-01-01..2025-12-31)" in a.diluted_shares.source
     assert a.shares_outstanding.value is None, "a count was corroborated against nothing"
@@ -562,7 +565,8 @@ def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
         from tests.stale_gate_support import stale_gate_held_open
         with stale_gate_held_open():
             fresh = compute_anchor(d.get("mechanical") or {}, facts=f,
-                                   computed_at=datetime(2026, 7, 31, tzinfo=UTC), ciq=None)
+                                   computed_at=datetime(2026, 7, 31, tzinfo=UTC), ciq=None,
+                                   filings=NO_FILINGS, eod_closes=NO_BARS)
         # COUNT WHAT WAS ACTUALLY COMPARED (review of #534). `compared` was incremented BEFORE the
         # None-skip, so a name the recompute could not value still raised the floor — the
         # anti-vacuity guard counted anchors it never compared. GOOGL and NFLX are exactly that

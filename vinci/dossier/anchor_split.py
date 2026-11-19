@@ -51,13 +51,9 @@ from pydantic import BaseModel
 
 _USD_M = 1e6
 
-#: How many days CIQ's own history's close may sit before the page's price date and still be
-#: "today's". Face validity: a month is the shortest gap over which a share price commonly moves by
-#: as much as the effects this split separates (a 30% annual volatility is about 9% a month).
-#: (W62, 2026-11-18) It is CIQ's history's limit only: whether a close is today's is the ANCHOR's
-#: verdict by its band's own cadence (`anchor.close_age`), and the split states that verdict — the
-#: ex-lease history, one observation a quarter, is judged by when its next one is due.
-STALE_CLOSE_DAYS = 30
+# (W73, 2026-11-19) No clock of this module's own: whether the close may be priced is the ANCHOR's
+# verdict by the event rule (`anchor.close_verdict`), and the split states that verdict. W62's
+# 30-day `STALE_CLOSE_DAYS` is retired with the ex-lease due date it sat beside.
 #: Net debt's share of the EV the current multiple puts on current EBITDA, above which the split
 #: FLAGS leverage (a flag, never a refusal). Face validity: past a half, debt is the larger claim
 #: on the enterprise, so a percentage error in any EV input — EBITDA or multiple — reaches the value
@@ -73,12 +69,12 @@ REPORTED_READINGS = frozenset({"reported", "indistinguishable"})
 REPRODUCE_TOL = 0.01
 
 BASIS = ("V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = "
-         "(M − m) × E_mid / S. The anchor at today's multiple = V0 + margin effect; at the median "
-         "= V0 + margin effect + multiple effect. m and M are the band's current and median; "
-         "E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA "
-         "m is struck on; ND and S are the anchor's net debt and share count. No term reads a "
-         "price. The margin effect carries every difference between E_mid and E_cur, including "
-         "the GAAP-versus-CIQ basis the mid-cycle gap reports.")
+         "(M − m) × E_mid / S. The anchor at the latest close's multiple = V0 + margin effect; "
+         "at the median = V0 + margin effect + multiple effect. m and M are the band's current "
+         "and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur"
+         " = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No "
+         "term reads a price. The margin effect carries every difference between E_mid and "
+         "E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.")
 
 
 class AnchorGapSplit(BaseModel, frozen=True):
@@ -93,7 +89,7 @@ class AnchorGapSplit(BaseModel, frozen=True):
     multiple_close: str | None           # the close m is struck at
     price_date: str | None               # the page's price date, the cut the anchor reads
     close_age_days: int | None           # price_date − multiple_close
-    stale_close: bool | None             # the anchor's cadence verdict (W62); None: not stated
+    stale_close: bool | None             # the anchor's event-rule verdict (W73); None: not stated
     midcycle_ebitda: float               # E_mid, $M
     midcycle_ebitda_source: str
     current_ebitda: float | None         # E_cur, $M
@@ -155,18 +151,18 @@ def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float,
                  f"{'lower' if s.multiple_effect < 0 else 'higher'}, not used.")
     stale = lev = None
     if s.stale_close and s.close_age_days is not None:   # stale is set only from a measured age
-        stale = (f"Today's multiple is the close of {s.multiple_close}, "
+        stale = (f"The multiple is the close of {s.multiple_close}, "
                  f"{_days(s.close_age_days)} "
                  f"before the page's stored close of {s.price_date}"
                  + (": the value on current EBITDA is that day's." if s.refusal is None else "."))
     if s.leverage_flag and s.net_debt_to_ev is not None:
-        lev = (f"Net debt is {s.net_debt_to_ev:.0%} of the EV today's multiple puts on current "
+        lev = (f"Net debt is {s.net_debt_to_ev:.0%} of the EV the multiple puts on current "
                f"EBITDA, so each 1% of EBITDA or multiple moves the value per share "
                f"{s.equity_sensitivity:.1f}%." if s.equity_sensitivity is not None else
-               "Net debt exceeds the EV today's multiple puts on current EBITDA: the value on "
+               "Net debt exceeds the EV the multiple puts on current EBITDA: the value on "
                "current EBITDA is negative, and how far a 1% move in EBITDA or multiple carries "
                "per share is undefined.")
-    lines = [f"m = {m:.4f}x, today's multiple (the close of {s.multiple_close or 'date unstated'})"
+    lines = [f"m = {m:.4f}x, the multiple at the {s.multiple_close or 'undated'} close"
              f"; M = {mm:.4f}x, the median beside it, never used.",
              f"E_mid = {revenue:,.1f} × {margin:.4%} + {d_and_a:,.1f} = {_money(s.midcycle_ebitda)}"
              " — LTM revenue × the median margin + D&A, the anchor's EBITDA."]
@@ -184,7 +180,8 @@ def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float,
     ratio = s.midcycle_ebitda / s.current_ebitda
     # THE APPROVED LINE (operator 2026-11-18, on the W61 preview: "Approve, shorter line"): its
     # shape is fixed; the margin sign, "lower"/"higher" and the ratio follow the numbers.
-    read = (f"Screen value {_ps(s.anchor_at_current)} at today's {m:.1f}x = "
+    read = (f"Screen value {_ps(s.anchor_at_current)} at {m:.1f}x "
+            f"(the {s.multiple_close or 'undated'} close) = "
             f"{_ps(s.value_at_current_ebitda)} on current EBITDA ({_money(s.current_ebitda)}) "
             f"{'−' if s.margin_effect < 0 else '+'} {_ps(abs(s.margin_effect))} margin reversion "
             f"(mid-cycle {ratio:.2f}× current). Median {mm:.1f}x: "
@@ -209,9 +206,9 @@ def _words(s: AnchorGapSplit, *, revenue: float, margin: float, d_and_a: float,
         + (f"the multiple's close is {_days(-s.close_age_days)} AFTER it"
            if s.close_age_days is not None and s.close_age_days < 0 else
            _days(s.close_age_days) if s.close_age_days is not None else "no age measured")
-        # (W62) the anchor's verdict by its band's cadence, never a flat clock of this module's
+        # (W73) the anchor's verdict by the event rule, never a clock of this module's
         + ("" if s.stale_close is None else
-           f"; {'stale' if s.stale_close else 'not stale'} by its history's cadence"
+           f"; {'refused' if s.stale_close else 'passed'} by the event rule"
            + (f": {stale_rule}" if stale_rule else ""))
         + ".",
     ]
@@ -302,11 +299,11 @@ def gap_split(mechanical: dict[str, Any], *, ex_lease: bool, current: float, med
     """The split, from the anchor's own inputs ($M; ``shares`` a count) and the committed
     mechanical layer. Pure arithmetic: never fetches, never reads a price.
 
-    ``stale`` and ``stale_rule`` are the ANCHOR's verdict on whether its current is today's, by its
-    band's cadence (`anchor.close_age`, W62): the notice and the arithmetic state it, and a caller
-    that states none gets neither. Never re-decided here on a flat clock: TJX's 75-day ex-lease
-    close is the newest its history could carry, and a notice calling it stale would contradict
-    the anchor priced on it."""
+    ``stale`` and ``stale_rule`` are the ANCHOR's verdict on the close it prices, by the event rule
+    (`anchor.close_verdict`, W73; W62's cadence before it): the notice and the arithmetic state it,
+    and a caller that states none gets neither. Never re-decided here on a clock of this module's:
+    TJX's 75-day ex-lease close is one nothing reported since outdates, and a notice calling it
+    stale would contradict the anchor priced on it."""
     if shares <= 0:
         raise ValueError("shares must be > 0")
     e_mid = revenue * margin + d_and_a

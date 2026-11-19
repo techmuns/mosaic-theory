@@ -20,6 +20,7 @@ from typing import Any
 import pytest
 
 from tests.frozen_support import frozen_page
+from tests.w73_lly_expected import as_derived
 from vinci.dossier import layer_refresh as lr
 from vinci.dossier.extraction_version import EXTRACTION_VERSION, declares
 from vinci.dossier.schemas import Dossier, dossier_json
@@ -107,7 +108,8 @@ def test_the_text_splice_round_trips_on_every_committed_page() -> None:
     entry lands where `dossier_json` writes it, every other byte is kept, and a second entry
     appends."""
     for t in PAGES:
-        text = (DOSS / t / "dossier.json").read_text()
+        # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
+        text = as_derived(t, (DOSS / t / "dossier.json").read_text())
         once = lr.upsert_text(text, lr.entry("anchor-backfill", ["anchor"]))
         twice = lr.upsert_text(once, lr.entry("own-history-refresh", ["mechanical.valuation"]))
         for got in (once, twice):

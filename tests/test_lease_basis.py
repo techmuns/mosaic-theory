@@ -26,6 +26,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import lease_basis as lbm
 from vinci.dossier import render as rend
@@ -75,7 +76,8 @@ def _mech(t: str, lb: dict[str, Any] | None) -> dict[str, Any]:
 
 
 def _anchor(t: str, lb: dict[str, Any] | None, facts_of: str | None = None) -> Any:
-    return compute_anchor(_mech(t, lb), facts=_facts(facts_of or t), computed_at=NOW)
+    return compute_anchor(_mech(t, lb), facts=_facts(facts_of or t), computed_at=NOW,
+                          filings=NO_FILINGS, eod_closes=NO_BARS)
 
 
 # --- the per-date split: what CIQ's TEV holds as operating leases ------------------------------
@@ -608,10 +610,12 @@ def test_the_screening_table_names_the_ex_lease_basis_in_both_renderers() -> Non
     (-) A CIQ-history anchor's row is unchanged. The web twin carries the same words."""
     # (W50) a derived anchor prices the current, so its row is the current-multiple row
     ex = Dossier.model_validate(_page_doc("TJX", _lb("TJX"), _lb("TJX")))
-    row = next(r for r in rend._screening_context_lines(ex.anchor) if "Current multiple" in r)
+    row = next(r for r in rend._screening_context_lines(ex.anchor)
+               if "Multiple at the latest close" in r)
     assert rend._EX_LEASE_LABEL.strip() in row
     ciq = Dossier.model_validate(_page_doc("TJX", None, None))
-    row = next(r for r in rend._screening_context_lines(ciq.anchor) if "Current multiple" in r)
+    row = next(r for r in rend._screening_context_lines(ciq.anchor)
+               if "Multiple at the latest close" in r)
     assert "ex-lease" not in row
     js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
     assert rend._EX_LEASE_LABEL.strip() in js and rend._EX_LEASE_SOURCE_PREFIX in js

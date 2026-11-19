@@ -22,6 +22,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import frozen_page
 from vinci.dossier import anchor as anc
 from vinci.edgar import net_debt as nd
@@ -206,13 +207,15 @@ def test_amzns_anchor_carries_the_leg_and_its_base_value_moves_by_exactly_it(
     leg = nd._short_term_securities(at_cut, end)
     assert leg is not None and leg.tag == "MarketableSecuritiesCurrent" and leg.value == value
     now = dt.datetime(2026, 10, 8, tzinfo=dt.UTC)
-    with_leg = anc.compute_anchor(mech, facts=facts, computed_at=now, ciq=None)
+    with_leg = anc.compute_anchor(mech, facts=facts, computed_at=now, ciq=None,
+                                  filings=NO_FILINGS, eod_closes=NO_BARS)
     assert with_leg.net_debt is not None and with_leg.net_debt.value is not None
     assert (f"short-term investments {value / 1e6:,.0f} (MarketableSecuritiesCurrent, "
             f"{end.isoformat()})") in with_leg.net_debt.source
 
     monkeypatch.setattr(nd, "_SHORT_TERM_SECURITIES_TAGS", ())
-    without = anc.compute_anchor(mech, facts=facts, computed_at=now, ciq=None)
+    without = anc.compute_anchor(mech, facts=facts, computed_at=now, ciq=None,
+                                 filings=NO_FILINGS, eod_closes=NO_BARS)
     assert without.net_debt is not None and without.net_debt.value is not None
     assert without.net_debt.value - with_leg.net_debt.value == pytest.approx(value / 1e6,
                                                                              abs=0.001)
