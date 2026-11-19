@@ -85,10 +85,13 @@
 {"origin_id": "ES-df28d5413b5c", "payload": "{\"origin_id\":\"ES-df28d5413b5c\",\"name\":\"Markit\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-df6141b63320", "payload": "{\"origin_id\":\"ES-df6141b63320\",\"name\":\"GDPx\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-e2e3d6b40199", "payload": "{\"origin_id\":\"ES-e2e3d6b40199\",\"name\":\"U.S. Department of War / CSIS\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-e703ec40f00c", "payload": "{\"origin_id\":\"ES-e703ec40f00c\",\"name\":\"Goldman Sachs Global Investment Research + IPUMS + US Bureau of Labor Statistics\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-e894595b04c6", "payload": "{\"origin_id\":\"ES-e894595b04c6\",\"name\":\"Goldman Sachs Global Investment Research + Haver Analytics\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-ec3a53ab3df5", "payload": "{\"origin_id\":\"ES-ec3a53ab3df5\",\"name\":\"Bureau of Economic Analysis + Goldman Sachs Global Investment Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-ed0c0f2f54d7", "payload": "{\"origin_id\":\"ES-ed0c0f2f54d7\",\"name\":\"PitchBook\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-ef61c61b4bc8", "payload": "{\"origin_id\":\"ES-ef61c61b4bc8\",\"name\":\"Jensen Huang public statements\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f1a195435792", "payload": "{\"origin_id\":\"ES-f1a195435792\",\"name\":\"Atlantic Council\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-f2be40db77fa", "payload": "{\"origin_id\":\"ES-f2be40db77fa\",\"name\":\"Goldman Sachs Global Investment Research + US Bureau of Labor Statistics\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f41ee4fccc95", "payload": "{\"origin_id\":\"ES-f41ee4fccc95\",\"name\":\"Morgan Stanley (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-f8175a623c1d", "payload": "{\"origin_id\":\"ES-f8175a623c1d\",\"name\":\"AlphaWise + Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-fa615740cca4", "payload": "{\"origin_id\":\"ES-fa615740cca4\",\"name\":\"Goldman Sachs Research\",\"kind\":\"data_vendor\"}"}
