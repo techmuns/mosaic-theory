@@ -408,21 +408,48 @@ class EvEbitdaBasis(SourceRefWhenBuilt, frozen=True):
     Rental Exp.'). Since ASC 842 CIQ's TEV carries the operating leases and, on most closes, its
     EBITDA adds rent back — the consistent lease-INCLUSIVE pair — but not on every close, so each
     page states its own reading (`vinci.dossier.ev_ebitda_basis`). `line` is the ONE sentence both
-    renderers print beside the multiple."""
+    renderers print beside the multiple.
+
+    ONE DATE OR NO DIVISION (W65, 2026-11-19): the pairing is measured only when the comps TEV's
+    date and the multiple's close are within `days_apart_tolerance`. Otherwise `reading` is
+    "dates_differ" (both dates stated) or "date_unstated", and the quotient and both ratios are
+    None: a TEV over another day's multiple is no EBITDA (GOOGL's $144,827M)."""
 
     multiple: float
     tev: float                                # $M — the comps snapshot TEV the multiple divides
     tev_as_of: str | None = None
-    implied_denominator: float                # $M — tev ÷ multiple
+    implied_denominator: float | None         # $M — tev ÷ multiple; None: not of one date
     reported_ltm_ebitda: float                # $M
     rent: float | None = None                 # $M, annual; None when unmeasured
     rent_fiscal_year: str | None = None
-    ratio_to_reported: float                  # implied ÷ reported
+    ratio_to_reported: float | None           # implied ÷ reported; None: not of one date
     ratio_to_reported_plus_rent: float | None = None
-    # "ebitda_plus_rent" | "reported" | "indistinguishable" | "not_reproduced"
+    # "ebitda_plus_rent" | "reported" | "indistinguishable" | "not_reproduced" — measured;
+    # "dates_differ" | "date_unstated" — not measured (W65)
     reading: str
     tolerance: float
     line: str
+    # (W65) the close the multiple is struck at (the own-history band's date, the same cell), the
+    # comps TEV's date less it in calendar days, and the limit. Named `_close`, never `_as_of`: it
+    # dates a VALUE, not a panel's arrival, so the freshness gate does not read it
+    # (`freshness._PANEL_KEY`), as it does not read the band's own `as_of`. ABSENT on a block built
+    # before them (the serializer below; `DROP_WHEN_NONE` for the page writer), and
+    # `multiple_close`/`days_apart` absent where unstated.
+    multiple_close: str | None = None
+    days_apart: int | None = None
+    days_apart_tolerance: int | None = None
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        # ABSENT, never null, until built — so a page built before W65 prompts byte-identically
+        # (the synthesis request dumps the layer itself; `DROP_WHEN_NONE` covers only the page
+        # writer). The parent's `source_ref` rule is kept, since this serializer replaces it.
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("source_ref", "multiple_close", "days_apart", "days_apart_tolerance"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+        return out
 
 
 class EvEbitdaAtPrice(SourceRefWhenBuilt, frozen=True):
@@ -3639,6 +3666,10 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     # what the as-of cut left out (STATE row 57, 2026-11-09)
     ("primary_source", "releases_after_price_date"),
     ("catalyst_path", "guidance_after_price_date"),
+    # the multiple's close and its distance from the comps TEV's date (`EvEbitdaBasis`, W65)
+    ("valuation.ev_ebitda_basis", "multiple_close"),
+    ("valuation.ev_ebitda_basis", "days_apart"),
+    ("valuation.ev_ebitda_basis", "days_apart_tolerance"),
 )
 
 

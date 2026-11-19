@@ -20,10 +20,22 @@ So two figures are built here, both from the page's own fields:
   history's `current` is the latest QUARTERLY close in CIQ's Historical Capitalization (TJX 16.3x at
   2026-08-28); a reader asked for "today's" multiple on R1's basis had to rebuild it by hand.
 
+ONE DATE OR NO DIVISION (W65, 2026-11-19). TEV ÷ the multiple is the EBITDA the multiple divides
+only when both are struck on one price. They are read from two CIQ exports: the TEV from Comparable
+Analysis (its data date, `implied_expectations.tev_as_of`) and the multiple from the Multiples
+sheet's latest Close (its column's date, the own-history band's `as_of`). GOOGL's page divided its
+2026-10-30 TEV ($3,316,548M) by its 2026-09-30 close (22.9x), across a fall from $344.08 to about
+$283.72, and called the $144,827M quotient an EBITDA that "reproduces neither pairing". AMZN carries
+the same 30 days, and there the quotient landed on reported EBITDA, a rent-free reading on a page
+whose rent is material. So :func:`headline_basis` reads the multiple's close first: within
+:data:`SAME_PRICE_DAYS` of the TEV's date it measures as before; beyond it, or with either date
+unstated, it STATES both dates and divides nothing.
+
 Every threshold is set by face validity, never by what any name's figure would come to.
 """
 from __future__ import annotations
 
+from datetime import date
 from typing import Any
 
 from vinci.dossier.schemas import EvEbitdaAtPrice, EvEbitdaBasis, MechanicalLayer, SourceStatus
@@ -33,6 +45,22 @@ from vinci.dossier.schemas import EvEbitdaAtPrice, EvEbitdaBasis, MechanicalLaye
 #: decimal, and the comps TEV can sit days from the multiple's close — each worth a few percent.
 #: Measured 2026-10-21: the 14 pages that reproduce EBITDA + rent do so within 0.7%–4.9%.
 PAIRING_TOL = 0.05
+
+#: How many calendar days the comps TEV's date and the multiple's close may sit apart, either way,
+#: and still be one price (W65). Face validity, from how the two are dated: CIQ dates the comps TEV
+#: at the last close before its export and a Multiples column at the export day, so one export's
+#: two figures sit up to a weekend plus a holiday apart (LLY: TEV 2026-10-30, a Friday; its
+#: Multiples close 2026-11-02, the Monday). Four days is the longest routine gap between two
+#: consecutive trading sessions, the same calendar fact `freshness.MAX_STORE_LAG_DAYS` measures in
+#: the price store. Within it, at most four sessions' moves separate the figures, about 4% at a 30%
+#: annual volatility, inside PAIRING_TOL's 5%. A month is about 9%: GOOGL's quotient then measures
+#: the price's move as much as the basis. Not chosen to catch or spare any name (every limit from 3
+#: to 29 days separates the 26 pages of 2026-11-19 alike).
+SAME_PRICE_DAYS = 4
+
+#: The readings under which nothing is divided: the two dates differ by more than SAME_PRICE_DAYS,
+#: or one of them is not stated. Every other reading is a measured pairing.
+DATE_READINGS = frozenset({"dates_differ", "date_unstated"})
 
 
 def _iso(x: Any) -> str | None:
@@ -63,9 +91,86 @@ def _ltm_ebitda(mech: MechanicalLayer) -> float | None:
     return float(v) if isinstance(v, (int, float)) else None
 
 
+def multiple_close(mech: MechanicalLayer) -> tuple[str | None, str]:
+    """The close CIQ's headline TEV/LTM EBITDA is struck at, as ``(ISO date, "")``, or
+    ``(None, why it is not dated)``.
+
+    Read off the own-history EV/EBITDA band: `ciq_sheets._latest_close` selects the band's current
+    and `as_of` and `ev_ebitda_current`'s value from one Close row, so they are one cell. The band's
+    current must still be the headline multiple (`anchor_split.SAME_MULTIPLE_TOL`, the headline's
+    one decimal): a band carrying another multiple does not date this one."""
+    from vinci.dossier.anchor_split import SAME_MULTIPLE_TOL
+
+    val = mech.valuation
+    mult = val.ev_ebitda.value
+    oh = val.own_history
+    bands = oh.value if oh is not None and oh.status is SourceStatus.PRESENT and oh.value else []
+    band = next((b for b in bands if "EBITDA" in b.metric), None)
+    if band is None:
+        return None, ("the page carries no own-history EV/EBITDA band, the read that dates CIQ's "
+                      "Multiples close")
+    if mult is None or abs(band.current - mult) > SAME_MULTIPLE_TOL + 1e-9:
+        return None, (f"the own-history band's current ({band.current:g}x) is not the headline "
+                      f"multiple ({mult}x), so its date is not this multiple's")
+    if not band.as_of:
+        return None, "the own-history band's latest close carries no date"
+    return band.as_of, ""
+
+
+def days_apart(tev_as_of: str | None, close: str | None) -> int | None:
+    """The comps TEV's date less the multiple's close, in calendar days; None when either is
+    unstated."""
+    if not tev_as_of or not close:
+        return None
+    return (date.fromisoformat(tev_as_of[:10]) - date.fromisoformat(close[:10])).days
+
+
+def _not_one_date(mech: MechanicalLayer, mult: float, tev: float, ltm: float,
+                  close: str | None, why: str, gap: int | None) -> EvEbitdaBasis:
+    """The block when the TEV and the multiple are not shown to be of one date: both dates stated,
+    the reported figures kept, and NO quotient, ratio or pairing (W65). A quotient of two dates'
+    figures folds the price's move between them into "EBITDA" (GOOGL's $144,827M)."""
+    ie = mech.valuation.implied_expectations
+    assert ie is not None                                 # the caller read its TEV
+    lb = mech.valuation.lease_basis
+    rent = lb.rent_expense if lb is not None and lb.rent_expense and lb.rent_expense > 0 else None
+    tev_day = _iso(ie.tev_as_of)
+    if gap is not None:
+        assert close is not None
+        reading = "dates_differ"
+        when = (f"{gap} days later" if gap > 0 else f"{-gap} days earlier")
+        line = (f"CIQ's {mult:.1f}x is struck at the {close} close and the comps TEV "
+                f"(${tev:,.0f}M) at {tev_day}, {when}: more than the {SAME_PRICE_DAYS} days within "
+                "which the two are one price. TEV ÷ the multiple would read the price's move "
+                "between the two dates as EBITDA, so which EBITDA the multiple divides is not "
+                "measured. It is measured again when the Multiples sheet's latest close sits "
+                f"within {SAME_PRICE_DAYS} days of the comps TEV's date.")
+    else:
+        # the comps TEV is always dated (`ImpliedExpectations.tev_as_of` is required), so an
+        # unstated pair is an undated multiple, and `why` says what the page lacks
+        reading = "date_unstated"
+        line = (f"CIQ's {mult:.1f}x and the comps TEV (${tev:,.0f}M, "
+                f"{tev_day or 'date unstated'}) are not shown to be of one date "
+                f"({why or 'the comps TEV is not dated'}), so which EBITDA the multiple divides "
+                "is not measured.")
+    return EvEbitdaBasis(
+        multiple=mult, tev=round(tev, 3), tev_as_of=tev_day,
+        implied_denominator=None, reported_ltm_ebitda=round(ltm, 3),
+        rent=rent, rent_fiscal_year=lb.rent_fiscal_year if lb is not None else None,
+        ratio_to_reported=None, ratio_to_reported_plus_rent=None,
+        reading=reading, tolerance=PAIRING_TOL, line=line,
+        multiple_close=close, days_apart=gap, days_apart_tolerance=SAME_PRICE_DAYS,
+        source_ref=("Assembler: the EBITDA a CIQ TEV/LTM EBITDA multiple divides — not measured: "
+                    f"the comps TEV ({tev_day or 'date unstated'}) and the Multiples close "
+                    f"({close or 'date unstated'}) are not within {SAME_PRICE_DAYS} days"))
+
+
 def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
     """CIQ's headline TEV/LTM EBITDA, read against the two consistent-or-not pairings, or None when
-    the page lacks a positive multiple, a snapshot TEV or a positive reported LTM EBITDA."""
+    the page lacks a positive multiple, a snapshot TEV or a positive reported LTM EBITDA.
+
+    The pairing is measured only when the TEV and the multiple are of one date, within
+    :data:`SAME_PRICE_DAYS` (W65). Otherwise the block states both dates and divides nothing."""
     val = mech.valuation
     ev = val.ev_ebitda
     ie = val.implied_expectations
@@ -76,9 +181,13 @@ def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
     ltm = _ltm_ebitda(mech)
     if ltm is None or ltm <= 0:
         return None
+    tev, mult = float(ie.tev.value), float(ev.value)
+    close, why = multiple_close(mech)
+    gap = days_apart(_iso(ie.tev_as_of), close)
+    if gap is None or abs(gap) > SAME_PRICE_DAYS:
+        return _not_one_date(mech, mult, tev, ltm, close, why, gap)
     lb = val.lease_basis
     rent = lb.rent_expense if lb is not None and lb.rent_expense and lb.rent_expense > 0 else None
-    tev, mult = float(ie.tev.value), float(ev.value)
     implied = tev / mult
     r_rep = implied / ltm
     r_rent = implied / (ltm + rent) if rent is not None else None
@@ -120,6 +229,7 @@ def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
         rent=rent, rent_fiscal_year=fy, ratio_to_reported=round(r_rep, 6),
         ratio_to_reported_plus_rent=round(r_rent, 6) if r_rent is not None else None,
         reading=reading, tolerance=PAIRING_TOL, line=line,
+        multiple_close=close, days_apart=gap, days_apart_tolerance=SAME_PRICE_DAYS,
         source_ref=("Assembler: the EBITDA a CIQ TEV/LTM EBITDA multiple divides — CIQ comps TEV ÷ "
                     "the multiple, against reported LTM EBITDA and rent"
                     + (f" (TEV as of {_iso(ie.tev_as_of)})" if _iso(ie.tev_as_of) else "")))
