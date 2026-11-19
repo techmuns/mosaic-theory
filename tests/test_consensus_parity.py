@@ -158,8 +158,15 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap(ticker: str) -> None:
     """
     from vinci.dossier.refresh import ev_gap_transform
 
-    committed = json.loads(
-        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())["mechanical"]
+    doc = json.loads((ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
+    committed = doc["mechanical"]
+    # (round 1 of #1132) an assembly writes CIQ's TEV less its cap before the gap; a page built
+    # before the field carries it in its own `ev_bridge`, off the export the page was built from
+    eb = doc.get("ev_bridge") or {}
+    assert eb.get("ciq_tev_claims") is not None, "fixture precondition: the page's own claims"
+    committed["stock_info"]["ciq_tev_claims"] = {
+        "value": eb["ciq_tev_claims"], "status": "present", "note": None,
+        "source_ref": eb.get("ciq_tev_claims_source") or "ev_bridge.ciq_tev_claims"}
     before = committed.get("ev_gap")
     assert before and before.get("status") == "computed", "fixture precondition"
 

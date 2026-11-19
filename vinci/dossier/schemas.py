@@ -2711,6 +2711,12 @@ class StockInfo(BaseModel):
     #: CIQ's cap against the page's, by the reconciliation that tells a share-basis change from
     #: drift (`freshness.reconcile_cap`); a gap beyond its tolerance FLAGS. ABSENT until built.
     cap_cross_check: CapCrossCheck | None = None
+    #: CIQ's claims on the enterprise beyond its equity, $M: its comps 'Total Enterprise Value'
+    #: less its 'Market Capitalization', read off the SAME comps row as ``market_cap``
+    #: (`ciq_sheets._ciq_tev_claims`) — what the TEV at the close adds to the cap at the close.
+    #: Not the comps 'Net Debt' line, which leaves out preferred, minority and other claims (MCK
+    #: 4,633 against 7,571). ABSENT until built.
+    ciq_tev_claims: Sourced[float] | None = None
 
     model_config = {"frozen": True}
 
@@ -2720,7 +2726,7 @@ class StockInfo(BaseModel):
         # are byte-identical (the `covenant_exhibit_outcomes` lesson, 2026-11-16)
         out = nxt(self)
         if isinstance(out, dict):
-            for key in ("market_cap_at_close", "cap_cross_check"):
+            for key in ("market_cap_at_close", "cap_cross_check", "ciq_tev_claims"):
                 if out.get(key) is None:
                     out.pop(key, None)
         return out
@@ -3623,6 +3629,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     # the fast values at the page's own close, CIQ's beside them (`price_values`, 2026-11-19)
     ("stock_info", "market_cap_at_close"),
     ("stock_info", "cap_cross_check"),
+    ("stock_info", "ciq_tev_claims"),
     ("valuation.implied_expectations", "tev_at_close"),
     ("valuation.implied_expectations", "tev_close_date"),
     # a ≤12m wall stated on a basis other than principal (`MaturityWall.basis`, audit E2-D15)

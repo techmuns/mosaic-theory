@@ -168,3 +168,65 @@ is present.
   the export stamp.
 - **No committed page carries the values yet.** They land by a separate $0 refresh (active pages,
   BRBR excluded), STATE row 10.
+
+## Review round 1 (Codex at its usage limit; `/code-review high` in this session, and coordinator B's independent review of `98807144`)
+
+**FIXED, each behind a test that fails on the PR head (`e5213046`):**
+- **CIQ's claims are its TEV less its market cap, never the comps 'Net Debt' line** (B, MEDIUM;
+  this session's review).
+  - The construction approved is "CIQ comps TEV − CIQ comps market cap". `price_values.claims`
+    read the name row's Net Debt, which leaves out preferred, minority and other claims.
+  - It now reads `stock_info.ciq_tev_claims`, written at assembly off the same comps row as the cap
+    (`ciq_sheets._ciq_tev_claims`). For a page built before the field, the refresh supplies it from
+    the page's own `ev_bridge.ciq_tev_claims` (`price_values_transform(ciq_tev_claims=…)`).
+  - With neither, the TEV at the close is UNKNOWN.
+  - `ciq_tev` is now CIQ's comps Total Enterprise Value: MCK $132,257.4M.
+  - Pinned on MCK's own export, cut through the real decode path
+    (`tests/fixtures/ciq_comps_price_values.json`): 7,571 against the line's 4,633.
+- **A foreign or transition filer's reports are events** (B, MEDIUM).
+  - 20-F, 40-F, 10-KT and 10-QT now count.
+  - Every 6-K counts whole: it carries no item code to tell a results release from any other, so
+    the rule never passes a filer whose reports it cannot read.
+  - Pinned on BURL's page with B's stub feed, which the PR head read as no event.
+- **The † rows' TEV is named for what it is.** `implied_expectations.tev` is CIQ's cap plus its Net
+  Debt line, not its Total Enterprise Value (MCK $129,319.4M against $132,257.4M). Both twins now
+  print "the † rows divide $X, CIQ's cap plus its net debt", never "CIQ's own TEV".
+- **A bundle with no comps workbook leaves the cross-sectional read as stored** (found writing this
+  round's pins). A refresh where the export is not on disk opens an empty bundle, and reading it
+  wrote EPAM's committed read over with MISSING ("export not found").
+- **Two messages** (B, nits): the UNKNOWN cap reads "the page carries no share count", and an
+  absent CIQ TEV is called absent, not non-positive.
+
+**DEFERRED (named here, no owner row needed):**
+- **FUBO, NKE and V price their cap at the close on CIQ's comps share count** (the bridge, where
+  EDGAR has no usable count; B, LOW). On them the cross-check can see price drift only.
+- **`_peer_gap_question` signs on CIQ's unrestated gaps** (B, LOW). No restated gap flips sign on
+  any of the 26 pages today.
+- **A 10-Q/A or 10-K/A is not an event.** Counting every amendment would refuse on Part III
+  amendments that carry no statements; telling them apart is `AnnualRead`'s rule, a separate change.
+- **`price_values_transform` reads the comps workbook on disk without checking that it is the
+  page's** (as its docstring already assigns to the caller). The refresh PR checks the export's
+  identity before it writes a page.
+
+**MOVED SINCE THE APPROVED PREVIEW**, re-measured on the 26 committed pages at `e5213046`'s data
+with each page's own CIQ claims: the TEV at the close moves on 10 pages.
+
+| page | TEV at the close, preview → now | why |
+|---|---|---|
+| MCK | $128,107.0M → $131,045.0M | claims 4,633 → 7,571 |
+| WLK | $12,003.5M → $12,509.5M | 3,884 → 4,390 |
+| UBER | $147,722.8M → $149,026.8M | 7,669 → 8,973 |
+| GOOGL | $3,492,907M → $3,510,930M | −114,767 → −96,744 |
+| V | $806,116.7M → $806,623.7M | 8,872 → 9,379 |
+| PARR | $4,814.2M → $4,850.8M | 949.0 → 985.6 |
+| NCNO | $2,622.7M → $2,638.1M | 255.3 → 270.7 |
+| ORKA | $4,183.7M → $4,186.6M | −1,123.0 → −1,120.1 |
+| EPAM | $7,488.8M → $7,489.4M | −818.8 → −818.2 |
+| FUBO | $482.7M → $2,308.2M | 172.5 → 1,998.0, read off its own export (stamp 2026-08-12); its page carries no `ev_bridge`, and it is sealed |
+
+- **The EV gap moves on NCNO** (0.709 → 0.705) and on no other computed page at 3 dp.
+- **The name's cross-sectional EV/EBITDA moves on MCK** (16.0x → 16.1x), with the peer implied
+  levels on the 10 pages.
+- **BRBR's cross-sectional read is now left as stored.** Its on-disk comps export is new (stamped
+  2026-11-19), so the control fails. That is a change of inputs, not code.
+- The cap, its cross-check and the freshness verdicts are unchanged on all 26.

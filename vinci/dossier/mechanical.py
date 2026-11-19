@@ -49,6 +49,7 @@ from vinci.dossier.filed_tiebreak import filed_quarter
 from vinci.dossier.freshness import (
     _COVERAGE_GAP_DAYS,
     EVENT_8K_ITEM,
+    EVENT_ANY_FORMS,
     EVENT_FORMS,
     FilingEvent,
     export_panels,
@@ -4837,7 +4838,7 @@ def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str
     since = date.fromisoformat(min(days))
     start = since + timedelta(days=1)
     try:
-        periodic = edgar.recent_filings(cik, forms=EVENT_FORMS, since=start)
+        periodic = edgar.recent_filings(cik, forms=(*EVENT_FORMS, *EVENT_ANY_FORMS), since=start)
         prints = [f for f in eight_k_events(edgar, cik, since=start) if EVENT_8K_ITEM in f.items]
     except Exception as exc:  # noqa: BLE001 — any feed miss is the refusal's stated reason
         return None, (f"EDGAR submissions for CIK {cik} could not be read "
@@ -5816,6 +5817,21 @@ def with_price_values(mech: MechanicalLayer, bundle: CiqBundle | None) -> Mechan
     si = mech.stock_info
     if si is None:
         return mech
+    # A BUNDLE WITH NO COMPS WORKBOOK IS NO WORKBOOK (round 1 of #1132): a refresh run where the
+    # export is not on disk opens an empty bundle, and reading it wrote the stored cross-sectional
+    # read over with MISSING; both reads below then leave the page as stored
+    comps = bundle if bundle is not None and bundle.workbook("comps") is not None else None
+    if comps is not None and si.ciq_tev_claims is None:
+        # CIQ's TEV less its cap, off the same comps row as the cap (round 1 of #1132) — never the
+        # 'Net Debt' line; a page that already carries the figure keeps it
+        tc = ciq_sheets._ciq_tev_claims(comps)
+        day_ciq = si.market_cap_as_of.isoformat() if si.market_cap_as_of is not None else None
+        si = si.model_copy(update={"ciq_tev_claims": (
+            Sourced.present(tc[0], source_ref=f"{tc[1]}{f', as of {day_ciq}' if day_ciq else ''}")
+            if tc is not None else Sourced.unknown(
+                note="the comps export states no Total Enterprise Value or Market "
+                     "Capitalization for the name"))})
+        mech = mech.model_copy(update={"stock_info": si})
     dumped = mech.model_dump(mode="json")
     si = si.model_copy(update={"market_cap_at_close": pv.cap_at_close(dumped["stock_info"]),
                                "cap_cross_check": pv.cross_check(dumped["stock_info"])})
@@ -5825,17 +5841,18 @@ def with_price_values(mech: MechanicalLayer, bundle: CiqBundle | None) -> Mechan
     if val.implied_expectations is not None:
         val = val.model_copy(update={"implied_expectations": pv.restate_implied(
             val.implied_expectations, tev_at, price_as_of=day)})
-    if bundle is not None and day is not None:
+    if comps is not None and day is not None:
         ciq = pv.ciq_tev(dumped)
         tev_r = (float(tev_at.value) / ciq if tev_at.value is not None and ciq is not None
                  and ciq > 0 else None)
-        close = ciq_sheets.comps_printed_close(bundle)
+        close = ciq_sheets.comps_printed_close(comps)
         price = si.price.value if si.price.status is SourceStatus.PRESENT else None
         price_r = price / close if price and close and close > 0 else None
         why: list[tuple[str, str]] = []
         if tev_r is None:
             why.append(("EV/EBITDA", f"no TEV at the page's close ({tev_at.note})"
-                        if tev_at.note else "CIQ's own TEV is not positive"))
+                        if tev_at.value is None else "CIQ's own TEV is absent"
+                        if ciq is None else "CIQ's own TEV is not positive"))
         if price_r is None:
             why.append(("P/E", "the page carries no close" if not price
                         else "CIQ's comps panel prints no close to restate its P/E from"))
@@ -5844,7 +5861,7 @@ def with_price_values(mech: MechanicalLayer, bundle: CiqBundle | None) -> Mechan
         # header is CIQ's export stamp
         cd = si.market_cap_as_of
         val = val.model_copy(update={"cross_sectional": ciq_sheets.cross_sectional_valuation(
-            bundle, at_close=ciq_sheets.NameAtClose(
+            comps, at_close=ciq_sheets.NameAtClose(
                 tev_ratio=tev_r, price_ratio=price_r, price_as_of=day,
                 ciq_as_of=cd.isoformat() if cd is not None else None, why=tuple(why)))})
     return mech.model_copy(update={"stock_info": si, "valuation": val})

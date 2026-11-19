@@ -38,6 +38,12 @@ def _with_values(page: dict[str, typing.Any]) -> dict[str, typing.Any]:
     """The page with its fast values built by production's own builder (no comps workbook: the
     cross-sectional read is left as stored)."""
     out = copy.deepcopy(page)
+    eb = out.get("ev_bridge") or {}
+    if eb.get("ciq_tev_claims") is not None:
+        # CIQ's TEV less its cap as the page's own export states it, as the refresh supplies it
+        out["mechanical"]["stock_info"]["ciq_tev_claims"] = {
+            "value": eb["ciq_tev_claims"], "status": "present", "note": None,
+            "source_ref": eb.get("ciq_tev_claims_source") or "ev_bridge.ciq_tev_claims"}
     mech = with_price_values(MechanicalLayer.model_validate(out["mechanical"]), None)
     out["mechanical"] = json.loads(mech.model_dump_json())
     return out
@@ -94,8 +100,8 @@ def _text(html_text: str) -> str:
 
 
 VRRM_CAP_MD = "cap $252M (CIQ $333M at 2026-11-06, +31.9%)"
-VRRM_TEV = ("TEV $1,190.6M at the 2026-11-17 close (CIQ claims as-of 2026-11-06; CIQ's own TEV "
-            "$1,271.2M as-of 2026-11-06, which the † rows divide)")
+VRRM_TEV = ("TEV $1,190.6M at the 2026-11-17 close (CIQ claims as-of 2026-11-06; the † rows divide "
+            "$1,271.2M, CIQ's cap plus its net debt, as-of 2026-11-06)")
 
 
 def test_the_snapshot_prints_the_cap_at_the_close_and_ciqs_beyond_tolerance_e2e(
@@ -178,3 +184,17 @@ def test_a_page_built_before_the_fields_renders_as_before(which: str,
         web = _text(_node(tmp_path, {"VRRM": page})["VRRM"])
         assert "Market cap $333M (2026-11-06)" in web
         assert "TEV as-of 2026-11-06 · multiples as-of" in web and "CIQ claims as-of" not in web
+
+
+def test_the_tev_the_identity_rows_divide_is_named_for_what_it_is_e2e(
+        tmp_path: pathlib.Path) -> None:
+    """(round 1 of #1132) On MCK the † rows divide $129,319.4M — CIQ's cap plus its 'Net Debt'
+    line — while CIQ's Total Enterprise Value is $132,257.4M; so the line names that figure as cap
+    plus net debt, never "CIQ's own TEV", on both twins."""
+    page = _with_values(frozen_doc("MCK"))
+    want = "the † rows divide $129,319.4M, CIQ's cap plus its net debt, as-of 2026-11-04"
+    md = _md(page)
+    assert want in md and "CIQ's own TEV" not in md
+    web = _node(tmp_path, {"MCK": page})["MCK"]
+    for tier in (web, _collapsed(web)):
+        assert want in _text(tier) and "CIQ's own TEV" not in _text(tier)

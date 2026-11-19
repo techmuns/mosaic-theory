@@ -61,8 +61,12 @@ MAX_PANEL_AGE_DAYS = 45
 
 #: (2026-11-19) THE EVENT RULE's filings: the periodic reports, and the 8-K item that releases
 #: results — the three things a CIQ export taken before them cannot carry.
-EVENT_FORMS: tuple[str, ...] = ("10-Q", "10-K")
+EVENT_FORMS: tuple[str, ...] = ("10-Q", "10-K", "10-QT", "10-KT", "20-F", "40-F")
 EVENT_8K_ITEM = "2.02"
+#: (round 1 of #1132) A foreign private issuer reports its interim results on 6-K, which carries no
+#: item code to tell a results release from any other report. So EVERY 6-K after a panel outdates
+#: it: the rule cannot read which one carries results, and it never passes what it cannot read.
+EVENT_ANY_FORMS: tuple[str, ...] = ("6-K",)
 
 #: The page's own CLOSE is not an export: it is the daily feed's, read at the build, and its age is
 #: the price-staleness rule's (`mechanical._price_stale_note`), unchanged. Exempt by name, so a
@@ -531,7 +535,9 @@ class FilingEvent:
 
     def label(self) -> str:
         item = f" item {EVENT_8K_ITEM}" if self.form.startswith("8-K") else ""
-        return f"{self.form}{item} {self.accession} filed {self.filing_date}"
+        whole = (" (every 6-K counts: the rule cannot tell one that carries results)"
+                 if self.form in EVENT_ANY_FORMS else "")
+        return f"{self.form}{item} {self.accession} filed {self.filing_date}{whole}"
 
 
 @dataclass(frozen=True)

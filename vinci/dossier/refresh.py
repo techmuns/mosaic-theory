@@ -437,7 +437,8 @@ def recompute_derived(mech: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-def price_values_transform(ticker: str) -> Transform:
+def price_values_transform(ticker: str, *,
+                           ciq_tev_claims: tuple[float, str] | None = None) -> Transform:
     """(2026-11-19) A `refresh_dossier` transform writing the FAST VALUES at the page's own close
     (`mechanical.with_price_values` — the assembler's own builder): the cap at the close with CIQ's
     beside it, the TEV at the close on the price-implied peer rows, and the name's side of the
@@ -446,12 +447,17 @@ def price_values_transform(ticker: str) -> Transform:
     THE CROSS-SECTIONAL READ NEEDS THE COMPS WORKBOOK (its peer medians and CIQ's printed close),
     opened as `ev_gap_transform` opens it. Absent, that read is LEFT AS STORED; the rest is a pure
     function of the stored page. The caller owns checking that the workbook on disk is the export
-    the page was built from (`inputs.ciq`), as for `ev_gap_transform`'s consensus vintage."""
+    the page was built from (`inputs.ciq`), as for `ev_gap_transform`'s consensus vintage.
+
+    ``ciq_tev_claims`` (round 1 of #1132): CIQ's TEV less its cap, with its source, for a page
+    built before `stock_info.ciq_tev_claims` existed — the page's own `ev_bridge.ciq_tev_claims`,
+    read off the export the page was built from. Without it the figure is read off the workbook
+    on disk; with neither, the TEV at the close is UNKNOWN, never struck on the 'Net Debt' line."""
     from vinci.config import get_config
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
     from vinci.dossier.manual_store import LocalFolderStore
     from vinci.dossier.mechanical import with_price_values
-    from vinci.dossier.schemas import MechanicalLayer
+    from vinci.dossier.schemas import MechanicalLayer, Sourced
 
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
         try:
@@ -459,7 +465,12 @@ def price_values_transform(ticker: str) -> Transform:
                 ticker, LocalFolderStore.from_config(get_config()).files(ticker))
         except (FileNotFoundError, CiqUnavailableError):
             bundle = None
-        built = with_price_values(MechanicalLayer.model_validate(mech), bundle)
+        layer = MechanicalLayer.model_validate(mech)
+        if ciq_tev_claims is not None and layer.stock_info is not None:
+            layer = layer.model_copy(update={"stock_info": layer.stock_info.model_copy(update={
+                "ciq_tev_claims": Sourced.present(ciq_tev_claims[0],
+                                                  source_ref=ciq_tev_claims[1])})})
+        built = with_price_values(layer, bundle)
         out: dict[str, Any] = json.loads(built.model_dump_json())
         return out
 

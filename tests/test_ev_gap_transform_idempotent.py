@@ -52,7 +52,15 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     # (2026-11-19) THE FIRST REFRESH RE-STRIKES THE MARKET'S SIDE at the page's own close
     # (`price_values`), so on a page built on CIQ's comps TEV it moves the gap — by the TEV and
     # nothing else, pinned in `test_consensus_parity`. Idempotence is the claim from there on.
-    refresh_dossier(path, transform=ev_gap_transform(ticker))
+    # It runs as the refresh will: `price_values_transform` first, handed CIQ's TEV less its cap
+    # from the page's own `ev_bridge` (round 1 of #1132), then the gap; the later refreshes run
+    # the gap ALONE, so the claims must survive the model round trip for it to stay computed.
+    from vinci.dossier.refresh import price_values_transform
+
+    eb = json.loads(path.read_text()).get("ev_bridge") or {}
+    claims = (eb["ciq_tev_claims"], eb.get("ciq_tev_claims_source") or "ev_bridge")
+    first = price_values_transform(ticker, ciq_tev_claims=claims)
+    refresh_dossier(path, transform=lambda m: ev_gap_transform(ticker)(first(m)))
     before = _gap(path)
     assert before["status"] == "computed", (
         f"{ticker}: a refresh degraded the gap to {before.get('status')!r} — "

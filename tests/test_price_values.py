@@ -27,8 +27,21 @@ ROOT = Path(__file__).resolve().parents[1]
 VRRM = FROZEN_PAGES / "2026-11-18" / "VRRM" / "dossier.json"
 
 
+def _with_claims(doc: dict[str, Any]) -> dict[str, Any]:
+    """The page's layer with CIQ's TEV less its cap as the page's OWN export states it
+    (`ev_bridge.ciq_tev_claims`, read off the export the page was built from) — what the refresh
+    supplies to a page built before `stock_info.ciq_tev_claims` existed."""
+    mech: dict[str, Any] = copy.deepcopy(doc["mechanical"])
+    eb = doc.get("ev_bridge") or {}
+    if eb.get("ciq_tev_claims") is not None:
+        mech["stock_info"]["ciq_tev_claims"] = {
+            "value": eb["ciq_tev_claims"], "status": "present", "note": None,
+            "source_ref": eb.get("ciq_tev_claims_source") or "ev_bridge.ciq_tev_claims"}
+    return mech
+
+
 def _vrrm() -> dict[str, Any]:
-    return dict(json.loads(VRRM.read_text())["mechanical"])
+    return _with_claims(json.loads(VRRM.read_text()))
 
 
 def test_the_pages_cap_is_its_close_times_its_count_and_ciqs_is_the_flagged_cross_check() -> None:
@@ -91,11 +104,10 @@ def test_absent_claims_or_count_leave_the_value_unknown_and_never_impute() -> No
     TEV, not zero claims — and no count is no cap. The EV gap then states why it is not computed."""
     mech = _vrrm()
     no_claims = copy.deepcopy(mech)
-    for r in no_claims["peer_comps"]["peer_grid"]["value"]:
-        if r.get("is_name"):
-            r["net_debt"] = None
+    no_claims["stock_info"].pop("ciq_tev_claims")
     tev = price_values.tev_at_close(no_claims)
-    assert tev.value is None and "no net debt" in (tev.note or "") and "imputed" in (tev.note or "")
+    assert tev.value is None and "TEV less market cap" in (tev.note or "")
+    assert "imputed" in (tev.note or "")
     no_count = copy.deepcopy(mech)
     no_count["stock_info"]["shares_out"] = {"value": None, "status": "unknown", "note": "none",
                                             "source_ref": None}
@@ -107,7 +119,7 @@ def test_absent_claims_or_count_leave_the_value_unknown_and_never_impute() -> No
                        tev=None, net_debt=938.3, shares=1.0, tev_as_of="2026-11-06",
                        consensus_as_of=None, tev_close_date="2026-11-17",
                        tev_absent=tev.note)
-    assert gap["status"] == "not-computed" and "no net debt" in str(gap["reason"])
+    assert gap["status"] == "not-computed" and "TEV less market cap" in str(gap["reason"])
 
 
 def test_the_peer_rows_divide_the_tev_at_the_close_and_the_identity_rows_ciqs() -> None:
@@ -149,7 +161,7 @@ def test_the_names_cross_sectional_side_is_restated_at_its_close_the_peers_dated
     export rebuilds the committed read. Then EV/EBITDA 15.7x × (TEV at the close ÷ CIQ's TEV) =
     15.2x, CIQ's 15.7x and the peers' date beside it. Its P/E is UNKNOWN at the close here — this
     cut of the export carries no printed close — and never CIQ's 28.6x as today's."""
-    page = frozen_doc("ROST")["mechanical"]
+    page = _with_claims(frozen_doc("ROST"))
     bundle = _rost_comps()
     assert (ciq_sheets.cross_sectional_valuation(bundle).value
             == page["valuation"]["cross_sectional"]["value"]), "control: not ROST's export"
@@ -197,3 +209,65 @@ def test_a_refresh_rederives_the_fast_values_and_leaves_a_page_without_them_alon
     ie = again["valuation"]["implied_expectations"]
     assert ie["tev_at_close"]["value"] == pytest.approx(2.00 * 152.009343 + 938.3, abs=1e-3)
     assert ie["tev"]["value"] == pytest.approx(1271.2), "CIQ's own TEV does not follow the price"
+
+
+# --- round 1 of #1132 -----------------------------------------------------------------------------
+
+
+def _mck_comps() -> CiqBundle:
+    """MCK's own comps export (sha256 158bc7e1…), its Financial Data header and name row cut through
+    the real decode path (`tests/fixtures/ciq_comps_price_values.json`)."""
+    raw = json.loads((ROOT / "tests/fixtures/ciq_comps_price_values.json").read_text())["names"]
+    path = Path("/frozen/MCK-comps.xls")
+    sheets = {k.split("|")[1]: copy.deepcopy(v) for k, v in raw["MCK"]["sheets"].items()}
+    return CiqBundle(ticker="MCK", workbooks=(CiqWorkbook(kind="comps", path=path,
+                                                          fmt=CiqFormat.BIFF_XLS, freq=None),),
+                     _cache={path: sheets})
+
+
+def test_the_claims_are_ciqs_tev_less_its_cap_never_the_net_debt_line() -> None:
+    """(B, round 1) MCK: the comps 'Net Debt' line reads 4,633, CIQ's Total Enterprise Value less
+    its Market Capitalization 7,571 — the claims the approved construction adds (the page's own
+    `ev_bridge` agrees). The TEV at the close is $123,474.0M + 7,571 and CIQ's TEV its comps
+    $132,257.4M. NEGATIVE: with no figure and no workbook the claims are UNKNOWN, never 4,633."""
+    doc = frozen_doc("MCK")
+    grid = doc["mechanical"]["peer_comps"]["peer_grid"]["value"]
+    assert next(r for r in grid if r.get("is_name"))["net_debt"] == 4633.0, "precondition"
+    assert doc["ev_bridge"]["ciq_tev_claims"] == 7571.0, "precondition: the page's own export"
+    built = with_price_values(MechanicalLayer.model_validate(doc["mechanical"]), _mck_comps())
+    assert built.stock_info is not None and built.stock_info.ciq_tev_claims is not None
+    assert built.stock_info.ciq_tev_claims.value == 7571.0
+    dumped = built.model_dump(mode="json")
+    assert price_values.tev_at_close(dumped).value == pytest.approx(123473.975 + 7571.0)
+    assert price_values.ciq_tev(dumped) == pytest.approx(132257.4)
+    assert price_values.claims(doc["mechanical"]).value is None
+
+
+def test_an_absent_input_note_reads_as_a_sentence() -> None:
+    """(nit, round 1) The UNKNOWN cap names what is absent in plain words."""
+    si = copy.deepcopy(_vrrm()["stock_info"])
+    si["shares_out"] = {"value": None, "status": "unknown", "note": "none", "source_ref": None}
+    assert "the page carries no share count;" in (price_values.cap_at_close(si).note or "")
+
+
+def test_an_absent_ciq_tev_is_named_absent_not_non_positive() -> None:
+    """(nit, round 1) ROST with CIQ's cap gone: its EV/EBITDA is UNKNOWN at the close because CIQ's
+    TEV is ABSENT — the reason says so, not that it is non-positive."""
+    page = _with_claims(frozen_doc("ROST"))
+    page["implied_valuation"]["market_cap"] = {"value": None, "status": "unknown", "note": "x",
+                                               "source_ref": None}
+    built = with_price_values(MechanicalLayer.model_validate(page), _rost_comps())
+    text = built.valuation.cross_sectional.value or ""
+    assert "EV/EBITDA UNKNOWN at the 2026-10-28 close — CIQ's own TEV is absent" in text
+
+
+def test_a_bundle_with_no_comps_workbook_leaves_the_cross_sectional_read_as_stored() -> None:
+    """(round 1 of #1132, found writing this round's pins) A refresh where the export is not on
+    disk opens an EMPTY bundle; reading it wrote the stored cross-sectional read over with MISSING
+    ("export not found"). An empty bundle is no workbook: the read is left as stored."""
+    page = _with_claims(frozen_doc("ROST"))
+    empty = CiqBundle(ticker="ROST", workbooks=(), _cache={})
+    built = with_price_values(MechanicalLayer.model_validate(page), empty)
+    assert (built.valuation.cross_sectional.model_dump(mode="json")
+            == page["valuation"]["cross_sectional"])
+    assert built.stock_info is not None and built.stock_info.ciq_tev_claims is not None

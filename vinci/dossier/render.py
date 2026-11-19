@@ -2137,8 +2137,10 @@ def _ie_tev_line(ie: Any) -> str:
     (`price_values`) — and CIQ's own beside it, which the † rows divide; the old line on a page
     built before the field. Twin of `ieTevLine()` in dossier.js."""
     at, ciq = ie.tev_at_close, ie.tev.value
-    ciq_part = (f"CIQ's own TEV ${ciq:,.1f}M as-of {ie.tev_as_of}, which the † rows divide"
-                if ciq is not None else "")
+    # `implied_expectations.tev` is CIQ's cap plus its 'Net Debt' line, not its Total Enterprise
+    # Value (round 1 of #1132: MCK $129,319.4M against $132,257M), so it is named for what it is
+    ciq_part = (f"the † rows divide ${ciq:,.1f}M, CIQ's cap plus its net debt, as-of "
+                f"{ie.tev_as_of}" if ciq is not None else "")
     if at is not None and at.value is not None:
         return (f"TEV ${at.value:,.1f}M at the {ie.tev_close_date} close (CIQ claims as-of "
                 f"{ie.tev_as_of}{f'; {ciq_part}' if ciq_part else ''})")

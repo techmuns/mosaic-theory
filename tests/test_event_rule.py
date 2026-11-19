@@ -203,3 +203,29 @@ def test_the_assembly_gate_reads_the_event_rule_and_no_clock() -> None:
     with pytest.raises(fr.FreshnessError, match="could not run"):
         _freshness_check(mech, ticker="FUBO", built_at=dt.date(2026, 11, 19), filings=None,
                          unread="EDGAR down")
+
+
+@pytest.mark.parametrize(("rows", "first"), [
+    ([("20-F", "2026-10-15"), ("6-K", "2026-10-20"), ("6-K", "2026-11-05")], "20-F"),
+    ([("6-K", "2026-10-20")], "6-K"),
+    ([("40-F", "2026-10-15")], "40-F"),
+    ([("10-KT", "2026-10-01")], "10-KT"),
+    ([("10-QT", "2026-10-01")], "10-QT"),
+])
+def test_a_foreign_or_transition_filers_reports_are_events(rows: list[tuple[str, str]],
+                                                           first: str) -> None:
+    """(B, round 1 of #1132) A foreign private issuer reports on 20-F or 40-F and its interims on
+    6-K; a filer changing its year files 10-KT / 10-QT. Each outdates BURL's 2026-09-25 panel. A 6-K
+    carries no item code to tell results from anything else, so EVERY 6-K counts — the rule never
+    passes a filer whose reports it cannot read. On B's stub feed the PR head read none of them."""
+    mech = frozen_doc("BURL")["mechanical"]
+    feed = _Feed([_filing(f, d) for f, d in rows])
+    filings, unread = read_filing_events(feed, "0001579298", mech,  # type: ignore[arg-type]
+                                         dt.date(2026, 11, 19))
+    assert unread is None and filings
+    v = fr.event_verdict(mech, filings, built_at=MEASURED)
+    assert v.stale and v.stale[0].filing.form == first
+    with pytest.raises(fr.FreshnessError, match=first):
+        fr.check_freshness(v, None, ticker="BURL")
+    if first == "6-K":
+        assert "every 6-K counts" in v.note()

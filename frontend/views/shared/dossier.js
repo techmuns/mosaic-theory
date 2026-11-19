@@ -3564,7 +3564,10 @@ function ieTevLine(ie) {
   const at = ie.tev_at_close;
   const ciq = ie.tev && ie.tev.value != null ? Number(ie.tev.value) : null;
   const asOf = escapeHtml(ie.tev_as_of || "");
-  const ciqPart = ciq != null ? `CIQ's own TEV $${fmtMoney1(ciq)}M as-of ${asOf}, which the † rows divide` : "";
+  // `implied_expectations.tev` is CIQ's cap plus its 'Net Debt' line, not its Total Enterprise
+  // Value (round 1 of #1132), so it is named for what it is
+  const ciqPart = ciq != null
+    ? `the † rows divide $${fmtMoney1(ciq)}M, CIQ's cap plus its net debt, as-of ${asOf}` : "";
   if (at && at.value != null) {
     return `TEV $${fmtMoney1(Number(at.value))}M at the ${escapeHtml(ie.tev_close_date || "")} close `
       + `(CIQ claims as-of ${asOf}${ciqPart ? `; ${ciqPart}` : ""})`;

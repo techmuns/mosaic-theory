@@ -69,11 +69,11 @@ def cap_at_close(stock_info: Mapping[str, Any] | None) -> Sourced[float]:
     si = stock_info or {}
     price, shares = _present(si.get("price")), _present(si.get("shares_out"))
     day = _iso(si.get("as_of"))
-    absent = [n for n, v in (("a close", price), ("its date", day), ("a share count", shares))
+    absent = [n for n, v in (("close", price), ("price date", day), ("share count", shares))
               if not v]
     if absent or price is None or shares is None or day is None:
         return Sourced.unknown(note=(
-            f"no market cap at the page's price — the page carries no {' and no '.join(absent)}; "
+            f"no market cap at the page's close — the page carries no {' and no '.join(absent)}; "
             "CIQ's comps figure is not put in its place"))
     if price <= 0 or shares <= 0:
         return Sourced.unknown(note=(
@@ -88,20 +88,19 @@ def cap_at_close(stock_info: Mapping[str, Any] | None) -> Sourced[float]:
 
 
 def claims(mechanical: Mapping[str, Any]) -> Sourced[float]:
-    """CIQ's claims on the enterprise beyond its equity, $M — its comps TEV less its comps market
-    cap, which the comps workbook states as the name row's net debt — dated by the comps panel.
-    UNKNOWN, never zero, where the name row carries none."""
-    grid = (((mechanical.get("peer_comps") or {}).get("peer_grid") or {}).get("value")) or []
-    row = next((r for r in grid if isinstance(r, Mapping) and r.get("is_name")), None)
-    nd = _num(row.get("net_debt")) if row is not None else None
-    day = _iso((mechanical.get("stock_info") or {}).get("market_cap_as_of"))
-    if nd is None:
+    """CIQ's claims on the enterprise beyond its equity, $M — its comps 'Total Enterprise Value'
+    less its 'Market Capitalization' (`stock_info.ciq_tev_claims`, written from the comps row the
+    cap is read off), dated by the comps panel. UNKNOWN, never zero and never the comps 'Net Debt'
+    line, where the page carries none: that line leaves out preferred, minority and other claims
+    (round 1 of #1132: MCK 4,633 against 7,571, on 9 of 25 pages)."""
+    node = (mechanical.get("stock_info") or {}).get("ciq_tev_claims")
+    value = _present(node)
+    if value is None:
         return Sourced.unknown(note=(
-            "no TEV at the page's price — the CIQ comps name row carries no net debt (CIQ's TEV "
-            "less its market cap), so CIQ's claims are not known; none is imputed"))
-    return Sourced.present(nd, source_ref=(
-        f"CIQ Comparable Analysis→Financial Data, name row Net Debt — CIQ's TEV less its market "
-        f"cap{f', as of {day}' if day else ''}"))
+            "no TEV at the page's close — the page carries no CIQ TEV less market cap "
+            "(`stock_info.ciq_tev_claims`), so CIQ's claims are not known; none is imputed"))
+    return Sourced.present(value, source_ref=str((node or {}).get("source_ref") or
+                                                 "CIQ TEV less market cap"))
 
 
 def tev_at_close(mechanical: Mapping[str, Any]) -> Sourced[float]:
@@ -120,8 +119,8 @@ def tev_at_close(mechanical: Mapping[str, Any]) -> Sourced[float]:
 
 
 def ciq_tev(mechanical: Mapping[str, Any]) -> float | None:
-    """CIQ's own simple TEV, $M — its comps market cap plus its claims, the TEV its comps
-    multiples were struck at. None where either is absent."""
+    """CIQ's own TEV, $M — its comps market cap plus its claims, i.e. the comps 'Total Enterprise
+    Value' its comps multiples were struck at. None where either is absent."""
     cap = _present((mechanical.get("implied_valuation") or {}).get("market_cap"))
     cl = claims(mechanical)
     return cap + float(cl.value) if cap is not None and cl.value is not None else None
