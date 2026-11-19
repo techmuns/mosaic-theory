@@ -1,5 +1,5 @@
 {
- "_about": "REAL committed covenant rows (W64), each with verbatim slices of the EDGAR exhibits it cites, cut from the operator's SEC cache on 2026-11-19 through html_to_text at 5e380efc (cache only; EDGAR filings are public). Each slice is text[start:end] of its document; a document's slices are joined in order by ' [gap] '. expect is the check's answer on the slices AND on the whole document, asserted when cut. A row read from a frozen page names it in `page` and is read there; rows from git history are stored verbatim in `rows`, the case's own first.",
+ "_about": "REAL committed covenant rows (W64), each with verbatim slices of the EDGAR exhibits it cites, cut from the operator's SEC cache on 2026-11-19 through html_to_text at 5e380efc (cache only; EDGAR filings are public). Each slice is text[start:end] of its document; a document's slices are joined in order by ' [gap] '. expect is the check's answer on the slices AND on the whole document, asserted when cut. A row read from a frozen page names it in `page` and is read there; rows from git history are stored verbatim in `rows`, the case's own first. One document (amzn-verbatim's) also carries `html`: raw[start:end] of the response itself, served as is, so the check's own html_to_text runs on real markup (review round 1: matched as raw HTML, its quote is not found).",
  "gap": " [gap] ",
  "cases": [
   {
@@ -29,7 +29,12 @@
        "end": 7949,
        "text": "ther Person that directly, or indirectly through one or more intermediaries, Controls or\nis Controlled by or is under common Control with the Person specified. “ Aggregate Commitments ”\nmeans, at any time, the Commitments of all the Lenders at such time. As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000. “ Agreed Currencies ”\nmeans US Dollars and each Alternative Currency. “ Agreement ”\nhas the meaning specified in the preamble hereto. “ Alternative Currency ”"
       }
-     ]
+     ],
+     "html": {
+      "start": 56462,
+      "end": 57003,
+      "text": "<P STYLE=\"font: 10pt Times New Roman, Times, Serif; margin: 0pt 0; text-align: justify; text-indent: 0.5in\">&nbsp;</P>\n\n<P STYLE=\"font: 10pt Times New Roman, Times, Serif; margin: 0pt 0; text-align: justify; text-indent: 0.5in\">&ldquo;<U>Aggregate Commitments</U>&rdquo;\nmeans, at any time, the Commitments of all the Lenders at such time. As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000.</P>\n\n<P STYLE=\"font: 10pt Times New Roman, Times, Serif; margin: 0pt 0; text-align: justify; text-indent: 0.5in\">&nbsp;</P>"
+     }
     }
    ]
   },

@@ -22,7 +22,7 @@ A ``not_found`` row names its CAUSE, read off the documents, never guessed (`CAU
 
 - ``wrong_exhibit``: the whole quote is a span of ANOTHER exhibit the page cites, not of its own;
 - ``reordered``: every piece between its ellipses is a span of the exhibit, out of the exhibit's
-  order;
+  order, and the same pieces in another order are a span;
 - ``editorial_bracket``: a piece reads in the exhibit once its bracketed insertions are taken out
   ("[Term Loan payment schedule]"), or is one: words the model added, which the filing does not
   print. A bracket a template prints itself ("[Borrower]") would be taken out too; no miss on any
@@ -31,8 +31,10 @@ A ``not_found`` row names its CAUSE, read off the documents, never guessed (`CAU
   taken away ("2.03(b) If the Administrative Agent notifies …");
 - ``unmarked_join``: a piece reads in the exhibit as two or more sentences, in order, joined with no
   ellipsis between them;
-- ``not_a_span``: anything else (a word added, dropped or corrected, a section label the model
-  prefixed, struck text). The first piece that is not a span is printed for the human to read.
+- ``not_a_span``: anything else: a word added, dropped or corrected; struck text; a section label
+  with another defect beside it (TJX's "2.06(c): If …", whose clause still does not read once the
+  label is gone); a piece repeated where the exhibit prints it once; or pieces in the exhibit's
+  order that miss only at punctuation. The first piece that is not a span is printed.
 
 PAGE FURNITURE IS NOT A CAUSE HERE. Since #829 (2026-10-28) `html_to_text` drops a page number or
 running header from the text, and no miss on either corpus measured (W64's record) reads across one.
@@ -51,7 +53,9 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import functools
 import hashlib
+import itertools
 import json
 import re
 import subprocess
@@ -181,17 +185,49 @@ def _in_order(source: SourceText, parts: Sequence[str]) -> bool:
     return bool(parts) and source.match(" ... ".join(parts)).found
 
 
+#: Up to this many pieces every order is tried; past it, one order sorted by which piece precedes
+#: which. A sort cannot place a piece the exhibit prints everywhere ("(a)"), so it is the fallback.
+_EVERY_ORDER = 7
+
+
+def _orders(source: SourceText, pieces: Sequence[str]) -> Iterable[Sequence[str]]:
+    """The other orders of ``pieces`` a reordering may be: all of them, or one sorted."""
+    if len(pieces) <= _EVERY_ORDER:
+        return itertools.permutations(pieces)
+
+    def before(a: str, b: str) -> int:
+        ab, ba = _in_order(source, [a, b]), _in_order(source, [b, a])
+        return -1 if ab and not ba else 1 if ba and not ab else 0
+
+    return [sorted(pieces, key=functools.cmp_to_key(before))]
+
+
+def _all_pieces_found(quote: str, pieces: Sequence[str],
+                      source: SourceText) -> tuple[str, str]:
+    """The cause when every trimmed piece is a span. ``reordered`` only when the quote's order is
+    not the exhibit's and another order of the same pieces is. A quote whose pieces are already in
+    order misses only at the punctuation this trim forgives and `vinci.verbatim` does not (a cut's
+    punctuation is trimmed at its end only), and a piece repeated where the exhibit prints it once
+    has no order at all: both are ``not_a_span``, naming the piece that is not a span."""
+    if _in_order(source, pieces):
+        raw = [p for p in _ELLIPSIS.split(quote) if p.strip(" .,;:")]
+        return NOT_A_SPAN, next((p.strip() for p in raw if not source.match(p).found), quote)
+
+    if any(_in_order(source, order) for order in _orders(source, pieces)):
+        return REORDERED, ""
+    breaks = next(i for i in range(1, len(pieces) + 1) if not _in_order(source, pieces[:i]))
+    return NOT_A_SPAN, pieces[breaks - 1]
+
+
 def _cause(quote: str, source: SourceText, others: tuple[str, ...]) -> tuple[str, str]:
     """(cause, the first piece that is not a span) for a quote ``source`` does not hold."""
     if others:
         return WRONG_EXHIBIT, ""
     pieces = _pieces(quote)
     unfound = [p for p in pieces if not source.match(p).found]
-    if not unfound and len(pieces) > 1:
-        return REORDERED, ""
-    # one piece has no order to break: a quote this trim makes a span is still no span (`vinci.
-    # verbatim` trims a cut's punctuation at its end only), so it is read for its other causes
-    first = unfound[0] if unfound else quote
+    if not unfound:
+        return _all_pieces_found(quote, pieces, source)
+    first = unfound[0]
     bare = [p.strip(" .,;:") for p in _BRACKET.split(first) if p.strip(" .,;:")]
     if _BRACKET.search(first) and (not bare or _in_order(source, bare)):
         return EDITORIAL_BRACKET, first

@@ -44,10 +44,16 @@ MISS_CASES = ("wern-editorial-bracket", "wern-unmarked-join", "wern-reordered", 
               "uber-wrong-exhibit", "amzn-label-added")
 
 #: Every committed quote the guard may find not in its exhibit, by (ticker, term, quote_of,
-#: source_ref, the quote's sha256), with its cause. Measured on main `5e380efc` (2026-11-19), the
+#: source_ref, the quote's sha256), with its cause. Measured on main `8bc138cd` (2026-11-19), the
 #: 20 pages with covenant quotes: none. A change that makes a committed quote miss (a converter or
 #: a span rule that reads a filing differently) either fixes it or names it here with its cause.
 KNOWN_MISSES: dict[tuple[str, str, str, str, str], str] = {}
+#: THE COVERAGE FLOOR (review round 1): what the guard checked on this Mac at main 8bc138cd from the
+#: primary checkout's cache: 54 of the 55 cited exhibits, 331 of the 337 quotes (WERN's 2026-10-05
+#: exhibit, 6 quotes, is the one it does not hold). A cache that holds less fails the guard rather
+#: than checking less in silence; only a cache that holds none of them skips it (CI).
+HELD_FLOOR = 54
+CHECKED_FLOOR = 331
 
 
 @pytest.fixture(autouse=True)
@@ -71,15 +77,17 @@ def _page(case: dict[str, Any]) -> dict[str, Any]:
 
 def _serve(root: pathlib.Path, cases: list[dict[str, Any]], *,
            withhold: frozenset[str] = frozenset()) -> pathlib.Path:
-    """A cache under ``root`` holding each case's documents as their slices, joined in order."""
+    """A cache under ``root`` holding each case's documents: its slices of the converted text,
+    joined in order, or, where a document carries ``html``, the response's own markup, as is."""
     writer = CachedHttp(cache_dir=root, user_agent="test", min_interval_sec=0.0, namespace="sec")
     for c in cases:
         for d in c["documents"]:
             if d["filename"] in withhold:
                 continue
             body = _FIX["gap"].join(s["text"] for s in d["slices"])
-            writer._write_cache(  # noqa: SLF001
-                d["url"], f"<html><body><p>{html.escape(body)}</p></body></html>")
+            served = (d["html"]["text"] if d.get("html")
+                      else f"<html><body><p>{html.escape(body)}</p></body></html>")
+            writer._write_cache(d["url"], served)  # noqa: SLF001
     return root
 
 
@@ -97,7 +105,9 @@ def _answer(root: pathlib.Path, case: dict[str, Any],
 def test_a_committed_quote_its_exhibit_carries_is_found(tmp_path: pathlib.Path, cid: str) -> None:
     """(+) AMZN's commitment clause is verbatim once its tag spaces fold ("“ Aggregate Commitments
     ” means"), IT's change-of-control clause is elided in the exhibit's order, and AMZN's floor
-    clause is a rate component's OWN quote: each is found, and the row names the root it read."""
+    clause is a rate component's OWN quote: each is found, and the row names the root it read.
+    AMZN's commitment clause is served as the exhibit's own markup (`&ldquo;<U>Aggregate
+    Commitments</U>&rdquo;`), so the check's conversion runs on real HTML (review round 1)."""
     case = _CASES[cid]
     r = _answer(_serve(tmp_path, [case]), case)
     assert (r.outcome, r.match) == (cec.FOUND, case["expect"]["match"])
@@ -237,28 +247,33 @@ def _key(r: cec.QuoteCheck) -> _Key:
 
 
 def _ratchet(results: list[cec.QuoteCheck], known: dict[_Key, str]
-             ) -> tuple[list[cec.QuoteCheck], list[_Key]]:
-    """(the misses `known` does not name, the named entries that are stale). An entry is stale when
-    its quote is no longer on a page, or is now found; an entry whose exhibit no root holds cannot
-    be read either way, and is neither."""
+             ) -> tuple[list[cec.QuoteCheck], list[_Key], list[_Key]]:
+    """(the misses `known` does not name, the named entries that are stale, the named entries whose
+    stored cause is not the cause the check reads now). An entry is stale when its quote is no
+    longer on a page, or is now found; an entry whose exhibit no root holds cannot be read either
+    way, and is none of the three."""
     by_key = {_key(r): r for r in results}
     new = [r for r in results if r.outcome == cec.NOT_FOUND and _key(r) not in known]
     stale = sorted(k for k in known if k not in by_key or by_key[k].outcome == cec.FOUND)
-    return new, stale
+    wrong = sorted(k for k, cause in known.items() if k in by_key
+                   and by_key[k].outcome == cec.NOT_FOUND and by_key[k].cause != cause)
+    return new, stale, wrong
 
 
 def test_the_ratchet_refuses_a_new_miss_and_a_stale_entry(tmp_path: pathlib.Path) -> None:
     """(+) A miss named with its cause passes, and so does an entry whose exhibit is not held;
-    (−) an unnamed miss is new, and an entry whose quote is found, or gone, is stale."""
+    (−) an unnamed miss is new, an entry whose quote is found, or gone, is stale, and an entry
+    naming another cause than the one the check reads is refused (review round 1)."""
     miss = _answer(_serve(tmp_path / "m", [_CASES["wern-reordered"]]), _CASES["wern-reordered"])
     hit = _answer(_serve(tmp_path / "h", [_CASES["amzn-verbatim"]]), _CASES["amzn-verbatim"])
     gone = ("AAA", "Maturity date", cec.ROW_QUOTE, "8-K 0000000001-26-000001 · ex.htm", "0" * 64)
-    assert _ratchet([miss, hit], {_key(miss): cec.REORDERED}) == ([], [])
-    assert _ratchet([miss, hit], {}) == ([miss], [])
-    assert _ratchet([miss, hit], {_key(miss): "x", _key(hit): "x", gone: "x"}) == (
-        [], sorted([_key(hit), gone]))
+    assert _ratchet([miss, hit], {_key(miss): cec.REORDERED}) == ([], [], [])
+    assert _ratchet([miss, hit], {}) == ([miss], [], [])
+    assert _ratchet([miss, hit], {_key(miss): cec.REORDERED, _key(hit): cec.REORDERED,
+                                  gone: cec.REORDERED}) == ([], sorted([_key(hit), gone]), [])
+    assert _ratchet([miss, hit], {_key(miss): cec.NOT_A_SPAN}) == ([], [], [_key(miss)])
     unheld = dataclasses.replace(miss, outcome=cec.UNCACHED)
-    assert _ratchet([unheld], {_key(miss): "x"}) == ([], [])
+    assert _ratchet([unheld], {_key(miss): cec.NOT_A_SPAN}) == ([], [], [])
 
 
 def test_every_committed_covenant_quote_is_in_the_exhibit_it_cites() -> None:
@@ -272,7 +287,17 @@ def test_every_committed_covenant_quote_is_in_the_exhibit_it_cites() -> None:
         pytest.skip(f"no exhibit the {len(pages)} pages' covenant quotes cite is held under "
                     f"{[str(r) for r in roots] or 'any data/cache/sec'}: the guard reads the SEC "
                     "cache, and CI holds none")
-    new, stale = _ratchet(results, KNOWN_MISSES)
+    held = {(r.ticker, r.accession, r.filename) for r in results if r.outcome != cec.UNCACHED}
+    checked = sum(1 for r in results if r.outcome != cec.UNCACHED)
+    print(f"covenant guard: {checked} of {len(results)} quotes checked, {len(held)} of "
+          f"{len({(r.ticker, r.accession, r.filename) for r in results})} cited exhibits held, "
+          f"roots {[str(r) for r in roots]}")
+    assert len(held) >= HELD_FLOOR and checked >= CHECKED_FLOOR, (
+        f"the guard checked {checked} quotes in {len(held)} held exhibits, under its floor of "
+        f"{CHECKED_FLOOR} in {HELD_FLOOR}: a cache that holds less checks less, silently. Point a "
+        "root at a cache that holds them; a change that takes quotes off the pages lowers the "
+        "floor in the same change.")
+    new, stale, wrong = _ratchet(results, KNOWN_MISSES)
     assert not new, (
         f"{len(new)} committed covenant quote(s) are not in the exhibit each cites: "
         + "; ".join(f"{r.ticker} | {r.term} | {r.quote_of} | {r.source_ref} | {r.cause}"
@@ -281,6 +306,8 @@ def test_every_committed_covenant_quote_is_in_the_exhibit_it_cites() -> None:
         "(python -m vinci.dossier.covenant_evidence_check prints them all).")
     assert not stale, (f"{len(stale)} KNOWN_MISSES entr(ies) are found now or left the pages: "
                        f"{stale}. Delete each: the ratchet only shrinks.")
+    assert not wrong, (f"{len(wrong)} KNOWN_MISSES entr(ies) name another cause than the check "
+                       f"reads: {[(k, KNOWN_MISSES[k]) for k in wrong]}.")
 
 
 def test_a_quote_with_no_ellipsis_is_never_called_reordered(tmp_path: pathlib.Path) -> None:
@@ -298,3 +325,32 @@ def test_a_quote_with_no_ellipsis_is_never_called_reordered(tmp_path: pathlib.Pa
     r = next(x for x in cec.check_pages({"AMZN": page}, readers)
              if (x.term, x.quote_of, x.source_ref) == want)
     assert (r.outcome, r.cause) == (cec.NOT_FOUND, cec.NOT_A_SPAN) and r.unfound_piece
+
+
+def _amzn_with(quote: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """AMZN's committed commitment row (from the cut) carrying ``quote`` in place of its own."""
+    case = json.loads(json.dumps(_CASES["amzn-verbatim"]))
+    page = _page(case)
+    row = next(r for r in page["mechanical"]["capital_structure"]["covenant_term_rows"]["value"]
+               if r["name"] == case["term"] and r["value"]["source_ref"] == case["source_ref"])
+    row["value"]["note"] = f"{ce.VERBATIM_NOTE_OPEN}{quote}{ce.VERBATIM_NOTE_CLOSE}"
+    return case, page
+
+
+@pytest.mark.parametrize("quote, piece", [
+    (", “ Aggregate Commitments ” means, at any time ... As of the Closing Date",
+     ", “ Aggregate Commitments ” means, at any time"),
+    ("As of the Closing Date ... As of the Closing Date", "As of the Closing Date"),
+], ids=["in-order-pieces-a-stray-comma", "a-piece-repeated"])
+def test_pieces_the_exhibit_holds_are_reordered_only_out_of_its_order(
+        tmp_path: pathlib.Path, quote: str, piece: str) -> None:
+    """(−) Review round 1: two pieces of AMZN's committed clause IN the exhibit's order, the first
+    behind a stray comma, and one piece quoted twice where the exhibit prints it once, are each a
+    miss that no other order of the same pieces repairs: `not_a_span`, the piece named, never
+    `reordered`. (+) WERN's definitions out of the exhibit's order stay `reordered` (above)."""
+    case, page = _amzn_with(quote)
+    readers = cec.readers_for([_serve(tmp_path, [case])])
+    r = next(x for x in cec.check_pages({"AMZN": page}, readers)
+             if (x.term, x.quote_of) == (case["term"], cec.ROW_QUOTE)
+             and x.source_ref == case["source_ref"])
+    assert (r.outcome, r.cause, r.unfound_piece) == (cec.NOT_FOUND, cec.NOT_A_SPAN, piece)
