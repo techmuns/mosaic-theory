@@ -2801,12 +2801,20 @@ function _deriveConversion(value) {
 }
 
 // (K1) governing-term key → short label for the curated main-body covenant line (survival-critical
-// only). Mirrors render._SUMMARY_TERMS — matched against g.term.toLowerCase().
+// only). Mirrors render._SUMMARY_TERMS / render._summary_label — matched against g.term.toLowerCase().
+// The coupon key matches the name's START (STATE row 63): the bare "interest" substring labelled a
+// default rate and an interest-payment date as the coupon; a prefix keeps "… — ABR Loans" variants.
+const _COUPON_TERM = "interest / coupon rate";
 const _SUMMARY_TERMS = [
   ["financial-maintenance", "Financial maintenance"], ["conversion", "Conversion"],
-  ["interest", "Interest / coupon"], ["maturity date", "Maturity"],
+  [_COUPON_TERM, "Interest / coupon"], ["maturity date", "Maturity"],
   ["mandatory prepayment", "Events of default"],
 ];
+function summaryLabel(term) {
+  const name = (term || "").toLowerCase();
+  const entry = _SUMMARY_TERMS.find(([key]) => (key === _COUPON_TERM ? name.startsWith(key) : name.includes(key)));
+  return entry ? entry[1] : null;
+}
 const _MONTHS_RE = "(?:January|February|March|April|May|June|July|August|September|October|November|December)";
 const _DATE_RE_SRC = `(?:${_MONTHS_RE})\\s+\\d{1,2},\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}`;
 const _CADENCE = { week: "weekly", month: "monthly", quarter: "quarterly", day: "daily", year: "annually" };
@@ -2987,9 +2995,8 @@ function covenantSummary(cs) {
       const withheld = (g.refusedNewer || []).length > 0;
       const v = (withheld ? g.lastVerified : g.value) || {};
       if (v.status !== "present") continue;
-      const entry = _SUMMARY_TERMS.find(([key]) => (g.term || "").toLowerCase().includes(key));
-      if (!entry) continue;
-      const label = entry[1];
+      const label = summaryLabel(g.term);
+      if (!label) continue;
       const raw = String(v.value);
       const lead = covenantValueLead(label, raw, g);  // (K1) lead with the extractable value
       const clause = lead ? `${lead} · ${clip120(raw)}` : clip120(raw);
@@ -3295,13 +3302,13 @@ function covenantTerms(cs) {
       const v = (withheld ? g.lastVerified : g.value) || {};
       if (v.status !== "present") return { label: g.term, cells: ["UNKNOWN", v.note || "not stated"] };
       // (T2) value = the extractable value-lead + a ≤200c clause; "full verbatim in JSON" only when trimmed.
-      const entry = _SUMMARY_TERMS.find(([key]) => (g.term || "").toLowerCase().includes(key));
+      const label = summaryLabel(g.term);
       const verbatim = String(v.value);
       // (RC-1.5d) the interest lead composes from structure and carries a QA note when the
       // consistency guard trips; the QA note is an audit-tier annotation (this table is on-demand).
       let lead, qa;
-      if (entry && entry[1] === "Interest / coupon") { [lead, qa] = composeInterestLead(g, verbatim); }
-      else { lead = entry ? covenantValueLead(entry[1], verbatim, g) : ""; qa = ""; }
+      if (label === "Interest / coupon") { [lead, qa] = composeInterestLead(g, verbatim); }
+      else { lead = label ? covenantValueLead(label, verbatim, g) : ""; qa = ""; }
       const [clause, trimmed] = clipTrim(verbatim, 200);
       const cell = (lead ? `${lead} · ${clause}` : clause) + (trimmed ? " — full verbatim in JSON" : "")
         + (qa ? ` — ⚠ QA: ${qa}` : "");

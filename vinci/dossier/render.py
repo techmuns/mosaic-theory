@@ -1562,11 +1562,25 @@ def _clip120(s: str) -> str:
 
 # (K1) governing-term name → short label for the curated main-body covenant line (survival-critical
 # only; principal is in the instruments panel; security/guaranty/agent/law detail → appendix).
+# THE COUPON IS ANCHORED TO ITS NAME'S START (STATE row 63, found 2026-11-18): the key was the bare
+# substring "interest", so "Default interest" and "Interest Payment Dates" printed as the coupon —
+# on VRRM's A&R revolver the default rate was the only coupon line. A coupon row is the extractor's
+# target term (`covenant_extract._TARGET_TERMS`) or a qualified variant of it ("… — ABR Loans"),
+# so it is matched by prefix; an exact-name test would drop IT's two qualified rate rows.
+_COUPON_TERM = "interest / coupon rate"
 _SUMMARY_TERMS = (
     ("financial-maintenance", "Financial maintenance"), ("conversion", "Conversion"),
-    ("interest", "Interest / coupon"), ("maturity date", "Maturity"),
+    (_COUPON_TERM, "Interest / coupon"), ("maturity date", "Maturity"),
     ("mandatory prepayment", "Events of default"),
 )
+
+
+def _summary_label(term: str) -> str | None:
+    """The curated label of a governing term's name, or None (the term stays appendix-only). The
+    coupon key matches the name's START; every other key matches anywhere in it, as before."""
+    name = term.lower()
+    return next((lbl for key, lbl in _SUMMARY_TERMS
+                 if (name.startswith(key) if key == _COUPON_TERM else key in name)), None)
 
 
 _MONTHS = ("January|February|March|April|May|June|July|August|September|October|November|December")
@@ -1789,7 +1803,7 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
             shown = g.last_verified if g.refused_newer else g.value
             if shown is None or shown.status is not SourceStatus.PRESENT:
                 continue
-            label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
+            label = _summary_label(g.term)
             if label is None:
                 continue
             raw = str(shown.value)
@@ -2013,7 +2027,7 @@ def _covenant_term_lines(cs: Any) -> list[str]:
                 continue
             # (T2) value = the extractable value-lead + a ≤200c clause; 'full verbatim in JSON' only
             # when the clause was actually trimmed.
-            label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
+            label = _summary_label(g.term)
             verbatim = str(v.value)
             # (RC-1.5d) the interest lead composes from structure and carries a QA note when the
             # consistency guard trips (a slipped/ambiguous rate component → clause alone + QA); the
