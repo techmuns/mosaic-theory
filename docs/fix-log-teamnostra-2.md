@@ -181,8 +181,8 @@ Order 2 is in code: #936 (RBC-D1, RA-D1, RBC-D8), #937 (RBC-D9, RG-D16) and #953
 | RFL-D8 | 6 | fixed | 31ff7b87 (#992): an exact duplicate is named, not a difference | `tests/test_facts_fix2.py::test_rfl_d8_an_exact_duplicate_the_ingest_holds_once_is_named_not_a_difference` | none (nothing reads the store) |
 | RFL-D9 | 6 | fixed | 31ff7b87 (#992): an unknown-shape row writes nothing | `tests/test_facts_fix2.py::test_rfl_d9_an_unknown_shape_row_writes_nothing` | none (nothing reads the store) |
 | RFL-D10 | 6 | fixed | 31ff7b87 (#992): an unread response names its real cause | `tests/test_facts_fix2.py::test_rfl_d10_an_unread_response_names_its_real_cause` | none (nothing reads the store) |
-| RH-D2 | 6 | in progress (#1002) | e3f715b0 (#1002): the regression test is in, as a strict xfail; the 2-line hook patch awaits the operator (refused three times as self-modification; operator: "I'll allow the hook edit") | — | none |
-| H-D1 | 6 | in progress (#1002) | = RH-D2 | — | none |
+| RH-D2 | 6 | fixed | 258ecb39 (#1086, 2026-11-16): #1002's approved patch to `.claude/hooks/fast_gate.py` applied (operator: "I'll allow the hook edit"), so the fast gate warns, never blocks, when its venv lacks a tool; the regression test from e3f715b0 (#1002) loses its strict-xfail marker | `tests/test_claude_hooks.py::test_fast_gate_warns_and_lets_a_clean_change_finish_when_a_tool_is_missing` | none |
+| H-D1 | 6 | fixed | = RH-D2: 258ecb39 (#1086) | `tests/test_claude_hooks.py::test_fast_gate_warns_and_lets_a_clean_change_finish_when_a_tool_is_missing` | none |
 | RH-D3 | 6 | fixed | 7edbfa36 (#996): `bin/commit` resolves its interpreter from the checkout | `tests/test_one_gate.py::test_the_local_gate_finds_the_checkouts_own_interpreter` | none |
 | RH-D5 | 6 | fixed | 7edbfa36 (#996): a shallow clone skips (= RG-D22) | `tests/test_evals_round2.py::test_a_shallow_clone_holding_the_freeze_commit_is_not_full_history` | none |
 | RH-D6 | 6 | fixed | 7edbfa36 (#996): node-launching tests check for node first | `tests/test_node_tests_skip_without_node.py::test_every_node_launch_in_the_suite_checks_for_node_first` | none |
