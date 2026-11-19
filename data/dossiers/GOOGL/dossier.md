@@ -1,6 +1,6 @@
 # Dossier — Alphabet Inc. (Nasdaq: GOOGL)
 
-_November 14, 2026 · extraction 2026-11-14.a-passage-is-filed-as-the-call-prints-it · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
+_November 14, 2026 · extraction 2026-11-14.a-passage-is-filed-as-the-call-prints-it · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -26,7 +26,7 @@ The underwrite missed its asymmetry line at the 14 Aug spot of $345.90, where th
 Alphabet Inc. offers various products and platforms in the United States, Europe, the Middle East, Africa, the Asia-Pacific, Canada, and Latin America.
 - **Segments:** Google Services 85%; Google Cloud 15%; Other Bets 0%; Unallocated Hedging Gains (Losses) -0% [1]
 - **Geography:** United States 48%; Europe, The Middle East, and Africa (EMEA) 29%; Asia-Pacific (APAC) 17%; Other Americas 6%; Unallocated -0% [2]
-- **Snapshot:** Nasdaq · CMP $293.45 (2026-11-11) · cap $3431.3B (2026-10-30) ⚠ implies $279.10/sh vs CMP (-4.9%) · 52-wk $270.70–$408.61 · shares 12.3B · book value/sh $53.65 [3]
+- **Snapshot:** Nasdaq · CMP $293.45 (2026-11-11) · cap $3607.7B (CIQ $3431.3B at 2026-10-30, -4.9%) · 52-wk $270.70–$408.61 · shares 12.3B · book value/sh $53.65 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Will the AI/cloud reinvestment convert the $561 billion Cloud backlog and record growth into free cash flow fast enough to out-earn an EV/EBITDA multiple already sitting at its own 92nd percentile, before the capex and $924 billion of purchase commitments keep free cash flow negative?**
@@ -286,17 +286,17 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 ## Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 17.5x vs peer median 15.7x (+11%); P/E 14.6x vs peer median 19.4x (-25%) [31]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-10-30 · multiples as-of 2026-11-01 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $3,510,930.3M at the 2026-11-11 close (CIQ claims as-of 2026-10-30; the † rows divide $3,316,548.0M, CIQ's cap plus its net debt, as-of 2026-10-30) · multiples as-of 2026-11-01 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [48]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
 | **name NTM TEV/EBITDA** | **11.82x** | **$280,587.8M EBITDA †** |
-| peer-median NTM TEV/EBITDA | 9.39x | $353,200.0M EBITDA |
-| peer-median LTM TEV/EBITDA | 15.7x | $211,245.1M EBITDA |
+| peer-median NTM TEV/EBITDA | 9.39x | $373,901.0M EBITDA |
+| peer-median LTM TEV/EBITDA | 15.7x | $223,626.1M EBITDA |
 | **name NTM TEV/Rev** | **5.58x** | **$594,363.4M Revenue †** |
-| peer-median NTM TEV/Rev | 3.61x | $918,711.4M Revenue |
-| peer-median LTM TEV/Rev | 4x | $829,137.0M Revenue |
+| peer-median NTM TEV/Rev | 3.61x | $972,556.9M Revenue |
+| peer-median LTM TEV/Rev | 4x | $877,732.6M Revenue |
 
 - **Consensus path anchors (EBITDA):** FY26E $227919.0M · FY27E $303791.2M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $499579.1M · FY27E $634498.6M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
@@ -665,6 +665,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 15d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 13d old (2026-11-01, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -727,7 +728,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [45] `CIQ Estimates→Consensus · EBITDA FY2032 (median, high, low, std dev, estimates)`
 [46] `CIQ Key Developments: Alphabet Inc NasdaqGS GOOGL Key Developments.rtf · Sep-30-2026`
 [47] `cadence: EDGAR submissions (median 94d gap over 13 results 8-Ks; last print 2026-10-28)`
-[48] `TEV = mcap 3431315.0 + net debt -114767.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-10-30, exported 2026-11-02) — simple-TEV basis`
+[48] `TEV at the page's close = market cap $3,607,674.3M (the page's close $293.45 (EOD GOOGL last close, 2026-11-11) × 12,294,000,000 shares (EDGAR XBRL shares outstanding)) + CIQ claims $-96,744.0M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [49] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [50] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
 [51] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-10-30`
