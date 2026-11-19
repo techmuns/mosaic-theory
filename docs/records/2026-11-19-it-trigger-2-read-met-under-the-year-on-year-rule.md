@@ -2,7 +2,7 @@
 id:
 status: open
 date: 2026-11-19
-prs: []
+prs: [1133]
 supersedes:
 superseded-by:
 ---
