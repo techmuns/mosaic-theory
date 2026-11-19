@@ -1,0 +1,51 @@
+{
+ "_about": "Cut-down CIQ Company Comparable Analysis 'Financial Data' sheet for the price-values pins (tests/test_price_values.py; operator ruling 2026-11-04, #891): MCK's own comps export, named by its sha256, cut through the real decode path (CiqBundle.sheet) to its header row and the name row, keeping only the cells the pins read \u2014 Company Name, Total Enterprise Value, Market Capitalization and Day Close Price \u2014 every other cell blanked in place so the column positions hold.",
+ "names": {
+  "MCK": {
+   "workbook": "Company Comparable Analysis McKesson Corporation.xls",
+   "sha256": "158bc7e18c5163f9a8886467f6a3d9efeb873c5c2c5dad54a59dfb305c0171b3",
+   "sheets": {
+    "comps|Financial Data": [
+     [
+      "Company Name",
+      "Day Close Price Latest",
+      "",
+      "Market Capitalization Latest",
+      "",
+      "",
+      "",
+      "Total Enterprise Value Latest",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ],
+     [
+      "McKesson Corporation (NYSE:MCK)",
+      1069.44,
+      "",
+      124686.4,
+      "",
+      "",
+      "",
+      132257.4,
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ]
+    ]
+   }
+  }
+ }
+}

@@ -45,6 +45,7 @@ from vinci.dossier.extraction_version import (
 from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.schemas import (
     DRAWDOWN_ANCHOR_WORDS,
+    CapCrossCheck,
     CovenantExhibitOutcome,
     Dossier,
     DrawdownCause,
@@ -2131,6 +2132,24 @@ def _gate_shortref(gate: str) -> str:
 # The #320 record's "mixed-basis TEV" finding rested on the same mistake and is corrected in STATE.
 
 
+def _ie_tev_line(ie: Any) -> str:
+    """(2026-11-19) The TEV the price-implied PEER rows divide — the TEV at the page's close
+    (`price_values`) — and CIQ's own beside it, which the † rows divide; the old line on a page
+    built before the field. Twin of `ieTevLine()` in dossier.js."""
+    at, ciq = ie.tev_at_close, ie.tev.value
+    # `implied_expectations.tev` is CIQ's cap plus its 'Net Debt' line, not its Total Enterprise
+    # Value (round 1 of #1132: MCK $129,319.4M against $132,257M), so it is named for what it is
+    ciq_part = (f"the † rows divide ${ciq:,.1f}M, CIQ's cap plus its net debt, as-of "
+                f"{ie.tev_as_of}" if ciq is not None else "")
+    if at is not None and at.value is not None:
+        return (f"TEV ${at.value:,.1f}M at the {ie.tev_close_date} close (CIQ claims as-of "
+                f"{ie.tev_as_of}{f'; {ciq_part}' if ciq_part else ''})")
+    if at is not None:
+        return (f"TEV at the page's close UNKNOWN — {at.note}"
+                + (f" · {ciq_part}" if ciq_part else ""))
+    return f"TEV as-of {ie.tev_as_of}"
+
+
 def _implied_expectations_lines(v: Any) -> list[str]:
     """(G) Price-inverted expectations, MULTIPLES-space. Shared table: each stated multiple → the
     fundamental LEVEL price implies (TEV ÷ multiple); the consensus path anchors are juxtaposed
@@ -2159,7 +2178,7 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     out = [
         f"- **What the current price implies (at stated multiples)** — "  # (K4) human-facing rename
         f"{_gate_shortref(ie.heterogeneity_gate)}",
-        f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of} · † at the name's "
+        f"  - _{_ie_tev_line(ie)} · multiples as-of {ie.multiples_as_of} · † at the name's "
         "own multiple the implied level is consensus by identity_",
     ]
     # rows carry the row-LABEL (the multiple's name) + one cell PER column — `_table` prepends a
@@ -2173,7 +2192,11 @@ def _implied_expectations_lines(v: Any) -> list[str]:
         rows.append([r.label, mult, level])
     name_rows = frozenset(i for i, r in enumerate(ie.rows) if r.is_identity)
     out += _table(
-        "Price-implied levels (at each stated multiple)", ie.tev.source_ref,
+        "Price-implied levels (at each stated multiple)",
+        # the peer rows divide the TEV at the page's close, so the table cites it; CIQ's own TEV
+        # keeps its full source in `implied_expectations.tev.source_ref`
+        (ie.tev_at_close.source_ref if ie.tev_at_close is not None
+         and ie.tev_at_close.source_ref else ie.tev.source_ref),
         ["Multiple (× used)", "Implied level"], rows, name_rows=name_rows)
 
     # (audit) H7/P8 made BOTH EBITDA and Revenue anchors UNKNOWN-able — they read the DIRECT
@@ -3112,6 +3135,21 @@ def _cap_drift(si: StockInfo) -> str:
     return f" ⚠ implies ${recon.implied_price:,.2f}/sh vs CMP ({recon.gap:+.1%})"
 
 
+def _cap_cross_check_tail(cc: CapCrossCheck | None, cap_iso: str) -> str:
+    """(2026-11-19) CIQ's comps cap beside the page's own (`price_values.cross_check`): nothing
+    inside the tolerance, the share-basis wording on a whole-number ratio, else CIQ's figure, its
+    date and the gap. Twin of `capCrossCheckTail()` in dossier.js."""
+    if cc is None:
+        return ""
+    if cc.corporate_action:
+        return (f" ⚠ SHARE-BASIS MISMATCH vs CIQ {_fmt_cap(cc.ciq_market_cap)}"
+                f"{f' ({cap_iso})' if cap_iso else ''}")
+    if not cc.beyond_tolerance:
+        return ""
+    return (f" (CIQ {_fmt_cap(cc.ciq_market_cap)}{f' at {cap_iso}' if cap_iso else ''}, "
+            f"{cc.gap:+.1%})")
+
+
 def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
     """(Brief snapshot) the scalar facts on ONE line — exchange · CMP · cap · 52-wk · shares · book
     value/sh — the linear-markdown mirror of the web key-figures table (CIK moved to Record &
@@ -3144,8 +3182,16 @@ def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
             # vintage to state, so it prints none rather than falling back to the neighbour.
             cap_iso = si.market_cap_as_of.isoformat() if si.market_cap_as_of is not None else ""
             si_iso = si.as_of.isoformat() if si.as_of is not None else ""
-            cap_v = f" ({cap_iso})" if cap_iso and cap_iso != si_iso else ""
-            parts.append(f"cap {_fmt_cap(si.market_cap.value)}{cap_v}{_cap_drift(si)}")
+            at = si.market_cap_at_close
+            if at is not None and at.status is p and at.value is not None:
+                # (2026-11-19, operator: "Approve, $0 refresh") THE PAGE'S CAP is its close × its
+                # count (`price_values`); CIQ's is a dated cross-check, printed only where it
+                # disagrees beyond the tolerance. A page built before the field keeps the old line.
+                parts.append(f"cap {_fmt_cap(at.value)}"
+                             f"{_cap_cross_check_tail(si.cap_cross_check, cap_iso)}")
+            else:
+                cap_v = f" ({cap_iso})" if cap_iso and cap_iso != si_iso else ""
+                parts.append(f"cap {_fmt_cap(si.market_cap.value)}{cap_v}{_cap_drift(si)}")
         if (si.low_52w.status is p and si.low_52w.value is not None
                 and si.high_52w.status is p and si.high_52w.value is not None):
             parts.append(f"52-wk ${si.low_52w.value:,.2f}–${si.high_52w.value:,.2f}")
@@ -4577,6 +4623,10 @@ def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
                 "and nothing is being withheld._", ""]
     v = g.get("vintages") or {}
     cons_as_of, tev_as_of = v.get("consensus_as_of"), v.get("tev_as_of")
+    # (2026-11-19) the TEV is struck at the page's close on CIQ's claims: both dates, each its half
+    tev_vintage = (f"TEV at the {v['tev_close_date']} close, CIQ claims as-of "
+                   f"{tev_as_of or 'UNKNOWN'}" if v.get("tev_close_date")
+                   else f"TEV as-of {tev_as_of or 'UNKNOWN'}")
     head = ["### The EV gap — our base case vs the street", ""]
     if g.get("status") != "computed":
         why = str(g.get("reason") or "no reason recorded")
@@ -4603,7 +4653,7 @@ def _ev_gap_lines(m: MechanicalLayer) -> list[str]:
                   else "")
     out = [*head,
            f"_Anchor FY{anchor} · consensus as-of {cons_as_of or 'UNKNOWN'}{floor_note} · "
-           f"TEV as-of {tev_as_of or 'UNKNOWN'} · form {g.get('form')}_", ""]
+           f"{tev_vintage} · form {g.get('form')}_", ""]
 
     def ratio(x: float | None) -> str:
         return f"{x:.2f}x" if isinstance(x, (int, float)) else "UNKNOWN"
