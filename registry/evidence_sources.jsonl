@@ -33,6 +33,7 @@
 {"origin_id": "ES-5f23df30f9c4", "payload": "{\"origin_id\":\"ES-5f23df30f9c4\",\"name\":\"AMD\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-6008af99b76c", "payload": "{\"origin_id\":\"ES-6008af99b76c\",\"name\":\"Bloomberg Finance L.P. + Goldman Sachs\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-62b1cce840ef", "payload": "{\"origin_id\":\"ES-62b1cce840ef\",\"name\":\"Wall Street Journal\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-64e32a737b2c", "payload": "{\"origin_id\":\"ES-64e32a737b2c\",\"name\":\"Dealogic + Federal Reserve + Goldman Sachs Global Investment Research + Treasury + eMBS\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-64fb15b3322c", "payload": "{\"origin_id\":\"ES-64fb15b3322c\",\"name\":\"Bank for International Settlements (BIS)\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-68e13d46ba1d", "payload": "{\"origin_id\":\"ES-68e13d46ba1d\",\"name\":\"TrendForce\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-6985a2d19c7b", "payload": "{\"origin_id\":\"ES-6985a2d19c7b\",\"name\":\"Rheinmetall\",\"kind\":\"data_vendor\"}"}
@@ -84,6 +85,7 @@
 {"origin_id": "ES-df28d5413b5c", "payload": "{\"origin_id\":\"ES-df28d5413b5c\",\"name\":\"Markit\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-df6141b63320", "payload": "{\"origin_id\":\"ES-df6141b63320\",\"name\":\"GDPx\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-e2e3d6b40199", "payload": "{\"origin_id\":\"ES-e2e3d6b40199\",\"name\":\"U.S. Department of War / CSIS\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-e894595b04c6", "payload": "{\"origin_id\":\"ES-e894595b04c6\",\"name\":\"Goldman Sachs Global Investment Research + Haver Analytics\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-ed0c0f2f54d7", "payload": "{\"origin_id\":\"ES-ed0c0f2f54d7\",\"name\":\"PitchBook\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-ef61c61b4bc8", "payload": "{\"origin_id\":\"ES-ef61c61b4bc8\",\"name\":\"Jensen Huang public statements\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f1a195435792", "payload": "{\"origin_id\":\"ES-f1a195435792\",\"name\":\"Atlantic Council\",\"kind\":\"data_vendor\"}"}
