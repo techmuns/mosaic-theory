@@ -1111,6 +1111,8 @@ class WeeklyRun(Mutable):
     tokens: dict[str, int] = Field(default_factory=dict)
     cost_usd: float | None = None
     fetch_seconds: float = 0.0
+    #: the SUM of every model call's own seconds — not the run's wall time: calls sent at once
+    #: (the enrichment pass, `--llm-workers`) each count their whole duration, so it can exceed it
     llm_seconds: float = 0.0
     warnings: list[str] = Field(default_factory=list)
     output_dir: str | None = None
