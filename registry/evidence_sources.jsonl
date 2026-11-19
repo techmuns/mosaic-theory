@@ -4,6 +4,7 @@
 {"origin_id": "ES-044b50fe7b56", "payload": "{\"origin_id\":\"ES-044b50fe7b56\",\"name\":\"JPM WM Solutions. Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-05f5154c6861", "payload": "{\"origin_id\":\"ES-05f5154c6861\",\"name\":\"Arithmetic\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-075927d01d2f", "payload": "{\"origin_id\":\"ES-075927d01d2f\",\"name\":\"Goldman Sachs Marquee MarketView\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-0775150b0407", "payload": "{\"origin_id\":\"ES-0775150b0407\",\"name\":\"Bloomberg + FactSet + Goldman Sachs\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-077da998c381", "payload": "{\"origin_id\":\"ES-077da998c381\",\"name\":\"Export-Import Bank of the United States\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-0b88146ab476", "payload": "{\"origin_id\":\"ES-0b88146ab476\",\"name\":\"Google\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-13664bff46c1", "payload": "{\"origin_id\":\"ES-13664bff46c1\",\"name\":\"Goldman Sachs commodity analysts\",\"kind\":\"data_vendor\"}"}
@@ -15,6 +16,8 @@
 {"origin_id": "ES-2247eb10ad22", "payload": "{\"origin_id\":\"ES-2247eb10ad22\",\"name\":\"Brad Gerstner\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-2562e176094b", "payload": "{\"origin_id\":\"ES-2562e176094b\",\"name\":\"Meta\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-27ae4606b6e1", "payload": "{\"origin_id\":\"ES-27ae4606b6e1\",\"name\":\"International Institute for Strategic Studies\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-28abcd2628f9", "payload": "{\"origin_id\":\"ES-28abcd2628f9\",\"name\":\"Goldman Sachs + ICE\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-2a606990fa82", "payload": "{\"origin_id\":\"ES-2a606990fa82\",\"name\":\"Haver Analytics\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-2d8f5e456bd3", "payload": "{\"origin_id\":\"ES-2d8f5e456bd3\",\"name\":\"NATO\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-2dd9807ab433", "payload": "{\"origin_id\":\"ES-2dd9807ab433\",\"name\":\"Dealroom.co + NATO Innovation Fund\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-30d80e8d1b3f", "payload": "{\"origin_id\":\"ES-30d80e8d1b3f\",\"name\":\"former hyperscaler employees + six current\",\"kind\":\"data_vendor\"}"}
