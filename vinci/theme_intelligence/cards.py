@@ -29,7 +29,7 @@ from dataclasses import dataclass, field, replace
 from datetime import date
 from typing import Any, TypeVar
 
-from vinci.theme_intelligence.display import clip
+from vinci.theme_intelligence.display import DESK_QUOTE_NOTE, clip, desk_quote
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.priority import (
     F8_CONTESTED,
@@ -851,6 +851,19 @@ def e(x: object) -> str:
     """Escaped for HTML — ONCE: text a source page already entity-encoded ("America&#039;s",
     the pilot's Nomura title) is decoded first, so it never prints as "&#039;"."""
     return html.escape(html.unescape("" if x is None else str(x)))
+
+
+def quote_html(text: str, tag: str = "div", *, cls: str | None = "q",
+               marks: bool = True) -> str:
+    """A SOURCE's own words as every page prints them (`display.desk_quote`): whole up to the
+    desk's cap, else shortened at a word with `DESK_QUOTE_NOTE` beside it. `marks`: inside curly
+    quotation marks (a business-group excerpt is printed bare). The claim keeps every word.
+    Measured and cut on the DECODED text `e()` prints, so a cut never falls inside an entity."""
+    shown, cut = desk_quote(html.unescape(text))
+    attr = f' class="{cls}"' if cls else ""
+    body = f"“{e(shown)}”" if marks else e(shown)
+    return (f"<{tag}{attr}>{body}</{tag}>"
+            + (f' <span class="note">{e(DESK_QUOTE_NOTE)}</span>' if cut else ""))
 
 
 def origin_label(attributed: str | None) -> str:
@@ -2072,7 +2085,7 @@ def _other_row(c: Claim, card: CardContent, rc: RenderContext) -> str:
         + ([] if c.span_verified and c.number_verified is not False else ["NOT VERIFIED"])
     label = " — ".join(x for x in (c.scope, c.metric) if x) or c.statement
     role = rc.roles.get(c.claim_id, "")
-    return (f'<tr id="{e(c.claim_id)}"><td>{e(label)}<div class="q">“{e(c.quote)}”</div></td>'
+    return (f'<tr id="{e(c.claim_id)}"><td>{e(label)}{quote_html(c.quote)}</td>'
             f'<td><b>{e(c.value_text or "—")}</b> {e(unit_shown(c.value_text, c.unit))}</td>'
             f'<td>{e(c.period or "—")}<div class=note>as of '
             f'{e(c.measured_as_of.isoformat() if c.measured_as_of else "—")}</div></td>'
@@ -2217,7 +2230,7 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                 f'(same origin — attribution, not new evidence)</div>'
                 if r.also_reported_in else "")
         rows.append(
-            f'<tr id="{e(r.claim_id)}"><td>{e(r.label)}<div class="q">“{e(r.quote)}”</div>'
+            f'<tr id="{e(r.claim_id)}"><td>{e(r.label)}{quote_html(r.quote)}'
             f'{also}</td><td><b>{e(r.value_text or "—")}</b> '
             f'{e(unit_shown(r.value_text, r.unit))}'
             + (f"<div class=note>{e(r.comparator)}</div>" if r.comparator else "")
@@ -2249,13 +2262,13 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     kept_sectors, junk = split_sectors(av)
     sector_rows = "".join(
         f'<div class="s"><span class="lab {_BADGE[s.provenance]}">{e(s.provenance.value)}</span> '
-        f'<b>{e(s.name)}</b> — {e(s.direction.value)} <span class="q">“{e(s.quote)}”</span>'
+        f'<b>{e(s.name)}</b> — {e(s.direction.value)} {quote_html(s.quote, "span")}'
         f'{_refs(s.claim_ids, rc)}</div>' for s in kept_sectors)
     junk_rows = "".join(
-        f'<div class="s"><b>{e(s.name)}</b> — {e(why)} <span class="q">“{e(s.quote)}”</span>'
+        f'<div class="s"><b>{e(s.name)}</b> — {e(why)} {quote_html(s.quote, "span")}'
         f'{_refs(s.claim_ids, rc)}</div>' for s, why in junk)
     group_rows = "".join(
-        f'<div class="s"><b>{e(g.name)}</b> <span class="q">{e(g.excerpt)}</span> '
+        f'<div class="s"><b>{e(g.name)}</b> {quote_html(g.excerpt, "span", marks=False)} '
         f'<span class="note">paragraph {e(", ".join(_para(b) for b in g.block_ids))}</span>'
         f'{_refs(g.claim_ids, rc)}</div>' for g in rc.groups)
     bodies["s05_affected"] = (

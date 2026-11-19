@@ -64,6 +64,7 @@ from vinci.theme_intelligence.cards import (
     more_line,
     proposal_reading,
     proposal_step,
+    quote_html,
     review_not_run_words,
     set_card,
     split_sectors,
@@ -2924,7 +2925,7 @@ class Desk:
                    if x["v"] else "")  # a statement has no number: no placeholder dash
             twice = (f' <span class="muted">· stated {len(x["quotes"])} times</span>'
                      if len(x["quotes"]) > 1 else "")
-            quotes = "".join(f"<blockquote>“{e(q)}”</blockquote>" for q in x["quotes"])
+            quotes = "".join(quote_html(q, "blockquote", cls=None) for q in x["quotes"])
             return (f'<li><details><summary>{val}{e(x["label"])}{when_}{kind}{twice}'
                     f'{src}</summary>{quotes}</details>'
                     f'<span class="aud cc">{e(" · ".join(x["ids"]))}</span></li>')
