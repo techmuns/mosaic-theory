@@ -132,6 +132,17 @@ CHARS_PER_TOKEN_BOUND = 2.0
 #: 46 / 31 vs 26 — the cached run lowest, inside a spread the two uncached runs already show (15),
 #: so neither equivalence nor harm is shown. An operator decision; see the 2026-10-11 record.
 PROMPT_CACHE_PARTS = False
+#: how many INDEPENDENT paid calls may be in flight at once (`scan` / `enrich` / `reanalyse`
+#: `--llm-workers`). Mapped 2026-11-19 (record of that date): only the enrichment pass has any —
+#: one call per thesis, each prompt that thesis's own card. Extraction, the completeness parts
+#: (each later part is shown what the earlier ones added) and the card reviews (inside the
+#: engine) are a chain, and stay one at a time. 8 because the dossier assembler already sends 8
+#: at once on this account (`vinci/dossier/assemble.py`); its rate limits were never measured
+#: here, so a 429 in an enrichment step means lower this. The spend guard reserves every call's
+#: bound, so the number never lets the spend pass a limit. It is not spend-neutral: when a call
+#: fails, or the run is interrupted, up to this many minus one calls are already sent and billed
+#: (each recorded and cached, `Pipeline._enrich_theses`).
+LLM_WORKERS = 8
 
 
 @dataclass(frozen=True)

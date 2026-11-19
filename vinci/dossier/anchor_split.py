@@ -33,9 +33,10 @@ bridge difference, into "EBITDA". SMPL's close of 2026-10-27 predates a rise of 
   ``valuation.ev_ebitda_basis`` MEASURES CIQ's TEV ÷ that multiple reproducing it (``reported`` or
   ``indistinguishable``, within its 5%), on the multiple the band carries.
 
-Anything else is REFUSED, never substituted: GOOGL's CIQ 22.9x divides its TEV by $144.8bn, neither
-its reported $185.5bn nor that plus rent. The multiple effect still stands there, since it reads no
-current EBITDA.
+Anything else is REFUSED, never substituted. GOOGL's CIQ 22.9x (the 2026-09-30 close) and its comps
+TEV (2026-10-30) are 30 days apart, so ``ev_ebitda_basis`` divides nothing there (W65); its old
+$144.8bn "neither pairing" was a quotient of two dates' figures. The multiple effect still stands
+there, since it reads no current EBITDA.
 
 Every threshold is set by face validity, never by what any name's figure would come to. This
 module ranks nothing and no decision reads it. It is display and audit only.
@@ -264,6 +265,19 @@ def current_ebitda(mechanical: dict[str, Any], *, ex_lease: bool, current: float
                 f"{current:g}x, so it does not say what this one divides")
     reading = eb.get("reading")
     e = _num(eb.get("reported_ltm_ebitda"))
+    from vinci.dossier.ev_ebitda_basis import DATE_READINGS  # lazy: it imports the schemas
+
+    if reading in DATE_READINGS:
+        # (W65) no pairing was measured, so none is named: GOOGL's split once called its 30-day
+        # quotient "neither reported LTM EBITDA nor that plus rent". An undated pair is not SHOWN
+        # to be of one date; only a measured gap says the two differ (review round 1)
+        apart = ("are not of one date" if reading == "dates_differ"
+                 else "are not shown to be of one date")
+        return (f"CIQ's {mult:g}x and the comps TEV it would divide {apart} "
+                f"(valuation.ev_ebitda_basis: {reading}; the multiple's close "
+                f"{eb.get('multiple_close') or 'unstated'}, the TEV's "
+                f"{eb.get('tev_as_of') or 'unstated'}), so the EBITDA it is struck on is not "
+                "measured")
     if reading not in REPORTED_READINGS:
         what = ("reported LTM EBITDA plus rent, which the anchor's EBITDA does not carry"
                 if reading == "ebitda_plus_rent" else "neither reported LTM EBITDA nor that plus "

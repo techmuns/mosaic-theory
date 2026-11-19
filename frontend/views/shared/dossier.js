@@ -2267,8 +2267,10 @@ function ebitdaReconNote(m) {
 }
 
 // (2026-10-21) what CIQ's headline EV/EBITDA divides, and R1's ex-lease basis at the page's price —
-// each the block's own sentence. Twin: render._valuation_bases_md (same pairings stated).
-const _BASIS_WORTH_STATING = new Set(["ebitda_plus_rent", "not_reproduced"]);
+// each the block's own sentence. Twin: render._valuation_bases_md (same pairings stated). (W65) The
+// two readings that measure nothing — the TEV and the multiple are not of one date — state why.
+const _BASIS_WORTH_STATING = new Set(["ebitda_plus_rent", "not_reproduced", "dates_differ",
+  "date_unstated"]);
 function valuationBasesHtml(m) {
   const v = m.valuation || {};
   const eb = v.ev_ebitda_basis, at = v.ev_ebitda_ex_lease_at_price;

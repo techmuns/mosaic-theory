@@ -986,6 +986,21 @@ measured for three Citi reports).
   (`COMPLETENESS_IN_PARTS`), each part shown what the earlier parts added. A part that overruns is
   split once into halves, with the discarded call recorded at its cost; a half that overruns again
   fails loud.
+- **What runs at once (2026-11-19).** Only calls whose prompt holds no other call's answer may be
+  in flight together, and only the ENRICHMENT pass has any: one call per thesis, its prompt that
+  thesis's own card. Up to `--llm-workers` (default 8, `config.LLM_WORKERS`; on `scan`, `enrich`
+  and `reanalyse`) are sent at once. The registry reads, the spend guard's admission and, in
+  input order, the SEC checks and every write stay on one thread, so a run writes what a
+  one-at-a-time run writes. A document's own calls are a CHAIN and stay one at a time: the
+  extraction (its prompt lists the registry's theses, which the documents before it changed),
+  each completeness part (shown what the earlier parts added) and each card review (inside the
+  engine, the registry's one writer). The spend guard RESERVES each call's bound until it
+  settles, so calls in flight together never jointly pass a limit — as long as each call costs no
+  more than its bound, the guard's own premise (`calls_over_their_bound` counts the ones that
+  did not). When a call fails, the error is raised at its thesis's turn; calls already sent for
+  later theses are paid, recorded (`enrichment-unrecorded`) and cached, so a re-run does not pay
+  for them again. A run's `llm_seconds` is the SUM of its calls' own times, so with calls sent at
+  once it can exceed the run's wall time.
 - **Malformed answers.** The model's answer is validated ITEM BY ITEM: a claim, mention, thesis or
   review that fails its schema is dropped and named (`MALFORMED_ITEM_DROPPED`, WARN) — never
   coerced into a guessed value — and every valid item is kept. The paid answer is cached before it
