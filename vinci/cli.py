@@ -1196,7 +1196,8 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     from vinci.dossier.mechanical import read_filing_events
 
     try:
-        facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
+        ident = resolver.resolve_ticker(t)
+        facts = edgar.companyfacts(ident.cik)
     except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
         print(f"  {t}: EDGAR fetch failed ({type(exc).__name__}) — skip, not written")
         return None
@@ -1222,7 +1223,7 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     # (W73) the event rule on the close R1 prices: the company's reports after that close
     mech = d.mechanical.model_dump(mode="json")
     close = r1_close(mech)
-    filings, unread = (read_filing_events(edgar, resolver.resolve_ticker(t).cik, mech,
+    filings, unread = (read_filing_events(edgar, ident.cik, mech,
                                           datetime.now(UTC).date(), since=close)
                        if close is not None else ([], None))
     # (W73, correction 1) the store's EOD closes, for the stock's move since the multiple's close.
@@ -1232,7 +1233,7 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     try:
         with Store(cfg.db_path) as _st:
             eod = [(b.bar_date, b.close)
-                   for b in _st.get_price_history(resolver.resolve_ticker(t).internal_id)]
+                   for b in _st.get_price_history(ident.internal_id)]
     except Exception as exc:  # noqa: BLE001 — the reason is printed on the page, never swallowed
         eod, eod_unread = None, f"the EOD store could not be read ({type(exc).__name__}: {exc})"
     anchor = compute_anchor(mech, facts=facts, computed_at=datetime.now(UTC), filings=filings,

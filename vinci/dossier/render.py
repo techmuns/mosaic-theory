@@ -407,9 +407,9 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
         # (W62; the event rule since W73) the current is there, but the anchor refused its close
         # (`anchor.close_verdict`): R1 still applies and prices no value. No twin:
         # dossier.js prints no sentence on what R1 prices here.
-        tail = ((" R1 prices no value on it: the event rule refuses that close (the company has "
-                 "reported after it, or it is after the page's date), and the median is never put "
-                 "in its place. The level and percentile above are CIQ's own series.")
+        tail = ((" R1 prices no value on it: the event rule refuses that close (the screening "
+                 "context names why), and the median is never put in its place. The level and "
+                 "percentile above are CIQ's own series.")
                 if _screens_at_dated_close(anchor) else
                 # (W62) an anchor derived before W73 keeps its own words until re-derived
                 (" R1 prices no value on it: a newer quarter than that current could be in the "

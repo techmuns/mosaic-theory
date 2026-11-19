@@ -236,11 +236,11 @@ def _close_refusal(doc: dict[str, Any], oh: dict[str, Any], cur: float) -> str |
     passed. Never re-decided here: one verdict for the page's screen and the record's base, read
     off the anchor that priced it.
 
-    Three refusals, each naming what clears it: the anchor does not price this close (a band
-    refreshed after the anchor, or an anchor before W50); it carries no verdict (derived before
-    W73); or the event rule refused it (a report after the close, or a close after the page's
-    date). The record would otherwise take a base multiple the page itself withholds (GOOGL's
-    22.9x at the 2026-09-30 close, before this change)."""
+    Four refusals, each naming what clears it: the anchor prices no multiple (an R2 page); it
+    does not price this close (a band refreshed after the anchor, or an anchor before W50); it
+    carries no verdict (derived before W73); or the event rule refused it (a report after the
+    close, or a close after the page's date). The record would otherwise take a base multiple the
+    page itself withholds (GOOGL's 22.9x at the 2026-09-30 close, before this change)."""
     held = _get(doc, "anchor", "multiple") or {}
     close = oh.get("as_of")
     if not held:

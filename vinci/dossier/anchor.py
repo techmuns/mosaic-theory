@@ -479,8 +479,8 @@ def stale_multiple_reason(ex_lease: bool, current: float, close: Any, cv: CloseV
     return (f"the multiple R1 prices ({where}, {current:g}x at the {close or 'undated'} close) "
             f"is refused by the event rule: {cv.rule} — the trailing median"
             + (f" ({median:g}x)" if median is not None else "")
-            + " is never priced in its place; R1 still applies, and no screen value is shown "
-              f"until {(cv.clears or 'the close passes').removesuffix(',')}")
+            + " is never priced in its place; R1 still applies, and no screen value is shown: "
+              f"{(cv.clears or 'a close the event rule passes').removesuffix(',')} clears it")
 
 
 class AnchorInput(BaseModel, frozen=True):
