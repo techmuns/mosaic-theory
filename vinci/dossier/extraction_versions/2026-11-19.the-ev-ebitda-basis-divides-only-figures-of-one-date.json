@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-19.the-ev-ebitda-basis-divides-only-figures-of-one-date",
+  "follows": [
+    "2026-11-19.fast-values-at-the-close-and-an-event-rule",
+    "2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape"
+  ],
+  "names": "what CIQ's headline TEV/LTM EBITDA divides is measured only when the comps TEV and the multiple's close (the own-history band's date) are within 4 calendar days; beyond that the block states both dates (dates_differ), an undated multiple states so (date_unstated), and neither divides: no implied denominator, no ratio, no pairing; both renderers print the line for the two readings, and the anchor split's refusal names the two dates, never a pairing (W65: AMZN and GOOGL, 30 days apart)"
+}

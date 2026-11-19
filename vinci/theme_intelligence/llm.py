@@ -27,6 +27,12 @@ ARTICLE_END = "</untrusted_article>"
 
 
 class ThemeLlmClient(AnthropicLlmClient):
+    #: each call's usage is kept on the thread that made it — the shared adapter's slot is per
+    #: thread (2026-10-23), and this client writes it only through `_record_usage` — so a
+    #: concurrent pass may send its independent calls from several threads at once
+    #: (`budget.GuardedClient.usage_per_thread`)
+    usage_per_thread = True
+
     def extract(self, *, system: str, user: str, tool: dict[str, Any],
                 cache: bool = False) -> dict[str, Any]:
         head, end, tail = user.partition(ARTICLE_END)

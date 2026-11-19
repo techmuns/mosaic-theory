@@ -334,7 +334,10 @@ def _multiple_basis_md(m: MechanicalLayer, anchor: Anchor | None = None) -> str:
 #: The pairings whose headline needs its basis stated beside it: CIQ's lease-inclusive pairing (a
 #: reader divides its TEV by reported EBITDA and calls 13.3x wrong) and the one that reproduces
 #: neither. A multiple of reported EBITDA, or one where rent is too small to matter, reads as it is.
-_BASIS_WORTH_STATING = frozenset({"ebitda_plus_rent", "not_reproduced"})
+#: (W65) And the two that measure nothing, because the TEV and the multiple are not of one date: the
+#: page says why the headline's basis is unknown rather than dropping the line it printed before.
+_BASIS_WORTH_STATING = frozenset({"ebitda_plus_rent", "not_reproduced", "dates_differ",
+                                  "date_unstated"})
 
 
 def _valuation_bases_md(m: MechanicalLayer) -> list[str]:
