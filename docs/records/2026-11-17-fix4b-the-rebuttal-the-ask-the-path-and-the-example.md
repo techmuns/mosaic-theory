@@ -284,3 +284,10 @@ runway-not-derivable 1 → 1.
   Falsified as minor if a rebuilt anchored page whose at-anchor part names no cause carries
   "bleed" in a bull or bear point.
 
+## Amendments
+
+**2026-11-19 — the SMPL half of the lean-move falsifier fired.** Y18's panel run (registration
+`99267760`), whose BASE is main with fix 4b, read SMPL bearish 4, mixed 1 in each arm: "SMPL at 4+
+bearish of 5 again, on requests this change moved". LLY read bullish 4 of 5, so its half did not
+fire. By the operator's ruling of 2026-11-19 ("Yes, merge once green"), SMPL's shift is a real
+effect and fix 4b stays. The $0 read of its draws: `docs/records/2026-11-19-smpl-lean-under-fix4b-is-real.md`.
