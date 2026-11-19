@@ -108,20 +108,21 @@ superseded-by:
     `implied_expectations.tev` as CIQ's comps TEV, and no committed `dossier.json` moved.
 - **Frozen corpus** (`tests/fixtures/frozen_pages/*`, 43 blocks): 8 move to `dates_differ`. The
   gaps are 0 days (31 blocks), −1 (2), −3 (2), 12 (2), 30 (3), 63, 98 and 119.
-- **Pins:** `tests/test_w65_basis_one_date.py`, 20, built from real committed JSON.
+- **Pins:** `tests/test_w65_basis_one_date.py`, 21, built from real committed JSON.
   - **Positive:** GOOGL and AMZN at the cut, and IT frozen 2026-08-18.
   - **Negative:** IT (0 days), UBER (−1) and LLY (−3) at the cut, with reading, quotient, both
     ratios and line identical to the committed block.
   - **Boundary:** ±4 days measured, ±5 days not, on IT with its TEV's date moved.
   - **Undated pair:** three multiple cuts (no band, another multiple, an undated close),
     and a TEV dated "UNKNOWN" (review round 0).
-  - **Readers:** `anchor_split`'s refusal, and the md and web e2e (real JSON → render).
+  - **Readers:** `anchor_split`'s refusal ("are not of one date" only on a measured gap, "not
+    shown to be" on an undated pair: review round 1), and the md and web e2e (real JSON → render).
   - **Gate unmoved:** the freshness gate's oldest panel does not move.
   - **Committed pages:** a roster walk, and a presence-parity round trip.
   - **The synthesis facts:** a pre-W65 block sends no new key (every committed page), and a
     rebuilt one sends them.
   - **Parity:** the two renderers hold one set of readings.
-- **18 of the 20 FAIL on main `8bc138cd`.** That was checked inside a full export of main with
+- **19 of the 21 FAIL on main `8bc138cd`.** That was checked inside a full export of main with
   `vinci` asserted to load from it. The other two are a check that the cut holds the pages, and the
   panel-stamp guard, which the rename mutant below proves.
 - **Mutation, on the rebased code: 14 of 14 mutants red:**
@@ -168,6 +169,23 @@ superseded-by:
   - At `8bc138cd` that branch runs on 6 pages (BRBR, IT, LLY, V, VITL, VRRM), all 0 days apart but
     LLY at −3. So no page is past the limit, but LLY's multiple, struck 2026-11-02, is labelled
     2026-10-30 there.
+- **Review round 1** (Codex at its usage limit): the in-session `/code-review high`, and coordinator
+  B's independent review of head `51b90480`.
+  - **B's finding A, FIXED:** on `date_unstated` the split said the two "are not of one date",
+    more than is known. It now says "are not shown to be of one date", as the basis line does.
+    Pinned on B's repro: IT with no band and a TEV dated "UNKNOWN".
+  - **B's finding B, DEFERRED to W73:** the same `valuation_basis._r1_current` defect named below.
+    B's repro moves `tev_as_of` to 2026-12-31 on IT, BRBR, VRRM or LLY; each prints "its pairing,
+    measured: dates_differ" and still returns a value (IT 9.400001). W73 owns that function.
+- **Deferred from review round 1 (in-session `/code-review high`):**
+  the multiple is dated only through the own-history band, which `ciq_sheets._own_history_band`
+  refuses below four dated closes.
+  - So a name with a shorter Multiples history has a present `ev_ebitda` and always reads
+    `date_unstated`, even on a same-day export.
+  - No committed page is affected: 23 of 23 with a multiple carry the band, at `8bc138cd`.
+  - The root fix is a structured date on the multiple itself. `ev_ebitda_current` deliberately
+    keeps its `source_ref` undated (#460: it is a join key), so that is a new field, a build of
+    its own.
 - **Falsifier:** a page whose TEV and close sit within 4 days and still read `not_reproduced` is a
   real basis difference, not a date one. WERN at the cut is the one such block today. A
   date-driven misreading surviving inside 4 days would show the limit too wide.

@@ -269,8 +269,11 @@ def current_ebitda(mechanical: dict[str, Any], *, ex_lease: bool, current: float
 
     if reading in DATE_READINGS:
         # (W65) no pairing was measured, so none is named: GOOGL's split once called its 30-day
-        # quotient "neither reported LTM EBITDA nor that plus rent"
-        return (f"CIQ's {mult:g}x and the comps TEV it would divide are not of one date "
+        # quotient "neither reported LTM EBITDA nor that plus rent". An undated pair is not SHOWN
+        # to be of one date; only a measured gap says the two differ (review round 1)
+        apart = ("are not of one date" if reading == "dates_differ"
+                 else "are not shown to be of one date")
+        return (f"CIQ's {mult:g}x and the comps TEV it would divide {apart} "
                 f"(valuation.ev_ebitda_basis: {reading}; the multiple's close "
                 f"{eb.get('multiple_close') or 'unstated'}, the TEV's "
                 f"{eb.get('tev_as_of') or 'unstated'}), so the EBITDA it is struck on is not "

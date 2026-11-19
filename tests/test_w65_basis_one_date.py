@@ -195,6 +195,28 @@ def test_the_split_names_the_dates_never_a_pairing() -> None:
     assert "neither reported" not in why and "unstated" not in why
 
 
+def test_the_split_claims_no_date_mismatch_it_did_not_measure() -> None:
+    """Review round 1 (B, finding A): on `date_unstated` the split said the two "are not of one
+    date", more than is known — nothing was dated to differ. It says they are not SHOWN to be of
+    one date, as the basis line does. B's repro: IT with no own-history band and a TEV dated
+    "UNKNOWN"."""
+    raw = frozen_doc("IT")
+    v = raw["mechanical"]["valuation"]
+    v["own_history"]["value"] = [b for b in v["own_history"]["value"]
+                                 if "EBITDA" not in b["metric"]]
+    v["implied_expectations"]["tev_as_of"] = "UNKNOWN"
+    got = eb.headline_basis(_mech(raw))
+    assert got is not None and got.reading == "date_unstated"
+    v["ev_ebitda_basis"] = json.loads(got.model_dump_json())
+    why = sp.current_ebitda(raw["mechanical"], ex_lease=False, current=got.multiple)
+    assert isinstance(why, str), why
+    assert "not shown to be of one date" in why and "are not of one date" not in why
+    # a measured mismatch still says so plainly
+    googl = sp.current_ebitda(_rebuilt(frozen_doc("GOOGL"))["mechanical"], ex_lease=False,
+                              current=22.888839)
+    assert isinstance(googl, str) and "are not of one date" in googl
+
+
 def test_the_new_date_is_not_a_panel_stamp() -> None:
     """The multiple's close dates a VALUE, like the own-history band's `as_of` the gate already
     skips. Named `multiple_close`, the freshness gate does not collect it, so no page's oldest
