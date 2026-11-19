@@ -2811,16 +2811,18 @@ const _COUPON_TERM = "interest / coupon rate";
 const _PREPAY_DEFAULT_TERM = "mandatory prepayment / events of default";
 const _PREPAY_TERM = "mandatory prepayment";
 const _DEFAULT_TERM = "events of default";
+const _PREPAY_DEFAULT_LABEL = "Prepayment / events of default";
+const _DEFAULT_LABEL = "Events of default";
 const _SUMMARY_TERMS = [
   ["financial-maintenance", "Financial maintenance"], ["conversion", "Conversion"],
   [_COUPON_TERM, "Interest / coupon"], ["maturity date", "Maturity"],
-  [_PREPAY_DEFAULT_TERM, "Prepayment / events of default"],
-  [_PREPAY_TERM, "Mandatory prepayment"], [_DEFAULT_TERM, "Events of default"],
+  [_PREPAY_DEFAULT_TERM, _PREPAY_DEFAULT_LABEL],
+  [_PREPAY_TERM, "Mandatory prepayment"], [_DEFAULT_TERM, _DEFAULT_LABEL],
 ];
 // the keys matched at the name's START (first match wins, so the combined term precedes its half)
 const _PREFIX_KEYS = new Set([_COUPON_TERM, _PREPAY_DEFAULT_TERM, _PREPAY_TERM, _DEFAULT_TERM]);
 // the labels whose value lead counts enumerated defaults and an acceleration word, as before
-const _DEFAULT_LEAD_LABELS = new Set(["Events of default", "Prepayment / events of default"]);
+const _DEFAULT_LEAD_LABELS = new Set([_DEFAULT_LABEL, _PREPAY_DEFAULT_LABEL]);
 function summaryLabel(term) {
   const name = (term || "").toLowerCase();
   const entry = _SUMMARY_TERMS.find(([key]) => (_PREFIX_KEYS.has(key) ? name.startsWith(key) : name.includes(key)));

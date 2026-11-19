@@ -1577,16 +1577,18 @@ _COUPON_TERM = "interest / coupon rate"
 _PREPAY_DEFAULT_TERM = "mandatory prepayment / events of default"
 _PREPAY_TERM = "mandatory prepayment"
 _DEFAULT_TERM = "events of default"
+_PREPAY_DEFAULT_LABEL = "Prepayment / events of default"
+_DEFAULT_LABEL = "Events of default"
 _SUMMARY_TERMS = (
     ("financial-maintenance", "Financial maintenance"), ("conversion", "Conversion"),
     (_COUPON_TERM, "Interest / coupon"), ("maturity date", "Maturity"),
-    (_PREPAY_DEFAULT_TERM, "Prepayment / events of default"),
-    (_PREPAY_TERM, "Mandatory prepayment"), (_DEFAULT_TERM, "Events of default"),
+    (_PREPAY_DEFAULT_TERM, _PREPAY_DEFAULT_LABEL),
+    (_PREPAY_TERM, "Mandatory prepayment"), (_DEFAULT_TERM, _DEFAULT_LABEL),
 )
 #: the keys matched at the name's START (first match wins, so the combined term precedes its half)
 _PREFIX_KEYS = frozenset({_COUPON_TERM, _PREPAY_DEFAULT_TERM, _PREPAY_TERM, _DEFAULT_TERM})
 #: the labels whose value lead counts enumerated defaults and an acceleration word, as before
-_DEFAULT_LEAD_LABELS = frozenset({"Events of default", "Prepayment / events of default"})
+_DEFAULT_LEAD_LABELS = frozenset({_DEFAULT_LABEL, _PREPAY_DEFAULT_LABEL})
 
 
 def _summary_label(term: str) -> str | None:
