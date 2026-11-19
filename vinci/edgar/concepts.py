@@ -372,9 +372,10 @@ def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
     stale value is to be withheld where it is read: an annual by :func:`current_annual` and
     :func:`current_pair`, a share count by the dossier's age bound (180 days, 540 for a filer
     that reports only annually), a debt line by net debt reading every leg at the cash instant.
-    One reader does not withhold yet (STATE.md §5.0 row 11 (b)): net debt's cash instant has no
-    age bound. (A filer that moved its statements to IFRS kept a frozen us-gaap fiscal year until
-    :func:`filer_fiscal_year` read its ifrs-full years, 2026-11-17.) Nor is this a reader's
+    Net debt reads its cash at the filer's newest balance sheet, with a 180d backstop where no
+    cash alias carries it (STATE.md §5.0 row 11 (b), 2026-11-19); a filer that moved its
+    statements to IFRS kept a frozen us-gaap fiscal year until :func:`filer_fiscal_year` read its
+    ifrs-full years (row 11 (a), 2026-11-17). Nor is this a reader's
     check. Its clock is the filer's frontier of ANY tag, which one forward-dated context moves
     years ahead, and it does not see a substitute :func:`annual_line` accepts. Why:
     docs/records/2026-11-17-the-monitors-stale-tag-row-is-retired.md
@@ -669,17 +670,19 @@ class StaleAnnual(NamedTuple):
     # one of this concept's own: the concept stopped on every alias and the filer moved on.
     against_filer: bool = False
 
-    @property
-    def behind_filer_words(self) -> str:
+    def behind_filer_words(self, *, pair: bool = False) -> str:
         """How far behind the filer an annual is, and why that is not current
         (:func:`behind_filer`): more than one fiscal year behind its newest, or one behind a year
         it reports under IFRS. The IFRS wording fits both shapes the ruling reaches — a filer that
         moved its statements to IFRS (Himax) and a stray us-gaap tag inside an IFRS filing
-        (Avino's `ProfitLoss`) — so it names no US GAAP year the filer may never have had."""
+        (Avino's `ProfitLoss`) — so it names no US GAAP year the filer may never have had.
+        ``pair`` words it for a combined figure's YEAR, two figures (:class:`StalePair`)."""
         end = self.newer_end.isoformat()
         if self.lag_days < FILER_STALE_DAYS and self.newer_tag.startswith(f"{IFRS_NAMESPACE}:"):
+            why = ("neither US GAAP figure of that year is current" if pair
+                   else "this US GAAP figure is not current")
             return (f"{self.lag_days}d behind the newest fiscal year the filer reports under IFRS "
-                    f"({self.newer_tag} to {end}), so this US GAAP figure is not current")
+                    f"({self.newer_tag} to {end}), so {why}")
         return (f"{self.lag_days}d behind the filer's newest fiscal year ({self.newer_tag} to "
                 f"{end}) — more than one fiscal year behind")
 
@@ -687,7 +690,7 @@ class StaleAnnual(NamedTuple):
     def note(self) -> str:
         if self.against_filer:
             return (f"stale annual {self.concept}: {self.tag} for the year to "
-                    f"{self.period_end.isoformat()}, {self.behind_filer_words}")
+                    f"{self.period_end.isoformat()}, {self.behind_filer_words()}")
         return (f"stale annual {self.concept}: {self.tag} for the year to "
                 f"{self.period_end.isoformat()}, {self.lag_days}d behind {self.newer_tag} to "
                 f"{self.newer_end.isoformat()} — not the current year")
@@ -798,7 +801,9 @@ def filer_fiscal_year(facts: dict[str, Any]) -> FiscalYear | None:
     concept, then the alias, first in order. The tie names the year and decides nothing else: the
     newest IFRS year is kept beside the winner (``ifrs_end``), and :func:`behind_filer` judges
     against it. Ties between the two: 0 on the uncut cache, 21 days in 9 ifrs-full filers on its
-    history (2026-11-18), each a stray us-gaap tag in an IFRS filing (enCore's `ProfitLoss`).
+    history (2026-11-18). 20 are a stray us-gaap tag in an IFRS filing (enCore's `ProfitLoss`).
+    The 21st is Nano Dimension's own US GAAP 6-K of 2025-08-20 (425 us-gaap facts, no ifrs-full),
+    on its return to US GAAP (review of 9f86e4d7).
 
     Its annual periods only, never the filer's frontier of any tag (``filer_frontier``), which
     counts quarters, instants and contexts dated years ahead (Innodata's reaches 2034). A period
@@ -1065,7 +1070,7 @@ class StalePair(NamedTuple):
         head = (f"newest year both {self.first} and {self.second} carry ends "
                 f"{self.period_end.isoformat()}")
         if self.behind:
-            head += f", {self.behind.behind_filer_words}"
+            head += f", {self.behind.behind_filer_words(pair=True)}"
         return "; ".join([head, *(s.note for s in self.legs)])
 
 

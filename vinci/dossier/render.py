@@ -23,8 +23,10 @@ from vinci import coverage_roster
 from vinci.config import get_config
 from vinci.dossier.anchor import (
     DQ_LEASE_BASIS,
+    DQ_STALE_MULTIPLE,
     MULTIPLE_CURRENT,
     PLACEHOLDER_HINTS,
+    SCREEN_VALUE_WITHHELD,
     SHARES_REFUSED,
     Anchor,
 )
@@ -396,6 +398,14 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
         tail = (" R1 prices nothing on it: the history carries no usable current multiple, and "
                 "the median is never put in its place. The level and percentile above are CIQ's "
                 "own series.")
+    elif priced_ex and _screens_at_current(anchor) and anchor is not None \
+            and DQ_STALE_MULTIPLE in (anchor.data_quality or ""):
+        # (W62) the current is there, but a newer quarter could be in the history by the page's
+        # price date (`anchor.close_age`): R1 still applies and prices no value. No twin:
+        # dossier.js prints no sentence on what R1 prices here.
+        tail = (" R1 prices no value on it: a newer quarter than that current could be in the "
+                "history by the page's price date, so it is not today's multiple, and the median "
+                "is never put in its place. The level and percentile above are CIQ's own series.")
     elif priced_ex and _screens_at_current(anchor):
         # (W50) the anchor prices the history's current, not its median. No twin: dossier.js
         # prints no sentence on what R1 prices here.
@@ -1552,11 +1562,25 @@ def _clip120(s: str) -> str:
 
 # (K1) governing-term name → short label for the curated main-body covenant line (survival-critical
 # only; principal is in the instruments panel; security/guaranty/agent/law detail → appendix).
+# THE COUPON IS ANCHORED TO ITS NAME'S START (STATE row 63, found 2026-11-18): the key was the bare
+# substring "interest", so "Default interest" and "Interest Payment Dates" printed as the coupon —
+# on VRRM's A&R revolver the default rate was the only coupon line. A coupon row is the extractor's
+# target term (`covenant_extract._TARGET_TERMS`) or a qualified variant of it ("… — ABR Loans"),
+# so it is matched by prefix; an exact-name test would drop IT's two qualified rate rows.
+_COUPON_TERM = "interest / coupon rate"
 _SUMMARY_TERMS = (
     ("financial-maintenance", "Financial maintenance"), ("conversion", "Conversion"),
-    ("interest", "Interest / coupon"), ("maturity date", "Maturity"),
+    (_COUPON_TERM, "Interest / coupon"), ("maturity date", "Maturity"),
     ("mandatory prepayment", "Events of default"),
 )
+
+
+def _summary_label(term: str) -> str | None:
+    """The curated label of a governing term's name, or None (the term stays appendix-only). The
+    coupon key matches the name's START; every other key matches anywhere in it, as before."""
+    name = term.lower()
+    return next((lbl for key, lbl in _SUMMARY_TERMS
+                 if (name.startswith(key) if key == _COUPON_TERM else key in name)), None)
 
 
 _MONTHS = ("January|February|March|April|May|June|July|August|September|October|November|December")
@@ -1779,7 +1803,7 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
             shown = g.last_verified if g.refused_newer else g.value
             if shown is None or shown.status is not SourceStatus.PRESENT:
                 continue
-            label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
+            label = _summary_label(g.term)
             if label is None:
                 continue
             raw = str(shown.value)
@@ -2003,7 +2027,7 @@ def _covenant_term_lines(cs: Any) -> list[str]:
                 continue
             # (T2) value = the extractable value-lead + a ≤200c clause; 'full verbatim in JSON' only
             # when the clause was actually trimmed.
-            label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
+            label = _summary_label(g.term)
             verbatim = str(v.value)
             # (RC-1.5d) the interest lead composes from structure and carries a QA note when the
             # consistency guard trips (a slipped/ambiguous rate component → clause alone + QA); the
@@ -3968,6 +3992,12 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         if dil is not None and inc is not None and inc.value is not None:
             rows.append(f"| Dilution test / share | ${dil:,.2f} | + {inc.value:,.0f} dilutive "
                         f"shares (diluted less basic weighted average, latest 10-Q) |")
+    elif anchor.value_withheld is not None:
+        # (W62; operator 2026-11-18: "Approve, add the row") R1 applies but its multiple is not
+        # today's: the row stays, its value withheld, its note the cause and what clears it —
+        # dates and days only. Twin: anchorInner() in dossier.js.
+        rows.append(f"| Screen value / share | {SCREEN_VALUE_WITHHELD} | "
+                    f"{_md_cell(anchor.value_withheld)} |")
     rows.append(f"| Overall confidence | {anchor.overall_confidence or '—'} |  |")
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
            f"_{_SCREEN_SUBTITLE_CURRENT if current else _SCREEN_SUBTITLE}_", "",

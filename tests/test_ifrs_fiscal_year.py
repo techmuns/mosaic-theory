@@ -362,3 +362,19 @@ def test_a_filer_current_under_ifrs_has_no_figure_invented() -> None:
     assert snap.fcf_sign.note == "no OCF/capex"
     assert snap.ebitda_annual.note == "no operating_income/D&A"
     assert snap.eps_diluted_annual.note == "no diluted EPS"
+
+
+def test_a_pair_one_ifrs_year_behind_is_worded_as_a_pair() -> None:
+    """A combined figure withheld one IFRS year behind names a YEAR of two figures, never "this
+    US GAAP figure" (review of 9f86e4d7, nit 3). Himax as filed 2019-03-28: its FCF sign's legs
+    are both FY2017, 365d behind the IFRS year, and the refusal says neither is current. A single
+    annual's refusal keeps the singular."""
+    facts = facts_as_of(_facts("HIMX"), date(2019, 3, 28))
+    snap = compute_fundamental_snapshot("0001342338", facts)
+    pair = snap.fcf_sign.note or ""
+    assert pair.startswith("newest year both operating_cash_flow and capex carry ends 2017-12-31")
+    assert "ifrs-full:Revenue to 2018-12-31" in pair, pair
+    assert "neither US GAAP figure of that year is current" in pair, pair
+    assert "this US GAAP figure" not in pair, pair
+    single = snap.op_income_sign.note or ""
+    assert "this US GAAP figure is not current" in single, single

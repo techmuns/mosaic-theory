@@ -1,6 +1,6 @@
 # Dossier — GARTNER INC (NYSE: IT)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
 
 # Brief — first cut
 
@@ -348,7 +348,7 @@ _The split's arithmetic:_
 - multiple effect = (22.9576 − 9.4263) × 1,094.4 ÷ 63,081,351 = $234.77, beside the anchor, never in it.
 - V0 + margin effect = $136.91, the screen value; + multiple effect = $371.67, the value at the median.
 - net debt ÷ EV = 1,680.3 ÷ 13,394.2 = 0.125; flagged above 0.5.
-- the multiple's close 2026-11-11, the page's stored close 2026-11-11: 0 days; stale above 30.
+- the multiple's close 2026-11-11, the page's stored close 2026-11-11: 0 days; not stale by its history's cadence: CIQ's history is stale past 30 days.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [51]  <!-- ds-table -->
@@ -515,7 +515,6 @@ _industry = 41 IT Consulting and Other Services companies (GICS industry), the p
 - **Covenants — AMENDED AND RESTATED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Adjusted LIBO Rate plus the Applicable Margin — per an 8-K filed 2020-09-28
   - **Interest / coupon:** ABR plus the Applicable Margin — per an 8-K filed 2020-09-28
-  - **Interest / coupon:** otherwise applicable rate plus 2% — per an 8-K filed 2020-09-28
   - **Maturity:** the fifth anniversary of the Closing Date — per an 8-K filed 2020-09-28
   - **Maturity:** the fifth anniversary of the Closing Date — per an 8-K filed 2020-09-28
   - **Financial maintenance:** Consolidated Leverage Ratio not to exceed 5.00 to 1.00 through Dec 31, 2021; thereafter 4.50 to 1.00 (or 5.00 to 1.00 d… — per an 8-K filed 2020-09-28
@@ -735,9 +734,13 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm_
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 8d old (2026-11-06, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Input checks** (run on what this page records it was built from; 0 of 2 flag):
+  - `inputs_recorded` · **PASS** (a FLAG check) — every input the build read is recorded (inputs-56e6e94c19d758b2)
+  - `one_export_per_kind` · **PASS** (a FLAG check) — each of the page's 3 export stamps is the record's one export of its kind
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000749251` · NYSE : IT
 - **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)

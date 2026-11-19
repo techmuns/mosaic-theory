@@ -28,6 +28,7 @@ from typing import Any
 import pytest
 
 from tests.frozen_support import frozen_doc
+from tests.stale_gate_support import stale_gate_held_open
 from vinci.dossier import anchor as anc
 from vinci.dossier import render as dr
 from vinci.dossier.schemas import Dossier
@@ -49,8 +50,17 @@ def _derived(t: str) -> str:
     """``t``'s frozen page with the anchor `compute_anchor` writes, as committed JSON text."""
     doc = frozen_doc(t)
     facts = json.loads((FACTS / f"{t}.json").read_text())
-    a = anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW)
+    # (W62) BRBR's 32-day CIQ close is stale by its history's cadence, so since W62 an anchor
+    # derived on it shows no value and carries no split. A page priced before W62 still carries one
+    # with a stale notice (#1119's TJX), and the renderers must print it: the anchor is derived as
+    # that code priced it (the check held open, `tests/stale_gate_support.py`), and its split is the
+    # committed reading of that page (`committed_gap_split`), whose notice states BRBR's cadence
+    # verdict, stale
+    with stale_gate_held_open():
+        a = anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW)
     assert a.gap_split is not None and a.gap_split.refusal is None, t
+    doc["anchor"] = json.loads(a.model_dump_json(exclude=anc.anchor_absent_fields(a) or None))
+    a = a.model_copy(update={"gap_split": anc.committed_gap_split(doc)})
     doc["anchor"] = json.loads(a.model_dump_json(exclude=anc.anchor_absent_fields(a) or None))
     return json.dumps(doc)
 

@@ -1,6 +1,6 @@
 # Dossier — EPAM Systems, Inc. (NYSE: EPAM)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
 
 # Brief — first cut
 
@@ -352,7 +352,7 @@ _The split's arithmetic:_
 - multiple effect = (23.8347 − 9.8862) × 799.2 ÷ 51,023,335 = $218.49, beside the anchor, never in it.
 - V0 + margin effect = $173.28, the screen value; + multiple effect = $391.78, the value at the median.
 - net debt ÷ EV = −940.2 ÷ 7,515.0 = −0.125; flagged above 0.5.
-- the multiple's close 2026-11-05, the page's stored close 2026-11-11: 6 days; stale above 30.
+- the multiple's close 2026-11-05, the page's stored close 2026-11-11: 6 days; not stale by its history's cadence: the next quarterly observation is due by 2027-02-26 (balance sheet 2026-09-30 + the longest of its last 4 quarters, 92 days, + the slowest of their pricing lags, 57 days).
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [45]  <!-- ds-table -->
@@ -745,9 +745,13 @@ _Source §: 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm_
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 8d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 6d old (2026-11-08, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Input checks** (run on what this page records it was built from; 0 of 2 flag):
+  - `inputs_recorded` · **PASS** (a FLAG check) — every input the build read is recorded (inputs-5375cded686fdecd)
+  - `one_export_per_kind` · **PASS** (a FLAG check) — each of the page's 2 export stamps is the record's one export of its kind
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001352010` · NYSE : EPAM
 - **Assembly log:** primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)

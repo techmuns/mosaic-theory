@@ -1,0 +1,247 @@
+{
+ "cik": 1049659,
+ "entityName": "NATIONAL STEEL CO",
+ "facts": {
+  "ifrs-full": {
+   "Assets": {
+    "description": null,
+    "label": null,
+    "units": {
+     "BRL": [
+      {
+       "accn": "0001292814-18-001943",
+       "end": "2016-12-31",
+       "filed": "2018-05-30",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2016Q4I",
+       "fy": 2017,
+       "val": 44153623000
+      },
+      {
+       "accn": "0001292814-18-001943",
+       "end": "2017-12-31",
+       "filed": "2018-05-30",
+       "form": "20-F",
+       "fp": "FY",
+       "fy": 2017,
+       "val": 45209970000
+      },
+      {
+       "accn": "0001292814-19-001158",
+       "end": "2017-12-31",
+       "filed": "2019-04-05",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2017Q4I",
+       "fy": 2018,
+       "val": 45209970000
+      },
+      {
+       "accn": "0001292814-19-001158",
+       "end": "2018-12-31",
+       "filed": "2019-04-05",
+       "form": "20-F",
+       "fp": "FY",
+       "fy": 2018,
+       "val": 47327524000
+      },
+      {
+       "accn": "0001292814-20-001301",
+       "end": "2018-12-31",
+       "filed": "2020-04-14",
+       "form": "20-F/A",
+       "fp": "FY",
+       "frame": "CY2018Q4I",
+       "fy": 2019,
+       "val": 47327524000
+      },
+      {
+       "accn": "0001292814-20-001301",
+       "end": "2019-12-31",
+       "filed": "2020-04-14",
+       "form": "20-F/A",
+       "fp": "FY",
+       "fy": 2019,
+       "val": 50869276000
+      },
+      {
+       "accn": "0001292814-21-001501",
+       "end": "2019-12-31",
+       "filed": "2021-04-13",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2019Q4I",
+       "fy": 2020,
+       "val": 50869276000
+      },
+      {
+       "accn": "0001292814-21-001501",
+       "end": "2020-12-31",
+       "filed": "2021-04-13",
+       "form": "20-F",
+       "fp": "FY",
+       "fy": 2020,
+       "val": 63002149000
+      },
+      {
+       "accn": "0001292814-22-002374",
+       "end": "2020-12-31",
+       "filed": "2022-05-18",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2020Q4I",
+       "fy": 2021,
+       "val": 63002149000
+      },
+      {
+       "accn": "0001292814-22-002374",
+       "end": "2021-12-31",
+       "filed": "2022-05-18",
+       "form": "20-F",
+       "fp": "FY",
+       "fy": 2021,
+       "val": 79379103000
+      },
+      {
+       "accn": "0001292814-23-001912",
+       "end": "2021-12-31",
+       "filed": "2023-04-28",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2021Q4I",
+       "fy": 2022,
+       "val": 79379103000
+      },
+      {
+       "accn": "0001292814-23-001912",
+       "end": "2022-12-31",
+       "filed": "2023-04-28",
+       "form": "20-F",
+       "fp": "FY",
+       "fy": 2022,
+       "val": 85354359000
+      },
+      {
+       "accn": "0001292814-24-001763",
+       "end": "2022-12-31",
+       "filed": "2024-05-01",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2022Q4I",
+       "fy": 2023,
+       "val": 85354359000
+      },
+      {
+       "accn": "0001292814-24-001763",
+       "end": "2023-12-31",
+       "filed": "2024-05-01",
+       "form": "20-F",
+       "fp": "FY",
+       "fy": 2023,
+       "val": 91529720000
+      },
+      {
+       "accn": "0001292814-25-001805",
+       "end": "2023-12-31",
+       "filed": "2025-04-30",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2023Q4I",
+       "fy": 2024,
+       "val": 91529720000
+      },
+      {
+       "accn": "0001292814-25-001805",
+       "end": "2024-12-31",
+       "filed": "2025-04-30",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2024Q4I",
+       "fy": 2024,
+       "val": 103906654000
+      }
+     ]
+    }
+   }
+  },
+  "us-gaap": {
+   "Assets": {
+    "description": "Sum of the carrying amounts as of the balance sheet date of all assets that are recognized. Assets are probable future economic benefits obtained or controlled by an entity as a result of past transactions or events.",
+    "label": "Assets",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001292814-10-001853",
+       "end": "2008-12-31",
+       "filed": "2010-06-01",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2008Q4I",
+       "fy": 2009,
+       "val": 15709000000
+      },
+      {
+       "accn": "0001292814-10-001853",
+       "end": "2009-12-31",
+       "filed": "2010-06-01",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2009Q4I",
+       "fy": 2009,
+       "val": 19188000000
+      }
+     ]
+    }
+   },
+   "CashAndCashEquivalentsAtCarryingValue": {
+    "description": "Amount of currency on hand as well as demand deposits with banks or financial institutions. Includes other kinds of accounts that have the general characteristics of demand deposits. Also includes short-term, highly liquid investments that are both readily convertible to known amounts of cash and so near their maturity that they present insignificant risk of changes in value because of changes in interest rates. Excludes cash and cash equivalents within disposal group and discontinued operation.",
+    "label": "Cash and Cash Equivalents, at Carrying Value",
+    "units": {
+     "USD": [
+      {
+       "accn": "0001292814-10-001853",
+       "end": "2006-12-31",
+       "filed": "2010-06-01",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2006Q4I",
+       "fy": 2009,
+       "val": 959000000
+      },
+      {
+       "accn": "0001292814-10-001853",
+       "end": "2007-12-31",
+       "filed": "2010-06-01",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2007Q4I",
+       "fy": 2009,
+       "val": 1213000000
+      },
+      {
+       "accn": "0001292814-10-001853",
+       "end": "2008-12-31",
+       "filed": "2010-06-01",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2008Q4I",
+       "fy": 2009,
+       "val": 3542000000
+      },
+      {
+       "accn": "0001292814-10-001853",
+       "end": "2009-12-31",
+       "filed": "2010-06-01",
+       "form": "20-F",
+       "fp": "FY",
+       "frame": "CY2009Q4I",
+       "fy": 2009,
+       "val": 3981000000
+      }
+     ]
+    }
+   }
+  }
+ }
+}

@@ -68,6 +68,9 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         # (W61, 2026-11-18) the screen value split into a margin and a multiple effect — absent
         # where there is no screen value and on every anchor written before
         "gap_split",
+        # (W62, 2026-11-18; operator: "Approve, add the row") why R1, which applies, shows no
+        # value: its multiple is not today's — absent wherever a value is shown or R1 cannot price
+        "value_withheld",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}

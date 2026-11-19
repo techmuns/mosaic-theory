@@ -19695,6 +19695,36 @@
     ],
     "unrecorded": []
   },
+  "input_checks": {
+    "schema_version": 1,
+    "results": [
+      {
+        "id": "inputs_recorded",
+        "what": "The page cannot say everything it was built from, so it cannot be re-checked anywhere else",
+        "level": "FLAG",
+        "outcome": "pass",
+        "reads": [
+          "inputs.recorded",
+          "inputs.unrecorded",
+          "inputs.inputs_id"
+        ],
+        "summary": "every input the build read is recorded (inputs-ee6688b7c3bbc604)",
+        "findings": []
+      },
+      {
+        "id": "one_export_per_kind",
+        "what": "A block on the page was not built from the export the page records for its kind",
+        "level": "FLAG",
+        "outcome": "pass",
+        "reads": [
+          "the page's export stamps",
+          "inputs.ciq"
+        ],
+        "summary": "each of the page's 3 export stamps is the record's one export of its kind",
+        "findings": []
+      }
+    ]
+  },
   "layer_refreshes": [
     {
       "date": "2026-11-15",
@@ -19720,17 +19750,26 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R3_forward_pe",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-18T15:50:53.827448Z",
+    "computed_at": "2026-11-19T03:35:05.870899Z",
     "reason": "EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 16.6x · R1 cannot anchor: EBITDA basis divergent: consensus-implied D&A 5.75× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block.",
-    "data_quality": "vendor_bridge",
+    "data_quality": "vendor_bridge+multiple_stale",
     "data_quality_detail": [
-      "vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag"
+      "vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag",
+      "multiple_stale: the current 22.8888x is the close of 2026-09-30; the page's price date is 2026-11-11; 42 days apart; CIQ's history is stale past 30 days — no screen value is priced on it"
     ],
     "margin": {
       "value": 0.262717,
@@ -19792,8 +19831,7 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 292.896,
-    "anchor_base_value_per_share_diluted": 290.2518,
+    "anchor_base_value_per_share": null,
     "midcycle_gap": {
       "ltm_margin": 0.333213,
       "median_margin": 0.262717,
@@ -19806,9 +19844,9 @@
       "basis_ciq_margin": 0.321098,
       "same_source": false,
       "basis": "LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 9 FY; flagged at ≥5 points; sources said to agree within 2",
-      "read": "The last twelve months' operating margin of 33.3% (CIQ EBIT) sits 7.0 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source."
+      "read": "The last twelve months' operating margin of 33.3% (CIQ EBIT) sits 7.0 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 would price that median at the multiple the name trades on today, though no screen value is priced here (its current multiple, the 2026-09-30 close, is not today's), so an R1 value would answer what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source."
     },
-    "anchor_ev_ebit": 28.1669,
+    "anchor_ev_ebit": null,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
     "operator_decision": {
@@ -19826,41 +19864,7 @@
       "d_and_a_source": "ciq"
     },
     "ciq_scale_check": "agree",
-    "gap_split": {
-      "current_multiple": 22.888839,
-      "median_multiple": 17.451829,
-      "multiple_close": "2026-09-30",
-      "price_date": "2026-11-11",
-      "close_age_days": 42,
-      "stale_close": true,
-      "midcycle_ebitda": 152305.511,
-      "midcycle_ebitda_source": "anchor ltm_revenue × margin + d_and_a: 471,098.000 × 0.262717 + 28,540.000 ($M)",
-      "current_ebitda": null,
-      "current_ebitda_source": null,
-      "current_ebitda_through": null,
-      "net_debt": -114767.0,
-      "shares": 12294000000.0,
-      "value_at_current_ebitda": null,
-      "margin_effect": null,
-      "multiple_effect": -67.357,
-      "anchor_at_current": 292.896,
-      "anchor_at_median": 225.539,
-      "net_debt_to_ev": null,
-      "equity_sensitivity": null,
-      "leverage_flag": null,
-      "refusal": "CIQ's 22.9x divides TEV $3,316,548M by $144,827M: neither reported LTM EBITDA nor that plus rent (valuation.ev_ebitda_basis: not_reproduced), so the EBITDA it is struck on is not identified",
-      "basis": "V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = (M − m) × E_mid / S. The anchor at today's multiple = V0 + margin effect; at the median = V0 + margin effect + multiple effect. m and M are the band's current and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No term reads a price. The margin effect carries every difference between E_mid and E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.",
-      "read": "The screen value, $292.90 at 22.9x, is not split: CIQ's 22.9x divides TEV $3,316,548M by $144,827M: neither reported LTM EBITDA nor that plus rent (valuation.ev_ebitda_basis: not_reproduced), so the EBITDA it is struck on is not identified. At the 17.5x median it would be $67.36 lower, not used.",
-      "stale_line": "Today's multiple is the close of 2026-09-30, 42 days before the page's stored close of 2026-11-11.",
-      "leverage_line": null,
-      "arithmetic": [
-        "m = 22.8888x, today's multiple (the close of 2026-09-30); M = 17.4518x, the median beside it, never used.",
-        "E_mid = 471,098.0 × 26.2717% + 28,540.0 = $152,306M — LTM revenue × the median margin + D&A, the anchor's EBITDA.",
-        "E_cur: not identified — CIQ's 22.9x divides TEV $3,316,548M by $144,827M: neither reported LTM EBITDA nor that plus rent (valuation.ev_ebitda_basis: not_reproduced), so the EBITDA it is struck on is not identified.",
-        "multiple effect = (17.4518 − 22.8888) × 152,305.5 ÷ 12,294,000,000 shares = −$67.36, beside the anchor.",
-        "screen value = (22.8888 × 152,305.5 − net debt −114,767.0) ÷ 12,294,000,000 = $292.90; at the median $225.54."
-      ]
-    },
+    "value_withheld": "the multiple is the 2026-09-30 close, 42 days before the page's close; a fresh CIQ export clears it",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

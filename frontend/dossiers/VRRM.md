@@ -1,6 +1,6 @@
 # Dossier — VERRA MOBILITY Corp (Nasdaq: VRRM)
 
-_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
+_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
 
 # Brief — first cut
 
@@ -302,7 +302,7 @@ _The split's arithmetic:_
 - multiple effect = (13.8659 − 3.5566) × 322.8 ÷ 152,009,343 = $21.89, beside the anchor, never in it.
 - V0 + margin effect = $1.34, the screen value; + multiple effect = $23.23, the value at the median.
 - net debt ÷ EV = 943.7 ÷ 1,231.9 = 0.766; flagged above 0.5.
-- the multiple's close 2026-11-06, the page's stored close 2026-11-17: 11 days; stale above 30.
+- the multiple's close 2026-11-06, the page's stored close 2026-11-17: 11 days; not stale by its history's cadence: CIQ's history is stale past 30 days.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [52]  <!-- ds-table -->
@@ -457,7 +457,6 @@ _industry = 37 Data Processing and Outsourced Services companies (GICS industry)
   - _reconciliation: itemized $1,075.2M + 1 with no principal stated (panel A 2025 filed Feb-24-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 681.9 (3 months Q2 Jun-30-2026 683.6 → 3 months Q3 Sep-30-2026 681.9); senior bonds 350.0; leases 52.5; total principal 1,092.8; total debt 1,085.1 (3 months Q3 Sep-30-2026) ($M) [70]
 - **Covenants — AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** 2.00% per annum in excess of otherwise applicable rate — per an 8-K filed 2025-10-17
   - **Financial maintenance:** Springing Consolidated Fixed Charge Coverage Ratio of at least 1.0 to 1.0, tested when Availability is less than the gr… — per an 8-K filed 2025-10-17
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR + 2.00% (Floor 0.00%) · Base Rate Term Loans: Base Rate plus 1.00%; Term SOFR Term Loans: Term SOFR plus 2.00% — per an 8-K filed 2025-10-17
@@ -645,6 +644,8 @@ _Source §: 8-K 0001193125-25-242530 · vrrm-ex10_2.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-11-18 16:53 UTC
 - **Extraction:** 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect — the page's R1 screening anchor carries anchor.gap_split: the value today's multiple puts on the EBITDA it is struck on (V0, the multiple's own denominator on its own lease basis, never market-implied), the margin effect that takes it to the anchor, and the multiple effect to the median beside it, never priced; each term's source, the multiple's close against the page's price date (stale past 30 days), and net debt's share of that EV (flagged past 0.5); a denominator the page does not identify is refused, never substituted, the multiple effect standing; no term reads a price; an anchor written before carries no gap_split
+- **Refreshed since assembly** (oldest first):
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
 - **Price store:** `vrrm-rebuild-1118` · reaching 2026-11-17
 - **Panel age:** oldest panel 12d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-18 build
 - **Consensus age:** consensus 15d old (2026-11-03, valuation.implied_expectations.multiples_as_of) — within the ceiling

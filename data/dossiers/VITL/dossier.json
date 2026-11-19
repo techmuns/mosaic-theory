@@ -13273,6 +13273,36 @@
     ],
     "unrecorded": []
   },
+  "input_checks": {
+    "schema_version": 1,
+    "results": [
+      {
+        "id": "inputs_recorded",
+        "what": "The page cannot say everything it was built from, so it cannot be re-checked anywhere else",
+        "level": "FLAG",
+        "outcome": "pass",
+        "reads": [
+          "inputs.recorded",
+          "inputs.unrecorded",
+          "inputs.inputs_id"
+        ],
+        "summary": "every input the build read is recorded (inputs-d2b33c53ace015a2)",
+        "findings": []
+      },
+      {
+        "id": "one_export_per_kind",
+        "what": "A block on the page was not built from the export the page records for its kind",
+        "level": "FLAG",
+        "outcome": "pass",
+        "reads": [
+          "the page's export stamps",
+          "inputs.ciq"
+        ],
+        "summary": "each of the page's 2 export stamps is the record's one export of its kind",
+        "findings": []
+      }
+    ]
+  },
   "layer_refreshes": [
     {
       "date": "2026-11-15",

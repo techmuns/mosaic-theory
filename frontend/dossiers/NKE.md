@@ -428,7 +428,6 @@ _9 undated / later aggregate line item(s) in the appendix panel_
   - **Interest / coupon:** Term SOFR + 0.595% (Floor 0.00%) · Term SOFR plus Applicable Margin of 0.595% (59.5 basis points) for Term SOFR Loans / Alternative Currency Loans; Base R… — per an 8-K filed 2025-03-10, amended 2026-03-09
   - **Maturity:** March 5, 2027 · The first to occur of (a) the later of (i) March 5, 2027 and (ii) if maturity is extended pursuant to Section 2.6, such… — per an 8-K filed 2025-03-10, amended 2026-03-09
   - **Events of default:** Mandatory prepayment: currency-fluctuation prepayment if Total Outstandings exceed 105% of Aggregate Commitments (Secti… — per an 8-K filed 2025-03-10, amended 2026-03-09
-  - **Interest / coupon:** Base Rate plus Applicable Margin applicable to Base Rate Loans plus 2% per annum (or otherwise applicable rate plus 2%… — per an 8-K filed 2026-03-09
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR plus the Applicable Margin (Applicable Margin in basis points: Level I 35.75, Level II 48.0, Level III 58.5,… — per an 8-K filed 2024-03-11
   - **Maturity:** March 7, 2025 · The later of (i) March 7, 2025 and (ii) if maturity is extended pursuant to Section 2.6, such extended maturity date — per an 8-K filed 2023-03-13, amended 2024-03-11
