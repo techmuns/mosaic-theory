@@ -140,7 +140,7 @@ from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text, normalize_text
 from vinci.monitor import benchmark_for_cap
-from vinci.netcache import CachedHttp, HttpError
+from vinci.netcache import CachedHttp, HttpError, SecRateLimitedError
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.resolver.index import pad_cik
 from vinci.schemas.data_record import DataRecord, Identity
@@ -4832,7 +4832,11 @@ def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str
 
     NOT FAIL-QUIET, unlike `_latest_earnings_print`'s caveat: this feeds a GATE, and a gate whose
     filings cannot be read must not report a clean pass, so a miss comes back as its reason and
-    `check_freshness` refuses on it. No dated export panel: nothing to outdate, nothing read."""
+    `check_freshness` refuses on it. No dated export panel: nothing to outdate, nothing read.
+
+    SEC REFUSING THE RUN IS NOT A MISS (B's review of #1144): `SecRateLimitedError` propagates, as
+    `netcache` intends. Read as a miss, it withheld R1's value on every page `anchor-backfill`
+    wrote during the refusal, and the export gate refused as though the filings could not be had."""
     days = [d for _k, d in export_panels(mechanical)]
     if since is None:
         if not days:
@@ -4844,6 +4848,8 @@ def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str
     try:
         periodic = edgar.recent_filings(cik, forms=(*EVENT_FORMS, *EVENT_ANY_FORMS), since=start)
         prints = [f for f in eight_k_events(edgar, cik, since=start) if EVENT_8K_ITEM in f.items]
+    except SecRateLimitedError:
+        raise  # SEC refused this run: it stops, never a withheld value or a "could not run"
     except Exception as exc:  # noqa: BLE001 — any feed miss is the refusal's stated reason
         return None, (f"EDGAR submissions for CIK {cik} could not be read "
                       f"({type(exc).__name__}: {exc})")

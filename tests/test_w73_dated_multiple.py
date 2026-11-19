@@ -506,8 +506,12 @@ def test_assembly_reads_every_store_call_inside_its_with_block() -> None:
     """REGRESSION (W73, caught by `vinci.impact run` on this PR's first head): `assemble_one` read
     the anchor's EOD closes with `store.get_price_history` AFTER its `with Store(...)` block had
     closed the store, so every $0 build raised `sqlite3.ProgrammingError` inside the anchor and fell
-    back to "anchor computation failed" — 25 of 25 pages lost their anchor. Every `store.<call>` in
-    `assemble_one` must sit lexically inside the `with Store(...) as store:` block that opens it."""
+    back to "anchor computation failed" — 25 of 25 pages lost their anchor. Every reference to
+    `store` in `assemble_one` must sit lexically inside the `with Store(...) as store:` block that
+    opens it: a call on it AND the name handed on, since a helper given the closed store after the
+    block reads it just the same (B's review of #1144: a `_eod_closes(store, id)` read after the
+    block passed the first cut of this pin, which saw only `store.<call>`, and all 671 tests of
+    B's mutation set)."""
     import ast
     import inspect
     import textwrap
@@ -519,11 +523,11 @@ def test_assembly_reads_every_store_call_inside_its_with_block() -> None:
         isinstance(i.optional_vars, ast.Name) and i.optional_vars.id == "store" for i in n.items)]
     assert len(blocks) == 1, "assemble_one opens its store in one with-block"
     inside = {id(n) for n in ast.walk(blocks[0])}
-    calls = [n for n in ast.walk(tree) if isinstance(n, ast.Attribute)
-             and isinstance(n.value, ast.Name) and n.value.id == "store"]
-    assert calls, "the scan found no store reads — it checks nothing"
-    outside = [n.lineno for n in calls if id(n) not in inside]
-    assert not outside, f"store read after its with-block closed (source lines {outside})"
+    uses = [n for n in ast.walk(tree) if isinstance(n, ast.Name) and n.id == "store"]
+    read = any(isinstance(p, ast.Attribute) and p.value is n for p in ast.walk(tree) for n in uses)
+    assert read, "the scan found no store read: it checks nothing"
+    outside = [n.lineno for n in uses if id(n) not in inside]
+    assert not outside, f"the store is used after its with-block closed (source lines {outside})"
 
 
 def test_a_zero_dollar_build_of_it_computes_its_anchor_end_to_end(tmp_path: Path) -> None:
@@ -573,3 +577,111 @@ def test_a_zero_dollar_build_of_it_computes_its_anchor_end_to_end(tmp_path: Path
         assert a.get(k), (k, a.get(k))
     assert a["multiple"]["statistic"] == anc.MULTIPLE_CURRENT
     assert a["multiple"].get("close_note"), a["multiple"]   # the event rule judged the close
+
+
+# --- an SEC refusal stops the run (B's review of #1144, finding A) -----------------------------
+
+def _refused_by_sec(monkeypatch: pytest.MonkeyPatch) -> Any:
+    """SEC's refusal as `netcache` raises it: the process stopped first (`_SEC_STOPPED`), then the
+    error. Every later SEC request in the process is refused unsent (`netcache._pace`)."""
+    from vinci import netcache
+
+    refusal = netcache.SecRateLimitedError(
+        "SEC refused https://data.sec.gov/submissions/CIK0001652044.json with 429 (test)")
+
+    def refuse(*_a: Any, **_k: Any) -> Any:
+        monkeypatch.setattr(netcache, "_SEC_STOPPED", refusal)
+        raise refusal
+    return refuse
+
+
+def test_the_event_rules_reader_lets_an_sec_refusal_through_and_states_any_other_miss(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊖ `read_filing_events` caught every exception, an SEC refusal included, and returned it as
+    the list's reason: the anchor then WITHHELD a value because SEC throttled the run, and the
+    export gate refused as "could not run". A refusal stops the run (`netcache`: not an
+    `HttpError`, on purpose). ⊕ Any other miss is still the reason, never a pass
+    (`test_event_rule`'s feed-down pin)."""
+    from types import SimpleNamespace
+
+    from vinci.dossier.mechanical import read_filing_events
+    from vinci.netcache import HttpError, SecRateLimitedError
+
+    mech = frozen_doc("GOOGL")["mechanical"]
+    refused = SimpleNamespace(recent_filings=_refused_by_sec(monkeypatch))
+    with pytest.raises(SecRateLimitedError, match="429"):
+        read_filing_events(refused, "0001652044", mech, date(2026, 11, 19),  # type: ignore[arg-type]
+                           since=date(2026, 9, 30))
+
+    def down(*_a: Any, **_k: Any) -> Any:
+        raise HttpError("submissions feed: 503 after retries (test)")
+    filings, unread = read_filing_events(SimpleNamespace(recent_filings=down),  # type: ignore[arg-type]
+                                         "0001652044", mech, date(2026, 11, 19),
+                                         since=date(2026, 9, 30))
+    assert filings is None and unread is not None and "HttpError" in unread
+
+
+def test_an_sec_refusal_stops_anchor_backfill_before_it_writes_a_page(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊖ THE COMMAND (`anchor-backfill`) on a copy of GOOGL's frozen page, EDGAR's companyfacts its
+    committed fixture and its submissions read refused by SEC: before the fix it returned 0 and
+    REWROTE the page, R1's value withheld because "the event rule could not read the company's
+    filings (… SecRateLimitedError …)". The backfill has no `_refuse_after_sec_refusal` before its
+    write, so every name after the refusal would be written the same way. Now the refusal stops
+    the run and the page is byte-identical."""
+    import argparse
+    from types import SimpleNamespace
+
+    from vinci import cli
+    from vinci.edgar.client import EdgarClient
+    from vinci.netcache import SecRateLimitedError
+    from vinci.resolver import EntityResolver
+
+    facts = json.loads((FIX / "anchor_ciq_bridge.json").read_text())["names"]["GOOGL"][
+        "companyfacts"]
+    folder = tmp_path / "dossiers" / "GOOGL"
+    folder.mkdir(parents=True)
+    shutil.copy(CUT / "GOOGL" / "dossier.json", folder / "dossier.json")
+    before = (folder / "dossier.json").read_bytes()
+    edgar = SimpleNamespace(companyfacts=lambda _cik: facts,
+                            recent_filings=_refused_by_sec(monkeypatch))
+    monkeypatch.setattr(cli, "get_config",
+                        lambda: SimpleNamespace(data_dir=tmp_path, db_path=tmp_path / "vinci.db"))
+    monkeypatch.setattr(EntityResolver, "from_config", classmethod(
+        lambda cls, cfg: SimpleNamespace(resolve_ticker=lambda _t: SimpleNamespace(
+            cik="0001652044", internal_id="googl"))))
+    monkeypatch.setattr(EdgarClient, "from_config", classmethod(lambda cls, cfg: edgar))
+    with pytest.raises(SecRateLimitedError, match="429"):
+        cli._cmd_anchor_backfill(argparse.Namespace(tickers="GOOGL", dry_run=False))
+    assert (folder / "dossier.json").read_bytes() == before
+    assert not (folder / "dossier.md").exists()
+
+
+def test_the_precheck_reports_an_sec_refusal_at_the_export_gate_as_a_stop(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """#1132'S CIQ-EXPORT GATE reads the same list. In the $0 precheck (`prespend.run`), SEC
+    refusing its post-spend read was a `_freshness_check` refusal that "could not run"; it is now
+    the refusal itself, said as the check's stop line, exit 1, as a refusal inside the $0 build is
+    (never a traceback). In the paid build the gate's read (`assemble_one`) sits outside any
+    handler, so the refusal leaves `assemble_one` and `assemble_cohort` stops the cohort on it,
+    where a `FreshnessError` was one failed name. The page is not written either way
+    (`_refuse_after_sec_refusal`)."""
+    from types import SimpleNamespace
+
+    from vinci.config import Config
+    from vinci.dossier import prespend
+    from vinci.edgar.client import EdgarClient
+
+    folder = tmp_path / "dossiers" / "GOOGL"
+    folder.mkdir(parents=True)
+    shutil.copy(CUT / "GOOGL" / "dossier.json", folder / "dossier.json")
+    built = Dossier.model_validate_json((folder / "dossier.json").read_text())
+    monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: built)
+    monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})
+    monkeypatch.setattr(EdgarClient, "from_config", classmethod(
+        lambda cls, cfg=None: SimpleNamespace(recent_filings=_refused_by_sec(monkeypatch))))
+    out: list[str] = []
+    assert prespend.run("GOOGL", Config(data_dir=tmp_path), emit=out.append) == 1
+    stop = "=== pre-spend check · GOOGL: SEC REFUSED the export gate's read"
+    assert out[-1].startswith(stop), out
+    assert "SecRateLimitedError" in out[-1] and "429" in out[-1]

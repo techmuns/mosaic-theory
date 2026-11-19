@@ -873,8 +873,15 @@ def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print,
     from vinci.edgar.client import EdgarClient
 
     # the event rule's filings, through the run's own config (its cache), as the paid build reads
-    post = post_spend_checks(built, bundle, committed=path.parent,
-                             edgar=EdgarClient.from_config(cfg))
+    # them. SEC refusing that read stops the check, as it stops the paid build (B's review of
+    # #1144: it was a `_freshness_check` refusal that "could not run")
+    try:
+        post = post_spend_checks(built, bundle, committed=path.parent,
+                                 edgar=EdgarClient.from_config(cfg))
+    except SecRateLimitedError as exc:
+        emit(f"=== pre-spend check · {t}: SEC REFUSED the export gate's read — the paid build "
+             f"stops at the same point — {type(exc).__name__}: {exc} ===")
+        return 1
     result = compare(committed, fresh, forecast) if committed is not None else None
     present = page_inputs.manifest_for(reads.reads(), db_path=cfg.db_path,
                                        extraction_version=built.extraction_version or "",

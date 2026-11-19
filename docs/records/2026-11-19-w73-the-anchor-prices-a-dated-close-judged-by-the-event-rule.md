@@ -154,11 +154,13 @@ superseded-by:
   - **The control:** the store's bar on each page's own date equals `stock_info.price` on all 15
     pages it reaches (page dates up to 2026-11-10).
 - **Pins:**
-  - `tests/test_w73_dated_multiple.py` has 16 tests, every guard pinned positive AND negative on
+  - `tests/test_w73_dated_multiple.py` has 21 tests, every guard pinned positive AND negative on
     real pages, real filings and real EOD closes. W68 is pinned on GOOGL's real 2026-11-19
     Multiples sheet, cut through the decode path (`tests/fixtures/ciq_googl_multiples_2026_11_19.json`,
     sha 976c63d857; operator ruling 2026-11-04, #891). It decodes to the export's own band.
-  - All 16 fail on main `2ecf6da0`. Finding B's pin fails at the defect itself: main labels IT's
+  - The first 16 fail on main `2ecf6da0`. The next two (the closed-store pins, below) fail on the
+    branch's own `d10c5888`, and the last three (review round 1, below) on `30bf5113`. Finding B's
+    pin fails at the defect itself: main labels IT's
     multiple 2026-12-31, the TEV's date.
   - `tests/test_w62_anchor_stale_multiple.py` is removed: its subject, the two clocks, is retired.
     Its still-valid pins move here: the value withheld and never the recipe; the "not priced" row
@@ -271,3 +273,58 @@ superseded-by:
   and head's `dossier.js` in node gives 26 of 26 identical.
 - **Downstream:** the decision ledger, the scoring report and the monitor are identical at both
   refs.
+
+## Review round 1 (head `30bf5113`): Codex at its usage limit, the in-session `/code-review high`, and coordinator B's independent review
+
+Codex's review failed at its usage limit, so the round is the in-session `/code-review high` (no
+`--fix`) plus B's review of the same head. The PR body's dispositions table lists every finding.
+
+- **B's review found no production regression.** BRBR, GOOGL and IT price on a store refreshed to
+  the export's close. The fence test is byte-identical to main, and no protected file moved. B
+  planted six bugs: five turned pins red, and one passed every test (finding B below).
+- **FIX: an SEC refusal stops the run instead of withholding a value** (B's finding A).
+  - `mechanical.read_filing_events` caught every exception, `SecRateLimitedError` included, and
+    returned it as the list's reason.
+  - Shown on HEAD `30bf5113`: `anchor-backfill` on a copy of GOOGL's frozen page, its submissions
+    read refused the way `netcache` refuses it (the process stopped, then the error). It returned
+    0 and REWROTE the page, R1's value withheld: "the event rule could not read the company's
+    filings (… SecRateLimitedError …)". The backfill has no `_refuse_after_sec_refusal` before
+    its write, so every later name would have been written the same way.
+  - The refusal now propagates. On the fix the same run raises `SecRateLimitedError` and the page
+    is byte-identical. Any other miss (`HttpError`, a connection error) is still the list's stated
+    reason, never a pass.
+  - **#1132's CIQ-export gate reads the same list, and its behaviour changes:**
+    - In the paid build (`assemble_one`), the gate's read sits outside any handler. The refusal
+      now leaves `assemble_one` and `assemble_cohort` stops the cohort on it, where a
+      `FreshnessError` "could not run" was one failed name. The page was not written either way:
+      `_write` refuses after a refusal.
+    - In the $0 precheck (`prespend.run`), a refusal at the post-spend read was a
+      `_freshness_check` refusal. It is now the check's stop line ("SEC REFUSED the export gate's
+      read"), exit 1, as a refusal inside the $0 build already was, never a traceback.
+  - **Pins, each failing on `30bf5113`:**
+    - `test_the_event_rules_reader_lets_an_sec_refusal_through_and_states_any_other_miss`;
+    - `test_an_sec_refusal_stops_anchor_backfill_before_it_writes_a_page`, the command end to end;
+    - `test_the_precheck_reports_an_sec_refusal_at_the_export_gate_as_a_stop`.
+- **FIX: the closed-store pin sees every use of the store, not only a call on it** (B's finding B).
+  - B's mutant read the closes through a helper after the block (`_eod_closes(store, id)`). It
+    passed the structural pin, which saw only `store.<attr>`, and all 671 tests of B's mutation
+    set.
+  - The pin now flags any reference to `store` outside its `with` block. Planted again in a
+    temporary worktree at `30bf5113` (since removed), HEAD's pin passes the mutant, and the widened
+    pin fails it: "the store is used after its with-block closed".
+  - The local end-to-end build of IT catches the mutant too, since a closed `Store` raises. It
+    skips in CI, which is why the structural pin carries the CI half.
+- **DEFER → W82: a report filed on the close's own day is invisible to the rule** (B's finding C).
+  - `first_event_after` counts only filings strictly after the close's date. BRBR filed its 8-K
+    item 2.02 and its 10-K on 2026-11-18, the day of the export's close. At a 2026-11-19 page date
+    it passes, and the page says "nothing reported after it by the page's close of 2026-11-19".
+    That is false if the release came after the bell.
+  - The same date-only rule decides #1132's CIQ-export gate. Treating a same-day filing as after
+    a 4pm close is a change to the rule both gates share, so it waits for the operator's ruling,
+    tracked by B as W82. BRBR stays out of the anchor backfill.
+- **FIX: this record counted 16 W73 pins** where the file held 18 (in-session review). Corrected
+  above; round 1 brings the file to 21.
+- **DISMISSED, with the reason in the table:** `_r1_current` validating a partial page dict (its
+  one caller passes a validated `Dossier` dump), the two EDGAR filing reads in assembly (both
+  cached and $0, no failure to name), and the end-to-end pin's dependence on this machine's
+  licensed inputs (required by B, skips where absent).
