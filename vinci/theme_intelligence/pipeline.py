@@ -62,6 +62,7 @@ from vinci.theme_intelligence.config import (
 )
 from vinci.theme_intelligence.coverage import SourceRisk, coverage_of, scan_source_risks
 from vinci.theme_intelligence.discovery import METHOD, Discovery, discover_source
+from vinci.theme_intelligence.display import desk_quote
 from vinci.theme_intelligence.engine import (
     ArticleContext,
     Engine,
@@ -813,13 +814,18 @@ class Pipeline:
                 "extraction_id": f"RISKSCAN-{self.run.run_id}"})
             if all(c.claim_id != pc.claim_id for c in ve.claims):
                 ve.claims.append(pc)
+            # the card prints the source's words at most at the desk's cap (a table block can
+            # read as ONE sentence: review of #1140); the claim keeps the whole sentence
+            said, cut = desk_quote(r.sentence)
             ve.risks.append(VerifiedRisk(
                 # the scope is SYSTEM-composed: ⟨…⟩, never read as a figure the line asserts
                 # (a bare "page 33" withheld the real line as a number its claim lacks)
-                raw=XRisk(statement=r.sentence,
+                raw=XRisk(statement=said,
                           scope_qualification="⟨the source's own words"
                                               + (f", page {r.page}" if r.page is not None
-                                                 else "") + " — a risk "
+                                                 else "")
+                                              + (", shortened for the desk — its claim keeps "
+                                                 "every word" if cut else "") + " — a risk "
                                               "no model pass listed (risk scan)⟩"),
                 claim_ids=[pc.claim_id], related=list(r.related)))
 

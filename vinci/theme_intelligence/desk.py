@@ -64,6 +64,7 @@ from vinci.theme_intelligence.cards import (
     more_line,
     proposal_reading,
     proposal_step,
+    quote_html,
     review_not_run_words,
     set_card,
     split_sectors,
@@ -81,7 +82,7 @@ from vinci.theme_intelligence.config import (
     load_sources,
     load_taxonomy,
 )
-from vinci.theme_intelligence.display import clip
+from vinci.theme_intelligence.display import clip, desk_quote
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.priority import (
     F8_CONTESTED,
@@ -2896,8 +2897,8 @@ class Desk:
             role = rc.roles.get(cid, "")
             rows.append((cl.article_id, {
                 "v": cl.value_text, "u": unit_shown(cl.value_text, cl.unit),
-                "label": figure_label(self.store, cid, " — ".join(
-                    z for z in (cl.scope, cl.metric) if z) or cl.statement),
+                "label": figure_label(self.store, cid, " — ".join(  # a passage claim's label
+                    z for z in (cl.scope, cl.metric) if z) or desk_quote(cl.statement)[0]),
                 "quote": cl.quote, "period": cl.period,
                 "type": _EPI.get(cl.epistemic.value, cl.epistemic.value),
                 "role": {"contradicts": "against", "context": "context", "supports": "supports",
@@ -2924,7 +2925,7 @@ class Desk:
                    if x["v"] else "")  # a statement has no number: no placeholder dash
             twice = (f' <span class="muted">· stated {len(x["quotes"])} times</span>'
                      if len(x["quotes"]) > 1 else "")
-            quotes = "".join(f"<blockquote>“{e(q)}”</blockquote>" for q in x["quotes"])
+            quotes = "".join(quote_html(q, "blockquote", cls=None) for q in x["quotes"])
             return (f'<li><details><summary>{val}{e(x["label"])}{when_}{kind}{twice}'
                     f'{src}</summary>{quotes}</details>'
                     f'<span class="aud cc">{e(" · ".join(x["ids"]))}</span></li>')
