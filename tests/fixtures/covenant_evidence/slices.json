@@ -1,0 +1,400 @@
+{
+ "_about": "REAL committed covenant rows (W64), each with verbatim slices of the EDGAR exhibits it cites, cut from the operator's SEC cache on 2026-11-19 through html_to_text at 5e380efc (cache only; EDGAR filings are public). Each slice is text[start:end] of its document; a document's slices are joined in order by ' [gap] '. expect is the check's answer on the slices AND on the whole document, asserted when cut. A row read from a frozen page names it in `page` and is read there; rows from git history are stored verbatim in `rows`, the case's own first. One document (amzn-verbatim's) also carries `html`: raw[start:end] of the response itself, served as is, so the check's own html_to_text runs on real markup (review round 1: matched as raw HTML, its quote is not found).",
+ "gap": " [gap] ",
+ "cases": [
+  {
+   "id": "amzn-verbatim",
+   "page": "tests/fixtures/frozen_pages/cut-4889ddba/AMZN/dossier.json",
+   "ticker": "AMZN",
+   "term": "Principal / commitment amount",
+   "quote_of": "row",
+   "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+   "rows": null,
+   "cik": null,
+   "expect": {
+    "outcome": "found",
+    "match": "verbatim",
+    "cause": "",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0001104659-23-113444",
+     "filename": "tm2329405d1_ex10-1.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465923113444/tm2329405d1_ex10-1.htm",
+     "response_sha256": "9f4276fe71a6af927941e8a296be56a8481ed8612e547a336bbac7f8025e7be9",
+     "slices": [
+      {
+       "start": 7458,
+       "end": 7949,
+       "text": "ther Person that directly, or indirectly through one or more intermediaries, Controls or\nis Controlled by or is under common Control with the Person specified. “ Aggregate Commitments ”\nmeans, at any time, the Commitments of all the Lenders at such time. As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000. “ Agreed Currencies ”\nmeans US Dollars and each Alternative Currency. “ Agreement ”\nhas the meaning specified in the preamble hereto. “ Alternative Currency ”"
+      }
+     ],
+     "html": {
+      "start": 56462,
+      "end": 57003,
+      "text": "<P STYLE=\"font: 10pt Times New Roman, Times, Serif; margin: 0pt 0; text-align: justify; text-indent: 0.5in\">&nbsp;</P>\n\n<P STYLE=\"font: 10pt Times New Roman, Times, Serif; margin: 0pt 0; text-align: justify; text-indent: 0.5in\">&ldquo;<U>Aggregate Commitments</U>&rdquo;\nmeans, at any time, the Commitments of all the Lenders at such time. As of the Closing Date, the Aggregate Commitments equal to US$15,000,000,000.</P>\n\n<P STYLE=\"font: 10pt Times New Roman, Times, Serif; margin: 0pt 0; text-align: justify; text-indent: 0.5in\">&nbsp;</P>"
+     }
+    }
+   ]
+  },
+  {
+   "id": "amzn-component-floor",
+   "page": "tests/fixtures/frozen_pages/cut-4889ddba/AMZN/dossier.json",
+   "ticker": "AMZN",
+   "term": "Interest / coupon rate",
+   "quote_of": "floor_pct",
+   "source_ref": "8-K 0001104659-23-113444 · tm2329405d1_ex10-1.htm",
+   "rows": null,
+   "cik": null,
+   "expect": {
+    "outcome": "found",
+    "match": "verbatim",
+    "cause": "",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0001104659-23-113444",
+     "filename": "tm2329405d1_ex10-1.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465923113444/tm2329405d1_ex10-1.htm",
+     "response_sha256": "9f4276fe71a6af927941e8a296be56a8481ed8612e547a336bbac7f8025e7be9",
+     "slices": [
+      {
+       "start": 97918,
+       "end": 98347,
+       "text": "siness Days prior to the\ncommencement of such tenor comparable to the applicable Interest period, as such rate is published by the CME Term SOFR Administrator; provided that if the Term SOFR as so determined would be less than zero, such rate shall be deemed to be zero. “ Term SOFR Borrowing ”\nmeans any Borrowing comprised of Term SOFR Loans. “ Term SOFR Loan ”\nmeans a Loan that bears interest at a rate based on the Term SOFR"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "it-elided",
+   "page": "tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json",
+   "ticker": "IT",
+   "term": "Change of Control",
+   "quote_of": "row",
+   "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
+   "rows": null,
+   "cik": null,
+   "expect": {
+    "outcome": "found",
+    "match": "elided",
+    "cause": "",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0001193125-20-256749",
+     "filename": "d75343dex101.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/749251/000119312520256749/d75343dex101.htm",
+     "response_sha256": "8068cf2db8ff3a9d19d32ed119c2ee3b4b3fc27b60c5bf037bdd94800f9f58cc",
+     "slices": [
+      {
+       "start": 324523,
+       "end": 325185,
+       "text": "ther than in accordance with Section 10.14 hereof), to be in full force and effect or any Loan Party or any Affiliate of any Loan Party shall so assert; or (k) any “person” or “group” (as such terms are used in Sections 13(d) and 14(d) of the Securities Exchange Act of\n1934, as amended (the “ Exchange Act ”)) is or becomes the “beneficial owner” (as defined in Rules 13(d)-3 and 13(d)-5 under the Exchange Act),\ndirectly or indirectly, of more than 50% of the outstanding common stock of the Borrower; then, and in any such event, (A) if such event is an Event\nof Default specified in clause (i) or (ii) of paragraph (f) above with respect to the Borrower, aut"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wern-editorial-bracket",
+   "page": "tests/fixtures/frozen_pages/2026-09-17/WERN/dossier.json",
+   "ticker": "WERN",
+   "term": "Mandatory prepayment / events of default",
+   "quote_of": "row",
+   "source_ref": "8-K 0000793074-25-000019 · wern-2025327ex101.htm",
+   "rows": null,
+   "cik": null,
+   "expect": {
+    "outcome": "not_found",
+    "match": "not_found",
+    "cause": "editorial_bracket",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0000793074-25-000019",
+     "filename": "wern-2025327ex101.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/793074/000079307425000019/wern-2025327ex101.htm",
+     "response_sha256": "f420a6693ab8e8d65c734e4aae5f150ea29ea990e35e8c79a5a913fe2eaff491",
+     "slices": [
+      {
+       "start": 121034,
+       "end": 121616,
+       "text": "d Lender shall be responsible for the failure of any other Committed Lender to make funds available to the Borrower in connection with any Loan hereunder). (d) The Borrower shall repay in full the outstanding Capital of each Lender on the Final Maturity Date.  Prior thereto, the Borrower shall, on each Settlement Date, make a prepayment of the outstanding Capital of the Lenders to the extent required under Section 4.01 and otherwise in accordance therewith.  Notwithstanding the foregoing, the Borrower, in its discretion, shall have the right to make a prepayment, in whole or "
+      },
+      {
+       "start": 121904,
+       "end": 122333,
+       "text": "ment shall be in a minimum aggregate amount of $1,000,000 and shall be an integral multiple of $100,000; provided , however that notwithstanding the foregoing, a prepayment may be in an amount necessary to reduce any Borrowing Base Deficit existing at such time to zero, and (ii) any accrued Interest and Fees and any associated Breakage Fees in respect of such prepaid Capital shall be paid on the immediately following Settleme"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wern-unmarked-join",
+   "page": "tests/fixtures/frozen_pages/2026-09-17/WERN/dossier.json",
+   "ticker": "WERN",
+   "term": "Mandatory prepayment / events of default",
+   "quote_of": "row",
+   "source_ref": "8-K 0000793074-26-000120 · wern-20260605ex101.htm",
+   "rows": null,
+   "cik": null,
+   "expect": {
+    "outcome": "not_found",
+    "match": "not_found",
+    "cause": "unmarked_join",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0000793074-26-000120",
+     "filename": "wern-20260605ex101.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/793074/000079307426000120/wern-20260605ex101.htm",
+     "response_sha256": "74d836c3e476c72039b786eea7ad6dab963b7c8ce6c86e4d21835b6b81ce8b75",
+     "slices": [
+      {
+       "start": 68299,
+       "end": 69550,
+       "text": "; or (bb) the Performance Guaranty is canceled, rescinded, amended, waived or otherwise modified without the prior written consent of the Administrative Agent; then, and in any such event, the Administrative Agent may (or, at the direction of the Majority Group Agents, shall) by notice to the Borrower (x) declare the Termination Date to have occurred (in which case the Termination Date shall be deemed to have occurred), (y) declare the Final Maturity Date to have occurred (in which case the Final Maturity Date shall be deemed to have occurred) and (z) declare the Aggregate Capital and all other Borrower Obligations to be immediately due and payable (in which case the Aggregate Capital and all other Borrower Obligations shall be immediately due and payable); provided that, automatically upon the occurrence of any event (without any requirement for the giving of notice) described in subsection (d) of this Section 10.01 with respect to the Borrower, the Termination Date shall occur and the Aggregate Capital and all other Borrower Obligations shall be immediately due and payable.  Upon any such declaration or designation or upon such automatic termination, the Administrative Agent and the other Secured Parties shall have, in addition t"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "wern-reordered",
+   "page": "tests/fixtures/frozen_pages/2026-09-17/WERN/dossier.json",
+   "ticker": "WERN",
+   "term": "Financial-maintenance covenants",
+   "quote_of": "row",
+   "source_ref": "8-K 0000793074-25-000019 · wern-2025327ex101.htm",
+   "rows": null,
+   "cik": null,
+   "expect": {
+    "outcome": "not_found",
+    "match": "not_found",
+    "cause": "reordered",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0000793074-25-000019",
+     "filename": "wern-2025327ex101.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/793074/000079307425000019/wern-2025327ex101.htm",
+     "response_sha256": "f420a6693ab8e8d65c734e4aae5f150ea29ea990e35e8c79a5a913fe2eaff491",
+     "slices": [
+      {
+       "start": 96242,
+       "end": 96607,
+       "text": "he UCC) of any of the foregoing. “ Release ” has the meaning set forth in Section 4.01(a) . “ Representatives ” has the meaning set forth in Section 14.06(c) . “ Required Capital Amount ” means $17,500,000. “ Required Reserve Percentage ” means, on any day, the sum of (a) the Yield Reserve Percentage, plus (b) the greater of (i) the sum of (A) the Dynamic Loss Re"
+      },
+      {
+       "start": 243407,
+       "end": 243886,
+       "text": "orrower in accordance with any Transaction Document or (ii) in favor of Administrative Agent in accordance with this Agreement or any Transaction Document. (j) Net Worth .  Permit Borrower’s Net Worth (as calculated in accordance with GAAP consistently applied), at any time, to be less than the Required Capital Amount. (k) Actions by Originators .  Notwithstanding anything to the contrary set forth in the Purchase and Sale Agreement, the Borrower will not consent to (i) any "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "it-not-a-span",
+   "page": "tests/fixtures/frozen_pages/2026-08-18/IT/dossier.json",
+   "ticker": "IT",
+   "term": "Principal / commitment amount",
+   "quote_of": "row",
+   "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
+   "rows": null,
+   "cik": null,
+   "expect": {
+    "outcome": "not_found",
+    "match": "not_found",
+    "cause": "not_a_span",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0000930413-17-000070",
+     "filename": "c86994_ex10-1.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/749251/000093041317000070/c86994_ex10-1.htm",
+     "response_sha256": "7dfe9797ff43d094b17036ee0e1220abdcdb583a2cee3b468d195f7485ed6229",
+     "slices": [
+      {
+       "start": 68117,
+       "end": 69007,
+       "text": "y, which will be available to be drawn at the Closing, subject to the satisfaction or\nwaiver of the conditions set forth in the Backstop Facilities Term Sheet. (b)     The Borrower will obtain\na seven-year senior secured term loan B facility (the “ Term Loan B Facility ,” together with the Existing Credit\nFacilities or the Backstop Facilities, as applicable, the “ Senior Secured Facilities ”) in an aggregate principal\namount of $1,375 million, which Term Loan B Facility may take the form of an incremental term loan incurred under the Existing\nCredit Agreement. (c)     The Borrower will obtain\na 364-day senior unsecured bridge facility (the “ 364-day Bridge Facility ”) in an aggregate principal amount\nof $300 million. (d)     The Borrower intends\nto (i) issue and sell senior unsecured notes providing for gross proceeds of up to $600 million on or prior to the Closing Date\n(the “"
+      },
+      {
+       "start": 69114,
+       "end": 69476,
+       "text": "o\nthe extent that all or a portion of such offering of Notes providing such amount of gross proceeds has not been entered into on\nor prior to the Closing Date, obtain up to $600 million in the aggregate (less the amount of any gross proceeds from the issuance\nof Notes for purposes of consummating the Acquisition) under a senior unsecured bridge loan facility d"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "uber-wrong-exhibit",
+   "page": "git:545403de:data/dossiers/UBER/dossier.json",
+   "ticker": "UBER",
+   "term": "Amortization",
+   "quote_of": "row",
+   "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
+   "rows": [
+    {
+     "name": "Amortization",
+     "value": {
+      "value": "Quarterly amortization: 2021 Refinancing Term Loans $2,875,000; 2021 Incremental Term Loans $3,750,000 (each as adjusted per Section 2.08(d))",
+      "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
+      "status": "present",
+      "note": "verbatim: “for the account of each 2021 Refinancing Term Lender, on the last Business Day of each March, June, September and December ... a principal amount of 2021 Refinancing Term Loans equal to $2,875,000 ... and (ii) for the account of each 2021 Incremental Term Lender ... a principal amount of 2021 Incremental Term Loans equal to $3,750,000”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "TERM LOAN AGREEMENT",
+     "agreement_is_amendment": true
+    },
+    {
+     "name": "Amortization",
+     "value": {
+      "value": "$4,375,000 per fiscal quarter (2023 Refinancing Term Loans), payable last Business Day of each March, June, September and December commencing first fiscal quarter after Amendment No. 3 Effective Date",
+      "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
+      "status": "present",
+      "note": "verbatim: “for the account of each 2023 Refinancing Term Lender, on the last Business Day of each March, June, September and December, commencing with the first fiscal quarter ending after the Amendment No. 3 Effective Date, a principal amount of 2023 Refinancing Term Loans equal to $4,375,000 (as adjusted from time to time pursuant to Section 2.08(d))”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "TERM LOAN AGREEMENT",
+     "agreement_is_amendment": true
+    }
+   ],
+   "cik": "0001543151",
+   "expect": {
+    "outcome": "not_found",
+    "match": "not_found",
+    "cause": "wrong_exhibit",
+    "in_other_exhibits": [
+     "8-K 0001552781-23-000080 · e23085_ex10-1.htm"
+    ]
+   },
+   "documents": [
+    {
+     "accession": "0001552781-21-000058",
+     "filename": "e21071_ex10-1.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278121000058/e21071_ex10-1.htm",
+     "response_sha256": "c90dac6b382d59dc62f416df69477f323ae9f9493782a5555be481fd65309312",
+     "slices": [
+      {
+       "start": 0,
+       "end": 460,
+       "text": "EX-10.1 2 e21071_ex10-1.htm Execution\nVersion AMENDMENT\nNO. 2 TO TERM LOAN AGREEMENT THIS AMENDMENT NO. 2\nTO TERM LOAN AGREEMENT, dated as of February 25, 2021 (this “ Agreement ”), is made by and among (i) UBER\nTECHNOLOGIES, INC., a Delaware corporation (the “ Borrower ”), (ii) RASIER, LLC, a Delaware limited\nliability company (the “ Guarantor ”), (iii) the Lenders party hereto and (iv) MORGAN STANLEY SENIOR\nFUNDING, INC., as administrative agent (in such"
+      },
+      {
+       "start": 190615,
+       "end": 191689,
+       "text": " Section\n2.07 Amortization;\nRepayment of Term Loans; Evidence of Debt . (a) The Borrower hereby unconditionally promises to pay to the Administrative\nAgent (i) for the account of each 2021 Refinancing\nTerm Lender, on the last Business Day of each March, June, September and December, commencing with the first full fiscal\nquarter ending after the Amendment No. 2 Effective Date, an\namount equal to one quarter of a percent (0.25%) of the original a principal amount of the Term Loans made\non the Effective Date, 2021 Refinancing Term\nLoans equal to $2,875,000, (as adjusted from time to time pursuant to Section 2.08(d)), and (ii) for the account of each 2021\nIncremental Term Lender, on the last Business Day of each March,\nJune, September and December, commencing with the first fiscal quarter ending after the Amendment No. 2 Effective Date, a\nprincipal amount of 2021 Incremental Term Loans equal to $3,750,000 (as adjusted from time to time pursuant to Section\n2.08(d) ), together in each case with accrued and unpaid interest on the principal amount to be paid to but "
+      }
+     ]
+    },
+    {
+     "accession": "0001552781-23-000080",
+     "filename": "e23085_ex10-1.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278123000080/e23085_ex10-1.htm",
+     "response_sha256": "ae10eae8c3371b19adb5089664cc215023a2ca34549cbcb07e1ad6e643c96a6e",
+     "slices": [
+      {
+       "start": 192335,
+       "end": 193294,
+       "text": " Section 2.07 Amortization; Repayment of Term Loans; Evidence of Debt . (a) The Borrower hereby unconditionally promises to pay to\nthe Administrative Agent (i) for the account of each 2021 Refinancing Term Lender, on the last Business Day of each March, June, September\nand December, commencing with the first fiscal quarter ending after the Amendment No. 2 Effective Date, a principal amount of 2021 Refinancing\nTerm Loans equal to $2,875,000, (as adjusted from time to time pursuant to Section\n2.08(d)) , and (ii) for the account\nof each 2021 Incremental Term Lender, on the last Business Day of each March, June, September and December, commencing with the first\nfiscal quarter ending after the Amendment No. 2 Effective Date, a principal amount of 2021 Incremental Term Loans equal to $3,750,000 (as adjusted from time to time\npursuant to Section 2.08(d)) and (iii) for the account of each 2023 Refinancing Term Lender, on the last Business Day of each Ma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "amzn-label-added",
+   "page": "git:545403de:data/dossiers/AMZN/dossier.json",
+   "ticker": "AMZN",
+   "term": "Mandatory prepayment / events of default",
+   "quote_of": "row",
+   "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+   "rows": [
+    {
+     "name": "Mandatory prepayment / events of default",
+     "value": {
+      "value": "Mandatory prepayment: Section 2.03(b) — if Total Outstandings exceed the Aggregate Commitments, Borrower shall within two Business Days prepay Loans sufficient to eliminate such excess. Events of Default (Section 8.01): (a) Non-Payment; (b) Specific Covenants; (c) Other Defaults; (d) Representations and Warranties; (e) Cross-Acceleration (Indebtedness > US$1,000,000,000); (f) Insolvency Proceedings; (g) Judgments (> US$1,000,000,000); (h) ERISA; (i) Change of Control",
+      "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+      "status": "present",
+      "note": "verbatim: “2.03(b) If the Administrative Agent notifies the Borrower at any time that the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, within two Business Days after receipt of such notice, the Borrower shall prepay Loans in an aggregate amount sufficient to eliminate such excess. ... 8.01 Events of Default . Any of the following shall constitute an “ Event of Default ”: (a) Non-Payment ... (e) Cross-Acceleration ... (f) Insolvency Proceedings, Etc ... (g) Judgments ... (i) Change of Control . There occurs any Change of Control.”"
+     },
+     "base_rate_label": null,
+     "margin_pct": null,
+     "margin_bps": null,
+     "floor_pct": null,
+     "pik_pct": null,
+     "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+     "agreement_is_amendment": false
+    }
+   ],
+   "cik": "0001018724",
+   "expect": {
+    "outcome": "not_found",
+    "match": "not_found",
+    "cause": "label_added",
+    "in_other_exhibits": []
+   },
+   "documents": [
+    {
+     "accession": "0001193125-22-289041",
+     "filename": "d413765dex101.htm",
+     "url": "https://www.sec.gov/Archives/edgar/data/1018724/000119312522289041/d413765dex101.htm",
+     "response_sha256": "0c62dfec27dfaf7d77c477f9ed907d2cea93a38a9725a133c7168b472e7d512d",
+     "slices": [
+      {
+       "start": 92927,
+       "end": 93550,
+       "text": "ment of a Borrowing shall be applied to the Loans of the Lenders comprising such Borrowing in\naccordance with their respective Applicable Percentages. (b)      If the Administrative\nAgent notifies the Borrower at any time that the Total Outstandings at such time exceed the Aggregate Commitments then in effect, then, within two Business Days after receipt of such notice, the Borrower shall prepay Loans in an aggregate amount\nsufficient to eliminate such excess. 2.04 Termination or Reduction of\nCommitments . The Borrower may, upon notice to the Administrative Agent, terminate the Aggregate Commitments, or from time to"
+      },
+      {
+       "start": 188123,
+       "end": 188546,
+       "text": "create, incur, assume or suffer to exist any Indebtedness under or pursuant\nto the Amazon Seller Lending Facility. ARTICLE VIII. EVENTS OF DEFAULT AND REMEDIES 8.01 Events of Default . Any of the following shall constitute\nan “ Event of Default ”: (a) Non-Payment . The Borrower fails to pay\n(i) when and as required to be paid herein, any amount of principal of any Loan or (ii) within five (5) Business Days after the sam"
+      },
+      {
+       "start": 189727,
+       "end": 190069,
+       "text": "nstitute an Event of Default if any such representation, warranty, certification or statement of fact is incorrect in any\nrespect) when made or deemed made; or (e) Cross-Acceleration . The Borrower or\nany Subsidiary (i) fails to make any payment or payments when due (whether by scheduled maturity, required prepayment, acceleration, demand, "
+      },
+      {
+       "start": 191616,
+       "end": 191967,
+       "text": "ebt securities incurred to finance one or more transactions if such\ntransaction(s) will not be consummated or are not consummated within a specified period; or (f) Insolvency Proceedings, Etc . The Borrower or any Material Subsidiary institutes\nor consents to the institution of any proceeding under any Debtor Relief Law, or makes an assignment for t"
+      },
+      {
+       "start": 192555,
+       "end": 192888,
+       "text": "ted without the consent of such Person\nand continues undismissed or unstayed for 60 calendar days, or an order for relief is entered in any such proceeding; or (g) Judgments . There is entered against the Borrower or any Material Subsidiary one\nor more final judgments or orders for the payment of money in an aggregate amount (as to"
+      },
+      {
+       "start": 193592,
+       "end": 193970,
+       "text": "n, or settled; or (h) ERISA . The Borrower shall incur liability that results in a Material Adverse\nEffect as a result of the occurrence of any ERISA Event; or (i) Change of\nControl . There occurs any Change of Control. 8.02 Remedies Upon Event\nof Default . If any Event of Default occurs and is continuing, the Administrative Agent shall, at the request of, or may, with the co"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
