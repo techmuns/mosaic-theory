@@ -2804,15 +2804,26 @@ function _deriveConversion(value) {
 // only). Mirrors render._SUMMARY_TERMS / render._summary_label — matched against g.term.toLowerCase().
 // The coupon key matches the name's START (STATE row 63): the bare "interest" substring labelled a
 // default rate and an interest-payment date as the coupon; a prefix keeps "… — ABR Loans" variants.
+// The prepayment and default keys match the name's START too (STATE row 63): the bare "mandatory
+// prepayment" substring labelled a prepayment sweep "Events of default"; the combined target term is
+// labelled with both halves, the bare rows with their own, and the value never chooses a label.
 const _COUPON_TERM = "interest / coupon rate";
+const _PREPAY_DEFAULT_TERM = "mandatory prepayment / events of default";
+const _PREPAY_TERM = "mandatory prepayment";
+const _DEFAULT_TERM = "events of default";
 const _SUMMARY_TERMS = [
   ["financial-maintenance", "Financial maintenance"], ["conversion", "Conversion"],
   [_COUPON_TERM, "Interest / coupon"], ["maturity date", "Maturity"],
-  ["mandatory prepayment", "Events of default"],
+  [_PREPAY_DEFAULT_TERM, "Prepayment / events of default"],
+  [_PREPAY_TERM, "Mandatory prepayment"], [_DEFAULT_TERM, "Events of default"],
 ];
+// the keys matched at the name's START (first match wins, so the combined term precedes its half)
+const _PREFIX_KEYS = new Set([_COUPON_TERM, _PREPAY_DEFAULT_TERM, _PREPAY_TERM, _DEFAULT_TERM]);
+// the labels whose value lead counts enumerated defaults and an acceleration word, as before
+const _DEFAULT_LEAD_LABELS = new Set(["Events of default", "Prepayment / events of default"]);
 function summaryLabel(term) {
   const name = (term || "").toLowerCase();
-  const entry = _SUMMARY_TERMS.find(([key]) => (key === _COUPON_TERM ? name.startsWith(key) : name.includes(key)));
+  const entry = _SUMMARY_TERMS.find(([key]) => (_PREFIX_KEYS.has(key) ? name.startsWith(key) : name.includes(key)));
   return entry ? entry[1] : null;
 }
 const _MONTHS_RE = "(?:January|February|March|April|May|June|July|August|September|October|November|December)";
@@ -2896,7 +2907,7 @@ function covenantValueLead(label, raw, term) {
     const m = repl || anch || raw.match(new RegExp(_DATE_RE_SRC));  // else first date (case-sensitive on months)
     return m ? (repl || anch ? m[1] : m[0]) : "";
   }
-  if (label === "Events of default") {
+  if (_DEFAULT_LEAD_LABELS.has(label)) {
     const nums = new Set([...raw.matchAll(/(?<![\$\d.])\b(\d{1,2})\.\s/g)].map((x) => Number(x[1])));  // contiguous 1..k
     let k = 0;
     while (nums.has(k + 1)) k += 1;  // a section number / dollar figure can't inflate the count
