@@ -1,0 +1,1728 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "industrials"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:13:39.729145Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-28",
+   "latest_article_date": "2026-10-28",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Industrials, defense, transport, capital goods",
+   "status": "ACTIVE",
+   "thesis_id": "TH-E9359EEA5E",
+   "title": "Dual-use rearmament spending spills over into advanced manufacturing and energy technology"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-81d754348a85c3"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "text": "Increased spending on dual-use technologies is already providing a tailwind to other segments of the industrial economy such as advanced manufacturing and energy technology, with NATO's 5% target reserving up to 1.5% of GDP for defense-related investment in critical infrastructure, networks and the industrial base."
+   },
+   {
+    "claim_ids": [
+     "C-81d754348a85c3",
+     "C-d2e26e99c80ffa",
+     "C-8b994f3ece8b6d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames defense as becoming a pillar of industrial policy, with resilience spending reaching defense-adjacent companies and energy-tech offtakers."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A broadened security mandate (critical minerals, off-grid energy, infrastructure resilience) could widen the beneficiary set beyond pure-play defense, but the article names no listed beneficiaries and does not quantify the spillover."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-81d754348a85c3"
+     ],
+     "original_date": "2026-10-28",
+     "period": "2025 Hague summit",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "NATO's 2025 Hague summit set a 5%-of-GDP target, of which up to 1.5% is for defense-related/infrastructure investment."
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8b994f3ece8b6d"
+     ],
+     "original_date": "2026-10-28",
+     "period": "2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The United States launched Project Vault, a large-scale effort to create a strategic critical mineral reserve"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d2e26e99c80ffa"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Advances in AI are increasing the threat and scale of cyberattacks against critical infrastructure"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:13 UTC, analysed as of 2026-11-10, from a source published 2026-10-28; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-81d754348a85c3"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "National security is redefined to include economic resilience, critical infrastructure, energy and supply-chain security."
+   },
+   {
+    "claim_ids": [
+     "C-81d754348a85c3"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "volumes",
+    "text": "NATO commitments dedicate up to 1.5% of GDP to defense-related infrastructure/industrial-base investment, expanding demand into dual-use and energy tech."
+   },
+   {
+    "claim_ids": [
+     "C-81d754348a85c3"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "The article does not quantify or name listed companies capturing this spillover into earnings."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b051",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-81d754348a85c3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "NATO 5% GDP target",
+    "measured_as_of": null,
+    "origin": "NATO",
+    "period": "2025 Hague summit",
+    "qualifiers": [
+     "up to 1.5% for defense-related investments"
+    ],
+    "quote": "Ofthe5%-of-GDP42 targetNATOmembersagreedtoatthe2025Hague summit,upto1.5%isdedicated",
+    "role": "supports",
+    "unit": "% of GDP",
+    "value": 5.0,
+    "value_text": "5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b055",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8b994f3ece8b6d",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The United States launched Project Vault, a large-scale effort to create a strategic critical mineral reserve",
+    "measured_as_of": null,
+    "origin": "Export-Import Bank of the United States",
+    "period": "2026",
+    "qualifiers": [
+     "earlier this year"
+    ],
+    "quote": "effort, Project Vault,36 to create a strategic critical mineral reserve",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b048",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d2e26e99c80ffa",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Advances in AI are increasing the threat and scale of cyberattacks against critical infrastructure",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "AdvancesinAIareincreasingthethreatandscaleof cyberattacks33againstcriticalinfrastructure",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-297881816c96f7",
+     "name_as_written": "Goldman Sachs Global Institute",
+     "other_securities": [],
+     "quote": "Co-Head, Goldman Sachs Global Institute",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author/publisher of the paper"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": "0000936468",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066928) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $1 par value",
+       "ticker": "LMT"
+      }
+     ],
+     "mention_id": "M-8a37b9e8d321b2",
+     "name_as_written": "Lockheed Martin",
+     "other_securities": [],
+     "quote": "Lockheed Martin reported a record $230 billion backlog49",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "sector_example",
+     "role_detail": "US defense prime cited for record backlog"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-61162969802cb6",
+     "name_as_written": "Rheinmetall",
+     "other_securities": [],
+     "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "European defense prime cited for order backlog and guidance"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9809fe09dcfc63",
+     "name_as_written": "Anduril",
+     "other_securities": [],
+     "quote": "Anduril raised58$5billioninMay2026ata$61billionvaluation",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "US defense tech startup/neo-prime cited for funding round"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b245155fa91c3d",
+     "name_as_written": "Helsing",
+     "other_securities": [],
+     "quote": "61 Helsing, \u201cHelsing Raises US$1.8bn in Series E,\u201d news release, July ",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Leading European defense tech unicorn"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-62f79217995004",
+     "name_as_written": "Destinus",
+     "other_securities": [],
+     "quote": "78 Destinus, \u201cRheinmetall and Destinus to Form a Joint Venture for Miss",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Swiss firm in JV with Rheinmetall for missiles"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e3ce77b40362ab",
+     "name_as_written": "EDGE Group",
+     "other_securities": [],
+     "quote": "79 EDGE Group, \u201cAbout Us,\u201d accessed October 17, 2026, https://edgegroup.a",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "UAE defense group forming joint production ventures"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4a59f9f38658fc",
+     "name_as_written": "Leonardo",
+     "other_securities": [],
+     "quote": "81 Leonardo, \u201cEDGE and Leonardo to Partner Through a Joint Venture on A",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Italian defense firm in JV with EDGE Group"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f4d5a4cef83385",
+     "name_as_written": "Quantum Systems",
+     "other_securities": [],
+     "quote": "Quantum Systems to Launch Two More Joint Ventures With Ukrainian Manufacturers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Named only in endnote citation re Ukrainian JVs"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-73924b1119f16a",
+     "name_as_written": "Goldman Sachs Marquee MarketView",
+     "other_securities": [],
+     "quote": "Source: Goldman Sachs Marquee MarketView52",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of defense stock basket performance data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-785223529345f0",
+     "name_as_written": "Goldman Sachs Global Investment Research",
+     "other_securities": [],
+     "quote": "53 Goldman Sachs Global Investment Research, accessed October 17, 2026, https://marquee.gs.com/content/",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Cited for German defense order allocation data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8496926267ac19",
+     "name_as_written": "Stockholm International Peace Research Institute",
+     "other_securities": [],
+     "quote": "Stockholm International Peace Research Institute",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for global and regional defense spending data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-65ba4c700b5837",
+     "name_as_written": "Center for Strategic and International Studies",
+     "other_securities": [],
+     "quote": "Center for Strategic and International Studies",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for US/China spending and cost data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3cec0bfbeae7c8",
+     "name_as_written": "Congressional Budget Office",
+     "other_securities": [],
+     "quote": "Congressional Budget Office, Potential Costs of a National Missile Defense System",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Source of Golden Dome cost estimate"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3a41a3688393a2",
+     "name_as_written": "DARPA",
+     "other_securities": [],
+     "quote": "supported by initiatives like DARPA and Defense Innovation Unit",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US agency supporting Silicon Valley\u2013Pentagon integration"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8a7e39a75d0166",
+     "name_as_written": "Defense Innovation Unit",
+     "other_securities": [],
+     "quote": "DARPA and Defense Innovation Unit",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US Pentagon innovation unit"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d274e0a1a76e6f",
+     "name_as_written": "AUKUS",
+     "other_securities": [],
+     "quote": "AUKUS anchorsAustralia,theUnitedKingdom,andtheUnited States",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "trilateral defense partnership (Australia, UK, US) for nuclear-powered submarines and advanced capabilities"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-367485a8c313d1",
+     "name_as_written": "NATO",
+     "other_securities": [],
+     "quote": "NATO hasalsolaunchedanumberofHighVisibilityProjects",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "alliance coordinating multinational capability development (High Visibility Projects)"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-9ebd0fc0bbf782",
+     "name_as_written": "Project Vault",
+     "other_securities": [],
+     "quote": "Project Vault,36",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US strategic critical-mineral reserve initiative"
+    }
+   ],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0be56cc89833",
+     "claim_ids": [
+      "C-81d754348a85c3"
+     ],
+     "direction": "positive",
+     "name": "advanced manufacturing and energy technology",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "supporting growth in areas such as advanced manufacturing and energy technology"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "claim_ids": [],
+     "direction": "positive",
+     "name": "energy technology",
+     "provenance": "SOURCE OPINION",
+     "quote": "supporting growth in areas such as advanced manufacturing and energy technology"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "claim_ids": [
+      "C-8b994f3ece8b6d"
+     ],
+     "direction": "positive",
+     "name": "critical minerals",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "to create a strategic critical mineral reserve"
+    }
+   ],
+   "sectors": [
+    "advanced manufacturing",
+    "energy technology",
+    "critical minerals",
+    "defense-adjacent industrials"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-81d754348a85c3"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "No near-term dated catalyst specific to the dual-use spillover is provided; framed as a multi-year structural tailwind."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-81d754348a85c3"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Defense spending is becoming a pillar of industrial policy, embedding resilience and dual-use demand into budgets durably."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-57D06E21EF: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BCBAD262D4: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D620F0FF87: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-85a3f8a11ee0a6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A larger defense market won't reward every entrant and owning strategic tech doesn't guarantee attractive economics."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "NATO members failing to meet the 1.5% defense-related investment share"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Dual-use offtake contracts not materializing"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: If broadening national-security definitions keep channeling spending into dual-use and defense-adjacent areas"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed advanced-manufacturing/energy-tech companies benefit"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Size of the dual-use spillover relative to core defense"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether resilience spending earns a commercial return"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Spillover remains concentrated in private/startup firms"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Resilience commitments stall at announcement stage"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Map listed advanced-manufacturing, critical-minerals and energy-technology companies positioned as dual-use/defense-adjacent offtakers."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "NATO members allocate the full 1.5% to defense-related infrastructure"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Named dual-use offtake contracts to listed companies"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-0be56cc89833",
+    "authors": [
+     "Goldman Sachs",
+     "Dan Keyserling"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-81d754348a85c3",
+     "C-d2e26e99c80ffa",
+     "C-8b994f3ece8b6d",
+     "C-85a3f8a11ee0a6"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-28T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "The Security Supercycle",
+    "upstream_origins": [
+     "Export-Import Bank of the United States",
+     "NATO",
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:1d95c5d9690cf203b6f65c1885ea91b6debf788601e07eb651fed5201f1710df",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001801368-26-000008)",
+    "business": "US rare earth mining and magnet production",
+    "direction": "positive",
+    "enrichment_id": "EC-6a2da8376b4465",
+    "evidence": "s03.1: NATO commitments dedicate up to 1.5% of GDP to defense-related infrastructure/industrial-base investment, expanding demand into dual-use and energy tech.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-06 (accession 0001801368-26-000057) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value of $0.0001 per share",
+      "ticker": "MP"
+     }
+    ],
+    "name": "MP Materials",
+    "rationale": "Dual-use/security mandate reaching critical minerals lifts demand and pricing for domestic rare earth oxides and magnets used in defense systems.",
+    "registrant": "MP Materials Corp. / DE",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1000); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "rare earth concentrate and magnet sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-E9359EEA5E",
+    "ticker_hint": "MP"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales \u2014 and also licences and maintenance",
+    "basis_quote": [
+     "Our revenue is derived primarily from product sales of our Energy Server systems, with additional recurring revenue from long-term operations and maintenance agreements that support availability and performance over the contract life."
+    ],
+    "basis_source": "10-K filed 2026-02-09 (0001628280-26-006516)",
+    "business": "solid-oxide fuel cell maker for on-site power",
+    "direction": "positive",
+    "enrichment_id": "EC-c928f8e8f264b2",
+    "evidence": "s03.1: NATO commitments dedicate up to 1.5% of GDP to defense-related infrastructure/industrial-base investment, expanding demand into dual-use and energy tech.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066931) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.0001 par value",
+      "ticker": "BE"
+     }
+    ],
+    "name": "Bloom Energy",
+    "rationale": "Off-grid energy and infrastructure-resilience spending drives demand for its fuel cell power systems at defense and critical sites.",
+    "registrant": "Bloom Energy Corp",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3620); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "fuel cell energy servers",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-E9359EEA5E",
+    "ticker_hint": "BE"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001551182-26-000007)",
+    "business": "electrical power management and distribution equipment",
+    "direction": "positive",
+    "enrichment_id": "EC-712de12995557b",
+    "evidence": "s03.1: NATO commitments dedicate up to 1.5% of GDP to defense-related infrastructure/industrial-base investment, expanding demand into dual-use and energy tech.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-03 (accession 0001551182-26-000040) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares ($0.01 par value)",
+      "ticker": "ETN"
+     }
+    ],
+    "name": "Eaton",
+    "rationale": "Infrastructure-resilience and energy-tech investment lifts demand for its grid, power distribution and aerospace/defense electrical systems.",
+    "registrant": "Eaton Corp plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3590); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "electrical and aerospace power equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-E9359EEA5E",
+    "ticker_hint": "ETN"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-19 (0001050915-26-000006)",
+    "business": "electric power and infrastructure construction services",
+    "direction": "positive",
+    "enrichment_id": "EC-61bbeb637ece9b",
+    "evidence": "s03.1: NATO commitments dedicate up to 1.5% of GDP to defense-related infrastructure/industrial-base investment, expanding demand into dual-use and energy tech.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001050915-26-000041) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.00001 par value",
+      "ticker": "PWR"
+     }
+    ],
+    "name": "Quanta Services",
+    "rationale": "Critical-infrastructure and grid-resilience spending expands its backlog for building and hardening energy networks.",
+    "registrant": "QUANTA SERVICES, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1731); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "infrastructure construction services",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-E9359EEA5E",
+    "ticker_hint": "PWR"
+   }
+  ],
+  "created_at": "2026-11-10T19:08:01.668572Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261110T190643Z-enrich",
+  "set_id": "ES-3b2a698627f6e1",
+  "thesis_id": "TH-E9359EEA5E",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-0be56cc89833",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "industrials"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:13:39.729145Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-28",
+     "latest_article_date": "2026-10-28",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Industrials, defense, transport, capital goods",
+     "status": "ACTIVE",
+     "thesis_id": "TH-E9359EEA5E",
+     "title": "Dual-use rearmament spending spills over into advanced manufacturing and energy technology"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-81d754348a85c3"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "Increased spending on dual-use technologies is already providing a tailwind to other segments of the industrial economy such as advanced manufacturing and energy technology, with NATO's 5% target reserving up to 1.5% of GDP for defense-related investment in critical infrastructure, networks and the industrial base."
+     },
+     {
+      "claim_ids": [
+       "C-81d754348a85c3",
+       "C-d2e26e99c80ffa",
+       "C-8b994f3ece8b6d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames defense as becoming a pillar of industrial policy, with resilience spending reaching defense-adjacent companies and energy-tech offtakers."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A broadened security mandate (critical minerals, off-grid energy, infrastructure resilience) could widen the beneficiary set beyond pure-play defense, but the article names no listed beneficiaries and does not quantify the spillover."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-81d754348a85c3"
+       ],
+       "original_date": "2026-10-28",
+       "period": "2025 Hague summit",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "NATO's 2025 Hague summit set a 5%-of-GDP target, of which up to 1.5% is for defense-related/infrastructure investment."
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8b994f3ece8b6d"
+       ],
+       "original_date": "2026-10-28",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The United States launched Project Vault, a large-scale effort to create a strategic critical mineral reserve"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d2e26e99c80ffa"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Advances in AI are increasing the threat and scale of cyberattacks against critical infrastructure"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:13 UTC, analysed as of 2026-11-10, from a source published 2026-10-28; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-81d754348a85c3"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "National security is redefined to include economic resilience, critical infrastructure, energy and supply-chain security."
+     },
+     {
+      "claim_ids": [
+       "C-81d754348a85c3"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "volumes",
+      "text": "NATO commitments dedicate up to 1.5% of GDP to defense-related infrastructure/industrial-base investment, expanding demand into dual-use and energy tech."
+     },
+     {
+      "claim_ids": [
+       "C-81d754348a85c3"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "The article does not quantify or name listed companies capturing this spillover into earnings."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b051",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-81d754348a85c3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "NATO 5% GDP target",
+      "measured_as_of": null,
+      "origin": "NATO",
+      "period": "2025 Hague summit",
+      "qualifiers": [
+       "up to 1.5% for defense-related investments"
+      ],
+      "quote": "Ofthe5%-of-GDP42 targetNATOmembersagreedtoatthe2025Hague summit,upto1.5%isdedicated",
+      "role": "supports",
+      "unit": "% of GDP",
+      "value": 5.0,
+      "value_text": "5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b055",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8b994f3ece8b6d",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The United States launched Project Vault, a large-scale effort to create a strategic critical mineral reserve",
+      "measured_as_of": null,
+      "origin": "Export-Import Bank of the United States",
+      "period": "2026",
+      "qualifiers": [
+       "earlier this year"
+      ],
+      "quote": "effort, Project Vault,36 to create a strategic critical mineral reserve",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b048",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d2e26e99c80ffa",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Advances in AI are increasing the threat and scale of cyberattacks against critical infrastructure",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "AdvancesinAIareincreasingthethreatandscaleof cyberattacks33againstcriticalinfrastructure",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-297881816c96f7",
+       "name_as_written": "Goldman Sachs Global Institute",
+       "other_securities": [],
+       "quote": "Co-Head, Goldman Sachs Global Institute",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher of the paper"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": "0000936468",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066928) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $1 par value",
+         "ticker": "LMT"
+        }
+       ],
+       "mention_id": "M-8a37b9e8d321b2",
+       "name_as_written": "Lockheed Martin",
+       "other_securities": [],
+       "quote": "Lockheed Martin reported a record $230 billion backlog49",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "sector_example",
+       "role_detail": "US defense prime cited for record backlog"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-61162969802cb6",
+       "name_as_written": "Rheinmetall",
+       "other_securities": [],
+       "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "European defense prime cited for order backlog and guidance"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9809fe09dcfc63",
+       "name_as_written": "Anduril",
+       "other_securities": [],
+       "quote": "Anduril raised58$5billioninMay2026ata$61billionvaluation",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "US defense tech startup/neo-prime cited for funding round"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b245155fa91c3d",
+       "name_as_written": "Helsing",
+       "other_securities": [],
+       "quote": "61 Helsing, \u201cHelsing Raises US$1.8bn in Series E,\u201d news release, July ",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Leading European defense tech unicorn"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-62f79217995004",
+       "name_as_written": "Destinus",
+       "other_securities": [],
+       "quote": "78 Destinus, \u201cRheinmetall and Destinus to Form a Joint Venture for Miss",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Swiss firm in JV with Rheinmetall for missiles"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e3ce77b40362ab",
+       "name_as_written": "EDGE Group",
+       "other_securities": [],
+       "quote": "79 EDGE Group, \u201cAbout Us,\u201d accessed October 17, 2026, https://edgegroup.a",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "UAE defense group forming joint production ventures"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4a59f9f38658fc",
+       "name_as_written": "Leonardo",
+       "other_securities": [],
+       "quote": "81 Leonardo, \u201cEDGE and Leonardo to Partner Through a Joint Venture on A",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Italian defense firm in JV with EDGE Group"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f4d5a4cef83385",
+       "name_as_written": "Quantum Systems",
+       "other_securities": [],
+       "quote": "Quantum Systems to Launch Two More Joint Ventures With Ukrainian Manufacturers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Named only in endnote citation re Ukrainian JVs"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-73924b1119f16a",
+       "name_as_written": "Goldman Sachs Marquee MarketView",
+       "other_securities": [],
+       "quote": "Source: Goldman Sachs Marquee MarketView52",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of defense stock basket performance data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-785223529345f0",
+       "name_as_written": "Goldman Sachs Global Investment Research",
+       "other_securities": [],
+       "quote": "53 Goldman Sachs Global Investment Research, accessed October 17, 2026, https://marquee.gs.com/content/",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Cited for German defense order allocation data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8496926267ac19",
+       "name_as_written": "Stockholm International Peace Research Institute",
+       "other_securities": [],
+       "quote": "Stockholm International Peace Research Institute",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for global and regional defense spending data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-65ba4c700b5837",
+       "name_as_written": "Center for Strategic and International Studies",
+       "other_securities": [],
+       "quote": "Center for Strategic and International Studies",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for US/China spending and cost data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3cec0bfbeae7c8",
+       "name_as_written": "Congressional Budget Office",
+       "other_securities": [],
+       "quote": "Congressional Budget Office, Potential Costs of a National Missile Defense System",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Source of Golden Dome cost estimate"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3a41a3688393a2",
+       "name_as_written": "DARPA",
+       "other_securities": [],
+       "quote": "supported by initiatives like DARPA and Defense Innovation Unit",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US agency supporting Silicon Valley\u2013Pentagon integration"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8a7e39a75d0166",
+       "name_as_written": "Defense Innovation Unit",
+       "other_securities": [],
+       "quote": "DARPA and Defense Innovation Unit",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US Pentagon innovation unit"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d274e0a1a76e6f",
+       "name_as_written": "AUKUS",
+       "other_securities": [],
+       "quote": "AUKUS anchorsAustralia,theUnitedKingdom,andtheUnited States",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "trilateral defense partnership (Australia, UK, US) for nuclear-powered submarines and advanced capabilities"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-367485a8c313d1",
+       "name_as_written": "NATO",
+       "other_securities": [],
+       "quote": "NATO hasalsolaunchedanumberofHighVisibilityProjects",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "alliance coordinating multinational capability development (High Visibility Projects)"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-9ebd0fc0bbf782",
+       "name_as_written": "Project Vault",
+       "other_securities": [],
+       "quote": "Project Vault,36",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US strategic critical-mineral reserve initiative"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0be56cc89833",
+       "claim_ids": [
+        "C-81d754348a85c3"
+       ],
+       "direction": "positive",
+       "name": "advanced manufacturing and energy technology",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "supporting growth in areas such as advanced manufacturing and energy technology"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "energy technology",
+       "provenance": "SOURCE OPINION",
+       "quote": "supporting growth in areas such as advanced manufacturing and energy technology"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "claim_ids": [
+        "C-8b994f3ece8b6d"
+       ],
+       "direction": "positive",
+       "name": "critical minerals",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "to create a strategic critical mineral reserve"
+      }
+     ],
+     "sectors": [
+      "advanced manufacturing",
+      "energy technology",
+      "critical minerals",
+      "defense-adjacent industrials"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-81d754348a85c3"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "No near-term dated catalyst specific to the dual-use spillover is provided; framed as a multi-year structural tailwind."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-81d754348a85c3"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Defense spending is becoming a pillar of industrial policy, embedding resilience and dual-use demand into budgets durably."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-57D06E21EF: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BCBAD262D4: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D620F0FF87: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-85a3f8a11ee0a6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A larger defense market won't reward every entrant and owning strategic tech doesn't guarantee attractive economics."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "NATO members failing to meet the 1.5% defense-related investment share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Dual-use offtake contracts not materializing"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: If broadening national-security definitions keep channeling spending into dual-use and defense-adjacent areas"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed advanced-manufacturing/energy-tech companies benefit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Size of the dual-use spillover relative to core defense"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether resilience spending earns a commercial return"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Spillover remains concentrated in private/startup firms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Resilience commitments stall at announcement stage"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map listed advanced-manufacturing, critical-minerals and energy-technology companies positioned as dual-use/defense-adjacent offtakers."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "NATO members allocate the full 1.5% to defense-related infrastructure"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Named dual-use offtake contracts to listed companies"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-0be56cc89833",
+      "authors": [
+       "Goldman Sachs",
+       "Dan Keyserling"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-81d754348a85c3",
+       "C-d2e26e99c80ffa",
+       "C-8b994f3ece8b6d",
+       "C-85a3f8a11ee0a6"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-28T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "The Security Supercycle",
+      "upstream_origins": [
+       "Export-Import Bank of the United States",
+       "NATO",
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:1d95c5d9690cf203b6f65c1885ea91b6debf788601e07eb651fed5201f1710df",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "d1484a3c8f5cd36ca6c757e14d43ba3ef0b3e5454fc0b085b0ab0d0c19bfac8a",
+   "created_at": "2026-11-10T15:13:55.964169Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-81d754348a85c3",
+       "C-8b994f3ece8b6d"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-077da998c381, ES-2d8f5e456bd3, ES-7157f87b7a71",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-8b994f3ece8b6d"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-8b994f3ece8b6d: measured 2026-10-28 (13 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: advanced manufacturing and energy technology, sector: energy technology, sector: critical minerals",
+      "value": "0 listed \u00b7 3 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-85a3f8a11ee0a6"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 2 decision-bearing sentence(s): s01.0, s02.0",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261110T150647Z-ingest",
+   "thesis_id": "TH-E9359EEA5E",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 4,
+ "other_cited_evidence": [
+  "C-85a3f8a11ee0a6"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The cited span only states that of the 5%-of-GDP target NATO members agreed to at the 2025 Hague summit, up to 1.5% is dedicated (text truncated). The sentence's assertion that increased dual-use spending is 'already providing a tailwind' to advanced manufacturing and energy tech, and the specifics of 'critical infrastructure, networks and the industrial base,' are not in the cited span. Also labelled MEASURED OBSERVATION but the tailwind portion is interpretation.",
+  "s02.1": "The cited span says 'effort, Project Vault, to create a strategic critical mineral reserve' but does not identify the United States as launching it, nor does it describe it as 'large-scale.' The US attribution and scale descriptor are not in the cited span.",
+  "s03.1": "The cited span supports that up to 1.5% of GDP is dedicated (text truncated, not explicitly 'defense-related infrastructure/industrial-base'), but the added claim 'expanding demand into dual-use and energy tech' is not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {
+  "s01.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s01.0 prints '1.5', which none of its cited claims carry: 'Increased spending on dual-use technologies is already providing a tailwind to other segments of the'",
+  "s02.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s02.0 prints '1.5', which none of its cited claims carry: \"NATO's 2025 Hague summit set a 5%-of-GDP target, of which up to 1.5% is for defense-related/infrastr\"",
+  "s03.0": "REVIEW_UNSUPPORTED \u2014 s03.0: UNSUPPORTED \u2014 The cited span is solely about the 5%-of-GDP NATO target with up to 1.5% dedicated. It says nothing about national security being redefined to include economic resilience, critical infrastructure, energy and supply-chain security. No pool span supports this specific redefinition claim. | 'National security is redefined to include economic resilience, critical infrastructure, energy and s'",
+  "s03.1": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s03.1 prints '1.5', which none of its cited claims carry: 'NATO commitments dedicate up to 1.5% of GDP to defense-related infrastructure/industrial-base invest'",
+  "s06.1": "REVIEW_UNSUPPORTED \u2014 s06.1: UNSUPPORTED \u2014 The cited span concerns only the 5%/1.5% NATO target and does not state that defense spending is becoming a pillar of industrial policy embedding resilience and dual-use demand durably into budgets. No pool span supports this framing. | 'Defense spending is becoming a pillar of industrial policy, embedding resilience and dual-use demand'"
+ }
+}

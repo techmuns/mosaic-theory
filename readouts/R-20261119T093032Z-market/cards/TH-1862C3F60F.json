@@ -1,0 +1,2331 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-19",
+   "ancestry": [
+    "telecom_media"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-19",
+   "first_ingested_at": "2026-11-19T09:15:31.772962Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-17",
+   "latest_article_date": "2026-11-17",
+   "region": "US",
+   "research_action": "RESEARCH NOW",
+   "sector": "Telecom and media",
+   "status": "ACTIVE",
+   "thesis_id": "TH-1862C3F60F",
+   "title": "SpaceX O-RAN shift to Qualcomm chipsets benefits Qualcomm and base-station component suppliers"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-86a3fd39462e13",
+     "C-cd26f69f0d4a5e",
+     "C-be4e910e74a76d",
+     "C-a6b3b9ade69a41",
+     "C-2b9dca96bd1262"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SpaceX signed a multi-year agreement to adopt Qualcomm's Dragonwing 5G O-RAN base station chipsets for a US mobile network, moving away from Ericsson and Nokia; TrendForce names Amphenol, Qorvo, American Tower and Crown Castle as potential ecosystem beneficiaries."
+   },
+   {
+    "claim_ids": [
+     "C-cd26f69f0d4a5e",
+     "C-a6b3b9ade69a41",
+     "C-2b9dca96bd1262"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce frames Qualcomm and its ecosystem partners (Amphenol, Qorvo, American Tower, Crown Castle) as primary beneficiaries and Ericsson/Nokia as displaced."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If the rollout across ~80,000 sites proceeds, Qualcomm captures chipset share from incumbent RAN vendors and named antenna, power-amplifier and tower suppliers gain new volume, though the article quantifies no revenue impact for any listed name."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0d74e1cecf17",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-86a3fd39462e13"
+     ],
+     "original_date": "2026-11-17",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "SpaceX and Qualcomm announced a multi-year supply agreement for SpaceX to adopt Qualcomm's Dragonwing 5G base station chipset solutions."
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8203a22affca52"
+     ],
+     "original_date": "2026-11-17",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "SpaceX secured access to approximately 80,000 base station sites via leasing arrangements with independent tower operators. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-104bd633f42dde"
+     ],
+     "original_date": "2026-11-17",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "TrendForce projects the global 5G infrastructure market value will reach US$55 billion in 2027. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-cd26f69f0d4a5e"
+     ],
+     "original_date": "2026-11-17",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "SpaceX is expanding into the US mobile communications market, moving away from proprietary RAN architectures dominated by Ericsson and Nokia."
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-be4e910e74a76d"
+     ],
+     "original_date": "2026-11-17",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Qualcomm's O-RAN chipset approach could substantially reduce the cost of deploying tens of thousands of 5G base stations across the US."
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a6b3b9ade69a41"
+     ],
+     "original_date": "2026-11-17",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Suppliers of 5G base station components are positioned to gain new business opportunities from the SpaceX-Qualcomm rollout."
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 11 pieces of evidence from A-0d74e1cecf17 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-19 09:15 UTC, analysed as of 2026-11-19, from a source published 2026-11-17; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-cd26f69f0d4a5e",
+     "C-86a3fd39462e13"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "SpaceX adopts open-RAN Qualcomm chipsets instead of proprietary Ericsson/Nokia RAN for US mobile buildout."
+   },
+   {
+    "claim_ids": [
+     "C-8203a22affca52",
+     "C-a6b3b9ade69a41",
+     "C-2b9dca96bd1262"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Rollout across ~80,000 leased sites drives chipset, antenna, power-amplifier and tower-leasing volumes for ecosystem suppliers. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-be4e910e74a76d",
+     "C-2ef7379e80a325"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "Pre-integrated O-RAN chipsets substantially reduce SpaceX's cost of deploying tens of thousands of base stations."
+   },
+   {
+    "claim_ids": [
+     "C-2b9dca96bd1262"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Incremental volumes would lift revenue at Qualcomm and named suppliers, but no earnings figure is given."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-104bd633f42dde",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "5G infrastructure market value",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "TrendForce projects the global 5G infrastructure\u2019s market value will reach US$55 billion in 2027, up 24.3% YoY",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 55.0,
+    "value_text": "US$55 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8203a22affca52",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "base station sites leased",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "approximately",
+     "independent tower operators"
+    ],
+    "quote": "SpaceX secured access to approximately 80,000 base station sites through leasing arrangements with independent tower operators",
+    "role": "catalyst",
+    "unit": "sites",
+    "value": 80000.0,
+    "value_text": "approximately 80,000"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9d6c30b9a21ae9",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "spectrum acquired",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "October 2026",
+    "qualifiers": [
+     "from Grain Management"
+    ],
+    "quote": "In October 2026, the company further strengthened its spectrum portfolio by acquiring critical 800 MHz mobile communications spectrum from Grain Management.",
+    "role": "catalyst",
+    "unit": "MHz",
+    "value": 800.0,
+    "value_text": "800 MHz"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1cb3780fe80f54",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Integrating Dragonwing-powered terrestrial 5G base stations with a 3GPP NTN-compliant LEO satellite constellation could address indoor link-budget losses and high-density capacity constraints.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "could effectively address",
+     "two major limitations"
+    ],
+    "quote": "integrating terrestrial 5G base stations powered by Qualcomm\u2019s Dragonwing platform with a low Earth orbit (LEO) satellite constellation compliant with 3GPP Non-Terrestrial Network (NTN) standards could effectively address two major limitations of conventional satellite connectivity",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2b9dca96bd1262",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "TrendForce names Amphenol (antennas), Qorvo (power amplifiers), American Tower and Crown Castle (tower leasing/site infrastructure) as potential beneficiaries within Qualcomm's ecosystem.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "potential suppliers"
+    ],
+    "quote": "Potential suppliers include Amphenol for base station antenna development and Qorvo for power amplifiers (PAs), while American Tower and Crown Castle could provide tower leasing and site infrastructure support.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7e65ed86bfa033",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Qualcomm will complete RU-DU fronthaul interoperability testing at the factory before shipment, reducing multi-vendor integration complexity to enable faster large-scale deployment.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "pre-integrated approach"
+    ],
+    "quote": "Qualcomm will complete the integration and interoperability testing of RU-DU fronthaul interfaces before the equipment leaves the factory, helping ensure stable signal transmission during actual network operations",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-86a3fd39462e13",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "SpaceX and Qualcomm announced a multi-year supply agreement for SpaceX to adopt Qualcomm's Dragonwing 5G base station chipset solutions.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "multi-year supply agreement"
+    ],
+    "quote": "SpaceX and Qualcomm recently announced a multi-year supply agreement under which SpaceX will widely adopt Qualcomm\u2019s Dragonwing 5G base station chipset solutions.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a6b3b9ade69a41",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Suppliers of 5G base station components are positioned to gain new business opportunities from the SpaceX-Qualcomm rollout.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "suppliers of 5G base station components are also positioned to gain new business opportunities",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-be4e910e74a76d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Qualcomm's O-RAN chipset approach could substantially reduce the cost of deploying tens of thousands of 5G base stations across the US.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "tens of thousands of base stations"
+    ],
+    "quote": "This approach could substantially reduce the cost of deploying tens of thousands of 5G base stations across the United States.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cd26f69f0d4a5e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "SpaceX is expanding into the US mobile communications market, moving away from proprietary RAN architectures dominated by Ericsson and Nokia.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "SpaceX is actively expanding into the U.S. mobile communications market, moving away from the proprietary radio access network (RAN) architectures traditionally dominated by telecommunications equipment giants such as Ericsson and Nokia.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cdaa2ff5d689c7",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "O-RAN operators have faced interoperability challenges when sourcing DUs, RUs and CUs from different vendors due to signal compatibility issues.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "interoperability challenges"
+    ],
+    "quote": "telecommunications operators deploying O-RAN networks have faced interoperability challenges when sourcing distributed units (DUs), radio units (RUs), and centralized units (CUs) from different equipment manufacturers",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0d74e1cecf17",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e0baaa82081de3",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Terrestrial base stations handling urban traffic offload and indoor coverage would operate with the satellite constellation as a space-terrestrial heterogeneous network (ST-HetNet) supporting comprehensive telecom services.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "ST-HetNet"
+    ],
+    "quote": "these complementary networks would enable coordinated operation through a space-terrestrial heterogeneous network (ST-HetNet), supporting a comprehensive range of telecommunications services",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-af16c144657ef0",
+     "name_as_written": "Dragonwing",
+     "other_securities": [],
+     "quote": "Qualcomm\u2019s Dragonwing 5G base station chipset solutions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Qualcomm's 5G base station chipset platform"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e0c56b815b06e2",
+     "name_as_written": "EchoStar",
+     "other_securities": [],
+     "quote": "a combined 65 MHz of mid-band spectrum from EchoStar",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Seller of mid-band spectrum to SpaceX"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-daa1ee4c8d5919",
+     "name_as_written": "Grain Management",
+     "other_securities": [],
+     "quote": "acquiring critical 800 MHz mobile communications spectrum from Grain Management",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Seller of 800 MHz spectrum to SpaceX"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-530b3eac8f1c74",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author and research publisher"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": "0000804328",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-11-04 (accession 0000804328-26-000128) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.0001 par value",
+       "ticker": "QCOM"
+      }
+     ],
+     "mention_id": "M-65591d2c9b42e9",
+     "name_as_written": "Qualcomm",
+     "other_securities": [],
+     "quote": "SpaceX and Qualcomm recently announced a multi-year supply agreement under which SpaceX will widely adopt Qualcomm\u2019s Dragonwing 5G base station chipset solutions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier of Dragonwing 5G base station chipsets to SpaceX"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": "0000820313",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.001 par value",
+       "ticker": "APH"
+      }
+     ],
+     "mention_id": "M-ce13574e8758e4",
+     "name_as_written": "Amphenol",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.375% Senior Notes due 2029",
+       "ticker": "APH29B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Senior Notes due 2032",
+       "ticker": "APH32"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.875% Senior Notes due 2034",
+       "ticker": "APH34A"
+      }
+     ],
+     "quote": "Amphenol for base station antenna development",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Potential supplier of base station antennas"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-265fbd9a2fe351",
+     "name_as_written": "Qorvo",
+     "other_securities": [],
+     "quote": "Qorvo for power amplifiers (PAs)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Potential supplier of power amplifiers"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": "0001053507",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "AMT"
+      }
+     ],
+     "mention_id": "M-2ded8791e8ec7a",
+     "name_as_written": "American Tower",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.450% Senior Notes due 2027",
+       "ticker": "AMT 27C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.400% Senior Notes due 2027",
+       "ticker": "AMT 27D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.125% Senior Notes due 2027",
+       "ticker": "AMT 27F"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.500% Senior Notes due 2028",
+       "ticker": "AMT 28A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.875% Senior Notes due 2029",
+       "ticker": "AMT 29B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.950% Senior Notes due 2030",
+       "ticker": "AMT 30C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.900% Senior Notes due 2030",
+       "ticker": "AMT 30D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.625% Senior Notes due 2031",
+       "ticker": "AMT 31B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.000% Senior Notes due 2032",
+       "ticker": "AMT 32"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.625% Senior Notes due 2032",
+       "ticker": "AMT 32B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.250% Senior Notes due 2033",
+       "ticker": "AMT 33"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.000% Senior Notes due 2033",
+       "ticker": "AMT 33D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.100% Senior Notes due 2034",
+       "ticker": "AMT 34A"
+      }
+     ],
+     "quote": "American Tower and Crown Castle could provide tower leasing and site infrastructure support",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Potential provider of tower leasing and site infrastructure"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": "0001051470",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-04 (accession 0001051470-26-000090) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "CCI"
+      }
+     ],
+     "mention_id": "M-56cbde2bb1af93",
+     "name_as_written": "Crown Castle",
+     "other_securities": [],
+     "quote": "American Tower and Crown Castle could provide tower leasing and site infrastructure support",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Potential provider of tower leasing and site infrastructure"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": "0000717826",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-d4640d218a8544",
+     "name_as_written": "Ericsson",
+     "other_securities": [],
+     "quote": "telecommunications equipment giants such as Ericsson and Nokia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potentially_harmed",
+     "role_detail": "Traditional RAN equipment giant SpaceX is moving away from"
+    },
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": "0000924613",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-882731ff0040ac",
+     "name_as_written": "Nokia",
+     "other_securities": [],
+     "quote": "telecommunications equipment giants such as Ericsson and Nokia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potentially_harmed",
+     "role_detail": "Traditional RAN equipment giant SpaceX is moving away from"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-0d74e1cecf17",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-bd04c578553782",
+     "name_as_written": "SpaceX",
+     "other_securities": [],
+     "quote": "SpaceX and Qualcomm recently announced a multi-year supply agreement",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Operator deploying tens of thousands of 5G base stations and adopting Qualcomm chipsets"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-0d74e1cecf17",
+     "claim_ids": [
+      "C-104bd633f42dde",
+      "C-745951e9caf32c"
+     ],
+     "direction": "positive",
+     "name": "5G infrastructure",
+     "provenance": "FORECAST",
+     "quote": "the global 5G infrastructure\u2019s market value"
+    }
+   ],
+   "sectors": [
+    "Telecommunications",
+    "5G base station components",
+    "Tower leasing"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Large-scale commercial US 5G rollout following October 2026 spectrum acquisition and tower leasing [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-86a3fd39462e13",
+      "C-8203a22affca52"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "The agreement and spectrum/tower moves are secured, but commercial-scale deployment revenue is a multi-year rollout. \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-cd26f69f0d4a5e",
+      "C-be4e910e74a76d",
+      "C-2b9dca96bd1262"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A new O-RAN-based operator scaling in US mobile shifts chipset and component share toward Qualcomm's ecosystem and away from traditional RAN giants."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-2315C45951: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-CD79589854: same value-chain node, not the same claim \u2014 a different mechanism (margin_expansion_adoption vs competitive_share_shift); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SpaceX selecting non-Qualcomm or incumbent RAN vendors for scale deployment"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Delays in US commercial mobile rollout"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Component orders going to suppliers other than those named"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Revenue or earnings magnitude for Qualcomm or any named supplier"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Timeline and pace of the base-station rollout"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether named 'potential' suppliers actually win the contracts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether cost savings translate into supplier volume gains versus margin pressure"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SpaceX scales back US mobile plans"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Qualcomm chipset volumes prove immaterial to earnings"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check Qualcomm's disclosed 5G infrastructure revenue exposure and the base-station content per site for Amphenol and Qorvo to gauge potential upside from an ~80,000-site rollout."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Confirmed supplier awards to Amphenol, Qorvo, American Tower or Crown Castle"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Disclosed deployment schedule or unit volumes for SpaceX base stations"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-9d6c30b9a21ae9: measured 2026-10-31 (19 days before the as-of); C-8203a22affca52: measured 2026-11-17 (2 days before the as-of); C-86a3fd39462e13: measured 2026-11-17 (2 days before the as-of); source-named exposure(s): Qualcomm (QCOM), Amphenol (APH), American Tower (AMT), Crown Castle (CCI), sector: 5G infrastructure; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-0d74e1cecf17",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-9d6c30b9a21ae9",
+     "C-8203a22affca52",
+     "C-86a3fd39462e13",
+     "C-104bd633f42dde",
+     "C-cd26f69f0d4a5e",
+     "C-be4e910e74a76d",
+     "C-a6b3b9ade69a41",
+     "C-2b9dca96bd1262",
+     "C-1cb3780fe80f54",
+     "C-e0baaa82081de3",
+     "C-cdaa2ff5d689c7",
+     "C-7e65ed86bfa033"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-17T16:48:56+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "SpaceX\u2019s Adoption of Qualcomm 5G Chipsets Could Significantly Reduce the Cost of Deploying Tens of Thousands of Base Stations, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261117-13309.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-19",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "The Company derives its revenue primarily from the sale of semiconductor products under individual customer purchase orders, some of which have underlying master sales agreements that specify terms governing the product sales."
+    ],
+    "basis_source": "10-K filed 2026-11-10 (0000004127-26-000055)",
+    "business": "RF semiconductor maker (filters, power amplifiers, front-end modules)",
+    "direction": "positive",
+    "enrichment_id": "EC-d509c041f0ac8a",
+    "evidence": "s03.1: Rollout across ~80,000 leased sites drives chipset, antenna, power-amplifier and tower-leasing volumes for ecosystem suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-11-10 (accession 0000004127-26-000055) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.25 per share",
+      "ticker": "SWKS"
+     }
+    ],
+    "name": "Skyworks Solutions",
+    "rationale": "O-RAN base station buildout drives demand for RF front-end and power-amplifier components used in 5G infrastructure, a growing segment.",
+    "registrant": "SKYWORKS SOLUTIONS, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "RF power amplifiers and front-end modules",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-1862C3F60F",
+    "ticker_hint": "SWKS"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-11-25 (0000006281-25-000153)",
+    "business": "analog, RF and mixed-signal semiconductor maker",
+    "direction": "positive",
+    "enrichment_id": "EC-50c616fd06480c",
+    "evidence": "s03.1: Rollout across ~80,000 leased sites drives chipset, antenna, power-amplifier and tower-leasing volumes for ecosystem suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-19 (accession 0000006281-26-000073) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock $0.16 2/3 par value per share",
+      "ticker": "ADI"
+     }
+    ],
+    "name": "Analog Devices",
+    "rationale": "Supplies RF transceivers and signal-chain chips for 5G radio units; large-scale O-RAN rollout lifts its communications infrastructure volumes.",
+    "registrant": "ANALOG DEVICES INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "RF transceivers and signal-chain chips for radios",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-1862C3F60F",
+    "ticker_hint": "ADI"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "network infrastructure maker (antennas, cables, connectivity)",
+    "direction": "positive",
+    "enrichment_id": "EC-90d051020c38ef",
+    "evidence": "s03.1: Rollout across ~80,000 leased sites drives chipset, antenna, power-amplifier and tower-leasing volumes for ecosystem suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "CommScope Holding",
+    "rationale": "80,000-site buildout drives demand for base-station antennas, cabling and tower connectivity hardware, core to its outdoor wireless business.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "base-station antennas and tower connectivity hardware",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-1862C3F60F",
+    "ticker_hint": "COMM"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-27 (0001034054-26-000002)",
+    "business": "wireless tower owner and operator (REIT)",
+    "direction": "positive",
+    "enrichment_id": "EC-5544e1f99ac104",
+    "evidence": "s03.1: Rollout across ~80,000 leased sites drives chipset, antenna, power-amplifier and tower-leasing volumes for ecosystem suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-05 (accession 0001034054-26-000013) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.01 par value per share",
+      "ticker": "SBAC"
+     }
+    ],
+    "name": "SBA Communications",
+    "rationale": "New mobile network buildout can add tower-leasing tenants; incremental site leases lift its core tower rental revenue.",
+    "registrant": "SBA COMMUNICATIONS CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6798); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "tower site leasing to mobile carriers",
+    "revenue_model": "subscription",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-1862C3F60F",
+    "ticker_hint": "SBAC"
+   }
+  ],
+  "created_at": "2026-11-19T09:28:47.103055Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261119T090734Z-scan",
+  "set_id": "ES-b5485bbc87eb5e",
+  "thesis_id": "TH-1862C3F60F",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-19",
+   "change_summary": "Initial record \u2014 created from A-0d74e1cecf17",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-19",
+     "ancestry": [
+      "telecom_media"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-19",
+     "first_ingested_at": "2026-11-19T09:15:31.772962Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-17",
+     "latest_article_date": "2026-11-17",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Telecom and media",
+     "status": "ACTIVE",
+     "thesis_id": "TH-1862C3F60F",
+     "title": "SpaceX O-RAN shift to Qualcomm chipsets benefits Qualcomm and base-station component suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-86a3fd39462e13",
+       "C-cd26f69f0d4a5e",
+       "C-be4e910e74a76d",
+       "C-a6b3b9ade69a41",
+       "C-2b9dca96bd1262"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SpaceX signed a multi-year agreement to adopt Qualcomm's Dragonwing 5G O-RAN base station chipsets for a US mobile network, moving away from Ericsson and Nokia; TrendForce names Amphenol, Qorvo, American Tower and Crown Castle as potential ecosystem beneficiaries."
+     },
+     {
+      "claim_ids": [
+       "C-cd26f69f0d4a5e",
+       "C-a6b3b9ade69a41",
+       "C-2b9dca96bd1262"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce frames Qualcomm and its ecosystem partners (Amphenol, Qorvo, American Tower, Crown Castle) as primary beneficiaries and Ericsson/Nokia as displaced."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If the rollout across ~80,000 sites proceeds, Qualcomm captures chipset share from incumbent RAN vendors and named antenna, power-amplifier and tower suppliers gain new volume, though the article quantifies no revenue impact for any listed name."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0d74e1cecf17",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-86a3fd39462e13"
+       ],
+       "original_date": "2026-11-17",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "SpaceX and Qualcomm announced a multi-year supply agreement for SpaceX to adopt Qualcomm's Dragonwing 5G base station chipset solutions."
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8203a22affca52"
+       ],
+       "original_date": "2026-11-17",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "SpaceX secured access to approximately 80,000 base station sites via leasing arrangements with independent tower operators. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-104bd633f42dde"
+       ],
+       "original_date": "2026-11-17",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "TrendForce projects the global 5G infrastructure market value will reach US$55 billion in 2027. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-cd26f69f0d4a5e"
+       ],
+       "original_date": "2026-11-17",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "SpaceX is expanding into the US mobile communications market, moving away from proprietary RAN architectures dominated by Ericsson and Nokia."
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-be4e910e74a76d"
+       ],
+       "original_date": "2026-11-17",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Qualcomm's O-RAN chipset approach could substantially reduce the cost of deploying tens of thousands of 5G base stations across the US."
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a6b3b9ade69a41"
+       ],
+       "original_date": "2026-11-17",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Suppliers of 5G base station components are positioned to gain new business opportunities from the SpaceX-Qualcomm rollout."
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 11 pieces of evidence from A-0d74e1cecf17 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-19 09:15 UTC, analysed as of 2026-11-19, from a source published 2026-11-17; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-cd26f69f0d4a5e",
+       "C-86a3fd39462e13"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "SpaceX adopts open-RAN Qualcomm chipsets instead of proprietary Ericsson/Nokia RAN for US mobile buildout."
+     },
+     {
+      "claim_ids": [
+       "C-8203a22affca52",
+       "C-a6b3b9ade69a41",
+       "C-2b9dca96bd1262"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Rollout across ~80,000 leased sites drives chipset, antenna, power-amplifier and tower-leasing volumes for ecosystem suppliers. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-be4e910e74a76d",
+       "C-2ef7379e80a325"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "Pre-integrated O-RAN chipsets substantially reduce SpaceX's cost of deploying tens of thousands of base stations."
+     },
+     {
+      "claim_ids": [
+       "C-2b9dca96bd1262"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Incremental volumes would lift revenue at Qualcomm and named suppliers, but no earnings figure is given."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-104bd633f42dde",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "5G infrastructure market value",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "TrendForce projects the global 5G infrastructure\u2019s market value will reach US$55 billion in 2027, up 24.3% YoY",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 55.0,
+      "value_text": "US$55 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8203a22affca52",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "base station sites leased",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "approximately",
+       "independent tower operators"
+      ],
+      "quote": "SpaceX secured access to approximately 80,000 base station sites through leasing arrangements with independent tower operators",
+      "role": "catalyst",
+      "unit": "sites",
+      "value": 80000.0,
+      "value_text": "approximately 80,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9d6c30b9a21ae9",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "spectrum acquired",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "October 2026",
+      "qualifiers": [
+       "from Grain Management"
+      ],
+      "quote": "In October 2026, the company further strengthened its spectrum portfolio by acquiring critical 800 MHz mobile communications spectrum from Grain Management.",
+      "role": "catalyst",
+      "unit": "MHz",
+      "value": 800.0,
+      "value_text": "800 MHz"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1cb3780fe80f54",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Integrating Dragonwing-powered terrestrial 5G base stations with a 3GPP NTN-compliant LEO satellite constellation could address indoor link-budget losses and high-density capacity constraints.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "could effectively address",
+       "two major limitations"
+      ],
+      "quote": "integrating terrestrial 5G base stations powered by Qualcomm\u2019s Dragonwing platform with a low Earth orbit (LEO) satellite constellation compliant with 3GPP Non-Terrestrial Network (NTN) standards could effectively address two major limitations of conventional satellite connectivity",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2b9dca96bd1262",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "TrendForce names Amphenol (antennas), Qorvo (power amplifiers), American Tower and Crown Castle (tower leasing/site infrastructure) as potential beneficiaries within Qualcomm's ecosystem.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "potential suppliers"
+      ],
+      "quote": "Potential suppliers include Amphenol for base station antenna development and Qorvo for power amplifiers (PAs), while American Tower and Crown Castle could provide tower leasing and site infrastructure support.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7e65ed86bfa033",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Qualcomm will complete RU-DU fronthaul interoperability testing at the factory before shipment, reducing multi-vendor integration complexity to enable faster large-scale deployment.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "pre-integrated approach"
+      ],
+      "quote": "Qualcomm will complete the integration and interoperability testing of RU-DU fronthaul interfaces before the equipment leaves the factory, helping ensure stable signal transmission during actual network operations",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-86a3fd39462e13",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "SpaceX and Qualcomm announced a multi-year supply agreement for SpaceX to adopt Qualcomm's Dragonwing 5G base station chipset solutions.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "multi-year supply agreement"
+      ],
+      "quote": "SpaceX and Qualcomm recently announced a multi-year supply agreement under which SpaceX will widely adopt Qualcomm\u2019s Dragonwing 5G base station chipset solutions.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a6b3b9ade69a41",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Suppliers of 5G base station components are positioned to gain new business opportunities from the SpaceX-Qualcomm rollout.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "suppliers of 5G base station components are also positioned to gain new business opportunities",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-be4e910e74a76d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Qualcomm's O-RAN chipset approach could substantially reduce the cost of deploying tens of thousands of 5G base stations across the US.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "tens of thousands of base stations"
+      ],
+      "quote": "This approach could substantially reduce the cost of deploying tens of thousands of 5G base stations across the United States.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cd26f69f0d4a5e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "SpaceX is expanding into the US mobile communications market, moving away from proprietary RAN architectures dominated by Ericsson and Nokia.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "SpaceX is actively expanding into the U.S. mobile communications market, moving away from the proprietary radio access network (RAN) architectures traditionally dominated by telecommunications equipment giants such as Ericsson and Nokia.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cdaa2ff5d689c7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "O-RAN operators have faced interoperability challenges when sourcing DUs, RUs and CUs from different vendors due to signal compatibility issues.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "interoperability challenges"
+      ],
+      "quote": "telecommunications operators deploying O-RAN networks have faced interoperability challenges when sourcing distributed units (DUs), radio units (RUs), and centralized units (CUs) from different equipment manufacturers",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0d74e1cecf17",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e0baaa82081de3",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Terrestrial base stations handling urban traffic offload and indoor coverage would operate with the satellite constellation as a space-terrestrial heterogeneous network (ST-HetNet) supporting comprehensive telecom services.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "ST-HetNet"
+      ],
+      "quote": "these complementary networks would enable coordinated operation through a space-terrestrial heterogeneous network (ST-HetNet), supporting a comprehensive range of telecommunications services",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-af16c144657ef0",
+       "name_as_written": "Dragonwing",
+       "other_securities": [],
+       "quote": "Qualcomm\u2019s Dragonwing 5G base station chipset solutions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Qualcomm's 5G base station chipset platform"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e0c56b815b06e2",
+       "name_as_written": "EchoStar",
+       "other_securities": [],
+       "quote": "a combined 65 MHz of mid-band spectrum from EchoStar",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Seller of mid-band spectrum to SpaceX"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-daa1ee4c8d5919",
+       "name_as_written": "Grain Management",
+       "other_securities": [],
+       "quote": "acquiring critical 800 MHz mobile communications spectrum from Grain Management",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Seller of 800 MHz spectrum to SpaceX"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-530b3eac8f1c74",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author and research publisher"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": "0000804328",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-11-04 (accession 0000804328-26-000128) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.0001 par value",
+         "ticker": "QCOM"
+        }
+       ],
+       "mention_id": "M-65591d2c9b42e9",
+       "name_as_written": "Qualcomm",
+       "other_securities": [],
+       "quote": "SpaceX and Qualcomm recently announced a multi-year supply agreement under which SpaceX will widely adopt Qualcomm\u2019s Dragonwing 5G base station chipset solutions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier of Dragonwing 5G base station chipsets to SpaceX"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": "0000820313",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.001 par value",
+         "ticker": "APH"
+        }
+       ],
+       "mention_id": "M-ce13574e8758e4",
+       "name_as_written": "Amphenol",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.375% Senior Notes due 2029",
+         "ticker": "APH29B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Senior Notes due 2032",
+         "ticker": "APH32"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001104659-26-120646) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.875% Senior Notes due 2034",
+         "ticker": "APH34A"
+        }
+       ],
+       "quote": "Amphenol for base station antenna development",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Potential supplier of base station antennas"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-265fbd9a2fe351",
+       "name_as_written": "Qorvo",
+       "other_securities": [],
+       "quote": "Qorvo for power amplifiers (PAs)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Potential supplier of power amplifiers"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": "0001053507",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "AMT"
+        }
+       ],
+       "mention_id": "M-2ded8791e8ec7a",
+       "name_as_written": "American Tower",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.450% Senior Notes due 2027",
+         "ticker": "AMT 27C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.400% Senior Notes due 2027",
+         "ticker": "AMT 27D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.125% Senior Notes due 2027",
+         "ticker": "AMT 27F"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.500% Senior Notes due 2028",
+         "ticker": "AMT 28A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.875% Senior Notes due 2029",
+         "ticker": "AMT 29B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.950% Senior Notes due 2030",
+         "ticker": "AMT 30C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.900% Senior Notes due 2030",
+         "ticker": "AMT 30D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.625% Senior Notes due 2031",
+         "ticker": "AMT 31B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.000% Senior Notes due 2032",
+         "ticker": "AMT 32"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.625% Senior Notes due 2032",
+         "ticker": "AMT 32B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.250% Senior Notes due 2033",
+         "ticker": "AMT 33"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.000% Senior Notes due 2033",
+         "ticker": "AMT 33D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-27 (accession 0001053507-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.100% Senior Notes due 2034",
+         "ticker": "AMT 34A"
+        }
+       ],
+       "quote": "American Tower and Crown Castle could provide tower leasing and site infrastructure support",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Potential provider of tower leasing and site infrastructure"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": "0001051470",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-04 (accession 0001051470-26-000090) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "CCI"
+        }
+       ],
+       "mention_id": "M-56cbde2bb1af93",
+       "name_as_written": "Crown Castle",
+       "other_securities": [],
+       "quote": "American Tower and Crown Castle could provide tower leasing and site infrastructure support",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Potential provider of tower leasing and site infrastructure"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": "0000717826",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-d4640d218a8544",
+       "name_as_written": "Ericsson",
+       "other_securities": [],
+       "quote": "telecommunications equipment giants such as Ericsson and Nokia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potentially_harmed",
+       "role_detail": "Traditional RAN equipment giant SpaceX is moving away from"
+      },
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": "0000924613",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-882731ff0040ac",
+       "name_as_written": "Nokia",
+       "other_securities": [],
+       "quote": "telecommunications equipment giants such as Ericsson and Nokia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potentially_harmed",
+       "role_detail": "Traditional RAN equipment giant SpaceX is moving away from"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-0d74e1cecf17",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-bd04c578553782",
+       "name_as_written": "SpaceX",
+       "other_securities": [],
+       "quote": "SpaceX and Qualcomm recently announced a multi-year supply agreement",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Operator deploying tens of thousands of 5G base stations and adopting Qualcomm chipsets"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-0d74e1cecf17",
+       "claim_ids": [
+        "C-104bd633f42dde",
+        "C-745951e9caf32c"
+       ],
+       "direction": "positive",
+       "name": "5G infrastructure",
+       "provenance": "FORECAST",
+       "quote": "the global 5G infrastructure\u2019s market value"
+      }
+     ],
+     "sectors": [
+      "Telecommunications",
+      "5G base station components",
+      "Tower leasing"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Large-scale commercial US 5G rollout following October 2026 spectrum acquisition and tower leasing [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-86a3fd39462e13",
+        "C-8203a22affca52"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "The agreement and spectrum/tower moves are secured, but commercial-scale deployment revenue is a multi-year rollout. \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-cd26f69f0d4a5e",
+        "C-be4e910e74a76d",
+        "C-2b9dca96bd1262"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A new O-RAN-based operator scaling in US mobile shifts chipset and component share toward Qualcomm's ecosystem and away from traditional RAN giants."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-2315C45951: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-CD79589854: same value-chain node, not the same claim \u2014 a different mechanism (margin_expansion_adoption vs competitive_share_shift); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SpaceX selecting non-Qualcomm or incumbent RAN vendors for scale deployment"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delays in US commercial mobile rollout"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Component orders going to suppliers other than those named"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue or earnings magnitude for Qualcomm or any named supplier"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Timeline and pace of the base-station rollout"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named 'potential' suppliers actually win the contracts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether cost savings translate into supplier volume gains versus margin pressure"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SpaceX scales back US mobile plans"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Qualcomm chipset volumes prove immaterial to earnings"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check Qualcomm's disclosed 5G infrastructure revenue exposure and the base-station content per site for Amphenol and Qorvo to gauge potential upside from an ~80,000-site rollout."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Confirmed supplier awards to Amphenol, Qorvo, American Tower or Crown Castle"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Disclosed deployment schedule or unit volumes for SpaceX base stations"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-9d6c30b9a21ae9: measured 2026-10-31 (19 days before the as-of); C-8203a22affca52: measured 2026-11-17 (2 days before the as-of); C-86a3fd39462e13: measured 2026-11-17 (2 days before the as-of); source-named exposure(s): Qualcomm (QCOM), Amphenol (APH), American Tower (AMT), Crown Castle (CCI), sector: 5G infrastructure; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-0d74e1cecf17",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-9d6c30b9a21ae9",
+       "C-8203a22affca52",
+       "C-86a3fd39462e13",
+       "C-104bd633f42dde",
+       "C-cd26f69f0d4a5e",
+       "C-be4e910e74a76d",
+       "C-a6b3b9ade69a41",
+       "C-2b9dca96bd1262",
+       "C-1cb3780fe80f54",
+       "C-e0baaa82081de3",
+       "C-cdaa2ff5d689c7",
+       "C-7e65ed86bfa033"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-17T16:48:56+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "SpaceX\u2019s Adoption of Qualcomm 5G Chipsets Could Significantly Reduce the Cost of Deploying Tens of Thousands of Base Stations, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261117-13309.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "bd7176c32d4deb60d2e2e64ab7f05672addcf546c0074a489e052d7632019b63",
+   "created_at": "2026-11-19T09:15:40.964251Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-9d6c30b9a21ae9: measured 2026-10-31 (19 days before the as-of); C-8203a22affca52: measured 2026-11-17 (2 days before the as-of); C-86a3fd39462e13: measured 2026-11-17 (2 days before the as-of); source-named exposure(s): Qualcomm (QCOM), Amphenol (APH), American Tower (AMT), Crown Castle (CCI), sector: 5G infrastructure; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-86a3fd39462e13",
+       "C-104bd633f42dde",
+       "C-cd26f69f0d4a5e",
+       "C-9d6c30b9a21ae9",
+       "C-8203a22affca52"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "5"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-9d6c30b9a21ae9",
+       "C-8203a22affca52",
+       "C-86a3fd39462e13"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-9d6c30b9a21ae9: measured 2026-10-31 (19 days before the as-of); C-8203a22affca52: measured 2026-11-17 (2 days before the as-of); C-86a3fd39462e13: measured 2026-11-17 (2 days before the as-of)); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Qualcomm (QCOM), Amphenol (APH), American Tower (AMT), Crown Castle (CCI), sector: 5G infrastructure",
+      "value": "4 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-9d6c30b9a21ae9",
+       "C-8203a22affca52"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "2 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 5 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-9d6c30b9a21ae9: measured 2026-10-31 (19 days before the as-of); C-8203a22affca52: measured 2026-11-17 (2 days before the as-of); C-86a3fd39462e13: measured 2026-11-17 (2 days before the as-of); source-named exposure(s): Qualcomm (QCOM), Amphenol (APH), American Tower (AMT), Crown Castle (CCI), sector: 5G infrastructure; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261119T090734Z-scan",
+   "thesis_id": "TH-1862C3F60F",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-0d74e1cecf17",
+   "block_ids": [
+    "b018",
+    "b017"
+   ],
+   "claim_ids": [
+    "C-2b9dca96bd1262",
+    "C-a6b3b9ade69a41"
+   ],
+   "excerpt": "\u2026be among the primary beneficiaries. Potential suppliers include Amphenol for base station antenna\u2026",
+   "name": "suppliers"
+  },
+  {
+   "article_id": "A-0d74e1cecf17",
+   "block_ids": [
+    "b005"
+   ],
+   "claim_ids": [
+    "C-2ef7379e80a325"
+   ],
+   "excerpt": "\u2026system integration across equipment from multiple vendors, thereby accelerating the large-scale\u2026",
+   "name": "vendors"
+  },
+  {
+   "article_id": "A-0d74e1cecf17",
+   "block_ids": [
+    "b012"
+   ],
+   "claim_ids": [
+    "C-cdaa2ff5d689c7"
+   ],
+   "excerpt": "\u2026centralized units (CUs) from different equipment manufacturers. This is because variations in vendor\u2026",
+   "name": "manufacturers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-2ef7379e80a325",
+  "C-745951e9caf32c"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.4": "Cited span says 'this approach could substantially reduce the cost' but does not attribute the cost reduction specifically to Qualcomm's O-RAN chipset approach; however the attribution is a mild gloss and consistent with source."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+ ],
+ "withheld_sentences": {}
+}

@@ -1,0 +1,1666 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:24:23.861747Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "market_regime",
+   "last_material_update": "2026-11-05",
+   "latest_article_date": "2026-11-05",
+   "region": "Emerging Markets",
+   "research_action": "WATCH",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-3903547D15",
+   "title": "EM credit maturity turns returns to fundamentals, rewarding selective credit picking"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-c27be2324a1e75",
+     "C-bcdb3a715648ad",
+     "C-c9254ee82f1259",
+     "C-1fbb78804a69f9",
+     "C-76e879ce69c1d6"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "GSAM argues EM credit has matured into a more diverse, resilient asset class where the oil-price shock produced dispersion across credits rather than uniform stress, so returns are increasingly driven by fundamentals and credit selection rather than EM beta."
+   },
+   {
+    "claim_ids": [
+     "C-bcdb3a715648ad",
+     "C-76e879ce69c1d6"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Investors should be selective in EM credit because credit selection now matters more than broad beta exposure."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article offers no quantified spread, return or default data to verify the resilience and dispersion claims, so the thesis is a qualitative regime view an analyst would need to test against actual EM credit performance."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1412e61c6f2ec2"
+     ],
+     "original_date": "2026-11-05",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "There are now more than 80 countries in the EM sovereign space."
+    },
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c9254ee82f1259"
+     ],
+     "original_date": "2026-11-05",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The mix of energy exporters and importers within EM credit creates greater differentiation across issuers rather than broad-based selloffs."
+    },
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1fbb78804a69f9"
+     ],
+     "original_date": "2026-11-05",
+     "period": "this cycle",
+     "provenance": "SOURCE OPINION",
+     "text": "In this shock cycle there has been dispersion across EM credits rather than uniform stress."
+    },
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c27be2324a1e75"
+     ],
+     "original_date": "2026-11-05",
+     "period": "this year",
+     "provenance": "SOURCE OPINION",
+     "text": "EM sovereign and corporate bonds weathered the oil-price shock with stability and solid performance."
+    },
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-bcdb3a715648ad"
+     ],
+     "original_date": "2026-11-05",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Fundamental improvements may have reduced binary tail risk in EM credit, making credit selection matter more."
+    },
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d98d0c4f023f33"
+     ],
+     "original_date": "2026-11-05",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "EM sovereigns now have deeper local-currency markets, stronger reserve buffers, more credible inflation policy and deeper domestic investor bases."
+    },
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 14 pieces of evidence from A-dbb0f34f3a6c \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:24 UTC, analysed as of 2026-11-10, from a source published 2026-11-05; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-1412e61c6f2ec2",
+     "C-d98d0c4f023f33",
+     "C-c60b3baec7a956"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "EM sovereign and corporate markets have deepened with stronger reserve buffers, more credible inflation policy, more than 80 sovereign issuers and improved IFRS-aligned disclosure."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+   },
+   {
+    "claim_ids": [
+     "C-c9254ee82f1259",
+     "C-1fbb78804a69f9"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "market_reaction",
+    "text": "In the oil-shock cycle, energy exporters and importers diverged, producing dispersion across credits rather than a broad-based selloff."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1412e61c6f2ec2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "number of EM sovereign countries",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "more than"
+    ],
+    "quote": "Now, there are more than 80 countries offering a far wider range of potential opportunities",
+    "role": "supports",
+    "unit": "countries",
+    "value": 80.0,
+    "value_text": "more than 80"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b028",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1fbb78804a69f9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "In this shock cycle there has been dispersion across EM credits rather than uniform stress.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "this cycle",
+    "qualifiers": [],
+    "quote": "we have not seen uniform stress across the market but rather a dispersion across credits",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2709aad49b07f4",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The historical transparency discount has narrowed; EM corporate disclosure now looks much closer to developed-market standards.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "If you look at the investable universe in EM corporates today, disclosure looks much closer to what we see in developed markets",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2b4242116bd352",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "EM corporate issuers are increasingly globally competitive, hard-currency industry leaders supported by deeper domestic investor bases.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "issuers are companies with footprints that extend beyond their borders\u2014 they are globally competitive, industry leaders that deal in hard currency",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-54716d0d38a4e8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "EM risk premiums, historically demanded due to governance and policy-framework concerns, have compressed meaningfully.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "there has always been a demand for higher risk premiums because of perceived notions around governance and weakness in policy frameworks. I think this has moved quite a bit",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5d484dc0ab9374",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "On an aggregate level EM has seen greater focus on fiscal and monetary orthodoxy, though progress is non-linear with some countries moving backward.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "aggregate level",
+     "not a linear progression"
+    ],
+    "quote": "there has been a greater focus on fiscal orthodoxy and monetary orthodoxy",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b030",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-76e879ce69c1d6",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "EM credit returns are increasingly driven by fundamentals and valuations rather than broad EM beta.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "returns are increasingly driven by fundamentals and valuations, and that is a very different proposition from simply owning what we used to call the EM beta trade",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-bcdb3a715648ad",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Fundamental improvements may have reduced binary tail risk in EM credit, making credit selection matter more.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "fundamental improvements that may have reduced binary tail risk",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c27be2324a1e75",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "EM sovereign and corporate bonds weathered the oil-price shock with stability and solid performance.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "this year",
+    "qualifiers": [],
+    "quote": "emerging market sovereign and corporate bonds weathered the shock with a newfound stability and solid performance for investors",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c60b3baec7a956",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "EM issuers increasingly use standardized IFRS or IFRS-aligned reporting, improving comparability and transparency.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "standardized reporting of data under International Financial Reporting Standards (IFRS) or IFRS-aligned frameworks",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c9254ee82f1259",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The mix of energy exporters and importers within EM credit creates greater differentiation across issuers rather than broad-based selloffs.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "In emerging market credit, we have energy exporters and importers, right? This creates greater differentiation across issuers",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d98d0c4f023f33",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "EM sovereigns now have deeper local-currency markets, stronger reserve buffers, more credible inflation policy and deeper domestic investor bases.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "you\u2019ll see deep local-currency markets with stronger reserve buffers. This means more liquidity. There are also more credible inflation-policy frameworks and deeper domestic investor bases",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e8fc2a46b50b6a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The US dollar constraint on EM debt is less binding than in previous cycles.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The US dollar constraint is less binding than it used to be in previous cycles",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-dbb0f34f3a6c",
+    "block_id": "b026",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f2f5889a27f288",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "EM issuers have improved investor communications (quarterly reporting, presentations, earnings calls, roadshows) comparable to developed markets.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Issuers have also improved communications with investors\u2014quarterly reporting, presentations, earnings calls, roadshows\u2014just as we see in developed markets",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-45b96908a2e261",
+     "name_as_written": "Goldman Sachs Executive Office",
+     "other_securities": [],
+     "quote": "Goldman Sachs Executive Office",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Prepared the document"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-1412e61c6f2ec2"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Emerging market sovereign debt universe of more than 80 countries, named without listing members (constituents not named by the source)"
+    }
+   ],
+   "companies": [
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "publisher",
+     "listings": [],
+     "mention_id": "M-127dc567ac4287",
+     "name_as_written": "Goldman Sachs Asset Management",
+     "other_securities": [],
+     "quote": "Goldman Sachs Asset Management",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Source of the views; manages emerging market debt"
+    },
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-44ad46df8de3d4",
+     "name_as_written": "International Financial Reporting Standards (IFRS)",
+     "other_securities": [],
+     "quote": "International Financial Reporting Standards (IFRS)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Accounting standards framework cited as evidence of improved EM corporate disclosure comparability."
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-dbb0f34f3a6c",
+     "claim_ids": [
+      "C-bcdb3a715648ad",
+      "C-76e879ce69c1d6"
+     ],
+     "direction": "positive",
+     "name": "emerging market credit",
+     "provenance": "SOURCE OPINION",
+     "quote": "emerging market credit (EM credit)"
+    }
+   ],
+   "sectors": [
+    "emerging market credit",
+    "emerging market sovereign bonds",
+    "emerging market corporate bonds"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-407a0d5a513192",
+      "C-1fbb78804a69f9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The article points to this year's oil shock producing dispersion rather than uniform stress, supporting a near-term selective stance."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-d98d0c4f023f33",
+      "C-e8fc2a46b50b6a",
+      "C-c60b3baec7a956",
+      "C-76e879ce69c1d6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Over the past decade EM credit has structurally matured: deeper local-currency markets, a less binding dollar constraint, broader issuer base and better data make it a more resilient, diverse asset class."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-740b2897df07cd",
+      "C-54716d0d38a4e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "EM credit historically carried a crisis label and a higher risk premium for weak governance and policy; the article acknowledges some countries move backward and risks remain."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection); a different geography (US vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs dispersion_selection); a different geography (Canada vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection); a different geography (China vs Emerging Markets); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-55C1780FB4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs dispersion_selection); a different geography (Germany vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-69FB9B5CE8: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs dispersion_selection) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D29D1FDA4D: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs dispersion_selection); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-FBDC863613: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs dispersion_selection); a different geography (US vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A broad-based EM credit selloff with uniform spread widening in a future shock"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Rising EM sovereign defaults or currency crises despite reserve buffers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that dollar strength again constrains EM debt servicing"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-bcdb3a715648ad",
+      "C-54716d0d38a4e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "EM bonds still span a wide risk range and some countries are moving backward, so investors must be selective; risks remain despite the asset class's maturation. (scope: Applies to the broad EM credit asset class (sovereign and corporate), as framed by GSAM; not tied to a specific issuer.)"
+    },
+    {
+     "claim_ids": [
+      "C-05911e74189664"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "In my view, it has become a more diverse and resilient asset class, though risks remain.\u201d (scope: \u27e8the source's own words, page 2 \u2014 a risk no model pass listed (risk scan)\u27e9)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No quantified EM credit spreads, returns, default rates or Sharpe ratios are provided to verify resilience and dispersion"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the observed dispersion reflects structural maturity versus a benign shock, and whether the association shown is causal"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "How selected EM credits are priced versus fundamentals currently"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A new shock triggers a broad-based EM credit selloff"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "EM default or downgrade cycle accelerates"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Pull actual EM sovereign and corporate credit spreads, returns and default data through the oil-shock period to test whether dispersion (not uniform stress) and the claimed resilience and attractive Sharpe ratios hold up."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hard data confirm EM corporate Sharpe ratios and low correlation with developed-market credit"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Future shocks produce credit dispersion rather than broad EM selloffs"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-dbb0f34f3a6c",
+    "authors": [
+     "Goldman Sachs"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-c27be2324a1e75",
+     "C-1412e61c6f2ec2",
+     "C-bcdb3a715648ad",
+     "C-d98d0c4f023f33",
+     "C-e8fc2a46b50b6a",
+     "C-c60b3baec7a956",
+     "C-c9254ee82f1259",
+     "C-1fbb78804a69f9",
+     "C-76e879ce69c1d6",
+     "C-5d484dc0ab9374",
+     "C-54716d0d38a4e8",
+     "C-2b4242116bd352",
+     "C-2709aad49b07f4",
+     "C-f2f5889a27f288",
+     "C-05911e74189664"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-05T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "Emerging Market Credit Shows Resilience amid Energy Shock",
+    "upstream_origins": [
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:6aad4e2f7b2f5c8632b69e97448bbc9226a38ed40130f8f16d4b1eadc7882462",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [],
+  "created_at": "2026-11-10T19:09:05.595552Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "none proposed: This is a qualitative market-regime view about EM credit breadth, dispersion and the merits of credit selection over beta. Step s03.1 is explicitly flagged NOT APPLICABLE: it argues a market-structure claim (breadth, correlation, dispersion), not an earnings mechanism, and its research use is SELECT"
+  ],
+  "run_id": "R-20261110T190855Z-enrich",
+  "set_id": "ES-f47028265f4126",
+  "thesis_id": "TH-3903547D15",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-dbb0f34f3a6c",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:24:23.861747Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "market_regime",
+     "last_material_update": "2026-11-05",
+     "latest_article_date": "2026-11-05",
+     "region": "Emerging Markets",
+     "research_action": "WATCH",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-3903547D15",
+     "title": "EM credit maturity turns returns to fundamentals, rewarding selective credit picking"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-c27be2324a1e75",
+       "C-bcdb3a715648ad",
+       "C-c9254ee82f1259",
+       "C-1fbb78804a69f9",
+       "C-76e879ce69c1d6"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "GSAM argues EM credit has matured into a more diverse, resilient asset class where the oil-price shock produced dispersion across credits rather than uniform stress, so returns are increasingly driven by fundamentals and credit selection rather than EM beta."
+     },
+     {
+      "claim_ids": [
+       "C-bcdb3a715648ad",
+       "C-76e879ce69c1d6"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Investors should be selective in EM credit because credit selection now matters more than broad beta exposure."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article offers no quantified spread, return or default data to verify the resilience and dispersion claims, so the thesis is a qualitative regime view an analyst would need to test against actual EM credit performance."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1412e61c6f2ec2"
+       ],
+       "original_date": "2026-11-05",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "There are now more than 80 countries in the EM sovereign space."
+      },
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c9254ee82f1259"
+       ],
+       "original_date": "2026-11-05",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The mix of energy exporters and importers within EM credit creates greater differentiation across issuers rather than broad-based selloffs."
+      },
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1fbb78804a69f9"
+       ],
+       "original_date": "2026-11-05",
+       "period": "this cycle",
+       "provenance": "SOURCE OPINION",
+       "text": "In this shock cycle there has been dispersion across EM credits rather than uniform stress."
+      },
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c27be2324a1e75"
+       ],
+       "original_date": "2026-11-05",
+       "period": "this year",
+       "provenance": "SOURCE OPINION",
+       "text": "EM sovereign and corporate bonds weathered the oil-price shock with stability and solid performance."
+      },
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-bcdb3a715648ad"
+       ],
+       "original_date": "2026-11-05",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Fundamental improvements may have reduced binary tail risk in EM credit, making credit selection matter more."
+      },
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d98d0c4f023f33"
+       ],
+       "original_date": "2026-11-05",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "EM sovereigns now have deeper local-currency markets, stronger reserve buffers, more credible inflation policy and deeper domestic investor bases."
+      },
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 14 pieces of evidence from A-dbb0f34f3a6c \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:24 UTC, analysed as of 2026-11-10, from a source published 2026-11-05; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-1412e61c6f2ec2",
+       "C-d98d0c4f023f33",
+       "C-c60b3baec7a956"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "EM sovereign and corporate markets have deepened with stronger reserve buffers, more credible inflation policy, more than 80 sovereign issuers and improved IFRS-aligned disclosure."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "NOT APPLICABLE \u2014 a market-regime record argues a market structure (breadth, correlation, dispersion), not an earnings mechanism; its research use is SELECTION, not an earnings call"
+     },
+     {
+      "claim_ids": [
+       "C-c9254ee82f1259",
+       "C-1fbb78804a69f9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "market_reaction",
+      "text": "In the oil-shock cycle, energy exporters and importers diverged, producing dispersion across credits rather than a broad-based selloff."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1412e61c6f2ec2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "number of EM sovereign countries",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "more than"
+      ],
+      "quote": "Now, there are more than 80 countries offering a far wider range of potential opportunities",
+      "role": "supports",
+      "unit": "countries",
+      "value": 80.0,
+      "value_text": "more than 80"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1fbb78804a69f9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "In this shock cycle there has been dispersion across EM credits rather than uniform stress.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "this cycle",
+      "qualifiers": [],
+      "quote": "we have not seen uniform stress across the market but rather a dispersion across credits",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2709aad49b07f4",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The historical transparency discount has narrowed; EM corporate disclosure now looks much closer to developed-market standards.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "If you look at the investable universe in EM corporates today, disclosure looks much closer to what we see in developed markets",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2b4242116bd352",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "EM corporate issuers are increasingly globally competitive, hard-currency industry leaders supported by deeper domestic investor bases.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "issuers are companies with footprints that extend beyond their borders\u2014 they are globally competitive, industry leaders that deal in hard currency",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-54716d0d38a4e8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "EM risk premiums, historically demanded due to governance and policy-framework concerns, have compressed meaningfully.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "there has always been a demand for higher risk premiums because of perceived notions around governance and weakness in policy frameworks. I think this has moved quite a bit",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5d484dc0ab9374",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "On an aggregate level EM has seen greater focus on fiscal and monetary orthodoxy, though progress is non-linear with some countries moving backward.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "aggregate level",
+       "not a linear progression"
+      ],
+      "quote": "there has been a greater focus on fiscal orthodoxy and monetary orthodoxy",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b030",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-76e879ce69c1d6",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "EM credit returns are increasingly driven by fundamentals and valuations rather than broad EM beta.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "returns are increasingly driven by fundamentals and valuations, and that is a very different proposition from simply owning what we used to call the EM beta trade",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bcdb3a715648ad",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Fundamental improvements may have reduced binary tail risk in EM credit, making credit selection matter more.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "fundamental improvements that may have reduced binary tail risk",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c27be2324a1e75",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "EM sovereign and corporate bonds weathered the oil-price shock with stability and solid performance.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "this year",
+      "qualifiers": [],
+      "quote": "emerging market sovereign and corporate bonds weathered the shock with a newfound stability and solid performance for investors",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c60b3baec7a956",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "EM issuers increasingly use standardized IFRS or IFRS-aligned reporting, improving comparability and transparency.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "standardized reporting of data under International Financial Reporting Standards (IFRS) or IFRS-aligned frameworks",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c9254ee82f1259",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The mix of energy exporters and importers within EM credit creates greater differentiation across issuers rather than broad-based selloffs.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "In emerging market credit, we have energy exporters and importers, right? This creates greater differentiation across issuers",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d98d0c4f023f33",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "EM sovereigns now have deeper local-currency markets, stronger reserve buffers, more credible inflation policy and deeper domestic investor bases.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "you\u2019ll see deep local-currency markets with stronger reserve buffers. This means more liquidity. There are also more credible inflation-policy frameworks and deeper domestic investor bases",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e8fc2a46b50b6a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The US dollar constraint on EM debt is less binding than in previous cycles.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The US dollar constraint is less binding than it used to be in previous cycles",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-dbb0f34f3a6c",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f2f5889a27f288",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "EM issuers have improved investor communications (quarterly reporting, presentations, earnings calls, roadshows) comparable to developed markets.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Issuers have also improved communications with investors\u2014quarterly reporting, presentations, earnings calls, roadshows\u2014just as we see in developed markets",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-45b96908a2e261",
+       "name_as_written": "Goldman Sachs Executive Office",
+       "other_securities": [],
+       "quote": "Goldman Sachs Executive Office",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Prepared the document"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-1412e61c6f2ec2"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Emerging market sovereign debt universe of more than 80 countries, named without listing members (constituents not named by the source)"
+      }
+     ],
+     "companies": [
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "publisher",
+       "listings": [],
+       "mention_id": "M-127dc567ac4287",
+       "name_as_written": "Goldman Sachs Asset Management",
+       "other_securities": [],
+       "quote": "Goldman Sachs Asset Management",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Source of the views; manages emerging market debt"
+      },
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-44ad46df8de3d4",
+       "name_as_written": "International Financial Reporting Standards (IFRS)",
+       "other_securities": [],
+       "quote": "International Financial Reporting Standards (IFRS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Accounting standards framework cited as evidence of improved EM corporate disclosure comparability."
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-dbb0f34f3a6c",
+       "claim_ids": [
+        "C-bcdb3a715648ad",
+        "C-76e879ce69c1d6"
+       ],
+       "direction": "positive",
+       "name": "emerging market credit",
+       "provenance": "SOURCE OPINION",
+       "quote": "emerging market credit (EM credit)"
+      }
+     ],
+     "sectors": [
+      "emerging market credit",
+      "emerging market sovereign bonds",
+      "emerging market corporate bonds"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-407a0d5a513192",
+        "C-1fbb78804a69f9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article points to this year's oil shock producing dispersion rather than uniform stress, supporting a near-term selective stance."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-d98d0c4f023f33",
+        "C-e8fc2a46b50b6a",
+        "C-c60b3baec7a956",
+        "C-76e879ce69c1d6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Over the past decade EM credit has structurally matured: deeper local-currency markets, a less binding dollar constraint, broader issuer base and better data make it a more resilient, diverse asset class."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-740b2897df07cd",
+        "C-54716d0d38a4e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "EM credit historically carried a crisis label and a higher risk premium for weak governance and policy; the article acknowledges some countries move backward and risks remain."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection); a different geography (US vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs dispersion_selection); a different geography (Canada vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs dispersion_selection); a different geography (China vs Emerging Markets); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-55C1780FB4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs dispersion_selection); a different geography (Germany vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-69FB9B5CE8: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs dispersion_selection) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D29D1FDA4D: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs dispersion_selection); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-FBDC863613: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs dispersion_selection); a different geography (US vs Emerging Markets) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A broad-based EM credit selloff with uniform spread widening in a future shock"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rising EM sovereign defaults or currency crises despite reserve buffers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that dollar strength again constrains EM debt servicing"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-bcdb3a715648ad",
+        "C-54716d0d38a4e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "EM bonds still span a wide risk range and some countries are moving backward, so investors must be selective; risks remain despite the asset class's maturation. (scope: Applies to the broad EM credit asset class (sovereign and corporate), as framed by GSAM; not tied to a specific issuer.)"
+      },
+      {
+       "claim_ids": [
+        "C-05911e74189664"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "In my view, it has become a more diverse and resilient asset class, though risks remain.\u201d (scope: \u27e8the source's own words, page 2 \u2014 a risk no model pass listed (risk scan)\u27e9)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No quantified EM credit spreads, returns, default rates or Sharpe ratios are provided to verify resilience and dispersion"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the observed dispersion reflects structural maturity versus a benign shock, and whether the association shown is causal"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "How selected EM credits are priced versus fundamentals currently"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A new shock triggers a broad-based EM credit selloff"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "EM default or downgrade cycle accelerates"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Pull actual EM sovereign and corporate credit spreads, returns and default data through the oil-shock period to test whether dispersion (not uniform stress) and the claimed resilience and attractive Sharpe ratios hold up."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hard data confirm EM corporate Sharpe ratios and low correlation with developed-market credit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Future shocks produce credit dispersion rather than broad EM selloffs"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-dbb0f34f3a6c",
+      "authors": [
+       "Goldman Sachs"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-c27be2324a1e75",
+       "C-1412e61c6f2ec2",
+       "C-bcdb3a715648ad",
+       "C-d98d0c4f023f33",
+       "C-e8fc2a46b50b6a",
+       "C-c60b3baec7a956",
+       "C-c9254ee82f1259",
+       "C-1fbb78804a69f9",
+       "C-76e879ce69c1d6",
+       "C-5d484dc0ab9374",
+       "C-54716d0d38a4e8",
+       "C-2b4242116bd352",
+       "C-2709aad49b07f4",
+       "C-f2f5889a27f288",
+       "C-05911e74189664"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-05T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Emerging Market Credit Shows Resilience amid Energy Shock",
+      "upstream_origins": [
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:6aad4e2f7b2f5c8632b69e97448bbc9226a38ed40130f8f16d4b1eadc7882462",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "222167440271150129e9652d591fc0e518a49cc6efcbd771cdda5fefc4508f62",
+   "created_at": "2026-11-10T15:24:54.562099Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-1412e61c6f2ec2"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7157f87b7a71",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "a market-regime record argues a market structure, not an earnings mechanism",
+      "value": "n/a (market-regime record)"
+     },
+     {
+      "claim_ids": [
+       "C-1412e61c6f2ec2"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-1412e61c6f2ec2: measured 2026-11-05 (5 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_exposure",
+      "kind": "held",
+      "text": "no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261110T152257Z-ingest",
+   "thesis_id": "TH-3903547D15",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 17,
+ "other_cited_evidence": [
+  "C-407a0d5a513192",
+  "C-740b2897df07cd",
+  "C-05911e74189664"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s06.0": "Cited spans support dispersion vs uniform stress but say nothing about 'this year's oil shock' specifically producing it; C-407a0d5a513192 is about inflation targets/GDP growth, not the dispersion claim. The near-term selective stance is an add-on not directly in the cited spans.",
+  "s07.0": "C-54716d0d38a4e8 supports the higher-risk-premium/governance point, but the 'crisis label' framing and 'some countries move backward' are not in the cited spans; C-740b2897df07cd is about tariffs and energy crunch shocks, not the crisis label or backward movement.",
+  "s07.9": "Cited spans (reduced tail risk, moved-quite-a-bit risk premium) do not state that 'some countries are moving backward' or that EM bonds 'span a wide risk range'; those specifics are not in the cited spans."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Exposure \u2014 only a name read as a sector that is not one (emerging market credit \u2014 the whole market and an asset class outside equities, not a sector) \u2014 none is counted as an exposure.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

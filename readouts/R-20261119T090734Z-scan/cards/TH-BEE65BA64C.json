@@ -1,0 +1,1457 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "consumer"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:16:42.333604Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-29",
+   "latest_article_date": "2026-10-29",
+   "region": "Global",
+   "research_action": "SKIP",
+   "sector": "Consumer discretionary and staples",
+   "status": "ACTIVE",
+   "thesis_id": "TH-BEE65BA64C",
+   "title": "OTAs may stay resilient to agentic AI via inventory breadth and consumer browsing habits"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-051775003ff342",
+     "C-c9f0e708d2a9a5",
+     "C-c875c60617865e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Morgan Stanley argues agentic AI's impact on OTAs may be balanced, with their broad inventory making them valuable to AI agents and consumers continuing to browse before booking."
+   },
+   {
+    "claim_ids": [
+     "C-051775003ff342",
+     "C-c9f0e708d2a9a5",
+     "C-8ad20bac849c76"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article suggests OTAs may remain resilient and could even gain if AI becomes a discovery source reducing paid-search spend."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "OTAs face a disruption risk from direct-booking agents but could retain relevance; the net effect on OTA revenue is unquantified and uncertain."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c9f0e708d2a9a5"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "OTAs' broad hotel inventory breadth could make them valuable to AI agents seeking the best match."
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-051775003ff342"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Agentic AI's impact on OTAs may be balanced, with potential advantages as well as risks."
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c875c60617865e"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "How much booking activity actually shifts between hotel and OTA channels remains uncertain."
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8ad20bac849c76"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "AI agents as a new discovery source could help OTAs generate bookings while spending less on traditional paid search, and OTA loyalty programs could influence which links an agent recommends."
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ec623ab42bf836"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Consumers often search and compare options multiple times before booking, and agentic AI may not change that habit entirely, supporting continued OTA relevance."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:16 UTC, analysed as of 2026-11-10, from a source published 2026-10-29; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-051775003ff342",
+     "C-6990675b655640"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "AI agents become a new travel discovery and booking layer."
+   },
+   {
+    "claim_ids": [
+     "C-c9f0e708d2a9a5",
+     "C-8ad20bac849c76"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "OTAs could generate bookings via AI agents while spending less on paid search, offsetting direct-booking leakage."
+   },
+   {
+    "claim_ids": [
+     "C-c875c60617865e"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "margins",
+    "text": "Lower paid-search spend could support OTA margins, but booking-share shift is uncertain."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-051775003ff342",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Agentic AI's impact on OTAs may be balanced, with potential advantages as well as risks.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "may be"
+    ],
+    "quote": "its impact on online travel agencies may be more balanced, with potential advantages as well",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8ad20bac849c76",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "AI agents as a new discovery source could help OTAs generate bookings while spending less on traditional paid search, and OTA loyalty programs could influence which links an agent recommends.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "they could also help online travel agencies generate bookings while spending less on traditional paid search",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c875c60617865e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "How much booking activity actually shifts between hotel and OTA channels remains uncertain.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "remains uncertain"
+    ],
+    "quote": "How much booking activity actually shifts between those channels remains uncertain",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c9f0e708d2a9a5",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "OTAs' broad hotel inventory breadth could make them valuable to AI agents seeking the best match.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "could"
+    ],
+    "quote": "that breadth could make them valuable to AI agents searching for the best match for travelers\u2019 needs",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ec623ab42bf836",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Consumers often search and compare options multiple times before booking, and agentic AI may not change that habit entirely, supporting continued OTA relevance.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "consumers often search and compare options multiple times before booking a trip",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-1eba0c2971e8",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ae9e116c173d9e",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research believes the rise of AI agents",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research publisher producing the analysis"
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-35308a756a5f89",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Stephen Grambling, Morgan Stanley\u2019s head of U.S. Gaming, Lodging & Leisure research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Research publisher whose analysts are quoted throughout"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [],
+   "sectors": [
+    "online travel agencies"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-c875c60617865e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The article says how much booking activity shifts between channels remains uncertain."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-c9f0e708d2a9a5",
+      "C-051775003ff342"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "OTAs' inventory breadth and consumers' browsing habits could preserve direct consumer relationships even as agentic tools improve."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-25497c5a0035b1"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Agentic AI could drive more travelers to book directly with hotels, bypassing OTAs."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-007AEC93D8: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs disruption_revenue_erosion); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-16225B12C4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs disruption_revenue_erosion); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-932062360F: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs disruption_revenue_erosion); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-E99CEF834D: same value-chain node, not the same claim \u2014 a different mechanism (dispersion_selection vs disruption_revenue_erosion) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-25497c5a0035b1"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI agents could help hotels reduce dependence on higher-cost OTAs and lower intermediary fees by driving direct bookings."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Sharp decline in OTA booking volumes attributed to AI agents"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI platforms directly disintermediating OTAs"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-ab1950d0fc95b7"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI platforms could become another intermediary and, if they eventually charge travel companies for access, placement or bookings, some of the costs reduced by agentic AI could reappear in a different form. (scope: Applies across hotels, OTAs and cruise lines; conditional and unquantified ('if these platforms eventually charge').)"
+    },
+    {
+     "claim_ids": [
+      "C-c875c60617865e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "How much booking activity actually shifts between hotel-direct and OTA channels remains uncertain, limiting confidence in the direction of benefit. (scope: Applies to hotel brands and OTAs; stated as uncertain by the publisher.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: If OTAs' inventory breadth and consumers' enjoyment of trip planning preserve their relevance to AI agents and travelers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "How much booking share actually shifts away from OTAs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI-agent-driven bookings offset lost paid-search traffic"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI platforms replace OTAs as the dominant intermediary"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Measurable booking share shifting from OTAs to direct hotel channels"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess listed OTAs' paid-search dependence and inventory breadth to judge resilience to and potential upside from AI-agent-driven discovery."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "OTAs report AI-agent bookings offsetting paid-search costs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence consumers keep multi-platform browsing habits"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-1 no verified material evidence"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-1eba0c2971e8",
+    "authors": [
+     "Morgan Stanley"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-051775003ff342",
+     "C-c9f0e708d2a9a5",
+     "C-c875c60617865e",
+     "C-8ad20bac849c76",
+     "C-ec623ab42bf836",
+     "C-25497c5a0035b1",
+     "C-ab1950d0fc95b7"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-29T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "How AI Agents Could Reshape the Travel Industry",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:da77e8d80c7b7aa70c69d5d6e935533fbfc9b615fcc44409642252be9b293654",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-1eba0c2971e8",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "consumer"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:16:42.333604Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-29",
+     "latest_article_date": "2026-10-29",
+     "region": "Global",
+     "research_action": "SKIP",
+     "sector": "Consumer discretionary and staples",
+     "status": "ACTIVE",
+     "thesis_id": "TH-BEE65BA64C",
+     "title": "OTAs may stay resilient to agentic AI via inventory breadth and consumer browsing habits"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-051775003ff342",
+       "C-c9f0e708d2a9a5",
+       "C-c875c60617865e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley argues agentic AI's impact on OTAs may be balanced, with their broad inventory making them valuable to AI agents and consumers continuing to browse before booking."
+     },
+     {
+      "claim_ids": [
+       "C-051775003ff342",
+       "C-c9f0e708d2a9a5",
+       "C-8ad20bac849c76"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article suggests OTAs may remain resilient and could even gain if AI becomes a discovery source reducing paid-search spend."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "OTAs face a disruption risk from direct-booking agents but could retain relevance; the net effect on OTA revenue is unquantified and uncertain."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c9f0e708d2a9a5"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "OTAs' broad hotel inventory breadth could make them valuable to AI agents seeking the best match."
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-051775003ff342"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Agentic AI's impact on OTAs may be balanced, with potential advantages as well as risks."
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c875c60617865e"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "How much booking activity actually shifts between hotel and OTA channels remains uncertain."
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8ad20bac849c76"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "AI agents as a new discovery source could help OTAs generate bookings while spending less on traditional paid search, and OTA loyalty programs could influence which links an agent recommends."
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ec623ab42bf836"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Consumers often search and compare options multiple times before booking, and agentic AI may not change that habit entirely, supporting continued OTA relevance."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:16 UTC, analysed as of 2026-11-10, from a source published 2026-10-29; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-051775003ff342",
+       "C-6990675b655640"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AI agents become a new travel discovery and booking layer."
+     },
+     {
+      "claim_ids": [
+       "C-c9f0e708d2a9a5",
+       "C-8ad20bac849c76"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "OTAs could generate bookings via AI agents while spending less on paid search, offsetting direct-booking leakage."
+     },
+     {
+      "claim_ids": [
+       "C-c875c60617865e"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "margins",
+      "text": "Lower paid-search spend could support OTA margins, but booking-share shift is uncertain."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-051775003ff342",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Agentic AI's impact on OTAs may be balanced, with potential advantages as well as risks.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "may be"
+      ],
+      "quote": "its impact on online travel agencies may be more balanced, with potential advantages as well",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8ad20bac849c76",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AI agents as a new discovery source could help OTAs generate bookings while spending less on traditional paid search, and OTA loyalty programs could influence which links an agent recommends.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "they could also help online travel agencies generate bookings while spending less on traditional paid search",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c875c60617865e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "How much booking activity actually shifts between hotel and OTA channels remains uncertain.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "remains uncertain"
+      ],
+      "quote": "How much booking activity actually shifts between those channels remains uncertain",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c9f0e708d2a9a5",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "OTAs' broad hotel inventory breadth could make them valuable to AI agents seeking the best match.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "could"
+      ],
+      "quote": "that breadth could make them valuable to AI agents searching for the best match for travelers\u2019 needs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ec623ab42bf836",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Consumers often search and compare options multiple times before booking, and agentic AI may not change that habit entirely, supporting continued OTA relevance.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "consumers often search and compare options multiple times before booking a trip",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-1eba0c2971e8",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ae9e116c173d9e",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research believes the rise of AI agents",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research publisher producing the analysis"
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-35308a756a5f89",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Stephen Grambling, Morgan Stanley\u2019s head of U.S. Gaming, Lodging & Leisure research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Research publisher whose analysts are quoted throughout"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [],
+     "sectors": [
+      "online travel agencies"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c875c60617865e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article says how much booking activity shifts between channels remains uncertain."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-c9f0e708d2a9a5",
+        "C-051775003ff342"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "OTAs' inventory breadth and consumers' browsing habits could preserve direct consumer relationships even as agentic tools improve."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-25497c5a0035b1"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Agentic AI could drive more travelers to book directly with hotels, bypassing OTAs."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-007AEC93D8: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs disruption_revenue_erosion); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-16225B12C4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs disruption_revenue_erosion); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-932062360F: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs disruption_revenue_erosion); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-E99CEF834D: same value-chain node, not the same claim \u2014 a different mechanism (dispersion_selection vs disruption_revenue_erosion) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-25497c5a0035b1"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI agents could help hotels reduce dependence on higher-cost OTAs and lower intermediary fees by driving direct bookings."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Sharp decline in OTA booking volumes attributed to AI agents"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI platforms directly disintermediating OTAs"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-ab1950d0fc95b7"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI platforms could become another intermediary and, if they eventually charge travel companies for access, placement or bookings, some of the costs reduced by agentic AI could reappear in a different form. (scope: Applies across hotels, OTAs and cruise lines; conditional and unquantified ('if these platforms eventually charge').)"
+      },
+      {
+       "claim_ids": [
+        "C-c875c60617865e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "How much booking activity actually shifts between hotel-direct and OTA channels remains uncertain, limiting confidence in the direction of benefit. (scope: Applies to hotel brands and OTAs; stated as uncertain by the publisher.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: If OTAs' inventory breadth and consumers' enjoyment of trip planning preserve their relevance to AI agents and travelers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "How much booking share actually shifts away from OTAs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI-agent-driven bookings offset lost paid-search traffic"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI platforms replace OTAs as the dominant intermediary"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Measurable booking share shifting from OTAs to direct hotel channels"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess listed OTAs' paid-search dependence and inventory breadth to judge resilience to and potential upside from AI-agent-driven discovery."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "OTAs report AI-agent bookings offsetting paid-search costs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence consumers keep multi-platform browsing habits"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-1 no verified material evidence"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-1eba0c2971e8",
+      "authors": [
+       "Morgan Stanley"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-051775003ff342",
+       "C-c9f0e708d2a9a5",
+       "C-c875c60617865e",
+       "C-8ad20bac849c76",
+       "C-ec623ab42bf836",
+       "C-25497c5a0035b1",
+       "C-ab1950d0fc95b7"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-29T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "How AI Agents Could Reshape the Travel Industry",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:da77e8d80c7b7aa70c69d5d6e935533fbfc9b615fcc44409642252be9b293654",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "0b4430018c9e8f14266bd5751b23cc5967d8eb67a081bfef2ad269eadeab3cfb",
+   "created_at": "2026-11-10T15:17:10.530782Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-25497c5a0035b1"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 0 supporting; 0 independent contradicting source(s) vs 0 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261110T151431Z-ingest",
+   "thesis_id": "TH-BEE65BA64C",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 8,
+ "other_cited_evidence": [
+  "C-6990675b655640",
+  "C-25497c5a0035b1",
+  "C-ab1950d0fc95b7"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.3": "First clause supported by cited span, but the loyalty-program claim ('OTA loyalty programs could influence which links an agent recommends') is not in the cited span; pool loyalty span C-584cdfc742b7ce concerns hotel brands, not OTAs, so it does not re-anchor this.",
+  "s03.1": "'offsetting direct-booking leakage' asserts an offset not stated in the cited spans; the spans only say OTAs could generate bookings while spending less on paid search."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-11-10: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "why_action": [
+  "Skip \u2014 no verified material evidence."
+ ],
+ "withheld_sentences": {}
+}

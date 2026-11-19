@@ -1,0 +1,2193 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "telecom_media"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:28:32.190731Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-05",
+   "latest_article_date": "2026-11-05",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Telecom and media",
+   "status": "ACTIVE",
+   "thesis_id": "TH-2315C45951",
+   "title": "Rising streaming subscriptions and pricing lift recorded music revenue through 2035"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-47da6092008416",
+     "C-20477b86c633c4",
+     "C-fabd623e039be5",
+     "C-a194de81e68e50",
+     "C-2bd7abfd76597c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "GS Research raised its long-term music industry outlook for the first time in three years, forecasting global music revenues to grow 5.8% annually to nearly $200bn in 2035 from $112bn in 2025, driven by faster-than-expected subscriber growth and rising revenue per user. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-36d910f4529bc6",
+     "C-a7715fb0230774",
+     "C-d98effa1069059",
+     "C-2c72ac00160efd",
+     "C-72daa812ffcd78",
+     "C-9ed591c0adf28f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames rising subscriptions, pricing, physical formats and new tiers as creating opportunities for the industry to grow revenue through 2035. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A structurally improving streaming revenue picture is a positive for recorded music rights holders and streaming platforms, but the article names no listed companies and does not quantify the earnings impact on any specific issuer."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-e8ace45656ce",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-47da6092008416"
+     ],
+     "original_date": "2026-11-05",
+     "period": "2025-2035",
+     "provenance": "FORECAST",
+     "text": "GS Research expects global music revenues to grow at a 5.8% annualized rate to almost $200 billion in 2035 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-36d910f4529bc6"
+     ],
+     "original_date": "2026-11-05",
+     "period": "2035",
+     "provenance": "FORECAST",
+     "text": "Developed-market paid subscribers forecast to rise to 568 million in 2035 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a7715fb0230774"
+     ],
+     "original_date": "2026-11-05",
+     "period": "2035",
+     "provenance": "FORECAST",
+     "text": "Most developed markets forecast to approach 60% peak paid music streaming penetration by 2035 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2c72ac00160efd"
+     ],
+     "original_date": "2026-11-05",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Live music market expected to grow 6% in 2026 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-72daa812ffcd78"
+     ],
+     "original_date": "2026-11-05",
+     "period": "through 2035",
+     "provenance": "FORECAST",
+     "text": "Live music expected to grow at a 6% compound rate through 2035 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-20477b86c633c4"
+     ],
+     "original_date": "2026-11-05",
+     "period": "2035",
+     "provenance": "FORECAST",
+     "text": "Global music revenues forecast to reach almost $200 billion in 2035 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 17 pieces of evidence from A-e8ace45656ce \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:28 UTC, analysed as of 2026-11-10, from a source published 2026-11-05; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-36d910f4529bc6",
+     "C-48bc35b5720606"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "Paid streaming subscriber numbers growing faster than expected plus rising revenue per user in developed markets \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-e5b1a12e31adfe",
+     "C-e2c4b082163916",
+     "C-36d910f4529bc6",
+     "C-48bc35b5720606"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Developed-market paid subscribers forecast to rise from 398m to 568m and EM penetration from 10% to 15% by 2035 \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-a7715fb0230774",
+     "C-ed78a87a193eca",
+     "C-d98effa1069059",
+     "C-38b3e125d0a61e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "More consistent price increases from streaming platforms and new premium tiers plus a potential $1-2 ad-light tier \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-47da6092008416"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher industry revenue would flow to rights holders and platforms, though the article does not quantify any issuer's earnings \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0e7dfbece14837",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "subscriber growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next 10 years",
+    "qualifiers": [
+     "mid-single-digit"
+    ],
+    "quote": "we expect subscribers to grow in the mid-single-digit range over the next 10 years",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "mid-single-digit range"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-20477b86c633c4",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "global music revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2035",
+    "qualifiers": [
+     "almost"
+    ],
+    "quote": "almost $200 billion in 2035",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 200.0,
+    "value_text": "almost $200 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2bd7abfd76597c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "global music revenue growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "year-on-year"
+    ],
+    "quote": "global music revenues to increase at 6.7% year-on-year in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 6.7,
+    "value_text": "6.7%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-36d910f4529bc6",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "paid subscribers (developed markets)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2035",
+    "qualifiers": [
+     "US, Canada, Europe, Australasia"
+    ],
+    "quote": "expect the number of paid subscribers in the US, Canada, Europe, and Australasia to rise to 568 million in 2035 from 398 million in 2025",
+    "role": "supports",
+    "unit": "millions",
+    "value": 568.0,
+    "value_text": "568 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-47da6092008416",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "global music revenue CAGR",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025-2035",
+    "qualifiers": [
+     "annualized rate"
+    ],
+    "quote": "global music revenues to grow at an annualized rate of 5.8% to almost $200 billion in 2035 from $112 billion in 2025",
+    "role": "supports",
+    "unit": "%",
+    "value": 5.8,
+    "value_text": "5.8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-48bc35b5720606",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "paid subscribers (developed markets)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [
+     "US, Canada, Europe, Australasia"
+    ],
+    "quote": "rise to 568 million in 2035 from 398 million in 2025",
+    "role": "supports",
+    "unit": "millions",
+    "value": 398.0,
+    "value_text": "398 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6cb399d8e83618",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "live music revenue growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "despite economic uncertainty"
+    ],
+    "quote": "The market for live music is forecast to grow 6% in 2026 despite economic uncertainty, driven by a strong global arena and stadium business",
+    "role": "supports",
+    "unit": "%",
+    "value": 6.0,
+    "value_text": "6%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b026",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-72daa812ffcd78",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "live music revenue CAGR",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "through 2035",
+    "qualifiers": [
+     "compound rate"
+    ],
+    "quote": "expect live music to grow at a similar 6% compound rate through 2035",
+    "role": "supports",
+    "unit": "%",
+    "value": 6.0,
+    "value_text": "6%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9feef968b5d41a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "paid music streaming penetration",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [
+     "around",
+     "Americans"
+    ],
+    "quote": "Only around 53% of Americans subscribed to paid music streaming in 2025",
+    "role": "supports",
+    "unit": "%",
+    "value": 53.0,
+    "value_text": "around 53%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a7715fb0230774",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "paid music streaming peak penetration",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2035",
+    "qualifiers": [
+     "peak penetration"
+    ],
+    "quote": "expects most developed markets to approach peak penetration for paid music streaming at 60% by 2035",
+    "role": "supports",
+    "unit": "%",
+    "value": 60.0,
+    "value_text": "60%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b026",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c5220476ae17f0",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "new music venues",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next five to seven years",
+    "qualifiers": [],
+    "quote": "venue capacity to grow, with operators poised to open several dozen new music venues around the world in the next five to seven years",
+    "role": "supports",
+    "unit": "venues",
+    "value": null,
+    "value_text": "several dozen"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d98effa1069059",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "ad-supported revenue uplift",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "around",
+     "conditional on 10% shift"
+    ],
+    "quote": "If 10% of free streaming users in developed markets shifted to a $1 ad-light tier, global ad-supported revenues would rise by around 8%",
+    "role": "supports",
+    "unit": "%",
+    "value": 8.0,
+    "value_text": "around 8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e2c4b082163916",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "EM internet users with paid streaming",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2035",
+    "qualifiers": [
+     "emerging markets"
+    ],
+    "quote": "forecast the percentage of internet users with paid streaming subscriptions in emerging markets to rise from 10% in 2025 to 15% in 2035",
+    "role": "supports",
+    "unit": "%",
+    "value": 15.0,
+    "value_text": "15%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e5b1a12e31adfe",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "EM internet users with paid streaming",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [
+     "emerging markets"
+    ],
+    "quote": "forecast the percentage of internet users with paid streaming subscriptions in emerging markets to rise from 10% in 2025 to 15% in 2035",
+    "role": "supports",
+    "unit": "%",
+    "value": 10.0,
+    "value_text": "10%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fabd623e039be5",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "global music revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [],
+    "quote": "from $112 billion in 2025",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 112.0,
+    "value_text": "$112 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-38b3e125d0a61e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Goldman Sachs expects more consistent streaming price increases as labels incorporate higher royalties into contracts and platforms introduce new premium tiers, supporting rising revenue per user.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "developed markets"
+    ],
+    "quote": "more consistent price increases from streaming platforms as music labels increasingly incorporate higher royalties into their contracts and streaming platforms introduce new premium service tiers",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-e8ace45656ce",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9ed591c0adf28f",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Increasing fan demand for vinyl and CDs is lifting the outlook for physical music revenues in Japan, South Korea, and the US, as fans treat physical formats as collectibles.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "Japan",
+     "South Korea",
+     "US"
+    ],
+    "quote": "increasing fan demand for vinyl and CDs is helping lift the outlook for physical music revenues in markets like Japan, South Korea, and the US",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0f4871eb5534d5",
+     "name_as_written": "Goldman Sachs Executive Office",
+     "other_securities": [],
+     "quote": "the Goldman Sachs Executive Office",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Preparer of this document"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-97af1d1e40c955",
+     "name_as_written": "IFPI Global Music Report 2026",
+     "other_securities": [],
+     "quote": "Source: IFPI Global Music Report 2026",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for net subscriber adds chart"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6b4bab9a03158b",
+     "name_as_written": "MIDiA",
+     "other_securities": [],
+     "quote": "Source: MIDiA, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for AI music generation tool usage data"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5689efb950aeb5",
+     "name_as_written": "BPI",
+     "other_securities": [],
+     "quote": "Source: BPI, AudienceNet, Audiomonitor 2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for UK age-group penetration data"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-552e0cd6a29c4a",
+     "name_as_written": "AudienceNet",
+     "other_securities": [],
+     "quote": "Source: BPI, AudienceNet, Audiomonitor 2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for UK age-group penetration data"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cdad331199ec41",
+     "name_as_written": "Audiomonitor",
+     "other_securities": [],
+     "quote": "Source: BPI, AudienceNet, Audiomonitor 2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for UK age-group penetration data"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9f379c8c7ae765",
+     "name_as_written": "David Solomon",
+     "other_securities": [],
+     "quote": "Goldman Sachs Chairman and CEO David Solomon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Named in a related-content link, not part of this article's analysis"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-9b39e0a5fc2072",
+     "name_as_written": "Goldman Sachs Research",
+     "other_securities": [],
+     "quote": "Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Source of the music industry forecasts"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-623bdc6546653f",
+     "name_as_written": "PWC",
+     "other_securities": [],
+     "quote": "Source: PWC, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for global live music revenue chart"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-e8ace45656ce",
+     "claim_ids": [
+      "C-47da6092008416",
+      "C-36d910f4529bc6"
+     ],
+     "direction": "positive",
+     "name": "recorded music",
+     "provenance": "FORECAST",
+     "quote": "Paid streaming subscriptions are helping to shore up the outlook for recorded music"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "claim_ids": [
+      "C-36d910f4529bc6",
+      "C-a7715fb0230774"
+     ],
+     "direction": "positive",
+     "name": "music streaming subscriptions",
+     "provenance": "FORECAST",
+     "quote": "Music streaming subscriptions are growing faster than expected"
+    },
+    {
+     "article_id": "A-e8ace45656ce",
+     "claim_ids": [
+      "C-2c72ac00160efd",
+      "C-72daa812ffcd78"
+     ],
+     "direction": "positive",
+     "name": "live music",
+     "provenance": "FORECAST",
+     "quote": "our analysts expect the market for live music to grow 6% in 2026"
+    }
+   ],
+   "sectors": [
+    "recorded music",
+    "music streaming"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-2bd7abfd76597c",
+      "C-6cb399d8e83618"
+     ],
+     "provenance": "FORECAST",
+     "text": "Global music revenues forecast to grow 6.7% YoY in 2026, with live music up 6%. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-47da6092008416",
+      "C-20477b86c633c4"
+     ],
+     "provenance": "FORECAST",
+     "text": "Long runway for industry expansion to nearly $200bn by 2035 on diversified monetization and favorable consumer behavior. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-911c2f43a0f3f3"
+     ],
+     "provenance": "FORECAST",
+     "text": "The music market undershot growth expectations over the last several years, with three consecutive prior downgrades to the 2030 recorded music forecast."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-911c2f43a0f3f3"
+     ],
+     "provenance": "FORECAST",
+     "text": "There were three consecutive prior downgrades to the 2030 recorded music revenue forecast \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Subscriber growth or ARPU falling below mid-single-digit forecasts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Price increases triggering elevated churn"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A renewed downgrade to the long-term industry outlook"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-2c72ac00160efd"
+     ],
+     "provenance": "FORECAST",
+     "text": "Consumer wallets face pressure from tariffs, gasoline prices and higher interest rates, which could weigh on discretionary live-music spending. (scope: Article argues live music is less exposed to downturns than other discretionary spending, but the macro pressures are acknowledged.)"
+    },
+    {
+     "claim_ids": [
+      "C-a194de81e68e50",
+      "C-911c2f43a0f3f3"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The music market has repeatedly undershot growth expectations, with three consecutive prior downgrades to the 2030 recorded music forecast before this upgrade. (scope: Prior forecast track record; this year marks the first upgrade in three years.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether specific listed music labels, streaming platforms or rights holders capture this revenue and at what margin"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether price increases and new tiers are adopted without raising churn"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus estimates versus these forecasts"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Subscriber growth decelerates below forecast"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Streaming price increases drive churn"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify the listed music majors, streaming platforms and rights holders most exposed to developed- and emerging-market subscription growth and compare their revenue guidance against these forecasts."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Subscriber adds or ARPU beats mid-single-digit forecast"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Successful rollout of ad-light tiers driving ad-supported revenue uplift"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report))"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-e8ace45656ce",
+    "authors": [
+     "Goldman Sachs",
+     "Stephen Laszczyk",
+     "Eric Sheridan"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-2c72ac00160efd",
+     "C-47da6092008416",
+     "C-20477b86c633c4",
+     "C-fabd623e039be5",
+     "C-2bd7abfd76597c",
+     "C-e5b1a12e31adfe",
+     "C-e2c4b082163916",
+     "C-36d910f4529bc6",
+     "C-48bc35b5720606",
+     "C-9feef968b5d41a",
+     "C-a7715fb0230774",
+     "C-0e7dfbece14837",
+     "C-d98effa1069059",
+     "C-c564173efb1e9f",
+     "C-38b3e125d0a61e",
+     "C-9ed591c0adf28f",
+     "C-6cb399d8e83618",
+     "C-72daa812ffcd78",
+     "C-c5220476ae17f0",
+     "C-911c2f43a0f3f3",
+     "C-a194de81e68e50"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-05T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "Global Music Revenues Are Forecast to Rise as Subscriber Growth Beats Expectations",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:11bbddec0ddb4cd829aa319f97caf2e83ec42c1b3d06d8350349657bd62f4e56",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names subscription",
+    "basis_quote": [
+     "We generate revenue for our Premium segment through the sale of subscriptions to the Subscription Offerings."
+    ],
+    "basis_source": "20-F filed 2026-02-10 (0001628280-26-006874)",
+    "business": "global music streaming subscription platform",
+    "direction": "positive",
+    "enrichment_id": "EC-d01cd72614b03e",
+    "evidence": "s03.1: Developed-market paid subscribers forecast to rise from 398m to 568m and EM penetration from 10% to 15% by 2035",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Spotify Technology",
+    "rationale": "Faster-than-expected paid subscriber growth across developed and emerging markets directly lifts Premium subscription revenue, Spotify's dominant revenue source.",
+    "registrant": "Spotify Technology S.A.",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['SPOT'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "Premium music streaming subscriptions",
+    "revenue_model": "subscription",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-2315C45951",
+    "ticker_hint": "SPOT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-11-20 (0001319161-25-000034)",
+    "business": "recorded music and music publishing rights holder",
+    "direction": "positive",
+    "enrichment_id": "EC-03b03002e259c5",
+    "evidence": "s03.3: Higher industry revenue would flow to rights holders and platforms, though the article does not quantify any issuer's earnings",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-05 (accession 0001319161-26-000032) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.001 par value per share",
+      "ticker": "WMG"
+     }
+    ],
+    "name": "Warner Music Group",
+    "rationale": "Higher industry streaming revenue flows to recorded music rights holders; streaming is the majority of WMG's recorded music income.",
+    "registrant": "Warner Music Group Corp.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7900); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "recorded music streaming royalties",
+    "revenue_model": "licences",
+    "step_id": "s03.3",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-2315C45951",
+    "ticker_hint": "WMG"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "largest recorded music and publishing rights holder",
+    "direction": "positive",
+    "enrichment_id": "EC-ff21b783af7c0b",
+    "evidence": "s03.3: Higher industry revenue would flow to rights holders and platforms, though the article does not quantify any issuer's earnings",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Universal Music Group",
+    "rationale": "As the largest rights holder, higher streaming subscriptions and pricing lift its recorded music and publishing royalties, its core earnings.",
+    "registrant": "Universal Music Group N.V./ADR",
+    "resolution_note": "only OTC/unlisted lines in the SEC map",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "recorded music and publishing royalties",
+    "revenue_model": "licences",
+    "step_id": "s03.3",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-2315C45951",
+    "ticker_hint": "UMGNF"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names advertising (showing 2 of 3)",
+    "basis_quote": [
+     "We derive revenues from the sale of advertising.",
+     "We derive revenue in this segment by developing and delivering our content and selling advertising across multiple digital distribution channels, including via our iHeartRadio mobile application, our station websites and other digital platforms that reach national, regional and local audiences."
+    ],
+    "basis_source": "10-K filed 2026-03-02 (0001628280-26-013221)",
+    "business": "audio and radio broadcaster with digital streaming",
+    "direction": "positive",
+    "enrichment_id": "EC-172ee1dfd78404",
+    "evidence": "s03.2: More consistent price increases from streaming platforms and new premium tiers plus a potential $1-2 ad-light tier",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-09 (accession 0001628280-26-072149) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, par value $0.001 per share",
+      "ticker": "IHRT"
+     }
+    ],
+    "name": "iHeartMedia",
+    "rationale": "A potential low-cost ad-light tier and growing streaming ad inventory could modestly lift its digital audio advertising revenue.",
+    "registrant": "iHeartMedia, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4832); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "digital audio advertising",
+    "revenue_model": "advertising",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-2315C45951",
+    "ticker_hint": "IHRT"
+   }
+  ],
+  "created_at": "2026-11-10T19:09:01.098684Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Spotify Technology: proposed twice \u2014 set aside",
+   "Live Nation Entertainment: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261110T190855Z-enrich",
+  "set_id": "ES-2bc4616f47917d",
+  "thesis_id": "TH-2315C45951",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-e8ace45656ce",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "telecom_media"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:28:32.190731Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-05",
+     "latest_article_date": "2026-11-05",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Telecom and media",
+     "status": "ACTIVE",
+     "thesis_id": "TH-2315C45951",
+     "title": "Rising streaming subscriptions and pricing lift recorded music revenue through 2035"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-47da6092008416",
+       "C-20477b86c633c4",
+       "C-fabd623e039be5",
+       "C-a194de81e68e50",
+       "C-2bd7abfd76597c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "GS Research raised its long-term music industry outlook for the first time in three years, forecasting global music revenues to grow 5.8% annually to nearly $200bn in 2035 from $112bn in 2025, driven by faster-than-expected subscriber growth and rising revenue per user. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-36d910f4529bc6",
+       "C-a7715fb0230774",
+       "C-d98effa1069059",
+       "C-2c72ac00160efd",
+       "C-72daa812ffcd78",
+       "C-9ed591c0adf28f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames rising subscriptions, pricing, physical formats and new tiers as creating opportunities for the industry to grow revenue through 2035. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A structurally improving streaming revenue picture is a positive for recorded music rights holders and streaming platforms, but the article names no listed companies and does not quantify the earnings impact on any specific issuer."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-e8ace45656ce",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-47da6092008416"
+       ],
+       "original_date": "2026-11-05",
+       "period": "2025-2035",
+       "provenance": "FORECAST",
+       "text": "GS Research expects global music revenues to grow at a 5.8% annualized rate to almost $200 billion in 2035 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-36d910f4529bc6"
+       ],
+       "original_date": "2026-11-05",
+       "period": "2035",
+       "provenance": "FORECAST",
+       "text": "Developed-market paid subscribers forecast to rise to 568 million in 2035 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a7715fb0230774"
+       ],
+       "original_date": "2026-11-05",
+       "period": "2035",
+       "provenance": "FORECAST",
+       "text": "Most developed markets forecast to approach 60% peak paid music streaming penetration by 2035 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2c72ac00160efd"
+       ],
+       "original_date": "2026-11-05",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Live music market expected to grow 6% in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-72daa812ffcd78"
+       ],
+       "original_date": "2026-11-05",
+       "period": "through 2035",
+       "provenance": "FORECAST",
+       "text": "Live music expected to grow at a 6% compound rate through 2035 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-20477b86c633c4"
+       ],
+       "original_date": "2026-11-05",
+       "period": "2035",
+       "provenance": "FORECAST",
+       "text": "Global music revenues forecast to reach almost $200 billion in 2035 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 17 pieces of evidence from A-e8ace45656ce \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:28 UTC, analysed as of 2026-11-10, from a source published 2026-11-05; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-36d910f4529bc6",
+       "C-48bc35b5720606"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "Paid streaming subscriber numbers growing faster than expected plus rising revenue per user in developed markets \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e5b1a12e31adfe",
+       "C-e2c4b082163916",
+       "C-36d910f4529bc6",
+       "C-48bc35b5720606"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Developed-market paid subscribers forecast to rise from 398m to 568m and EM penetration from 10% to 15% by 2035 \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-a7715fb0230774",
+       "C-ed78a87a193eca",
+       "C-d98effa1069059",
+       "C-38b3e125d0a61e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "More consistent price increases from streaming platforms and new premium tiers plus a potential $1-2 ad-light tier \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-47da6092008416"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher industry revenue would flow to rights holders and platforms, though the article does not quantify any issuer's earnings \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0e7dfbece14837",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "subscriber growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next 10 years",
+      "qualifiers": [
+       "mid-single-digit"
+      ],
+      "quote": "we expect subscribers to grow in the mid-single-digit range over the next 10 years",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "mid-single-digit range"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-20477b86c633c4",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global music revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2035",
+      "qualifiers": [
+       "almost"
+      ],
+      "quote": "almost $200 billion in 2035",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 200.0,
+      "value_text": "almost $200 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2bd7abfd76597c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global music revenue growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "year-on-year"
+      ],
+      "quote": "global music revenues to increase at 6.7% year-on-year in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.7,
+      "value_text": "6.7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-36d910f4529bc6",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "paid subscribers (developed markets)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2035",
+      "qualifiers": [
+       "US, Canada, Europe, Australasia"
+      ],
+      "quote": "expect the number of paid subscribers in the US, Canada, Europe, and Australasia to rise to 568 million in 2035 from 398 million in 2025",
+      "role": "supports",
+      "unit": "millions",
+      "value": 568.0,
+      "value_text": "568 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-47da6092008416",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global music revenue CAGR",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025-2035",
+      "qualifiers": [
+       "annualized rate"
+      ],
+      "quote": "global music revenues to grow at an annualized rate of 5.8% to almost $200 billion in 2035 from $112 billion in 2025",
+      "role": "supports",
+      "unit": "%",
+      "value": 5.8,
+      "value_text": "5.8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-48bc35b5720606",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "paid subscribers (developed markets)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [
+       "US, Canada, Europe, Australasia"
+      ],
+      "quote": "rise to 568 million in 2035 from 398 million in 2025",
+      "role": "supports",
+      "unit": "millions",
+      "value": 398.0,
+      "value_text": "398 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6cb399d8e83618",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "live music revenue growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "despite economic uncertainty"
+      ],
+      "quote": "The market for live music is forecast to grow 6% in 2026 despite economic uncertainty, driven by a strong global arena and stadium business",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-72daa812ffcd78",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "live music revenue CAGR",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2035",
+      "qualifiers": [
+       "compound rate"
+      ],
+      "quote": "expect live music to grow at a similar 6% compound rate through 2035",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9feef968b5d41a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "paid music streaming penetration",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [
+       "around",
+       "Americans"
+      ],
+      "quote": "Only around 53% of Americans subscribed to paid music streaming in 2025",
+      "role": "supports",
+      "unit": "%",
+      "value": 53.0,
+      "value_text": "around 53%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a7715fb0230774",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "paid music streaming peak penetration",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2035",
+      "qualifiers": [
+       "peak penetration"
+      ],
+      "quote": "expects most developed markets to approach peak penetration for paid music streaming at 60% by 2035",
+      "role": "supports",
+      "unit": "%",
+      "value": 60.0,
+      "value_text": "60%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c5220476ae17f0",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "new music venues",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next five to seven years",
+      "qualifiers": [],
+      "quote": "venue capacity to grow, with operators poised to open several dozen new music venues around the world in the next five to seven years",
+      "role": "supports",
+      "unit": "venues",
+      "value": null,
+      "value_text": "several dozen"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d98effa1069059",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "ad-supported revenue uplift",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "around",
+       "conditional on 10% shift"
+      ],
+      "quote": "If 10% of free streaming users in developed markets shifted to a $1 ad-light tier, global ad-supported revenues would rise by around 8%",
+      "role": "supports",
+      "unit": "%",
+      "value": 8.0,
+      "value_text": "around 8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e2c4b082163916",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "EM internet users with paid streaming",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2035",
+      "qualifiers": [
+       "emerging markets"
+      ],
+      "quote": "forecast the percentage of internet users with paid streaming subscriptions in emerging markets to rise from 10% in 2025 to 15% in 2035",
+      "role": "supports",
+      "unit": "%",
+      "value": 15.0,
+      "value_text": "15%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e5b1a12e31adfe",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "EM internet users with paid streaming",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [
+       "emerging markets"
+      ],
+      "quote": "forecast the percentage of internet users with paid streaming subscriptions in emerging markets to rise from 10% in 2025 to 15% in 2035",
+      "role": "supports",
+      "unit": "%",
+      "value": 10.0,
+      "value_text": "10%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fabd623e039be5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "global music revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "from $112 billion in 2025",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 112.0,
+      "value_text": "$112 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-38b3e125d0a61e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Goldman Sachs expects more consistent streaming price increases as labels incorporate higher royalties into contracts and platforms introduce new premium tiers, supporting rising revenue per user.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "developed markets"
+      ],
+      "quote": "more consistent price increases from streaming platforms as music labels increasingly incorporate higher royalties into their contracts and streaming platforms introduce new premium service tiers",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-e8ace45656ce",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9ed591c0adf28f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Increasing fan demand for vinyl and CDs is lifting the outlook for physical music revenues in Japan, South Korea, and the US, as fans treat physical formats as collectibles.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Japan",
+       "South Korea",
+       "US"
+      ],
+      "quote": "increasing fan demand for vinyl and CDs is helping lift the outlook for physical music revenues in markets like Japan, South Korea, and the US",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0f4871eb5534d5",
+       "name_as_written": "Goldman Sachs Executive Office",
+       "other_securities": [],
+       "quote": "the Goldman Sachs Executive Office",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Preparer of this document"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-97af1d1e40c955",
+       "name_as_written": "IFPI Global Music Report 2026",
+       "other_securities": [],
+       "quote": "Source: IFPI Global Music Report 2026",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for net subscriber adds chart"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b4bab9a03158b",
+       "name_as_written": "MIDiA",
+       "other_securities": [],
+       "quote": "Source: MIDiA, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for AI music generation tool usage data"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5689efb950aeb5",
+       "name_as_written": "BPI",
+       "other_securities": [],
+       "quote": "Source: BPI, AudienceNet, Audiomonitor 2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for UK age-group penetration data"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-552e0cd6a29c4a",
+       "name_as_written": "AudienceNet",
+       "other_securities": [],
+       "quote": "Source: BPI, AudienceNet, Audiomonitor 2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for UK age-group penetration data"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cdad331199ec41",
+       "name_as_written": "Audiomonitor",
+       "other_securities": [],
+       "quote": "Source: BPI, AudienceNet, Audiomonitor 2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for UK age-group penetration data"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9f379c8c7ae765",
+       "name_as_written": "David Solomon",
+       "other_securities": [],
+       "quote": "Goldman Sachs Chairman and CEO David Solomon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Named in a related-content link, not part of this article's analysis"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-9b39e0a5fc2072",
+       "name_as_written": "Goldman Sachs Research",
+       "other_securities": [],
+       "quote": "Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Source of the music industry forecasts"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-623bdc6546653f",
+       "name_as_written": "PWC",
+       "other_securities": [],
+       "quote": "Source: PWC, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for global live music revenue chart"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-e8ace45656ce",
+       "claim_ids": [
+        "C-47da6092008416",
+        "C-36d910f4529bc6"
+       ],
+       "direction": "positive",
+       "name": "recorded music",
+       "provenance": "FORECAST",
+       "quote": "Paid streaming subscriptions are helping to shore up the outlook for recorded music"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "claim_ids": [
+        "C-36d910f4529bc6",
+        "C-a7715fb0230774"
+       ],
+       "direction": "positive",
+       "name": "music streaming subscriptions",
+       "provenance": "FORECAST",
+       "quote": "Music streaming subscriptions are growing faster than expected"
+      },
+      {
+       "article_id": "A-e8ace45656ce",
+       "claim_ids": [
+        "C-2c72ac00160efd",
+        "C-72daa812ffcd78"
+       ],
+       "direction": "positive",
+       "name": "live music",
+       "provenance": "FORECAST",
+       "quote": "our analysts expect the market for live music to grow 6% in 2026"
+      }
+     ],
+     "sectors": [
+      "recorded music",
+      "music streaming"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-2bd7abfd76597c",
+        "C-6cb399d8e83618"
+       ],
+       "provenance": "FORECAST",
+       "text": "Global music revenues forecast to grow 6.7% YoY in 2026, with live music up 6%. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-47da6092008416",
+        "C-20477b86c633c4"
+       ],
+       "provenance": "FORECAST",
+       "text": "Long runway for industry expansion to nearly $200bn by 2035 on diversified monetization and favorable consumer behavior. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-911c2f43a0f3f3"
+       ],
+       "provenance": "FORECAST",
+       "text": "The music market undershot growth expectations over the last several years, with three consecutive prior downgrades to the 2030 recorded music forecast."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-911c2f43a0f3f3"
+       ],
+       "provenance": "FORECAST",
+       "text": "There were three consecutive prior downgrades to the 2030 recorded music revenue forecast \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Subscriber growth or ARPU falling below mid-single-digit forecasts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Price increases triggering elevated churn"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A renewed downgrade to the long-term industry outlook"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-2c72ac00160efd"
+       ],
+       "provenance": "FORECAST",
+       "text": "Consumer wallets face pressure from tariffs, gasoline prices and higher interest rates, which could weigh on discretionary live-music spending. (scope: Article argues live music is less exposed to downturns than other discretionary spending, but the macro pressures are acknowledged.)"
+      },
+      {
+       "claim_ids": [
+        "C-a194de81e68e50",
+        "C-911c2f43a0f3f3"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The music market has repeatedly undershot growth expectations, with three consecutive prior downgrades to the 2030 recorded music forecast before this upgrade. (scope: Prior forecast track record; this year marks the first upgrade in three years.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether specific listed music labels, streaming platforms or rights holders capture this revenue and at what margin"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether price increases and new tiers are adopted without raising churn"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus estimates versus these forecasts"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Subscriber growth decelerates below forecast"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Streaming price increases drive churn"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the listed music majors, streaming platforms and rights holders most exposed to developed- and emerging-market subscription growth and compare their revenue guidance against these forecasts."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Subscriber adds or ARPU beats mid-single-digit forecast"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Successful rollout of ad-light tiers driving ad-supported revenue uplift"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report))"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-e8ace45656ce",
+      "authors": [
+       "Goldman Sachs",
+       "Stephen Laszczyk",
+       "Eric Sheridan"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-2c72ac00160efd",
+       "C-47da6092008416",
+       "C-20477b86c633c4",
+       "C-fabd623e039be5",
+       "C-2bd7abfd76597c",
+       "C-e5b1a12e31adfe",
+       "C-e2c4b082163916",
+       "C-36d910f4529bc6",
+       "C-48bc35b5720606",
+       "C-9feef968b5d41a",
+       "C-a7715fb0230774",
+       "C-0e7dfbece14837",
+       "C-d98effa1069059",
+       "C-c564173efb1e9f",
+       "C-38b3e125d0a61e",
+       "C-9ed591c0adf28f",
+       "C-6cb399d8e83618",
+       "C-72daa812ffcd78",
+       "C-c5220476ae17f0",
+       "C-911c2f43a0f3f3",
+       "C-a194de81e68e50"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-05T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Global Music Revenues Are Forecast to Rise as Subscriber Growth Beats Expectations",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:11bbddec0ddb4cd829aa319f97caf2e83ec42c1b3d06d8350349657bd62f4e56",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "ce0154b0436f5035e46c56e5a68806897cf457f15bf113772ad4d7e5287bb3d6",
+   "created_at": "2026-11-10T15:29:04.187969Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-47da6092008416",
+       "C-20477b86c633c4",
+       "C-fabd623e039be5",
+       "C-2bd7abfd76597c",
+       "C-e5b1a12e31adfe",
+       "C-e2c4b082163916",
+       "C-36d910f4529bc6",
+       "C-48bc35b5720606",
+       "C-9feef968b5d41a",
+       "C-a7715fb0230774",
+       "C-0e7dfbece14837",
+       "C-d98effa1069059",
+       "C-c564173efb1e9f",
+       "C-6cb399d8e83618",
+       "C-72daa812ffcd78",
+       "C-c5220476ae17f0",
+       "C-2c72ac00160efd"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "17"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7157f87b7a71",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-2bd7abfd76597c",
+       "C-6cb399d8e83618",
+       "C-2c72ac00160efd"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-2bd7abfd76597c: forecast window 2026-01-01..2026-12-31 (2026); C-6cb399d8e83618: forecast window 2026-01-01..2026-12-31 (2026); C-2c72ac00160efd: forecast window 2026-01-01..2026-12-31 (2026)); 8 long-range claim(s); 2 long-dated statement(s) of the source beside the cited evidence, not on the card: C-911c2f43a0f3f3, C-ee20f7804ac98e; model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: recorded music, sector: music streaming subscriptions, sector: live music",
+      "value": "0 listed \u00b7 3 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-2c72ac00160efd",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-2bd7abfd76597c"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report",
+      "value": "not credible"
+     },
+     {
+      "claim_ids": [
+       "C-911c2f43a0f3f3"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 15 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report))"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report)"
+     }
+    ]
+   },
+   "run_id": "R-20261110T152529Z-ingest",
+   "thesis_id": "TH-2315C45951",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 7,
+ "other_cited_evidence": [
+  "C-a194de81e68e50",
+  "C-2c72ac00160efd",
+  "C-ed78a87a193eca",
+  "C-911c2f43a0f3f3",
+  "C-c564173efb1e9f"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "Sentence says '$112bn in 2025' with no qualifier and the 5.8% growth, plus 'rising revenue per user'; cited spans support 5.8%, almost $200bn, $112bn, first-in-three-years opinion. However 'rising revenue per user' is not in the cited spans, and the C-2bd7abfd76597c span (6.7% in 2026) is unrelated to the claim as stated. The core numbers are supported though; the RPU phrase overstates.",
+  "s03.0": "Cited spans support the subscriber rise to 568m from 398m, but 'growing faster than expected' and 'rising revenue per user in developed markets' are not supported by the cited spans.",
+  "s06.1": "Nearly $200bn by 2035 is supported, but 'diversified monetization and favorable consumer behavior' is editorializing not present in the two cited spans.",
+  "s07.1": "Three consecutive downgrades to the 2030 forecast is supported, but 'The music market undershot growth expectations over the last several years' is an added characterization not in the cited span.",
+  "s07.3": "First upgrade in three years and three consecutive downgrades are both supported, but 'has repeatedly undershot growth expectations' is an added characterization beyond the cited spans."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 the near-term change is a forecast without a corroborating measurement."
+ ],
+ "withheld_sentences": {
+  "s07.2": "REVIEW_UNSUPPORTED \u2014 s07.2: UNSUPPORTED \u2014 Cited span only supports 6% live music growth in 2026 driven by arena/stadium business. It says nothing about tariffs, gasoline prices, interest rates, or wallet pressure on discretionary live-music spending. No pool span supports these macro claims. | 'Consumer wallets face pressure from tariffs, gasoline prices and higher interest rates, which could '"
+ }
+}

@@ -1,0 +1,1826 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "industrials"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:13:26.495569Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-28",
+   "latest_article_date": "2026-10-28",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Industrials, defense, transport, capital goods",
+   "status": "ACTIVE",
+   "thesis_id": "TH-57D06E21EF",
+   "title": "Shift to low-cost autonomous/attritable systems favors defense-tech startups and software layer"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Funding for defense-tech startups focused on autonomous systems, unmanned platforms and defense software has hit records ($14.6bn US through May 2026; $8.7bn Europe in 2025), with Anduril ($61bn valuation) and Palantir able to act as primes, as militaries move to low-cost attritable systems and a critical AI software layer."
+   },
+   {
+    "claim_ids": [
+     "C-3fe62b586d9403",
+     "C-85a3f8a11ee0a6"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues winners will be firms addressing specific production constraints (components, processes, software, enabling infrastructure) rather than broad themes, and that investors must separate pilots from repeat orders."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A durable reorientation toward autonomous mass and software could shift share toward new entrants and the software layer, but most leading names (Anduril, Helsing) are private, and the article does not establish which listed companies capture the economics."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-429a036f94f454"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The LRHW Dark Eagle costs $41 million per round, the high end of the cost-asymmetry chart"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9e364032153998"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "A Shahed drone costs $20,000 to $50,000 per round, a cheap offensive system in the cost-asymmetry chart \u27e8cited figures: approximate, read from a chart\u27e9"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-04a9a4741e63b3"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Ukrainian FPV drones cost $600 to $2,500 per round, the cheapest point in the cost-asymmetry chart \u27e8cited figures: approximate, read from a chart\u27e9"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-83d457d58d502e"
+     ],
+     "original_date": "2026-10-28",
+     "period": "March 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "In March 2026 Ukraine signed 10-year defense cooperation agreements with Saudi Arabia, Qatar and the UAE"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:13 UTC, analysed as of 2026-11-10, from a source published 2026-10-28; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "industry_shift",
+    "text": "Modern warfare shifts toward unmanned systems, AI-enabled software and low-cost attritable mass, upending legacy defense industrial parameters."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Record venture funding and government programs (Drone Dominance, Taiwan/Australia drone funding) expand production of autonomous systems."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "The revenue/earnings accruing to listed firms is not quantified; most prominent players are privately held."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-04a9a4741e63b3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "cost per round",
+    "measured_as_of": null,
+    "origin": "Andreessen Horowitz, CSIS, Military Times",
+    "period": null,
+    "qualifiers": [
+     "news-reporting estimate"
+    ],
+    "quote": "Ukrainian FPV Drones $600\u2013$2.5K",
+    "role": "supports",
+    "unit": "USD",
+    "value": null,
+    "value_text": "$600\u2013$2.5K"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-429a036f94f454",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "cost per round",
+    "measured_as_of": null,
+    "origin": "Andreessen Horowitz, CSIS, Military Times",
+    "period": null,
+    "qualifiers": [
+     "US missile per FY2027 budget request"
+    ],
+    "quote": "LRHW Dark Eagle $41mn",
+    "role": "supports",
+    "unit": "USD million",
+    "value": 41.0,
+    "value_text": "$41mn"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b087",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-83d457d58d502e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "defense cooperation agreement term",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "March 2026",
+    "qualifiers": [
+     "Saudi Arabia, Qatar, UAE"
+    ],
+    "quote": "InMarch2026,thegovernmentofUkrainesigned70 10-yeardefensecooperationagreementswithSaudi Arabia,Qatar,andtheUnitedArabEmirates",
+    "role": "supports",
+    "unit": "years",
+    "value": 10.0,
+    "value_text": "10-year"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-9e364032153998",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "cost per round",
+    "measured_as_of": null,
+    "origin": "Andreessen Horowitz, CSIS, Military Times",
+    "period": null,
+    "qualifiers": [
+     "news-reporting estimate"
+    ],
+    "quote": "Shahed Drone $20K\u2013$50K",
+    "role": "supports",
+    "unit": "USD",
+    "value": null,
+    "value_text": "$20K\u2013$50K"
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-297881816c96f7",
+     "name_as_written": "Goldman Sachs Global Institute",
+     "other_securities": [],
+     "quote": "Co-Head, Goldman Sachs Global Institute",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author/publisher of the paper"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": "0000936468",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066928) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $1 par value",
+       "ticker": "LMT"
+      }
+     ],
+     "mention_id": "M-8a37b9e8d321b2",
+     "name_as_written": "Lockheed Martin",
+     "other_securities": [],
+     "quote": "Lockheed Martin reported a record $230 billion backlog49",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "sector_example",
+     "role_detail": "US defense prime cited for record backlog"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-61162969802cb6",
+     "name_as_written": "Rheinmetall",
+     "other_securities": [],
+     "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "European defense prime cited for order backlog and guidance"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-62f79217995004",
+     "name_as_written": "Destinus",
+     "other_securities": [],
+     "quote": "78 Destinus, \u201cRheinmetall and Destinus to Form a Joint Venture for Miss",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Swiss firm in JV with Rheinmetall for missiles"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e3ce77b40362ab",
+     "name_as_written": "EDGE Group",
+     "other_securities": [],
+     "quote": "79 EDGE Group, \u201cAbout Us,\u201d accessed October 17, 2026, https://edgegroup.a",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "UAE defense group forming joint production ventures"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4a59f9f38658fc",
+     "name_as_written": "Leonardo",
+     "other_securities": [],
+     "quote": "81 Leonardo, \u201cEDGE and Leonardo to Partner Through a Joint Venture on A",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Italian defense firm in JV with EDGE Group"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-73924b1119f16a",
+     "name_as_written": "Goldman Sachs Marquee MarketView",
+     "other_securities": [],
+     "quote": "Source: Goldman Sachs Marquee MarketView52",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of defense stock basket performance data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-785223529345f0",
+     "name_as_written": "Goldman Sachs Global Investment Research",
+     "other_securities": [],
+     "quote": "53 Goldman Sachs Global Investment Research, accessed October 17, 2026, https://marquee.gs.com/content/",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Cited for German defense order allocation data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8496926267ac19",
+     "name_as_written": "Stockholm International Peace Research Institute",
+     "other_securities": [],
+     "quote": "Stockholm International Peace Research Institute",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for global and regional defense spending data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-65ba4c700b5837",
+     "name_as_written": "Center for Strategic and International Studies",
+     "other_securities": [],
+     "quote": "Center for Strategic and International Studies",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for US/China spending and cost data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3cec0bfbeae7c8",
+     "name_as_written": "Congressional Budget Office",
+     "other_securities": [],
+     "quote": "Congressional Budget Office, Potential Costs of a National Missile Defense System",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Source of Golden Dome cost estimate"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9ebd0fc0bbf782",
+     "name_as_written": "Project Vault",
+     "other_securities": [],
+     "quote": "Project Vault,36",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US strategic critical-mineral reserve initiative"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3a41a3688393a2",
+     "name_as_written": "DARPA",
+     "other_securities": [],
+     "quote": "supported by initiatives like DARPA and Defense Innovation Unit",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US agency supporting Silicon Valley\u2013Pentagon integration"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8a7e39a75d0166",
+     "name_as_written": "Defense Innovation Unit",
+     "other_securities": [],
+     "quote": "DARPA and Defense Innovation Unit",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US Pentagon innovation unit"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d274e0a1a76e6f",
+     "name_as_written": "AUKUS",
+     "other_securities": [],
+     "quote": "AUKUS anchorsAustralia,theUnitedKingdom,andtheUnited States",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "trilateral defense partnership (Australia, UK, US) for nuclear-powered submarines and advanced capabilities"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-367485a8c313d1",
+     "name_as_written": "NATO",
+     "other_securities": [],
+     "quote": "NATO hasalsolaunchedanumberofHighVisibilityProjects",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "alliance coordinating multinational capability development (High Visibility Projects)"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-9809fe09dcfc63",
+     "name_as_written": "Anduril",
+     "other_securities": [],
+     "quote": "Anduril raised58$5billioninMay2026ata$61billionvaluation",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "US defense tech startup/neo-prime cited for funding round"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-b245155fa91c3d",
+     "name_as_written": "Helsing",
+     "other_securities": [],
+     "quote": "61 Helsing, \u201cHelsing Raises US$1.8bn in Series E,\u201d news release, July ",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Leading European defense tech unicorn"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "sector example",
+     "listings": [],
+     "mention_id": "M-f4d5a4cef83385",
+     "name_as_written": "Quantum Systems",
+     "other_securities": [],
+     "quote": "Quantum Systems to Launch Two More Joint Ventures With Ukrainian Manufacturers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Named only in endnote citation re Ukrainian JVs"
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "defense technology",
+    "defense software",
+    "autonomous/unmanned systems"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Drone Dominance 300,000 drones by 2027; ongoing 2026 funding rounds [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Government programs targeting 2027 and continued 2026 record funding provide near-term momentum, though monetization for listed names is unclear."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The force-design shift to attritable mass plus an AI software layer is framed as a durable structural change in how militaries procure."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-3fe62b586d9403"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Rapid obsolescence of these systems as innovation cycles compress, and unproven ability of procurement reforms to translate into production at scale, could erode the opportunity."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BCBAD262D4: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D620F0FF87: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-85a3f8a11ee0a6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A larger defense market won't reward every entrant and owning strategic tech doesn't guarantee attractive economics."
+    },
+    {
+     "claim_ids": [
+      "C-3fe62b586d9403"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The article argues the winners will be firms addressing specific production constraints, not broad themes."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Government drone programs underdelivering (as Replicator did)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Startup funding rounds slowing or down rounds"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Primes reclaiming share of autonomous/software work"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-85a3f8a11ee0a6",
+      "C-3fe62b586d9403"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A larger defense market won't reward every entrant and owning strategically important technology doesn't automatically translate into attractive economics; investors must distinguish announcements from funded programs, pilots from repeat orders, and urgent purchases from durable procurement changes. (scope: Applies to defense and defense-tech equities broadly; the article's own cautionary framing of the supercycle opportunity.)"
+    },
+    {
+     "claim_ids": [
+      "C-3fe62b586d9403"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Low-cost autonomous systems become obsolete quickly as innovation cycles compress, and traditional procurement has not adapted to the speed/scale required, raising execution risk for the autonomous/attritable systems build-out. (scope: Specific to low-end/attritable autonomous systems and the startups and programs serving them.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: If the shift toward unmanned, AI-enabled, attritable mass and software becomes a durable change in procurement rather than pilot projects"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies (vs private Anduril/Helsing) capture the autonomous/software economics"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether funded programs convert into repeat orders rather than pilots"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether rapid obsolescence undermines returns on these investments"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Autonomous programs underdeliver like Replicator"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Funding concentrated in private firms with no listed read-through"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed companies (e.g. software and components suppliers) exposed to the autonomous/attritable systems shift, since the named leaders are private."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Defense-tech startups IPO or listed names win large autonomous program awards"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Drone Dominance converts to funded repeat orders"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-0be56cc89833",
+    "authors": [
+     "Goldman Sachs",
+     "Dan Keyserling"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-429a036f94f454",
+     "C-9e364032153998",
+     "C-04a9a4741e63b3",
+     "C-83d457d58d502e",
+     "C-85a3f8a11ee0a6",
+     "C-3fe62b586d9403"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-28T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "The Security Supercycle",
+    "upstream_origins": [
+     "Andreessen Horowitz, CSIS, Military Times",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:1d95c5d9690cf203b6f65c1885ea91b6debf788601e07eb651fed5201f1710df",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names subscription \u2014 and also licences and maintenance, services (showing 2 of 3)",
+    "basis_quote": [
+     "We generate revenue from the sale of subscriptions to access our software platforms via Palantir Cloud and On-Premises Software, with ongoing O&M services and professional services.",
+     "the Company generates revenue from the sale of subscriptions to access its software platforms in the Company\u2019s hosted environment, along with ongoing operations and maintenance (\u201cO&M\u201d) services (\u201cPalantir Cloud\u201d);"
+    ],
+    "basis_source": "10-K filed 2026-02-17 (0001321655-26-000011)",
+    "business": "defense and commercial AI/data software platforms",
+    "direction": "positive",
+    "enrichment_id": "EC-c1e90f58751679",
+    "evidence": "s03.0: Modern warfare shifts toward unmanned systems, AI-enabled software and low-cost attritable mass, upending legacy defense industrial parameters.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-03 (accession 0001321655-26-000048) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, par value $0.001 per share",
+      "ticker": "PLTR"
+     }
+    ],
+    "name": "Palantir Technologies",
+    "rationale": "Named as able to act as a prime for the AI software layer; defense software demand lifts government segment revenue.",
+    "registrant": "Palantir Technologies Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "defense AI/data software platforms (Gotham, AIP)",
+    "revenue_model": "subscription",
+    "step_id": "s03.0",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-57D06E21EF",
+    "ticker_hint": "PLTR"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-23 (0001069258-26-000013)",
+    "business": "low-cost unmanned tactical drones and jet targets",
+    "direction": "positive",
+    "enrichment_id": "EC-ea11aa2283dac4",
+    "evidence": "s03.1: Record venture funding and government programs (Drone Dominance, Taiwan/Australia drone funding) expand production of autonomous systems.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-05 (accession 0001069258-26-000088) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value",
+      "ticker": "KTOS"
+     }
+    ],
+    "name": "Kratos Defense & Security Solutions",
+    "rationale": "Core maker of attritable unmanned aerial systems; expanded drone programs lift its unmanned systems orders and revenue.",
+    "registrant": "KRATOS DEFENSE & SECURITY SOLUTIONS, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3760); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "attritable unmanned aerial systems (Valkyrie, drones)",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-57D06E21EF",
+    "ticker_hint": "KTOS"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-06-29 (0001104659-26-078906)",
+    "business": "small unmanned aircraft and loitering munitions",
+    "direction": "positive",
+    "enrichment_id": "EC-d9b80c32a69448",
+    "evidence": "s03.1: Record venture funding and government programs (Drone Dominance, Taiwan/Australia drone funding) expand production of autonomous systems.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-10 (accession 0001104659-26-106423) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.0001 per share",
+      "ticker": "AVAV"
+     }
+    ],
+    "name": "AeroVironment",
+    "rationale": "Leading supplier of small drones and loitering munitions; drone-funding programs expand repeat orders and production.",
+    "registrant": "AeroVironment Inc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3721); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "small UAS and loitering munitions (Switchblade)",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-57D06E21EF",
+    "ticker_hint": "AVAV"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-19 (0001628280-26-019861)",
+    "business": "small military drone systems maker",
+    "direction": "positive",
+    "enrichment_id": "EC-c383d99f608f59",
+    "evidence": "s03.1: Record venture funding and government programs (Drone Dominance, Taiwan/Australia drone funding) expand production of autonomous systems.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054368) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.001",
+      "ticker": "RCAT"
+     }
+    ],
+    "name": "Red Cat Holdings",
+    "rationale": "Pure-play small military drone maker; US Drone Dominance and allied programs could convert pilots into production orders.",
+    "registrant": "Red Cat Holdings, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "military drone systems (Teal, Black Widow)",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-57D06E21EF",
+    "ticker_hint": "RCAT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-01-27 (0001133421-26-000003)",
+    "business": "legacy prime defense contractor, aircraft/systems",
+    "direction": "negative",
+    "enrichment_id": "EC-c5ca62151cee50",
+    "evidence": "s03.2: The revenue/earnings accruing to listed firms is not quantified; most prominent players are privately held.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-20 (accession 0001133421-26-000038) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock",
+      "ticker": "NOC"
+     }
+    ],
+    "name": "Northrop Grumman",
+    "rationale": "Share shift toward low-cost autonomous systems and software entrants pressures demand for high-cost legacy programs.",
+    "registrant": "NORTHROP GRUMMAN CORP /DE/",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3812); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "large exquisite defense platforms",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-57D06E21EF",
+    "ticker_hint": "NOC"
+   }
+  ],
+  "created_at": "2026-11-10T19:09:10.363546Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Ondas Holdings: more than 4 on one side \u2014 set aside",
+   "Palladyne AI: more than 4 on one side \u2014 set aside",
+   "Lockheed Martin: the source already names it \u2014 set aside"
+  ],
+  "run_id": "R-20261110T190855Z-enrich",
+  "set_id": "ES-a870bd892775c3",
+  "thesis_id": "TH-57D06E21EF",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-0be56cc89833",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "industrials"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:13:26.495569Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-28",
+     "latest_article_date": "2026-10-28",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Industrials, defense, transport, capital goods",
+     "status": "ACTIVE",
+     "thesis_id": "TH-57D06E21EF",
+     "title": "Shift to low-cost autonomous/attritable systems favors defense-tech startups and software layer"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Funding for defense-tech startups focused on autonomous systems, unmanned platforms and defense software has hit records ($14.6bn US through May 2026; $8.7bn Europe in 2025), with Anduril ($61bn valuation) and Palantir able to act as primes, as militaries move to low-cost attritable systems and a critical AI software layer."
+     },
+     {
+      "claim_ids": [
+       "C-3fe62b586d9403",
+       "C-85a3f8a11ee0a6"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues winners will be firms addressing specific production constraints (components, processes, software, enabling infrastructure) rather than broad themes, and that investors must separate pilots from repeat orders."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A durable reorientation toward autonomous mass and software could shift share toward new entrants and the software layer, but most leading names (Anduril, Helsing) are private, and the article does not establish which listed companies capture the economics."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-429a036f94f454"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The LRHW Dark Eagle costs $41 million per round, the high end of the cost-asymmetry chart"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9e364032153998"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A Shahed drone costs $20,000 to $50,000 per round, a cheap offensive system in the cost-asymmetry chart \u27e8cited figures: approximate, read from a chart\u27e9"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-04a9a4741e63b3"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Ukrainian FPV drones cost $600 to $2,500 per round, the cheapest point in the cost-asymmetry chart \u27e8cited figures: approximate, read from a chart\u27e9"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-83d457d58d502e"
+       ],
+       "original_date": "2026-10-28",
+       "period": "March 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In March 2026 Ukraine signed 10-year defense cooperation agreements with Saudi Arabia, Qatar and the UAE"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:13 UTC, analysed as of 2026-11-10, from a source published 2026-10-28; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "industry_shift",
+      "text": "Modern warfare shifts toward unmanned systems, AI-enabled software and low-cost attritable mass, upending legacy defense industrial parameters."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Record venture funding and government programs (Drone Dominance, Taiwan/Australia drone funding) expand production of autonomous systems."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "The revenue/earnings accruing to listed firms is not quantified; most prominent players are privately held."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-04a9a4741e63b3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "cost per round",
+      "measured_as_of": null,
+      "origin": "Andreessen Horowitz, CSIS, Military Times",
+      "period": null,
+      "qualifiers": [
+       "news-reporting estimate"
+      ],
+      "quote": "Ukrainian FPV Drones $600\u2013$2.5K",
+      "role": "supports",
+      "unit": "USD",
+      "value": null,
+      "value_text": "$600\u2013$2.5K"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-429a036f94f454",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "cost per round",
+      "measured_as_of": null,
+      "origin": "Andreessen Horowitz, CSIS, Military Times",
+      "period": null,
+      "qualifiers": [
+       "US missile per FY2027 budget request"
+      ],
+      "quote": "LRHW Dark Eagle $41mn",
+      "role": "supports",
+      "unit": "USD million",
+      "value": 41.0,
+      "value_text": "$41mn"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b087",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-83d457d58d502e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "defense cooperation agreement term",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "March 2026",
+      "qualifiers": [
+       "Saudi Arabia, Qatar, UAE"
+      ],
+      "quote": "InMarch2026,thegovernmentofUkrainesigned70 10-yeardefensecooperationagreementswithSaudi Arabia,Qatar,andtheUnitedArabEmirates",
+      "role": "supports",
+      "unit": "years",
+      "value": 10.0,
+      "value_text": "10-year"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-9e364032153998",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "cost per round",
+      "measured_as_of": null,
+      "origin": "Andreessen Horowitz, CSIS, Military Times",
+      "period": null,
+      "qualifiers": [
+       "news-reporting estimate"
+      ],
+      "quote": "Shahed Drone $20K\u2013$50K",
+      "role": "supports",
+      "unit": "USD",
+      "value": null,
+      "value_text": "$20K\u2013$50K"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-297881816c96f7",
+       "name_as_written": "Goldman Sachs Global Institute",
+       "other_securities": [],
+       "quote": "Co-Head, Goldman Sachs Global Institute",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher of the paper"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": "0000936468",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066928) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $1 par value",
+         "ticker": "LMT"
+        }
+       ],
+       "mention_id": "M-8a37b9e8d321b2",
+       "name_as_written": "Lockheed Martin",
+       "other_securities": [],
+       "quote": "Lockheed Martin reported a record $230 billion backlog49",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "sector_example",
+       "role_detail": "US defense prime cited for record backlog"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-61162969802cb6",
+       "name_as_written": "Rheinmetall",
+       "other_securities": [],
+       "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "European defense prime cited for order backlog and guidance"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-62f79217995004",
+       "name_as_written": "Destinus",
+       "other_securities": [],
+       "quote": "78 Destinus, \u201cRheinmetall and Destinus to Form a Joint Venture for Miss",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Swiss firm in JV with Rheinmetall for missiles"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e3ce77b40362ab",
+       "name_as_written": "EDGE Group",
+       "other_securities": [],
+       "quote": "79 EDGE Group, \u201cAbout Us,\u201d accessed October 17, 2026, https://edgegroup.a",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "UAE defense group forming joint production ventures"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4a59f9f38658fc",
+       "name_as_written": "Leonardo",
+       "other_securities": [],
+       "quote": "81 Leonardo, \u201cEDGE and Leonardo to Partner Through a Joint Venture on A",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Italian defense firm in JV with EDGE Group"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-73924b1119f16a",
+       "name_as_written": "Goldman Sachs Marquee MarketView",
+       "other_securities": [],
+       "quote": "Source: Goldman Sachs Marquee MarketView52",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of defense stock basket performance data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-785223529345f0",
+       "name_as_written": "Goldman Sachs Global Investment Research",
+       "other_securities": [],
+       "quote": "53 Goldman Sachs Global Investment Research, accessed October 17, 2026, https://marquee.gs.com/content/",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Cited for German defense order allocation data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8496926267ac19",
+       "name_as_written": "Stockholm International Peace Research Institute",
+       "other_securities": [],
+       "quote": "Stockholm International Peace Research Institute",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for global and regional defense spending data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-65ba4c700b5837",
+       "name_as_written": "Center for Strategic and International Studies",
+       "other_securities": [],
+       "quote": "Center for Strategic and International Studies",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for US/China spending and cost data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3cec0bfbeae7c8",
+       "name_as_written": "Congressional Budget Office",
+       "other_securities": [],
+       "quote": "Congressional Budget Office, Potential Costs of a National Missile Defense System",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Source of Golden Dome cost estimate"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9ebd0fc0bbf782",
+       "name_as_written": "Project Vault",
+       "other_securities": [],
+       "quote": "Project Vault,36",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US strategic critical-mineral reserve initiative"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3a41a3688393a2",
+       "name_as_written": "DARPA",
+       "other_securities": [],
+       "quote": "supported by initiatives like DARPA and Defense Innovation Unit",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US agency supporting Silicon Valley\u2013Pentagon integration"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8a7e39a75d0166",
+       "name_as_written": "Defense Innovation Unit",
+       "other_securities": [],
+       "quote": "DARPA and Defense Innovation Unit",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US Pentagon innovation unit"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d274e0a1a76e6f",
+       "name_as_written": "AUKUS",
+       "other_securities": [],
+       "quote": "AUKUS anchorsAustralia,theUnitedKingdom,andtheUnited States",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "trilateral defense partnership (Australia, UK, US) for nuclear-powered submarines and advanced capabilities"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-367485a8c313d1",
+       "name_as_written": "NATO",
+       "other_securities": [],
+       "quote": "NATO hasalsolaunchedanumberofHighVisibilityProjects",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "alliance coordinating multinational capability development (High Visibility Projects)"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-9809fe09dcfc63",
+       "name_as_written": "Anduril",
+       "other_securities": [],
+       "quote": "Anduril raised58$5billioninMay2026ata$61billionvaluation",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "US defense tech startup/neo-prime cited for funding round"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-b245155fa91c3d",
+       "name_as_written": "Helsing",
+       "other_securities": [],
+       "quote": "61 Helsing, \u201cHelsing Raises US$1.8bn in Series E,\u201d news release, July ",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Leading European defense tech unicorn"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "sector example",
+       "listings": [],
+       "mention_id": "M-f4d5a4cef83385",
+       "name_as_written": "Quantum Systems",
+       "other_securities": [],
+       "quote": "Quantum Systems to Launch Two More Joint Ventures With Ukrainian Manufacturers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Named only in endnote citation re Ukrainian JVs"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "defense technology",
+      "defense software",
+      "autonomous/unmanned systems"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Drone Dominance 300,000 drones by 2027; ongoing 2026 funding rounds [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Government programs targeting 2027 and continued 2026 record funding provide near-term momentum, though monetization for listed names is unclear."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The force-design shift to attritable mass plus an AI software layer is framed as a durable structural change in how militaries procure."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-3fe62b586d9403"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Rapid obsolescence of these systems as innovation cycles compress, and unproven ability of procurement reforms to translate into production at scale, could erode the opportunity."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BCBAD262D4: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D620F0FF87: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-85a3f8a11ee0a6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A larger defense market won't reward every entrant and owning strategic tech doesn't guarantee attractive economics."
+      },
+      {
+       "claim_ids": [
+        "C-3fe62b586d9403"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article argues the winners will be firms addressing specific production constraints, not broad themes."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Government drone programs underdelivering (as Replicator did)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Startup funding rounds slowing or down rounds"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Primes reclaiming share of autonomous/software work"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-85a3f8a11ee0a6",
+        "C-3fe62b586d9403"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A larger defense market won't reward every entrant and owning strategically important technology doesn't automatically translate into attractive economics; investors must distinguish announcements from funded programs, pilots from repeat orders, and urgent purchases from durable procurement changes. (scope: Applies to defense and defense-tech equities broadly; the article's own cautionary framing of the supercycle opportunity.)"
+      },
+      {
+       "claim_ids": [
+        "C-3fe62b586d9403"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Low-cost autonomous systems become obsolete quickly as innovation cycles compress, and traditional procurement has not adapted to the speed/scale required, raising execution risk for the autonomous/attritable systems build-out. (scope: Specific to low-end/attritable autonomous systems and the startups and programs serving them.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: If the shift toward unmanned, AI-enabled, attritable mass and software becomes a durable change in procurement rather than pilot projects"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies (vs private Anduril/Helsing) capture the autonomous/software economics"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether funded programs convert into repeat orders rather than pilots"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether rapid obsolescence undermines returns on these investments"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Autonomous programs underdeliver like Replicator"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Funding concentrated in private firms with no listed read-through"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed companies (e.g. software and components suppliers) exposed to the autonomous/attritable systems shift, since the named leaders are private."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Defense-tech startups IPO or listed names win large autonomous program awards"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Drone Dominance converts to funded repeat orders"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-0be56cc89833",
+      "authors": [
+       "Goldman Sachs",
+       "Dan Keyserling"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-429a036f94f454",
+       "C-9e364032153998",
+       "C-04a9a4741e63b3",
+       "C-83d457d58d502e",
+       "C-85a3f8a11ee0a6",
+       "C-3fe62b586d9403"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-28T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "The Security Supercycle",
+      "upstream_origins": [
+       "Andreessen Horowitz, CSIS, Military Times",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:1d95c5d9690cf203b6f65c1885ea91b6debf788601e07eb651fed5201f1710df",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "4520e00bb82782cb7fc687ada896eca727ff19b20f4932ae2f23b6d34edf93fb",
+   "created_at": "2026-11-10T15:13:39.727319Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-429a036f94f454",
+       "C-9e364032153998",
+       "C-04a9a4741e63b3",
+       "C-83d457d58d502e"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-1bd5dd04b43c, ES-7157f87b7a71",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 2 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-429a036f94f454",
+       "C-9e364032153998",
+       "C-04a9a4741e63b3"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-429a036f94f454: measured 2026-10-28 (13 days before the as-of); C-9e364032153998: measured 2026-10-28 (13 days before the as-of); C-04a9a4741e63b3: measured 2026-10-28 (13 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-85a3f8a11ee0a6",
+       "C-3fe62b586d9403"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (2 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 4 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 2 decision-bearing sentence(s): s02.1, s02.2",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_exposure",
+      "kind": "held",
+      "text": "no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261110T150647Z-ingest",
+   "thesis_id": "TH-57D06E21EF",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 4,
+ "other_cited_evidence": [
+  "C-3fe62b586d9403",
+  "C-85a3f8a11ee0a6"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s07.8": "First clause supported by C-85a3f8a11ee0a6. But the 'investors must distinguish announcements from funded programs, pilots from repeat orders, urgent purchases from durable procurement changes' claim is not in either cited span (C-3fe62b586d9403 is about which firms gain advantage)."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Exposure \u2014 no listed company or verified sector exposure; whether the source names business groups is not checkable on this machine (the article text is not held here).",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {
+  "s02.1": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s02.1 prints '20,000', which none of its cited claims carry: 'A Shahed drone costs $20,000 to $50,000 per round, a cheap offensive system in the cost-asymmetry ch'",
+  "s02.2": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s02.2 prints '2,500', which none of its cited claims carry: 'Ukrainian FPV drones cost $600 to $2,500 per round, the cheapest point in the cost-asymmetry chart \u27e8'",
+  "s07.2": "REVIEW_UNSUPPORTED \u2014 s07.2: UNSUPPORTED \u2014 Cited span is about which companies gain advantage; it says nothing about rapid obsolescence, compressed innovation cycles, or procurement reform scaling. No pool span supports this. | 'Rapid obsolescence of these systems as innovation cycles compress, and unproven ability of procureme'",
+  "s07.9": "REVIEW_UNSUPPORTED \u2014 s07.9: UNSUPPORTED \u2014 Cited span addresses which companies gain advantage; it does not state that low-cost autonomous systems become obsolete quickly, that innovation cycles compress, or that procurement has not adapted. No pool span supports this. | 'Low-cost autonomous systems become obsolete quickly as innovation cycles compress, and traditional p'"
+ }
+}

@@ -1,0 +1,1313 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "consumer"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:21:24.569464Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-04",
+   "latest_article_date": "2026-11-04",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Consumer discretionary and staples",
+   "status": "ACTIVE",
+   "thesis_id": "TH-8FBC7CB2C6",
+   "title": "Softened Medicaid/SNAP cuts support consumer spending and economic growth"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-0bb2b04e29fbdd",
+     "C-eb63d7f5ff05a2",
+     "C-1f0d775b571d44"
+    ],
+    "provenance": "FORECAST",
+    "text": "OBBBA includes ~$900bn Medicaid and $200bn SNAP cuts over a decade; a Democratic Congress could delay or soften these, which MS says could support household finances and consumer spending. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-1f0d775b571d44"
+    ],
+    "provenance": "FORECAST",
+    "text": "Delaying or reducing cuts could support consumer spending, providing a modest boost to economic activity."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A modest boost to consumer spending could benefit consumer-exposed equities, but the article quantifies no earnings effect and the policy outcome remains uncertain."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1f0d775b571d44"
+     ],
+     "original_date": "2026-11-04",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "MS expects delaying or reducing Medicaid/SNAP cuts to support consumer spending and provide a modest boost to economic activity."
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0bb2b04e29fbdd"
+     ],
+     "original_date": "2026-11-04",
+     "period": "next decade",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "OBBBA includes approximately $900 billion in Medicaid spending reductions over the next decade. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-eb63d7f5ff05a2"
+     ],
+     "original_date": "2026-11-04",
+     "period": "next decade",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "OBBBA includes $200 billion in SNAP cuts over the next decade."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:21 UTC, analysed as of 2026-11-10, from a source published 2026-11-04; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0bb2b04e29fbdd",
+     "C-eb63d7f5ff05a2",
+     "C-d5dd52a09a17af"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Democratic Congress could delay, soften or reverse planned Medicaid and SNAP cuts. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-1f0d775b571d44"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Supported household finances could lift consumer spending and economic activity."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0bb2b04e29fbdd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Medicaid spending reduction",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next decade",
+    "qualifiers": [
+     "approximately",
+     "over the next decade"
+    ],
+    "quote": "The One Big Beautiful Bill Act (OBBBA) includes approximately $900 billion in Medicaid spending reductions",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 900.0,
+    "value_text": "approximately $900 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eb63d7f5ff05a2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "SNAP spending cut",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next decade",
+    "qualifiers": [
+     "over the next decade"
+    ],
+    "quote": "$200 billion in cuts to the Supplemental Nutrition Assistance Program (SNAP) over the next decade",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 200.0,
+    "value_text": "$200 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1f0d775b571d44",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MS expects delaying or reducing Medicaid/SNAP cuts to support consumer spending and provide a modest boost to economic activity.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "modest boost"
+    ],
+    "quote": "Delaying or reducing planned Medicaid and SNAP cuts could support household finances and consumer spending, providing a modest boost to economic activity.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-799b42efd435cf",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research maintains its overweight position in global equities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the research commentary"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e66dfa40bc85f5",
+     "name_as_written": "Affordable Care Act (ACA)",
+     "other_securities": [],
+     "quote": "Affordable Care Act (ACA)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Healthcare law whose enhanced subsidies may be restored"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d9964959bd19c1",
+     "name_as_written": "United States-Mexico-Canada Agreement (USMCA)",
+     "other_securities": [],
+     "quote": "United States-Mexico-Canada Agreement (USMCA)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Trade agreement up for review"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dc587421168422",
+     "name_as_written": "Gina Hinojosa",
+     "other_securities": [],
+     "quote": "Democrat Gina Hinojosa's victory",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Texas governor-elect whose platform included data center moratorium"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-240fd70ab5ce86",
+     "name_as_written": "Donald Trump",
+     "other_securities": [],
+     "quote": "President Donald Trump's second term",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US President referenced for executive-led policy"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7a68cf25ce6802",
+     "name_as_written": "Ariana Salvatore",
+     "other_securities": [],
+     "quote": "Author Ariana Salvatore, Head of Public Policy Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Named author of the article, Head of Public Policy Research at Morgan Stanley"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-910176774402de",
+     "name_as_written": "Supplemental Nutrition Assistance Program (SNAP)",
+     "other_securities": [],
+     "quote": "Supplemental Nutrition Assistance Program (SNAP)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Federal food assistance program subject to cuts"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-37ac7de307471b",
+     "name_as_written": "One Big Beautiful Bill Act (OBBBA)",
+     "other_securities": [],
+     "quote": "The One Big Beautiful Bill Act (OBBBA)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Legislation containing Medicaid and SNAP spending reductions"
+    }
+   ],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "claim_ids": [
+      "C-1f0d775b571d44"
+     ],
+     "direction": "positive",
+     "name": "consumer spending",
+     "provenance": "FORECAST",
+     "quote": "benefit the healthcare sector and consumer spending"
+    }
+   ],
+   "sectors": [
+    "consumer spending"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Negotiations around upcoming fiscal deadlines; new Congress convening in January [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-1f0d775b571d44"
+     ],
+     "provenance": "FORECAST",
+     "text": "Delaying or reducing planned cuts could provide a modest near-term boost to consumer spending and activity."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-1f0d775b571d44",
+      "C-291e573e9ab803"
+     ],
+     "provenance": "FORECAST",
+     "text": "MS sees the election results as a potential source of additional upside to US growth."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-df527b6d9a93b0"
+     ],
+     "provenance": "FORECAST",
+     "text": "MS notes federal deficits remain around 6% of GDP even if spending cuts remain in place, implying limited fiscal change."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-007AEC93D8: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-16225B12C4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-932062360F: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs policy_regulation); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BEE65BA64C: same value-chain node, not the same claim \u2014 a different mechanism (disruption_revenue_erosion vs policy_regulation); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-E99CEF834D: same value-chain node, not the same claim \u2014 a different mechanism (dispersion_selection vs policy_regulation); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-df527b6d9a93b0"
+     ],
+     "provenance": "FORECAST",
+     "text": "MS expects federal fiscal deficits to remain around 6% of GDP even if spending cuts remain. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Medicaid/SNAP cuts proceed as legislated"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consumer spending data weakens despite policy delays"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued executive-led policy uncertainty (geopolitics, export controls, deregulation, trade including USMCA review) persists despite the midterm result. (scope: Broad market, areas where the administration retains executive authority.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: Democratic Congress delays, softens or reverses planned Medicaid and SNAP cuts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether Democrats actually delay or soften the cuts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The magnitude of any consumer spending boost"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which consumer-exposed equities would benefit"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Cuts proceed as legislated"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consumer spending softens regardless"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Track fiscal negotiations on Medicaid/SNAP cuts and assess consumer-staples and discretionary exposure to low-income household spending."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Congress formally delays or reverses Medicaid/SNAP cuts"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-32d0f6d2cfe7",
+    "authors": [
+     "Morgan Stanley",
+     "Ariana Salvatore"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-1f0d775b571d44",
+     "C-0bb2b04e29fbdd",
+     "C-eb63d7f5ff05a2",
+     "C-df527b6d9a93b0"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-04T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "What the U.S. Midterm Sweep Could Mean for Markets",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:488b1d694dc8e919ef2d9feda68d1da614a794c33be9580418f491c13b0b10c8",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-20 (0001104659-26-032325)",
+    "business": "discount retailer serving low-income rural shoppers",
+    "direction": "positive",
+    "enrichment_id": "EC-b9cd1ea2df4bec",
+    "evidence": "s03.1: Supported household finances could lift consumer spending and economic activity.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-27 (accession 0001104659-26-101932) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.875 per share",
+      "ticker": "DG"
+     }
+    ],
+    "name": "Dollar General",
+    "rationale": "Core customers are heavy SNAP/Medicaid recipients; softened cuts preserve household budgets, supporting discretionary and grocery spend at its stores.",
+    "registrant": "DOLLAR GENERAL CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 5331); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "general merchandise and consumables retail",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8FBC7CB2C6",
+    "ticker_hint": "DG"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-16 (0000935703-26-000025)",
+    "business": "discount variety retailer (Dollar Tree, Family Dollar)",
+    "direction": "positive",
+    "enrichment_id": "EC-02e2568284b9ba",
+    "evidence": "s03.1: Supported household finances could lift consumer spending and economic activity.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-27 (accession 0000935703-26-000109) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01 per share",
+      "ticker": "DLTR"
+     }
+    ],
+    "name": "Dollar Tree",
+    "rationale": "Family Dollar serves low-income SNAP-reliant shoppers; delayed benefit cuts preserve their spending power, supporting store sales and traffic.",
+    "registrant": "DOLLAR TREE, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 5331); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "discount retail of consumables and merchandise",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8FBC7CB2C6",
+    "ticker_hint": "DLTR"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "large US supermarket grocery chain",
+    "direction": "positive",
+    "enrichment_id": "EC-68f48c0bc9f18b",
+    "evidence": "s03.1: Supported household finances could lift consumer spending and economic activity.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "The Kroger",
+    "rationale": "Significant share of sales via SNAP/EBT; softened SNAP cuts preserve grocery purchasing power, supporting food retail volumes.",
+    "registrant": "KROGER CO",
+    "resolution_note": "no common equity among the securities registered on the 10-Q filed 2026-09-18 (accession 0001104659-26-108926) cover page",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "grocery and food retail sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8FBC7CB2C6",
+    "ticker_hint": "KR"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-13 (0000104169-26-000055)",
+    "business": "largest US retailer, major grocery and merchandise",
+    "direction": "positive",
+    "enrichment_id": "EC-9f1f81c2e5bbee",
+    "evidence": "s03.1: Supported household finances could lift consumer spending and economic activity.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-28 (accession 0000104169-26-000154) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.10 per share",
+      "ticker": "WMT"
+     }
+    ],
+    "name": "Walmart",
+    "rationale": "Largest recipient of SNAP spending; softened cuts preserve low-income customer budgets, supporting grocery and general merchandise sales.",
+    "registrant": "Walmart Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 5331); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "grocery and general merchandise retail",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8FBC7CB2C6",
+    "ticker_hint": "WMT"
+   }
+  ],
+  "created_at": "2026-11-10T19:09:14.029777Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Centene: more than 4 on one side \u2014 set aside",
+   "Molina Healthcare: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261110T190855Z-enrich",
+  "set_id": "ES-b28552ecfb6729",
+  "thesis_id": "TH-8FBC7CB2C6",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-32d0f6d2cfe7",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "consumer"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:21:24.569464Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-04",
+     "latest_article_date": "2026-11-04",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Consumer discretionary and staples",
+     "status": "ACTIVE",
+     "thesis_id": "TH-8FBC7CB2C6",
+     "title": "Softened Medicaid/SNAP cuts support consumer spending and economic growth"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-0bb2b04e29fbdd",
+       "C-eb63d7f5ff05a2",
+       "C-1f0d775b571d44"
+      ],
+      "provenance": "FORECAST",
+      "text": "OBBBA includes ~$900bn Medicaid and $200bn SNAP cuts over a decade; a Democratic Congress could delay or soften these, which MS says could support household finances and consumer spending. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-1f0d775b571d44"
+      ],
+      "provenance": "FORECAST",
+      "text": "Delaying or reducing cuts could support consumer spending, providing a modest boost to economic activity."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A modest boost to consumer spending could benefit consumer-exposed equities, but the article quantifies no earnings effect and the policy outcome remains uncertain."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1f0d775b571d44"
+       ],
+       "original_date": "2026-11-04",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "MS expects delaying or reducing Medicaid/SNAP cuts to support consumer spending and provide a modest boost to economic activity."
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0bb2b04e29fbdd"
+       ],
+       "original_date": "2026-11-04",
+       "period": "next decade",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "OBBBA includes approximately $900 billion in Medicaid spending reductions over the next decade. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-eb63d7f5ff05a2"
+       ],
+       "original_date": "2026-11-04",
+       "period": "next decade",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "OBBBA includes $200 billion in SNAP cuts over the next decade."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:21 UTC, analysed as of 2026-11-10, from a source published 2026-11-04; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0bb2b04e29fbdd",
+       "C-eb63d7f5ff05a2",
+       "C-d5dd52a09a17af"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Democratic Congress could delay, soften or reverse planned Medicaid and SNAP cuts. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-1f0d775b571d44"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Supported household finances could lift consumer spending and economic activity."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0bb2b04e29fbdd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Medicaid spending reduction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next decade",
+      "qualifiers": [
+       "approximately",
+       "over the next decade"
+      ],
+      "quote": "The One Big Beautiful Bill Act (OBBBA) includes approximately $900 billion in Medicaid spending reductions",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 900.0,
+      "value_text": "approximately $900 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eb63d7f5ff05a2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "SNAP spending cut",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next decade",
+      "qualifiers": [
+       "over the next decade"
+      ],
+      "quote": "$200 billion in cuts to the Supplemental Nutrition Assistance Program (SNAP) over the next decade",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 200.0,
+      "value_text": "$200 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1f0d775b571d44",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MS expects delaying or reducing Medicaid/SNAP cuts to support consumer spending and provide a modest boost to economic activity.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "modest boost"
+      ],
+      "quote": "Delaying or reducing planned Medicaid and SNAP cuts could support household finances and consumer spending, providing a modest boost to economic activity.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-799b42efd435cf",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research maintains its overweight position in global equities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research commentary"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e66dfa40bc85f5",
+       "name_as_written": "Affordable Care Act (ACA)",
+       "other_securities": [],
+       "quote": "Affordable Care Act (ACA)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Healthcare law whose enhanced subsidies may be restored"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d9964959bd19c1",
+       "name_as_written": "United States-Mexico-Canada Agreement (USMCA)",
+       "other_securities": [],
+       "quote": "United States-Mexico-Canada Agreement (USMCA)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Trade agreement up for review"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dc587421168422",
+       "name_as_written": "Gina Hinojosa",
+       "other_securities": [],
+       "quote": "Democrat Gina Hinojosa's victory",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Texas governor-elect whose platform included data center moratorium"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-240fd70ab5ce86",
+       "name_as_written": "Donald Trump",
+       "other_securities": [],
+       "quote": "President Donald Trump's second term",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US President referenced for executive-led policy"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7a68cf25ce6802",
+       "name_as_written": "Ariana Salvatore",
+       "other_securities": [],
+       "quote": "Author Ariana Salvatore, Head of Public Policy Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Named author of the article, Head of Public Policy Research at Morgan Stanley"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-910176774402de",
+       "name_as_written": "Supplemental Nutrition Assistance Program (SNAP)",
+       "other_securities": [],
+       "quote": "Supplemental Nutrition Assistance Program (SNAP)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Federal food assistance program subject to cuts"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-37ac7de307471b",
+       "name_as_written": "One Big Beautiful Bill Act (OBBBA)",
+       "other_securities": [],
+       "quote": "The One Big Beautiful Bill Act (OBBBA)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Legislation containing Medicaid and SNAP spending reductions"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "claim_ids": [
+        "C-1f0d775b571d44"
+       ],
+       "direction": "positive",
+       "name": "consumer spending",
+       "provenance": "FORECAST",
+       "quote": "benefit the healthcare sector and consumer spending"
+      }
+     ],
+     "sectors": [
+      "consumer spending"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Negotiations around upcoming fiscal deadlines; new Congress convening in January [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-1f0d775b571d44"
+       ],
+       "provenance": "FORECAST",
+       "text": "Delaying or reducing planned cuts could provide a modest near-term boost to consumer spending and activity."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-1f0d775b571d44",
+        "C-291e573e9ab803"
+       ],
+       "provenance": "FORECAST",
+       "text": "MS sees the election results as a potential source of additional upside to US growth."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-df527b6d9a93b0"
+       ],
+       "provenance": "FORECAST",
+       "text": "MS notes federal deficits remain around 6% of GDP even if spending cuts remain in place, implying limited fiscal change."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-007AEC93D8: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-16225B12C4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-932062360F: same value-chain node, not the same claim \u2014 a different mechanism (cost_inflation vs policy_regulation); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BEE65BA64C: same value-chain node, not the same claim \u2014 a different mechanism (disruption_revenue_erosion vs policy_regulation); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-E99CEF834D: same value-chain node, not the same claim \u2014 a different mechanism (dispersion_selection vs policy_regulation); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-df527b6d9a93b0"
+       ],
+       "provenance": "FORECAST",
+       "text": "MS expects federal fiscal deficits to remain around 6% of GDP even if spending cuts remain. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Medicaid/SNAP cuts proceed as legislated"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consumer spending data weakens despite policy delays"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued executive-led policy uncertainty (geopolitics, export controls, deregulation, trade including USMCA review) persists despite the midterm result. (scope: Broad market, areas where the administration retains executive authority.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Democratic Congress delays, softens or reverses planned Medicaid and SNAP cuts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether Democrats actually delay or soften the cuts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The magnitude of any consumer spending boost"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which consumer-exposed equities would benefit"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Cuts proceed as legislated"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consumer spending softens regardless"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track fiscal negotiations on Medicaid/SNAP cuts and assess consumer-staples and discretionary exposure to low-income household spending."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Congress formally delays or reverses Medicaid/SNAP cuts"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-32d0f6d2cfe7",
+      "authors": [
+       "Morgan Stanley",
+       "Ariana Salvatore"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-1f0d775b571d44",
+       "C-0bb2b04e29fbdd",
+       "C-eb63d7f5ff05a2",
+       "C-df527b6d9a93b0"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-04T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "What the U.S. Midterm Sweep Could Mean for Markets",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:488b1d694dc8e919ef2d9feda68d1da614a794c33be9580418f491c13b0b10c8",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "b8b61b961531cd8311f8452c24436853ebab6cb525a6a5a952ab280e0a58b3bd",
+   "created_at": "2026-11-10T15:21:48.604918Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-0bb2b04e29fbdd",
+       "C-eb63d7f5ff05a2",
+       "C-1f0d775b571d44"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-0bb2b04e29fbdd",
+       "C-eb63d7f5ff05a2"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-0bb2b04e29fbdd: measured 2026-11-04 (6 days before the as-of); C-eb63d7f5ff05a2: measured 2026-11-04 (6 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: consumer spending",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-1f0d775b571d44",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-df527b6d9a93b0"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 3 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261110T151809Z-ingest",
+   "thesis_id": "TH-8FBC7CB2C6",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 5,
+ "other_cited_evidence": [
+  "C-d5dd52a09a17af",
+  "C-291e573e9ab803",
+  "C-df527b6d9a93b0"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The sentence attributes the delay/softening to a 'Democratic Congress', but the cited forecast span C-1f0d775b571d44 says nothing about a Democratic Congress; the political actor claim is not in the cited spans. The $900bn/$200bn/MS boost portions are supported.",
+  "s06.0": "Cited span says 'modest boost to economic activity' but does not characterize it as 'near-term'; the near-term qualifier is not supported by the cited span.",
+  "s07.1": "The cited span supports the ~6% deficit forecast, but 'implying limited fiscal change' is an added interpretation not present in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Premise \u2014 conditional in the source."
+ ],
+ "withheld_sentences": {}
+}

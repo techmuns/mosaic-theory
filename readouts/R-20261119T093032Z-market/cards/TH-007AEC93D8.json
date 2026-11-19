@@ -1,0 +1,3215 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "consumer"
+   ],
+   "evidence_direction": "MIXED",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:05:41.935714Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-29",
+   "latest_article_date": "2026-10-29",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Consumer discretionary and staples",
+   "status": "ACTIVE",
+   "thesis_id": "TH-007AEC93D8",
+   "title": "Luxury-goods revenue recovery accelerates into 2027 on improving sales momentum"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-c54d142f3781cd",
+     "C-22cc88e7ce5d05",
+     "C-ad3b35a220f30a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Goldman Sachs Research forecasts luxury-goods basket revenue growth of 7% in 2027, up from an expected 6% in 2026, framed as a solid recovery after years of sluggish performance. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-ad3b35a220f30a",
+     "C-548331e04fdecb",
+     "C-b3a291488aeace"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The author argues sales momentum, not valuation, drives the sector and sees it picking up soon, rebutting the ex-growth bear case."
+   },
+   {
+    "claim_ids": [
+     "C-097279fd0c7bb2",
+     "C-5b440bf61be833",
+     "C-b979fc8f85ba1d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "\u27e8update 2026-10-29 \u00b7 Morgan Stanley\u27e9 Morgan Stanley argues cruise lines, at just 2-4% of the global vacation market, could be AI winners as agents introduce cruising to new travelers, broaden the addressable market and reduce distribution/acquisition costs."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "new",
+     "claim_ids": [
+      "C-097279fd0c7bb2"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Cruise lines account for just 2% to 4% of the global vacation market. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "new",
+     "claim_ids": [
+      "C-5b440bf61be833"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Agentic AI could make cruising more accessible, reduce customer acquisition costs and accelerate industry growth. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "new",
+     "claim_ids": [
+      "C-b979fc8f85ba1d"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "AI agents could broaden cruise lines' addressable market by recommending cruises to would-be land-based travelers. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-ab1950d0fc95b7"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "AI platforms could become new intermediaries, with costs reduced by agentic AI reappearing if platforms charge for access, placement or bookings. \u27e8the source states evidence against this thesis\u27e9"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v1 held 14 claim(s); this source adds: contradictory \u00d71, new \u00d73"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-277527874056f0",
+     "C-5d920adc8002d1"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "New CEOs/creative directors and renewed innovation revive consumer interest after post-Covid price hikes dampened demand. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-0afc667432eb1e",
+     "C-7cde6865c03de4"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "US consumer appetite picking up strongly plus Hong Kong recovery lift luxury unit demand."
+   },
+   {
+    "claim_ids": [
+     "C-5b440bf61be833",
+     "C-25497c5a0035b1"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "Lower reliance on travel advisors and intermediaries could reduce distribution and acquisition costs."
+   },
+   {
+    "claim_ids": [
+     "C-c54d142f3781cd"
+    ],
+    "provenance": "FORECAST",
+    "step": "listed_earnings",
+    "text": "Faster revenue growth (7% in 2027) would flow to luxury makers' top line; the article does not quantify earnings impact. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-22cc88e7ce5d05",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "revenue growth",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "an improvement from an expected 6% growth rate in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 6.0,
+    "value_text": "6%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-61da9fe87834bd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "revenue CAGR",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "past 25 years",
+    "qualifiers": [
+     "average annual"
+    ],
+    "quote": "recorded average top-line growth of 6% annually over the past 25 years",
+    "role": "supports",
+    "unit": "%",
+    "value": 6.0,
+    "value_text": "6%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c54d142f3781cd",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "revenue growth",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "2027",
+    "qualifiers": [
+     "basket of large, publicly traded luxury-goods makers"
+    ],
+    "quote": "forecast to increase revenue by 7% in 2027",
+    "role": "supports",
+    "unit": "%",
+    "value": 7.0,
+    "value_text": "7%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b026",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-097279fd0c7bb2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "cruise share of global vacation market",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "just"
+    ],
+    "quote": "an industry that accounts for just 2% to 4% of the global vacation market",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "2% to 4%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b026",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0afc667432eb1e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "American consumers' appetite for luxury goods has picked up strongly since Covid.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since the Covid pandemic",
+    "qualifiers": [],
+    "quote": "The appetite of American consumers for luxury goods has picked up strongly",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-548331e04fdecb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The author argues share moves are driven by sales momentum, which he sees picking up soon.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "soon",
+    "qualifiers": [],
+    "quote": "it is more a function of sales momentum, which we see picking up soon",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b028",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7cde6865c03de4",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Hong Kong luxury market is showing signs of recovery supported by local and mainland Chinese consumers.",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the market is showing signs of recovery, with both local consumers and visitors from mainland China supporting sales growth",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8f611cf5a15c67",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The author views the US as an emerging market for luxury goods.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "we still think the US is an emerging market for luxury goods",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ad3b35a220f30a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The forecast recovery rebuts the bear argument that the sector has gone ex-growth for an extended period.",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": null,
+    "qualifiers": [],
+    "quote": "a rebuttal of the argument by some bears \u201cthat the sector may have gone ex-growth for an extended period,\u201d",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3f8a5339c023",
+    "block_id": "b030",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b3a291488aeace",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "sales vs 6% CAGR",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since 2019",
+    "qualifiers": [],
+    "quote": "sales levels exceed what a 6% compound annual growth rate (CAGR) would have implied since just before the Covid pandemic in 2019",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b027",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-5b440bf61be833",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Agentic AI could make cruising more accessible, reduce customer acquisition costs and accelerate industry growth.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "has the potential"
+    ],
+    "quote": "agentic AI has the potential to make cruising more accessible, reduce customer acquisition costs and accelerate growth for the industry",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1eba0c2971e8",
+    "block_id": "b030",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-b979fc8f85ba1d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "AI agents could broaden cruise lines' addressable market by recommending cruises to would-be land-based travelers.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "could"
+    ],
+    "quote": "Agents could broaden the industry\u2019s addressable market by recommending cruises to consumers who would otherwise choose land-based holidays",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-3f8a5339c023",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1bb37fcd7f0284",
+     "name_as_written": "Goldman Sachs Research",
+     "other_securities": [],
+     "quote": "Goldman Sachs Research forecasts 7% revenue growth",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the underlying research report and forecasts"
+    },
+    {
+     "article_id": "A-3f8a5339c023",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3b4e45bc91422d",
+     "name_as_written": "Goldman Sachs Executive Office",
+     "other_securities": [],
+     "quote": "prepared by the Goldman Sachs Executive Office",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Preparer of this document"
+    },
+    {
+     "article_id": "A-3f8a5339c023",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b0767b87b6ea70",
+     "name_as_written": "Datastream",
+     "other_securities": [],
+     "quote": "Source: Datastream, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for luxury sector market capitalization chart"
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ae9e116c173d9e",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research believes the rise of AI agents",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research publisher producing the analysis"
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-35308a756a5f89",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Stephen Grambling, Morgan Stanley\u2019s head of U.S. Gaming, Lodging & Leisure research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Research publisher whose analysts are quoted throughout"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-c54d142f3781cd",
+      "C-22cc88e7ce5d05"
+     ],
+     "provenance": "FORECAST",
+     "text": "A basket of large, publicly traded luxury-goods maker stocks used for Goldman Sachs Research's revenue growth forecasts; members not named. (constituents not named by the source)"
+    }
+   ],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-3f8a5339c023",
+     "claim_ids": [],
+     "direction": "positive",
+     "name": "jewelry",
+     "provenance": "SOURCE OPINION",
+     "quote": "some consumer verticals, such as jewelry, having better growth potential than others, such as beauty products"
+    },
+    {
+     "article_id": "A-3f8a5339c023",
+     "claim_ids": [],
+     "direction": "negative",
+     "name": "beauty products",
+     "provenance": "SOURCE OPINION",
+     "quote": "such as beauty products"
+    },
+    {
+     "article_id": "A-1eba0c2971e8",
+     "claim_ids": [
+      "C-097279fd0c7bb2",
+      "C-5b440bf61be833",
+      "C-b979fc8f85ba1d"
+     ],
+     "direction": "positive",
+     "name": "cruise lines",
+     "provenance": "SOURCE OPINION",
+     "quote": "Cruise Lines: A Potential AI Winner"
+    }
+   ],
+   "sectors": [
+    "luxury goods",
+    "consumer discretionary",
+    "cruise lines"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-5b440bf61be833"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "Framed as a longer-term potential catalyst without a dated near-term event."
+    },
+    {
+     "claim_ids": [
+      "C-c54d142f3781cd",
+      "C-22cc88e7ce5d05",
+      "C-548331e04fdecb"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Revenue growth forecast to accelerate to 7% in 2027 from 6% in 2026, with sales momentum seen picking up soon. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-097279fd0c7bb2",
+      "C-5b440bf61be833"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Winning even a small share of land-based vacationers could drive outsized cruise growth, with agentic AI as the catalyst."
+    },
+    {
+     "claim_ids": [
+      "C-8f611cf5a15c67",
+      "C-61da9fe87834bd"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "US viewed as a still-emerging market for luxury and sector has averaged 6% top-line growth over 25 years, supporting a longer-term growth case."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-ad3b35a220f30a",
+      "C-2ccc935baee289"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Bears argue the sector may have gone ex-growth for an extended period; macro headwinds (China property, tariffs, rates, geopolitics) weighed on discretionary spending."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-16225B12C4: the same claim at an overlapping but different geography (Global vs US) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+    },
+    {
+     "claim_ids": [
+      "C-ab1950d0fc95b7"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI platforms could become new intermediaries that re-impose costs on travel companies including cruise lines."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-749b82707fb6ab"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "South Korean luxury demand growth may be fragile due to reliance on a volatile tech-heavy equity market."
+    },
+    {
+     "claim_ids": [
+      "C-d49d999c9b60a8"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Luxury share prices have fallen over the past three or four years, as have earnings estimates."
+    },
+    {
+     "claim_ids": [
+      "C-ab1950d0fc95b7"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI platforms could become new intermediaries, with costs reduced by agentic AI reappearing if platforms charge for access, placement or bookings."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "2026/2027 luxury sales prints below the 6%/7% forecasts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued store traffic declines after new collections"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "US luxury demand reverting after equity-market weakness"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No shift in cruise penetration of the vacation market"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI platforms charging cruise lines for placement/bookings"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-749b82707fb6ab"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "South Korean luxury demand growth may be fragile because it is linked to wealth tied to a tech-heavy, volatile equity market. (scope: South Korea luxury demand specifically)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Macro and geopolitical factors (China property slump, 2025 US tariffs, jittery equity markets, midterm elections, higher rates, Middle East conflict) have weighed on luxury discretionary spending. (scope: Global luxury discretionary demand)"
+    },
+    {
+     "claim_ids": [
+      "C-ab1950d0fc95b7"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI platforms could become another intermediary and, if they eventually charge travel companies for access, placement or bookings, some of the costs reduced by agentic AI could reappear in a different form. (scope: Applies across hotels, OTAs and cruise lines; conditional and unquantified ('if these platforms eventually charge').)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether listed luxury companies' valuations or earnings estimates reflect the forecast recovery"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the US demand pickup is durable rather than cyclical"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which specific listed brands benefit, since the article names none"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the comparison of sales vs 6% CAGR demonstrates renewed growth or base effects"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI agents actually recommend cruises to land-based travelers at scale"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The magnitude of addressable-market expansion or cost reduction"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed cruise operators capture the benefit"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus already prices in a stronger 2027 recovery"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "China property slump deepens and drags Asian luxury demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI platforms imposing new fees on cruise bookings"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Examine listed cruise operators' distribution cost structure and new-to-cruise customer share to gauge upside from agentic AI discovery."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "US luxury store-opening and same-store sales data confirm strong US demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "New creative-director collections drive traffic and sales recovery"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence AI agents are recommending cruises to new travelers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Cruise lines reporting lower customer acquisition costs"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-3f8a5339c023",
+    "authors": [
+     "Goldman Sachs",
+     "Erwan Rambourg"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-0afc667432eb1e",
+     "C-22cc88e7ce5d05",
+     "C-277527874056f0",
+     "C-2ccc935baee289",
+     "C-548331e04fdecb",
+     "C-5d920adc8002d1",
+     "C-61da9fe87834bd",
+     "C-749b82707fb6ab",
+     "C-7cde6865c03de4",
+     "C-8f611cf5a15c67",
+     "C-ad3b35a220f30a",
+     "C-b3a291488aeace",
+     "C-c54d142f3781cd",
+     "C-d49d999c9b60a8"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-22T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "Why Luxury Goods Companies\u2019 Revenues Are Forecast to Climb",
+    "upstream_origins": [
+     "Goldman Sachs Research",
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:65a4cb628796ab0c621d1ec6a06d91e3dd0fd78bc81e754344d24227cf64a3ac",
+    "version_dates": []
+   },
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-1eba0c2971e8",
+    "authors": [
+     "Morgan Stanley"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-097279fd0c7bb2",
+     "C-5b440bf61be833",
+     "C-b979fc8f85ba1d",
+     "C-ab1950d0fc95b7"
+    ],
+    "contribution": "contradictory",
+    "published_at": "2026-10-29T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "How AI Agents Could Reshape the Travel Industry",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:da77e8d80c7b7aa70c69d5d6e935533fbfc9b615fcc44409642252be9b293654",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-19 (0001001250-26-000041)",
+    "business": "makes prestige beauty, skincare, fragrance and makeup",
+    "direction": "negative",
+    "enrichment_id": "EC-0af79d7204ad35",
+    "evidence": "s03.0: New CEOs/creative directors and renewed innovation revive consumer interest after post-Covid price hikes dampened demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-02 (accession 0001001250-26-000060) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $.01 par value",
+      "ticker": "EL"
+     }
+    ],
+    "name": "Estee Lauder",
+    "rationale": "Source flags beauty products negative; weak post-price-hike demand and slow recovery versus other luxury categories pressures its sales.",
+    "registrant": "ESTEE LAUDER COMPANIES INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2844); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "prestige beauty and skincare products",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-007AEC93D8",
+    "ticker_hint": "EL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-20 (0001024305-26-000048)",
+    "business": "makes fragrances and cosmetics brands",
+    "direction": "negative",
+    "enrichment_id": "EC-96f9eff7a7af7c",
+    "evidence": "s03.0: New CEOs/creative directors and renewed innovation revive consumer interest after post-Covid price hikes dampened demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-05 (accession 0001024305-26-000074) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.01 par value",
+      "ticker": "COTY"
+     }
+    ],
+    "name": "Coty",
+    "rationale": "Source names beauty products as negative; sluggish prestige beauty momentum relative to jewelry weighs on its fragrance and cosmetics revenue.",
+    "registrant": "COTY INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2844); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "prestige fragrance and cosmetics",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-007AEC93D8",
+    "ticker_hint": "COTY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-13 (0001116132-26-000018)",
+    "business": "owns Coach and Kate Spade accessible-luxury brands",
+    "direction": "positive",
+    "enrichment_id": "EC-91cb298bd53213",
+    "evidence": "s03.1: US consumer appetite picking up strongly plus Hong Kong recovery lift luxury unit demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-05 (accession 0001116132-26-000031) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $.01 per share",
+      "ticker": "TPR"
+     }
+    ],
+    "name": "Tapestry",
+    "rationale": "US consumer appetite picking up strongly lifts accessible-luxury handbag and accessory unit demand, flowing to its top line.",
+    "registrant": "TAPESTRY, INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3100); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "accessible-luxury handbags and accessories",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-007AEC93D8",
+    "ticker_hint": "TPR"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-05-27 (0001530721-26-000047)",
+    "business": "owns Michael Kors, Versace, Jimmy Choo brands",
+    "direction": "positive",
+    "enrichment_id": "EC-39e32bc4bd66ec",
+    "evidence": "s03.1: US consumer appetite picking up strongly plus Hong Kong recovery lift luxury unit demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-30 (accession 0001530721-26-000094) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary Shares, no par value",
+      "ticker": "CPRI"
+     }
+    ],
+    "name": "Capri Holdings",
+    "rationale": "Renewed US luxury demand and new creative direction revive unit volumes across its fashion and accessories brands.",
+    "registrant": "Capri Holdings Ltd",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3100); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "luxury fashion and accessories",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-007AEC93D8",
+    "ticker_hint": "CPRI"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-11 (0000884887-26-000007)",
+    "business": "operates global cruise lines and vacations",
+    "direction": "positive",
+    "enrichment_id": "EC-91090bbd2510a0",
+    "evidence": "s03.2: Lower reliance on travel advisors and intermediaries could reduce distribution and acquisition costs.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-27 (accession 0000884887-26-000044) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01 per share",
+      "ticker": "RCL"
+     }
+    ],
+    "name": "Royal Caribbean Cruises",
+    "rationale": "AI agents introducing new travelers to cruising broaden its addressable market and lower distribution/acquisition costs versus travel advisors.",
+    "registrant": "ROYAL CARIBBEAN CRUISES LTD",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4400); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "cruise ticket and onboard revenue",
+    "revenue_model": "services",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-007AEC93D8",
+    "ticker_hint": "RCL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-01-27 (0000815097-26-000007)",
+    "business": "operates world's largest cruise fleet",
+    "direction": "positive",
+    "enrichment_id": "EC-47f18d637974c6",
+    "evidence": "s03.2: Lower reliance on travel advisors and intermediaries could reduce distribution and acquisition costs.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-29 (accession 0000815097-26-000107) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Shares ($0.01 par value)",
+      "ticker": "CCL"
+     }
+    ],
+    "name": "Carnival",
+    "rationale": "Broader cruise addressable market from AI-driven discovery and reduced intermediary acquisition costs lift bookings and margins.",
+    "registrant": "Carnival Corp Ltd.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4400); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "cruise ticket and onboard revenue",
+    "revenue_model": "services",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-007AEC93D8",
+    "ticker_hint": "CCL"
+   }
+  ],
+  "created_at": "2026-11-10T19:08:58.739946Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Norwegian Cruise Line Holdings: more than 4 on one side \u2014 set aside",
+   "Signet Jewelers: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261110T190855Z-enrich",
+  "set_id": "ES-2ca7aa12e9dc27",
+  "thesis_id": "TH-007AEC93D8",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-3f8a5339c023",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "consumer"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:05:41.935714Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-22",
+     "latest_article_date": "2026-10-22",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Consumer discretionary and staples",
+     "status": "ACTIVE",
+     "thesis_id": "TH-007AEC93D8",
+     "title": "Luxury-goods revenue recovery accelerates into 2027 on improving sales momentum"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-c54d142f3781cd",
+       "C-22cc88e7ce5d05",
+       "C-ad3b35a220f30a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Goldman Sachs Research forecasts luxury-goods basket revenue growth of 7% in 2027, up from an expected 6% in 2026, framed as a solid recovery after years of sluggish performance. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-ad3b35a220f30a",
+       "C-548331e04fdecb",
+       "C-b3a291488aeace"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The author argues sales momentum, not valuation, drives the sector and sees it picking up soon, rebutting the ex-growth bear case."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The thesis rests on a demand/sales-momentum recovery (notably in the US) and new creative leadership reviving consumer interest; the article quantifies revenue growth but not any listed company's earnings or valuation impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-3f8a5339c023",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c54d142f3781cd"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "A basket of large publicly traded luxury-goods makers is forecast to grow revenue 7% in 2027. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-22cc88e7ce5d05"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Luxury-goods revenue growth is expected at 6% in 2026. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-61da9fe87834bd"
+       ],
+       "original_date": "2026-10-22",
+       "period": "past 25 years",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Covered luxury companies averaged 6% annual top-line growth over the past 25 years."
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ad3b35a220f30a"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The forecast recovery rebuts the bear argument that the sector has gone ex-growth for an extended period."
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-548331e04fdecb"
+       ],
+       "original_date": "2026-10-22",
+       "period": "soon",
+       "provenance": "SOURCE OPINION",
+       "text": "The author argues share moves are driven by sales momentum, which he sees picking up soon."
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0afc667432eb1e"
+       ],
+       "original_date": "2026-10-22",
+       "period": "since the Covid pandemic",
+       "provenance": "SOURCE OPINION",
+       "text": "American consumers' appetite for luxury goods has picked up strongly since Covid."
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 9 pieces of evidence from A-3f8a5339c023 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:05 UTC, analysed as of 2026-11-10, from a source published 2026-10-22; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-277527874056f0",
+       "C-5d920adc8002d1"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "New CEOs/creative directors and renewed innovation revive consumer interest after post-Covid price hikes dampened demand. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0afc667432eb1e",
+       "C-7cde6865c03de4"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "US consumer appetite picking up strongly plus Hong Kong recovery lift luxury unit demand."
+     },
+     {
+      "claim_ids": [
+       "C-c54d142f3781cd"
+      ],
+      "provenance": "FORECAST",
+      "step": "listed_earnings",
+      "text": "Faster revenue growth (7% in 2027) would flow to luxury makers' top line; the article does not quantify earnings impact. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-22cc88e7ce5d05",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "revenue growth",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "an improvement from an expected 6% growth rate in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-61da9fe87834bd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "revenue CAGR",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "past 25 years",
+      "qualifiers": [
+       "average annual"
+      ],
+      "quote": "recorded average top-line growth of 6% annually over the past 25 years",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c54d142f3781cd",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "revenue growth",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "2027",
+      "qualifiers": [
+       "basket of large, publicly traded luxury-goods makers"
+      ],
+      "quote": "forecast to increase revenue by 7% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": 7.0,
+      "value_text": "7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0afc667432eb1e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "American consumers' appetite for luxury goods has picked up strongly since Covid.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since the Covid pandemic",
+      "qualifiers": [],
+      "quote": "The appetite of American consumers for luxury goods has picked up strongly",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-548331e04fdecb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author argues share moves are driven by sales momentum, which he sees picking up soon.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "soon",
+      "qualifiers": [],
+      "quote": "it is more a function of sales momentum, which we see picking up soon",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7cde6865c03de4",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Hong Kong luxury market is showing signs of recovery supported by local and mainland Chinese consumers.",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the market is showing signs of recovery, with both local consumers and visitors from mainland China supporting sales growth",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8f611cf5a15c67",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author views the US as an emerging market for luxury goods.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we still think the US is an emerging market for luxury goods",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ad3b35a220f30a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The forecast recovery rebuts the bear argument that the sector has gone ex-growth for an extended period.",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": null,
+      "qualifiers": [],
+      "quote": "a rebuttal of the argument by some bears \u201cthat the sector may have gone ex-growth for an extended period,\u201d",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b030",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b3a291488aeace",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "sales vs 6% CAGR",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [],
+      "quote": "sales levels exceed what a 6% compound annual growth rate (CAGR) would have implied since just before the Covid pandemic in 2019",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-3f8a5339c023",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1bb37fcd7f0284",
+       "name_as_written": "Goldman Sachs Research",
+       "other_securities": [],
+       "quote": "Goldman Sachs Research forecasts 7% revenue growth",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the underlying research report and forecasts"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3b4e45bc91422d",
+       "name_as_written": "Goldman Sachs Executive Office",
+       "other_securities": [],
+       "quote": "prepared by the Goldman Sachs Executive Office",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Preparer of this document"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b0767b87b6ea70",
+       "name_as_written": "Datastream",
+       "other_securities": [],
+       "quote": "Source: Datastream, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for luxury sector market capitalization chart"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-c54d142f3781cd",
+        "C-22cc88e7ce5d05"
+       ],
+       "provenance": "FORECAST",
+       "text": "A basket of large, publicly traded luxury-goods maker stocks used for Goldman Sachs Research's revenue growth forecasts; members not named. (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-3f8a5339c023",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "jewelry",
+       "provenance": "SOURCE OPINION",
+       "quote": "some consumer verticals, such as jewelry, having better growth potential than others, such as beauty products"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "claim_ids": [],
+       "direction": "negative",
+       "name": "beauty products",
+       "provenance": "SOURCE OPINION",
+       "quote": "such as beauty products"
+      }
+     ],
+     "sectors": [
+      "luxury goods",
+      "consumer discretionary"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c54d142f3781cd",
+        "C-22cc88e7ce5d05",
+        "C-548331e04fdecb"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Revenue growth forecast to accelerate to 7% in 2027 from 6% in 2026, with sales momentum seen picking up soon. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-8f611cf5a15c67",
+        "C-61da9fe87834bd"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "US viewed as a still-emerging market for luxury and sector has averaged 6% top-line growth over 25 years, supporting a longer-term growth case."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ad3b35a220f30a",
+        "C-2ccc935baee289"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Bears argue the sector may have gone ex-growth for an extended period; macro headwinds (China property, tariffs, rates, geopolitics) weighed on discretionary spending."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-16225B12C4: the same claim at an overlapping but different geography (Global vs US) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-749b82707fb6ab"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "South Korean luxury demand growth may be fragile due to reliance on a volatile tech-heavy equity market."
+      },
+      {
+       "claim_ids": [
+        "C-d49d999c9b60a8"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Luxury share prices have fallen over the past three or four years, as have earnings estimates."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "2026/2027 luxury sales prints below the 6%/7% forecasts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued store traffic declines after new collections"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "US luxury demand reverting after equity-market weakness"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-749b82707fb6ab"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "South Korean luxury demand growth may be fragile because it is linked to wealth tied to a tech-heavy, volatile equity market. (scope: South Korea luxury demand specifically)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macro and geopolitical factors (China property slump, 2025 US tariffs, jittery equity markets, midterm elections, higher rates, Middle East conflict) have weighed on luxury discretionary spending. (scope: Global luxury discretionary demand)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed luxury companies' valuations or earnings estimates reflect the forecast recovery"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the US demand pickup is durable rather than cyclical"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific listed brands benefit, since the article names none"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the comparison of sales vs 6% CAGR demonstrates renewed growth or base effects"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus already prices in a stronger 2027 recovery"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "China property slump deepens and drags Asian luxury demand"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the constituents of the luxury-goods basket and check whether consensus revenue and earnings estimates for the largest listed luxury names already embed a 7% 2027 recovery."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "US luxury store-opening and same-store sales data confirm strong US demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "New creative-director collections drive traffic and sales recovery"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-3f8a5339c023",
+      "authors": [
+       "Goldman Sachs",
+       "Erwan Rambourg"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-c54d142f3781cd",
+       "C-22cc88e7ce5d05",
+       "C-ad3b35a220f30a",
+       "C-548331e04fdecb",
+       "C-0afc667432eb1e",
+       "C-8f611cf5a15c67",
+       "C-7cde6865c03de4",
+       "C-61da9fe87834bd",
+       "C-b3a291488aeace",
+       "C-749b82707fb6ab",
+       "C-d49d999c9b60a8"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-22T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Why Luxury Goods Companies\u2019 Revenues Are Forecast to Climb",
+      "upstream_origins": [
+       "Goldman Sachs Research",
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:65a4cb628796ab0c621d1ec6a06d91e3dd0fd78bc81e754344d24227cf64a3ac",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "4ba4b902bbe96d662b76d7b1c56d0cc9563729f75d11220fdd4c3f9b86bfe22b",
+   "created_at": "2026-11-10T15:06:05.865570Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-c54d142f3781cd",
+       "C-22cc88e7ce5d05",
+       "C-61da9fe87834bd",
+       "C-b3a291488aeace"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7157f87b7a71, ES-fa615740cca4",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-22cc88e7ce5d05",
+       "C-61da9fe87834bd"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-22cc88e7ce5d05: forecast window 2026-01-01..2026-12-31 (2026); C-61da9fe87834bd: measured 2026-10-22 (19 days before the as-of)); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: jewelry, sector: beauty products",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-749b82707fb6ab",
+       "C-d49d999c9b60a8"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (2 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 4 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261110T150349Z-ingest",
+   "thesis_id": "TH-007AEC93D8",
+   "version": 1
+  },
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "A-1eba0c2971e8: contradictory \u00d71, new \u00d73",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "consumer"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:05:41.935714Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-29",
+     "latest_article_date": "2026-10-29",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Consumer discretionary and staples",
+     "status": "ACTIVE",
+     "thesis_id": "TH-007AEC93D8",
+     "title": "Luxury-goods revenue recovery accelerates into 2027 on improving sales momentum"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-c54d142f3781cd",
+       "C-22cc88e7ce5d05",
+       "C-ad3b35a220f30a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Goldman Sachs Research forecasts luxury-goods basket revenue growth of 7% in 2027, up from an expected 6% in 2026, framed as a solid recovery after years of sluggish performance. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-ad3b35a220f30a",
+       "C-548331e04fdecb",
+       "C-b3a291488aeace"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The author argues sales momentum, not valuation, drives the sector and sees it picking up soon, rebutting the ex-growth bear case."
+     },
+     {
+      "claim_ids": [
+       "C-097279fd0c7bb2",
+       "C-5b440bf61be833",
+       "C-b979fc8f85ba1d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "\u27e8update 2026-10-29 \u00b7 Morgan Stanley\u27e9 Morgan Stanley argues cruise lines, at just 2-4% of the global vacation market, could be AI winners as agents introduce cruising to new travelers, broaden the addressable market and reduce distribution/acquisition costs."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "new",
+       "claim_ids": [
+        "C-097279fd0c7bb2"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Cruise lines account for just 2% to 4% of the global vacation market. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "new",
+       "claim_ids": [
+        "C-5b440bf61be833"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Agentic AI could make cruising more accessible, reduce customer acquisition costs and accelerate industry growth. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "new",
+       "claim_ids": [
+        "C-b979fc8f85ba1d"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "AI agents could broaden cruise lines' addressable market by recommending cruises to would-be land-based travelers. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-ab1950d0fc95b7"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "AI platforms could become new intermediaries, with costs reduced by agentic AI reappearing if platforms charge for access, placement or bookings. \u27e8the source states evidence against this thesis\u27e9"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 14 claim(s); this source adds: contradictory \u00d71, new \u00d73"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-277527874056f0",
+       "C-5d920adc8002d1"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "New CEOs/creative directors and renewed innovation revive consumer interest after post-Covid price hikes dampened demand. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0afc667432eb1e",
+       "C-7cde6865c03de4"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "US consumer appetite picking up strongly plus Hong Kong recovery lift luxury unit demand."
+     },
+     {
+      "claim_ids": [
+       "C-5b440bf61be833",
+       "C-25497c5a0035b1"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "Lower reliance on travel advisors and intermediaries could reduce distribution and acquisition costs."
+     },
+     {
+      "claim_ids": [
+       "C-c54d142f3781cd"
+      ],
+      "provenance": "FORECAST",
+      "step": "listed_earnings",
+      "text": "Faster revenue growth (7% in 2027) would flow to luxury makers' top line; the article does not quantify earnings impact. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-22cc88e7ce5d05",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "revenue growth",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "an improvement from an expected 6% growth rate in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-61da9fe87834bd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "revenue CAGR",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "past 25 years",
+      "qualifiers": [
+       "average annual"
+      ],
+      "quote": "recorded average top-line growth of 6% annually over the past 25 years",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c54d142f3781cd",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "revenue growth",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "2027",
+      "qualifiers": [
+       "basket of large, publicly traded luxury-goods makers"
+      ],
+      "quote": "forecast to increase revenue by 7% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": 7.0,
+      "value_text": "7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b026",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-097279fd0c7bb2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "cruise share of global vacation market",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "just"
+      ],
+      "quote": "an industry that accounts for just 2% to 4% of the global vacation market",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "2% to 4%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0afc667432eb1e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "American consumers' appetite for luxury goods has picked up strongly since Covid.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since the Covid pandemic",
+      "qualifiers": [],
+      "quote": "The appetite of American consumers for luxury goods has picked up strongly",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-548331e04fdecb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author argues share moves are driven by sales momentum, which he sees picking up soon.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "soon",
+      "qualifiers": [],
+      "quote": "it is more a function of sales momentum, which we see picking up soon",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7cde6865c03de4",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Hong Kong luxury market is showing signs of recovery supported by local and mainland Chinese consumers.",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the market is showing signs of recovery, with both local consumers and visitors from mainland China supporting sales growth",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8f611cf5a15c67",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author views the US as an emerging market for luxury goods.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we still think the US is an emerging market for luxury goods",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ad3b35a220f30a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The forecast recovery rebuts the bear argument that the sector has gone ex-growth for an extended period.",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": null,
+      "qualifiers": [],
+      "quote": "a rebuttal of the argument by some bears \u201cthat the sector may have gone ex-growth for an extended period,\u201d",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3f8a5339c023",
+      "block_id": "b030",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b3a291488aeace",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "sales vs 6% CAGR",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [],
+      "quote": "sales levels exceed what a 6% compound annual growth rate (CAGR) would have implied since just before the Covid pandemic in 2019",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b027",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-5b440bf61be833",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Agentic AI could make cruising more accessible, reduce customer acquisition costs and accelerate industry growth.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "has the potential"
+      ],
+      "quote": "agentic AI has the potential to make cruising more accessible, reduce customer acquisition costs and accelerate growth for the industry",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1eba0c2971e8",
+      "block_id": "b030",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-b979fc8f85ba1d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AI agents could broaden cruise lines' addressable market by recommending cruises to would-be land-based travelers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "could"
+      ],
+      "quote": "Agents could broaden the industry\u2019s addressable market by recommending cruises to consumers who would otherwise choose land-based holidays",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-3f8a5339c023",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1bb37fcd7f0284",
+       "name_as_written": "Goldman Sachs Research",
+       "other_securities": [],
+       "quote": "Goldman Sachs Research forecasts 7% revenue growth",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the underlying research report and forecasts"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3b4e45bc91422d",
+       "name_as_written": "Goldman Sachs Executive Office",
+       "other_securities": [],
+       "quote": "prepared by the Goldman Sachs Executive Office",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Preparer of this document"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b0767b87b6ea70",
+       "name_as_written": "Datastream",
+       "other_securities": [],
+       "quote": "Source: Datastream, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for luxury sector market capitalization chart"
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ae9e116c173d9e",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research believes the rise of AI agents",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research publisher producing the analysis"
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-35308a756a5f89",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-05 (accession 0000895421-26-000293) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Stephen Grambling, Morgan Stanley\u2019s head of U.S. Gaming, Lodging & Leisure research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Research publisher whose analysts are quoted throughout"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-c54d142f3781cd",
+        "C-22cc88e7ce5d05"
+       ],
+       "provenance": "FORECAST",
+       "text": "A basket of large, publicly traded luxury-goods maker stocks used for Goldman Sachs Research's revenue growth forecasts; members not named. (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-3f8a5339c023",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "jewelry",
+       "provenance": "SOURCE OPINION",
+       "quote": "some consumer verticals, such as jewelry, having better growth potential than others, such as beauty products"
+      },
+      {
+       "article_id": "A-3f8a5339c023",
+       "claim_ids": [],
+       "direction": "negative",
+       "name": "beauty products",
+       "provenance": "SOURCE OPINION",
+       "quote": "such as beauty products"
+      },
+      {
+       "article_id": "A-1eba0c2971e8",
+       "claim_ids": [
+        "C-097279fd0c7bb2",
+        "C-5b440bf61be833",
+        "C-b979fc8f85ba1d"
+       ],
+       "direction": "positive",
+       "name": "cruise lines",
+       "provenance": "SOURCE OPINION",
+       "quote": "Cruise Lines: A Potential AI Winner"
+      }
+     ],
+     "sectors": [
+      "luxury goods",
+      "consumer discretionary",
+      "cruise lines"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-5b440bf61be833"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "Framed as a longer-term potential catalyst without a dated near-term event."
+      },
+      {
+       "claim_ids": [
+        "C-c54d142f3781cd",
+        "C-22cc88e7ce5d05",
+        "C-548331e04fdecb"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Revenue growth forecast to accelerate to 7% in 2027 from 6% in 2026, with sales momentum seen picking up soon. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-097279fd0c7bb2",
+        "C-5b440bf61be833"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Winning even a small share of land-based vacationers could drive outsized cruise growth, with agentic AI as the catalyst."
+      },
+      {
+       "claim_ids": [
+        "C-8f611cf5a15c67",
+        "C-61da9fe87834bd"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "US viewed as a still-emerging market for luxury and sector has averaged 6% top-line growth over 25 years, supporting a longer-term growth case."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ad3b35a220f30a",
+        "C-2ccc935baee289"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Bears argue the sector may have gone ex-growth for an extended period; macro headwinds (China property, tariffs, rates, geopolitics) weighed on discretionary spending."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-16225B12C4: the same claim at an overlapping but different geography (Global vs US) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      },
+      {
+       "claim_ids": [
+        "C-ab1950d0fc95b7"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI platforms could become new intermediaries that re-impose costs on travel companies including cruise lines."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-749b82707fb6ab"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "South Korean luxury demand growth may be fragile due to reliance on a volatile tech-heavy equity market."
+      },
+      {
+       "claim_ids": [
+        "C-d49d999c9b60a8"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Luxury share prices have fallen over the past three or four years, as have earnings estimates."
+      },
+      {
+       "claim_ids": [
+        "C-ab1950d0fc95b7"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI platforms could become new intermediaries, with costs reduced by agentic AI reappearing if platforms charge for access, placement or bookings."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "2026/2027 luxury sales prints below the 6%/7% forecasts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued store traffic declines after new collections"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "US luxury demand reverting after equity-market weakness"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No shift in cruise penetration of the vacation market"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI platforms charging cruise lines for placement/bookings"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-749b82707fb6ab"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "South Korean luxury demand growth may be fragile because it is linked to wealth tied to a tech-heavy, volatile equity market. (scope: South Korea luxury demand specifically)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macro and geopolitical factors (China property slump, 2025 US tariffs, jittery equity markets, midterm elections, higher rates, Middle East conflict) have weighed on luxury discretionary spending. (scope: Global luxury discretionary demand)"
+      },
+      {
+       "claim_ids": [
+        "C-ab1950d0fc95b7"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI platforms could become another intermediary and, if they eventually charge travel companies for access, placement or bookings, some of the costs reduced by agentic AI could reappear in a different form. (scope: Applies across hotels, OTAs and cruise lines; conditional and unquantified ('if these platforms eventually charge').)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed luxury companies' valuations or earnings estimates reflect the forecast recovery"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the US demand pickup is durable rather than cyclical"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific listed brands benefit, since the article names none"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the comparison of sales vs 6% CAGR demonstrates renewed growth or base effects"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI agents actually recommend cruises to land-based travelers at scale"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The magnitude of addressable-market expansion or cost reduction"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed cruise operators capture the benefit"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus already prices in a stronger 2027 recovery"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "China property slump deepens and drags Asian luxury demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI platforms imposing new fees on cruise bookings"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Examine listed cruise operators' distribution cost structure and new-to-cruise customer share to gauge upside from agentic AI discovery."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "US luxury store-opening and same-store sales data confirm strong US demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "New creative-director collections drive traffic and sales recovery"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence AI agents are recommending cruises to new travelers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Cruise lines reporting lower customer acquisition costs"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-3f8a5339c023",
+      "authors": [
+       "Goldman Sachs",
+       "Erwan Rambourg"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0afc667432eb1e",
+       "C-22cc88e7ce5d05",
+       "C-277527874056f0",
+       "C-2ccc935baee289",
+       "C-548331e04fdecb",
+       "C-5d920adc8002d1",
+       "C-61da9fe87834bd",
+       "C-749b82707fb6ab",
+       "C-7cde6865c03de4",
+       "C-8f611cf5a15c67",
+       "C-ad3b35a220f30a",
+       "C-b3a291488aeace",
+       "C-c54d142f3781cd",
+       "C-d49d999c9b60a8"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-22T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Why Luxury Goods Companies\u2019 Revenues Are Forecast to Climb",
+      "upstream_origins": [
+       "Goldman Sachs Research",
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:65a4cb628796ab0c621d1ec6a06d91e3dd0fd78bc81e754344d24227cf64a3ac",
+      "version_dates": []
+     },
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-1eba0c2971e8",
+      "authors": [
+       "Morgan Stanley"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-097279fd0c7bb2",
+       "C-5b440bf61be833",
+       "C-b979fc8f85ba1d",
+       "C-ab1950d0fc95b7"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-10-29T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "How AI Agents Could Reshape the Travel Industry",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:da77e8d80c7b7aa70c69d5d6e935533fbfc9b615fcc44409642252be9b293654",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "2cebf7055d1e7d1b43f83a43c2f9939297178fde80a1ce3c0978188abc856539",
+   "created_at": "2026-11-10T15:17:41.119741Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-097279fd0c7bb2"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "cruise share of global vacation market: 2% to 4%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-5b440bf61be833"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Agentic AI could make cruising more accessible, reduce customer acquisition costs and accelerate industry growth.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-b979fc8f85ba1d"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "AI agents could broaden cruise lines' addressable market by recommending cruises to would-be land-based travelers.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-ab1950d0fc95b7"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "AI platforms could become new intermediaries, with costs reduced by agentic AI reappearing if platforms charge for access, placement or bookings.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-097279fd0c7bb2",
+      "C-5b440bf61be833",
+      "C-b979fc8f85ba1d"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "cruise lines (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-c54d142f3781cd",
+      "C-22cc88e7ce5d05",
+      "C-ad3b35a220f30a",
+      "C-ad3b35a220f30a",
+      "C-548331e04fdecb",
+      "C-b3a291488aeace",
+      "C-097279fd0c7bb2",
+      "C-5b440bf61be833",
+      "C-b979fc8f85ba1d"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-10-29 \u00b7 Morgan Stanley\u27e9 Morgan Stanley argues cruise lines, at just 2-4% of the global vacation market, could be AI winners as agents introduce cruising to new travelers, broaden the addressable market and reduce distribution/acquisition costs.",
+     "note": "",
+     "old": "The thesis rests on a demand/sales-momentum recovery (notably in the US) and new creative leadership reviving consumer interest; the article quantifies revenue growth but not any listed company's earnings or valuation impact."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "4ba4b902bbe96d662b76d7b1c56d0cc9563729f75d11220fdd4c3f9b86bfe22b",
+   "priority": {
+    "change_reason": "no change in action (F2_material_evidence 4\u21925; F3_independent_origins 2\u21923; F6_recognizable_exposures 0 listed \u00b7 2 sector \u00b7 0 instrument\u21920 listed \u00b7 3 sector \u00b7 0 instrument; F10_verification_hold clear\u2192HOLD)",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-22cc88e7ce5d05",
+       "C-61da9fe87834bd",
+       "C-b3a291488aeace",
+       "C-c54d142f3781cd",
+       "C-097279fd0c7bb2"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "5"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7157f87b7a71, ES-f41ee4fccc95, ES-fa615740cca4",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "3 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-22cc88e7ce5d05",
+       "C-61da9fe87834bd",
+       "C-097279fd0c7bb2"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-22cc88e7ce5d05: forecast window 2026-01-01..2026-12-31 (2026); C-61da9fe87834bd: measured 2026-10-22 (19 days before the as-of); C-097279fd0c7bb2: measured 2026-10-29 (12 days before the as-of)); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: jewelry, sector: beauty products, sector: cruise lines",
+      "value": "0 listed \u00b7 3 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-749b82707fb6ab",
+       "C-d49d999c9b60a8",
+       "C-ab1950d0fc95b7"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (3 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 5 supporting; 0 independent contradicting source(s) vs 3 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.2",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261110T151431Z-ingest",
+   "thesis_id": "TH-007AEC93D8",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 16,
+ "other_cited_evidence": [
+  "C-ab1950d0fc95b7",
+  "C-277527874056f0",
+  "C-5d920adc8002d1",
+  "C-25497c5a0035b1",
+  "C-749b82707fb6ab",
+  "C-d49d999c9b60a8",
+  "C-2ccc935baee289"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s03.1": "Cited spans support strong US consumer appetite and a recovering market with local consumers and mainland China visitors, but the span does not name Hong Kong specifically.",
+  "s03.2": "Cited spans refer to reducing cruise customer acquisition costs and hotels reducing dependence on OTAs/intermediary fees; they do not mention travel advisors specifically, but the intermediary/distribution cost reduction is supported."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {
+  "s01.2": "REVIEW_UNSUPPORTED \u2014 s01.2: UNSUPPORTED \u2014 This is a luxury-goods card but the sentence is about Morgan Stanley and cruise lines \u2014 unrelated topic, though the cited spans do support the cruise content. The claim matches its cited spans about cruise lines/AI agents. | '\u27e8update 2026-10-29 \u00b7 Morgan Stanley\u27e9 Morgan Stanley argues cruise lines, at just 2-4% of the global '",
+  "s03.0": "REVIEW_UNSUPPORTED \u2014 s03.0: UNSUPPORTED \u2014 The sentence claims new CEOs/creative directors and renewed innovation revive consumer interest after post-Covid price hikes dampened demand, but cited spans only cover a ~60% figure (unspecified metric) and that it takes three-to-four collections for consumers to recognize change. Neither span states price hikes dampened demand or that leadership revives interest. | 'New CEOs/creative directors and renewed innovation revive consumer interest after post-Covid price h'"
+ }
+}

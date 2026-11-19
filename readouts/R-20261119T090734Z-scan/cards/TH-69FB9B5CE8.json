@@ -1,0 +1,1510 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:22:07.045375Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-04",
+   "latest_article_date": "2026-11-04",
+   "region": "Global",
+   "research_action": "RESEARCH NOW",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-69FB9B5CE8",
+   "title": "Overweight global equities over bonds as AI investment supports earnings post-midterms"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-f226ddb9ed976b",
+     "C-b90e4ec1dec606",
+     "C-ae84e14bbbc0ee",
+     "C-30d19a0caab544"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "MS maintains overweight global equities and underweight core fixed income after the midterms, expecting continued AI investment to boost corporate earnings worldwide; historically US stocks rose ~15-16% six months and 22% a year after midterms. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-f226ddb9ed976b",
+     "C-b90e4ec1dec606"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "MS continues to favor global stocks over core bonds, expecting AI investment to support markets worldwide."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article frames the midterm result as not changing its constructive equity stance, with AI capex as the earnings driver, but quantifies no specific earnings uplift."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ae84e14bbbc0ee"
+     ],
+     "original_date": "2026-11-04",
+     "period": "six months after midterms, since 1982",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Since 1982, large-company US stocks gained about 15-16% in the six months after midterm elections. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-30d19a0caab544"
+     ],
+     "original_date": "2026-11-04",
+     "period": "following year after midterms, since 1982",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Since 1982, large-company US stocks gained 22% over the year following midterms."
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b90e4ec1dec606"
+     ],
+     "original_date": "2026-11-04",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "MS expects continued AI investment to boost corporate earnings and support stock markets worldwide including Europe and EM."
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7792eb14d977c8"
+     ],
+     "original_date": "2026-11-04",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "MS expects companies to keep borrowing heavily to fund digital infrastructure even as investors grow more cautious about AI."
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f226ddb9ed976b"
+     ],
+     "original_date": "2026-11-04",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "MS maintains overweight global equities and underweight core fixed income."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:22 UTC, analysed as of 2026-11-10, from a source published 2026-11-04; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b90e4ec1dec606",
+     "C-7792eb14d977c8"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "Continued AI investment and heavy corporate borrowing to fund digital infrastructure."
+   },
+   {
+    "claim_ids": [
+     "C-b90e4ec1dec606"
+    ],
+    "provenance": "FORECAST",
+    "step": "listed_earnings",
+    "text": "AI investment expected to boost corporate earnings worldwide."
+   },
+   {
+    "claim_ids": [
+     "C-ae84e14bbbc0ee",
+     "C-30d19a0caab544"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "market_reaction",
+    "text": "Historically US stocks have gained ~15-16% six months and 22% a year after midterms. \u27e8cited figures: approximate\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-30d19a0caab544",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "large-cap US equity return",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "following year after midterms, since 1982",
+    "qualifiers": [
+     "following year"
+    ],
+    "quote": "22% over the following year",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 22.0,
+    "value_text": "22%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ae84e14bbbc0ee",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "large-cap US equity return",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "six months after midterms, since 1982",
+    "qualifiers": [
+     "about",
+     "six months after midterms"
+    ],
+    "quote": "Since 1982, largecompany U.S. stocks have gained about 15% to 16% in the six months after midterms",
+    "role": "catalyst",
+    "unit": "%",
+    "value": null,
+    "value_text": "about 15% to 16%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7792eb14d977c8",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MS expects companies to keep borrowing heavily to fund digital infrastructure even as investors grow more cautious about AI.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "We expect companies to keep borrowing heavily to fund digital infrastructure, even as investors grow a bit more cautious about AI.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b90e4ec1dec606",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MS expects continued AI investment to boost corporate earnings and support stock markets worldwide including Europe and EM.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "We expect continued AI investment to boost corporate earnings and support stock markets worldwide, including in Europe and emerging markets.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-32d0f6d2cfe7",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f226ddb9ed976b",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "MS maintains overweight global equities and underweight core fixed income.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "we continue to favor global stocks over core bonds\u2014an overweight position in equities and an underweight in core fixed income",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-37ac7de307471b",
+     "name_as_written": "One Big Beautiful Bill Act (OBBBA)",
+     "other_securities": [],
+     "quote": "The One Big Beautiful Bill Act (OBBBA)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Legislation containing Medicaid and SNAP spending reductions"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-910176774402de",
+     "name_as_written": "Supplemental Nutrition Assistance Program (SNAP)",
+     "other_securities": [],
+     "quote": "Supplemental Nutrition Assistance Program (SNAP)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Federal food assistance program subject to cuts"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e66dfa40bc85f5",
+     "name_as_written": "Affordable Care Act (ACA)",
+     "other_securities": [],
+     "quote": "Affordable Care Act (ACA)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Healthcare law whose enhanced subsidies may be restored"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d9964959bd19c1",
+     "name_as_written": "United States-Mexico-Canada Agreement (USMCA)",
+     "other_securities": [],
+     "quote": "United States-Mexico-Canada Agreement (USMCA)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Trade agreement up for review"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dc587421168422",
+     "name_as_written": "Gina Hinojosa",
+     "other_securities": [],
+     "quote": "Democrat Gina Hinojosa's victory",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Texas governor-elect whose platform included data center moratorium"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-240fd70ab5ce86",
+     "name_as_written": "Donald Trump",
+     "other_securities": [],
+     "quote": "President Donald Trump's second term",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US President referenced for executive-led policy"
+    },
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7a68cf25ce6802",
+     "name_as_written": "Ariana Salvatore",
+     "other_securities": [],
+     "quote": "Author Ariana Salvatore, Head of Public Policy Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Named author of the article, Head of Public Policy Research at Morgan Stanley"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-ae84e14bbbc0ee",
+      "C-30d19a0caab544"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Large-company US stocks measured over six-month and one-year windows after midterm elections since 1982 (constituents not named by the source)"
+    }
+   ],
+   "companies": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "publisher",
+     "listings": [],
+     "mention_id": "M-799b42efd435cf",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research maintains its overweight position in global equities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the research commentary"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-32d0f6d2cfe7",
+     "claim_ids": [
+      "C-b90e4ec1dec606"
+     ],
+     "direction": "positive",
+     "name": "AI investment",
+     "provenance": "FORECAST",
+     "quote": "We expect continued AI investment to boost corporate earnings"
+    }
+   ],
+   "sectors": [
+    "global equities",
+    "AI investment"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Six to twelve months after the midterm elections [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-ab69c775936d06"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Near-term volatility possible given the size of the win, but this may mark the final stage of the summer pullback."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-b90e4ec1dec606",
+      "C-291e573e9ab803"
+     ],
+     "provenance": "FORECAST",
+     "text": "Longer-term support from resilient growth, corporate earnings and continued AI investment."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-7792eb14d977c8"
+     ],
+     "provenance": "FORECAST",
+     "text": "Investors growing a bit more cautious about AI, plus risks from Iran conflict and new US tariffs."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: the same claim at an overlapping but different geography (Global vs Canada) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-55C1780FB4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D29D1FDA4D: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs capex_spending_cycle); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-FBDC863613: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI capex guidance cut"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Equity markets fall after midterms"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Corporate earnings disappoint"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-ab69c775936d06"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Near-term equity volatility and short-term market swings could follow the larger-than-expected Democratic win, especially the Texas governor's race, prolonging the summer stock-market pullback. (scope: US equities, near term; MS frames it as possibly the final stage of the pullback rather than a new downtrend.)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Renewed military conflict involving Iran and new U.S. tariffs are risks to US equities. (scope: US equities; cited as 'other risks to watch'.)"
+    },
+    {
+     "claim_ids": [
+      "C-7792eb14d977c8"
+     ],
+     "provenance": "FORECAST",
+     "text": "Investors may grow more cautious about AI even as companies keep borrowing heavily to fund digital infrastructure, posing a sentiment/credit risk to AI-exposed assets. (scope: AI-exposed equities and credit; framed as rising investor caution, not a base case for the capex cycle.)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued executive-led policy uncertainty (geopolitics, export controls, deregulation, trade including USMCA review) persists despite the midterm result. (scope: Broad market, areas where the administration retains executive authority.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI investment delivers the expected earnings boost"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the historical post-midterm pattern holds this cycle"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Magnitude of earnings uplift"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI investment slows"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Iran conflict or new tariffs materialize"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess whether current AI capex trajectory and consensus earnings support the overweight-equities stance, and test the historical post-midterm return pattern."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI capex guidance raised"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Post-midterm equity rally confirms historical pattern"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-ae84e14bbbc0ee: measured 2026-11-04 (6 days before the as-of); C-30d19a0caab544: measured 2026-11-04 (6 days before the as-of); source-named exposure(s): sector: AI investment; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-32d0f6d2cfe7",
+    "authors": [
+     "Morgan Stanley",
+     "Ariana Salvatore"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-ae84e14bbbc0ee",
+     "C-30d19a0caab544",
+     "C-f226ddb9ed976b",
+     "C-b90e4ec1dec606",
+     "C-7792eb14d977c8",
+     "C-ab69c775936d06"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-04T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "What the U.S. Midterm Sweep Could Mean for Markets",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:488b1d694dc8e919ef2d9feda68d1da614a794c33be9580418f491c13b0b10c8",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "We derive our revenue primarily from product sales including hardware and systems."
+    ],
+    "basis_source": "10-K filed 2026-02-25 (0001045810-26-000021)",
+    "business": "designs AI GPUs and data-center compute platforms",
+    "direction": "positive",
+    "enrichment_id": "EC-1a69a59656b352",
+    "evidence": "s03.1: AI investment expected to boost corporate earnings worldwide.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "NVDA"
+     }
+    ],
+    "name": "Nvidia",
+    "rationale": "AI investment and digital-infrastructure capex drive demand for its data-center GPUs, the core earnings growth engine.",
+    "registrant": "NVIDIA CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data-center AI accelerators and platforms",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-69FB9B5CE8",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-07-29 (0001193125-26-323660)",
+    "business": "cloud computing, software, Azure AI services",
+    "direction": "positive",
+    "enrichment_id": "EC-98f55515142156",
+    "evidence": "s03.1: AI investment expected to boost corporate earnings worldwide.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.00000625 par value per share",
+      "ticker": "MSFT"
+     }
+    ],
+    "name": "Microsoft",
+    "rationale": "AI investment lifts Azure AI consumption and Copilot adoption, supporting cloud and software earnings growth.",
+    "registrant": "MICROSOFT CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Azure cloud and AI services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-69FB9B5CE8",
+    "ticker_hint": "MSFT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-12-18 (0001730168-25-000121)",
+    "business": "custom AI chips and networking semiconductors",
+    "direction": "positive",
+    "enrichment_id": "EC-0fc8a0186e4190",
+    "evidence": "s03.1: AI investment expected to boost corporate earnings worldwide.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value",
+      "ticker": "AVGO"
+     }
+    ],
+    "name": "Broadcom",
+    "rationale": "AI capex drives demand for its custom accelerators and data-center networking silicon, lifting semiconductor earnings.",
+    "registrant": "Broadcom Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI accelerators and networking chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-69FB9B5CE8",
+    "ticker_hint": "AVGO"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-04-16 (0001628280-26-025362)",
+    "business": "contract manufacturer of advanced logic chips",
+    "direction": "positive",
+    "enrichment_id": "EC-daf8318db98e66",
+    "evidence": "s03.1: AI investment expected to boost corporate earnings worldwide.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Taiwan Semiconductor",
+    "rationale": "AI investment increases foundry demand for leading-edge nodes powering AI accelerators, lifting wafer revenue and margins.",
+    "registrant": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['TSM', 'TSMWF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "advanced-node foundry wafer manufacturing",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-69FB9B5CE8",
+    "ticker_hint": "TSM"
+   }
+  ],
+  "created_at": "2026-11-10T19:09:13.158500Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261110T190855Z-enrich",
+  "set_id": "ES-f4309abb562346",
+  "thesis_id": "TH-69FB9B5CE8",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-32d0f6d2cfe7",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:22:07.045375Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-04",
+     "latest_article_date": "2026-11-04",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-69FB9B5CE8",
+     "title": "Overweight global equities over bonds as AI investment supports earnings post-midterms"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-f226ddb9ed976b",
+       "C-b90e4ec1dec606",
+       "C-ae84e14bbbc0ee",
+       "C-30d19a0caab544"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "MS maintains overweight global equities and underweight core fixed income after the midterms, expecting continued AI investment to boost corporate earnings worldwide; historically US stocks rose ~15-16% six months and 22% a year after midterms. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-f226ddb9ed976b",
+       "C-b90e4ec1dec606"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "MS continues to favor global stocks over core bonds, expecting AI investment to support markets worldwide."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article frames the midterm result as not changing its constructive equity stance, with AI capex as the earnings driver, but quantifies no specific earnings uplift."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ae84e14bbbc0ee"
+       ],
+       "original_date": "2026-11-04",
+       "period": "six months after midterms, since 1982",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Since 1982, large-company US stocks gained about 15-16% in the six months after midterm elections. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-30d19a0caab544"
+       ],
+       "original_date": "2026-11-04",
+       "period": "following year after midterms, since 1982",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Since 1982, large-company US stocks gained 22% over the year following midterms."
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b90e4ec1dec606"
+       ],
+       "original_date": "2026-11-04",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "MS expects continued AI investment to boost corporate earnings and support stock markets worldwide including Europe and EM."
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7792eb14d977c8"
+       ],
+       "original_date": "2026-11-04",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "MS expects companies to keep borrowing heavily to fund digital infrastructure even as investors grow more cautious about AI."
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f226ddb9ed976b"
+       ],
+       "original_date": "2026-11-04",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "MS maintains overweight global equities and underweight core fixed income."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:22 UTC, analysed as of 2026-11-10, from a source published 2026-11-04; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b90e4ec1dec606",
+       "C-7792eb14d977c8"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "Continued AI investment and heavy corporate borrowing to fund digital infrastructure."
+     },
+     {
+      "claim_ids": [
+       "C-b90e4ec1dec606"
+      ],
+      "provenance": "FORECAST",
+      "step": "listed_earnings",
+      "text": "AI investment expected to boost corporate earnings worldwide."
+     },
+     {
+      "claim_ids": [
+       "C-ae84e14bbbc0ee",
+       "C-30d19a0caab544"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "market_reaction",
+      "text": "Historically US stocks have gained ~15-16% six months and 22% a year after midterms. \u27e8cited figures: approximate\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-30d19a0caab544",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "large-cap US equity return",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "following year after midterms, since 1982",
+      "qualifiers": [
+       "following year"
+      ],
+      "quote": "22% over the following year",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 22.0,
+      "value_text": "22%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ae84e14bbbc0ee",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "large-cap US equity return",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "six months after midterms, since 1982",
+      "qualifiers": [
+       "about",
+       "six months after midterms"
+      ],
+      "quote": "Since 1982, largecompany U.S. stocks have gained about 15% to 16% in the six months after midterms",
+      "role": "catalyst",
+      "unit": "%",
+      "value": null,
+      "value_text": "about 15% to 16%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7792eb14d977c8",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MS expects companies to keep borrowing heavily to fund digital infrastructure even as investors grow more cautious about AI.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect companies to keep borrowing heavily to fund digital infrastructure, even as investors grow a bit more cautious about AI.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b90e4ec1dec606",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MS expects continued AI investment to boost corporate earnings and support stock markets worldwide including Europe and EM.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect continued AI investment to boost corporate earnings and support stock markets worldwide, including in Europe and emerging markets.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-32d0f6d2cfe7",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f226ddb9ed976b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "MS maintains overweight global equities and underweight core fixed income.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we continue to favor global stocks over core bonds\u2014an overweight position in equities and an underweight in core fixed income",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-37ac7de307471b",
+       "name_as_written": "One Big Beautiful Bill Act (OBBBA)",
+       "other_securities": [],
+       "quote": "The One Big Beautiful Bill Act (OBBBA)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Legislation containing Medicaid and SNAP spending reductions"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-910176774402de",
+       "name_as_written": "Supplemental Nutrition Assistance Program (SNAP)",
+       "other_securities": [],
+       "quote": "Supplemental Nutrition Assistance Program (SNAP)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Federal food assistance program subject to cuts"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e66dfa40bc85f5",
+       "name_as_written": "Affordable Care Act (ACA)",
+       "other_securities": [],
+       "quote": "Affordable Care Act (ACA)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Healthcare law whose enhanced subsidies may be restored"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d9964959bd19c1",
+       "name_as_written": "United States-Mexico-Canada Agreement (USMCA)",
+       "other_securities": [],
+       "quote": "United States-Mexico-Canada Agreement (USMCA)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Trade agreement up for review"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dc587421168422",
+       "name_as_written": "Gina Hinojosa",
+       "other_securities": [],
+       "quote": "Democrat Gina Hinojosa's victory",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Texas governor-elect whose platform included data center moratorium"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-240fd70ab5ce86",
+       "name_as_written": "Donald Trump",
+       "other_securities": [],
+       "quote": "President Donald Trump's second term",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US President referenced for executive-led policy"
+      },
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7a68cf25ce6802",
+       "name_as_written": "Ariana Salvatore",
+       "other_securities": [],
+       "quote": "Author Ariana Salvatore, Head of Public Policy Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Named author of the article, Head of Public Policy Research at Morgan Stanley"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-ae84e14bbbc0ee",
+        "C-30d19a0caab544"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Large-company US stocks measured over six-month and one-year windows after midterm elections since 1982 (constituents not named by the source)"
+      }
+     ],
+     "companies": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "publisher",
+       "listings": [],
+       "mention_id": "M-799b42efd435cf",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research maintains its overweight position in global equities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research commentary"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-32d0f6d2cfe7",
+       "claim_ids": [
+        "C-b90e4ec1dec606"
+       ],
+       "direction": "positive",
+       "name": "AI investment",
+       "provenance": "FORECAST",
+       "quote": "We expect continued AI investment to boost corporate earnings"
+      }
+     ],
+     "sectors": [
+      "global equities",
+      "AI investment"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Six to twelve months after the midterm elections [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-ab69c775936d06"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Near-term volatility possible given the size of the win, but this may mark the final stage of the summer pullback."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-b90e4ec1dec606",
+        "C-291e573e9ab803"
+       ],
+       "provenance": "FORECAST",
+       "text": "Longer-term support from resilient growth, corporate earnings and continued AI investment."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-7792eb14d977c8"
+       ],
+       "provenance": "FORECAST",
+       "text": "Investors growing a bit more cautious about AI, plus risks from Iran conflict and new US tariffs."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: the same claim at an overlapping but different geography (Global vs Canada) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-55C1780FB4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-D29D1FDA4D: same value-chain node, not the same claim \u2014 a different mechanism (pricing_cycle vs capex_spending_cycle); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-FBDC863613: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI capex guidance cut"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Equity markets fall after midterms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Corporate earnings disappoint"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-ab69c775936d06"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Near-term equity volatility and short-term market swings could follow the larger-than-expected Democratic win, especially the Texas governor's race, prolonging the summer stock-market pullback. (scope: US equities, near term; MS frames it as possibly the final stage of the pullback rather than a new downtrend.)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Renewed military conflict involving Iran and new U.S. tariffs are risks to US equities. (scope: US equities; cited as 'other risks to watch'.)"
+      },
+      {
+       "claim_ids": [
+        "C-7792eb14d977c8"
+       ],
+       "provenance": "FORECAST",
+       "text": "Investors may grow more cautious about AI even as companies keep borrowing heavily to fund digital infrastructure, posing a sentiment/credit risk to AI-exposed assets. (scope: AI-exposed equities and credit; framed as rising investor caution, not a base case for the capex cycle.)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued executive-led policy uncertainty (geopolitics, export controls, deregulation, trade including USMCA review) persists despite the midterm result. (scope: Broad market, areas where the administration retains executive authority.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI investment delivers the expected earnings boost"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the historical post-midterm pattern holds this cycle"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Magnitude of earnings uplift"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI investment slows"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Iran conflict or new tariffs materialize"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess whether current AI capex trajectory and consensus earnings support the overweight-equities stance, and test the historical post-midterm return pattern."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI capex guidance raised"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Post-midterm equity rally confirms historical pattern"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-ae84e14bbbc0ee: measured 2026-11-04 (6 days before the as-of); C-30d19a0caab544: measured 2026-11-04 (6 days before the as-of); source-named exposure(s): sector: AI investment; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-32d0f6d2cfe7",
+      "authors": [
+       "Morgan Stanley",
+       "Ariana Salvatore"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-ae84e14bbbc0ee",
+       "C-30d19a0caab544",
+       "C-f226ddb9ed976b",
+       "C-b90e4ec1dec606",
+       "C-7792eb14d977c8",
+       "C-ab69c775936d06"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-04T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "What the U.S. Midterm Sweep Could Mean for Markets",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:488b1d694dc8e919ef2d9feda68d1da614a794c33be9580418f491c13b0b10c8",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "7257fe2b4970f6cc9dfabe9597831bdad2e1cc5d8c0de66075e63b392d053c2d",
+   "created_at": "2026-11-10T15:22:38.049693Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-ae84e14bbbc0ee: measured 2026-11-04 (6 days before the as-of); C-30d19a0caab544: measured 2026-11-04 (6 days before the as-of); source-named exposure(s): sector: AI investment; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-b90e4ec1dec606",
+       "C-7792eb14d977c8",
+       "C-ae84e14bbbc0ee",
+       "C-30d19a0caab544"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-ae84e14bbbc0ee",
+       "C-30d19a0caab544"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-ae84e14bbbc0ee: measured 2026-11-04 (6 days before the as-of); C-30d19a0caab544: measured 2026-11-04 (6 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: AI investment",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-ae84e14bbbc0ee",
+       "C-30d19a0caab544"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "2 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 4 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-ae84e14bbbc0ee: measured 2026-11-04 (6 days before the as-of); C-30d19a0caab544: measured 2026-11-04 (6 days before the as-of); source-named exposure(s): sector: AI investment; verified dislocation/catalyst (2 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261110T151809Z-ingest",
+   "thesis_id": "TH-69FB9B5CE8",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 4,
+ "other_cited_evidence": [
+  "C-ab69c775936d06",
+  "C-291e573e9ab803"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The card states the result occurred 'after the midterms' and frames Democratic win context, but the cited spans only give the overweight/underweight stance, AI forecast, and historical post-midterm returns. The '~15-16% six months and 22% a year' figures are supported; 22% is cited as not approximate while the card bundles it under 'approximate', but the main issue is the line carries SOURCE OPINION which is the weakest of its cited claims \u2014 acceptable. All content is present in cited spans.",
+  "s06.0": "The cited span supports 'this may mark the final stage of the summer pullback', but 'Near-term volatility possible given the size of the win' is not in the cited span C-ab69c775936d06.",
+  "s07.0": "The cited span supports investor caution about AI, but 'risks from Iran conflict and new US tariffs' are not in the cited span C-7792eb14d977c8 and not in any pool span.",
+  "s07.8": "The cited span supports 'final stage of the summer pullback' framing, but the specifics 'larger-than-expected Democratic win, especially the Texas governor's race' and 'near-term equity volatility and short-term market swings' are not in the cited span C-ab69c775936d06."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+ ],
+ "withheld_sentences": {}
+}

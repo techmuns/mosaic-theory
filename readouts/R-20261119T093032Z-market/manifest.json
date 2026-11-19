@@ -1,0 +1,1145 @@
+{
+ "as_of": "2026-11-19",
+ "cost_note": "list price; cached calls cost 0",
+ "cost_usd": 0.0,
+ "counts": {
+  "http_cache_hits": 0,
+  "http_requests": 0,
+  "llm_calls": 0,
+  "llm_calls_cached": 0,
+  "theses_priced": 64
+ },
+ "db_schema_version": 9,
+ "engine_version": "ti-engine-5",
+ "fetch_seconds": 0.0,
+ "finished_at": "2026-11-19T10:03:48.338555+00:00",
+ "generated_at": "2026-11-19T10:03:52.117211+00:00",
+ "llm": {
+  "extract_prompt_version": "ti-extract-6",
+  "model": "claude-opus-4-8",
+  "provider": "anthropic",
+  "review_prompt_version": "ti-review-4"
+ },
+ "llm_seconds": 0.0,
+ "mode": "market",
+ "output_dir": "data/theme_intelligence/runs/R-20261119T093032Z-market",
+ "outputs": [
+  "articles-2026-10-20.html",
+  "articles-2026-10-21.html",
+  "articles-2026-10-30.html",
+  "articles-2026-11-09.html",
+  "articles.html",
+  "cards/TH-007AEC93D8.html",
+  "cards/TH-007AEC93D8.json",
+  "cards/TH-007AEC93D8.md",
+  "cards/TH-007AEC93D8.print.html",
+  "cards/TH-0289733FD9.html",
+  "cards/TH-0289733FD9.json",
+  "cards/TH-0289733FD9.md",
+  "cards/TH-0289733FD9.print.html",
+  "cards/TH-05208D689A.html",
+  "cards/TH-05208D689A.json",
+  "cards/TH-05208D689A.md",
+  "cards/TH-05208D689A.print.html",
+  "cards/TH-0577F0AD38.html",
+  "cards/TH-0577F0AD38.json",
+  "cards/TH-0577F0AD38.md",
+  "cards/TH-0577F0AD38.print.html",
+  "cards/TH-0D381F307A.html",
+  "cards/TH-0D381F307A.json",
+  "cards/TH-0D381F307A.md",
+  "cards/TH-0D381F307A.print.html",
+  "cards/TH-0F1BABEC2D.html",
+  "cards/TH-0F1BABEC2D.json",
+  "cards/TH-0F1BABEC2D.md",
+  "cards/TH-0F1BABEC2D.print.html",
+  "cards/TH-124668406F.html",
+  "cards/TH-124668406F.json",
+  "cards/TH-124668406F.md",
+  "cards/TH-124668406F.print.html",
+  "cards/TH-156D98BD04.html",
+  "cards/TH-156D98BD04.json",
+  "cards/TH-156D98BD04.md",
+  "cards/TH-156D98BD04.print.html",
+  "cards/TH-16225B12C4.html",
+  "cards/TH-16225B12C4.json",
+  "cards/TH-16225B12C4.md",
+  "cards/TH-16225B12C4.print.html",
+  "cards/TH-1862C3F60F.html",
+  "cards/TH-1862C3F60F.json",
+  "cards/TH-1862C3F60F.md",
+  "cards/TH-1862C3F60F.print.html",
+  "cards/TH-188B31F187.html",
+  "cards/TH-188B31F187.json",
+  "cards/TH-188B31F187.md",
+  "cards/TH-188B31F187.print.html",
+  "cards/TH-1B06ACA0B7.html",
+  "cards/TH-1B06ACA0B7.json",
+  "cards/TH-1B06ACA0B7.md",
+  "cards/TH-1B06ACA0B7.print.html",
+  "cards/TH-2315C45951.html",
+  "cards/TH-2315C45951.json",
+  "cards/TH-2315C45951.md",
+  "cards/TH-2315C45951.print.html",
+  "cards/TH-25E28E19CA.html",
+  "cards/TH-25E28E19CA.json",
+  "cards/TH-25E28E19CA.md",
+  "cards/TH-25E28E19CA.print.html",
+  "cards/TH-29DC4DB5D4.html",
+  "cards/TH-29DC4DB5D4.json",
+  "cards/TH-29DC4DB5D4.md",
+  "cards/TH-29DC4DB5D4.print.html",
+  "cards/TH-30F6348B8B.html",
+  "cards/TH-30F6348B8B.json",
+  "cards/TH-30F6348B8B.md",
+  "cards/TH-30F6348B8B.print.html",
+  "cards/TH-34834776CF.html",
+  "cards/TH-34834776CF.json",
+  "cards/TH-34834776CF.md",
+  "cards/TH-34834776CF.print.html",
+  "cards/TH-3557AAE138.html",
+  "cards/TH-3557AAE138.json",
+  "cards/TH-3557AAE138.md",
+  "cards/TH-3557AAE138.print.html",
+  "cards/TH-38CA111885.html",
+  "cards/TH-38CA111885.json",
+  "cards/TH-38CA111885.md",
+  "cards/TH-38CA111885.print.html",
+  "cards/TH-3903547D15.html",
+  "cards/TH-3903547D15.json",
+  "cards/TH-3903547D15.md",
+  "cards/TH-3903547D15.print.html",
+  "cards/TH-393DF5CD2B.html",
+  "cards/TH-393DF5CD2B.json",
+  "cards/TH-393DF5CD2B.md",
+  "cards/TH-393DF5CD2B.print.html",
+  "cards/TH-3C22A83E75.html",
+  "cards/TH-3C22A83E75.json",
+  "cards/TH-3C22A83E75.md",
+  "cards/TH-3C22A83E75.print.html",
+  "cards/TH-41B1AB7F8C.html",
+  "cards/TH-41B1AB7F8C.json",
+  "cards/TH-41B1AB7F8C.md",
+  "cards/TH-41B1AB7F8C.print.html",
+  "cards/TH-431B4B9195.html",
+  "cards/TH-431B4B9195.json",
+  "cards/TH-431B4B9195.md",
+  "cards/TH-431B4B9195.print.html",
+  "cards/TH-45A01B5D5C.html",
+  "cards/TH-45A01B5D5C.json",
+  "cards/TH-45A01B5D5C.md",
+  "cards/TH-45A01B5D5C.print.html",
+  "cards/TH-48CF61E45B.html",
+  "cards/TH-48CF61E45B.json",
+  "cards/TH-48CF61E45B.md",
+  "cards/TH-48CF61E45B.print.html",
+  "cards/TH-4B2DCF293E.html",
+  "cards/TH-4B2DCF293E.json",
+  "cards/TH-4B2DCF293E.md",
+  "cards/TH-4B2DCF293E.print.html",
+  "cards/TH-5151436FE1.html",
+  "cards/TH-5151436FE1.json",
+  "cards/TH-5151436FE1.md",
+  "cards/TH-5151436FE1.print.html",
+  "cards/TH-55C1780FB4.html",
+  "cards/TH-55C1780FB4.json",
+  "cards/TH-55C1780FB4.md",
+  "cards/TH-55C1780FB4.print.html",
+  "cards/TH-57D06E21EF.html",
+  "cards/TH-57D06E21EF.json",
+  "cards/TH-57D06E21EF.md",
+  "cards/TH-57D06E21EF.print.html",
+  "cards/TH-61104CD5A3.html",
+  "cards/TH-61104CD5A3.json",
+  "cards/TH-61104CD5A3.md",
+  "cards/TH-61104CD5A3.print.html",
+  "cards/TH-67C1C257A1.html",
+  "cards/TH-67C1C257A1.json",
+  "cards/TH-67C1C257A1.md",
+  "cards/TH-67C1C257A1.print.html",
+  "cards/TH-69FB9B5CE8.html",
+  "cards/TH-69FB9B5CE8.json",
+  "cards/TH-69FB9B5CE8.md",
+  "cards/TH-69FB9B5CE8.print.html",
+  "cards/TH-6BDD0881AD.html",
+  "cards/TH-6BDD0881AD.json",
+  "cards/TH-6BDD0881AD.md",
+  "cards/TH-6BDD0881AD.print.html",
+  "cards/TH-6C5B6C2933.html",
+  "cards/TH-6C5B6C2933.json",
+  "cards/TH-6C5B6C2933.md",
+  "cards/TH-6C5B6C2933.print.html",
+  "cards/TH-6F2E7079B0.html",
+  "cards/TH-6F2E7079B0.json",
+  "cards/TH-6F2E7079B0.md",
+  "cards/TH-6F2E7079B0.print.html",
+  "cards/TH-71F810A7B5.html",
+  "cards/TH-71F810A7B5.json",
+  "cards/TH-71F810A7B5.md",
+  "cards/TH-71F810A7B5.print.html",
+  "cards/TH-722932E64F.html",
+  "cards/TH-722932E64F.json",
+  "cards/TH-722932E64F.md",
+  "cards/TH-722932E64F.print.html",
+  "cards/TH-77926B9936.html",
+  "cards/TH-77926B9936.json",
+  "cards/TH-77926B9936.md",
+  "cards/TH-77926B9936.print.html",
+  "cards/TH-7AC3AE200E.html",
+  "cards/TH-7AC3AE200E.json",
+  "cards/TH-7AC3AE200E.md",
+  "cards/TH-7AC3AE200E.print.html",
+  "cards/TH-7C895A0A4E.html",
+  "cards/TH-7C895A0A4E.json",
+  "cards/TH-7C895A0A4E.md",
+  "cards/TH-7C895A0A4E.print.html",
+  "cards/TH-7F3F3B05AF.html",
+  "cards/TH-7F3F3B05AF.json",
+  "cards/TH-7F3F3B05AF.md",
+  "cards/TH-7F3F3B05AF.print.html",
+  "cards/TH-8178B565CB.html",
+  "cards/TH-8178B565CB.json",
+  "cards/TH-8178B565CB.md",
+  "cards/TH-8178B565CB.print.html",
+  "cards/TH-87D93CD53A.html",
+  "cards/TH-87D93CD53A.json",
+  "cards/TH-87D93CD53A.md",
+  "cards/TH-87D93CD53A.print.html",
+  "cards/TH-8D294751AD.html",
+  "cards/TH-8D294751AD.json",
+  "cards/TH-8D294751AD.md",
+  "cards/TH-8D294751AD.print.html",
+  "cards/TH-8DDD7B2868.html",
+  "cards/TH-8DDD7B2868.json",
+  "cards/TH-8DDD7B2868.md",
+  "cards/TH-8DDD7B2868.print.html",
+  "cards/TH-8FBC7CB2C6.html",
+  "cards/TH-8FBC7CB2C6.json",
+  "cards/TH-8FBC7CB2C6.md",
+  "cards/TH-8FBC7CB2C6.print.html",
+  "cards/TH-921772E86C.html",
+  "cards/TH-921772E86C.json",
+  "cards/TH-921772E86C.md",
+  "cards/TH-921772E86C.print.html",
+  "cards/TH-92F9F0F899.html",
+  "cards/TH-92F9F0F899.json",
+  "cards/TH-92F9F0F899.md",
+  "cards/TH-92F9F0F899.print.html",
+  "cards/TH-932062360F.html",
+  "cards/TH-932062360F.json",
+  "cards/TH-932062360F.md",
+  "cards/TH-932062360F.print.html",
+  "cards/TH-95AEE030DA.html",
+  "cards/TH-95AEE030DA.json",
+  "cards/TH-95AEE030DA.md",
+  "cards/TH-95AEE030DA.print.html",
+  "cards/TH-A097D4722F.html",
+  "cards/TH-A097D4722F.json",
+  "cards/TH-A097D4722F.md",
+  "cards/TH-A097D4722F.print.html",
+  "cards/TH-A381AB426E.html",
+  "cards/TH-A381AB426E.json",
+  "cards/TH-A381AB426E.md",
+  "cards/TH-A381AB426E.print.html",
+  "cards/TH-A90402AB3E.html",
+  "cards/TH-A90402AB3E.json",
+  "cards/TH-A90402AB3E.md",
+  "cards/TH-A90402AB3E.print.html",
+  "cards/TH-ABE7D2B79D.html",
+  "cards/TH-ABE7D2B79D.json",
+  "cards/TH-ABE7D2B79D.md",
+  "cards/TH-ABE7D2B79D.print.html",
+  "cards/TH-B121174B17.html",
+  "cards/TH-B121174B17.json",
+  "cards/TH-B121174B17.md",
+  "cards/TH-B121174B17.print.html",
+  "cards/TH-B1F096684F.html",
+  "cards/TH-B1F096684F.json",
+  "cards/TH-B1F096684F.md",
+  "cards/TH-B1F096684F.print.html",
+  "cards/TH-BAA07551ED.html",
+  "cards/TH-BAA07551ED.json",
+  "cards/TH-BAA07551ED.md",
+  "cards/TH-BAA07551ED.print.html",
+  "cards/TH-BBF8E714C1.html",
+  "cards/TH-BBF8E714C1.json",
+  "cards/TH-BBF8E714C1.md",
+  "cards/TH-BBF8E714C1.print.html",
+  "cards/TH-BCBAD262D4.html",
+  "cards/TH-BCBAD262D4.json",
+  "cards/TH-BCBAD262D4.md",
+  "cards/TH-BCBAD262D4.print.html",
+  "cards/TH-BEE65BA64C.html",
+  "cards/TH-BEE65BA64C.json",
+  "cards/TH-BEE65BA64C.md",
+  "cards/TH-BEE65BA64C.print.html",
+  "cards/TH-C1889ABBA5.html",
+  "cards/TH-C1889ABBA5.json",
+  "cards/TH-C1889ABBA5.md",
+  "cards/TH-C1889ABBA5.print.html",
+  "cards/TH-C2BEC5879A.html",
+  "cards/TH-C2BEC5879A.json",
+  "cards/TH-C2BEC5879A.md",
+  "cards/TH-C2BEC5879A.print.html",
+  "cards/TH-C2EA7EB06F.html",
+  "cards/TH-C2EA7EB06F.json",
+  "cards/TH-C2EA7EB06F.md",
+  "cards/TH-C2EA7EB06F.print.html",
+  "cards/TH-C3C88F30B7.html",
+  "cards/TH-C3C88F30B7.json",
+  "cards/TH-C3C88F30B7.md",
+  "cards/TH-C3C88F30B7.print.html",
+  "cards/TH-CBFA9511C2.html",
+  "cards/TH-CBFA9511C2.json",
+  "cards/TH-CBFA9511C2.md",
+  "cards/TH-CBFA9511C2.print.html",
+  "cards/TH-CD79589854.html",
+  "cards/TH-CD79589854.json",
+  "cards/TH-CD79589854.md",
+  "cards/TH-CD79589854.print.html",
+  "cards/TH-D29D1FDA4D.html",
+  "cards/TH-D29D1FDA4D.json",
+  "cards/TH-D29D1FDA4D.md",
+  "cards/TH-D29D1FDA4D.print.html",
+  "cards/TH-D620F0FF87.html",
+  "cards/TH-D620F0FF87.json",
+  "cards/TH-D620F0FF87.md",
+  "cards/TH-D620F0FF87.print.html",
+  "cards/TH-D67A00F4FE.html",
+  "cards/TH-D67A00F4FE.json",
+  "cards/TH-D67A00F4FE.md",
+  "cards/TH-D67A00F4FE.print.html",
+  "cards/TH-DEB6560D7F.html",
+  "cards/TH-DEB6560D7F.json",
+  "cards/TH-DEB6560D7F.md",
+  "cards/TH-DEB6560D7F.print.html",
+  "cards/TH-E30F846AB8.html",
+  "cards/TH-E30F846AB8.json",
+  "cards/TH-E30F846AB8.md",
+  "cards/TH-E30F846AB8.print.html",
+  "cards/TH-E9359EEA5E.html",
+  "cards/TH-E9359EEA5E.json",
+  "cards/TH-E9359EEA5E.md",
+  "cards/TH-E9359EEA5E.print.html",
+  "cards/TH-E99CEF834D.html",
+  "cards/TH-E99CEF834D.json",
+  "cards/TH-E99CEF834D.md",
+  "cards/TH-E99CEF834D.print.html",
+  "cards/TH-EBAB22460B.html",
+  "cards/TH-EBAB22460B.json",
+  "cards/TH-EBAB22460B.md",
+  "cards/TH-EBAB22460B.print.html",
+  "cards/TH-EF9EABA05A.html",
+  "cards/TH-EF9EABA05A.json",
+  "cards/TH-EF9EABA05A.md",
+  "cards/TH-EF9EABA05A.print.html",
+  "cards/TH-F2CD2F7AFC.html",
+  "cards/TH-F2CD2F7AFC.json",
+  "cards/TH-F2CD2F7AFC.md",
+  "cards/TH-F2CD2F7AFC.print.html",
+  "cards/TH-F9F8F41CE0.html",
+  "cards/TH-F9F8F41CE0.json",
+  "cards/TH-F9F8F41CE0.md",
+  "cards/TH-F9F8F41CE0.print.html",
+  "cards/TH-FAABB39749.html",
+  "cards/TH-FAABB39749.json",
+  "cards/TH-FAABB39749.md",
+  "cards/TH-FAABB39749.print.html",
+  "cards/TH-FBDC863613.html",
+  "cards/TH-FBDC863613.json",
+  "cards/TH-FBDC863613.md",
+  "cards/TH-FBDC863613.print.html",
+  "cards/TH-FDEF68AB50.html",
+  "cards/TH-FDEF68AB50.json",
+  "cards/TH-FDEF68AB50.md",
+  "cards/TH-FDEF68AB50.print.html",
+  "dashboard.csv",
+  "dashboard.html",
+  "dashboard.json",
+  "dashboard.md",
+  "index.html",
+  "report_print.html",
+  "review.html",
+  "sources.html",
+  "themes.html",
+  "theses/TH-007AEC93D8.html",
+  "theses/TH-0289733FD9.html",
+  "theses/TH-05208D689A.html",
+  "theses/TH-0577F0AD38.html",
+  "theses/TH-0D381F307A.html",
+  "theses/TH-0F1BABEC2D.html",
+  "theses/TH-124668406F.html",
+  "theses/TH-156D98BD04.html",
+  "theses/TH-16225B12C4.html",
+  "theses/TH-1862C3F60F.html",
+  "theses/TH-188B31F187.html",
+  "theses/TH-1B06ACA0B7.html",
+  "theses/TH-2315C45951.html",
+  "theses/TH-25E28E19CA.html",
+  "theses/TH-29DC4DB5D4.html",
+  "theses/TH-30F6348B8B.html",
+  "theses/TH-34834776CF.html",
+  "theses/TH-3557AAE138.html",
+  "theses/TH-38CA111885.html",
+  "theses/TH-3903547D15.html",
+  "theses/TH-393DF5CD2B.html",
+  "theses/TH-3C22A83E75.html",
+  "theses/TH-41B1AB7F8C.html",
+  "theses/TH-431B4B9195.html",
+  "theses/TH-45A01B5D5C.html",
+  "theses/TH-48CF61E45B.html",
+  "theses/TH-4B2DCF293E.html",
+  "theses/TH-5151436FE1.html",
+  "theses/TH-55C1780FB4.html",
+  "theses/TH-57D06E21EF.html",
+  "theses/TH-61104CD5A3.html",
+  "theses/TH-67C1C257A1.html",
+  "theses/TH-69FB9B5CE8.html",
+  "theses/TH-6BDD0881AD.html",
+  "theses/TH-6C5B6C2933.html",
+  "theses/TH-6F2E7079B0.html",
+  "theses/TH-71F810A7B5.html",
+  "theses/TH-722932E64F.html",
+  "theses/TH-77926B9936.html",
+  "theses/TH-7AC3AE200E.html",
+  "theses/TH-7C895A0A4E.html",
+  "theses/TH-7F3F3B05AF.html",
+  "theses/TH-8178B565CB.html",
+  "theses/TH-87D93CD53A.html",
+  "theses/TH-8D294751AD.html",
+  "theses/TH-8DDD7B2868.html",
+  "theses/TH-8FBC7CB2C6.html",
+  "theses/TH-921772E86C.html",
+  "theses/TH-92F9F0F899.html",
+  "theses/TH-932062360F.html",
+  "theses/TH-95AEE030DA.html",
+  "theses/TH-A097D4722F.html",
+  "theses/TH-A381AB426E.html",
+  "theses/TH-A90402AB3E.html",
+  "theses/TH-ABE7D2B79D.html",
+  "theses/TH-B121174B17.html",
+  "theses/TH-B1F096684F.html",
+  "theses/TH-BAA07551ED.html",
+  "theses/TH-BBF8E714C1.html",
+  "theses/TH-BCBAD262D4.html",
+  "theses/TH-BEE65BA64C.html",
+  "theses/TH-C1889ABBA5.html",
+  "theses/TH-C2BEC5879A.html",
+  "theses/TH-C2EA7EB06F.html",
+  "theses/TH-C3C88F30B7.html",
+  "theses/TH-CBFA9511C2.html",
+  "theses/TH-CD79589854.html",
+  "theses/TH-D29D1FDA4D.html",
+  "theses/TH-D620F0FF87.html",
+  "theses/TH-D67A00F4FE.html",
+  "theses/TH-DEB6560D7F.html",
+  "theses/TH-E30F846AB8.html",
+  "theses/TH-E9359EEA5E.html",
+  "theses/TH-E99CEF834D.html",
+  "theses/TH-EBAB22460B.html",
+  "theses/TH-EF9EABA05A.html",
+  "theses/TH-F2CD2F7AFC.html",
+  "theses/TH-F9F8F41CE0.html",
+  "theses/TH-FAABB39749.html",
+  "theses/TH-FBDC863613.html",
+  "theses/TH-FDEF68AB50.html",
+  "uploads.html",
+  "validation_log.json"
+ ],
+ "parser_version": "ti-parse-8",
+ "research_verification": {
+  "articles": 16,
+  "articles_preview_only": 1,
+  "articles_unreadable": 0,
+  "coverage": [
+   {
+    "article_id": "A-ddac106c1f41",
+    "article_version_id": "AV-1c1b2eadc5a0e5fd",
+    "propositions": [
+     "CARD h1 \u201cHyperscaler AI capex surprises widen the range of S&P 500 earnings outcomes\u201d \u2192 TH-25E28E19CA",
+     "CARD h2 \u201cS&P 500 upside driven by earnings not re-rating, with valuations near average\u201d \u2192 TH-FBDC863613",
+     "CARD h3 \u201cSemiconductor margin expansion and one-off gains temporarily inflate earnings and will fade\u201d \u2192 TH-0289733FD9"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cCurrent earnings may be unsustainable: even an 'average' forward multiple may be expensive, and the cyclically adjusted P/E is one of the hi\u201d \u2014 on 1 card(s): TH-FBDC863613",
+     "\u201cEnergy prices and interest rates create near-term macro risks around the earnings forecasts, while the impact of AI is the biggest long-term\u201d \u2014 on 2 card(s): TH-25E28E19CA, TH-FBDC863613",
+     "\u201cAI investment is expected to transition from an earnings tailwind to a marginal drag by 2028 as capex growth slows and hyperscaler depreciat\u201d \u2014 on 1 card(s): TH-25E28E19CA"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "page 1: UNEXPLAINED \u2014 3 fact(s): C-deaae70549981a 51% \u2014 'S&P 500 EPS grew 51% in the second quarter (year over year)' \u00b7 C-2460c05a22caba 26% \u2014 '26% over the past four quarters' \u00b7 C-a69efbb24a0f1c $460 \u2014 '$460 in 2028'",
+     "page 2: UNEXPLAINED \u2014 3 fact(s): C-690e2e25b42508 51% \u2014 'S&P 500 earnings per share (EPS) grew 51% in the second quarter (year over year)' \u00b7 C-2aa0e3dd137956 26% \u2014 'grew 51% in the second quarter (year over year) and 26% during the past four quarters' \u00b7 C-5cab92d1975c4b 7% \u2014 'the S&P 500\u2019s four-quarter growth in EPS has averaged 7% during the past 30 years'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-fe4f1de3193a",
+    "article_version_id": "AV-903c1184a93ff59a",
+    "propositions": [
+     "CARD h1 \u201cChina semicap and foundry capacity ramp faster than market expected on 40% growth guidance\u201d \u2192 TH-D67A00F4FE",
+     "CARD h2 \u201cOptical networking TAM grows ninefold to $154bn by 2028 as AI interconnect demand scales\u201d \u2192 TH-921772E86C",
+     "CARD h3 \u201cChinese AI labs' cost efficiency and harness-layer investment drive pricing power and lasting leadership\u201d \u2192 TH-E30F846AB8"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cEven as China's semiconductor industry advances, bottlenecks persist\u2014principally in GPU availability, plus local foundry capacity and semica\u201d \u2014 on 2 card(s): TH-D67A00F4FE, TH-E30F846AB8",
+     "\u201cChina's AI technology faces geopolitical scrutiny in some jurisdictions, which could limit adoption of Chinese models.\u201d \u2014 on 1 card(s): TH-E30F846AB8"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "page 2: UNEXPLAINED \u2014 1 fact(s): C-e2e1e1004f2c72 over 1,400 \u2014 '400 companies were represented and over 1,400 investors attended the event in Hong Kong'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-714c9c0a1871",
+    "article_version_id": "AV-f5d4643c99ad88fe",
+    "propositions": [
+     "CARD h1 \u201cGlobal AI buildout lifts German computer, electronics and electrical equipment exporters\u201d \u2192 TH-29DC4DB5D4",
+     "CARD h2 \u201cGerman export rebound on US and EU trade recovery and competitiveness gains\u201d \u2192 TH-55C1780FB4"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cCompetition from Chinese exporters is expected to continue weighing on German export performance in the medium term, especially in third mar\u201d \u2014 on 2 card(s): TH-29DC4DB5D4, TH-55C1780FB4",
+     "\u201cStronger chemicals and intermediate goods exports may partly reverse, as they may reflect precautionary purchases related to the Strait of H\u201d \u2014 on 1 card(s): TH-55C1780FB4"
+    ],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-fc38d9934d44",
+    "article_version_id": "AV-7afa58908cf136ea",
+    "propositions": [
+     "CARD h1 \u201cIndiscriminate AI de-risking leaves derated electrification, aerospace, transports attractive\u201d \u2192 TH-4B2DCF293E",
+     "CARD h2 \u201cHyperscaler capex may face financing, power and model-competition limits\u201d \u2192 TH-C3C88F30B7",
+     "CARD hx1 \u201cLong nominal assets and commodities on strong nominal growth and high inflation\u201d \u2192 TH-D29D1FDA4D"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cImmense concentration in AI, semis and hyperscalers has made consensual trades painful to unwind, with record tech selling in the GS prime b\u201d \u2014 on 1 card(s): TH-C3C88F30B7",
+     "\u201cA rising cost of capital has spilled over broadly (CCC spreads, European/French sovereign spreads, levered AI/neoclouds), raising the risk o\u201d \u2014 on 1 card(s): TH-C3C88F30B7",
+     "\u201cA disinflationary bust (AI capex slows, retrenchment, a proper credit cycle) would undermine the nominal-asset and derated-cyclical trades; \u201d \u2014 on 2 card(s): TH-4B2DCF293E, TH-C3C88F30B7",
+     "\u201cHigh energy prices and an unresolved energy backdrop have tightened financial conditions, pushed the Fed to do more, repriced a hiking cycle\u201d \u2014 on 1 card(s): TH-4B2DCF293E",
+     "\u201cA problematic energy backdrop with still-high risk premium that the equity market has compartmentalized could resolve adversely in the comin\u201d \u2014 on 2 card(s): TH-4B2DCF293E, TH-D29D1FDA4D",
+     "\u201cA structural shift from a savings glut to a spending glut (over a trillion in AI capex plus widespread fiscal deficits) raises the cost of c\u201d \u2014 on 2 card(s): TH-C3C88F30B7, TH-D29D1FDA4D"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "page 6: UNEXPLAINED \u2014 1 fact(s): C-01777e55fc2d2e in excess of a trillion dollars \u2014 \"in the last year we're projecting to spend in excess of a trillion dollars on AI CapEx\""
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-3f8a5339c023",
+    "article_version_id": "AV-198442c975318cae",
+    "propositions": [
+     "CARD h1 \u201cLuxury-goods revenue recovery accelerates into 2027 on improving sales momentum\u201d \u2192 TH-007AEC93D8",
+     "CARD hx1 \u201cSeven-Cs framework points to brand-level dispersion within luxury\u201d \u2192 TH-E99CEF834D"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cSouth Korean luxury demand growth may be fragile because it is linked to wealth tied to a tech-heavy, volatile equity market.\u201d \u2014 on 1 card(s): TH-007AEC93D8",
+     "\u201cMacro and geopolitical factors (China property slump, 2025 US tariffs, jittery equity markets, midterm elections, higher rates, Middle East \u201d \u2014 on 1 card(s): TH-007AEC93D8"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "page 1: UNEXPLAINED \u2014 1 fact(s): C-851d6c145b5716 6% \u2014 'up from 6% in 2026'",
+     "page 2: UNEXPLAINED \u2014 1 fact(s): C-e1f0206e8f6115  \u2014 'The market capitalization for luxury-goods stocks increased in 2022'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-0be56cc89833",
+    "article_version_id": "AV-dc4526f38209c50c",
+    "propositions": [
+     "CARD h1 \u201cStructural global rearmament supercycle lifts defense primes' multi-year revenue visibility\u201d \u2192 TH-D620F0FF87",
+     "CARD h2 \u201cShift to low-cost autonomous/attritable systems favors defense-tech startups and software layer\u201d \u2192 TH-57D06E21EF",
+     "CARD h3 \u201cDual-use rearmament spending spills over into advanced manufacturing and energy technology\u201d \u2192 TH-E9359EEA5E",
+     "MERGED b1.hx1_1 \u201cEconomic resilience redefined as national security widens spending to critical-infrastructure and supply-chain security\u201d \u2192 TH-E9359EEA5E \u2014 merged with h3 \u201cDual-use rearmament spending spills over into advanced manufacturing and energy technology\u201d under one identity key \u2014 1 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cA larger defense market won't reward every entrant and owning strategically important technology doesn't automatically translate into attrac\u201d \u2014 on 2 card(s): TH-57D06E21EF, TH-D620F0FF87",
+     "\u201cLow-cost autonomous systems become obsolete quickly as innovation cycles compress, and traditional procurement has not adapted to the speed/\u201d \u2014 on 1 card(s): TH-57D06E21EF"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "page 3: UNEXPLAINED \u2014 1 fact(s): C-c92048bf428931 $2.89 trillion \u2014 'reaching a record $2.89 trillion2 in 2025'",
+     "page 4: UNEXPLAINED \u2014 5 fact(s): C-cede1e4872b045 $1 trillion \u2014 'surpassing6$1trillioninFY2026' \u00b7 C-896ff73b481fa9 38% \u2014 'thiswouldrepresenta38%realincrease8over FY2026spendinglevels' \u00b7 C-ba022bef301c76 13x \u2014 'China\u2019sdefense spendinghasgrownbymorethan13x11since1995' \u00b7 C-87e298372b0ad2 101% \u2014 'Europe\u2019sdefensespending rosebymorethan101%23overthepastdecade' \u00b7 C-6cff771a8aa24e $563 billion \u2014 'Defense spendingamongEuropeanNATOmembersreachedan estimated$563billion24in2025,55%higherthanin 2022'",
+     "page 5: UNEXPLAINED \u2014 3 fact(s): C-2401b7aee08f14 80% \u2014 'drones now account for more than 80%28 of strikes against enemy targets' \u00b7 C-391472264dd784 $35,000 to $50,000 \u2014 'Iranian Shahed drones are estimated to cost30 anywhere from $35,000 to $50,000 per unit' \u00b7 C-407f63121401ea $4 million \u2014 'Patriot missile interceptors that are being used to defend against thousands of Iranian strikes cost an estimated $4 million,31'",
+     "page 7: UNEXPLAINED \u2014 1 fact(s): C-c721dd594e77eb $1.2 trillion \u2014 \"Trumpadministration'sGoldenDomearchitecturealone runto$1.2trillion\"",
+     "page 8: UNEXPLAINED \u2014 2 fact(s): C-2437c4688f034b $679 billion \u2014 \"The world's top 100 defense companies earned a record $679 billion47 in 2024\" \u00b7 C-d4e2a33c017961 100% \u2014 'Arab Emirates, which already have ambitious defense For example, South Korea\u2019s defense industry has grown53 localization targets,56 are looking to pivot from bu\u2026 [+190 chars \u2014 full text in the JSON export]'",
+     "page 9: UNEXPLAINED \u2014 10 fact(s): C-11afaa141f1bf3 $14.6 billion \u2014 'USdefensetechstartupshave alreadyraised57arecord$14.6billion,surpassingthe$9.6 billionraisedinallof2025' \u00b7 C-51373d3c2ab5ab $5 billion \u2014 'Anduril raised58$5billioninMay2026ata$61billionvaluation' \u00b7 C-41406250a21e4a $8.7 billion \u2014 'Europeandefensetechstartupsraised arecord$8.7billion59inventurefundingin2025,a55% year-over-yearincrease' \u00b7 C-897d516894a2dc $1.8 billion \u2014 'Munich-basedHelsing,whichraised$1.8billion61in July2026atan$18billionvaluation' \u00b7 C-30ef3590ff9ba0 $4.1 billion \u2014 'Arecord$4.1billion64ofVCfundingrounds fordefensetechstartupsin2026hadparticipationfrom defenseprimes' \u00b7 C-e0fc4c55aa45cb 25% \u2014 '13ofthelargestdefensecompanies intheworldhaveincreasedtheirownR&Dbudgets65byat least25%overthepastfiveyears' \u00b7 C-9b7a8a78d2103d $6.8 billion \u2014 'Ukraine\u2019sdefensetechnologysectorisoneofthe mostinnovativeandproductiveinEurope,valuedat approximately$6.8billion.66' \u00b7 C-edbd5cb51bca17 $105 million \u2014 'In2025,investment68in Ukrainiandefensecompaniesroseto$105million,upfrom just$1.1millionthreeyearsago' \u00b7 C-fc8a6e797ef1eb nearly doubled \u2014 'manufacturing-focuseddefenseinvestmentnearly doubled63in2025' \u00b7 C-1cee3d106cf6a2 10 \u2014 'Kyivhassigned 1072dronecooperationagreementstodate,mostlywith EuropeanandMiddleEasternstates'",
+     "page 10: UNEXPLAINED \u2014 1 fact(s): C-1ea10177f21716 $1 billion \u2014 'Drone Dominance83program,whichaimstospend$1billion tofield300,000cheapdronesby2027'",
+     "page 11: UNEXPLAINED \u2014 2 fact(s): C-4045bbea6f2ba7 US$15.3 billion \u2014 'Australia planstoinvestroughlyA$22billion88(US$15.3billion)in droneandcounter-dronedefensesoverthenextdecade' \u00b7 C-69490f03bc12a4 $7 billion \u2014 'Taiwan,too,has approvedanadditional$7billion89infundingtosupportits homegrowndroneindustry'"
+    ],
+    "unrecorded_names": [
+     "Saudi Arabia (a list of examples, b077)"
+    ]
+   },
+   {
+    "article_id": "A-1eba0c2971e8",
+    "article_version_id": "AV-39cb01ce023d2f09",
+    "propositions": [
+     "CARD h1 \u201cAgentic AI drives direct bookings, lowering hotel distribution and marketing costs\u201d \u2192 TH-932062360F",
+     "CARD h2 \u201cOTAs may stay resilient to agentic AI via inventory breadth and consumer browsing habits\u201d \u2192 TH-BEE65BA64C",
+     "CARD h3 \u201cAgentic AI could expand cruise addressable market and cut acquisition costs\u201d \u2192 TH-007AEC93D8"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cAI platforms could become another intermediary and, if they eventually charge travel companies for access, placement or bookings, some of th\u201d \u2014 on 3 card(s): TH-007AEC93D8, TH-932062360F, TH-BEE65BA64C",
+     "\u201cHow much booking activity actually shifts between hotel-direct and OTA channels remains uncertain, limiting confidence in the direction of b\u201d \u2014 on 2 card(s): TH-932062360F, TH-BEE65BA64C"
+    ],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-32d0f6d2cfe7",
+    "article_version_id": "AV-ce6071f7d4d882b0",
+    "propositions": [
+     "CARD h1 \u201cState-level data center restrictions after Democratic sweep threaten AI infrastructure buildout\u201d \u2192 TH-EF9EABA05A",
+     "CARD h2 \u201cSoftened Medicaid/SNAP cuts support consumer spending and economic growth\u201d \u2192 TH-8FBC7CB2C6",
+     "CARD h3 \u201cDemocratic sweep favors Medicaid-focused health insurers via ACA and Medicaid policy\u201d \u2192 TH-6C5B6C2933",
+     "CARD h4 \u201cOverweight global equities over bonds as AI investment supports earnings post-midterms\u201d \u2192 TH-69FB9B5CE8"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cNear-term equity volatility and short-term market swings could follow the larger-than-expected Democratic win, especially the Texas governor\u201d \u2014 on 1 card(s): TH-69FB9B5CE8",
+     "\u201cRenewed military conflict involving Iran and new U.S. tariffs are risks to US equities.\u201d \u2014 on 1 card(s): TH-69FB9B5CE8",
+     "\u201cInvestors may grow more cautious about AI even as companies keep borrowing heavily to fund digital infrastructure, posing a sentiment/credit\u201d \u2014 on 2 card(s): TH-69FB9B5CE8, TH-EF9EABA05A",
+     "\u201cContinued executive-led policy uncertainty (geopolitics, export controls, deregulation, trade including USMCA review) persists despite the m\u201d \u2014 on 4 card(s): TH-69FB9B5CE8, TH-6C5B6C2933, TH-8FBC7CB2C6, TH-EF9EABA05A"
+    ],
+    "source_risks": [
+     "page 2 b008: \u201cFor investors, one of the most significant developments is the prospect of tighter restrictions on data center development, which could weigh on sentiment toward artificial intelligence (AI) investmen\u2026 [+2 chars \u2014 full text in the JSON export]\u201d \u2192 ON NO CARD",
+     "page 3 b024: \u201cAlthough these developments could weigh on near-term AI sentiment, Morgan Stanley Research expects the broader AI capital expenditure (capex) cycle to remain intact.\u201d \u2192 carried by: 'counter-evidence: Morgan Stanley Research expects the broader AI capital expenditure (capex) cycle to remain intact'",
+     "page 4 b028: \u201cThis removes the primary source of upside risk to the U.S.\u201d \u2192 ON NO CARD",
+     "page 5 b036: \u201cCurrency markets are likely to reflect uncertainty about AI investment, more pushback in Congress against renewed geopolitical conflict and a higher risk of targeted trade measures.\u201d \u2192 ON NO CARD"
+    ],
+    "uncarried": [
+     "page 3: UNEXPLAINED \u2014 1 fact(s): C-7e0f366b68ca31  \u2014 'Delays could also modestly increase Treasury issuance in the two- to seven-year maturity range.'",
+     "page 5: UNEXPLAINED \u2014 1 fact(s): C-477c7d196827ea  \u2014 'The Japanese yen, Swiss franc and euro could strengthen against the U.S. dollar, while the Australian dollar may lag because it tends to move with investor sent\u2026 [+29 chars \u2014 full text in the JSON export]'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-dbb0f34f3a6c",
+    "article_version_id": "AV-713d9ee2cc903468",
+    "propositions": [
+     "CARD h1 \u201cEM credit maturity turns returns to fundamentals, rewarding selective credit picking\u201d \u2192 TH-3903547D15"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cEM bonds still span a wide risk range and some countries are moving backward, so investors must be selective; risks remain despite the asset\u201d \u2014 on 1 card(s): TH-3903547D15"
+    ],
+    "source_risks": [
+     "page 2 b006: \u201cIn my view, it has become a more diverse and resilient asset class, though risks remain.\u201d\u201d \u2192 FLAGGED on TH-3903547D15",
+     "page 3 b016: \u201cIndeed, investors are increasingly demanding a higher risk premium to own some developed market assets.\u201d \u2192 ON NO CARD",
+     "page 3 b017: \u201cIn my view, what\u2019s interesting is that in emerging markets, there has always been a demand for higher risk premiums because of perceived notions around governance and weakness in policy frameworks.\u201d \u2192 carried by: 'evidence on its card: there has always been a demand for higher risk premiums because of perceived notions around governance and weakness in policy frameworks. I think this has moved quite a bit'"
+    ],
+    "uncarried": [
+     "page 2: UNEXPLAINED \u2014 2 fact(s): C-20655721d8fd3f  \u2014 'When the Iran war triggered a surge in oil prices this year' \u00b7 C-9f4aa592d31049 trillions of dollars \u2014 'the market, which has trillions of dollars in outstanding debt'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-e8ace45656ce",
+    "article_version_id": "AV-850a7db6db414419",
+    "propositions": [
+     "CARD h1 \u201cRising streaming subscriptions and pricing lift recorded music revenue through 2035\u201d \u2192 TH-2315C45951",
+     "MERGED h2 \u201cDurable, recession-resilient live music demand grows 6% annually through 2035\u201d \u2192 TH-2315C45951 \u2014 merged with h1 \u201cRising streaming subscriptions and pricing lift recorded music revenue through 2035\u201d under one identity key \u2014 0 supporting claim(s) shared, 4 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+     "CARD h3 \u201cAI benefits music rights holders and higher-end artists more than it cannibalizes them\u201d \u2192 TH-CD79589854"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cAI-generated music could cannibalize human artists over the long term, mostly affecting lower-value music and mid-tier artists.\u201d \u2014 on 1 card(s): TH-CD79589854",
+     "\u201cConsumer wallets face pressure from tariffs, gasoline prices and higher interest rates, which could weigh on discretionary live-music spendi\u201d \u2014 on 1 card(s): TH-2315C45951",
+     "\u201cThe music market has repeatedly undershot growth expectations, with three consecutive prior downgrades to the 2030 recorded music forecast b\u201d \u2014 on 1 card(s): TH-2315C45951"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "page 4: EXCLUDED \u2014 2 fact(s) \u2014 figure '0%' judged immaterial: Y-axis origin label; axis scale only.: C-ec217c07a8dc3b around 60% \u2014 'compared with around 60% for gaming and 90% for on-demand video' \u00b7 C-c62ef35944ed37 90% \u2014 'compared with around 60% for gaming and 90% for on-demand video'",
+     "page 5: UNEXPLAINED \u2014 1 fact(s): C-ee20f7804ac98e tens of millions to hundreds of millions \u2014 'the direct-to- consumer opportunity could grow from representing tens of millions of dollars of revenue today to hundreds of millions over the next decade'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-2125a57a23d7",
+    "article_version_id": "AV-3238a8076b3bfb9e",
+    "propositions": [
+     "CARD h1 \u201cSoftening PC demand slows PC DRAM price increases to 13-18% QoQ in 4Q26\u201d \u2192 TH-7C895A0A4E",
+     "CARD h2 \u201cWeak PC demand and inventory glut pressure PC OEMs to downgrade specs and procurement\u201d \u2192 TH-FDEF68AB50"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 2 fact(s): C-1b865c3ec30106 15.8% \u2014 'Notebook shipments fell 15.8% QoQ in 3Q26, with a further single-digit percentage decline possible in 4Q26.' \u00b7 C-88aadc8e25f870 below 5% \u2014 'client SSD price increases expected to stay below 5%'"
+    ],
+    "unrecorded_names": [
+     "SSDs (a list of examples, b013)"
+    ]
+   },
+   {
+    "article_id": "A-b319f57345aa",
+    "article_version_id": "AV-3e3608dfa2446ee9",
+    "propositions": [
+     "CARD h1 \u201cOLED monitor demand doubles YoY as ample panel supply broadens brand shipments\u201d \u2192 TH-3C22A83E75"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-d02f8acfee3b",
+    "article_version_id": "AV-5111984eab9b7be4",
+    "propositions": [
+     "CARD hx1 \u201cPremium Mini LED and RGB Mini LED mix-shift lifts TV brand ASPs despite falling volumes\u201d \u2192 TH-3C22A83E75",
+     "DROPPED h1 \u201cPremium Mini LED and RGB Mini LED shift lifts leading TV brands' product mix and ASPs\u201d \u2192 \u2014 \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) \u2014 its evidence was kept; REVIEW REQUIRED"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cOverall global TV shipments are declining (-3.6% YoY in 3Q26) and forecast to fall in both 2026 (-1.4%) and 2027 (-1.2%), with weak consumer\u201d \u2014 on 0 card(s): none"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 8 fact(s): C-319997c7dd454a 47.94 million \u2014 'Shipments reached 47.94 million units, rising 2.8% QoQ but declining 3.6% compared with the same period in 2025.' \u00b7 C-207e4162913bd2 2.8% \u2014 'rising 2.8% QoQ' \u00b7 C-fabc6818f67a7c 3.6% \u2014 'declining 3.6% compared with the same period in 2025' \u00b7 C-b0e3f7b9a89636 4% \u2014 'although volumes will still be down 4% YoY' \u00b7 C-91977e09e508a7 8.4 million \u2014 'Samsung retained its leading position in 3Q26 with shipments of 8.4 million units, despite a 1.9% YoY decline.' \u00b7 C-4355abe44433fb 7.45 million \u2014 'Hisense followed closely behind with global TV shipments of 7.45 million units in 3Q26, down 2.7% YoY.' \u00b7 C-d9a81f3c5dba0b 30,000 \u2014 'With just 30,000 units separating Hisense from TCL' \u00b7 C-0bf4019ed96d78 fourth \u2014 'elevating the company to fourth place worldwide'"
+    ],
+    "unrecorded_names": [
+     "Micro RGB (a list of examples, b024)"
+    ]
+   },
+   {
+    "article_id": "A-3db98a8758b8",
+    "article_version_id": "AV-d8818f4bff804fdc",
+    "propositions": [
+     "CARD h1 \u201cNAND oversupply in 2027 drives contract prices into a downward cycle\u201d \u2192 TH-67C1C257A1"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cThe 2027 NAND price outlook depends on the pace of Chinese CSP inventory reduction, changes to overseas GPU procurement restrictions, and wh\u201d \u2014 on 1 card(s): TH-67C1C257A1",
+     "\u201cUS policy direction after the mid-term election, particularly on major 2028 AI data center projects still in planning and permitting, could \u201d \u2014 on 1 card(s): TH-67C1C257A1"
+    ],
+    "source_risks": [
+     "b015: \u201cAs oversupply intensifies, TrendForce forecasts that overall NAND Flash contract prices will decline by 0\u20135% QoQ in the first quarter, with all product categories entering a downward price cycle begin\u2026 [+27 chars \u2014 full text in the JSON export]\u201d \u2192 carried by: 'evidence on its card: overall NAND Flash contract prices will decline by 0\u20135% QoQ in the first quarter, with all product categories entering a downward price cycle beginning in the second quarter'"
+    ],
+    "uncarried": [],
+    "unrecorded_names": [
+     "GPU (a list of examples, b010)"
+    ]
+   },
+   {
+    "article_id": "A-0d74e1cecf17",
+    "article_version_id": "AV-f7b5515cdf28ecf6",
+    "propositions": [
+     "CARD h1 \u201cSpaceX O-RAN shift to Qualcomm chipsets benefits Qualcomm and base-station component suppliers\u201d \u2192 TH-1862C3F60F"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-84c25e7062d317 65 MHz \u2014 'Since 2025, SpaceX has progressively acquired a combined 65 MHz of mid-band spectrum from EchoStar'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-5b5764ebd058",
+    "article_version_id": "AV-ff34e6ad9de19292",
+    "propositions": [
+     "CARD h1 \u201cJensen's exit loosens Nvidia's supply-chain lock, helping rival chip buyers\u201d \u2192 TH-F2CD2F7AFC",
+     "CARD h2 \u201cLoss of Jensen's backstops risks contraction in the neocloud/neolab ecosystem\u201d \u2192 TH-156D98BD04",
+     "CARD h3 \u201cTighter China export controls accelerate Chinese labs' shift to domestic accelerators\u201d \u2192 TH-124668406F",
+     "CARD b1.hx1_1 \u201cJensen's exit impairs the open-source AI pipeline feeding Nvidia's ecosystem and startups\u201d \u2192 TH-38CA111885",
+     "CARD b1.hx1_2 \u201cNvidia's founder-centric structure makes it a key-man risk with no deep successor bench\u201d \u2192 TH-71F810A7B5"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cGPU smuggling indictments (a $2.5B Supermicro-linked case with $510M reaching China, and a $65M Keelung case implicating 9 people across Nvi\u201d \u2014 on 1 card(s): TH-124668406F",
+     "\u201cNvidia's $530B of gross off-balance-sheet guarantees (up from $184B) including $36B take-or-pay floors concentrate credit/financing risk in \u201d \u2014 on 1 card(s): TH-156D98BD04"
+    ],
+    "source_risks": [
+     "b026: \u201cKress is the interim CEO, but wrangling more than 60 VPs to a cohesive vision of the company takes a certain kind of person, and otherwise the firm\u2019s direction risks dissolving into noise.\u201d \u2192 FLAGGED on TH-71F810A7B5"
+    ],
+    "uncarried": [
+     "UNEXPLAINED \u2014 3 fact(s): C-b17299c0f1525a more than 1.5GW \u2014 'our data shows more than 1.5GW of Nvidia chips, which are restricted, still ultimately ended up in China' \u00b7 C-38d436e0c03590 $279B \u2014 'Nvidia\u2019s supply and capacity commitments jumped from $119B to $279B in a single quarter, primarily for memory' \u00b7 C-9d1985e7f706b6 four days \u2014 'his resignation after only four days'"
+    ],
+    "unrecorded_names": []
+   }
+  ],
+  "coverage_alerts": [
+   "A-ddac106c1f41: page 1: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 51%; 26%; $460 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-ddac106c1f41: page 2: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 51%; 26%; 7% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-0be56cc89833: propositions merged: \u201cEconomic resilience redefined as national security widens spending to critical-infrastructure and supply-chain security\u201d \u2014 merged with h3 \u201cDual-use rearmament spending spills over into advanced manufacturing and energy technology\u201d under one identity key \u2014 1 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "A-0be56cc89833: page 4: 5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: $1 trillion; 38%; 13x; 101%; $563 billion \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-0be56cc89833: page 5: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 80%; $35,000 to $50,000; $4 million \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-0be56cc89833: page 8: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: $679 billion; 100% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-0be56cc89833: page 9: 10 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: $14.6 billion; $5 billion; $8.7 billion; $1.8 billion; $4.1 billion; 25%; $6.8 billion; $105 million; nearly doubled; 10 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-0be56cc89833: page 11: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: US$15.3 billion; $7 billion \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-32d0f6d2cfe7: page 2: a risk the source states that no model pass listed \u2014 \u201cFor investors, one of the most significant developments is the prospect of tighter restrictions on data center development, which could weigh on sentiment toward artificial intelligence (AI) investment.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "A-32d0f6d2cfe7: page 4: a risk the source states that no model pass listed \u2014 \u201cThis removes the primary source of upside risk to the U.S.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "A-32d0f6d2cfe7: page 5: a risk the source states that no model pass listed \u2014 \u201cCurrency markets are likely to reflect uncertainty about AI investment, more pushback in Congress against renewed geopolitical conflict and a higher risk of targeted trade measures.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "A-dbb0f34f3a6c: page 2: a risk the source states that no model pass listed \u2014 \u201cIn my view, it has become a more diverse and resilient asset class, though risks remain.\u201d\u201d (now in 07 of \u201cEM credit maturity turns returns to fundamentals, rewarding selective credit picking\u201d as the source's opinion \u2014 its paragraph holds that evidence; review)",
+   "A-dbb0f34f3a6c: page 3: a risk the source states that no model pass listed \u2014 \u201cIndeed, investors are increasingly demanding a higher risk premium to own some developed market assets.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "A-dbb0f34f3a6c: page 2: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: An Iran war triggered a surge in oil prices this year.; trillions of dollars \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-e8ace45656ce: propositions merged: \u201cDurable, recession-resilient live music demand grows 6% annually through 2035\u201d \u2014 merged with h1 \u201cRising streaming subscriptions and pricing lift recorded music revenue through 2035\u201d under one identity key \u2014 0 supporting claim(s) shared, 4 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "A-2125a57a23d7: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 15.8%; below 5% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-d02f8acfee3b: proposition dropped: \u201cPremium Mini LED and RGB Mini LED shift lifts leading TV brands' product mix and ASPs\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "A-d02f8acfee3b: 8 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 47.94 million; 2.8%; 3.6%; 4%; 8.4 million; 7.45 million; 30,000; fourth \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-5b5764ebd058: a risk the source states that no model pass listed \u2014 \u201cKress is the interim CEO, but wrangling more than 60 VPs to a cohesive vision of the company takes a certain kind of person, and otherwise the firm\u2019s direction risks dissolving into noise.\u201d (now in 07 of \u201cNvidia's founder-centric structure makes it a key-man risk with no deep successor bench\u201d as the source's opinion \u2014 its paragraph holds that evidence; review)",
+   "A-5b5764ebd058: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: more than 1.5GW; $279B; four days \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "coverage_alerts_plain": [
+   "\u201cCan AI Investment Drive S&P 500 Earnings Even Higher?\u201d: page 1: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 51%; 26%; $460 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cCan AI Investment Drive S&P 500 Earnings Even Higher?\u201d: page 2: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 51%; 26%; 7% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cThe Security Supercycle\u201d: propositions merged: \u201cEconomic resilience redefined as national security widens spending to critical-infrastructure and supply-chain security\u201d \u2014 merged with h3 \u201cDual-use rearmament spending spills over into advanced manufacturing and energy technology\u201d under one identity key \u2014 1 supporting claim(s) shared, 2 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "\u201cThe Security Supercycle\u201d: page 4: 5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: $1 trillion; 38%; 13x; 101%; $563 billion \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cThe Security Supercycle\u201d: page 5: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 80%; $35,000 to $50,000; $4 million \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cThe Security Supercycle\u201d: page 8: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: $679 billion; 100% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cThe Security Supercycle\u201d: page 9: 10 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: $14.6 billion; $5 billion; $8.7 billion; $1.8 billion; $4.1 billion; 25%; $6.8 billion; $105 million; nearly doubled; 10 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cThe Security Supercycle\u201d: page 11: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: US$15.3 billion; $7 billion \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cWhat the U.S. Midterm Sweep Could Mean for Markets\u201d: page 2: a risk the source states that no model pass listed \u2014 \u201cFor investors, one of the most significant developments is the prospect of tighter restrictions on data center development, which could weigh on sentiment toward artificial intelligence (AI) investment.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "\u201cWhat the U.S. Midterm Sweep Could Mean for Markets\u201d: page 4: a risk the source states that no model pass listed \u2014 \u201cThis removes the primary source of upside risk to the U.S.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "\u201cWhat the U.S. Midterm Sweep Could Mean for Markets\u201d: page 5: a risk the source states that no model pass listed \u2014 \u201cCurrency markets are likely to reflect uncertainty about AI investment, more pushback in Congress against renewed geopolitical conflict and a higher risk of targeted trade measures.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "\u201cEmerging Market Credit Shows Resilience amid Energy Shock\u201d: page 2: a risk the source states that no model pass listed \u2014 \u201cIn my view, it has become a more diverse and resilient asset class, though risks remain.\u201d\u201d (now in 07 of \u201cEM credit maturity turns returns to fundamentals, rewarding selective credit picking\u201d as the source's opinion \u2014 its paragraph holds that evidence; review)",
+   "\u201cEmerging Market Credit Shows Resilience amid Energy Shock\u201d: page 3: a risk the source states that no model pass listed \u2014 \u201cIndeed, investors are increasingly demanding a higher risk premium to own some developed market assets.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "\u201cEmerging Market Credit Shows Resilience amid Energy Shock\u201d: page 2: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: An Iran war triggered a surge in oil prices this year.; trillions of dollars \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cGlobal Music Revenues Are Forecast to Rise as Subscriber Growth Beats Expectations\u201d: propositions merged: \u201cDurable, recession-resilient live music demand grows 6% annually through 2035\u201d \u2014 merged with h1 \u201cRising streaming subscriptions and pricing lift recorded music revenue through 2035\u201d under one identity key \u2014 0 supporting claim(s) shared, 4 its own \u2014 DISTINCT EVIDENCE: review whether it is the same thesis",
+   "\u201cMounting Finished-Goods Inventories Prompt Some PC OEMs to Adjust Memory Procurement Plans for 2027, Says TrendForce\u201d: 2 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 15.8%; below 5% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cGlobal TV Shipments Decline 3.6% YoY in 3Q26 as Brands Target Premium Mini LED and RGB Mini LED Markets, Says TrendForce\u201d: proposition dropped: \u201cPremium Mini LED and RGB Mini LED shift lifts leading TV brands' product mix and ASPs\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "\u201cGlobal TV Shipments Decline 3.6% YoY in 3Q26 as Brands Target Premium Mini LED and RGB Mini LED Markets, Says TrendForce\u201d: 8 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 47.94 million; 2.8%; 3.6%; 4%; 8.4 million; 7.45 million; 30,000; fourth \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cNvidia and the World Without Jensen\u201d: a risk the source states that no model pass listed \u2014 \u201cKress is the interim CEO, but wrangling more than 60 VPs to a cohesive vision of the company takes a certain kind of person, and otherwise the firm\u2019s direction risks dissolving into noise.\u201d (now in 07 of \u201cNvidia's founder-centric structure makes it a key-man risk with no deep successor bench\u201d as the source's opinion \u2014 its paragraph holds that evidence; review)",
+   "\u201cNvidia and the World Without Jensen\u201d: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: more than 1.5GW; $279B; four days \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "figures": 405,
+  "figures_open": 23,
+  "figures_superseded": 0,
+  "open_causes": {
+   "account_names_no_record": 3,
+   "capture_not_verified": 6,
+   "no_account": 1,
+   "verification_failed": 17
+  },
+  "open_items": [
+   "AV-7afa58908cf136ea b043 figure 'five years' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-dc4526f38209c50c b014 figure '$2.89' \u2014 verification_failed: a claim quotes it (C-c92048bf428931) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b033 figure '5.7%' \u2014 verification_failed: a claim quotes it (C-54baab05b43568) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b036 figure '80' \u2014 verification_failed: a claim quotes it (C-2401b7aee08f14) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b036 figure '28' \u2014 verification_failed: a claim quotes it (C-2401b7aee08f14) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b041 figure '$4 million' \u2014 verification_failed: a claim quotes it (C-407f63121401ea) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b065 figure '$1.2trillion' \u2014 verification_failed: a claim quotes it (C-c721dd594e77eb) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b069 figure '100' \u2014 verification_failed: a claim quotes it (C-2437c4688f034b) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b069 figure '$679' \u2014 verification_failed: a claim quotes it (C-2437c4688f034b) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b077 figure '50%' \u2014 verification_failed: a claim quotes it (C-b4d89f033aeee7, C-4720faa40e008c) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b077 figure '$5' \u2014 verification_failed: a claim quotes it (C-680e1cee318db4) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b081 figure '$14.6billion' \u2014 verification_failed: a claim quotes it (C-11afaa141f1bf3) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b081 figure '$9.6' \u2014 verification_failed: a claim quotes it (C-11afaa141f1bf3) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b086 figure '$6.8billion' \u2014 verification_failed: a claim quotes it (C-9b7a8a78d2103d) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b086 figure '$105million' \u2014 verification_failed: a claim quotes it (C-edbd5cb51bca17) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b094 figure '$1billion' \u2014 verification_failed: a claim quotes it (C-1ea10177f21716) but failed verification, so it is never used as evidence",
+   "AV-dc4526f38209c50c b096 figure '$15.3billion' \u2014 verification_failed: a claim quotes it (C-4045bbea6f2ba7) but failed verification, so it is never used as evidence",
+   "AV-850a7db6db414419 b033 figure '4%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-850a7db6db414419 b034 figure '3%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-3238a8076b3bfb9e b008 figure '15.8%' \u2014 verification_failed: a claim quotes it (C-1b865c3ec30106) but failed verification, so it is never used as evidence",
+   "AV-5111984eab9b7be4 b001 figure '3.6%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-5111984eab9b7be4 b016 figure '15%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-5111984eab9b7be4 b016 figure '2 million' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-dc4526f38209c50c b093 paragraph \u2014 no_account: no verified claim sits in it and pass 1b gave no account of it",
+   "AV-ce6071f7d4d882b0 b018 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'Continued policy uncertainty from executive authority\u2014already captured in first-pass market risks.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+   "AV-d8818f4bff804fdc b016 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'States the market-outlook dependencies (Chinese CSP inventory reduction, GPU procurement restrictions, lower memory specs into 2028) already captured as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+   "AV-d8818f4bff804fdc b017 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'States US post-election policy risk on 2028 AI data center projects affecting 2H27 procurement, already captured as a first-pass market risk.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked"
+  ],
+  "open_items_plain": [
+   "\u201cWhy Investors Are Reducing AI Exposure\u201d \u2014 figure 'five years' not captured: the claim meant to capture it could not be verified",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$2.89' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '5.7%' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '80' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '28' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$4 million' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$1.2trillion' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '100' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$679' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '50%' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$5' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$14.6billion' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$9.6' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$6.8billion' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$105million' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$1billion' not captured: the claim quoting it failed the number check",
+   "\u201cThe Security Supercycle\u201d \u2014 figure '$15.3billion' not captured: the claim quoting it failed the number check",
+   "\u201cGlobal Music Revenues Are Forecast to Rise as Subscriber Growth Beats Expectations\u201d \u2014 figure '4%' not captured: the claim meant to capture it could not be verified",
+   "\u201cGlobal Music Revenues Are Forecast to Rise as Subscriber Growth Beats Expectations\u201d \u2014 figure '3%' not captured: the claim meant to capture it could not be verified",
+   "\u201cMounting Finished-Goods Inventories Prompt Some PC OEMs to Adjust Memory Procurement Plans for 2027, Says TrendForce\u201d \u2014 figure '15.8%' not captured: the claim quoting it failed the number check",
+   "\u201cGlobal TV Shipments Decline 3.6% YoY in 3Q26 as Brands Target Premium Mini LED and RGB Mini LED Markets, Says TrendForce\u201d \u2014 figure '3.6%' not captured: the claim meant to capture it could not be verified",
+   "\u201cGlobal TV Shipments Decline 3.6% YoY in 3Q26 as Brands Target Premium Mini LED and RGB Mini LED Markets, Says TrendForce\u201d \u2014 figure '15%' not captured: the claim meant to capture it could not be verified",
+   "\u201cGlobal TV Shipments Decline 3.6% YoY in 3Q26 as Brands Target Premium Mini LED and RGB Mini LED Markets, Says TrendForce\u201d \u2014 figure '2 million' not captured: the claim meant to capture it could not be verified",
+   "\u201cThe Security Supercycle\u201d \u2014 one argument paragraph not accounted for: not accounted for",
+   "\u201cWhat the U.S. Midterm Sweep Could Mean for Markets\u201d \u2014 one argument paragraph not accounted for: the review accounted for it without naming a record",
+   "\u201cNAND Flash Prices Set to Decline in 2027 as Chinese CSP Order Cuts Outweigh North American Demand Growth, Says TrendForce\u201d \u2014 one argument paragraph not accounted for: the review accounted for it without naming a record",
+   "\u201cNAND Flash Prices Set to Decline in 2027 as Chinese CSP Order Cuts Outweigh North American Demand Growth, Says TrendForce\u201d \u2014 one argument paragraph not accounted for: the review accounted for it without naming a record"
+  ],
+  "paragraphs": 379,
+  "paragraphs_open": 4,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 16 article(s) this report's 12 runs analysed: 23 of 405 stated figure(s) and 4 of 379 argument paragraph(s) open; causes: account_names_no_record 3, capture_not_verified 6, no_account 1, verification_failed 17; 1 article(s) read only in part (a preview, or pages that could not be read); mechanism coverage: 20 alert(s) for review \u2014 a proposition dropped or merged on distinct evidence, or verified facts no thesis carries. Open material is never used as evidence, so it can hold a thesis back but never raise its research action",
+  "superseded_items_plain": []
+ },
+ "run_id": "R-20261119T093032Z-market",
+ "runtime_seconds": 1995.9,
+ "source_health": {
+  "attention": [
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-11-19T09:08:35.718521+00:00",
+    "consecutive_failed_checks": 4,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Morgan Stanley",
+    "reason": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "source_id": "ms_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-11-19T09:09:46.177710+00:00",
+    "consecutive_failed_checks": 5,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 1,
+    "last_scan": {
+     "full": 0,
+     "partial": 5,
+     "run_id": "R-20261109T140627Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-11-19T09:09:46.177710+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-11-12",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-11-12",
+    "next_action": "none to supply \u2014 paid posts are read as their free preview by the operator's decision (paywalled_posts = \"preview_only\")",
+    "plain": "articles are read only in part; some articles are previews or summaries of a fuller report",
+    "publisher": "SemiAnalysis",
+    "reason": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261109T140627Z-scan: 0 full, 5 preview / partial, 0 unreadable",
+    "source_id": "semianalysis",
+    "status": "DEGRADED",
+    "tests": [
+     {
+      "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (2900 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline; latest scan R-20261109T140627Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261109T140627Z-scan: 0 full, 5 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "WARN"
+     },
+     {
+      "detail": "newest dated article 2026-11-12; 1 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 2415\u20134697 words; 0 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-11-19T09:10:26.306242+00:00",
+    "consecutive_failed_checks": 4,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Goldman Sachs",
+    "reason": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+    "source_id": "gs_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   }
+  ],
+  "checked_at": "2026-11-19T09:10:26.306242+00:00",
+  "counts": {
+   "BLOCKED": 2,
+   "DEGRADED": 1,
+   "ERROR": 0,
+   "HEALTHY": 3,
+   "UNKNOWN": 0
+  },
+  "line": "Sources healthy: 3/6 | Degraded: 1 | Blocked: 2 | Errors: 0",
+  "new_alerts": []
+ },
+ "sources": [],
+ "spend_guard": {
+  "actual_total_usd": 0,
+  "bound_total_usd": 0,
+  "calls": [],
+  "calls_over_their_bound": 0,
+  "paid_calls": 0,
+  "refusals": [],
+  "run_limit_usd": 100.0,
+  "spent_usd": 0.0
+ },
+ "started_at": "2026-11-19T09:30:32.487116+00:00",
+ "status": "SUCCEEDED",
+ "theses_in_registry": 81,
+ "tokens": {},
+ "verification": {
+  "BLOCK": 73,
+  "HOLD": 0,
+  "INFO": 104,
+  "WARN": 227
+ },
+ "warnings": [],
+ "window_from": "2026-11-19",
+ "window_to": "2026-11-19"
+}

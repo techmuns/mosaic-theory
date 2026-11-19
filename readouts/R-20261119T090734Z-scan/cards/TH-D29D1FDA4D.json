@@ -1,0 +1,1727 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:03:10.802356Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-22",
+   "latest_article_date": "2026-10-22",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-D29D1FDA4D",
+   "title": "Long nominal assets and commodities on strong nominal growth and high inflation"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-1e4b4ab1179fee",
+     "C-ca66a90daa5fbb",
+     "C-7c2109c751881e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The speaker argues nominal assets are big-picture where you want to be given strong GDP growth and high inflation, unless a disinflationary bust occurs, now favoring a more barbell portfolio."
+   },
+   {
+    "claim_ids": [
+     "C-1e4b4ab1179fee",
+     "C-ca66a90daa5fbb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Stay long nominal assets over the medium and long term but add a barbell for protection against a disinflationary bust."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The nominal-asset/commodity trade has been repriced alongside AI de-risking; the view is that this may be overdone but hinges on whether AI capex sustains."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1e4b4ab1179fee"
+     ],
+     "original_date": "2026-10-22",
+     "period": "medium and long term",
+     "provenance": "SOURCE OPINION",
+     "text": "Nominal assets are the preferred position big-picture, unless there is a disinflationary bust (capex slows, retrenchment, a proper credit cycle)."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-15c8b4a8abb3cc"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The economy has shifted from a savings glut to a spending glut, a seismic change raising the cost of capital."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5a81713ec72b55"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7c2109c751881e"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "GDP growth is still very strong and inflation is high, supporting a long-nominal-assets stance."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ca66a90daa5fbb"
+     ],
+     "original_date": "2026-10-22",
+     "period": "medium and long term",
+     "provenance": "SOURCE OPINION",
+     "text": "The speaker suggests a more barbell portfolio is now more sensible while still favoring nominal assets medium/long term."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:03 UTC, analysed as of 2026-11-10, from a source published 2026-10-22; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-15c8b4a8abb3cc"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "A shift from savings glut to spending glut (over a trillion in AI capex, fiscal deficits) raises the cost of capital and supports nominal growth."
+   },
+   {
+    "claim_ids": [
+     "C-7c2109c751881e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "Strong GDP growth and high inflation support pricing of commodities and nominal assets."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   },
+   {
+    "claim_ids": [
+     "C-5a81713ec72b55"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "market_reaction",
+    "text": "Repricing of AI spending expectations has swept commodities and nominal assets down with it ('thrown the baby out with the bathwater')."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-56614c022c7f88",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "hyperscaler capex expectation",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next year",
+    "qualifiers": [
+     "approximate",
+     "market expectation"
+    ],
+    "quote": "the market is kind of at $1.1 trillion for next year",
+    "role": "catalyst",
+    "unit": "$tn",
+    "value": 1.1,
+    "value_text": "$1.1 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5a81713ec72b55",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "we've kind of thrown the baby out with the bathwater",
+    "role": "dislocation",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-15c8b4a8abb3cc",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The economy has shifted from a savings glut to a spending glut, a seismic change raising the cost of capital.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "seismic change"
+    ],
+    "quote": "We are in a spending glut, and this is a really big seismic change in terms of the way things work and what the cost of capital becomes",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1e4b4ab1179fee",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Nominal assets are the preferred position big-picture, unless there is a disinflationary bust (capex slows, retrenchment, a proper credit cycle).",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "medium and long term",
+    "qualifiers": [
+     "conditional on no disinflationary bust"
+    ],
+    "quote": "nominal assets are big picture where you want to be, unless we go into a disinflationary bust",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b028",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7c2109c751881e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "GDP growth is still very strong and inflation is high, supporting a long-nominal-assets stance.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "GDP growth is strong, and GDP growth is looking still very strong, and inflation is high",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ca66a90daa5fbb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The speaker suggests a more barbell portfolio is now more sensible while still favoring nominal assets medium/long term.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "medium and long term",
+    "qualifiers": [],
+    "quote": "I think now perhaps a bit more of a barbell in the portfolio would be a bit more sensible",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ab49fe6af7430e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The speaker believes there is still a lot of risk premium in markets because of energy, with hoped-for resolution in the next few weeks.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next few weeks",
+    "qualifiers": [],
+    "quote": "I think we still have a lot of risk premium because of energy",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": "0000886982",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, par value $0.01 per share",
+       "ticker": "GS"
+      }
+     ],
+     "mention_id": "M-e0f1070b3e02df",
+     "name_as_written": "Goldman Sachs",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRC"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRD"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital II",
+       "ticker": "GS/43PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital III",
+       "ticker": "GS/43PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Medium-Term Notes",
+       "ticker": "GS/31B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Medium-Term Notes",
+       "ticker": "GS/31X"
+      },
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "GSCE"
+      }
+     ],
+     "quote": "Chris Hussey, Host, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher of the podcast and author's employer"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-75e7e97a3b738c",
+     "name_as_written": "Goldman Sachs Research",
+     "other_securities": [],
+     "quote": "Host, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research division hosting the podcast"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a041621dc02630",
+     "name_as_written": "S&P",
+     "other_securities": [],
+     "quote": "the S&P has done a great job compartmentalizing",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "comparator",
+     "role_detail": "Benchmark index contrasted with the median equity's decline"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-fa887685634384",
+     "name_as_written": "Fed",
+     "other_securities": [],
+     "quote": "pushed the Fed to do more",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Central bank whose policy path repriced on FCI tightening"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-462831c72712e0",
+     "name_as_written": "Rich Privorotsky",
+     "other_securities": [],
+     "quote": "Rich Privorotsky, Head, European Equities Trading, FICC and Equities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Named speaker/author: Head, European Equities Trading, FICC and Equities at Goldman Sachs"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-941923e9e731ad",
+     "name_as_written": "Chris Hussey",
+     "other_securities": [],
+     "quote": "Chris Hussey, Host, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Host of The Markets, Goldman Sachs Research"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-fc38d9934d44",
+     "claim_ids": [
+      "C-7c2109c751881e"
+     ],
+     "direction": "positive",
+     "name": "commodities",
+     "provenance": "SOURCE OPINION",
+     "quote": "which is a lot of commodities"
+    }
+   ],
+   "sectors": [
+    "commodities",
+    "nominal assets",
+    "energy"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "next few weeks (energy resolution); next-week hyperscaler numbers [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-ca66a90daa5fbb",
+      "C-ab49fe6af7430e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Near-term the trade has been hurt by repricing and energy; a barbell is more sensible now."
+    },
+    {
+     "claim_ids": [
+      "C-5a81713ec72b55"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Dislocation evidence: The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-1e4b4ab1179fee",
+      "C-15c8b4a8abb3cc"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Over the medium and long term nominal assets remain where you want to be amid a spending glut."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-e0cd71bd8f9d92",
+      "C-1e4b4ab1179fee"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A disinflationary bust \u2014 AI capex slows, everyone retrenches, a proper credit cycle \u2014 would undermine the nominal-asset trade; this risk is now rated a lot higher."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs pricing_cycle); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs pricing_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs pricing_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-55C1780FB4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-FBDC863613: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-e0cd71bd8f9d92"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The speaker says the risk of a disinflationary bust / proper credit cycle was low three months ago and is now a lot higher."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI capex guidance cut at hyperscaler earnings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Energy prices falling sharply / disinflation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Widening credit spreads signaling a credit cycle"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-e3e726835a635d",
+      "C-ab49fe6af7430e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A problematic energy backdrop with still-high risk premium that the equity market has compartmentalized could resolve adversely in the coming weeks, lowering risk appetite broadly. (scope: Global/European equities; speaker expects (but has been wrong on timing of) a resolution in the next few weeks.)"
+    },
+    {
+     "claim_ids": [
+      "C-15c8b4a8abb3cc",
+      "C-7654f624a573e3",
+      "C-b8d9601739e55a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A structural shift from a savings glut to a spending glut (over a trillion in AI capex plus widespread fiscal deficits) raises the cost of capital and pushes out fringe/lower-quality borrowers and large-deficit sovereigns like France. (scope: Global credit and sovereign markets; CCC spreads (partly idiosyncratic) and French sovereign concerns cited as evidence.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: unless the economy goes into a disinflationary bust (AI capex slows, retrenchment, a proper credit cycle)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI capex is sustainable relative to market expectations, which the speaker calls the trillion-dollar question that determines the nominal-asset repricing"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether a credit cycle materializes"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Signs of a disinflationary bust / credit cycle emerge"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI capex guidance is cut sharply"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess how much commodity and nominal-asset repricing is tied to AI de-risking versus fundamentals, and track hyperscaler capex/monetization and energy resolution as the swing factors."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscaler earnings confirm sustained capex and monetization"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Energy backdrop resolves favorably"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-56614c022c7f88: forecast window 2027-01-01..2027-12-31 (next year) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no verified dislocation or catalyst; premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-fc38d9934d44",
+    "authors": [
+     "Un-named",
+     "Rich Privorotsky",
+     "Chris Hussey"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-5a81713ec72b55",
+     "C-ab49fe6af7430e",
+     "C-56614c022c7f88",
+     "C-1e4b4ab1179fee",
+     "C-15c8b4a8abb3cc",
+     "C-7c2109c751881e",
+     "C-ca66a90daa5fbb",
+     "C-e0cd71bd8f9d92",
+     "C-e3e726835a635d",
+     "C-7654f624a573e3",
+     "C-b8d9601739e55a"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-22T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "Why Investors Are Reducing AI Exposure",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:dd8ad15f27c78fd7335f7686258fc4b1241d4b23c10c9932e4b1f02f7c261ae6",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "integrated oil and gas producer and refiner",
+    "direction": "positive",
+    "enrichment_id": "EC-8aa32dc6921da9",
+    "evidence": "s03.1: Strong GDP growth and high inflation support pricing of commodities and nominal assets.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Exxon Mobil",
+    "rationale": "High inflation and strong growth support oil and gas prices; upstream realizations drive most of its earnings directly.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "crude oil, natural gas and refined products",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-D29D1FDA4D",
+    "ticker_hint": "XOM"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0000831259-26-000012)",
+    "business": "copper and gold mining company",
+    "direction": "positive",
+    "enrichment_id": "EC-8159713c69caaf",
+    "evidence": "s03.1: Strong GDP growth and high inflation support pricing of commodities and nominal assets.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-06 (accession 0000831259-26-000051) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.10 per share",
+      "ticker": "FCX"
+     }
+    ],
+    "name": "Freeport-McMoRan",
+    "rationale": "Copper prices rise with strong nominal growth and AI/electrification demand; realized metal prices drive nearly all its earnings.",
+    "registrant": "FREEPORT-MCMORAN INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1000); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "copper and gold sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-D29D1FDA4D",
+    "ticker_hint": "FCX"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-25 (0001193125-26-071575)",
+    "business": "steel producer and recycler",
+    "direction": "positive",
+    "enrichment_id": "EC-56a3b2817af79f",
+    "evidence": "s03.1: Strong GDP growth and high inflation support pricing of commodities and nominal assets.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-10 (accession 0001193125-26-454565) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.40 per share",
+      "ticker": "NUE"
+     }
+    ],
+    "name": "Nucor",
+    "rationale": "Strong nominal growth and inflation support steel pricing and volumes; realized steel prices drive the bulk of earnings.",
+    "registrant": "NUCOR CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3312); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "steel mill products",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-D29D1FDA4D",
+    "ticker_hint": "NUE"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-19 (0001164727-26-000010)",
+    "business": "gold mining company",
+    "direction": "positive",
+    "enrichment_id": "EC-5bdc9e35f6e180",
+    "evidence": "s03.1: Strong GDP growth and high inflation support pricing of commodities and nominal assets.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-22 (accession 0001164727-26-000043) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $1.60 per share",
+      "ticker": "NEM"
+     }
+    ],
+    "name": "Newmont",
+    "rationale": "High inflation lifts gold prices; realized gold prices drive almost all of its earnings as a classic inflation hedge.",
+    "registrant": "NEWMONT Corp /DE/",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1040); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "gold and copper sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-D29D1FDA4D",
+    "ticker_hint": "NEM"
+   }
+  ],
+  "created_at": "2026-11-10T19:07:14.844313Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261110T190643Z-enrich",
+  "set_id": "ES-a48c9313b23711",
+  "thesis_id": "TH-D29D1FDA4D",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-fc38d9934d44",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:03:10.802356Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-22",
+     "latest_article_date": "2026-10-22",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-D29D1FDA4D",
+     "title": "Long nominal assets and commodities on strong nominal growth and high inflation"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-1e4b4ab1179fee",
+       "C-ca66a90daa5fbb",
+       "C-7c2109c751881e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The speaker argues nominal assets are big-picture where you want to be given strong GDP growth and high inflation, unless a disinflationary bust occurs, now favoring a more barbell portfolio."
+     },
+     {
+      "claim_ids": [
+       "C-1e4b4ab1179fee",
+       "C-ca66a90daa5fbb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Stay long nominal assets over the medium and long term but add a barbell for protection against a disinflationary bust."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The nominal-asset/commodity trade has been repriced alongside AI de-risking; the view is that this may be overdone but hinges on whether AI capex sustains."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1e4b4ab1179fee"
+       ],
+       "original_date": "2026-10-22",
+       "period": "medium and long term",
+       "provenance": "SOURCE OPINION",
+       "text": "Nominal assets are the preferred position big-picture, unless there is a disinflationary bust (capex slows, retrenchment, a proper credit cycle)."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-15c8b4a8abb3cc"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The economy has shifted from a savings glut to a spending glut, a seismic change raising the cost of capital."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5a81713ec72b55"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7c2109c751881e"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "GDP growth is still very strong and inflation is high, supporting a long-nominal-assets stance."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ca66a90daa5fbb"
+       ],
+       "original_date": "2026-10-22",
+       "period": "medium and long term",
+       "provenance": "SOURCE OPINION",
+       "text": "The speaker suggests a more barbell portfolio is now more sensible while still favoring nominal assets medium/long term."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:03 UTC, analysed as of 2026-11-10, from a source published 2026-10-22; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-15c8b4a8abb3cc"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "A shift from savings glut to spending glut (over a trillion in AI capex, fiscal deficits) raises the cost of capital and supports nominal growth."
+     },
+     {
+      "claim_ids": [
+       "C-7c2109c751881e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Strong GDP growth and high inflation support pricing of commodities and nominal assets."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     },
+     {
+      "claim_ids": [
+       "C-5a81713ec72b55"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "market_reaction",
+      "text": "Repricing of AI spending expectations has swept commodities and nominal assets down with it ('thrown the baby out with the bathwater')."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-56614c022c7f88",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "hyperscaler capex expectation",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next year",
+      "qualifiers": [
+       "approximate",
+       "market expectation"
+      ],
+      "quote": "the market is kind of at $1.1 trillion for next year",
+      "role": "catalyst",
+      "unit": "$tn",
+      "value": 1.1,
+      "value_text": "$1.1 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5a81713ec72b55",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we've kind of thrown the baby out with the bathwater",
+      "role": "dislocation",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-15c8b4a8abb3cc",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The economy has shifted from a savings glut to a spending glut, a seismic change raising the cost of capital.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "seismic change"
+      ],
+      "quote": "We are in a spending glut, and this is a really big seismic change in terms of the way things work and what the cost of capital becomes",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1e4b4ab1179fee",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Nominal assets are the preferred position big-picture, unless there is a disinflationary bust (capex slows, retrenchment, a proper credit cycle).",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "medium and long term",
+      "qualifiers": [
+       "conditional on no disinflationary bust"
+      ],
+      "quote": "nominal assets are big picture where you want to be, unless we go into a disinflationary bust",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7c2109c751881e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "GDP growth is still very strong and inflation is high, supporting a long-nominal-assets stance.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "GDP growth is strong, and GDP growth is looking still very strong, and inflation is high",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ca66a90daa5fbb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The speaker suggests a more barbell portfolio is now more sensible while still favoring nominal assets medium/long term.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "medium and long term",
+      "qualifiers": [],
+      "quote": "I think now perhaps a bit more of a barbell in the portfolio would be a bit more sensible",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ab49fe6af7430e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The speaker believes there is still a lot of risk premium in markets because of energy, with hoped-for resolution in the next few weeks.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next few weeks",
+      "qualifiers": [],
+      "quote": "I think we still have a lot of risk premium because of energy",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": "0000886982",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "GS"
+        }
+       ],
+       "mention_id": "M-e0f1070b3e02df",
+       "name_as_written": "Goldman Sachs",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRC"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRD"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital II",
+         "ticker": "GS/43PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital III",
+         "ticker": "GS/43PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Medium-Term Notes",
+         "ticker": "GS/31B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Medium-Term Notes",
+         "ticker": "GS/31X"
+        },
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "GSCE"
+        }
+       ],
+       "quote": "Chris Hussey, Host, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher of the podcast and author's employer"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-75e7e97a3b738c",
+       "name_as_written": "Goldman Sachs Research",
+       "other_securities": [],
+       "quote": "Host, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research division hosting the podcast"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a041621dc02630",
+       "name_as_written": "S&P",
+       "other_securities": [],
+       "quote": "the S&P has done a great job compartmentalizing",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "comparator",
+       "role_detail": "Benchmark index contrasted with the median equity's decline"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-fa887685634384",
+       "name_as_written": "Fed",
+       "other_securities": [],
+       "quote": "pushed the Fed to do more",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Central bank whose policy path repriced on FCI tightening"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-462831c72712e0",
+       "name_as_written": "Rich Privorotsky",
+       "other_securities": [],
+       "quote": "Rich Privorotsky, Head, European Equities Trading, FICC and Equities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Named speaker/author: Head, European Equities Trading, FICC and Equities at Goldman Sachs"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-941923e9e731ad",
+       "name_as_written": "Chris Hussey",
+       "other_securities": [],
+       "quote": "Chris Hussey, Host, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Host of The Markets, Goldman Sachs Research"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-fc38d9934d44",
+       "claim_ids": [
+        "C-7c2109c751881e"
+       ],
+       "direction": "positive",
+       "name": "commodities",
+       "provenance": "SOURCE OPINION",
+       "quote": "which is a lot of commodities"
+      }
+     ],
+     "sectors": [
+      "commodities",
+      "nominal assets",
+      "energy"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "next few weeks (energy resolution); next-week hyperscaler numbers [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-ca66a90daa5fbb",
+        "C-ab49fe6af7430e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Near-term the trade has been hurt by repricing and energy; a barbell is more sensible now."
+      },
+      {
+       "claim_ids": [
+        "C-5a81713ec72b55"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Dislocation evidence: The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-1e4b4ab1179fee",
+        "C-15c8b4a8abb3cc"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Over the medium and long term nominal assets remain where you want to be amid a spending glut."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-e0cd71bd8f9d92",
+        "C-1e4b4ab1179fee"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A disinflationary bust \u2014 AI capex slows, everyone retrenches, a proper credit cycle \u2014 would undermine the nominal-asset trade; this risk is now rated a lot higher."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs pricing_cycle); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs pricing_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs pricing_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-55C1780FB4: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-FBDC863613: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs pricing_cycle) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-e0cd71bd8f9d92"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The speaker says the risk of a disinflationary bust / proper credit cycle was low three months ago and is now a lot higher."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI capex guidance cut at hyperscaler earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Energy prices falling sharply / disinflation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Widening credit spreads signaling a credit cycle"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-e3e726835a635d",
+        "C-ab49fe6af7430e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A problematic energy backdrop with still-high risk premium that the equity market has compartmentalized could resolve adversely in the coming weeks, lowering risk appetite broadly. (scope: Global/European equities; speaker expects (but has been wrong on timing of) a resolution in the next few weeks.)"
+      },
+      {
+       "claim_ids": [
+        "C-15c8b4a8abb3cc",
+        "C-7654f624a573e3",
+        "C-b8d9601739e55a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A structural shift from a savings glut to a spending glut (over a trillion in AI capex plus widespread fiscal deficits) raises the cost of capital and pushes out fringe/lower-quality borrowers and large-deficit sovereigns like France. (scope: Global credit and sovereign markets; CCC spreads (partly idiosyncratic) and French sovereign concerns cited as evidence.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: unless the economy goes into a disinflationary bust (AI capex slows, retrenchment, a proper credit cycle)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI capex is sustainable relative to market expectations, which the speaker calls the trillion-dollar question that determines the nominal-asset repricing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether a credit cycle materializes"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Signs of a disinflationary bust / credit cycle emerge"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI capex guidance is cut sharply"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess how much commodity and nominal-asset repricing is tied to AI de-risking versus fundamentals, and track hyperscaler capex/monetization and energy resolution as the swing factors."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscaler earnings confirm sustained capex and monetization"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Energy backdrop resolves favorably"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-56614c022c7f88: forecast window 2027-01-01..2027-12-31 (next year) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no verified dislocation or catalyst; premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-fc38d9934d44",
+      "authors": [
+       "Un-named",
+       "Rich Privorotsky",
+       "Chris Hussey"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-5a81713ec72b55",
+       "C-ab49fe6af7430e",
+       "C-56614c022c7f88",
+       "C-1e4b4ab1179fee",
+       "C-15c8b4a8abb3cc",
+       "C-7c2109c751881e",
+       "C-ca66a90daa5fbb",
+       "C-e0cd71bd8f9d92",
+       "C-e3e726835a635d",
+       "C-7654f624a573e3",
+       "C-b8d9601739e55a"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-22T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Why Investors Are Reducing AI Exposure",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:dd8ad15f27c78fd7335f7686258fc4b1241d4b23c10c9932e4b1f02f7c261ae6",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "7c4acbce179315b30b7b74eaf9b7f010ce25d0d5854e0541955c080cf67c823a",
+   "created_at": "2026-11-10T15:03:28.122665Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-56614c022c7f88: forecast window 2027-01-01..2027-12-31 (next year) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no verified dislocation or catalyst; premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-56614c022c7f88"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7157f87b7a71",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-56614c022c7f88"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "runs_past"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: commodities",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 3 offered but NOT counted (opinion, forecast figure or stale reading): C-5a81713ec72b55, C-ab49fe6af7430e, C-56614c022c7f88",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-e0cd71bd8f9d92"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-56614c022c7f88: forecast window 2027-01-01..2027-12-31 (next year) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; no verified dislocation or catalyst; premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "window_runs_past",
+      "kind": "held",
+      "text": "near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-56614c022c7f88: forecast window 2027-01-01..2027-12-31 (next year) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261110T145858Z-ingest",
+   "thesis_id": "TH-D29D1FDA4D",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 9,
+ "other_cited_evidence": [
+  "C-e0cd71bd8f9d92",
+  "C-e3e726835a635d",
+  "C-7654f624a573e3",
+  "C-b8d9601739e55a"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.0": "The parenthetical detail (capex slows, retrenchment, a proper credit cycle) is not in the cited span, which only says 'unless we go into a disinflationary bust'.",
+  "s02.1": "The cited span affirms a spending glut and seismic change raising cost of capital, but does not state the shift was FROM a savings glut.",
+  "s03.0": "The cited span supports spending glut and cost of capital, but 'over a trillion in AI capex, fiscal deficits' and 'from savings glut' are not in the cited span. Pool C-01777e55fc2d2e covers the trillion capex.",
+  "s03.1": "The cited span supports strong GDP growth and high inflation, but says nothing about commodities pricing.",
+  "s03.3": "The cited span 'thrown the baby out with the bathwater' does not mention AI spending repricing sweeping commodities and nominal assets; that scope is added.",
+  "s06.0": "Barbell and energy risk premium are supported, but 'trade has been hurt by repricing' is not in the cited spans.",
+  "s07.1": "The 'a lot higher' risk and disinflationary bust are supported, but the detail 'AI capex slows, everyone retrenches, a proper credit cycle' is not in the cited spans.",
+  "s07.9": "Spending glut, French sovereign concerns and CCC spreads are supported, but 'over a trillion in AI capex' is not in the cited spans. Pool C-01777e55fc2d2e covers it."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Timing \u2014 its dated figures run past the next four quarters; a full-year or multi-quarter figure is not a 2-4-quarter window.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Premise \u2014 conditional in the source."
+ ],
+ "withheld_sentences": {}
+}

@@ -1,0 +1,1711 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T14:08:11.791228Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-23",
+   "latest_article_date": "2026-09-23",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-FBDC863613",
+   "title": "S&P 500 upside driven by earnings not re-rating, with valuations near average"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-1268e1397ce118",
+     "C-11ae8fb1e8f068",
+     "C-166d295eeb15e0",
+     "C-1005e898e9f823",
+     "C-1ac1cc73ec2281"
+    ],
+    "provenance": "FORECAST",
+    "text": "GS forecasts the S&P 500 at 8,700 over 12 months (up from 7,764 on Sep 21), implying a forward P/E near the current 19x; EPS is forecast to grow about 11% in 2027 (to $415) and 2028 ($460). \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-166d295eeb15e0",
+     "C-f04fb221a0a1d8"
+    ],
+    "provenance": "FORECAST",
+    "text": "GS expects the S&P 500 rally to be driven by profit growth rather than a higher valuation, with a dramatic valuation increase unlikely given AI uncertainty. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Index upside depends on earnings delivery rather than multiple expansion; a fading AI investment tailwind must be replaced by GDP growth and AI productivity gains for forecasts to hold."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-ddac106c1f41",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1268e1397ce118"
+     ],
+     "original_date": "2026-09-23",
+     "period": "next 12 months",
+     "provenance": "FORECAST",
+     "text": "S&P 500 forecast to rise to 8,700 over 12 months from 7,764 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1005e898e9f823"
+     ],
+     "original_date": "2026-09-23",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "S&P 500 EPS forecast to grow about 11% in 2027 to $415 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1ac1cc73ec2281"
+     ],
+     "original_date": "2026-09-23",
+     "period": "2028",
+     "provenance": "FORECAST",
+     "text": "S&P 500 EPS forecast to grow about 11% in 2028 to $460 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-166d295eeb15e0"
+     ],
+     "original_date": "2026-09-23",
+     "period": "next 12 months",
+     "provenance": "FORECAST",
+     "text": "S&P 500 target implies forward P/E remaining close to 19x \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f04fb221a0a1d8"
+     ],
+     "original_date": "2026-09-23",
+     "period": "coming years",
+     "provenance": "FORECAST",
+     "text": "Earnings driven by GDP growth and AI investment tailwind fading into AI productivity boost"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-e4aeb60aaf506e"
+     ],
+     "original_date": "2026-09-23",
+     "period": "coming years",
+     "provenance": "FORECAST",
+     "text": "Base case is S&P 500 earnings growth decelerates but does not collapse"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 7 pieces of evidence from A-ddac106c1f41 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 14:08 UTC, analysed as of 2026-11-10, from a source published 2026-09-23; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-f04fb221a0a1d8"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "Solid GDP growth and AI investment tailwind fading into AI productivity boost."
+   },
+   {
+    "claim_ids": [
+     "C-1005e898e9f823",
+     "C-1ac1cc73ec2281"
+    ],
+    "provenance": "FORECAST",
+    "step": "listed_earnings",
+    "text": "S&P 500 EPS forecast to grow about 11% in 2027 ($415) and 2028 ($460). \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-1268e1397ce118",
+     "C-166d295eeb15e0"
+    ],
+    "provenance": "FORECAST",
+    "step": "market_reaction",
+    "text": "S&P 500 forecast to rise to 8,700 over 12 months on a stable ~19x forward P/E. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-ddac106c1f41",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1005e898e9f823",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "S&P 500 EPS",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "2027",
+    "qualifiers": [
+     "growth about 11%"
+    ],
+    "quote": "S&P 500 EPS are forecast to grow about 11% in both 2027 (to $415) and 2028 ($460)",
+    "role": "supports",
+    "unit": "$ (EPS)",
+    "value": 415.0,
+    "value_text": "$415"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-ddac106c1f41",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1268e1397ce118",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "S&P 500 index target",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "next 12 months",
+    "qualifiers": [],
+    "quote": "Goldman Sachs Research forecasts the S&P 500 will rise to 8,700 over 12 months, up from 7,764 on September 21",
+    "role": "supports",
+    "unit": "index level",
+    "value": 8700.0,
+    "value_text": "8,700"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-ddac106c1f41",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-166d295eeb15e0",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "forward P/E (implied by target)",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "next 12 months",
+    "qualifiers": [],
+    "quote": "a P/E multiple on consensus forward EPS that remains close to the current level of 19 times",
+    "role": "supports",
+    "unit": "x",
+    "value": 19.0,
+    "value_text": "19 times"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-ddac106c1f41",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1ac1cc73ec2281",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "S&P 500 EPS",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "2028",
+    "qualifiers": [
+     "growth about 11%"
+    ],
+    "quote": "S&P 500 EPS are forecast to grow about 11% in both 2027 (to $415) and 2028 ($460)",
+    "role": "supports",
+    "unit": "$ (EPS)",
+    "value": 460.0,
+    "value_text": "$460"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-ddac106c1f41",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d47dbd3e47c060",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "As the AI investment boost to earnings fades, AI productivity gains become increasingly important for stock profitability.",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": null,
+    "qualifiers": [],
+    "quote": "making productivity gains from AI increasingly important for stock profitability",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-ddac106c1f41",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e4aeb60aaf506e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Base case is S&P 500 earnings growth decelerates but does not collapse",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "coming years",
+    "qualifiers": [],
+    "quote": "Our base case is for S&P 500 earnings growth to decelerate, not collapse, in coming years",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-ddac106c1f41",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f04fb221a0a1d8",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Earnings driven by GDP growth and AI investment tailwind fading into AI productivity boost",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Research",
+    "period": "coming years",
+    "qualifiers": [],
+    "quote": "Earnings are expected to be driven by solid GDP growth and a fading tailwind from AI investment that gradually transitions into a growing boost from AI productivity",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-ddac106c1f41",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-467fe6b9599aa3",
+     "name_as_written": "Goldman Sachs Research",
+     "other_securities": [],
+     "quote": "according to Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "research unit producing the earnings analysis and forecasts"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "cik": "0000886982",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, par value $0.01 per share",
+       "ticker": "GS"
+      }
+     ],
+     "mention_id": "M-6329fc3af7277f",
+     "name_as_written": "Goldman Sachs",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRC"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRD"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital II",
+       "ticker": "GS/43PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital III",
+       "ticker": "GS/43PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Medium-Term Notes",
+       "ticker": "GS/31B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Medium-Term Notes",
+       "ticker": "GS/31X"
+      },
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "GSCE"
+      }
+     ],
+     "quote": "does not constitute a recommendation from any Goldman Sachs entity",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "publisher of the article"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "cik": "0001013237",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": null,
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-10-20 (accession 0001628280-26-066391) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 Par Value",
+       "ticker": "FDS"
+      }
+     ],
+     "mention_id": "M-c5e3abf4365e66",
+     "name_as_written": "FactSet",
+     "other_securities": [],
+     "quote": "Source: FactSet, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "data_source",
+     "role_detail": "data source for EPS growth chart"
+    },
+    {
+     "article_id": "A-ddac106c1f41",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8131a1aa2eb7d8",
+     "name_as_written": "Ben Snider",
+     "other_securities": [],
+     "quote": "writes Ben Snider, chief US equity strategist at Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author / chief US equity strategist cited as report author"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [
+    {
+     "article_id": "A-ddac106c1f41",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "market instrument",
+     "listings": [],
+     "mention_id": "M-1e91b0a732d404",
+     "name_as_written": "S&P 500",
+     "other_securities": [],
+     "quote": "Can AI Investment Drive S&P 500 Earnings Even Higher?",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "the index whose earnings and level are analyzed"
+    }
+   ],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-ddac106c1f41",
+     "claim_ids": [
+      "C-1268e1397ce118"
+     ],
+     "direction": "positive",
+     "name": "S&P 500",
+     "provenance": "FORECAST",
+     "quote": "Goldman Sachs Research forecasts the S&P 500 will rise to 8,700"
+    }
+   ],
+   "sectors": [
+    "US equities"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-cbaa759a7eb0f5",
+      "C-840a5f25a9bc6d"
+     ],
+     "provenance": "FORECAST",
+     "text": "Near-term valuations show no hint of a bubble; forward P/E has fallen from 23x to 19x, matching its 10-year average. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-e4aeb60aaf506e",
+      "C-f04fb221a0a1d8"
+     ],
+     "provenance": "FORECAST",
+     "text": "Base case is S&P 500 earnings growth decelerates but does not collapse, driven by GDP and AI productivity."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-715c3e9de07b2e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Even an 'average' multiple may be expensive if current earnings are unsustainable; the cyclically adjusted P/E is one of the highest on record, and some investors fear an 'earnings bubble.'"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift); a different geography (Canada vs US) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs demand_volume_shift); a different geography (China vs US); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-715c3e9de07b2e"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "CAPE ratio is one of the highest on record, below 1999-2000 peak but above 2021"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Earnings misses / downward EPS revisions"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Forward P/E compression below historical average"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Energy price or rate shocks"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-715c3e9de07b2e",
+      "C-865057527b31d0"
+     ],
+     "provenance": "FORECAST",
+     "text": "Current earnings may be unsustainable: even an 'average' forward multiple may be expensive, and the cyclically adjusted P/E is one of the highest readings on record (below 1999-2000 but above 2021), raising 'earnings bubble' concerns. (scope: S&P 500 valuation / aggregate earnings sustainability)"
+    },
+    {
+     "claim_ids": [
+      "C-cfb4a64b18b23f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Energy prices and interest rates create near-term macro risks around the earnings forecasts, while the impact of AI is the biggest long-term question for corporate earnings. (scope: S&P 500 earnings forecasts, near-term and long-term)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI productivity gains materialize to replace the fading investment tailwind"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether current earnings are sustainable given elevated CAPE"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus EPS vs GS forecast"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "EPS downgrades"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Energy price or interest rate shock"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Compare GS's $415/$460 EPS forecasts and 8,700 target against consensus to gauge how much earnings delivery is required and whether the implied 19x multiple is defensible given an elevated CAPE."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "EPS revisions trending above GS forecasts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI productivity evidence strengthening"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-ddac106c1f41",
+    "authors": [
+     "Goldman Sachs",
+     "Ben Snider"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-1268e1397ce118",
+     "C-166d295eeb15e0",
+     "C-1005e898e9f823",
+     "C-1ac1cc73ec2281",
+     "C-f04fb221a0a1d8",
+     "C-e4aeb60aaf506e",
+     "C-d47dbd3e47c060",
+     "C-715c3e9de07b2e",
+     "C-865057527b31d0",
+     "C-cfb4a64b18b23f"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-23T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "Can AI Investment Drive S&P 500 Earnings Even Higher?",
+    "upstream_origins": [
+     "Goldman Sachs Research"
+    ],
+    "url": "urn:document:sha256:80fd0e0af921bc8670f5c38812d1defc14d6c6bac02ceb34818b2746a934d10f",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-07-29 (0001193125-26-323660)",
+    "business": "software, cloud (Azure) and AI infrastructure provider",
+    "direction": "positive",
+    "enrichment_id": "EC-90bdb9b14fe8f4",
+    "evidence": "s03.0: Solid GDP growth and AI investment tailwind fading into AI productivity boost.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.00000625 par value per share",
+      "ticker": "MSFT"
+     }
+    ],
+    "name": "Microsoft",
+    "rationale": "AI productivity monetization via Copilot and Azure AI services converts the AI tailwind into realized cloud and software revenue growth.",
+    "registrant": "MICROSOFT CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "cloud and AI-enabled software subscriptions",
+    "revenue_model": "subscription",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-FBDC863613",
+    "ticker_hint": "MSFT"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "We derive our revenue primarily from product sales including hardware and systems."
+    ],
+    "basis_source": "10-K filed 2026-02-25 (0001045810-26-000021)",
+    "business": "designer of AI accelerator GPUs and data-center chips",
+    "direction": "positive",
+    "enrichment_id": "EC-06eb3ae59634c8",
+    "evidence": "s03.0: Solid GDP growth and AI investment tailwind fading into AI productivity boost.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "NVDA"
+     }
+    ],
+    "name": "NVIDIA",
+    "rationale": "Continued AI investment and data-center buildout drives GPU demand; a fading tailwind would slow this segment's rapid growth.",
+    "registrant": "NVIDIA CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data-center AI GPUs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-FBDC863613",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names services",
+    "basis_quote": [
+     "Our revenues are derived from contracts for managed services, technology integration consulting services and non-technology integration consulting services."
+    ],
+    "basis_source": "10-K filed 2026-10-16 (0001467373-26-000049)",
+    "business": "global IT consulting and systems integration services",
+    "direction": "positive",
+    "enrichment_id": "EC-c9f69f2e18e3a2",
+    "evidence": "s03.0: Solid GDP growth and AI investment tailwind fading into AI productivity boost.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-10-16 (accession 0001467373-26-000049) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A ordinary shares, par value $0.0000225 per share",
+      "ticker": "ACN"
+     }
+    ],
+    "name": "Accenture",
+    "rationale": "AI productivity adoption drives enterprise consulting and implementation demand, lifting bookings as firms deploy AI across operations.",
+    "registrant": "Accenture plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7389); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI and digital transformation consulting",
+    "revenue_model": "services",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-FBDC863613",
+    "ticker_hint": "ACN"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names subscription",
+    "basis_quote": [
+     "We derive our revenues predominately from subscription revenues, which are primarily comprised of subscription fees that give customers access to the ordered subscription service, related support and updates, if any, to the subscribed service during the subscription term."
+    ],
+    "basis_source": "10-K filed 2026-01-29 (0001373715-26-000007)",
+    "business": "enterprise workflow automation software platform",
+    "direction": "positive",
+    "enrichment_id": "EC-b4af27fe2c8684",
+    "evidence": "s03.1: S&P 500 EPS forecast to grow about 11% in 2027 ($415) and 2028 ($460).",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001373715-26-000096) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.001 per share",
+      "ticker": "NOW"
+     }
+    ],
+    "name": "ServiceNow",
+    "rationale": "AI-driven workflow automation lifts subscription growth, contributing to broad S&P 500 earnings expansion from productivity gains.",
+    "registrant": "ServiceNow, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "workflow automation subscriptions",
+    "revenue_model": "subscription",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-FBDC863613",
+    "ticker_hint": "NOW"
+   }
+  ],
+  "created_at": "2026-11-10T19:08:36.903736Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Caterpillar: more than 4 on one side \u2014 set aside",
+   "JPMorgan Chase: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261110T190643Z-enrich",
+  "set_id": "ES-742115b93f4cda",
+  "thesis_id": "TH-FBDC863613",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-ddac106c1f41",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T14:08:11.791228Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-23",
+     "latest_article_date": "2026-09-23",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-FBDC863613",
+     "title": "S&P 500 upside driven by earnings not re-rating, with valuations near average"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-1268e1397ce118",
+       "C-11ae8fb1e8f068",
+       "C-166d295eeb15e0",
+       "C-1005e898e9f823",
+       "C-1ac1cc73ec2281"
+      ],
+      "provenance": "FORECAST",
+      "text": "GS forecasts the S&P 500 at 8,700 over 12 months (up from 7,764 on Sep 21), implying a forward P/E near the current 19x; EPS is forecast to grow about 11% in 2027 (to $415) and 2028 ($460). \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-166d295eeb15e0",
+       "C-f04fb221a0a1d8"
+      ],
+      "provenance": "FORECAST",
+      "text": "GS expects the S&P 500 rally to be driven by profit growth rather than a higher valuation, with a dramatic valuation increase unlikely given AI uncertainty. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Index upside depends on earnings delivery rather than multiple expansion; a fading AI investment tailwind must be replaced by GDP growth and AI productivity gains for forecasts to hold."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-ddac106c1f41",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1268e1397ce118"
+       ],
+       "original_date": "2026-09-23",
+       "period": "next 12 months",
+       "provenance": "FORECAST",
+       "text": "S&P 500 forecast to rise to 8,700 over 12 months from 7,764 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1005e898e9f823"
+       ],
+       "original_date": "2026-09-23",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "S&P 500 EPS forecast to grow about 11% in 2027 to $415 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1ac1cc73ec2281"
+       ],
+       "original_date": "2026-09-23",
+       "period": "2028",
+       "provenance": "FORECAST",
+       "text": "S&P 500 EPS forecast to grow about 11% in 2028 to $460 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-166d295eeb15e0"
+       ],
+       "original_date": "2026-09-23",
+       "period": "next 12 months",
+       "provenance": "FORECAST",
+       "text": "S&P 500 target implies forward P/E remaining close to 19x \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f04fb221a0a1d8"
+       ],
+       "original_date": "2026-09-23",
+       "period": "coming years",
+       "provenance": "FORECAST",
+       "text": "Earnings driven by GDP growth and AI investment tailwind fading into AI productivity boost"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-e4aeb60aaf506e"
+       ],
+       "original_date": "2026-09-23",
+       "period": "coming years",
+       "provenance": "FORECAST",
+       "text": "Base case is S&P 500 earnings growth decelerates but does not collapse"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 7 pieces of evidence from A-ddac106c1f41 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 14:08 UTC, analysed as of 2026-11-10, from a source published 2026-09-23; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-f04fb221a0a1d8"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "Solid GDP growth and AI investment tailwind fading into AI productivity boost."
+     },
+     {
+      "claim_ids": [
+       "C-1005e898e9f823",
+       "C-1ac1cc73ec2281"
+      ],
+      "provenance": "FORECAST",
+      "step": "listed_earnings",
+      "text": "S&P 500 EPS forecast to grow about 11% in 2027 ($415) and 2028 ($460). \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-1268e1397ce118",
+       "C-166d295eeb15e0"
+      ],
+      "provenance": "FORECAST",
+      "step": "market_reaction",
+      "text": "S&P 500 forecast to rise to 8,700 over 12 months on a stable ~19x forward P/E. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-ddac106c1f41",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1005e898e9f823",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "S&P 500 EPS",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "2027",
+      "qualifiers": [
+       "growth about 11%"
+      ],
+      "quote": "S&P 500 EPS are forecast to grow about 11% in both 2027 (to $415) and 2028 ($460)",
+      "role": "supports",
+      "unit": "$ (EPS)",
+      "value": 415.0,
+      "value_text": "$415"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-ddac106c1f41",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1268e1397ce118",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "S&P 500 index target",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "next 12 months",
+      "qualifiers": [],
+      "quote": "Goldman Sachs Research forecasts the S&P 500 will rise to 8,700 over 12 months, up from 7,764 on September 21",
+      "role": "supports",
+      "unit": "index level",
+      "value": 8700.0,
+      "value_text": "8,700"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-ddac106c1f41",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-166d295eeb15e0",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "forward P/E (implied by target)",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "next 12 months",
+      "qualifiers": [],
+      "quote": "a P/E multiple on consensus forward EPS that remains close to the current level of 19 times",
+      "role": "supports",
+      "unit": "x",
+      "value": 19.0,
+      "value_text": "19 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-ddac106c1f41",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1ac1cc73ec2281",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "S&P 500 EPS",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "2028",
+      "qualifiers": [
+       "growth about 11%"
+      ],
+      "quote": "S&P 500 EPS are forecast to grow about 11% in both 2027 (to $415) and 2028 ($460)",
+      "role": "supports",
+      "unit": "$ (EPS)",
+      "value": 460.0,
+      "value_text": "$460"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-ddac106c1f41",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d47dbd3e47c060",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "As the AI investment boost to earnings fades, AI productivity gains become increasingly important for stock profitability.",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": null,
+      "qualifiers": [],
+      "quote": "making productivity gains from AI increasingly important for stock profitability",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-ddac106c1f41",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e4aeb60aaf506e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Base case is S&P 500 earnings growth decelerates but does not collapse",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "coming years",
+      "qualifiers": [],
+      "quote": "Our base case is for S&P 500 earnings growth to decelerate, not collapse, in coming years",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-ddac106c1f41",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f04fb221a0a1d8",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Earnings driven by GDP growth and AI investment tailwind fading into AI productivity boost",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Research",
+      "period": "coming years",
+      "qualifiers": [],
+      "quote": "Earnings are expected to be driven by solid GDP growth and a fading tailwind from AI investment that gradually transitions into a growing boost from AI productivity",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-ddac106c1f41",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-467fe6b9599aa3",
+       "name_as_written": "Goldman Sachs Research",
+       "other_securities": [],
+       "quote": "according to Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "research unit producing the earnings analysis and forecasts"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "cik": "0000886982",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "GS"
+        }
+       ],
+       "mention_id": "M-6329fc3af7277f",
+       "name_as_written": "Goldman Sachs",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRC"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRD"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital II",
+         "ticker": "GS/43PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital III",
+         "ticker": "GS/43PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Medium-Term Notes",
+         "ticker": "GS/31B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Medium-Term Notes",
+         "ticker": "GS/31X"
+        },
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "GSCE"
+        }
+       ],
+       "quote": "does not constitute a recommendation from any Goldman Sachs entity",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "publisher of the article"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "cik": "0001013237",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": null,
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-10-20 (accession 0001628280-26-066391) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 Par Value",
+         "ticker": "FDS"
+        }
+       ],
+       "mention_id": "M-c5e3abf4365e66",
+       "name_as_written": "FactSet",
+       "other_securities": [],
+       "quote": "Source: FactSet, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "data source for EPS growth chart"
+      },
+      {
+       "article_id": "A-ddac106c1f41",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8131a1aa2eb7d8",
+       "name_as_written": "Ben Snider",
+       "other_securities": [],
+       "quote": "writes Ben Snider, chief US equity strategist at Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author / chief US equity strategist cited as report author"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [
+      {
+       "article_id": "A-ddac106c1f41",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "market instrument",
+       "listings": [],
+       "mention_id": "M-1e91b0a732d404",
+       "name_as_written": "S&P 500",
+       "other_securities": [],
+       "quote": "Can AI Investment Drive S&P 500 Earnings Even Higher?",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "the index whose earnings and level are analyzed"
+      }
+     ],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-ddac106c1f41",
+       "claim_ids": [
+        "C-1268e1397ce118"
+       ],
+       "direction": "positive",
+       "name": "S&P 500",
+       "provenance": "FORECAST",
+       "quote": "Goldman Sachs Research forecasts the S&P 500 will rise to 8,700"
+      }
+     ],
+     "sectors": [
+      "US equities"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-cbaa759a7eb0f5",
+        "C-840a5f25a9bc6d"
+       ],
+       "provenance": "FORECAST",
+       "text": "Near-term valuations show no hint of a bubble; forward P/E has fallen from 23x to 19x, matching its 10-year average. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-e4aeb60aaf506e",
+        "C-f04fb221a0a1d8"
+       ],
+       "provenance": "FORECAST",
+       "text": "Base case is S&P 500 earnings growth decelerates but does not collapse, driven by GDP and AI productivity."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-715c3e9de07b2e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Even an 'average' multiple may be expensive if current earnings are unsustainable; the cyclically adjusted P/E is one of the highest on record, and some investors fear an 'earnings bubble.'"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-41B1AB7F8C: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift); a different geography (Canada vs US) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs demand_volume_shift); a different geography (China vs US); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-715c3e9de07b2e"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "CAPE ratio is one of the highest on record, below 1999-2000 peak but above 2021"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Earnings misses / downward EPS revisions"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Forward P/E compression below historical average"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Energy price or rate shocks"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-715c3e9de07b2e",
+        "C-865057527b31d0"
+       ],
+       "provenance": "FORECAST",
+       "text": "Current earnings may be unsustainable: even an 'average' forward multiple may be expensive, and the cyclically adjusted P/E is one of the highest readings on record (below 1999-2000 but above 2021), raising 'earnings bubble' concerns. (scope: S&P 500 valuation / aggregate earnings sustainability)"
+      },
+      {
+       "claim_ids": [
+        "C-cfb4a64b18b23f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Energy prices and interest rates create near-term macro risks around the earnings forecasts, while the impact of AI is the biggest long-term question for corporate earnings. (scope: S&P 500 earnings forecasts, near-term and long-term)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI productivity gains materialize to replace the fading investment tailwind"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether current earnings are sustainable given elevated CAPE"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus EPS vs GS forecast"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "EPS downgrades"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Energy price or interest rate shock"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Compare GS's $415/$460 EPS forecasts and 8,700 target against consensus to gauge how much earnings delivery is required and whether the implied 19x multiple is defensible given an elevated CAPE."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "EPS revisions trending above GS forecasts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI productivity evidence strengthening"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-ddac106c1f41",
+      "authors": [
+       "Goldman Sachs",
+       "Ben Snider"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-1268e1397ce118",
+       "C-166d295eeb15e0",
+       "C-1005e898e9f823",
+       "C-1ac1cc73ec2281",
+       "C-f04fb221a0a1d8",
+       "C-e4aeb60aaf506e",
+       "C-d47dbd3e47c060",
+       "C-715c3e9de07b2e",
+       "C-865057527b31d0",
+       "C-cfb4a64b18b23f"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-23T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Can AI Investment Drive S&P 500 Earnings Even Higher?",
+      "upstream_origins": [
+       "Goldman Sachs Research"
+      ],
+      "url": "urn:document:sha256:80fd0e0af921bc8670f5c38812d1defc14d6c6bac02ceb34818b2746a934d10f",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "1bee0b864f05f7fcaed3a8c980c7b68355ee348a30ba01d5620b17866f106e71",
+   "created_at": "2026-11-10T14:51:15.846003Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-1268e1397ce118",
+       "C-166d295eeb15e0",
+       "C-1005e898e9f823",
+       "C-1ac1cc73ec2281",
+       "C-f04fb221a0a1d8",
+       "C-e4aeb60aaf506e"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-fa615740cca4",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-1268e1397ce118",
+       "C-166d295eeb15e0"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-1268e1397ce118: forecast window 2026-09-23..2027-09-23 (NTM from 2026-09-23 \u2014 the twelve months after the figure was read); C-166d295eeb15e0: forecast window 2026-09-23..2027-09-23 (NTM from 2026-09-23 \u2014 the twelve months after the figure was read)); 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: S&P 500",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-715c3e9de07b2e"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 6 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261110T145114Z-ingest",
+   "thesis_id": "TH-FBDC863613",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 7,
+ "other_cited_evidence": [
+  "C-11ae8fb1e8f068",
+  "C-cbaa759a7eb0f5",
+  "C-840a5f25a9bc6d",
+  "C-715c3e9de07b2e",
+  "C-865057527b31d0",
+  "C-cfb4a64b18b23f"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s06.0": "The cited spans support the forward P/E falling from 23x to 19x, but the claim that 19x matches its 10-year average and that there is 'no hint of a bubble' is not in the cited spans",
+  "s07.1": "The 'average multiple may be expensive if earnings unsustainable' and 'earnings bubble' fears are not in the cited span, which only covers the CAPE being one of the highest on record",
+  "s07.6": "The 'average multiple may be expensive' / 'earnings bubble' and unsustainability claims are not in either cited span; CAPE span and hyperscaler capex span do not support those assertions"
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {
+  "s06.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s06.0 prints '10', which none of its cited claims carry: 'Near-term valuations show no hint of a bubble; forward P/E has fallen from 23x to 19x, matching its '"
+ }
+}

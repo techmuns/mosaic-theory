@@ -1,0 +1,1225 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "ai_models_platforms"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T14:53:40.365014Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-09",
+   "latest_article_date": "2026-10-09",
+   "region": "China",
+   "research_action": "SKIP",
+   "sector": "AI model developers and AI platforms / applications",
+   "status": "ACTIVE",
+   "thesis_id": "TH-E30F846AB8",
+   "title": "Chinese AI labs' cost efficiency and harness-layer investment drive pricing power and lasting leadership"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-b1a2fbd417363f",
+     "C-fc5d15856cef4c",
+     "C-4a6a0b2b2ed154",
+     "C-0339f6e232b6a8",
+     "C-1aa98537009793"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "As Chinese AI models' performance gap narrows, Goldman Sachs Research argues differentiation will come from cost efficiencies and harness-layer investment, with the strongest financial power and best price-to-performance leading to pricing power and lasting success."
+   },
+   {
+    "claim_ids": [
+     "C-fc5d15856cef4c",
+     "C-a492238adff5ae",
+     "C-98492004dca675"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Investors should focus on cost efficiencies and the harness layer, not just model performance, when assessing which Chinese AI labs sustain leadership; adoption of Chinese open-weight models globally is underappreciated."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If model performance commoditizes, well-capitalized Chinese labs that invest in the harness layer and achieve best price-to-performance could gain durable share, but the article names no companies and does not quantify revenue or margin outcomes."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-fe4f1de3193a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1aa98537009793"
+     ],
+     "original_date": "2026-10-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Cost efficiencies and the strongest financial power will lead to the most lasting success among Chinese AI labs."
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-fc5d15856cef4c"
+     ],
+     "original_date": "2026-10-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "AI-model developers may differentiate through cost efficiencies and the harness layer rather than model performance."
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b1a2fbd417363f"
+     ],
+     "original_date": "2026-10-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The performance gap, especially in coding, is narrowing between leading AI models."
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-4a6a0b2b2ed154"
+     ],
+     "original_date": "2026-10-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Chinese AI labs are just beginning harness-layer investments, having previously focused on the model layer."
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0339f6e232b6a8"
+     ],
+     "original_date": "2026-10-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Chinese AI labs are aiming for the best price-to-performance ratio."
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-98492004dca675"
+     ],
+     "original_date": "2026-10-09",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Chinese AI models have proliferated around the world, a success the article suggests investors may underappreciate"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 14:53 UTC, analysed as of 2026-11-10, from a source published 2026-10-09; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b1a2fbd417363f",
+     "C-4a6a0b2b2ed154",
+     "C-fc5d15856cef4c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Performance gap between leading Chinese AI models narrows, especially in coding, shifting competition to cost efficiency and the harness layer."
+   },
+   {
+    "claim_ids": [
+     "C-0339f6e232b6a8",
+     "C-1aa98537009793"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "Labs with cost efficiencies and strongest financial power achieve best price-to-performance, leading to pricing power."
+   },
+   {
+    "claim_ids": [
+     "C-1aa98537009793"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Pricing power would support revenue and margins for winning labs, but the article quantifies no earnings effect."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fe4f1de3193a",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0339f6e232b6a8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Chinese AI labs are aiming for the best price-to-performance ratio.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "What the labs are trying to aim for is the best price-to-performance ratio",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fe4f1de3193a",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1aa98537009793",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Cost efficiencies and the strongest financial power will lead to the most lasting success among Chinese AI labs.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "will lead to pricing power"
+    ],
+    "quote": "Cost efficiencies and the strongest financial power will lead to the most lasting success.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fe4f1de3193a",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4a6a0b2b2ed154",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Chinese AI labs are just beginning harness-layer investments, having previously focused on the model layer.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The AI labs in China actually are just beginning harness investments.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fe4f1de3193a",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-98492004dca675",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Chinese AI models have proliferated around the world, a success the article suggests investors may underappreciate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "Keung view"
+    ],
+    "quote": "investors may not fully appreciate the success that Chinese models have had in proliferating around the world",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fe4f1de3193a",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b1a2fbd417363f",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The performance gap, especially in coding, is narrowing between leading AI models.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "especially in coding"
+    ],
+    "quote": "the gap in performance, especially in coding, is narrowing between the leading AI models",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fe4f1de3193a",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fc5d15856cef4c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "AI-model developers may differentiate through cost efficiencies and the harness layer rather than model performance.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The key may be in cost efficiencies and on the harness layer.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-fe4f1de3193a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0f1f2a74d8a285",
+     "name_as_written": "Goldman Sachs Research",
+     "other_securities": [],
+     "quote": "according to Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research unit whose analysts' views are summarized"
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-43f4226341c614",
+     "name_as_written": "Goldman Sachs Asia Leaders Conference",
+     "other_securities": [],
+     "quote": "the second annual Goldman Sachs Asia Leaders Conference in Hong Kong",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Conference where the views were presented"
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ffc3bf390fb687",
+     "name_as_written": "Goldman Sachs Executive Office",
+     "other_securities": [],
+     "quote": "prepared by the Goldman Sachs Executive Office",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Preparer of the document"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-fe4f1de3193a",
+     "claim_ids": [
+      "C-fc5d15856cef4c"
+     ],
+     "direction": "positive",
+     "name": "AI-model developers",
+     "provenance": "SOURCE OPINION",
+     "quote": "how AI-model developers can differentiate besides model performance"
+    },
+    {
+     "article_id": "A-fe4f1de3193a",
+     "claim_ids": [
+      "C-4a6a0b2b2ed154"
+     ],
+     "direction": "positive",
+     "name": "The AI labs in China",
+     "provenance": "SOURCE OPINION",
+     "quote": "The AI labs in China actually are just beginning harness investments."
+    }
+   ],
+   "sectors": [
+    "AI model developers",
+    "China internet"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-4a6a0b2b2ed154"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Chinese AI labs are just beginning harness-layer investments, a nascent and evolving shift."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-fc5d15856cef4c",
+      "C-1aa98537009793"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Cost efficiency and harness-layer strength, backed by financial power, determine lasting leadership among Chinese AI labs."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-b1a2fbd417363f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Intensifying competition and a narrowing performance gap could commoditize the model layer and erode differentiation."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-38CA111885: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (disruption_revenue_erosion vs competitive_share_shift); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-61104CD5A3: same value-chain node, not the same claim \u2014 a different mechanism (margin_expansion_adoption vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6BDD0881AD: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C1889ABBA5: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Price war eroding lab margins despite cost efficiency"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Geopolitical restrictions curbing Chinese model adoption"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Harness-layer investment failing to differentiate"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-30ad9f09358b3a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Even as China's semiconductor industry advances, bottlenecks persist\u2014principally in GPU availability, plus local foundry capacity and semicap equipment constraints. (scope: China semiconductor supply chain; framed as ongoing constraints on compute capacity, not tied to a specific named security.)"
+    },
+    {
+     "claim_ids": [
+      "C-a492238adff5ae",
+      "C-caa5333ea4dfa9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China's AI technology faces geopolitical scrutiny in some jurisdictions, which could limit adoption of Chinese models. (scope: Chinese AI models globally; geopolitical/regulatory risk to adoption.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies or labs are the likely winners (unnamed)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether harness-layer investment earns a return"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether global adoption of Chinese open-weight models translates to monetization"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Price war compresses lab economics"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Geopolitical bans curb adoption"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed proxies for China's leading AI labs and their harness-layer/cost-efficiency positioning and global open-weight adoption."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of pricing power at a leading Chinese lab"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Accelerating global adoption of Chinese open-weight models on Western clouds"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-1 no verified material evidence"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-fe4f1de3193a",
+    "authors": [
+     "Goldman Sachs"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-b1a2fbd417363f",
+     "C-fc5d15856cef4c",
+     "C-4a6a0b2b2ed154",
+     "C-0339f6e232b6a8",
+     "C-1aa98537009793",
+     "C-98492004dca675",
+     "C-30ad9f09358b3a",
+     "C-a492238adff5ae"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-09T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "Competition Among China\u2019s AI Models Is Intensifying as the Chip Sector Advances",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:05ea13a73919ee4621eefca9c877b8eb5ea770b15ffc64b7e3e9f47d3c6f1b39",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-fe4f1de3193a",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "ai_models_platforms"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T14:53:40.365014Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-09",
+     "latest_article_date": "2026-10-09",
+     "region": "China",
+     "research_action": "SKIP",
+     "sector": "AI model developers and AI platforms / applications",
+     "status": "ACTIVE",
+     "thesis_id": "TH-E30F846AB8",
+     "title": "Chinese AI labs' cost efficiency and harness-layer investment drive pricing power and lasting leadership"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-b1a2fbd417363f",
+       "C-fc5d15856cef4c",
+       "C-4a6a0b2b2ed154",
+       "C-0339f6e232b6a8",
+       "C-1aa98537009793"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "As Chinese AI models' performance gap narrows, Goldman Sachs Research argues differentiation will come from cost efficiencies and harness-layer investment, with the strongest financial power and best price-to-performance leading to pricing power and lasting success."
+     },
+     {
+      "claim_ids": [
+       "C-fc5d15856cef4c",
+       "C-a492238adff5ae",
+       "C-98492004dca675"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Investors should focus on cost efficiencies and the harness layer, not just model performance, when assessing which Chinese AI labs sustain leadership; adoption of Chinese open-weight models globally is underappreciated."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If model performance commoditizes, well-capitalized Chinese labs that invest in the harness layer and achieve best price-to-performance could gain durable share, but the article names no companies and does not quantify revenue or margin outcomes."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-fe4f1de3193a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1aa98537009793"
+       ],
+       "original_date": "2026-10-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Cost efficiencies and the strongest financial power will lead to the most lasting success among Chinese AI labs."
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fc5d15856cef4c"
+       ],
+       "original_date": "2026-10-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "AI-model developers may differentiate through cost efficiencies and the harness layer rather than model performance."
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b1a2fbd417363f"
+       ],
+       "original_date": "2026-10-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The performance gap, especially in coding, is narrowing between leading AI models."
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-4a6a0b2b2ed154"
+       ],
+       "original_date": "2026-10-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Chinese AI labs are just beginning harness-layer investments, having previously focused on the model layer."
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0339f6e232b6a8"
+       ],
+       "original_date": "2026-10-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Chinese AI labs are aiming for the best price-to-performance ratio."
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-98492004dca675"
+       ],
+       "original_date": "2026-10-09",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Chinese AI models have proliferated around the world, a success the article suggests investors may underappreciate"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 14:53 UTC, analysed as of 2026-11-10, from a source published 2026-10-09; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b1a2fbd417363f",
+       "C-4a6a0b2b2ed154",
+       "C-fc5d15856cef4c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Performance gap between leading Chinese AI models narrows, especially in coding, shifting competition to cost efficiency and the harness layer."
+     },
+     {
+      "claim_ids": [
+       "C-0339f6e232b6a8",
+       "C-1aa98537009793"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Labs with cost efficiencies and strongest financial power achieve best price-to-performance, leading to pricing power."
+     },
+     {
+      "claim_ids": [
+       "C-1aa98537009793"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Pricing power would support revenue and margins for winning labs, but the article quantifies no earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fe4f1de3193a",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0339f6e232b6a8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Chinese AI labs are aiming for the best price-to-performance ratio.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "What the labs are trying to aim for is the best price-to-performance ratio",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fe4f1de3193a",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1aa98537009793",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Cost efficiencies and the strongest financial power will lead to the most lasting success among Chinese AI labs.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "will lead to pricing power"
+      ],
+      "quote": "Cost efficiencies and the strongest financial power will lead to the most lasting success.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fe4f1de3193a",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4a6a0b2b2ed154",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Chinese AI labs are just beginning harness-layer investments, having previously focused on the model layer.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The AI labs in China actually are just beginning harness investments.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fe4f1de3193a",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-98492004dca675",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Chinese AI models have proliferated around the world, a success the article suggests investors may underappreciate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Keung view"
+      ],
+      "quote": "investors may not fully appreciate the success that Chinese models have had in proliferating around the world",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fe4f1de3193a",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b1a2fbd417363f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The performance gap, especially in coding, is narrowing between leading AI models.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "especially in coding"
+      ],
+      "quote": "the gap in performance, especially in coding, is narrowing between the leading AI models",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fe4f1de3193a",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fc5d15856cef4c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AI-model developers may differentiate through cost efficiencies and the harness layer rather than model performance.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The key may be in cost efficiencies and on the harness layer.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-fe4f1de3193a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0f1f2a74d8a285",
+       "name_as_written": "Goldman Sachs Research",
+       "other_securities": [],
+       "quote": "according to Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research unit whose analysts' views are summarized"
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-43f4226341c614",
+       "name_as_written": "Goldman Sachs Asia Leaders Conference",
+       "other_securities": [],
+       "quote": "the second annual Goldman Sachs Asia Leaders Conference in Hong Kong",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Conference where the views were presented"
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ffc3bf390fb687",
+       "name_as_written": "Goldman Sachs Executive Office",
+       "other_securities": [],
+       "quote": "prepared by the Goldman Sachs Executive Office",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Preparer of the document"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-fe4f1de3193a",
+       "claim_ids": [
+        "C-fc5d15856cef4c"
+       ],
+       "direction": "positive",
+       "name": "AI-model developers",
+       "provenance": "SOURCE OPINION",
+       "quote": "how AI-model developers can differentiate besides model performance"
+      },
+      {
+       "article_id": "A-fe4f1de3193a",
+       "claim_ids": [
+        "C-4a6a0b2b2ed154"
+       ],
+       "direction": "positive",
+       "name": "The AI labs in China",
+       "provenance": "SOURCE OPINION",
+       "quote": "The AI labs in China actually are just beginning harness investments."
+      }
+     ],
+     "sectors": [
+      "AI model developers",
+      "China internet"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-4a6a0b2b2ed154"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Chinese AI labs are just beginning harness-layer investments, a nascent and evolving shift."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-fc5d15856cef4c",
+        "C-1aa98537009793"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Cost efficiency and harness-layer strength, backed by financial power, determine lasting leadership among Chinese AI labs."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-b1a2fbd417363f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Intensifying competition and a narrowing performance gap could commoditize the model layer and erode differentiation."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-38CA111885: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (disruption_revenue_erosion vs competitive_share_shift); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-61104CD5A3: same value-chain node, not the same claim \u2014 a different mechanism (margin_expansion_adoption vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-6BDD0881AD: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C1889ABBA5: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Price war eroding lab margins despite cost efficiency"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Geopolitical restrictions curbing Chinese model adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Harness-layer investment failing to differentiate"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-30ad9f09358b3a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Even as China's semiconductor industry advances, bottlenecks persist\u2014principally in GPU availability, plus local foundry capacity and semicap equipment constraints. (scope: China semiconductor supply chain; framed as ongoing constraints on compute capacity, not tied to a specific named security.)"
+      },
+      {
+       "claim_ids": [
+        "C-a492238adff5ae",
+        "C-caa5333ea4dfa9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China's AI technology faces geopolitical scrutiny in some jurisdictions, which could limit adoption of Chinese models. (scope: Chinese AI models globally; geopolitical/regulatory risk to adoption.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies or labs are the likely winners (unnamed)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether harness-layer investment earns a return"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether global adoption of Chinese open-weight models translates to monetization"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Price war compresses lab economics"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Geopolitical bans curb adoption"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed proxies for China's leading AI labs and their harness-layer/cost-efficiency positioning and global open-weight adoption."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of pricing power at a leading Chinese lab"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Accelerating global adoption of Chinese open-weight models on Western clouds"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-1 no verified material evidence"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-fe4f1de3193a",
+      "authors": [
+       "Goldman Sachs"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-b1a2fbd417363f",
+       "C-fc5d15856cef4c",
+       "C-4a6a0b2b2ed154",
+       "C-0339f6e232b6a8",
+       "C-1aa98537009793",
+       "C-98492004dca675",
+       "C-30ad9f09358b3a",
+       "C-a492238adff5ae"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-09T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Competition Among China\u2019s AI Models Is Intensifying as the Chip Sector Advances",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:05ea13a73919ee4621eefca9c877b8eb5ea770b15ffc64b7e3e9f47d3c6f1b39",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "72bd4046aa77e4031324e80710a3468297e9bf6028e426ad95e2b801ff6ceeb7",
+   "created_at": "2026-11-10T14:54:09.878897Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7157f87b7a71",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: AI-model developers, sector: The AI labs in China",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 0 supporting; 0 independent contradicting source(s) vs 0 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261110T145134Z-ingest",
+   "thesis_id": "TH-E30F846AB8",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 6,
+ "other_cited_evidence": [
+  "C-a492238adff5ae",
+  "C-30ad9f09358b3a",
+  "C-caa5333ea4dfa9"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.3": "Cited span supports 'just beginning harness investments' but not the added claim that they 'previously focused on the model layer,' which is not in the cited span.",
+  "s03.1": "Cited spans support price-to-performance aim and that cost efficiency/financial power lead to lasting success, but 'leading to pricing power' is not stated in the cited spans.",
+  "s07.0": "Cited span supports narrowing performance gap, but the added commoditization/erosion of differentiation is not in the cited span.",
+  "s07.5": "Cited span supports GPU-availability bottlenecks only; the added 'local foundry capacity and semicap equipment constraints' are not in the cited span (pool spans actually describe expansion/growth, not constraints)."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-11-10: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "why_action": [
+  "Skip \u2014 no verified material evidence."
+ ],
+ "withheld_sentences": {}
+}

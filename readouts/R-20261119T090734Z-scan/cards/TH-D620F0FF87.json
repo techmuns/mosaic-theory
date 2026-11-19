@@ -1,0 +1,2373 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "industrials"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:12:48.689954Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-28",
+   "latest_article_date": "2026-10-28",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Industrials, defense, transport, capital goods",
+   "status": "ACTIVE",
+   "thesis_id": "TH-D620F0FF87",
+   "title": "Structural global rearmament supercycle lifts defense primes' multi-year revenue visibility"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-d9c8deeb0c34d1",
+     "C-b5bfddd6ccfc39",
+     "C-3cdd8c46dd2e27",
+     "C-2de5a96cbd834d"
+    ],
+    "provenance": "FORECAST",
+    "text": "Record and growing global defense budgets ($2.89tn in 2025, US FY2027 request of $1.5tn) are feeding historically large order books, with Lockheed Martin at a record $230bn backlog and Rheinmetall guiding toward ~$151bn, giving established manufacturers multiyear revenue visibility. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-5321fdbfbe9e2c",
+     "C-85a3f8a11ee0a6"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues the strongest opportunities capture a 'readiness premium' and advises investors to distinguish funded programs from announcements and repeat orders from pilots."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The scale and persistence of government spending plus surging backlogs point to durable top-line growth for defense primes, but the article does not quantify earnings or valuation impact, and warns a larger market won't reward every entrant."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b5bfddd6ccfc39"
+     ],
+     "original_date": "2026-10-28",
+     "period": "July 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Lockheed Martin reported a record $230bn backlog in July 2026, up $64bn YoY."
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3cdd8c46dd2e27"
+     ],
+     "original_date": "2026-10-28",
+     "period": "July 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Rheinmetall had a $93bn order backlog as of July 2026."
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2de5a96cbd834d"
+     ],
+     "original_date": "2026-10-28",
+     "period": "year-end 2026",
+     "provenance": "FORECAST",
+     "text": "Rheinmetall guides to roughly $151bn backlog by year-end 2026. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d9c8deeb0c34d1"
+     ],
+     "original_date": "2026-10-28",
+     "period": "past decade",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Global defense spending grew 41% over the past decade."
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2c376ac96dbb0b"
+     ],
+     "original_date": "2026-10-28",
+     "period": "2024",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The top five defense companies generated $214bn of 2024 revenue."
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9e3443e78ec5be"
+     ],
+     "original_date": "2026-10-28",
+     "period": "past year",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "India increased defense spending by 9% over the past year"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 13 pieces of evidence from A-0be56cc89833 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:12 UTC, analysed as of 2026-11-10, from a source published 2026-10-28; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-d9c8deeb0c34d1",
+     "C-c1667f2d03a48b",
+     "C-ab0636dcee4e06"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "Structural rearmament and broadening national-security definitions raise baseline defense demand globally."
+   },
+   {
+    "claim_ids": [
+     "C-b5bfddd6ccfc39",
+     "C-3cdd8c46dd2e27",
+     "C-2de5a96cbd834d"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Rising procurement drives surging order books giving primes multiyear revenue visibility and production ramp-up. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-2c376ac96dbb0b"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Record top-100 defense revenue ($679bn in 2024) with $214bn from the top five implies earnings growth, though the article does not quantify forward EPS impact."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-201bbe82642b6d",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "defense spending change",
+    "measured_as_of": null,
+    "origin": "Stockholm International Peace Research Institute",
+    "period": "past year",
+    "qualifiers": [],
+    "quote": "Taiwan(+14%)",
+    "role": "supports",
+    "unit": "%",
+    "value": 14.0,
+    "value_text": "+14%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b069",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2c376ac96dbb0b",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "top 5 defense company revenue",
+    "measured_as_of": null,
+    "origin": "Defense News",
+    "period": "2024",
+    "qualifiers": [
+     "four of which are US primes"
+    ],
+    "quote": "$214 billion of which was generated by just the top five48 companies",
+    "role": "supports",
+    "unit": "USD billion",
+    "value": 214.0,
+    "value_text": "$214 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b069",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3cdd8c46dd2e27",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Rheinmetall order backlog",
+    "measured_as_of": null,
+    "origin": "Rheinmetall",
+    "period": "July 2026",
+    "qualifiers": [],
+    "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion as of July 2026",
+    "role": "supports",
+    "unit": "USD billion",
+    "value": 93.0,
+    "value_text": "$93 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b077",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-45f4b3bf562994",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "defense industry growth",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Global Investment Research",
+    "period": "past five years",
+    "qualifiers": [
+     "about"
+    ],
+    "quote": "Arab Emirates, which already have ambitious defense For example, South Korea\u2019s defense industry has grown53 localization targets,56 are looking to pivot from buyers by about 100% over the past five years because of a to defense industrial partners as investment ramps and surge in European orders following the outbreak of war in capabilities expand.",
+    "role": "supports",
+    "unit": "%",
+    "value": 100.0,
+    "value_text": "about 100%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5b7648e4ef54a3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "defense spending change",
+    "measured_as_of": null,
+    "origin": "Stockholm International Peace Research Institute",
+    "period": "past year",
+    "qualifiers": [],
+    "quote": "thePhilippines (+12%)",
+    "role": "supports",
+    "unit": "%",
+    "value": 12.0,
+    "value_text": "+12%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b077",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5efc7baedd1bfe",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share of European defense orders to German-foreign partnerships",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Investment Research",
+    "period": "since 2022",
+    "qualifiers": [],
+    "quote": "another 35% to German-foreign partnerships",
+    "role": "supports",
+    "unit": "%",
+    "value": 35.0,
+    "value_text": "35%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8a2d7e34718e02",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "defense spending as share of GDP",
+    "measured_as_of": null,
+    "origin": "Stockholm International Peace Research Institute",
+    "period": null,
+    "qualifiers": [],
+    "quote": "SaudiArabia(6.5%)",
+    "role": "supports",
+    "unit": "% of GDP",
+    "value": 6.5,
+    "value_text": "6.5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9e3443e78ec5be",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "defense spending change",
+    "measured_as_of": null,
+    "origin": "Stockholm International Peace Research Institute",
+    "period": "past year",
+    "qualifiers": [],
+    "quote": "India(+9%)",
+    "role": "supports",
+    "unit": "%",
+    "value": 9.0,
+    "value_text": "+9%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b069",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b5bfddd6ccfc39",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Lockheed Martin backlog",
+    "measured_as_of": null,
+    "origin": "Lockheed Martin",
+    "period": "July 2026",
+    "qualifiers": [
+     "record",
+     "up $64 billion year-over-year"
+    ],
+    "quote": "Lockheed Martin reported a record $230 billion backlog49 in July 2026, up $64 billion year-over-year",
+    "role": "supports",
+    "unit": "USD billion",
+    "value": 230.0,
+    "value_text": "$230 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-be6c1d999651e7",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "defense spending as share of GDP",
+    "measured_as_of": null,
+    "origin": "Stockholm International Peace Research Institute",
+    "period": null,
+    "qualifiers": [
+     "led the region"
+    ],
+    "quote": "Israel(7.8%)",
+    "role": "supports",
+    "unit": "% of GDP",
+    "value": 7.8,
+    "value_text": "7.8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b074",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-d72b95c80adb7f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "index level",
+    "measured_as_of": null,
+    "origin": "Goldman Sachs Marquee MarketView",
+    "period": "2022-2026",
+    "qualifiers": [
+     "plotted basket value"
+    ],
+    "quote": "296.2",
+    "role": "supports",
+    "unit": "index level",
+    "value": 296.2,
+    "value_text": "296.2"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d9c8deeb0c34d1",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "global defense spending growth",
+    "measured_as_of": null,
+    "origin": "Stockholm International Peace Research Institute",
+    "period": "past decade",
+    "qualifiers": [
+     "over the past decade"
+    ],
+    "quote": "Global defense spending has grown1 by 41% over the past decade",
+    "role": "supports",
+    "unit": "%",
+    "value": 41.0,
+    "value_text": "41%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-0be56cc89833",
+    "block_id": "b069",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2de5a96cbd834d",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Rheinmetall backlog guidance",
+    "measured_as_of": null,
+    "origin": "Rheinmetall",
+    "period": "year-end 2026",
+    "qualifiers": [
+     "roughly",
+     "company guidance"
+    ],
+    "quote": "company guidance pointing to roughly $151 billion by year-end 2026",
+    "role": "catalyst",
+    "unit": "USD billion",
+    "value": 151.0,
+    "value_text": "$151 billion"
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-297881816c96f7",
+     "name_as_written": "Goldman Sachs Global Institute",
+     "other_securities": [],
+     "quote": "Co-Head, Goldman Sachs Global Institute",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author/publisher of the paper"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9809fe09dcfc63",
+     "name_as_written": "Anduril",
+     "other_securities": [],
+     "quote": "Anduril raised58$5billioninMay2026ata$61billionvaluation",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "US defense tech startup/neo-prime cited for funding round"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b245155fa91c3d",
+     "name_as_written": "Helsing",
+     "other_securities": [],
+     "quote": "61 Helsing, \u201cHelsing Raises US$1.8bn in Series E,\u201d news release, July ",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Leading European defense tech unicorn"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-62f79217995004",
+     "name_as_written": "Destinus",
+     "other_securities": [],
+     "quote": "78 Destinus, \u201cRheinmetall and Destinus to Form a Joint Venture for Miss",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Swiss firm in JV with Rheinmetall for missiles"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e3ce77b40362ab",
+     "name_as_written": "EDGE Group",
+     "other_securities": [],
+     "quote": "79 EDGE Group, \u201cAbout Us,\u201d accessed October 17, 2026, https://edgegroup.a",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "UAE defense group forming joint production ventures"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f4d5a4cef83385",
+     "name_as_written": "Quantum Systems",
+     "other_securities": [],
+     "quote": "Quantum Systems to Launch Two More Joint Ventures With Ukrainian Manufacturers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Named only in endnote citation re Ukrainian JVs"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-73924b1119f16a",
+     "name_as_written": "Goldman Sachs Marquee MarketView",
+     "other_securities": [],
+     "quote": "Source: Goldman Sachs Marquee MarketView52",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of defense stock basket performance data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-785223529345f0",
+     "name_as_written": "Goldman Sachs Global Investment Research",
+     "other_securities": [],
+     "quote": "53 Goldman Sachs Global Investment Research, accessed October 17, 2026, https://marquee.gs.com/content/",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Cited for German defense order allocation data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8496926267ac19",
+     "name_as_written": "Stockholm International Peace Research Institute",
+     "other_securities": [],
+     "quote": "Stockholm International Peace Research Institute",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for global and regional defense spending data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-65ba4c700b5837",
+     "name_as_written": "Center for Strategic and International Studies",
+     "other_securities": [],
+     "quote": "Center for Strategic and International Studies",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source for US/China spending and cost data"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3cec0bfbeae7c8",
+     "name_as_written": "Congressional Budget Office",
+     "other_securities": [],
+     "quote": "Congressional Budget Office, Potential Costs of a National Missile Defense System",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Source of Golden Dome cost estimate"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9ebd0fc0bbf782",
+     "name_as_written": "Project Vault",
+     "other_securities": [],
+     "quote": "Project Vault,36",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US strategic critical-mineral reserve initiative"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3a41a3688393a2",
+     "name_as_written": "DARPA",
+     "other_securities": [],
+     "quote": "supported by initiatives like DARPA and Defense Innovation Unit",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US agency supporting Silicon Valley\u2013Pentagon integration"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8a7e39a75d0166",
+     "name_as_written": "Defense Innovation Unit",
+     "other_securities": [],
+     "quote": "DARPA and Defense Innovation Unit",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US Pentagon innovation unit"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d274e0a1a76e6f",
+     "name_as_written": "AUKUS",
+     "other_securities": [],
+     "quote": "AUKUS anchorsAustralia,theUnitedKingdom,andtheUnited States",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "trilateral defense partnership (Australia, UK, US) for nuclear-powered submarines and advanced capabilities"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-367485a8c313d1",
+     "name_as_written": "NATO",
+     "other_securities": [],
+     "quote": "NATO hasalsolaunchedanumberofHighVisibilityProjects",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "alliance coordinating multinational capability development (High Visibility Projects)"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-cd0dbf468ff9a5"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Goldman Sachs baskets of US, European and Asian defense stocks (GSXUDFNS, GSSBDEFE, GSXADFSE) whose performance is charted 2022-2026; members not disclosed. (constituents not named by the source)"
+    }
+   ],
+   "companies": [
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": "0000936468",
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066928) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $1 par value",
+       "ticker": "LMT"
+      }
+     ],
+     "mention_id": "M-8a37b9e8d321b2",
+     "name_as_written": "Lockheed Martin",
+     "other_securities": [],
+     "quote": "Lockheed Martin reported a record $230 billion backlog49",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "sector_example",
+     "role_detail": "US defense prime cited for record backlog"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-61162969802cb6",
+     "name_as_written": "Rheinmetall",
+     "other_securities": [],
+     "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "European defense prime cited for order backlog and guidance"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-4a59f9f38658fc",
+     "name_as_written": "Leonardo",
+     "other_securities": [],
+     "quote": "81 Leonardo, \u201cEDGE and Leonardo to Partner Through a Joint Venture on A",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Italian defense firm in JV with EDGE Group"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0be56cc89833",
+     "claim_ids": [
+      "C-cd0dbf468ff9a5"
+     ],
+     "direction": "positive",
+     "name": "US Defense",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "US Defense (GSXUDFNS)"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "claim_ids": [
+      "C-cd0dbf468ff9a5"
+     ],
+     "direction": "positive",
+     "name": "EU Defense",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "EU Defense (GSSBDEFE)"
+    },
+    {
+     "article_id": "A-0be56cc89833",
+     "claim_ids": [
+      "C-cd0dbf468ff9a5"
+     ],
+     "direction": "positive",
+     "name": "APAC Defense",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "APAC Defense (GSXADFSE)"
+    }
+   ],
+   "sectors": [
+    "defense",
+    "aerospace & defense",
+    "industrials"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "FY2027 US defense budget enactment; Rheinmetall year-end 2026 backlog [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-2de5a96cbd834d",
+      "C-5b7648e4ef54a3"
+     ],
+     "provenance": "FORECAST",
+     "text": "Backlog milestones (Rheinmetall year-end 2026 ~$151bn) and the FY2027 budget provide near-term catalysts within 12 months. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-d9c8deeb0c34d1",
+      "C-6ef43cd1e9bd7f"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Multi-year, multi-region structural spending growth rather than a cyclical surge underpins durable demand for primes."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-85a3f8a11ee0a6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A larger market won't reward every entrant and strategic technology ownership doesn't automatically translate into attractive economics; investors must distinguish funded programs from announcements."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: the same claim at an overlapping but different geography (Global vs China) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BCBAD262D4: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-85a3f8a11ee0a6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A larger defense market won't reward every entrant and owning strategic tech doesn't guarantee attractive economics."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Budget appropriations falling short of requests"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Backlog or order-intake deceleration in 2026-2027 reports"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Margin pressure from cost inflation on fixed-price programs"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-85a3f8a11ee0a6",
+      "C-3fe62b586d9403"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A larger defense market won't reward every entrant and owning strategically important technology doesn't automatically translate into attractive economics; investors must distinguish announcements from funded programs, pilots from repeat orders, and urgent purchases from durable procurement changes. (scope: Applies to defense and defense-tech equities broadly; the article's own cautionary framing of the supercycle opportunity.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: If the security supercycle thesis is right and rising defense budgets are structural not cyclical"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether named primes' current valuations already reflect the backlog growth"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus earnings expectations versus this trajectory"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether budget requests (e.g. FY2027 $1.5tn) get enacted at requested levels"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Budget appropriations cut materially below requests"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Defense baskets already richly valued relative to history"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check whether consensus forward revenue/EPS for named primes (Lockheed Martin, Rheinmetall) already discounts the backlog growth and budget trajectory."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "FY2027 US budget enacted near the $1.5tn request"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further backlog/order-intake upside in 2026 reports"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report); verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-0be56cc89833",
+    "authors": [
+     "Goldman Sachs",
+     "Dan Keyserling"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-2de5a96cbd834d",
+     "C-d9c8deeb0c34d1",
+     "C-2c376ac96dbb0b",
+     "C-b5bfddd6ccfc39",
+     "C-3cdd8c46dd2e27",
+     "C-9e3443e78ec5be",
+     "C-201bbe82642b6d",
+     "C-5b7648e4ef54a3",
+     "C-be6c1d999651e7",
+     "C-8a2d7e34718e02",
+     "C-d72b95c80adb7f",
+     "C-5efc7baedd1bfe",
+     "C-45f4b3bf562994",
+     "C-85a3f8a11ee0a6",
+     "C-3fe62b586d9403"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-28T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "The Security Supercycle",
+    "upstream_origins": [
+     "Defense News",
+     "Goldman Sachs Global Investment Research",
+     "Goldman Sachs Investment Research",
+     "Goldman Sachs Marquee MarketView",
+     "Lockheed Martin",
+     "Rheinmetall",
+     "Stockholm International Peace Research Institute",
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:1d95c5d9690cf203b6f65c1885ea91b6debf788601e07eb651fed5201f1710df",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-06 (0000101829-26-000006)",
+    "business": "defense prime: missiles, radars, engines, aircraft systems",
+    "direction": "positive",
+    "enrichment_id": "EC-b678f5c88853c0",
+    "evidence": "s03.2: Record top-100 defense revenue ($679bn in 2024) with $214bn from the top five implies earnings growth, though the article does not quantify forward EPS impact.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-20 (accession 0000101829-26-000031) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock ($1 par value)",
+      "ticker": "RTX"
+     }
+    ],
+    "name": "RTX Corporation",
+    "rationale": "Top-five defense prime; rising global procurement and record backlog lift its Raytheon missile and defense revenue and multi-year visibility.",
+    "registrant": "RTX Corp",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3724); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "missiles, defense electronics and munitions",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-D620F0FF87",
+    "ticker_hint": "RTX"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-01-27 (0001133421-26-000003)",
+    "business": "defense prime: aircraft, missiles, space, munitions",
+    "direction": "positive",
+    "enrichment_id": "EC-47b77fbb55cb56",
+    "evidence": "s03.2: Record top-100 defense revenue ($679bn in 2024) with $214bn from the top five implies earnings growth, though the article does not quantify forward EPS impact.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-20 (accession 0001133421-26-000038) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock",
+      "ticker": "NOC"
+     }
+    ],
+    "name": "Northrop Grumman",
+    "rationale": "Top-five prime; US FY2027 budget growth and munitions/nuclear modernization feed backlog and sustained top-line growth.",
+    "registrant": "NORTHROP GRUMMAN CORP /DE/",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3812); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "aerospace, strategic weapons and munitions",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-D620F0FF87",
+    "ticker_hint": "NOC"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-01-30 (0000040533-26-000006)",
+    "business": "defense prime: combat vehicles, submarines, munitions",
+    "direction": "positive",
+    "enrichment_id": "EC-d7507b744af507",
+    "evidence": "s03.1: Rising procurement drives surging order books giving primes multiyear revenue visibility and production ramp-up.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-30 (accession 0000040533-26-000038) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock",
+      "ticker": "GD"
+     }
+    ],
+    "name": "General Dynamics",
+    "rationale": "Rising procurement and AUKUS submarine demand swell its order book, giving multiyear revenue visibility in marine and combat systems.",
+    "registrant": "GENERAL DYNAMICS CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3730); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "submarines and combat vehicles",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-D620F0FF87",
+    "ticker_hint": "GD"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-12 (0000202058-26-000015)",
+    "business": "defense electronics, communications, munitions, propulsion",
+    "direction": "positive",
+    "enrichment_id": "EC-856efd40772fb8",
+    "evidence": "s03.1: Rising procurement drives surging order books giving primes multiyear revenue visibility and production ramp-up.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000202058-26-000087) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $1.00 per share",
+      "ticker": "LHX"
+     }
+    ],
+    "name": "L3Harris Technologies",
+    "rationale": "Broadening national-security demand and munitions ramp (Aerojet Rocketdyne) grow its backlog and production across tactical systems.",
+    "registrant": "L3HARRIS TECHNOLOGIES, INC. /DE/",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3812); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "defense communications and propulsion systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-D620F0FF87",
+    "ticker_hint": "LHX"
+   }
+  ],
+  "created_at": "2026-11-10T19:07:31.694635Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "BAE Systems: more than 4 on one side \u2014 set aside",
+   "Axon Enterprise: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261110T190643Z-enrich",
+  "set_id": "ES-7d04ea1fdb53f5",
+  "thesis_id": "TH-D620F0FF87",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-0be56cc89833",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "industrials"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:12:48.689954Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-28",
+     "latest_article_date": "2026-10-28",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Industrials, defense, transport, capital goods",
+     "status": "ACTIVE",
+     "thesis_id": "TH-D620F0FF87",
+     "title": "Structural global rearmament supercycle lifts defense primes' multi-year revenue visibility"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-d9c8deeb0c34d1",
+       "C-b5bfddd6ccfc39",
+       "C-3cdd8c46dd2e27",
+       "C-2de5a96cbd834d"
+      ],
+      "provenance": "FORECAST",
+      "text": "Record and growing global defense budgets ($2.89tn in 2025, US FY2027 request of $1.5tn) are feeding historically large order books, with Lockheed Martin at a record $230bn backlog and Rheinmetall guiding toward ~$151bn, giving established manufacturers multiyear revenue visibility. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-5321fdbfbe9e2c",
+       "C-85a3f8a11ee0a6"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues the strongest opportunities capture a 'readiness premium' and advises investors to distinguish funded programs from announcements and repeat orders from pilots."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The scale and persistence of government spending plus surging backlogs point to durable top-line growth for defense primes, but the article does not quantify earnings or valuation impact, and warns a larger market won't reward every entrant."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b5bfddd6ccfc39"
+       ],
+       "original_date": "2026-10-28",
+       "period": "July 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Lockheed Martin reported a record $230bn backlog in July 2026, up $64bn YoY."
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3cdd8c46dd2e27"
+       ],
+       "original_date": "2026-10-28",
+       "period": "July 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Rheinmetall had a $93bn order backlog as of July 2026."
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2de5a96cbd834d"
+       ],
+       "original_date": "2026-10-28",
+       "period": "year-end 2026",
+       "provenance": "FORECAST",
+       "text": "Rheinmetall guides to roughly $151bn backlog by year-end 2026. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d9c8deeb0c34d1"
+       ],
+       "original_date": "2026-10-28",
+       "period": "past decade",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Global defense spending grew 41% over the past decade."
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2c376ac96dbb0b"
+       ],
+       "original_date": "2026-10-28",
+       "period": "2024",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The top five defense companies generated $214bn of 2024 revenue."
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9e3443e78ec5be"
+       ],
+       "original_date": "2026-10-28",
+       "period": "past year",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "India increased defense spending by 9% over the past year"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 13 pieces of evidence from A-0be56cc89833 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:12 UTC, analysed as of 2026-11-10, from a source published 2026-10-28; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-d9c8deeb0c34d1",
+       "C-c1667f2d03a48b",
+       "C-ab0636dcee4e06"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "Structural rearmament and broadening national-security definitions raise baseline defense demand globally."
+     },
+     {
+      "claim_ids": [
+       "C-b5bfddd6ccfc39",
+       "C-3cdd8c46dd2e27",
+       "C-2de5a96cbd834d"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Rising procurement drives surging order books giving primes multiyear revenue visibility and production ramp-up. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-2c376ac96dbb0b"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Record top-100 defense revenue ($679bn in 2024) with $214bn from the top five implies earnings growth, though the article does not quantify forward EPS impact."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-201bbe82642b6d",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "defense spending change",
+      "measured_as_of": null,
+      "origin": "Stockholm International Peace Research Institute",
+      "period": "past year",
+      "qualifiers": [],
+      "quote": "Taiwan(+14%)",
+      "role": "supports",
+      "unit": "%",
+      "value": 14.0,
+      "value_text": "+14%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b069",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2c376ac96dbb0b",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "top 5 defense company revenue",
+      "measured_as_of": null,
+      "origin": "Defense News",
+      "period": "2024",
+      "qualifiers": [
+       "four of which are US primes"
+      ],
+      "quote": "$214 billion of which was generated by just the top five48 companies",
+      "role": "supports",
+      "unit": "USD billion",
+      "value": 214.0,
+      "value_text": "$214 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b069",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3cdd8c46dd2e27",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Rheinmetall order backlog",
+      "measured_as_of": null,
+      "origin": "Rheinmetall",
+      "period": "July 2026",
+      "qualifiers": [],
+      "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion as of July 2026",
+      "role": "supports",
+      "unit": "USD billion",
+      "value": 93.0,
+      "value_text": "$93 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b077",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-45f4b3bf562994",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "defense industry growth",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Global Investment Research",
+      "period": "past five years",
+      "qualifiers": [
+       "about"
+      ],
+      "quote": "Arab Emirates, which already have ambitious defense For example, South Korea\u2019s defense industry has grown53 localization targets,56 are looking to pivot from buyers by about 100% over the past five years because of a to defense industrial partners as investment ramps and surge in European orders following the outbreak of war in capabilities expand.",
+      "role": "supports",
+      "unit": "%",
+      "value": 100.0,
+      "value_text": "about 100%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5b7648e4ef54a3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "defense spending change",
+      "measured_as_of": null,
+      "origin": "Stockholm International Peace Research Institute",
+      "period": "past year",
+      "qualifiers": [],
+      "quote": "thePhilippines (+12%)",
+      "role": "supports",
+      "unit": "%",
+      "value": 12.0,
+      "value_text": "+12%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b077",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5efc7baedd1bfe",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share of European defense orders to German-foreign partnerships",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Investment Research",
+      "period": "since 2022",
+      "qualifiers": [],
+      "quote": "another 35% to German-foreign partnerships",
+      "role": "supports",
+      "unit": "%",
+      "value": 35.0,
+      "value_text": "35%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8a2d7e34718e02",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "defense spending as share of GDP",
+      "measured_as_of": null,
+      "origin": "Stockholm International Peace Research Institute",
+      "period": null,
+      "qualifiers": [],
+      "quote": "SaudiArabia(6.5%)",
+      "role": "supports",
+      "unit": "% of GDP",
+      "value": 6.5,
+      "value_text": "6.5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9e3443e78ec5be",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "defense spending change",
+      "measured_as_of": null,
+      "origin": "Stockholm International Peace Research Institute",
+      "period": "past year",
+      "qualifiers": [],
+      "quote": "India(+9%)",
+      "role": "supports",
+      "unit": "%",
+      "value": 9.0,
+      "value_text": "+9%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b069",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b5bfddd6ccfc39",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Lockheed Martin backlog",
+      "measured_as_of": null,
+      "origin": "Lockheed Martin",
+      "period": "July 2026",
+      "qualifiers": [
+       "record",
+       "up $64 billion year-over-year"
+      ],
+      "quote": "Lockheed Martin reported a record $230 billion backlog49 in July 2026, up $64 billion year-over-year",
+      "role": "supports",
+      "unit": "USD billion",
+      "value": 230.0,
+      "value_text": "$230 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-be6c1d999651e7",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "defense spending as share of GDP",
+      "measured_as_of": null,
+      "origin": "Stockholm International Peace Research Institute",
+      "period": null,
+      "qualifiers": [
+       "led the region"
+      ],
+      "quote": "Israel(7.8%)",
+      "role": "supports",
+      "unit": "% of GDP",
+      "value": 7.8,
+      "value_text": "7.8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b074",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-d72b95c80adb7f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "index level",
+      "measured_as_of": null,
+      "origin": "Goldman Sachs Marquee MarketView",
+      "period": "2022-2026",
+      "qualifiers": [
+       "plotted basket value"
+      ],
+      "quote": "296.2",
+      "role": "supports",
+      "unit": "index level",
+      "value": 296.2,
+      "value_text": "296.2"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d9c8deeb0c34d1",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "global defense spending growth",
+      "measured_as_of": null,
+      "origin": "Stockholm International Peace Research Institute",
+      "period": "past decade",
+      "qualifiers": [
+       "over the past decade"
+      ],
+      "quote": "Global defense spending has grown1 by 41% over the past decade",
+      "role": "supports",
+      "unit": "%",
+      "value": 41.0,
+      "value_text": "41%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-0be56cc89833",
+      "block_id": "b069",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2de5a96cbd834d",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Rheinmetall backlog guidance",
+      "measured_as_of": null,
+      "origin": "Rheinmetall",
+      "period": "year-end 2026",
+      "qualifiers": [
+       "roughly",
+       "company guidance"
+      ],
+      "quote": "company guidance pointing to roughly $151 billion by year-end 2026",
+      "role": "catalyst",
+      "unit": "USD billion",
+      "value": 151.0,
+      "value_text": "$151 billion"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-297881816c96f7",
+       "name_as_written": "Goldman Sachs Global Institute",
+       "other_securities": [],
+       "quote": "Co-Head, Goldman Sachs Global Institute",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher of the paper"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9809fe09dcfc63",
+       "name_as_written": "Anduril",
+       "other_securities": [],
+       "quote": "Anduril raised58$5billioninMay2026ata$61billionvaluation",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "US defense tech startup/neo-prime cited for funding round"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b245155fa91c3d",
+       "name_as_written": "Helsing",
+       "other_securities": [],
+       "quote": "61 Helsing, \u201cHelsing Raises US$1.8bn in Series E,\u201d news release, July ",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Leading European defense tech unicorn"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-62f79217995004",
+       "name_as_written": "Destinus",
+       "other_securities": [],
+       "quote": "78 Destinus, \u201cRheinmetall and Destinus to Form a Joint Venture for Miss",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Swiss firm in JV with Rheinmetall for missiles"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e3ce77b40362ab",
+       "name_as_written": "EDGE Group",
+       "other_securities": [],
+       "quote": "79 EDGE Group, \u201cAbout Us,\u201d accessed October 17, 2026, https://edgegroup.a",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "UAE defense group forming joint production ventures"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f4d5a4cef83385",
+       "name_as_written": "Quantum Systems",
+       "other_securities": [],
+       "quote": "Quantum Systems to Launch Two More Joint Ventures With Ukrainian Manufacturers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Named only in endnote citation re Ukrainian JVs"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-73924b1119f16a",
+       "name_as_written": "Goldman Sachs Marquee MarketView",
+       "other_securities": [],
+       "quote": "Source: Goldman Sachs Marquee MarketView52",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of defense stock basket performance data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-785223529345f0",
+       "name_as_written": "Goldman Sachs Global Investment Research",
+       "other_securities": [],
+       "quote": "53 Goldman Sachs Global Investment Research, accessed October 17, 2026, https://marquee.gs.com/content/",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Cited for German defense order allocation data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8496926267ac19",
+       "name_as_written": "Stockholm International Peace Research Institute",
+       "other_securities": [],
+       "quote": "Stockholm International Peace Research Institute",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for global and regional defense spending data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-65ba4c700b5837",
+       "name_as_written": "Center for Strategic and International Studies",
+       "other_securities": [],
+       "quote": "Center for Strategic and International Studies",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source for US/China spending and cost data"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3cec0bfbeae7c8",
+       "name_as_written": "Congressional Budget Office",
+       "other_securities": [],
+       "quote": "Congressional Budget Office, Potential Costs of a National Missile Defense System",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Source of Golden Dome cost estimate"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9ebd0fc0bbf782",
+       "name_as_written": "Project Vault",
+       "other_securities": [],
+       "quote": "Project Vault,36",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US strategic critical-mineral reserve initiative"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3a41a3688393a2",
+       "name_as_written": "DARPA",
+       "other_securities": [],
+       "quote": "supported by initiatives like DARPA and Defense Innovation Unit",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US agency supporting Silicon Valley\u2013Pentagon integration"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8a7e39a75d0166",
+       "name_as_written": "Defense Innovation Unit",
+       "other_securities": [],
+       "quote": "DARPA and Defense Innovation Unit",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US Pentagon innovation unit"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d274e0a1a76e6f",
+       "name_as_written": "AUKUS",
+       "other_securities": [],
+       "quote": "AUKUS anchorsAustralia,theUnitedKingdom,andtheUnited States",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "trilateral defense partnership (Australia, UK, US) for nuclear-powered submarines and advanced capabilities"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-367485a8c313d1",
+       "name_as_written": "NATO",
+       "other_securities": [],
+       "quote": "NATO hasalsolaunchedanumberofHighVisibilityProjects",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "alliance coordinating multinational capability development (High Visibility Projects)"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-cd0dbf468ff9a5"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Goldman Sachs baskets of US, European and Asian defense stocks (GSXUDFNS, GSSBDEFE, GSXADFSE) whose performance is charted 2022-2026; members not disclosed. (constituents not named by the source)"
+      }
+     ],
+     "companies": [
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": "0000936468",
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066928) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $1 par value",
+         "ticker": "LMT"
+        }
+       ],
+       "mention_id": "M-8a37b9e8d321b2",
+       "name_as_written": "Lockheed Martin",
+       "other_securities": [],
+       "quote": "Lockheed Martin reported a record $230 billion backlog49",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "sector_example",
+       "role_detail": "US defense prime cited for record backlog"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-61162969802cb6",
+       "name_as_written": "Rheinmetall",
+       "other_securities": [],
+       "quote": "Germany's Rheinmetall, one of the leaders of Europe's rearmament, has an order backlog50 of $93 billion",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "European defense prime cited for order backlog and guidance"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4a59f9f38658fc",
+       "name_as_written": "Leonardo",
+       "other_securities": [],
+       "quote": "81 Leonardo, \u201cEDGE and Leonardo to Partner Through a Joint Venture on A",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Italian defense firm in JV with EDGE Group"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0be56cc89833",
+       "claim_ids": [
+        "C-cd0dbf468ff9a5"
+       ],
+       "direction": "positive",
+       "name": "US Defense",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "US Defense (GSXUDFNS)"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "claim_ids": [
+        "C-cd0dbf468ff9a5"
+       ],
+       "direction": "positive",
+       "name": "EU Defense",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "EU Defense (GSSBDEFE)"
+      },
+      {
+       "article_id": "A-0be56cc89833",
+       "claim_ids": [
+        "C-cd0dbf468ff9a5"
+       ],
+       "direction": "positive",
+       "name": "APAC Defense",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "APAC Defense (GSXADFSE)"
+      }
+     ],
+     "sectors": [
+      "defense",
+      "aerospace & defense",
+      "industrials"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "FY2027 US defense budget enactment; Rheinmetall year-end 2026 backlog [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-2de5a96cbd834d",
+        "C-5b7648e4ef54a3"
+       ],
+       "provenance": "FORECAST",
+       "text": "Backlog milestones (Rheinmetall year-end 2026 ~$151bn) and the FY2027 budget provide near-term catalysts within 12 months. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-d9c8deeb0c34d1",
+        "C-6ef43cd1e9bd7f"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Multi-year, multi-region structural spending growth rather than a cyclical surge underpins durable demand for primes."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-85a3f8a11ee0a6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A larger market won't reward every entrant and strategic technology ownership doesn't automatically translate into attractive economics; investors must distinguish funded programs from announcements."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: the same claim at an overlapping but different geography (Global vs China) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BCBAD262D4: same value-chain node, not the same claim \u2014 a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-85a3f8a11ee0a6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A larger defense market won't reward every entrant and owning strategic tech doesn't guarantee attractive economics."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Budget appropriations falling short of requests"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Backlog or order-intake deceleration in 2026-2027 reports"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Margin pressure from cost inflation on fixed-price programs"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-85a3f8a11ee0a6",
+        "C-3fe62b586d9403"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A larger defense market won't reward every entrant and owning strategically important technology doesn't automatically translate into attractive economics; investors must distinguish announcements from funded programs, pilots from repeat orders, and urgent purchases from durable procurement changes. (scope: Applies to defense and defense-tech equities broadly; the article's own cautionary framing of the supercycle opportunity.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: If the security supercycle thesis is right and rising defense budgets are structural not cyclical"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named primes' current valuations already reflect the backlog growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus earnings expectations versus this trajectory"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether budget requests (e.g. FY2027 $1.5tn) get enacted at requested levels"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Budget appropriations cut materially below requests"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Defense baskets already richly valued relative to history"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether consensus forward revenue/EPS for named primes (Lockheed Martin, Rheinmetall) already discounts the backlog growth and budget trajectory."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "FY2027 US budget enacted near the $1.5tn request"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further backlog/order-intake upside in 2026 reports"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report); verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-0be56cc89833",
+      "authors": [
+       "Goldman Sachs",
+       "Dan Keyserling"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-2de5a96cbd834d",
+       "C-d9c8deeb0c34d1",
+       "C-2c376ac96dbb0b",
+       "C-b5bfddd6ccfc39",
+       "C-3cdd8c46dd2e27",
+       "C-9e3443e78ec5be",
+       "C-201bbe82642b6d",
+       "C-5b7648e4ef54a3",
+       "C-be6c1d999651e7",
+       "C-8a2d7e34718e02",
+       "C-d72b95c80adb7f",
+       "C-5efc7baedd1bfe",
+       "C-45f4b3bf562994",
+       "C-85a3f8a11ee0a6",
+       "C-3fe62b586d9403"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-28T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "The Security Supercycle",
+      "upstream_origins": [
+       "Defense News",
+       "Goldman Sachs Global Investment Research",
+       "Goldman Sachs Investment Research",
+       "Goldman Sachs Marquee MarketView",
+       "Lockheed Martin",
+       "Rheinmetall",
+       "Stockholm International Peace Research Institute",
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:1d95c5d9690cf203b6f65c1885ea91b6debf788601e07eb651fed5201f1710df",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "49a19352af5d47cb09c0a65bf4c8a56bc76d2f354f1310ad5bc7c733f72591a0",
+   "created_at": "2026-11-10T15:13:26.492481Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report); verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-d9c8deeb0c34d1",
+       "C-2c376ac96dbb0b",
+       "C-b5bfddd6ccfc39",
+       "C-3cdd8c46dd2e27",
+       "C-9e3443e78ec5be",
+       "C-201bbe82642b6d",
+       "C-5b7648e4ef54a3",
+       "C-be6c1d999651e7",
+       "C-8a2d7e34718e02",
+       "C-d72b95c80adb7f",
+       "C-5efc7baedd1bfe",
+       "C-45f4b3bf562994",
+       "C-2de5a96cbd834d"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "13"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-042f351f4da2, ES-075927d01d2f, ES-36c0fe609737, ES-56ae1adde393, ES-6985a2d19c7b, ES-a8775295ff38, ES-bee38a31e849",
+      "value": "7"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-2de5a96cbd834d",
+       "C-d9c8deeb0c34d1",
+       "C-9e3443e78ec5be",
+       "C-201bbe82642b6d",
+       "C-5b7648e4ef54a3",
+       "C-be6c1d999651e7",
+       "C-8a2d7e34718e02",
+       "C-d72b95c80adb7f",
+       "C-5efc7baedd1bfe",
+       "C-45f4b3bf562994"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "10 claim(s) inside the next 2-4 quarters (C-2de5a96cbd834d: forecast window 2026-01-01..2026-12-31 (2026); C-d9c8deeb0c34d1: measured 2026-10-28 (13 days before the as-of); C-9e3443e78ec5be: measured 2026-10-28 (13 days before the as-of); C-201bbe82642b6d: measured 2026-10-28 (13 days before the as-of); showing 4 of 10); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Lockheed Martin (LMT), sector: US Defense, sector: EU Defense, sector: APAC Defense",
+      "value": "1 listed \u00b7 3 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-2de5a96cbd834d",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-45f4b3bf562994"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report",
+      "value": "not credible"
+     },
+     {
+      "claim_ids": [
+       "C-85a3f8a11ee0a6"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 13 supporting; 0 independent contradicting source(s) vs 7 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.0",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report); verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst, and the near-term inflection does not qualify (1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report)"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261110T150647Z-ingest",
+   "thesis_id": "TH-D620F0FF87",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 11,
+ "other_cited_evidence": [
+  "C-5321fdbfbe9e2c",
+  "C-85a3f8a11ee0a6",
+  "C-c1667f2d03a48b",
+  "C-ab0636dcee4e06",
+  "C-cd0dbf468ff9a5",
+  "C-6ef43cd1e9bd7f",
+  "C-3fe62b586d9403"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The sentence cites specific figures not in its cited spans: '$2.89tn in 2025' and 'US FY2027 request of $1.5tn' are not in the cited spans (the $2.89tn figure is in pool C-c92048bf428931; no $1.5tn FY2027 request figure exists in pool \u2014 only FY2026 surpassing $1tn and a 38% real increase). Also states Rheinmetall backlog $93bn is implied but the sentence omits that and frames 'guiding toward ~$151bn' correctly. The $1.5tn FY2027 request is unsupported.",
+  "s03.0": "The sentence is an interpretive claim ('structural rearmament and broadening national-security definitions raise baseline defense demand globally') labelled MEASURED OBSERVATION, but the cited spans are specific data points (41% growth, 2.5% of GDP, eight conflicts) that support the premise rather than the stated interpretation. The 'broadening national-security definitions' element is not in the cited spans.",
+  "s03.1": "The claim that procurement 'drives surging order books giving primes multiyear revenue visibility and production ramp-up' is an interpretation; the cited spans are backlog figures (point-in-time), not a forecast of surging order books or production ramp-up. The visibility/ramp-up framing goes beyond the cited data.",
+  "s06.0": "The sentence references 'the FY2027 budget' as a near-term catalyst, but the cited spans only cover Rheinmetall's $151bn year-end 2026 guidance and the Philippines +12%. The second cited span (Philippines +12%) is irrelevant to the FY2027 budget claim, and there is no cited span for an FY2027 budget. Pool C-896ff73b481fa9 covers FY2027's 38% real increase.",
+  "s06.1": "The claim 'multi-year, multi-region structural spending growth rather than a cyclical surge underpins durable demand' is interpretive and labelled MEASURED OBSERVATION; the cited spans (41% past decade, 3.5% NATO target) are data points. The 'rather than a cyclical surge' and 'durable demand' characterizations are not directly stated in the cited spans.",
+  "s07.1": "The cited span supports the 'larger market won't reward every entrant' and 'strategic tech doesn't translate to economics' portions, but 'investors must distinguish funded programs from announcements' is not in the cited span.",
+  "s07.6": "The cited spans support 'larger market won't reward every entrant' and 'strategic tech doesn't translate to economics' and the advantage-companies framing, but the specific distinctions 'announcements from funded programs, pilots from repeat orders, and urgent purchases from durable procurement changes' are not in the cited spans."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 the near-term change is a forecast without a corroborating measurement.",
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {
+  "s01.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s01.0 prints '2.89', which none of its cited claims carry: 'Record and growing global defense budgets ($2.89tn in 2025, US FY2027 request of $1.5tn) are feeding'"
+ }
+}

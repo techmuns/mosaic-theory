@@ -1,0 +1,2156 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-10",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.hyperscaler_capex"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-10",
+   "first_ingested_at": "2026-11-10T15:02:36.575195Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-22",
+   "latest_article_date": "2026-10-22",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Hyperscaler / cloud AI capital expenditure and the companies spending it",
+   "status": "ACTIVE",
+   "thesis_id": "TH-C3C88F30B7",
+   "title": "Hyperscaler capex may face financing, power and model-competition limits"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-0d146261d3142f",
+     "C-25b738b120dbbc",
+     "C-68602458c611d9",
+     "C-1ce641e140825c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The speaker frames three market concerns pressuring the AI capex trade: a cost-of-capital/financing squeeze on levered AI players and neoclouds, an inability to energize 20-40/50GW of power next year, and more competition at the model layer, driving investor de-risking. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-1ce641e140825c",
+     "C-010122a2d434dc",
+     "C-533c8356f9d295"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article says the market is de-risking the AI/AI-capex trade and watching hyperscaler monetization and FCF breakeven closely as the key swing factor for credit and risk."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If any of these constraints bind, hyperscaler and AI-infrastructure capex and the related suppliers' volumes could fall short of the ~$1.1tn market expectation; the article does not quantify the earnings hit."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-25b738b120dbbc"
+     ],
+     "original_date": "2026-10-22",
+     "period": "next year",
+     "provenance": "FORECAST",
+     "text": "The range of deliverable power for next year is roughly 20 to 40-50 gigawatts. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-56614c022c7f88"
+     ],
+     "original_date": "2026-10-22",
+     "period": "next year",
+     "provenance": "FORECAST",
+     "text": "Market expectation for hyperscaler capex is around $1.1 trillion for next year. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7027f0ea81ca44"
+     ],
+     "original_date": "2026-10-22",
+     "period": "last week",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Last week saw the biggest selling of tech ever recorded in the GS prime book."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0d146261d3142f"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Cost of capital has spilled over broadly, seen in CCC spreads, European sovereign spreads and the more levered parts of the AI trade/neoclouds."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-e53fc23ebd48cd"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Investors were very concentrated within AI, semis and hyperscalers."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-68602458c611d9"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "There is more competition at the AI model layer."
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 11 pieces of evidence from A-fc38d9934d44 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:02 UTC, analysed as of 2026-11-10, from a source published 2026-10-22; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0d146261d3142f",
+     "C-25b738b120dbbc",
+     "C-68602458c611d9"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Cost of capital spillover, power delivery constraints and model-layer competition raise doubts over AI capex sustainability. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-25b738b120dbbc"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "If power cannot be energized, forward-ordered chips may not be consumed, reducing effective demand volumes. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-533c8356f9d295"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "cash_flow",
+    "text": "Speed of the bridge to hyperscaler free-cash-flow breakeven vs expectations is the key cash-flow variable, with implications for credit."
+   },
+   {
+    "claim_ids": [
+     "C-56614c022c7f88",
+     "C-533c8356f9d295"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Shortfalls in capex, monetization or FCF would pressure hyperscaler and AI-supplier earnings, though the article gives no figure. \u27e8cited figures: forecast; approximate\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b045",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7027f0ea81ca44",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "tech net selling",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "last week",
+    "qualifiers": [
+     "prime book",
+     "record"
+    ],
+    "quote": "it was the biggest selling of tech we've ever seen in our prime book last week",
+    "role": "dislocation",
+    "unit": null,
+    "value": null,
+    "value_text": "biggest selling of tech we've ever seen"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-25b738b120dbbc",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "deliverable power range",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next year",
+    "qualifiers": [
+     "approximate",
+     "ability to energize data centers"
+    ],
+    "quote": "the spread is kind of 20 at 40, 50 gigawatts for next year",
+    "role": "supports",
+    "unit": "GW",
+    "value": null,
+    "value_text": "20 at 40, 50 gigawatts"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-56614c022c7f88",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "hyperscaler capex expectation",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next year",
+    "qualifiers": [
+     "approximate",
+     "market expectation"
+    ],
+    "quote": "the market is kind of at $1.1 trillion for next year",
+    "role": "supports",
+    "unit": "$tn",
+    "value": 1.1,
+    "value_text": "$1.1 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e0cd71bd8f9d92",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The speaker says the risk of a disinflationary bust / proper credit cycle was low three months ago and is now a lot higher.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "three months ago",
+    "qualifiers": [
+     "a lot higher"
+    ],
+    "quote": "I would've said three months ago the risk of that was low, and now certainly it's a lot higher",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "three months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0d146261d3142f",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Cost of capital has spilled over broadly, seen in CCC spreads, European sovereign spreads and the more levered parts of the AI trade/neoclouds.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "neoclouds stand out"
+    ],
+    "quote": "we've had a spillover in terms of the cost of capital, and I think we're seeing that pretty much everywhere. Whether it's triple C spreads, sovereign spreads in Europe, but also at the very pointy end within some of these more levered parts of the AI trade and the neoclouds really stand out",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1ce641e140825c",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Investors have been de-risking by taking growth expectations down through the AI and AI capex trade, while bonds have rallied.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "people have been in a de-risking mentality. And the nature of that has been taking growth expectations down via the AI trade and AI CapEx trade. And on the flip side of that, bonds have been rallying",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-533c8356f9d295",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "How quickly hyperscalers reach free cash flow breakeven vs expectations could materially affect credit markets, which have become acutely sensitive.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "I think the nature of how quickly their bridge to free cash flow break even occurs relative to market expectations could have a big implication on the credit markets, which have become acutely sensitive.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-68602458c611d9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "There is more competition at the AI model layer.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "you have more competition at the model layer",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b8d9601739e55a",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "CCC spreads",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "idiosyncratic"
+    ],
+    "quote": "I think you've seen it in CCC spreads, which is, in fairness, a bit idiosyncratic given the composition of what's occurred there, but they have",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c9209b8dbc9d9a",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "compute spot price",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "new highs every day"
+    ],
+    "quote": "you see compute prices literally making new highs every day in the spot market. There is insatiable demand for what they have for sale.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e53fc23ebd48cd",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Investors were very concentrated within AI, semis and hyperscalers.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "People were very concentrated within AI, within semis, within hyperscalers.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-fc38d9934d44",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-010122a2d434dc",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "It is most important to see continued cloud growth and monetization from hyperscalers.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "3Q earnings season",
+    "qualifiers": [],
+    "quote": "most importantly see continued cloud growth and monetization",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": "0000886982",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, par value $0.01 per share",
+       "ticker": "GS"
+      }
+     ],
+     "mention_id": "M-e0f1070b3e02df",
+     "name_as_written": "Goldman Sachs",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRC"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+       "ticker": "GS PRD"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital II",
+       "ticker": "GS/43PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital III",
+       "ticker": "GS/43PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Medium-Term Notes",
+       "ticker": "GS/31B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Medium-Term Notes",
+       "ticker": "GS/31X"
+      },
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "GSCE"
+      }
+     ],
+     "quote": "Chris Hussey, Host, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher of the podcast and author's employer"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-75e7e97a3b738c",
+     "name_as_written": "Goldman Sachs Research",
+     "other_securities": [],
+     "quote": "Host, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research division hosting the podcast"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a041621dc02630",
+     "name_as_written": "S&P",
+     "other_securities": [],
+     "quote": "the S&P has done a great job compartmentalizing",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "comparator",
+     "role_detail": "Benchmark index contrasted with the median equity's decline"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-fa887685634384",
+     "name_as_written": "Fed",
+     "other_securities": [],
+     "quote": "pushed the Fed to do more",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Central bank whose policy path repriced on FCI tightening"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-462831c72712e0",
+     "name_as_written": "Rich Privorotsky",
+     "other_securities": [],
+     "quote": "Rich Privorotsky, Head, European Equities Trading, FICC and Equities",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Named speaker/author: Head, European Equities Trading, FICC and Equities at Goldman Sachs"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-941923e9e731ad",
+     "name_as_written": "Chris Hussey",
+     "other_securities": [],
+     "quote": "Chris Hussey, Host, Goldman Sachs Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Host of The Markets, Goldman Sachs Research"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-56614c022c7f88"
+     ],
+     "provenance": "FORECAST",
+     "text": "Market consensus for hyperscaler capex at ~$1.1 trillion for next year (constituents not named by the source)"
+    }
+   ],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-fc38d9934d44",
+     "claim_ids": [
+      "C-e53fc23ebd48cd",
+      "C-56614c022c7f88"
+     ],
+     "direction": "negative",
+     "name": "hyperscalers",
+     "provenance": "SOURCE OPINION",
+     "quote": "within hyperscalers"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "claim_ids": [
+      "C-e53fc23ebd48cd"
+     ],
+     "direction": "negative",
+     "name": "semis",
+     "provenance": "SOURCE OPINION",
+     "quote": "within semis"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "claim_ids": [
+      "C-0d146261d3142f"
+     ],
+     "direction": "negative",
+     "name": "neoclouds",
+     "provenance": "SOURCE OPINION",
+     "quote": "the neoclouds really stand out"
+    },
+    {
+     "article_id": "A-fc38d9934d44",
+     "claim_ids": [
+      "C-1ce641e140825c"
+     ],
+     "direction": "negative",
+     "name": "AI CapEx trade",
+     "provenance": "SOURCE OPINION",
+     "quote": "the AI trade and AI CapEx trade"
+    }
+   ],
+   "sectors": [
+    "AI",
+    "semiconductors",
+    "hyperscalers",
+    "neoclouds"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "third quarter hyperscaler earnings season / next week [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-010122a2d434dc"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Market is watching hyperscaler capex figures and monetization next week as critical for the tape, credit and underlying demand."
+    },
+    {
+     "claim_ids": [
+      "C-7027f0ea81ca44"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: Last week saw the biggest selling of tech ever recorded in the GS prime book."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-56614c022c7f88"
+     ],
+     "provenance": "FORECAST",
+     "text": "The market is grappling with whether AI spending is sustainable relative to expectations, the 'trillion-dollar question'. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-c9209b8dbc9d9a",
+      "C-5a81713ec72b55"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Compute prices are making new highs daily with insatiable demand, suggesting hyperscalers have a strong story and the de-risking may be overdone."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-0D381F307A: held for review \u2014 the same thesis claim (node ai_infrastructure.hyperscaler_capex, mechanism capex_spending_cycle, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-7027f0ea81ca44 vs C-5ddde48e0564c3: a claim names no product the taxonomy knows; a claim names no measured variable; a claim states no period; a quote states no single direction of change; overlapping geography); nothing is filed against it automatically"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-25E28E19CA: held for review \u2014 the same thesis claim (node ai_infrastructure.hyperscaler_capex, mechanism capex_spending_cycle, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-7027f0ea81ca44 vs C-072008b6d486ae: a claim names no product the taxonomy knows; a claim names no measured variable; a claim states no period; a quote states no single direction of change; overlapping geography); nothing is filed against it automatically"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-BAA07551ED: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs capex_spending_cycle); no overlapping timeframe \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 26 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-5a81713ec72b55"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers reaffirm ~$1.1tn capex with accelerating cloud revenue and faster FCF breakeven"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Compute spot prices keep rising"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Neocloud/levered AI financing stabilizes and CCC spreads tighten"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-32a36d736360d7",
+      "C-e53fc23ebd48cd",
+      "C-7027f0ea81ca44"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Immense concentration in AI, semis and hyperscalers has made consensual trades painful to unwind, with record tech selling in the GS prime book. (scope: Equity market concentration / crowding risk within the AI complex; GS prime book data for last week.)"
+    },
+    {
+     "claim_ids": [
+      "C-0d146261d3142f",
+      "C-b8d9601739e55a",
+      "C-1e4b4ab1179fee",
+      "C-533c8356f9d295",
+      "C-e0cd71bd8f9d92"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A rising cost of capital has spilled over broadly (CCC spreads, European/French sovereign spreads, levered AI/neoclouds), raising the risk of a proper credit cycle that was considered low three months ago. (scope: Credit-market and sovereign spread risk tied to a 'spending glut' and large fiscal deficits; speaker notes CCC moves are partly idiosyncratic.)"
+    },
+    {
+     "claim_ids": [
+      "C-1e4b4ab1179fee",
+      "C-e0cd71bd8f9d92"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A disinflationary bust (AI capex slows, retrenchment, a proper credit cycle) would undermine the nominal-asset and derated-cyclical trades; the speaker now rates this risk higher. (scope: Macro tail-risk scenario conditioning the nominal-asset and dislocation theses.)"
+    },
+    {
+     "claim_ids": [
+      "C-15c8b4a8abb3cc",
+      "C-7654f624a573e3",
+      "C-b8d9601739e55a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A structural shift from a savings glut to a spending glut (over a trillion in AI capex plus widespread fiscal deficits) raises the cost of capital and pushes out fringe/lower-quality borrowers and large-deficit sovereigns like France. (scope: Global credit and sovereign markets; CCC spreads (partly idiosyncratic) and French sovereign concerns cited as evidence.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: That rising cost of capital constrains levered AI borrowers, power cannot be energized at scale, and model-layer competition intensifies"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether hyperscaler 3Q capex, cloud monetization and FCF breakeven meet or beat the ~$1.1tn expectation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether power delivery actually constrains chip consumption next year"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether model-layer competition erodes economics"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The article does not quantify any earnings or revenue effect"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscaler capex and monetization both beat at 3Q"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Compute spot prices and demand stay strong"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Track reported hyperscaler 3Q capex vs the ~$1.1tn next-year consensus and cloud revenue/backlog conversion and FCF-breakeven timing."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Neocloud/levered AI financing stress widens and spills into broader credit"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscaler cloud monetization disappoints at 3Q results"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Power delivery shortfalls confirmed below 40GW for next year"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: premise is reported_view in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-fc38d9934d44",
+    "authors": [
+     "Un-named",
+     "Rich Privorotsky",
+     "Chris Hussey"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-7027f0ea81ca44",
+     "C-010122a2d434dc",
+     "C-e53fc23ebd48cd",
+     "C-0d146261d3142f",
+     "C-25b738b120dbbc",
+     "C-68602458c611d9",
+     "C-1ce641e140825c",
+     "C-56614c022c7f88",
+     "C-533c8356f9d295",
+     "C-c9209b8dbc9d9a",
+     "C-b8d9601739e55a",
+     "C-e0cd71bd8f9d92",
+     "C-5a81713ec72b55",
+     "C-32a36d736360d7",
+     "C-1e4b4ab1179fee",
+     "C-15c8b4a8abb3cc",
+     "C-7654f624a573e3"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-22T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Goldman Sachs",
+    "retrieval_state": "FULL",
+    "title": "Why Investors Are Reducing AI Exposure",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "urn:document:sha256:dd8ad15f27c78fd7335f7686258fc4b1241d4b23c10c9932e4b1f02f7c261ae6",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-10",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "We derive our revenue primarily from product sales including hardware and systems."
+    ],
+    "basis_source": "10-K filed 2026-02-25 (0001045810-26-000021)",
+    "business": "AI accelerator GPUs and data-center systems",
+    "direction": "negative",
+    "enrichment_id": "EC-afc99d69fe50fe",
+    "evidence": "s03.1: If power cannot be energized, forward-ordered chips may not be consumed, reducing effective demand volumes.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "NVDA"
+     }
+    ],
+    "name": "NVIDIA",
+    "rationale": "If power cannot be energized, forward-ordered GPUs go unconsumed; effective data-center demand volumes fall, pressuring its dominant data-center GPU sales.",
+    "registrant": "NVIDIA CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data-center AI GPUs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-C3C88F30B7",
+    "ticker_hint": "NVDA"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-04 (0000002488-26-000018)",
+    "business": "CPUs, GPUs and data-center accelerators",
+    "direction": "negative",
+    "enrichment_id": "EC-d59f3c28f2e45e",
+    "evidence": "s03.1: If power cannot be energized, forward-ordered chips may not be consumed, reducing effective demand volumes.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 par value per share",
+      "ticker": "AMD"
+     }
+    ],
+    "name": "Advanced Micro Devices",
+    "rationale": "Weaker effective AI compute demand from power constraints reduces data-center GPU and CPU volumes it sells to hyperscalers.",
+    "registrant": "ADVANCED MICRO DEVICES INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "data-center accelerators and CPUs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-C3C88F30B7",
+    "ticker_hint": "AMD"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-07-29 (0001193125-26-323660)",
+    "business": "cloud (Azure), software and AI services",
+    "direction": "negative",
+    "enrichment_id": "EC-dbedb50de1c5ca",
+    "evidence": "s03.3: Shortfalls in capex, monetization or FCF would pressure hyperscaler and AI-supplier earnings, though the article gives no figure.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.00000625 par value per share",
+      "ticker": "MSFT"
+     }
+    ],
+    "name": "Microsoft",
+    "rationale": "Shortfalls in AI monetization or slower FCF breakeven on heavy capex pressure Azure AI earnings and cash flow.",
+    "registrant": "MICROSOFT CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Azure cloud and AI services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.3",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-C3C88F30B7",
+    "ticker_hint": "MSFT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-31 (0001375365-26-000022)",
+    "business": "AI server and rack systems integrator",
+    "direction": "negative",
+    "enrichment_id": "EC-dbf57abf0ac1c7",
+    "evidence": "s03.1: If power cannot be energized, forward-ordered chips may not be consumed, reducing effective demand volumes.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-06 (accession 0001375365-26-000027) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "SMCI"
+     }
+    ],
+    "name": "Super Micro Computer",
+    "rationale": "If forward-ordered chips go unconsumed for lack of power, AI server build volumes fall, directly hitting its core revenue.",
+    "registrant": "Super Micro Computer, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI server and rack systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-C3C88F30B7",
+    "ticker_hint": "SMCI"
+   }
+  ],
+  "created_at": "2026-11-10T19:07:00.910446Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Vertiv Holdings: more than 4 on one side \u2014 set aside",
+   "Broadcom: more than 4 on one side \u2014 set aside",
+   "Oracle: more than 4 on one side \u2014 set aside",
+   "CoreWeave: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261110T190643Z-enrich",
+  "set_id": "ES-0ba6a3ac44c110",
+  "thesis_id": "TH-C3C88F30B7",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 09:30 UTC from the registry (ti-engine-5; run R-20261119T090734Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-10",
+   "change_summary": "Initial record \u2014 created from A-fc38d9934d44",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-10",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.hyperscaler_capex"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-10",
+     "first_ingested_at": "2026-11-10T15:02:36.575195Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-22",
+     "latest_article_date": "2026-10-22",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Hyperscaler / cloud AI capital expenditure and the companies spending it",
+     "status": "ACTIVE",
+     "thesis_id": "TH-C3C88F30B7",
+     "title": "Hyperscaler capex may face financing, power and model-competition limits"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-0d146261d3142f",
+       "C-25b738b120dbbc",
+       "C-68602458c611d9",
+       "C-1ce641e140825c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The speaker frames three market concerns pressuring the AI capex trade: a cost-of-capital/financing squeeze on levered AI players and neoclouds, an inability to energize 20-40/50GW of power next year, and more competition at the model layer, driving investor de-risking. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-1ce641e140825c",
+       "C-010122a2d434dc",
+       "C-533c8356f9d295"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article says the market is de-risking the AI/AI-capex trade and watching hyperscaler monetization and FCF breakeven closely as the key swing factor for credit and risk."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If any of these constraints bind, hyperscaler and AI-infrastructure capex and the related suppliers' volumes could fall short of the ~$1.1tn market expectation; the article does not quantify the earnings hit."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-25b738b120dbbc"
+       ],
+       "original_date": "2026-10-22",
+       "period": "next year",
+       "provenance": "FORECAST",
+       "text": "The range of deliverable power for next year is roughly 20 to 40-50 gigawatts. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-56614c022c7f88"
+       ],
+       "original_date": "2026-10-22",
+       "period": "next year",
+       "provenance": "FORECAST",
+       "text": "Market expectation for hyperscaler capex is around $1.1 trillion for next year. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7027f0ea81ca44"
+       ],
+       "original_date": "2026-10-22",
+       "period": "last week",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Last week saw the biggest selling of tech ever recorded in the GS prime book."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0d146261d3142f"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Cost of capital has spilled over broadly, seen in CCC spreads, European sovereign spreads and the more levered parts of the AI trade/neoclouds."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-e53fc23ebd48cd"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Investors were very concentrated within AI, semis and hyperscalers."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-68602458c611d9"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "There is more competition at the AI model layer."
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 11 pieces of evidence from A-fc38d9934d44 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-10 15:02 UTC, analysed as of 2026-11-10, from a source published 2026-10-22; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0d146261d3142f",
+       "C-25b738b120dbbc",
+       "C-68602458c611d9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Cost of capital spillover, power delivery constraints and model-layer competition raise doubts over AI capex sustainability. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-25b738b120dbbc"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "If power cannot be energized, forward-ordered chips may not be consumed, reducing effective demand volumes. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-533c8356f9d295"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "cash_flow",
+      "text": "Speed of the bridge to hyperscaler free-cash-flow breakeven vs expectations is the key cash-flow variable, with implications for credit."
+     },
+     {
+      "claim_ids": [
+       "C-56614c022c7f88",
+       "C-533c8356f9d295"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Shortfalls in capex, monetization or FCF would pressure hyperscaler and AI-supplier earnings, though the article gives no figure. \u27e8cited figures: forecast; approximate\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b045",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7027f0ea81ca44",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "tech net selling",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "last week",
+      "qualifiers": [
+       "prime book",
+       "record"
+      ],
+      "quote": "it was the biggest selling of tech we've ever seen in our prime book last week",
+      "role": "dislocation",
+      "unit": null,
+      "value": null,
+      "value_text": "biggest selling of tech we've ever seen"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-25b738b120dbbc",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "deliverable power range",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next year",
+      "qualifiers": [
+       "approximate",
+       "ability to energize data centers"
+      ],
+      "quote": "the spread is kind of 20 at 40, 50 gigawatts for next year",
+      "role": "supports",
+      "unit": "GW",
+      "value": null,
+      "value_text": "20 at 40, 50 gigawatts"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-56614c022c7f88",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "hyperscaler capex expectation",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next year",
+      "qualifiers": [
+       "approximate",
+       "market expectation"
+      ],
+      "quote": "the market is kind of at $1.1 trillion for next year",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 1.1,
+      "value_text": "$1.1 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e0cd71bd8f9d92",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The speaker says the risk of a disinflationary bust / proper credit cycle was low three months ago and is now a lot higher.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "three months ago",
+      "qualifiers": [
+       "a lot higher"
+      ],
+      "quote": "I would've said three months ago the risk of that was low, and now certainly it's a lot higher",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "three months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0d146261d3142f",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Cost of capital has spilled over broadly, seen in CCC spreads, European sovereign spreads and the more levered parts of the AI trade/neoclouds.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "neoclouds stand out"
+      ],
+      "quote": "we've had a spillover in terms of the cost of capital, and I think we're seeing that pretty much everywhere. Whether it's triple C spreads, sovereign spreads in Europe, but also at the very pointy end within some of these more levered parts of the AI trade and the neoclouds really stand out",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1ce641e140825c",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Investors have been de-risking by taking growth expectations down through the AI and AI capex trade, while bonds have rallied.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "people have been in a de-risking mentality. And the nature of that has been taking growth expectations down via the AI trade and AI CapEx trade. And on the flip side of that, bonds have been rallying",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-533c8356f9d295",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "How quickly hyperscalers reach free cash flow breakeven vs expectations could materially affect credit markets, which have become acutely sensitive.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "I think the nature of how quickly their bridge to free cash flow break even occurs relative to market expectations could have a big implication on the credit markets, which have become acutely sensitive.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-68602458c611d9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "There is more competition at the AI model layer.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "you have more competition at the model layer",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b8d9601739e55a",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "CCC spreads",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "idiosyncratic"
+      ],
+      "quote": "I think you've seen it in CCC spreads, which is, in fairness, a bit idiosyncratic given the composition of what's occurred there, but they have",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c9209b8dbc9d9a",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "compute spot price",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "new highs every day"
+      ],
+      "quote": "you see compute prices literally making new highs every day in the spot market. There is insatiable demand for what they have for sale.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e53fc23ebd48cd",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Investors were very concentrated within AI, semis and hyperscalers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "People were very concentrated within AI, within semis, within hyperscalers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-fc38d9934d44",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-010122a2d434dc",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "It is most important to see continued cloud growth and monetization from hyperscalers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "3Q earnings season",
+      "qualifiers": [],
+      "quote": "most importantly see continued cloud growth and monetization",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": "0000886982",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "GS"
+        }
+       ],
+       "mention_id": "M-e0f1070b3e02df",
+       "name_as_written": "Goldman Sachs",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRC"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, Each Representing 1/1,000th Interest in a Share",
+         "ticker": "GS PRD"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital II",
+         "ticker": "GS/43PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Normal Automatic Preferred Enhanced Capital Securities of Goldman Sachs Capital III",
+         "ticker": "GS/43PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Medium-Term Notes",
+         "ticker": "GS/31B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Medium-Term Notes",
+         "ticker": "GS/31X"
+        },
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-11-02 (accession 0000886982-26-000532) cover page and no 8-A12B registration before 2026-11-10 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "GSCE"
+        }
+       ],
+       "quote": "Chris Hussey, Host, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher of the podcast and author's employer"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-75e7e97a3b738c",
+       "name_as_written": "Goldman Sachs Research",
+       "other_securities": [],
+       "quote": "Host, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research division hosting the podcast"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a041621dc02630",
+       "name_as_written": "S&P",
+       "other_securities": [],
+       "quote": "the S&P has done a great job compartmentalizing",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "comparator",
+       "role_detail": "Benchmark index contrasted with the median equity's decline"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-fa887685634384",
+       "name_as_written": "Fed",
+       "other_securities": [],
+       "quote": "pushed the Fed to do more",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Central bank whose policy path repriced on FCI tightening"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-462831c72712e0",
+       "name_as_written": "Rich Privorotsky",
+       "other_securities": [],
+       "quote": "Rich Privorotsky, Head, European Equities Trading, FICC and Equities",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Named speaker/author: Head, European Equities Trading, FICC and Equities at Goldman Sachs"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-941923e9e731ad",
+       "name_as_written": "Chris Hussey",
+       "other_securities": [],
+       "quote": "Chris Hussey, Host, Goldman Sachs Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Host of The Markets, Goldman Sachs Research"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-56614c022c7f88"
+       ],
+       "provenance": "FORECAST",
+       "text": "Market consensus for hyperscaler capex at ~$1.1 trillion for next year (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-fc38d9934d44",
+       "claim_ids": [
+        "C-e53fc23ebd48cd",
+        "C-56614c022c7f88"
+       ],
+       "direction": "negative",
+       "name": "hyperscalers",
+       "provenance": "SOURCE OPINION",
+       "quote": "within hyperscalers"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "claim_ids": [
+        "C-e53fc23ebd48cd"
+       ],
+       "direction": "negative",
+       "name": "semis",
+       "provenance": "SOURCE OPINION",
+       "quote": "within semis"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "claim_ids": [
+        "C-0d146261d3142f"
+       ],
+       "direction": "negative",
+       "name": "neoclouds",
+       "provenance": "SOURCE OPINION",
+       "quote": "the neoclouds really stand out"
+      },
+      {
+       "article_id": "A-fc38d9934d44",
+       "claim_ids": [
+        "C-1ce641e140825c"
+       ],
+       "direction": "negative",
+       "name": "AI CapEx trade",
+       "provenance": "SOURCE OPINION",
+       "quote": "the AI trade and AI CapEx trade"
+      }
+     ],
+     "sectors": [
+      "AI",
+      "semiconductors",
+      "hyperscalers",
+      "neoclouds"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "third quarter hyperscaler earnings season / next week [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-010122a2d434dc"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Market is watching hyperscaler capex figures and monetization next week as critical for the tape, credit and underlying demand."
+      },
+      {
+       "claim_ids": [
+        "C-7027f0ea81ca44"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: Last week saw the biggest selling of tech ever recorded in the GS prime book."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-56614c022c7f88"
+       ],
+       "provenance": "FORECAST",
+       "text": "The market is grappling with whether AI spending is sustainable relative to expectations, the 'trillion-dollar question'. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-c9209b8dbc9d9a",
+        "C-5a81713ec72b55"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Compute prices are making new highs daily with insatiable demand, suggesting hyperscalers have a strong story and the de-risking may be overdone."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-0D381F307A: held for review \u2014 the same thesis claim (node ai_infrastructure.hyperscaler_capex, mechanism capex_spending_cycle, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-7027f0ea81ca44 vs C-5ddde48e0564c3: a claim names no product the taxonomy knows; a claim names no measured variable; a claim states no period; a quote states no single direction of change; overlapping geography); nothing is filed against it automatically"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-25E28E19CA: held for review \u2014 the same thesis claim (node ai_infrastructure.hyperscaler_capex, mechanism capex_spending_cycle, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-7027f0ea81ca44 vs C-072008b6d486ae: a claim names no product the taxonomy knows; a claim names no measured variable; a claim states no period; a quote states no single direction of change; overlapping geography); nothing is filed against it automatically"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-BAA07551ED: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs capex_spending_cycle); no overlapping timeframe \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 26 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-5a81713ec72b55"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The de-risking has been indiscriminate, throwing the baby out with the bathwater across nominal assets and commodities."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers reaffirm ~$1.1tn capex with accelerating cloud revenue and faster FCF breakeven"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Compute spot prices keep rising"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Neocloud/levered AI financing stabilizes and CCC spreads tighten"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-32a36d736360d7",
+        "C-e53fc23ebd48cd",
+        "C-7027f0ea81ca44"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Immense concentration in AI, semis and hyperscalers has made consensual trades painful to unwind, with record tech selling in the GS prime book. (scope: Equity market concentration / crowding risk within the AI complex; GS prime book data for last week.)"
+      },
+      {
+       "claim_ids": [
+        "C-0d146261d3142f",
+        "C-b8d9601739e55a",
+        "C-1e4b4ab1179fee",
+        "C-533c8356f9d295",
+        "C-e0cd71bd8f9d92"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A rising cost of capital has spilled over broadly (CCC spreads, European/French sovereign spreads, levered AI/neoclouds), raising the risk of a proper credit cycle that was considered low three months ago. (scope: Credit-market and sovereign spread risk tied to a 'spending glut' and large fiscal deficits; speaker notes CCC moves are partly idiosyncratic.)"
+      },
+      {
+       "claim_ids": [
+        "C-1e4b4ab1179fee",
+        "C-e0cd71bd8f9d92"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A disinflationary bust (AI capex slows, retrenchment, a proper credit cycle) would undermine the nominal-asset and derated-cyclical trades; the speaker now rates this risk higher. (scope: Macro tail-risk scenario conditioning the nominal-asset and dislocation theses.)"
+      },
+      {
+       "claim_ids": [
+        "C-15c8b4a8abb3cc",
+        "C-7654f624a573e3",
+        "C-b8d9601739e55a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A structural shift from a savings glut to a spending glut (over a trillion in AI capex plus widespread fiscal deficits) raises the cost of capital and pushes out fringe/lower-quality borrowers and large-deficit sovereigns like France. (scope: Global credit and sovereign markets; CCC spreads (partly idiosyncratic) and French sovereign concerns cited as evidence.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: That rising cost of capital constrains levered AI borrowers, power cannot be energized at scale, and model-layer competition intensifies"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether hyperscaler 3Q capex, cloud monetization and FCF breakeven meet or beat the ~$1.1tn expectation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether power delivery actually constrains chip consumption next year"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether model-layer competition erodes economics"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The article does not quantify any earnings or revenue effect"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscaler capex and monetization both beat at 3Q"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Compute spot prices and demand stay strong"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track reported hyperscaler 3Q capex vs the ~$1.1tn next-year consensus and cloud revenue/backlog conversion and FCF-breakeven timing."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Neocloud/levered AI financing stress widens and spills into broader credit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscaler cloud monetization disappoints at 3Q results"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Power delivery shortfalls confirmed below 40GW for next year"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: premise is reported_view in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-fc38d9934d44",
+      "authors": [
+       "Un-named",
+       "Rich Privorotsky",
+       "Chris Hussey"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-7027f0ea81ca44",
+       "C-010122a2d434dc",
+       "C-e53fc23ebd48cd",
+       "C-0d146261d3142f",
+       "C-25b738b120dbbc",
+       "C-68602458c611d9",
+       "C-1ce641e140825c",
+       "C-56614c022c7f88",
+       "C-533c8356f9d295",
+       "C-c9209b8dbc9d9a",
+       "C-b8d9601739e55a",
+       "C-e0cd71bd8f9d92",
+       "C-5a81713ec72b55",
+       "C-32a36d736360d7",
+       "C-1e4b4ab1179fee",
+       "C-15c8b4a8abb3cc",
+       "C-7654f624a573e3"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-22T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Goldman Sachs",
+      "retrieval_state": "FULL",
+      "title": "Why Investors Are Reducing AI Exposure",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "urn:document:sha256:dd8ad15f27c78fd7335f7686258fc4b1241d4b23c10c9932e4b1f02f7c261ae6",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "b98386335a26f580ea5f1ede481827e116b8df8ed9496fab4a13fb8f26b1c4a4",
+   "created_at": "2026-11-10T15:03:10.794852Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: premise is reported_view in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-25b738b120dbbc",
+       "C-56614c022c7f88",
+       "C-7027f0ea81ca44"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7157f87b7a71",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-7027f0ea81ca44"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-7027f0ea81ca44: measured 2026-10-22 (19 days before the as-of)); 2 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: hyperscalers, sector: semis, sector: neoclouds, sector: AI CapEx trade",
+      "value": "0 listed \u00b7 4 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-7027f0ea81ca44"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-010122a2d434dc",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-5a81713ec72b55"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 3 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "reported_view"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: premise is reported_view in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "premise_reported_view",
+      "kind": "held",
+      "text": "premise is reported_view in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261110T145858Z-ingest",
+   "thesis_id": "TH-C3C88F30B7",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 12,
+ "other_cited_evidence": [
+  "C-5a81713ec72b55",
+  "C-32a36d736360d7",
+  "C-1e4b4ab1179fee",
+  "C-15c8b4a8abb3cc",
+  "C-7654f624a573e3"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s03.1": "The cited span only gives the 20-40/50GW power spread; the causal claim that forward-ordered chips may not be consumed and effective demand falls is not in the cited span. No pool span supports the chip-consumption inference.",
+  "s06.2": "The cited span states market is at $1.1tn for next year but does not express the 'is AI spending sustainable / trillion-dollar question' framing. The sustainability framing is not in the cited span.",
+  "s07.9": "Cited spans support spending glut, French sovereign pushed out, CCC spreads. But 'over a trillion in AI capex' is not in the cited spans. Pool span C-01777e55fc2d2e supports the trillion-dollar AI capex figure."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Premise \u2014 reported view in the source."
+ ],
+ "withheld_sentences": {}
+}

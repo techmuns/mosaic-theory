@@ -1,0 +1,2959 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-19",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.memory"
+   ],
+   "evidence_direction": "MIXED",
+   "first_detected": "2026-11-09",
+   "first_ingested_at": "2026-11-09T14:19:24.902241Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-11",
+   "latest_article_date": "2026-11-11",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-7C895A0A4E",
+   "title": "High DRAM prices push budget smartphone brands to adopt cheaper reballed memory"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-73815b2568902e",
+     "C-1b0862b34a6ab5",
+     "C-b13d8f7a7d1dae",
+     "C-483c5652b33b0c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% in 2027, as brands use it to offset rising mobile DRAM contract prices, especially in sub-CNY1,299 4G phones. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-e8679311fe22f0",
+     "C-52c18f104fcc8b"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames reballed memory as a cost-management workaround that nonetheless leaves the upward DRAM contract price trend intact, with potential spread into higher price segments if prices keep climbing in 1Q27."
+   },
+   {
+    "claim_ids": [
+     "C-3b86df268ddf00",
+     "C-b7606c0a8ea0b9",
+     "C-066952896ad45a",
+     "C-c51e6fa2705493",
+     "C-47249bee70db8f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "\u27e8update 2026-11-11 \u00b7 TrendForce\u27e9 TrendForce forecasts PC DRAM contract prices rise 13-18% QoQ in 4Q26 and client SSD prices under 5%, both moderating from the prior quarter, as softening PC demand and rising OEM inventories collide with AI-driven supply tightness. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-3b86df268ddf00"
+     ],
+     "original_date": "2026-11-11",
+     "period": "4Q26",
+     "provenance": "FORECAST",
+     "text": "PC DRAM contract prices are forecast to rise 13\u201318% QoQ in 4Q26. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-066952896ad45a"
+     ],
+     "original_date": "2026-11-11",
+     "period": "4Q26",
+     "provenance": "FORECAST",
+     "text": "Client SSD contract prices are expected to rise less than 5% QoQ in 4Q26, a notable moderation from the previous quarter. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-b7606c0a8ea0b9"
+     ],
+     "original_date": "2026-11-11",
+     "period": "4Q26",
+     "provenance": "FORECAST",
+     "text": "PC DRAM contract price increases in 4Q26 are slowing from the previous quarter. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-c51e6fa2705493"
+     ],
+     "original_date": "2026-11-11",
+     "period": "since 3Q26",
+     "provenance": "SOURCE OPINION",
+     "text": "DRAM inventory weeks among OEMs have steadily increased since 3Q26 and are expected to build further in 4Q26. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-47249bee70db8f"
+     ],
+     "original_date": "2026-11-11",
+     "period": "2027",
+     "provenance": "SOURCE OPINION",
+     "text": "Memory makers are tentatively planning to cut PC DRAM supply in 2027 due to robust AI demand. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-c9cbdec8d8ff42"
+     ],
+     "original_date": "2026-11-11",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Client SSD production capacity is being squeezed by growing AI-related demand. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-2dd21f605a21da"
+     ],
+     "original_date": "2026-11-11",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "SSD suppliers are imposing steeper price increases on lower-capacity SSDs to discourage demand for less profitable products and improve product mix \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "new",
+     "claim_ids": [
+      "C-177dd4f5c6d6a7"
+     ],
+     "original_date": "2026-11-11",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Memory manufacturers prioritize strategic PC-customer partnerships as they prepare for longer-term edge AI opportunities \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-368a88b9d4ae0d"
+     ],
+     "original_date": "2026-11-11",
+     "period": "4Q26",
+     "provenance": "SOURCE OPINION",
+     "text": "PC brands broadly curtailed client SSD procurement in 4Q26 due to subdued demand and elevated inventories. \u27e8the source states evidence against this thesis\u27e9"
+    },
+    {
+     "article_id": "A-2125a57a23d7",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-766668e190b5e8"
+     ],
+     "original_date": "2026-11-11",
+     "period": "1Q27",
+     "provenance": "SOURCE OPINION",
+     "text": "SSD procurement caution extends into 1Q27 with plans revised downward. \u27e8the source states evidence against this thesis\u27e9"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v1 held 10 claim(s); this source adds: contradictory \u00d72, new \u00d78"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b13d8f7a7d1dae",
+     "C-6a1262e91452f1"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Sustained rises in mobile DRAM contract prices drive smartphone brands toward lower-cost reballed memory."
+   },
+   {
+    "claim_ids": [
+     "C-74c179db37cc77",
+     "C-c51e6fa2705493"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Notebook shipments fell 15.8% QoQ in 3Q26 with a further single-digit decline possible in 4Q26, raising OEM inventories. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-6a1262e91452f1",
+     "C-52c18f104fcc8b"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend."
+   },
+   {
+    "claim_ids": [
+     "C-483c5652b33b0c",
+     "C-004704edd9c3aa",
+     "C-b5d05ebd627c6d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models."
+   },
+   {
+    "claim_ids": [
+     "C-47249bee70db8f"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "margins",
+    "text": "Supply constraint from AI keeps memory supplier pricing elevated; effect on specific listed memory makers' margins not quantified by the article."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Implication for listed memory suppliers' revenue/margins is not quantified by the article."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1b0862b34a6ab5",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "reballed memory smartphone penetration rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "potentially"
+    ],
+    "quote": "potentially climbing to 7\u20139% in 2027",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "7\u20139%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-483c5652b33b0c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "below"
+    ],
+    "quote": "LPDDR4X 4GB currently accounts for the bulk of reballed memory available in the market, with these components primarily finding their way into 4G smartphones priced below CNY 1,299",
+    "role": "supports",
+    "unit": "CNY",
+    "value": 1299.0,
+    "value_text": "1,299"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-73815b2568902e",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "reballed memory smartphone penetration rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "the penetration rate of reballed memory in the smartphone market will reach approximately 3\u20134% in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "3\u20134%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-2125a57a23d7",
+    "block_id": "b012",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-b7606c0a8ea0b9",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "PC DRAM contract price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [
+     "QoQ",
+     "slowing from previous quarter"
+    ],
+    "quote": "PC DRAM contract prices will rise 13\u201318% QoQ in 4Q26, with increases slowing from the previous quarter",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "13\u201318%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-2125a57a23d7",
+    "block_id": "b017",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-066952896ad45a",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "client SSD contract price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "4Q26",
+    "qualifiers": [
+     "QoQ",
+     "notable moderation"
+    ],
+    "quote": "client SSD contract prices to rise by less than 5% QoQ in 4Q26, marking a notable moderation from the previous quarter",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 5.0,
+    "value_text": "less than 5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-52c18f104fcc8b",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the increasing use of reballed components is unlikely to significantly disrupt the prevailing upward trend in DRAM contract prices",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b13d8f7a7d1dae",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the sustained rise in mobile DRAM contract prices is driving smartphone brands to increasingly embrace lower-cost reballed memory components",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b5d05ebd627c6d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Reballed memory lets smartphone brands curb production costs near-term and sustain shipment volumes amid rising component prices",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "near term",
+    "qualifiers": [
+     "near term"
+    ],
+    "quote": "reballed memory provides smartphone brands with an effective means of curbing production costs in the near term, offering much-needed flexibility to sustain shipment volumes amid rising component prices",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-2125a57a23d7",
+    "block_id": "b011",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-177dd4f5c6d6a7",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Memory manufacturers prioritize strategic PC-customer partnerships as they prepare for longer-term edge AI opportunities",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Maintaining strategic partnerships with PC customers also remains a priority as manufacturers prepare for longer-term opportunities in edge AI",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-2125a57a23d7",
+    "block_id": "b015",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-2dd21f605a21da",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "SSD suppliers are imposing steeper price increases on lower-capacity SSDs to discourage demand for less profitable products and improve product mix",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "suppliers are imposing steeper price increases on lower-capacity SSDs to discourage demand for these less profitable products",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-2125a57a23d7",
+    "block_id": "b011",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-47249bee70db8f",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "PC DRAM supply",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "tentatively plan",
+     "cuts"
+    ],
+    "quote": "robust demand from AI applications has led memory manufacturers to tentatively plan cuts to PC DRAM supply in 2027",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-2125a57a23d7",
+    "block_id": "b010",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-c51e6fa2705493",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "DRAM inventory weeks",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since 3Q26",
+    "qualifiers": [
+     "rising inventory"
+    ],
+    "quote": "declining finished-product shipments have led to a steady increase in DRAM inventory weeks among OEMs since 3Q26, with inventories expected to build further in 4Q26",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-2125a57a23d7",
+    "block_id": "b015",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-c9cbdec8d8ff42",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Client SSD production capacity is being squeezed by growing AI-related demand.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "capacity squeeze"
+    ],
+    "quote": "client SSD production capacity continues to be squeezed by the growing demands of AI-related applications",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-d62b9f56c2a5",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6a1262e91452f1",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "DRAM contract price direction",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "1Q27",
+    "qualifiers": [],
+    "quote": "with DRAM price increases expected to gain further momentum in 1Q27, smartphone manufacturers are likely to face mounting pressure on their cost structures",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-2125a57a23d7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-e9ee1cba5b5193",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author and source of the memory industry research and forecasts."
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-2125a57a23d7",
+     "claim_ids": [
+      "C-47249bee70db8f"
+     ],
+     "direction": "positive",
+     "name": "memory",
+     "provenance": "SOURCE OPINION",
+     "quote": "memory manufacturers to tentatively plan cuts to PC DRAM supply in 2027"
+    }
+   ],
+   "sectors": [
+    "memory",
+    "smartphones",
+    "Semiconductors",
+    "PC OEMs"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "4Q26 contract pricing settlement [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-3b86df268ddf00",
+      "C-066952896ad45a"
+     ],
+     "provenance": "FORECAST",
+     "text": "Price increases continue in 4Q26 but moderate QoQ for both PC DRAM (13-18%) and client SSD (<5%). \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-1b0862b34a6ab5",
+      "C-6a1262e91452f1"
+     ],
+     "provenance": "FORECAST",
+     "text": "Reballed penetration rising to 7-9% in 2027 while DRAM prices keep climbing into 1Q27. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-47249bee70db8f",
+      "C-c9cbdec8d8ff42"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI applications structurally divert memory capacity away from PC/consumer segments, keeping the pricing cycle up even amid weak PC demand into 2027."
+    },
+    {
+     "claim_ids": [
+      "C-dd23ced2073631",
+      "C-52c18f104fcc8b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reballed memory remains concentrated in budget devices and a modest share of total LPDRAM bit consumption, so it does not undermine the structural DRAM price uptrend."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-52c18f104fcc8b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Spreading adoption of reballed and lower-spec memory could theoretically dampen DRAM demand, but the article judges it too modest to disrupt prices."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 17 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    },
+    {
+     "claim_ids": [
+      "C-c51e6fa2705493",
+      "C-368a88b9d4ae0d",
+      "C-766668e190b5e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Rising OEM finished-goods inventories and curtailed procurement could force larger price moderation or eventual declines if PC demand keeps weakening."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-3d8803bc462058"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reballed memory carries quality-consistency uncertainty that can compromise reliability and shorten device lifespans, risking warranty and repair costs."
+    },
+    {
+     "claim_ids": [
+      "C-368a88b9d4ae0d"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "PC brands broadly curtailed client SSD procurement in 4Q26 due to subdued demand and elevated inventories."
+    },
+    {
+     "claim_ids": [
+      "C-766668e190b5e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "SSD procurement caution extends into 1Q27 with plans revised downward."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DRAM contract prices falling instead of rising in 1Q27"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reballed penetration materially exceeding budget segment and denting new DRAM demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Quality failures of reballed memory reversing adoption"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "PC DRAM 4Q26 contract prices settling below 13% QoQ or turning negative"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory makers reversing planned 2027 PC DRAM supply cuts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SSD prices falling rather than rising"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-3d8803bc462058"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reliance on reballed memory carries quality-consistency uncertainty that can compromise product reliability, shorten device lifespans, erode consumer confidence, damage brand reputation, and raise warranty and repair costs for smartphone makers. (scope: Applies to smartphone brands adopting reballed memory, per TrendForce's stated trade-offs; no listed company named.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: Mobile DRAM contract prices continue rising, keeping budget smartphone BOM pressure high."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether and how much reballed adoption affects listed DRAM makers' bit shipments, revenue or margins"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which specific listed smartphone brands or memory suppliers are exposed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the penetration estimates reflect demonstrated causation vs. association with price rises"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether specific listed memory suppliers' earnings or margins reflect the forecast price moves"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether 2027 PC DRAM supply cuts are executed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus memory price expectations versus this forecast"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Mobile DRAM prices roll over"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reballed adoption stalls on quality/reliability concerns"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "PC demand stabilizes and inventories normalize"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Price increases stall or reverse"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check listed DRAM/NAND makers' (e.g. Samsung, SK Hynix, Micron) PC segment exposure and guidance against TrendForce's 4Q26 price forecasts and 2027 supply-cut plans."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DRAM contract prices accelerate further in 1Q27"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reballed adoption spreads to mid/high price tiers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory makers confirm 2027 PC DRAM supply cuts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "4Q26 contract prices settle at top of 13-18% range"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-d62b9f56c2a5",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-1b0862b34a6ab5",
+     "C-3d8803bc462058",
+     "C-483c5652b33b0c",
+     "C-52c18f104fcc8b",
+     "C-6a1262e91452f1",
+     "C-73815b2568902e",
+     "C-b13d8f7a7d1dae",
+     "C-b5d05ebd627c6d",
+     "C-dd23ced2073631",
+     "C-e8679311fe22f0"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-06T13:45:07+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Persistently High DRAM Prices Drive Adoption of Reballed Memory, with Smartphone Penetration Expected to Reach 7\u20139% in 2027, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261106-13297.html",
+    "version_dates": []
+   },
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-2125a57a23d7",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-3b86df268ddf00",
+     "C-066952896ad45a",
+     "C-b7606c0a8ea0b9",
+     "C-c51e6fa2705493",
+     "C-47249bee70db8f",
+     "C-c9cbdec8d8ff42",
+     "C-2dd21f605a21da",
+     "C-177dd4f5c6d6a7",
+     "C-368a88b9d4ae0d",
+     "C-766668e190b5e8"
+    ],
+    "contribution": "contradictory",
+    "published_at": "2026-11-11T15:20:31+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Mounting Finished-Goods Inventories Prompt Some PC OEMs to Adjust Memory Procurement Plans for 2027, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261111-13303.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-19",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-10-09 (0000723125-26-000023)",
+    "business": "memory chip maker (DRAM, NAND, HBM)",
+    "direction": "positive",
+    "enrichment_id": "EC-31fa4d9885ec26",
+    "evidence": "s03.4: Supply constraint from AI keeps memory supplier pricing elevated; effect on specific listed memory makers' margins not quantified by the article.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-10-09 (accession 0000723125-26-000023) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.10 per share",
+      "ticker": "MU"
+     }
+    ],
+    "name": "Micron Technology",
+    "rationale": "AI-driven supply tightness keeps DRAM contract prices elevated; rising mobile and PC DRAM pricing lifts Micron's product margins directly.",
+    "registrant": "MICRON TECHNOLOGY INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "DRAM memory chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.4",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "MU"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "DRAM and NAND memory manufacturer",
+    "direction": "positive",
+    "enrichment_id": "EC-a31079973a68e9",
+    "evidence": "s03.2: DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "SK Hynix",
+    "rationale": "Sustained upward DRAM contract pricing through 1Q27, including mobile DRAM, raises revenue and margins for a leading mobile DRAM supplier.",
+    "registrant": "SK hynix Inc.",
+    "resolution_note": "listing NOT point-in-time verified as of 2026-11-19: no periodic filing on or before 2026-11-19 in the SEC submissions index; foreign-issuer check unavailable",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "mobile and PC DRAM chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "HXSCL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-14 (0001628280-26-057139)",
+    "business": "HDD and NAND flash storage maker",
+    "direction": "positive",
+    "enrichment_id": "EC-37864713b30cad",
+    "evidence": "s03.2: DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-23 (accession 0001628280-26-066933) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 Par Value Per Share",
+      "ticker": "WDC"
+     }
+    ],
+    "name": "Western Digital",
+    "rationale": "Rising client SSD and NAND prices amid supply tightness lift pricing on its storage products, though SSD increases are moderating.",
+    "registrant": "WESTERN DIGITAL CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3572); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "client SSD and flash storage",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "WDC"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-17 (0001628280-26-057406)",
+    "business": "NAND flash memory and SSD maker",
+    "direction": "positive",
+    "enrichment_id": "EC-df9aee6cb45c7f",
+    "evidence": "s03.2: DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-30 (accession 0001628280-26-068601) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 Par Value Per Share",
+      "ticker": "SNDK"
+     }
+    ],
+    "name": "Sandisk",
+    "rationale": "Elevated NAND and client SSD contract pricing from supply tightness supports revenue and margins on its flash products.",
+    "registrant": "Sandisk Corp",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3572); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "NAND flash and SSDs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "SNDK"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-12-10 (0000047217-25-000071)",
+    "business": "PC and printer manufacturer",
+    "direction": "negative",
+    "enrichment_id": "EC-0cafe65fe92986",
+    "evidence": "s03.1: Notebook shipments fell 15.8% QoQ in 3Q26 with a further single-digit decline possible in 4Q26, raising OEM inventories.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-27 (accession 0000047217-26-000051) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.01 per share",
+      "ticker": "HPQ"
+     }
+    ],
+    "name": "HP Inc.",
+    "rationale": "Notebook shipments falling QoQ and rising OEM inventories, plus climbing PC DRAM and SSD input costs, pressure its PC volumes and margins.",
+    "registrant": "HP INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3570); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "notebook and desktop PCs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "HPQ"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-16 (0001571996-26-000008)",
+    "business": "PC, server and storage maker",
+    "direction": "negative",
+    "enrichment_id": "EC-6bc057af1aebb9",
+    "evidence": "s03.1: Notebook shipments fell 15.8% QoQ in 3Q26 with a further single-digit decline possible in 4Q26, raising OEM inventories.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-08 (accession 0001571996-26-000046) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class C Common Stock, par value of $0.01 per share",
+      "ticker": "DELL"
+     }
+    ],
+    "name": "Dell Technologies",
+    "rationale": "Softening PC demand with rising OEM inventories and higher DRAM/SSD component costs squeeze its client notebook business margins.",
+    "registrant": "Dell Technologies Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "client notebook PCs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "DELL"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "PC and smartphone manufacturer",
+    "direction": "negative",
+    "enrichment_id": "EC-a0428cc42d0dfe",
+    "evidence": "s03.3: Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Lenovo Group",
+    "rationale": "Rising DRAM prices raise BOM costs across its budget smartphones and notebooks, pressuring margins despite reballed-memory workarounds.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "smartphones and notebook PCs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.3",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-7C895A0A4E",
+    "ticker_hint": "LNVGY"
+   }
+  ],
+  "created_at": "2026-11-19T09:29:58.364481Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261119T090734Z-scan",
+  "set_id": "ES-f186ddc5c260e9",
+  "thesis_id": "TH-7C895A0A4E",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-09",
+   "change_summary": "Initial record \u2014 created from A-d62b9f56c2a5",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-09",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.memory"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:19:24.902241Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-06",
+     "latest_article_date": "2026-11-06",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-7C895A0A4E",
+     "title": "High DRAM prices push budget smartphone brands to adopt cheaper reballed memory"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-1b0862b34a6ab5",
+       "C-b13d8f7a7d1dae",
+       "C-483c5652b33b0c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% in 2027, as brands use it to offset rising mobile DRAM contract prices, especially in sub-CNY1,299 4G phones. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e8679311fe22f0",
+       "C-52c18f104fcc8b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames reballed memory as a cost-management workaround that nonetheless leaves the upward DRAM contract price trend intact, with potential spread into higher price segments if prices keep climbing in 1Q27."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A rising DRAM price cycle is strong enough that budget smartphone makers increasingly substitute reballed (reused) memory, but the article says this will not derail the upward DRAM price trend, so the main read-through is continued memory pricing strength."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-73815b2568902e"
+       ],
+       "original_date": "2026-11-06",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Reballed memory penetration in the smartphone market is estimated at about 3-4% in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1b0862b34a6ab5"
+       ],
+       "original_date": "2026-11-06",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Reballed memory smartphone penetration could climb to 7-9% in 2027. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-6a1262e91452f1"
+       ],
+       "original_date": "2026-11-06",
+       "period": "1Q27",
+       "provenance": "FORECAST",
+       "text": "DRAM price increases are expected to gain further momentum in 1Q27, pressuring smartphone manufacturers' cost structures."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b13d8f7a7d1dae"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-483c5652b33b0c"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-52c18f104fcc8b"
+       ],
+       "original_date": "2026-11-06",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices."
+      },
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 7 pieces of evidence from A-d62b9f56c2a5 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-09 14:19 UTC, analysed as of 2026-11-09, from a source published 2026-11-06; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b13d8f7a7d1dae",
+       "C-6a1262e91452f1"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Sustained rises in mobile DRAM contract prices drive smartphone brands toward lower-cost reballed memory."
+     },
+     {
+      "claim_ids": [
+       "C-6a1262e91452f1",
+       "C-52c18f104fcc8b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend."
+     },
+     {
+      "claim_ids": [
+       "C-483c5652b33b0c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Implication for listed memory suppliers' revenue/margins is not quantified by the article."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1b0862b34a6ab5",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "reballed memory smartphone penetration rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "potentially"
+      ],
+      "quote": "potentially climbing to 7\u20139% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "7\u20139%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-483c5652b33b0c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "below"
+      ],
+      "quote": "LPDDR4X 4GB currently accounts for the bulk of reballed memory available in the market, with these components primarily finding their way into 4G smartphones priced below CNY 1,299",
+      "role": "supports",
+      "unit": "CNY",
+      "value": 1299.0,
+      "value_text": "1,299"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-73815b2568902e",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "reballed memory smartphone penetration rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "the penetration rate of reballed memory in the smartphone market will reach approximately 3\u20134% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "3\u20134%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-52c18f104fcc8b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the increasing use of reballed components is unlikely to significantly disrupt the prevailing upward trend in DRAM contract prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b13d8f7a7d1dae",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the sustained rise in mobile DRAM contract prices is driving smartphone brands to increasingly embrace lower-cost reballed memory components",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b5d05ebd627c6d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Reballed memory lets smartphone brands curb production costs near-term and sustain shipment volumes amid rising component prices",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "near term",
+      "qualifiers": [
+       "near term"
+      ],
+      "quote": "reballed memory provides smartphone brands with an effective means of curbing production costs in the near term, offering much-needed flexibility to sustain shipment volumes amid rising component prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6a1262e91452f1",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "DRAM contract price direction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1Q27",
+      "qualifiers": [],
+      "quote": "with DRAM price increases expected to gain further momentum in 1Q27, smartphone manufacturers are likely to face mounting pressure on their cost structures",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-d62b9f56c2a5",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-76ad408b29de5a",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the memory industry analysis and estimates."
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [],
+     "sectors": [
+      "memory",
+      "smartphones"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "1Q27 expected DRAM price momentum [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-1b0862b34a6ab5",
+        "C-6a1262e91452f1"
+       ],
+       "provenance": "FORECAST",
+       "text": "Reballed penetration rising to 7-9% in 2027 while DRAM prices keep climbing into 1Q27. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-dd23ced2073631",
+        "C-52c18f104fcc8b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reballed memory remains concentrated in budget devices and a modest share of total LPDRAM bit consumption, so it does not undermine the structural DRAM price uptrend."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-52c18f104fcc8b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Spreading adoption of reballed and lower-spec memory could theoretically dampen DRAM demand, but the article judges it too modest to disrupt prices."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 17 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-3d8803bc462058"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reballed memory carries quality-consistency uncertainty that can compromise reliability and shorten device lifespans, risking warranty and repair costs."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM contract prices falling instead of rising in 1Q27"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed penetration materially exceeding budget segment and denting new DRAM demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Quality failures of reballed memory reversing adoption"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-3d8803bc462058"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reliance on reballed memory carries quality-consistency uncertainty that can compromise product reliability, shorten device lifespans, erode consumer confidence, damage brand reputation, and raise warranty and repair costs for smartphone makers. (scope: Applies to smartphone brands adopting reballed memory, per TrendForce's stated trade-offs; no listed company named.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Mobile DRAM contract prices continue rising, keeping budget smartphone BOM pressure high."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether and how much reballed adoption affects listed DRAM makers' bit shipments, revenue or margins"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific listed smartphone brands or memory suppliers are exposed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the penetration estimates reflect demonstrated causation vs. association with price rises"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Mobile DRAM prices roll over"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed adoption stalls on quality/reliability concerns"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Quantify how reballed memory penetration at 7-9% of smartphone units but a modest share of LPDRAM bits affects listed DRAM suppliers' bit demand and ASP trajectory."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM contract prices accelerate further in 1Q27"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed adoption spreads to mid/high price tiers"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-d62b9f56c2a5",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-6a1262e91452f1",
+       "C-73815b2568902e",
+       "C-1b0862b34a6ab5",
+       "C-b13d8f7a7d1dae",
+       "C-483c5652b33b0c",
+       "C-52c18f104fcc8b",
+       "C-b5d05ebd627c6d",
+       "C-3d8803bc462058"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-06T13:45:07+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Persistently High DRAM Prices Drive Adoption of Reballed Memory, with Smartphone Penetration Expected to Reach 7\u20139% in 2027, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261106-13297.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "340c735f89d52fdc43e939eb8004688759bedf7de60c0d9c04b55ce9d0990e17",
+   "created_at": "2026-11-09T14:19:35.890974Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-1b0862b34a6ab5",
+       "C-483c5652b33b0c",
+       "C-6a1262e91452f1"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-6a1262e91452f1"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-73815b2568902e: forecast window 2026-01-01..2026-12-31 (2026); C-6a1262e91452f1: forecast window 2027-01-01..2027-03-31 (1q27)); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-6a1262e91452f1",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-3d8803bc462058"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 4 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.0",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_exposure",
+      "kind": "held",
+      "text": "no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261109T140627Z-scan",
+   "thesis_id": "TH-7C895A0A4E",
+   "version": 1
+  },
+  {
+   "as_of": "2026-11-19",
+   "change_summary": "A-2125a57a23d7: contradictory \u00d72, new \u00d78",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-19",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.memory"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-11-09",
+     "first_ingested_at": "2026-11-09T14:19:24.902241Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-11",
+     "latest_article_date": "2026-11-11",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Memory (DRAM, HBM, NAND): supply, pricing, capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-7C895A0A4E",
+     "title": "High DRAM prices push budget smartphone brands to adopt cheaper reballed memory"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-1b0862b34a6ab5",
+       "C-b13d8f7a7d1dae",
+       "C-483c5652b33b0c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% in 2027, as brands use it to offset rising mobile DRAM contract prices, especially in sub-CNY1,299 4G phones. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e8679311fe22f0",
+       "C-52c18f104fcc8b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames reballed memory as a cost-management workaround that nonetheless leaves the upward DRAM contract price trend intact, with potential spread into higher price segments if prices keep climbing in 1Q27."
+     },
+     {
+      "claim_ids": [
+       "C-3b86df268ddf00",
+       "C-b7606c0a8ea0b9",
+       "C-066952896ad45a",
+       "C-c51e6fa2705493",
+       "C-47249bee70db8f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "\u27e8update 2026-11-11 \u00b7 TrendForce\u27e9 TrendForce forecasts PC DRAM contract prices rise 13-18% QoQ in 4Q26 and client SSD prices under 5%, both moderating from the prior quarter, as softening PC demand and rising OEM inventories collide with AI-driven supply tightness. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-3b86df268ddf00"
+       ],
+       "original_date": "2026-11-11",
+       "period": "4Q26",
+       "provenance": "FORECAST",
+       "text": "PC DRAM contract prices are forecast to rise 13\u201318% QoQ in 4Q26. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-066952896ad45a"
+       ],
+       "original_date": "2026-11-11",
+       "period": "4Q26",
+       "provenance": "FORECAST",
+       "text": "Client SSD contract prices are expected to rise less than 5% QoQ in 4Q26, a notable moderation from the previous quarter. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-b7606c0a8ea0b9"
+       ],
+       "original_date": "2026-11-11",
+       "period": "4Q26",
+       "provenance": "FORECAST",
+       "text": "PC DRAM contract price increases in 4Q26 are slowing from the previous quarter. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-c51e6fa2705493"
+       ],
+       "original_date": "2026-11-11",
+       "period": "since 3Q26",
+       "provenance": "SOURCE OPINION",
+       "text": "DRAM inventory weeks among OEMs have steadily increased since 3Q26 and are expected to build further in 4Q26. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-47249bee70db8f"
+       ],
+       "original_date": "2026-11-11",
+       "period": "2027",
+       "provenance": "SOURCE OPINION",
+       "text": "Memory makers are tentatively planning to cut PC DRAM supply in 2027 due to robust AI demand. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-c9cbdec8d8ff42"
+       ],
+       "original_date": "2026-11-11",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Client SSD production capacity is being squeezed by growing AI-related demand. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-2dd21f605a21da"
+       ],
+       "original_date": "2026-11-11",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "SSD suppliers are imposing steeper price increases on lower-capacity SSDs to discourage demand for less profitable products and improve product mix \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "new",
+       "claim_ids": [
+        "C-177dd4f5c6d6a7"
+       ],
+       "original_date": "2026-11-11",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Memory manufacturers prioritize strategic PC-customer partnerships as they prepare for longer-term edge AI opportunities \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-368a88b9d4ae0d"
+       ],
+       "original_date": "2026-11-11",
+       "period": "4Q26",
+       "provenance": "SOURCE OPINION",
+       "text": "PC brands broadly curtailed client SSD procurement in 4Q26 due to subdued demand and elevated inventories. \u27e8the source states evidence against this thesis\u27e9"
+      },
+      {
+       "article_id": "A-2125a57a23d7",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-766668e190b5e8"
+       ],
+       "original_date": "2026-11-11",
+       "period": "1Q27",
+       "provenance": "SOURCE OPINION",
+       "text": "SSD procurement caution extends into 1Q27 with plans revised downward. \u27e8the source states evidence against this thesis\u27e9"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 10 claim(s); this source adds: contradictory \u00d72, new \u00d78"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b13d8f7a7d1dae",
+       "C-6a1262e91452f1"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Sustained rises in mobile DRAM contract prices drive smartphone brands toward lower-cost reballed memory."
+     },
+     {
+      "claim_ids": [
+       "C-74c179db37cc77",
+       "C-c51e6fa2705493"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Notebook shipments fell 15.8% QoQ in 3Q26 with a further single-digit decline possible in 4Q26, raising OEM inventories. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-6a1262e91452f1",
+       "C-52c18f104fcc8b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "DRAM contract prices expected to keep rising through 1Q27 and beyond, with reballed adoption unlikely to disrupt the upward trend."
+     },
+     {
+      "claim_ids": [
+       "C-483c5652b33b0c",
+       "C-004704edd9c3aa",
+       "C-b5d05ebd627c6d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "Rising DRAM prices increase smartphone BOM costs; reballed memory eases this burden in budget models."
+     },
+     {
+      "claim_ids": [
+       "C-47249bee70db8f"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "margins",
+      "text": "Supply constraint from AI keeps memory supplier pricing elevated; effect on specific listed memory makers' margins not quantified by the article."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Implication for listed memory suppliers' revenue/margins is not quantified by the article."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1b0862b34a6ab5",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "reballed memory smartphone penetration rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "potentially"
+      ],
+      "quote": "potentially climbing to 7\u20139% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "7\u20139%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-483c5652b33b0c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "LPDDR4X 4GB accounts for the bulk of available reballed memory, used mostly in 4G smartphones priced below CNY 1,299.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "below"
+      ],
+      "quote": "LPDDR4X 4GB currently accounts for the bulk of reballed memory available in the market, with these components primarily finding their way into 4G smartphones priced below CNY 1,299",
+      "role": "supports",
+      "unit": "CNY",
+      "value": 1299.0,
+      "value_text": "1,299"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-73815b2568902e",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "reballed memory smartphone penetration rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "the penetration rate of reballed memory in the smartphone market will reach approximately 3\u20134% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "3\u20134%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-2125a57a23d7",
+      "block_id": "b012",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-b7606c0a8ea0b9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "PC DRAM contract price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [
+       "QoQ",
+       "slowing from previous quarter"
+      ],
+      "quote": "PC DRAM contract prices will rise 13\u201318% QoQ in 4Q26, with increases slowing from the previous quarter",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "13\u201318%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-2125a57a23d7",
+      "block_id": "b017",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-066952896ad45a",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "client SSD contract price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "4Q26",
+      "qualifiers": [
+       "QoQ",
+       "notable moderation"
+      ],
+      "quote": "client SSD contract prices to rise by less than 5% QoQ in 4Q26, marking a notable moderation from the previous quarter",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 5.0,
+      "value_text": "less than 5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-52c18f104fcc8b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Increasing reballed memory use is unlikely to significantly disrupt the upward trend in DRAM contract prices.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the increasing use of reballed components is unlikely to significantly disrupt the prevailing upward trend in DRAM contract prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b13d8f7a7d1dae",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Sustained rises in mobile DRAM contract prices are driving smartphone brands to adopt lower-cost reballed memory.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the sustained rise in mobile DRAM contract prices is driving smartphone brands to increasingly embrace lower-cost reballed memory components",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b5d05ebd627c6d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Reballed memory lets smartphone brands curb production costs near-term and sustain shipment volumes amid rising component prices",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "near term",
+      "qualifiers": [
+       "near term"
+      ],
+      "quote": "reballed memory provides smartphone brands with an effective means of curbing production costs in the near term, offering much-needed flexibility to sustain shipment volumes amid rising component prices",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-2125a57a23d7",
+      "block_id": "b011",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-177dd4f5c6d6a7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Memory manufacturers prioritize strategic PC-customer partnerships as they prepare for longer-term edge AI opportunities",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Maintaining strategic partnerships with PC customers also remains a priority as manufacturers prepare for longer-term opportunities in edge AI",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-2125a57a23d7",
+      "block_id": "b015",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-2dd21f605a21da",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SSD suppliers are imposing steeper price increases on lower-capacity SSDs to discourage demand for less profitable products and improve product mix",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "suppliers are imposing steeper price increases on lower-capacity SSDs to discourage demand for these less profitable products",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-2125a57a23d7",
+      "block_id": "b011",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-47249bee70db8f",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "PC DRAM supply",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "tentatively plan",
+       "cuts"
+      ],
+      "quote": "robust demand from AI applications has led memory manufacturers to tentatively plan cuts to PC DRAM supply in 2027",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-2125a57a23d7",
+      "block_id": "b010",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-c51e6fa2705493",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "DRAM inventory weeks",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 3Q26",
+      "qualifiers": [
+       "rising inventory"
+      ],
+      "quote": "declining finished-product shipments have led to a steady increase in DRAM inventory weeks among OEMs since 3Q26, with inventories expected to build further in 4Q26",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-2125a57a23d7",
+      "block_id": "b015",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-c9cbdec8d8ff42",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Client SSD production capacity is being squeezed by growing AI-related demand.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "capacity squeeze"
+      ],
+      "quote": "client SSD production capacity continues to be squeezed by the growing demands of AI-related applications",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-d62b9f56c2a5",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6a1262e91452f1",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "DRAM contract price direction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1Q27",
+      "qualifiers": [],
+      "quote": "with DRAM price increases expected to gain further momentum in 1Q27, smartphone manufacturers are likely to face mounting pressure on their cost structures",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-2125a57a23d7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-e9ee1cba5b5193",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author and source of the memory industry research and forecasts."
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-2125a57a23d7",
+       "claim_ids": [
+        "C-47249bee70db8f"
+       ],
+       "direction": "positive",
+       "name": "memory",
+       "provenance": "SOURCE OPINION",
+       "quote": "memory manufacturers to tentatively plan cuts to PC DRAM supply in 2027"
+      }
+     ],
+     "sectors": [
+      "memory",
+      "smartphones",
+      "Semiconductors",
+      "PC OEMs"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "4Q26 contract pricing settlement [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-3b86df268ddf00",
+        "C-066952896ad45a"
+       ],
+       "provenance": "FORECAST",
+       "text": "Price increases continue in 4Q26 but moderate QoQ for both PC DRAM (13-18%) and client SSD (<5%). \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-1b0862b34a6ab5",
+        "C-6a1262e91452f1"
+       ],
+       "provenance": "FORECAST",
+       "text": "Reballed penetration rising to 7-9% in 2027 while DRAM prices keep climbing into 1Q27. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-47249bee70db8f",
+        "C-c9cbdec8d8ff42"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI applications structurally divert memory capacity away from PC/consumer segments, keeping the pricing cycle up even amid weak PC demand into 2027."
+      },
+      {
+       "claim_ids": [
+        "C-dd23ced2073631",
+        "C-52c18f104fcc8b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reballed memory remains concentrated in budget devices and a modest share of total LPDRAM bit consumption, so it does not undermine the structural DRAM price uptrend."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-52c18f104fcc8b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Spreading adoption of reballed and lower-spec memory could theoretically dampen DRAM demand, but the article judges it too modest to disrupt prices."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 17 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      },
+      {
+       "claim_ids": [
+        "C-c51e6fa2705493",
+        "C-368a88b9d4ae0d",
+        "C-766668e190b5e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Rising OEM finished-goods inventories and curtailed procurement could force larger price moderation or eventual declines if PC demand keeps weakening."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-3d8803bc462058"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reballed memory carries quality-consistency uncertainty that can compromise reliability and shorten device lifespans, risking warranty and repair costs."
+      },
+      {
+       "claim_ids": [
+        "C-368a88b9d4ae0d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "PC brands broadly curtailed client SSD procurement in 4Q26 due to subdued demand and elevated inventories."
+      },
+      {
+       "claim_ids": [
+        "C-766668e190b5e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "SSD procurement caution extends into 1Q27 with plans revised downward."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM contract prices falling instead of rising in 1Q27"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed penetration materially exceeding budget segment and denting new DRAM demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Quality failures of reballed memory reversing adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "PC DRAM 4Q26 contract prices settling below 13% QoQ or turning negative"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory makers reversing planned 2027 PC DRAM supply cuts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SSD prices falling rather than rising"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-3d8803bc462058"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reliance on reballed memory carries quality-consistency uncertainty that can compromise product reliability, shorten device lifespans, erode consumer confidence, damage brand reputation, and raise warranty and repair costs for smartphone makers. (scope: Applies to smartphone brands adopting reballed memory, per TrendForce's stated trade-offs; no listed company named.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: Mobile DRAM contract prices continue rising, keeping budget smartphone BOM pressure high."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether and how much reballed adoption affects listed DRAM makers' bit shipments, revenue or margins"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific listed smartphone brands or memory suppliers are exposed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the penetration estimates reflect demonstrated causation vs. association with price rises"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether specific listed memory suppliers' earnings or margins reflect the forecast price moves"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether 2027 PC DRAM supply cuts are executed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus memory price expectations versus this forecast"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Mobile DRAM prices roll over"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed adoption stalls on quality/reliability concerns"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "PC demand stabilizes and inventories normalize"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Price increases stall or reverse"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check listed DRAM/NAND makers' (e.g. Samsung, SK Hynix, Micron) PC segment exposure and guidance against TrendForce's 4Q26 price forecasts and 2027 supply-cut plans."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DRAM contract prices accelerate further in 1Q27"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reballed adoption spreads to mid/high price tiers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory makers confirm 2027 PC DRAM supply cuts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "4Q26 contract prices settle at top of 13-18% range"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-d62b9f56c2a5",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-1b0862b34a6ab5",
+       "C-3d8803bc462058",
+       "C-483c5652b33b0c",
+       "C-52c18f104fcc8b",
+       "C-6a1262e91452f1",
+       "C-73815b2568902e",
+       "C-b13d8f7a7d1dae",
+       "C-b5d05ebd627c6d",
+       "C-dd23ced2073631",
+       "C-e8679311fe22f0"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-06T13:45:07+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Persistently High DRAM Prices Drive Adoption of Reballed Memory, with Smartphone Penetration Expected to Reach 7\u20139% in 2027, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261106-13297.html",
+      "version_dates": []
+     },
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-2125a57a23d7",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-3b86df268ddf00",
+       "C-066952896ad45a",
+       "C-b7606c0a8ea0b9",
+       "C-c51e6fa2705493",
+       "C-47249bee70db8f",
+       "C-c9cbdec8d8ff42",
+       "C-2dd21f605a21da",
+       "C-177dd4f5c6d6a7",
+       "C-368a88b9d4ae0d",
+       "C-766668e190b5e8"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-11-11T15:20:31+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Mounting Finished-Goods Inventories Prompt Some PC OEMs to Adjust Memory Procurement Plans for 2027, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261111-13303.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "56b085eae89b6c2fa12450e13cbf1784d5628d4936213ddfaa7c2a773d68b855",
+   "created_at": "2026-11-19T09:27:22.066454Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-b7606c0a8ea0b9"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "PC DRAM contract price change: 13\u201318%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-066952896ad45a"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "client SSD contract price change: less than 5%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-177dd4f5c6d6a7"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Memory manufacturers prioritize strategic PC-customer partnerships as they prepare for longer-term edge AI opportunities:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-2dd21f605a21da"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "SSD suppliers are imposing steeper price increases on lower-capacity SSDs to discourage demand for less profitable products and improve product mix:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-47249bee70db8f"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "PC DRAM supply:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-c51e6fa2705493"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "DRAM inventory weeks:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-c9cbdec8d8ff42"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Client SSD production capacity is being squeezed by growing AI-related demand.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-368a88b9d4ae0d"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "PC brands broadly curtailed client SSD procurement in 4Q26 due to subdued demand and elevated inventories.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-766668e190b5e8"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "SSD procurement caution extends into 1Q27 with plans revised downward.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3b86df268ddf00",
+      "C-066952896ad45a",
+      "C-1b0862b34a6ab5",
+      "C-6a1262e91452f1"
+     ],
+     "field_id": "s06_why_now.catalyst_window",
+     "new": "4Q26 contract pricing settlement [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "note": "",
+     "old": "1Q27 expected DRAM price momentum [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window"
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "TrendForce (publisher)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-47249bee70db8f"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "memory (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-73815b2568902e",
+      "C-1b0862b34a6ab5",
+      "C-b13d8f7a7d1dae",
+      "C-483c5652b33b0c",
+      "C-e8679311fe22f0",
+      "C-52c18f104fcc8b",
+      "C-3b86df268ddf00",
+      "C-b7606c0a8ea0b9",
+      "C-066952896ad45a",
+      "C-c51e6fa2705493",
+      "C-47249bee70db8f"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-11-11 \u00b7 TrendForce\u27e9 TrendForce forecasts PC DRAM contract prices rise 13-18% QoQ in 4Q26 and client SSD prices under 5%, both moderating from the prior quarter, as softening PC demand and rising OEM inventories collide with AI-driven supply tightness. \u27e8cited figures: forecast\u27e9",
+     "note": "",
+     "old": "A rising DRAM price cycle is strong enough that budget smartphone makers increasingly substitute reballed (reused) memory, but the article says this will not derail the upward DRAM price trend, so the main read-through is continued memory pricing strength."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "340c735f89d52fdc43e939eb8004688759bedf7de60c0d9c04b55ce9d0990e17",
+   "priority": {
+    "change_reason": "no change in action (F2_material_evidence 4\u21927; F6_recognizable_exposures 0 listed \u00b7 0 sector \u00b7 0 instrument\u21920 listed \u00b7 1 sector \u00b7 0 instrument; F12_fundamental_inflection absent\u2192qualifies; F8_counterevidence 0\u21921)",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-1b0862b34a6ab5",
+       "C-483c5652b33b0c",
+       "C-73815b2568902e",
+       "C-b7606c0a8ea0b9",
+       "C-6a1262e91452f1",
+       "C-3b86df268ddf00",
+       "C-066952896ad45a"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "7"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "3 fundamental step(s) shown by the source, 5 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-73815b2568902e",
+       "C-b7606c0a8ea0b9",
+       "C-6a1262e91452f1",
+       "C-3b86df268ddf00",
+       "C-066952896ad45a"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "5 claim(s) inside the next 2-4 quarters (C-73815b2568902e: forecast window 2026-01-01..2026-12-31 (2026); C-b7606c0a8ea0b9: forecast window 2026-10-01..2026-12-31 (4q26); C-6a1262e91452f1: forecast window 2027-01-01..2027-03-31 (1q27); C-3b86df268ddf00: forecast window 2026-10-01..2026-12-31 (4q26); showing 4 of 5); 2 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: memory",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 3 offered but NOT counted (opinion, forecast figure or stale reading): C-6a1262e91452f1, C-3b86df268ddf00, C-066952896ad45a",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-b7606c0a8ea0b9",
+       "C-3b86df268ddf00",
+       "C-066952896ad45a"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-b7606c0a8ea0b9: forecast window 2026-10-01..2026-12-31 (4q26) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for memory already reflect PC DRAM contract price change of 13\u201318% in 4Q26?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [
+       "C-3d8803bc462058",
+       "C-368a88b9d4ae0d",
+       "C-766668e190b5e8"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (3 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 6 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.0",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261119T090734Z-scan",
+   "thesis_id": "TH-7C895A0A4E",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-2125a57a23d7",
+   "block_ids": [
+    "b011",
+    "b010"
+   ],
+   "claim_ids": [
+    "C-177dd4f5c6d6a7",
+    "C-47249bee70db8f",
+    "C-6a1262e91452f1"
+   ],
+   "excerpt": "\u2026robust demand from AI applications has led memory manufacturers to tentatively plan cuts to PC DRAM\u2026",
+   "name": "manufacturers"
+  },
+  {
+   "article_id": "A-2125a57a23d7",
+   "block_ids": [
+    "b011",
+    "b015",
+    "b010"
+   ],
+   "claim_ids": [
+    "C-2dd21f605a21da"
+   ],
+   "excerpt": "\u2026plan cuts to PC DRAM supply in 2027. However, suppliers have some flexibility to slightly moderate\u2026",
+   "name": "suppliers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 6,
+ "other_cited_evidence": [
+  "C-e8679311fe22f0",
+  "C-3b86df268ddf00",
+  "C-368a88b9d4ae0d",
+  "C-766668e190b5e8",
+  "C-74c179db37cc77",
+  "C-004704edd9c3aa",
+  "C-dd23ced2073631",
+  "C-3d8803bc462058"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s03.1": "The 15.8% QoQ decline figure for 3Q26 is not in the cited spans; cited C-74c179db37cc77 only covers the possible 4Q26 single-digit decline. The exact 15.8% is in pool C-1b865c3ec30106.",
+  "s07.6": "Cited span supports quality uncertainty, reliability compromise and shortened lifespans, but 'erode consumer confidence, damage brand reputation, and raise warranty and repair costs' are not in the cited span or pool."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {
+  "s01.0": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s01.0 prints '299', which none of its cited claims carry: 'TrendForce estimates reballed memory penetration in smartphones at ~3-4% in 2026, potentially 7-9% i'",
+  "s03.1": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s03.1 prints '15.8', which none of its cited claims carry: 'Notebook shipments fell 15.8% QoQ in 3Q26 with a further single-digit decline possible in 4Q26, rais'"
+ }
+}

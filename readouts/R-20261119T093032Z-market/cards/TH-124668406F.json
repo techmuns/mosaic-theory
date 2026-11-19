@@ -1,0 +1,2714 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-19",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.compute_semis"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-19",
+   "first_ingested_at": "2026-11-19T09:23:49.035034Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-12",
+   "latest_article_date": "2026-11-12",
+   "region": "China",
+   "research_action": "WATCH",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-124668406F",
+   "title": "Tighter China export controls accelerate Chinese labs' shift to domestic accelerators"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-8751cd52abcdaa",
+     "C-5300e059d7a280",
+     "C-bd854f643868b4",
+     "C-fc1e930b5f2bfe",
+     "C-770f3e937aa101",
+     "C-c1a20199606cea"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SemiAnalysis argues Jensen's exit removes Nvidia's biggest defender of China access, accelerating RASA-style export controls; cut off from Nvidia GPUs, Chinese labs are already moving to domestic accelerators (Z.ai/GLM-5, DeepSeek on Huawei Ascend, Meituan LongCat on Ascend 910B), harming Nvidia and benefiting Huawei."
+   },
+   {
+    "claim_ids": [
+     "C-bd854f643868b4",
+     "C-f9a1644bdecd17",
+     "C-fc1e930b5f2bfe"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues escalating controls guarantee fewer chips produced and faster Chinese migration off Nvidia, which is already happening."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If RASA or similar passes and controls tighten, Nvidia loses China demand and the US open-source ecosystem loses Chinese contributions, while Huawei and domestic accelerators gain volume; the article does not quantify Nvidia's China revenue at risk."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5300e059d7a280"
+     ],
+     "original_date": "2026-11-12",
+     "period": "Jan. 12",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "RASA passed the House 369-22 on Jan. 12"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8751cd52abcdaa"
+     ],
+     "original_date": "2026-11-12",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "RASA has passed the House but awaits a Senate vote, which is happening now"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c4da5871203e79"
+     ],
+     "original_date": "2026-11-12",
+     "period": "May",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "In the Keelung smuggling investigation, authorities searched 12 more locations and seized 56 servers and luxury cars."
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-73ffdfb6a6f3ce"
+     ],
+     "original_date": "2026-11-12",
+     "period": "May",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Authorities also seized NT$9M (about $275k USD) in cash in the Keelung smuggling case. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-cd0edecb24884f"
+     ],
+     "original_date": "2026-11-12",
+     "period": "September 2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Flying Tiger received a license in Sep 2025 to purchase 130 servers from Supermicro as the named end user, then passed an onsite inspection that prosecutors say the site did not meet."
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-bd854f643868b4"
+     ],
+     "original_date": "2026-11-12",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Department of Commerce believes more than 1.5GW of Nvidia chips are improperly in China"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 8 pieces of evidence from A-5b5764ebd058 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-19 09:23 UTC, analysed as of 2026-11-19, from a source published 2026-11-12; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-5300e059d7a280",
+     "C-8751cd52abcdaa",
+     "C-fc1e930b5f2bfe"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "RASA-style remote-access and export controls ramp faster with Jensen gone, cutting Chinese labs off from Nvidia GPUs"
+   },
+   {
+    "claim_ids": [
+     "C-bd854f643868b4",
+     "C-770f3e937aa101"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Chinese labs move inference/training onto Huawei Ascend and other domestic accelerators"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b055",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5300e059d7a280",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "House vote",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "Jan. 12",
+    "qualifiers": [
+     "motion to suspend the rules"
+    ],
+    "quote": "RASA passed the House 369-22 on Jan. 12",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "369-22"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b093",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-73ffdfb6a6f3ce",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "cash seized",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "May",
+    "qualifiers": [
+     "about $275k USD"
+    ],
+    "quote": "NT$9M (about $275k USD) in cash",
+    "role": "supports",
+    "unit": "NT$m",
+    "value": 9.0,
+    "value_text": "NT$9M"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b052",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-bd854f643868b4",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Department of Commerce believes more than 1.5GW of Nvidia chips are improperly in China",
+    "measured_as_of": null,
+    "origin": "Department of Commerce",
+    "period": null,
+    "qualifiers": [
+     "more than"
+    ],
+    "quote": "The Department of Commerce now also finally believes that there is more than 1.5GW of NVIDIA chips in China that shouldn\u2019t be there.",
+    "role": "supports",
+    "unit": "GW",
+    "value": 1.5,
+    "value_text": "more than 1.5GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b093",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c4da5871203e79",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "servers seized",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "May",
+    "qualifiers": [
+     "12 locations searched",
+     "luxury cars"
+    ],
+    "quote": "They then searched 12 more locations, and seized 56 servers, luxury cars",
+    "role": "supports",
+    "unit": "servers",
+    "value": 56.0,
+    "value_text": "56"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b096",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cd0edecb24884f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "servers licensed",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "September 2025",
+    "qualifiers": [
+     "named end user",
+     "onsite inspection"
+    ],
+    "quote": "Flying Tiger had applied and received a license to purchase 130 servers from Supermicro in Sep 2025 with themselves named as the end user",
+    "role": "supports",
+    "unit": "servers",
+    "value": 130.0,
+    "value_text": "130"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b055",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2010bef72f37a0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "committee vote",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "April 2025",
+    "qualifiers": [],
+    "quote": "The House Foreign Affairs Committee approved it 51-0 in April 2025",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "51-0"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b057",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-93e8041c47262a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Neoclouds across many regions actively selling capacity to Chinese companies would all be impacted by RASA",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "neoclouds in Asia, Australia, the Middle East, Nordics, Europe, Canada and even the U.S. that are actively selling capacity to Chinese companies. All of them would be impacted by this bill",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b003",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fc1e930b5f2bfe",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Author believes China AI/chip restrictions will ramp much faster now that Jensen is gone",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "AI and chip restrictions on China are going to ramp now much faster with the biggest defender Jensen, gone",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b053",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8751cd52abcdaa",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "RASA has passed the House but awaits a Senate vote, which is happening now",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": null,
+    "qualifiers": [
+     "Remote Access Security Act"
+    ],
+    "quote": "a critical bill called the Remote Access Security Act (\u201cRASA\u201d) that has passed the House that has yet to receive a vote in the Senate, and that vote is happening right now",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0000002488",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-e1b208e37d74db",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Competitor/Tier 1 memory customer that could gain supply access as Nvidia's supply chain stranglehold loosens"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001730168",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value",
+       "ticker": "AVGO"
+      }
+     ],
+     "mention_id": "M-93dc40f586075e",
+     "name_as_written": "Broadcom",
+     "other_securities": [],
+     "quote": "Broadcom",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Tier 1 customer that could gain memory/capacity access as Nvidia's priority loosens"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7fd0f50dcd4de6",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler customer and Tier 1 memory customer building own XPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001018724",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-9160272340ff6c",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "Amazon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler and Tier 1 memory customer building own XPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0000789019",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-1fbfa2f2a3f7ea",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001326801",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-eb1d65a8308d61",
+     "name_as_written": "Meta",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page, but 2 8-A12B registration(s) fell between it and 2026-11-19 \u2014 undecidable here",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "METAM"
+      }
+     ],
+     "quote": "Meta",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001571996",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-08 (accession 0001571996-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class C Common Stock, par value of $0.01 per share",
+       "ticker": "DELL"
+      }
+     ],
+     "mention_id": "M-1babb7e913430d",
+     "name_as_written": "Dell",
+     "other_securities": [],
+     "quote": "Dell",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Server maker dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0002120882",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3e553fdfe442de",
+     "name_as_written": "SK Hynix",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "SKHY"
+      },
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "HXSCL"
+      }
+     ],
+     "quote": "SK Hynix\u2019s 2027 HBM4 pricing",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "HBM memory supplier whose pricing priority for Nvidia may loosen without Jensen"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001973239",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-79246b3a2e2f66",
+     "name_as_written": "Arm",
+     "other_securities": [],
+     "quote": "Rene Haas at Arm",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Company run by a rare former Nvidia executive turned CEO"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001341439",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.01 per share",
+       "ticker": "ORCL"
+      }
+     ],
+     "mention_id": "M-96926f04425b8a",
+     "name_as_written": "Oracle",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+       "ticker": "ORCL PRD"
+      }
+     ],
+     "quote": "NVIDIA and Oracle have been lobbying against it",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Company lobbying against RASA export-control bill"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5288aea0904852",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "only two real customers, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "One of Nvidia's two frontier-lab customers"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-405ef3a5c400bb",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "One of Nvidia's two frontier-lab customers"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-408d23dfa212db",
+     "name_as_written": "SpaceX",
+     "other_securities": [],
+     "quote": "all seven except SpaceX are trying to build their own XPUs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "The only major customer not building its own XPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-27689cfe67f4fb",
+     "name_as_written": "Reflection",
+     "other_securities": [],
+     "quote": "investing in firms like Reflection, Thinking Machines, Poolside",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "US open-source AI firm Nvidia was propping up; may be deprioritized without Jensen"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3f8b1c97d5df2c",
+     "name_as_written": "Thinking Machines",
+     "other_securities": [],
+     "quote": "Reflection, Thinking Machines, Poolside",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "US AI firm Nvidia was supporting"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c58e199058d12f",
+     "name_as_written": "Poolside",
+     "other_securities": [],
+     "quote": "Reflection, Thinking Machines, Poolside",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "US AI firm Nvidia was supporting"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d5ef0663d9f348",
+     "name_as_written": "Hugging Face",
+     "other_securities": [],
+     "quote": "the Hugging Face acquisition",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Open-source AI platform referenced as a Nvidia acquisition supporting open source"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-20d83825c76e07",
+     "name_as_written": "Albatron",
+     "other_securities": [],
+     "quote": "Albatron",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Supermicro distributor implicated in smuggling indictment"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2b148ab4a46391",
+     "name_as_written": "Chief Telecom",
+     "other_securities": [],
+     "quote": "Chief Telecom (a Taiwanese distributor, reseller, and datacenter operator)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Taiwanese datacenter operator implicated in smuggling indictment"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0000071691",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-04 (accession 0000071691-26-000041) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock",
+       "ticker": "NYT"
+      }
+     ],
+     "mention_id": "M-7bb37ad3ddf1fa",
+     "name_as_written": "New York Times",
+     "other_securities": [],
+     "quote": "The second New York Times story",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "data_source",
+     "role_detail": "Cited news source reporting on intelligence community basis"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ed4798a3ddfdbb",
+     "name_as_written": "Department of Commerce",
+     "other_securities": [],
+     "quote": "The Department of Commerce now also finally believes",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US agency believing more than 1.5GW of Nvidia chips improperly in China"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f3ff421b0b2653",
+     "name_as_written": "Rednote",
+     "other_securities": [],
+     "quote": "ads on Rednote for an 800 GPU cluster of RTX 5090",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Chinese platform where smuggled GPU clusters are advertised for rental"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b35d1b0e0f059f",
+     "name_as_written": "Colette Kress",
+     "other_securities": [],
+     "quote": "Colette Kress has been named interim CEO",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Named interim CEO of Nvidia"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-124ce832cee91c",
+     "name_as_written": "MiniMax",
+     "other_securities": [],
+     "quote": "kernel libraries like MiniMax MSA",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "disruptor",
+     "role_detail": "Chinese lab producing open-source kernel libraries (MSA) targeting Nvidia Blackwell GPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-890cd64a7b8efb",
+     "name_as_written": "Moonshot",
+     "other_securities": [],
+     "quote": "Moonshot\u2019s FlashKDA",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Chinese lab producing open-source kernel library FlashKDA"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001045810",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-3c11427af47696",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Jensen Huang is no longer the CEO of Nvidia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potentially_harmed",
+     "role_detail": "Subject of the article; loss of founder CEO Jensen Huang seen as materially negative for the company and its ecosystem"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-55981b9d60e3ab",
+     "name_as_written": "Huawei",
+     "other_securities": [],
+     "quote": "Huawei Ascend NPUs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Domestic Chinese accelerator maker benefiting from Chinese labs moving off Nvidia"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-8418807b050f60",
+     "name_as_written": "Meituan",
+     "other_securities": [],
+     "quote": "Meituan claimed LongCat 2.0",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "disruptor",
+     "role_detail": "Chinese firm claiming model pretrained entirely on Huawei Ascend NPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "risk",
+     "listings": [],
+     "mention_id": "M-f8605a7b4d8116",
+     "name_as_written": "Supermicro",
+     "other_securities": [],
+     "quote": "Supermicro",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Server maker implicated in GPU smuggling indictments; dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "risk",
+     "listings": [],
+     "mention_id": "M-d3e94d024ba598",
+     "name_as_written": "Flying Tiger",
+     "other_securities": [],
+     "quote": "Flying Tiger",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Server reseller implicated in smuggling indictment"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-30eba571844925",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "DeepSeek published their V4 paper",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Chinese lab open-sourcing inference kernel on Huawei Ascend NPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-290abab8f02805",
+     "name_as_written": "Z.ai",
+     "other_securities": [],
+     "quote": "Z.ai claimed inference support for GLM-5 on seven domestic accelerators",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Chinese lab moving to domestic accelerators"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "claim_ids": [
+      "C-bd854f643868b4"
+     ],
+     "direction": "positive",
+     "name": "domestic accelerators",
+     "provenance": "SOURCE OPINION",
+     "quote": "they would all be even more motivated to move off of NVIDIA GPUs and onto domestic accelerators"
+    }
+   ],
+   "sectors": [
+    "AI accelerators",
+    "semiconductors"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Senate RASA vote happening now [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-8751cd52abcdaa"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A Senate RASA vote is described as imminent, a near-term catalyst that could reprice China-exposed names."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-bd854f643868b4",
+      "C-770f3e937aa101"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Chinese labs are already demonstrating domestic-accelerator capability, a structural shift that tighter controls would accelerate."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SemiAnalysis argues the current remote-access regime keeps profits with US firms and lets the US monitor and cut off China; cutting off access motivates faster domestic migration, so controls may harm US interests rather than help."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-0577F0AD38: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-0F1BABEC2D: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (valuation_dislocation vs policy_regulation); a different geography (US vs China); no overlapping timeframe \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-B121174B17: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs policy_regulation); no overlapping timeframe \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-CBFA9511C2: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs policy_regulation); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-F2CD2F7AFC: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs policy_regulation) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 27 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "RASA stalls in the Senate"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Chinese labs remain dependent on Nvidia GPUs"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-2f603578e059db",
+      "C-4e79eb09e37d13",
+      "C-6a506010882760"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "GPU smuggling indictments (a $2.5B Supermicro-linked case with $510M reaching China, and a $65M Keelung case implicating 9 people across Nvidia Taiwan, Supermicro, Albatron, Flying Tiger and Chief Telecom) expose named companies to legal and enforcement risk and underpin a crackdown. (scope: Legal/enforcement and reputational risk to the specific named companies; outcomes are being litigated and not resolved.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether RASA passes the Senate and when"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Nvidia's quantified China revenue exposure (not given)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "How fast domestic accelerators can scale to replace Nvidia"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "RASA stalls indefinitely"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "China access regime remains unchanged"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Track the RASA Senate Banking Committee schedule and Chinese labs' public accelerator adoption claims to gauge the pace of Nvidia China displacement."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "RASA advances in the Senate"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "More Chinese labs announce production on domestic accelerators"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-5b5764ebd058",
+    "authors": [
+     "Dylan Patel",
+     "Doug",
+     "Wayne Ma",
+     "Jordan Nanos"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-8751cd52abcdaa",
+     "C-2010bef72f37a0",
+     "C-5300e059d7a280",
+     "C-bd854f643868b4",
+     "C-fc1e930b5f2bfe",
+     "C-93e8041c47262a",
+     "C-c4da5871203e79",
+     "C-73ffdfb6a6f3ce",
+     "C-cd0edecb24884f",
+     "C-2f603578e059db",
+     "C-4e79eb09e37d13",
+     "C-6a506010882760"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-12T18:06:26Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Nvidia and the World Without Jensen",
+    "upstream_origins": [
+     "Department of Commerce",
+     "US v. Liaw indictment",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/nvidia-and-the-world-without-jensen",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-19",
+  "candidates": [
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "China's largest contract chip foundry",
+    "direction": "positive",
+    "enrichment_id": "EC-cba0f442128737",
+    "evidence": "s03.1: Chinese labs move inference/training onto Huawei Ascend and other domestic accelerators",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Semiconductor Manufacturing International (SMIC)",
+    "rationale": "Huawei Ascend accelerators are fabricated domestically at SMIC; rising domestic accelerator volumes increase SMIC's advanced-node wafer production and foundry revenue.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "advanced-node logic wafer foundry",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-124668406F",
+    "ticker_hint": "SMICY"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "Chinese AI accelerator chip designer",
+    "direction": "positive",
+    "enrichment_id": "EC-06dbb634e27dc2",
+    "evidence": "s03.1: Chinese labs move inference/training onto Huawei Ascend and other domestic accelerators",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Cambricon Technologies",
+    "rationale": "A leading non-Huawei domestic accelerator vendor; Chinese labs migrating off Nvidia expand addressable demand for its training/inference chips.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "AI accelerator chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-124668406F",
+    "ticker_hint": "688256"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-04-16 (0001628280-26-025362)",
+    "business": "world's largest contract chip foundry",
+    "direction": "negative",
+    "enrichment_id": "EC-63a9d0bd323ff5",
+    "evidence": "s03.0: RASA-style remote-access and export controls ramp faster with Jensen gone, cutting Chinese labs off from Nvidia GPUs",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Taiwan Semiconductor Manufacturing",
+    "rationale": "Fabricates Nvidia GPUs; tighter China controls and lost Nvidia China demand reduce leading-edge wafer orders, modestly trimming foundry revenue.",
+    "registrant": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['TSM', 'TSMWF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "leading-edge logic wafer foundry",
+    "revenue_model": "services",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-124668406F",
+    "ticker_hint": "TSM"
+   }
+  ],
+  "created_at": "2026-11-19T09:28:11.839374Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261119T090734Z-scan",
+  "set_id": "ES-87159f75a3e52d",
+  "thesis_id": "TH-124668406F",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-19",
+   "change_summary": "Initial record \u2014 created from A-5b5764ebd058",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-19",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-19",
+     "first_ingested_at": "2026-11-19T09:23:49.035034Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-12",
+     "latest_article_date": "2026-11-12",
+     "region": "China",
+     "research_action": "WATCH",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-124668406F",
+     "title": "Tighter China export controls accelerate Chinese labs' shift to domestic accelerators"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-8751cd52abcdaa",
+       "C-5300e059d7a280",
+       "C-bd854f643868b4",
+       "C-fc1e930b5f2bfe",
+       "C-770f3e937aa101",
+       "C-c1a20199606cea"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SemiAnalysis argues Jensen's exit removes Nvidia's biggest defender of China access, accelerating RASA-style export controls; cut off from Nvidia GPUs, Chinese labs are already moving to domestic accelerators (Z.ai/GLM-5, DeepSeek on Huawei Ascend, Meituan LongCat on Ascend 910B), harming Nvidia and benefiting Huawei."
+     },
+     {
+      "claim_ids": [
+       "C-bd854f643868b4",
+       "C-f9a1644bdecd17",
+       "C-fc1e930b5f2bfe"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues escalating controls guarantee fewer chips produced and faster Chinese migration off Nvidia, which is already happening."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If RASA or similar passes and controls tighten, Nvidia loses China demand and the US open-source ecosystem loses Chinese contributions, while Huawei and domestic accelerators gain volume; the article does not quantify Nvidia's China revenue at risk."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5300e059d7a280"
+       ],
+       "original_date": "2026-11-12",
+       "period": "Jan. 12",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "RASA passed the House 369-22 on Jan. 12"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8751cd52abcdaa"
+       ],
+       "original_date": "2026-11-12",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "RASA has passed the House but awaits a Senate vote, which is happening now"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c4da5871203e79"
+       ],
+       "original_date": "2026-11-12",
+       "period": "May",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In the Keelung smuggling investigation, authorities searched 12 more locations and seized 56 servers and luxury cars."
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-73ffdfb6a6f3ce"
+       ],
+       "original_date": "2026-11-12",
+       "period": "May",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Authorities also seized NT$9M (about $275k USD) in cash in the Keelung smuggling case. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-cd0edecb24884f"
+       ],
+       "original_date": "2026-11-12",
+       "period": "September 2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Flying Tiger received a license in Sep 2025 to purchase 130 servers from Supermicro as the named end user, then passed an onsite inspection that prosecutors say the site did not meet."
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-bd854f643868b4"
+       ],
+       "original_date": "2026-11-12",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Department of Commerce believes more than 1.5GW of Nvidia chips are improperly in China"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 8 pieces of evidence from A-5b5764ebd058 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-19 09:23 UTC, analysed as of 2026-11-19, from a source published 2026-11-12; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-5300e059d7a280",
+       "C-8751cd52abcdaa",
+       "C-fc1e930b5f2bfe"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "RASA-style remote-access and export controls ramp faster with Jensen gone, cutting Chinese labs off from Nvidia GPUs"
+     },
+     {
+      "claim_ids": [
+       "C-bd854f643868b4",
+       "C-770f3e937aa101"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Chinese labs move inference/training onto Huawei Ascend and other domestic accelerators"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b055",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5300e059d7a280",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "House vote",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "Jan. 12",
+      "qualifiers": [
+       "motion to suspend the rules"
+      ],
+      "quote": "RASA passed the House 369-22 on Jan. 12",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "369-22"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b093",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-73ffdfb6a6f3ce",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "cash seized",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "May",
+      "qualifiers": [
+       "about $275k USD"
+      ],
+      "quote": "NT$9M (about $275k USD) in cash",
+      "role": "supports",
+      "unit": "NT$m",
+      "value": 9.0,
+      "value_text": "NT$9M"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b052",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bd854f643868b4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Department of Commerce believes more than 1.5GW of Nvidia chips are improperly in China",
+      "measured_as_of": null,
+      "origin": "Department of Commerce",
+      "period": null,
+      "qualifiers": [
+       "more than"
+      ],
+      "quote": "The Department of Commerce now also finally believes that there is more than 1.5GW of NVIDIA chips in China that shouldn\u2019t be there.",
+      "role": "supports",
+      "unit": "GW",
+      "value": 1.5,
+      "value_text": "more than 1.5GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b093",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c4da5871203e79",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "servers seized",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "May",
+      "qualifiers": [
+       "12 locations searched",
+       "luxury cars"
+      ],
+      "quote": "They then searched 12 more locations, and seized 56 servers, luxury cars",
+      "role": "supports",
+      "unit": "servers",
+      "value": 56.0,
+      "value_text": "56"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b096",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cd0edecb24884f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "servers licensed",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September 2025",
+      "qualifiers": [
+       "named end user",
+       "onsite inspection"
+      ],
+      "quote": "Flying Tiger had applied and received a license to purchase 130 servers from Supermicro in Sep 2025 with themselves named as the end user",
+      "role": "supports",
+      "unit": "servers",
+      "value": 130.0,
+      "value_text": "130"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b055",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2010bef72f37a0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "committee vote",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "April 2025",
+      "qualifiers": [],
+      "quote": "The House Foreign Affairs Committee approved it 51-0 in April 2025",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "51-0"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b057",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-93e8041c47262a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Neoclouds across many regions actively selling capacity to Chinese companies would all be impacted by RASA",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "neoclouds in Asia, Australia, the Middle East, Nordics, Europe, Canada and even the U.S. that are actively selling capacity to Chinese companies. All of them would be impacted by this bill",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b003",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fc1e930b5f2bfe",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Author believes China AI/chip restrictions will ramp much faster now that Jensen is gone",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "AI and chip restrictions on China are going to ramp now much faster with the biggest defender Jensen, gone",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b053",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8751cd52abcdaa",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "RASA has passed the House but awaits a Senate vote, which is happening now",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": null,
+      "qualifiers": [
+       "Remote Access Security Act"
+      ],
+      "quote": "a critical bill called the Remote Access Security Act (\u201cRASA\u201d) that has passed the House that has yet to receive a vote in the Senate, and that vote is happening right now",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0000002488",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-e1b208e37d74db",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Competitor/Tier 1 memory customer that could gain supply access as Nvidia's supply chain stranglehold loosens"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001730168",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value",
+         "ticker": "AVGO"
+        }
+       ],
+       "mention_id": "M-93dc40f586075e",
+       "name_as_written": "Broadcom",
+       "other_securities": [],
+       "quote": "Broadcom",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Tier 1 customer that could gain memory/capacity access as Nvidia's priority loosens"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7fd0f50dcd4de6",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler customer and Tier 1 memory customer building own XPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001018724",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-9160272340ff6c",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler and Tier 1 memory customer building own XPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0000789019",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-1fbfa2f2a3f7ea",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001326801",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-eb1d65a8308d61",
+       "name_as_written": "Meta",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page, but 2 8-A12B registration(s) fell between it and 2026-11-19 \u2014 undecidable here",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "METAM"
+        }
+       ],
+       "quote": "Meta",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001571996",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-08 (accession 0001571996-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class C Common Stock, par value of $0.01 per share",
+         "ticker": "DELL"
+        }
+       ],
+       "mention_id": "M-1babb7e913430d",
+       "name_as_written": "Dell",
+       "other_securities": [],
+       "quote": "Dell",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Server maker dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0002120882",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3e553fdfe442de",
+       "name_as_written": "SK Hynix",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "SKHY"
+        },
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "HXSCL"
+        }
+       ],
+       "quote": "SK Hynix\u2019s 2027 HBM4 pricing",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "HBM memory supplier whose pricing priority for Nvidia may loosen without Jensen"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001973239",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-79246b3a2e2f66",
+       "name_as_written": "Arm",
+       "other_securities": [],
+       "quote": "Rene Haas at Arm",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Company run by a rare former Nvidia executive turned CEO"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001341439",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.01 per share",
+         "ticker": "ORCL"
+        }
+       ],
+       "mention_id": "M-96926f04425b8a",
+       "name_as_written": "Oracle",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+         "ticker": "ORCL PRD"
+        }
+       ],
+       "quote": "NVIDIA and Oracle have been lobbying against it",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Company lobbying against RASA export-control bill"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5288aea0904852",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "only two real customers, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "One of Nvidia's two frontier-lab customers"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-405ef3a5c400bb",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "One of Nvidia's two frontier-lab customers"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-408d23dfa212db",
+       "name_as_written": "SpaceX",
+       "other_securities": [],
+       "quote": "all seven except SpaceX are trying to build their own XPUs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "The only major customer not building its own XPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-27689cfe67f4fb",
+       "name_as_written": "Reflection",
+       "other_securities": [],
+       "quote": "investing in firms like Reflection, Thinking Machines, Poolside",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "US open-source AI firm Nvidia was propping up; may be deprioritized without Jensen"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3f8b1c97d5df2c",
+       "name_as_written": "Thinking Machines",
+       "other_securities": [],
+       "quote": "Reflection, Thinking Machines, Poolside",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "US AI firm Nvidia was supporting"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c58e199058d12f",
+       "name_as_written": "Poolside",
+       "other_securities": [],
+       "quote": "Reflection, Thinking Machines, Poolside",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "US AI firm Nvidia was supporting"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d5ef0663d9f348",
+       "name_as_written": "Hugging Face",
+       "other_securities": [],
+       "quote": "the Hugging Face acquisition",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Open-source AI platform referenced as a Nvidia acquisition supporting open source"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-20d83825c76e07",
+       "name_as_written": "Albatron",
+       "other_securities": [],
+       "quote": "Albatron",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Supermicro distributor implicated in smuggling indictment"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b148ab4a46391",
+       "name_as_written": "Chief Telecom",
+       "other_securities": [],
+       "quote": "Chief Telecom (a Taiwanese distributor, reseller, and datacenter operator)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Taiwanese datacenter operator implicated in smuggling indictment"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0000071691",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-04 (accession 0000071691-26-000041) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock",
+         "ticker": "NYT"
+        }
+       ],
+       "mention_id": "M-7bb37ad3ddf1fa",
+       "name_as_written": "New York Times",
+       "other_securities": [],
+       "quote": "The second New York Times story",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "Cited news source reporting on intelligence community basis"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ed4798a3ddfdbb",
+       "name_as_written": "Department of Commerce",
+       "other_securities": [],
+       "quote": "The Department of Commerce now also finally believes",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US agency believing more than 1.5GW of Nvidia chips improperly in China"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f3ff421b0b2653",
+       "name_as_written": "Rednote",
+       "other_securities": [],
+       "quote": "ads on Rednote for an 800 GPU cluster of RTX 5090",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Chinese platform where smuggled GPU clusters are advertised for rental"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b35d1b0e0f059f",
+       "name_as_written": "Colette Kress",
+       "other_securities": [],
+       "quote": "Colette Kress has been named interim CEO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Named interim CEO of Nvidia"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-124ce832cee91c",
+       "name_as_written": "MiniMax",
+       "other_securities": [],
+       "quote": "kernel libraries like MiniMax MSA",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "disruptor",
+       "role_detail": "Chinese lab producing open-source kernel libraries (MSA) targeting Nvidia Blackwell GPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-890cd64a7b8efb",
+       "name_as_written": "Moonshot",
+       "other_securities": [],
+       "quote": "Moonshot\u2019s FlashKDA",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Chinese lab producing open-source kernel library FlashKDA"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001045810",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-3c11427af47696",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Jensen Huang is no longer the CEO of Nvidia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potentially_harmed",
+       "role_detail": "Subject of the article; loss of founder CEO Jensen Huang seen as materially negative for the company and its ecosystem"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-55981b9d60e3ab",
+       "name_as_written": "Huawei",
+       "other_securities": [],
+       "quote": "Huawei Ascend NPUs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Domestic Chinese accelerator maker benefiting from Chinese labs moving off Nvidia"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-8418807b050f60",
+       "name_as_written": "Meituan",
+       "other_securities": [],
+       "quote": "Meituan claimed LongCat 2.0",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "disruptor",
+       "role_detail": "Chinese firm claiming model pretrained entirely on Huawei Ascend NPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "risk",
+       "listings": [],
+       "mention_id": "M-f8605a7b4d8116",
+       "name_as_written": "Supermicro",
+       "other_securities": [],
+       "quote": "Supermicro",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Server maker implicated in GPU smuggling indictments; dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "risk",
+       "listings": [],
+       "mention_id": "M-d3e94d024ba598",
+       "name_as_written": "Flying Tiger",
+       "other_securities": [],
+       "quote": "Flying Tiger",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Server reseller implicated in smuggling indictment"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-30eba571844925",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "DeepSeek published their V4 paper",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Chinese lab open-sourcing inference kernel on Huawei Ascend NPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-290abab8f02805",
+       "name_as_written": "Z.ai",
+       "other_securities": [],
+       "quote": "Z.ai claimed inference support for GLM-5 on seven domestic accelerators",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Chinese lab moving to domestic accelerators"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "claim_ids": [
+        "C-bd854f643868b4"
+       ],
+       "direction": "positive",
+       "name": "domestic accelerators",
+       "provenance": "SOURCE OPINION",
+       "quote": "they would all be even more motivated to move off of NVIDIA GPUs and onto domestic accelerators"
+      }
+     ],
+     "sectors": [
+      "AI accelerators",
+      "semiconductors"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Senate RASA vote happening now [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-8751cd52abcdaa"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A Senate RASA vote is described as imminent, a near-term catalyst that could reprice China-exposed names."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-bd854f643868b4",
+        "C-770f3e937aa101"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Chinese labs are already demonstrating domestic-accelerator capability, a structural shift that tighter controls would accelerate."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SemiAnalysis argues the current remote-access regime keeps profits with US firms and lets the US monitor and cut off China; cutting off access motivates faster domestic migration, so controls may harm US interests rather than help."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-0577F0AD38: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-0F1BABEC2D: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (valuation_dislocation vs policy_regulation); a different geography (US vs China); no overlapping timeframe \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-B121174B17: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs policy_regulation); no overlapping timeframe \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-CBFA9511C2: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs policy_regulation); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-F2CD2F7AFC: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs policy_regulation) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 27 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "RASA stalls in the Senate"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chinese labs remain dependent on Nvidia GPUs"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-2f603578e059db",
+        "C-4e79eb09e37d13",
+        "C-6a506010882760"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "GPU smuggling indictments (a $2.5B Supermicro-linked case with $510M reaching China, and a $65M Keelung case implicating 9 people across Nvidia Taiwan, Supermicro, Albatron, Flying Tiger and Chief Telecom) expose named companies to legal and enforcement risk and underpin a crackdown. (scope: Legal/enforcement and reputational risk to the specific named companies; outcomes are being litigated and not resolved.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether RASA passes the Senate and when"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Nvidia's quantified China revenue exposure (not given)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "How fast domestic accelerators can scale to replace Nvidia"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "RASA stalls indefinitely"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "China access regime remains unchanged"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track the RASA Senate Banking Committee schedule and Chinese labs' public accelerator adoption claims to gauge the pace of Nvidia China displacement."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "RASA advances in the Senate"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "More Chinese labs announce production on domestic accelerators"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-5b5764ebd058",
+      "authors": [
+       "Dylan Patel",
+       "Doug",
+       "Wayne Ma",
+       "Jordan Nanos"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-8751cd52abcdaa",
+       "C-2010bef72f37a0",
+       "C-5300e059d7a280",
+       "C-bd854f643868b4",
+       "C-fc1e930b5f2bfe",
+       "C-93e8041c47262a",
+       "C-c4da5871203e79",
+       "C-73ffdfb6a6f3ce",
+       "C-cd0edecb24884f",
+       "C-2f603578e059db",
+       "C-4e79eb09e37d13",
+       "C-6a506010882760"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-12T18:06:26Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Nvidia and the World Without Jensen",
+      "upstream_origins": [
+       "Department of Commerce",
+       "US v. Liaw indictment",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/nvidia-and-the-world-without-jensen",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "829ff62373d73f25423923f915cd15aa8f569d8aa62d641cb441437c91b13179",
+   "created_at": "2026-11-19T09:24:26.402166Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-5300e059d7a280",
+       "C-bd854f643868b4",
+       "C-c4da5871203e79",
+       "C-73ffdfb6a6f3ce",
+       "C-cd0edecb24884f",
+       "C-8751cd52abcdaa",
+       "C-2010bef72f37a0"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "7"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-02f06aaa3527, ES-7661d1cfece8",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-8751cd52abcdaa",
+       "C-5300e059d7a280",
+       "C-c4da5871203e79",
+       "C-73ffdfb6a6f3ce"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-8751cd52abcdaa: measured 2026-11-12 (7 days before the as-of); C-5300e059d7a280: measured 2026-11-12 (7 days before the as-of); C-c4da5871203e79: measured 2026-11-12 (7 days before the as-of); C-73ffdfb6a6f3ce: measured 2026-11-12 (7 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Nvidia (NVDA), sector: domestic accelerators",
+      "value": "1 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-8751cd52abcdaa"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-2010bef72f37a0",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 7 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261119T090734Z-scan",
+   "thesis_id": "TH-124668406F",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-770f3e937aa101",
+  "C-c1a20199606cea",
+  "C-f9a1644bdecd17",
+  "C-2f603578e059db",
+  "C-4e79eb09e37d13",
+  "C-6a506010882760"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.4": "Cited span supports license for 130 servers from Supermicro in Sep 2025 with themselves named as end user, but the onsite inspection / 'did not meet' claim is not in the cited span.",
+  "s07.7": "Cited spans support $2.5B, $510M, $65M, 9 people, 130 B300 servers with 74 reaching China. But the $2.5B case cites 3 people at Supermicro (not stated as the case with $510M attribution as separate); the specific named companies (Nvidia Taiwan, Supermicro, Albatron, Flying Tiger, Chief Telecom) and the '$65M Keelung case implicating 9 people across' those companies are not supported by the cited spans \u2014 the 9-person indictment span is about 130 B300 servers, and the named-company list is not in the cited spans."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}

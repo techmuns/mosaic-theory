@@ -1,4 +1,5 @@
 {"origin_id": "ES-0259c5ff2ef4", "payload": "{\"origin_id\":\"ES-0259c5ff2ef4\",\"name\":\"Extrapolate\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-02f06aaa3527", "payload": "{\"origin_id\":\"ES-02f06aaa3527\",\"name\":\"Department of Commerce\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-042f351f4da2", "payload": "{\"origin_id\":\"ES-042f351f4da2\",\"name\":\"Goldman Sachs Global Investment Research\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-044b50fe7b56", "payload": "{\"origin_id\":\"ES-044b50fe7b56\",\"name\":\"JPM WM Solutions. Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-05f5154c6861", "payload": "{\"origin_id\":\"ES-05f5154c6861\",\"name\":\"Arithmetic\",\"kind\":\"data_vendor\"}"}
@@ -20,6 +21,7 @@
 {"origin_id": "ES-370bfea99a7f", "payload": "{\"origin_id\":\"ES-370bfea99a7f\",\"name\":\"State Council\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-376a4a64f9cb", "payload": "{\"origin_id\":\"ES-376a4a64f9cb\",\"name\":\"The Elec\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-3c468eee1d4a", "payload": "{\"origin_id\":\"ES-3c468eee1d4a\",\"name\":\"Chakra\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-42d24ce06fd7", "payload": "{\"origin_id\":\"ES-42d24ce06fd7\",\"name\":\"its financial disclosures\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-434f2bc4de39", "payload": "{\"origin_id\":\"ES-434f2bc4de39\",\"name\":\"a local report\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-4690d9f96633", "payload": "{\"origin_id\":\"ES-4690d9f96633\",\"name\":\"Ergodex\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-533cadcc5730", "payload": "{\"origin_id\":\"ES-533cadcc5730\",\"name\":\"SemiAnalysis Datacenter Model\",\"kind\":\"data_vendor\"}"}
@@ -73,6 +75,7 @@
 {"origin_id": "ES-bee38a31e849", "payload": "{\"origin_id\":\"ES-bee38a31e849\",\"name\":\"Lockheed Martin\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-c1879b598a67", "payload": "{\"origin_id\":\"ES-c1879b598a67\",\"name\":\"Huawei\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-c414df565bed", "payload": "{\"origin_id\":\"ES-c414df565bed\",\"name\":\"Tristan Hume on Twitter\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-c568eb67fff3", "payload": "{\"origin_id\":\"ES-c568eb67fff3\",\"name\":\"US v. Liaw indictment\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-c7cceb760f9e", "payload": "{\"origin_id\":\"ES-c7cceb760f9e\",\"name\":\"SIPRI Military Expenditure Database\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-ce50707dc1bc", "payload": "{\"origin_id\":\"ES-ce50707dc1bc\",\"name\":\"Living Context\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-d124a419dea1", "payload": "{\"origin_id\":\"ES-d124a419dea1\",\"name\":\"Kristen Severson et al.\",\"kind\":\"data_vendor\"}"}
@@ -82,6 +85,7 @@
 {"origin_id": "ES-df6141b63320", "payload": "{\"origin_id\":\"ES-df6141b63320\",\"name\":\"GDPx\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-e2e3d6b40199", "payload": "{\"origin_id\":\"ES-e2e3d6b40199\",\"name\":\"U.S. Department of War / CSIS\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-ed0c0f2f54d7", "payload": "{\"origin_id\":\"ES-ed0c0f2f54d7\",\"name\":\"PitchBook\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-ef61c61b4bc8", "payload": "{\"origin_id\":\"ES-ef61c61b4bc8\",\"name\":\"Jensen Huang public statements\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f1a195435792", "payload": "{\"origin_id\":\"ES-f1a195435792\",\"name\":\"Atlantic Council\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f41ee4fccc95", "payload": "{\"origin_id\":\"ES-f41ee4fccc95\",\"name\":\"Morgan Stanley (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-f8175a623c1d", "payload": "{\"origin_id\":\"ES-f8175a623c1d\",\"name\":\"AlphaWise + Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}

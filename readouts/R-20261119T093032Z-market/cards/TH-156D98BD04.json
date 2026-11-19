@@ -1,0 +1,2423 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-11-19",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.datacenter_physical"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-11-19",
+   "first_ingested_at": "2026-11-19T09:23:36.266301Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-11-12",
+   "latest_article_date": "2026-11-12",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-156D98BD04",
+   "title": "Loss of Jensen's backstops risks contraction in the neocloud/neolab ecosystem"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-3b918f4d38866f",
+     "C-fc01e4344cefe6",
+     "C-451950df8dbb1d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SemiAnalysis argues Nvidia's $530B of off-balance-sheet guarantees (including $36B take-or-pay floors) and backstop program let non-investment-grade neoclouds borrow at IG pricing because Jensen personally backed them; without the Jensen put there might be a large contraction in this ecosystem."
+   },
+   {
+    "claim_ids": [
+     "C-451950df8dbb1d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article explicitly warns of a large ecosystem contraction if the Jensen put disappears."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If the next CEO cannot or will not extend the same credit support, neocloud financing and buildout could shrink, reducing demand for GPUs and datacenter physical suppliers; the article does not quantify the contraction."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3b918f4d38866f"
+     ],
+     "original_date": "2026-11-12",
+     "period": "fiscal second quarter",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Nvidia disclosed $530B of gross off-balance-sheet guarantees in fiscal Q2, up from $184B prior quarter"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-fc01e4344cefe6"
+     ],
+     "original_date": "2026-11-12",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Guarantees include $36B of take-or-pay floors under neocloud capacity"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-451950df8dbb1d"
+     ],
+     "original_date": "2026-11-12",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Without the Jensen put, there could be a large contraction in the neocloud/neolab ecosystem"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-11-19 09:23 UTC, analysed as of 2026-11-19, from a source published 2026-11-12; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-3b918f4d38866f",
+     "C-fc01e4344cefe6"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "Nvidia backstops (revenue floors, lease guarantees) let neoclouds without IG ratings borrow at IG pricing, enabled by Jensen's personal credibility"
+   },
+   {
+    "claim_ids": [
+     "C-451950df8dbb1d"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Ecosystem contraction would reduce neocloud GPU purchases and buildout"
+   },
+   {
+    "claim_ids": [
+     "C-451950df8dbb1d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "cash_flow",
+    "text": "Without the Jensen put, neocloud financing and the ability to raise money contracts"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3b918f4d38866f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "gross off-balance-sheet guarantees",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "fiscal second quarter",
+    "qualifiers": [
+     "gross off-balance-sheet guarantees"
+    ],
+    "quote": "Nvidia disclosed $530B of gross off-balance-sheet guarantees as of its fiscal second quarter, up from $184B the prior quarter",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 530.0,
+    "value_text": "$530B"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fc01e4344cefe6",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "take-or-pay floors",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "take-or-pay floors",
+     "neocloud capacity"
+    ],
+    "quote": "including $36B of take-or-pay floors under neocloud capacity",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 36.0,
+    "value_text": "$36B"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-5b5764ebd058",
+    "block_id": "b035",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-451950df8dbb1d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Without the Jensen put, there could be a large contraction in the neocloud/neolab ecosystem",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "If the Jensen put is not there, there might be a large contraction in this ecosystem.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0000002488",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-e1b208e37d74db",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Competitor/Tier 1 memory customer that could gain supply access as Nvidia's supply chain stranglehold loosens"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001730168",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value",
+       "ticker": "AVGO"
+      }
+     ],
+     "mention_id": "M-93dc40f586075e",
+     "name_as_written": "Broadcom",
+     "other_securities": [],
+     "quote": "Broadcom",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Tier 1 customer that could gain memory/capacity access as Nvidia's priority loosens"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7fd0f50dcd4de6",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler customer and Tier 1 memory customer building own XPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001018724",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-9160272340ff6c",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "Amazon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler and Tier 1 memory customer building own XPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0000789019",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-1fbfa2f2a3f7ea",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001326801",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-eb1d65a8308d61",
+     "name_as_written": "Meta",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page, but 2 8-A12B registration(s) fell between it and 2026-11-19 \u2014 undecidable here",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "METAM"
+      }
+     ],
+     "quote": "Meta",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f8605a7b4d8116",
+     "name_as_written": "Supermicro",
+     "other_securities": [],
+     "quote": "Supermicro",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Server maker implicated in GPU smuggling indictments; dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001571996",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-08 (accession 0001571996-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class C Common Stock, par value of $0.01 per share",
+       "ticker": "DELL"
+      }
+     ],
+     "mention_id": "M-1babb7e913430d",
+     "name_as_written": "Dell",
+     "other_securities": [],
+     "quote": "Dell",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Server maker dependent on Chinese supply chain"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0002120882",
+     "direction": "unclear",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3e553fdfe442de",
+     "name_as_written": "SK Hynix",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "SKHY"
+      },
+      {
+       "exchange": "OTC",
+       "instrument": "unknown",
+       "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+       "pit_source": null,
+       "pit_status": "UNVERIFIED",
+       "security_class": null,
+       "ticker": "HXSCL"
+      }
+     ],
+     "quote": "SK Hynix\u2019s 2027 HBM4 pricing",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "HBM memory supplier whose pricing priority for Nvidia may loosen without Jensen"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001973239",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-79246b3a2e2f66",
+     "name_as_written": "Arm",
+     "other_securities": [],
+     "quote": "Rene Haas at Arm",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Company run by a rare former Nvidia executive turned CEO"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001341439",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.01 per share",
+       "ticker": "ORCL"
+      }
+     ],
+     "mention_id": "M-96926f04425b8a",
+     "name_as_written": "Oracle",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+       "ticker": "ORCL PRD"
+      }
+     ],
+     "quote": "NVIDIA and Oracle have been lobbying against it",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Company lobbying against RASA export-control bill"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5288aea0904852",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "only two real customers, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "One of Nvidia's two frontier-lab customers"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-405ef3a5c400bb",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "One of Nvidia's two frontier-lab customers"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-408d23dfa212db",
+     "name_as_written": "SpaceX",
+     "other_securities": [],
+     "quote": "all seven except SpaceX are trying to build their own XPUs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "The only major customer not building its own XPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-27689cfe67f4fb",
+     "name_as_written": "Reflection",
+     "other_securities": [],
+     "quote": "investing in firms like Reflection, Thinking Machines, Poolside",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "US open-source AI firm Nvidia was propping up; may be deprioritized without Jensen"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3f8b1c97d5df2c",
+     "name_as_written": "Thinking Machines",
+     "other_securities": [],
+     "quote": "Reflection, Thinking Machines, Poolside",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "US AI firm Nvidia was supporting"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c58e199058d12f",
+     "name_as_written": "Poolside",
+     "other_securities": [],
+     "quote": "Reflection, Thinking Machines, Poolside",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "US AI firm Nvidia was supporting"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d5ef0663d9f348",
+     "name_as_written": "Hugging Face",
+     "other_securities": [],
+     "quote": "the Hugging Face acquisition",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Open-source AI platform referenced as a Nvidia acquisition supporting open source"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-290abab8f02805",
+     "name_as_written": "Z.ai",
+     "other_securities": [],
+     "quote": "Z.ai claimed inference support for GLM-5 on seven domestic accelerators",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Chinese lab moving to domestic accelerators"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-30eba571844925",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "DeepSeek published their V4 paper",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Chinese lab open-sourcing inference kernel on Huawei Ascend NPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8418807b050f60",
+     "name_as_written": "Meituan",
+     "other_securities": [],
+     "quote": "Meituan claimed LongCat 2.0",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "disruptor",
+     "role_detail": "Chinese firm claiming model pretrained entirely on Huawei Ascend NPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-55981b9d60e3ab",
+     "name_as_written": "Huawei",
+     "other_securities": [],
+     "quote": "Huawei Ascend NPUs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Domestic Chinese accelerator maker benefiting from Chinese labs moving off Nvidia"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-20d83825c76e07",
+     "name_as_written": "Albatron",
+     "other_securities": [],
+     "quote": "Albatron",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Supermicro distributor implicated in smuggling indictment"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d3e94d024ba598",
+     "name_as_written": "Flying Tiger",
+     "other_securities": [],
+     "quote": "Flying Tiger",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Server reseller implicated in smuggling indictment"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2b148ab4a46391",
+     "name_as_written": "Chief Telecom",
+     "other_securities": [],
+     "quote": "Chief Telecom (a Taiwanese distributor, reseller, and datacenter operator)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "risk",
+     "role_detail": "Taiwanese datacenter operator implicated in smuggling indictment"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0000071691",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-11-04 (accession 0000071691-26-000041) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock",
+       "ticker": "NYT"
+      }
+     ],
+     "mention_id": "M-7bb37ad3ddf1fa",
+     "name_as_written": "New York Times",
+     "other_securities": [],
+     "quote": "The second New York Times story",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "data_source",
+     "role_detail": "Cited news source reporting on intelligence community basis"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ed4798a3ddfdbb",
+     "name_as_written": "Department of Commerce",
+     "other_securities": [],
+     "quote": "The Department of Commerce now also finally believes",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "US agency believing more than 1.5GW of Nvidia chips improperly in China"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f3ff421b0b2653",
+     "name_as_written": "Rednote",
+     "other_securities": [],
+     "quote": "ads on Rednote for an 800 GPU cluster of RTX 5090",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Chinese platform where smuggled GPU clusters are advertised for rental"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b35d1b0e0f059f",
+     "name_as_written": "Colette Kress",
+     "other_securities": [],
+     "quote": "Colette Kress has been named interim CEO",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Named interim CEO of Nvidia"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-124ce832cee91c",
+     "name_as_written": "MiniMax",
+     "other_securities": [],
+     "quote": "kernel libraries like MiniMax MSA",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "disruptor",
+     "role_detail": "Chinese lab producing open-source kernel libraries (MSA) targeting Nvidia Blackwell GPUs"
+    },
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-890cd64a7b8efb",
+     "name_as_written": "Moonshot",
+     "other_securities": [],
+     "quote": "Moonshot\u2019s FlashKDA",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Chinese lab producing open-source kernel library FlashKDA"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "cik": "0001045810",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-3c11427af47696",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Jensen Huang is no longer the CEO of Nvidia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potentially_harmed",
+     "role_detail": "Subject of the article; loss of founder CEO Jensen Huang seen as materially negative for the company and its ecosystem"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-5b5764ebd058",
+     "claim_ids": [
+      "C-451950df8dbb1d"
+     ],
+     "direction": "negative",
+     "name": "neoclouds",
+     "provenance": "SOURCE OPINION",
+     "quote": "Neoclouds around the world raised their money because Jensen backed them"
+    }
+   ],
+   "sectors": [
+    "neoclouds",
+    "AI datacenter capacity"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-451950df8dbb1d"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "The risk is conditional on successor behavior; no dated near-term catalyst is given."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-3b918f4d38866f",
+      "C-451950df8dbb1d"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The neocloud financing model depends on Nvidia's $530B of guarantees and the founder's personal backing, a structural vulnerability if that support is withdrawn."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-3b918f4d38866f"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "Nvidia's institutional guarantees are contractual and could persist regardless of CEO, limiting the contraction."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-3557AAE138: the opposite direction on the same value-chain node, but not the same claim \u2014 a timeframe only one of them states \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-6F2E7079B0: the opposite direction on the same value-chain node, but not the same claim \u2014 a timeframe only one of them states \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-95AEE030DA: the opposite direction on the same value-chain node, but not the same claim \u2014 a timeframe only one of them states \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-B1F096684F: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-EF9EABA05A: same value-chain node, not the same claim \u2014 a different mechanism (policy_regulation vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 26 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Nvidia reaffirms and extends neocloud backstops under new leadership"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Neoclouds continue raising capital at IG pricing"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-3b918f4d38866f",
+      "C-7d30d954d89118",
+      "C-fc01e4344cefe6",
+      "C-dbc7ccfd10e3bb"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Nvidia's $530B of gross off-balance-sheet guarantees (up from $184B) including $36B take-or-pay floors concentrate credit/financing risk in the AI infrastructure ecosystem that depended on the founder's personal backing. (scope: Off-balance-sheet exposure specific to Nvidia's neocloud backstop structure; the article does not quantify realized losses.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: If the Jensen put (credit backstops, revenue floors, lease guarantees) is not there under a successor"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether a successor maintains the backstop program"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The size of any contraction (not quantified)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which specific neoclouds are most exposed"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Nvidia reaffirms neocloud backstop program"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "New neocloud financings close at IG pricing"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Review Nvidia's 10-Q off-balance-sheet guarantee disclosures and neocloud funding announcements to test whether backstop support is continuing post-Jensen."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A neocloud financing round fails or reprices wider"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Nvidia signals reducing backstop commitments"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-5b5764ebd058",
+    "authors": [
+     "Dylan Patel",
+     "Doug",
+     "Wayne Ma",
+     "Jordan Nanos"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-3b918f4d38866f",
+     "C-fc01e4344cefe6",
+     "C-451950df8dbb1d",
+     "C-7d30d954d89118",
+     "C-dbc7ccfd10e3bb"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-11-12T18:06:26Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Nvidia and the World Without Jensen",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/nvidia-and-the-world-without-jensen",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-11-19",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-02 (0001769628-26-000104)",
+    "business": "GPU cloud provider renting Nvidia accelerators to AI firms",
+    "direction": "negative",
+    "enrichment_id": "EC-5e1f220874f419",
+    "evidence": "s03.2: Without the Jensen put, neocloud financing and the ability to raise money contracts",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-11-12 (accession 0001769628-26-000465) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.000005 par value per share",
+      "ticker": "CRWV"
+     }
+    ],
+    "name": "CoreWeave",
+    "rationale": "A pure-play neocloud that leans on Nvidia backstops and vendor financing; loss of the Jensen put raises its borrowing costs and curbs buildout.",
+    "registrant": "CoreWeave, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "GPU cloud compute rental",
+    "revenue_model": "usage_based",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-156D98BD04",
+    "ticker_hint": "CRWV"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-04-30 (0001104659-26-052948)",
+    "business": "AI cloud infrastructure provider renting GPU compute",
+    "direction": "negative",
+    "enrichment_id": "EC-f8ee73c533e326",
+    "evidence": "s03.2: Without the Jensen put, neocloud financing and the ability to raise money contracts",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Nebius Group",
+    "rationale": "Non-IG neocloud reliant on cheap financing to fund GPU buildout; disappearance of Nvidia credit support tightens its financing conditions.",
+    "registrant": "Nebius Group N.V.",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['NBIS'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "AI cloud compute services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-156D98BD04",
+    "ticker_hint": "NBIS"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-07-29 (0001144879-26-000048)",
+    "business": "AI datacenter developer and HPC hosting operator",
+    "direction": "negative",
+    "enrichment_id": "EC-8347324f3e15c9",
+    "evidence": "s03.1: Ecosystem contraction would reduce neocloud GPU purchases and buildout",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-07 (accession 0001144879-26-000059) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.001 per share",
+      "ticker": "APLD"
+     }
+    ],
+    "name": "Applied Digital",
+    "rationale": "Builds datacenters leased to neoclouds; ecosystem contraction reduces leasing demand and tenant creditworthiness, hitting occupancy and buildout.",
+    "registrant": "Applied Digital Corp.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7374); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "HPC datacenter hosting and leasing",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-156D98BD04",
+    "ticker_hint": "APLD"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001674101-26-000008)",
+    "business": "datacenter power and thermal/cooling equipment maker",
+    "direction": "negative",
+    "enrichment_id": "EC-26da520b6b707d",
+    "evidence": "s03.1: Ecosystem contraction would reduce neocloud GPU purchases and buildout",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001628280-26-067893) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.0001 par value per share",
+      "ticker": "VRT"
+     }
+    ],
+    "name": "Vertiv Holdings",
+    "rationale": "Supplies power and cooling to AI datacenters; reduced neocloud buildout cuts orders for its physical infrastructure.",
+    "registrant": "Vertiv Holdings Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3679); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter power and cooling systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-156D98BD04",
+    "ticker_hint": "VRT"
+   }
+  ],
+  "created_at": "2026-11-19T09:28:32.699709Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Vertiv is cooling; also propose rack maker: more than 4 on one side \u2014 set aside",
+   "Digital Realty Trust: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261119T090734Z-scan",
+  "set_id": "ES-ef2c7ab7986861",
+  "thesis_id": "TH-156D98BD04",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-11-19 10:03 UTC from the registry (ti-engine-5; run R-20261119T093032Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-11-19",
+   "change_summary": "Initial record \u2014 created from A-5b5764ebd058",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-11-19",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-11-19",
+     "first_ingested_at": "2026-11-19T09:23:36.266301Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-11-12",
+     "latest_article_date": "2026-11-12",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-156D98BD04",
+     "title": "Loss of Jensen's backstops risks contraction in the neocloud/neolab ecosystem"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-3b918f4d38866f",
+       "C-fc01e4344cefe6",
+       "C-451950df8dbb1d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SemiAnalysis argues Nvidia's $530B of off-balance-sheet guarantees (including $36B take-or-pay floors) and backstop program let non-investment-grade neoclouds borrow at IG pricing because Jensen personally backed them; without the Jensen put there might be a large contraction in this ecosystem."
+     },
+     {
+      "claim_ids": [
+       "C-451950df8dbb1d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article explicitly warns of a large ecosystem contraction if the Jensen put disappears."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If the next CEO cannot or will not extend the same credit support, neocloud financing and buildout could shrink, reducing demand for GPUs and datacenter physical suppliers; the article does not quantify the contraction."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3b918f4d38866f"
+       ],
+       "original_date": "2026-11-12",
+       "period": "fiscal second quarter",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Nvidia disclosed $530B of gross off-balance-sheet guarantees in fiscal Q2, up from $184B prior quarter"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fc01e4344cefe6"
+       ],
+       "original_date": "2026-11-12",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Guarantees include $36B of take-or-pay floors under neocloud capacity"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-451950df8dbb1d"
+       ],
+       "original_date": "2026-11-12",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Without the Jensen put, there could be a large contraction in the neocloud/neolab ecosystem"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-11-19 09:23 UTC, analysed as of 2026-11-19, from a source published 2026-11-12; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-3b918f4d38866f",
+       "C-fc01e4344cefe6"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "Nvidia backstops (revenue floors, lease guarantees) let neoclouds without IG ratings borrow at IG pricing, enabled by Jensen's personal credibility"
+     },
+     {
+      "claim_ids": [
+       "C-451950df8dbb1d"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Ecosystem contraction would reduce neocloud GPU purchases and buildout"
+     },
+     {
+      "claim_ids": [
+       "C-451950df8dbb1d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "cash_flow",
+      "text": "Without the Jensen put, neocloud financing and the ability to raise money contracts"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3b918f4d38866f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "gross off-balance-sheet guarantees",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "fiscal second quarter",
+      "qualifiers": [
+       "gross off-balance-sheet guarantees"
+      ],
+      "quote": "Nvidia disclosed $530B of gross off-balance-sheet guarantees as of its fiscal second quarter, up from $184B the prior quarter",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 530.0,
+      "value_text": "$530B"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fc01e4344cefe6",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "take-or-pay floors",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "take-or-pay floors",
+       "neocloud capacity"
+      ],
+      "quote": "including $36B of take-or-pay floors under neocloud capacity",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 36.0,
+      "value_text": "$36B"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-5b5764ebd058",
+      "block_id": "b035",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-451950df8dbb1d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Without the Jensen put, there could be a large contraction in the neocloud/neolab ecosystem",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "If the Jensen put is not there, there might be a large contraction in this ecosystem.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0000002488",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-04 (accession 0000002488-26-000191) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-e1b208e37d74db",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Competitor/Tier 1 memory customer that could gain supply access as Nvidia's supply chain stranglehold loosens"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001730168",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-10 (accession 0001730168-26-000080) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value",
+         "ticker": "AVGO"
+        }
+       ],
+       "mention_id": "M-93dc40f586075e",
+       "name_as_written": "Broadcom",
+       "other_securities": [],
+       "quote": "Broadcom",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Tier 1 customer that could gain memory/capacity access as Nvidia's priority loosens"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7fd0f50dcd4de6",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler customer and Tier 1 memory customer building own XPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001018724",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-9160272340ff6c",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler and Tier 1 memory customer building own XPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0000789019",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-1fbfa2f2a3f7ea",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001326801",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-eb1d65a8308d61",
+       "name_as_written": "Meta",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page, but 2 8-A12B registration(s) fell between it and 2026-11-19 \u2014 undecidable here",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "METAM"
+        }
+       ],
+       "quote": "Meta",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler customer dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f8605a7b4d8116",
+       "name_as_written": "Supermicro",
+       "other_securities": [],
+       "quote": "Supermicro",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Server maker implicated in GPU smuggling indictments; dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001571996",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-08 (accession 0001571996-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class C Common Stock, par value of $0.01 per share",
+         "ticker": "DELL"
+        }
+       ],
+       "mention_id": "M-1babb7e913430d",
+       "name_as_written": "Dell",
+       "other_securities": [],
+       "quote": "Dell",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Server maker dependent on Chinese supply chain"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0002120882",
+       "direction": "unclear",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3e553fdfe442de",
+       "name_as_written": "SK Hynix",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "SKHY"
+        },
+        {
+         "exchange": "OTC",
+         "instrument": "unknown",
+         "note": "current SEC ticker map only \u2014 point-in-time registration not verifiable (no periodic filing on or before 2026-11-19 in the SEC submissions index); never use in a historical basket",
+         "pit_source": null,
+         "pit_status": "UNVERIFIED",
+         "security_class": null,
+         "ticker": "HXSCL"
+        }
+       ],
+       "quote": "SK Hynix\u2019s 2027 HBM4 pricing",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "HBM memory supplier whose pricing priority for Nvidia may loosen without Jensen"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001973239",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-79246b3a2e2f66",
+       "name_as_written": "Arm",
+       "other_securities": [],
+       "quote": "Rene Haas at Arm",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Company run by a rare former Nvidia executive turned CEO"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001341439",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.01 per share",
+         "ticker": "ORCL"
+        }
+       ],
+       "mention_id": "M-96926f04425b8a",
+       "name_as_written": "Oracle",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+         "ticker": "ORCL PRD"
+        }
+       ],
+       "quote": "NVIDIA and Oracle have been lobbying against it",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Company lobbying against RASA export-control bill"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5288aea0904852",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "only two real customers, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "One of Nvidia's two frontier-lab customers"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-405ef3a5c400bb",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "One of Nvidia's two frontier-lab customers"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-408d23dfa212db",
+       "name_as_written": "SpaceX",
+       "other_securities": [],
+       "quote": "all seven except SpaceX are trying to build their own XPUs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "The only major customer not building its own XPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-27689cfe67f4fb",
+       "name_as_written": "Reflection",
+       "other_securities": [],
+       "quote": "investing in firms like Reflection, Thinking Machines, Poolside",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "US open-source AI firm Nvidia was propping up; may be deprioritized without Jensen"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3f8b1c97d5df2c",
+       "name_as_written": "Thinking Machines",
+       "other_securities": [],
+       "quote": "Reflection, Thinking Machines, Poolside",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "US AI firm Nvidia was supporting"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c58e199058d12f",
+       "name_as_written": "Poolside",
+       "other_securities": [],
+       "quote": "Reflection, Thinking Machines, Poolside",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "US AI firm Nvidia was supporting"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d5ef0663d9f348",
+       "name_as_written": "Hugging Face",
+       "other_securities": [],
+       "quote": "the Hugging Face acquisition",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Open-source AI platform referenced as a Nvidia acquisition supporting open source"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-290abab8f02805",
+       "name_as_written": "Z.ai",
+       "other_securities": [],
+       "quote": "Z.ai claimed inference support for GLM-5 on seven domestic accelerators",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Chinese lab moving to domestic accelerators"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-30eba571844925",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "DeepSeek published their V4 paper",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Chinese lab open-sourcing inference kernel on Huawei Ascend NPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8418807b050f60",
+       "name_as_written": "Meituan",
+       "other_securities": [],
+       "quote": "Meituan claimed LongCat 2.0",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "disruptor",
+       "role_detail": "Chinese firm claiming model pretrained entirely on Huawei Ascend NPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-55981b9d60e3ab",
+       "name_as_written": "Huawei",
+       "other_securities": [],
+       "quote": "Huawei Ascend NPUs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Domestic Chinese accelerator maker benefiting from Chinese labs moving off Nvidia"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-20d83825c76e07",
+       "name_as_written": "Albatron",
+       "other_securities": [],
+       "quote": "Albatron",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Supermicro distributor implicated in smuggling indictment"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d3e94d024ba598",
+       "name_as_written": "Flying Tiger",
+       "other_securities": [],
+       "quote": "Flying Tiger",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Server reseller implicated in smuggling indictment"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b148ab4a46391",
+       "name_as_written": "Chief Telecom",
+       "other_securities": [],
+       "quote": "Chief Telecom (a Taiwanese distributor, reseller, and datacenter operator)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "risk",
+       "role_detail": "Taiwanese datacenter operator implicated in smuggling indictment"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0000071691",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-11-04 (accession 0000071691-26-000041) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock",
+         "ticker": "NYT"
+        }
+       ],
+       "mention_id": "M-7bb37ad3ddf1fa",
+       "name_as_written": "New York Times",
+       "other_securities": [],
+       "quote": "The second New York Times story",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "data_source",
+       "role_detail": "Cited news source reporting on intelligence community basis"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ed4798a3ddfdbb",
+       "name_as_written": "Department of Commerce",
+       "other_securities": [],
+       "quote": "The Department of Commerce now also finally believes",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "US agency believing more than 1.5GW of Nvidia chips improperly in China"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f3ff421b0b2653",
+       "name_as_written": "Rednote",
+       "other_securities": [],
+       "quote": "ads on Rednote for an 800 GPU cluster of RTX 5090",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Chinese platform where smuggled GPU clusters are advertised for rental"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b35d1b0e0f059f",
+       "name_as_written": "Colette Kress",
+       "other_securities": [],
+       "quote": "Colette Kress has been named interim CEO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Named interim CEO of Nvidia"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-124ce832cee91c",
+       "name_as_written": "MiniMax",
+       "other_securities": [],
+       "quote": "kernel libraries like MiniMax MSA",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "disruptor",
+       "role_detail": "Chinese lab producing open-source kernel libraries (MSA) targeting Nvidia Blackwell GPUs"
+      },
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-890cd64a7b8efb",
+       "name_as_written": "Moonshot",
+       "other_securities": [],
+       "quote": "Moonshot\u2019s FlashKDA",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Chinese lab producing open-source kernel library FlashKDA"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "cik": "0001045810",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-3c11427af47696",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Jensen Huang is no longer the CEO of Nvidia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potentially_harmed",
+       "role_detail": "Subject of the article; loss of founder CEO Jensen Huang seen as materially negative for the company and its ecosystem"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-5b5764ebd058",
+       "claim_ids": [
+        "C-451950df8dbb1d"
+       ],
+       "direction": "negative",
+       "name": "neoclouds",
+       "provenance": "SOURCE OPINION",
+       "quote": "Neoclouds around the world raised their money because Jensen backed them"
+      }
+     ],
+     "sectors": [
+      "neoclouds",
+      "AI datacenter capacity"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-451950df8dbb1d"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "The risk is conditional on successor behavior; no dated near-term catalyst is given."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-3b918f4d38866f",
+        "C-451950df8dbb1d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The neocloud financing model depends on Nvidia's $530B of guarantees and the founder's personal backing, a structural vulnerability if that support is withdrawn."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-3b918f4d38866f"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "Nvidia's institutional guarantees are contractual and could persist regardless of CEO, limiting the contraction."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-3557AAE138: the opposite direction on the same value-chain node, but not the same claim \u2014 a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-6F2E7079B0: the opposite direction on the same value-chain node, but not the same claim \u2014 a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-95AEE030DA: the opposite direction on the same value-chain node, but not the same claim \u2014 a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-B1F096684F: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-EF9EABA05A: same value-chain node, not the same claim \u2014 a different mechanism (policy_regulation vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 26 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Nvidia reaffirms and extends neocloud backstops under new leadership"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Neoclouds continue raising capital at IG pricing"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-3b918f4d38866f",
+        "C-7d30d954d89118",
+        "C-fc01e4344cefe6",
+        "C-dbc7ccfd10e3bb"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Nvidia's $530B of gross off-balance-sheet guarantees (up from $184B) including $36B take-or-pay floors concentrate credit/financing risk in the AI infrastructure ecosystem that depended on the founder's personal backing. (scope: Off-balance-sheet exposure specific to Nvidia's neocloud backstop structure; the article does not quantify realized losses.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: If the Jensen put (credit backstops, revenue floors, lease guarantees) is not there under a successor"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether a successor maintains the backstop program"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The size of any contraction (not quantified)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific neoclouds are most exposed"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Nvidia reaffirms neocloud backstop program"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "New neocloud financings close at IG pricing"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Review Nvidia's 10-Q off-balance-sheet guarantee disclosures and neocloud funding announcements to test whether backstop support is continuing post-Jensen."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A neocloud financing round fails or reprices wider"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Nvidia signals reducing backstop commitments"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-5b5764ebd058",
+      "authors": [
+       "Dylan Patel",
+       "Doug",
+       "Wayne Ma",
+       "Jordan Nanos"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-3b918f4d38866f",
+       "C-fc01e4344cefe6",
+       "C-451950df8dbb1d",
+       "C-7d30d954d89118",
+       "C-dbc7ccfd10e3bb"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-11-12T18:06:26Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Nvidia and the World Without Jensen",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/nvidia-and-the-world-without-jensen",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "6f069cced7ce836713efd1ff95b577b8bb2109103a3afdbdf4f3075b255d7bae",
+   "created_at": "2026-11-19T09:23:49.033290Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-3b918f4d38866f",
+       "C-fc01e4344cefe6"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-3b918f4d38866f",
+       "C-fc01e4344cefe6"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-3b918f4d38866f: measured 2026-11-12 (7 days before the as-of); C-fc01e4344cefe6: measured 2026-11-12 (7 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Nvidia (NVDA), sector: neoclouds",
+      "value": "1 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261119T090734Z-scan",
+   "thesis_id": "TH-156D98BD04",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-5b5764ebd058",
+   "block_ids": [
+    "b034",
+    "b035"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026doesn\u2019t always make strategic sense to skip the hyperscalers, or to work with them and treat them\u2026",
+   "name": "hyperscalers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-7d30d954d89118",
+  "C-dbc7ccfd10e3bb"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The cited spans support $530B guarantees, $36B take-or-pay floors, and the contraction opinion, but the claim that non-investment-grade neoclouds borrow at IG pricing because Jensen personally backed them is not in the cited spans (that content appears in s03.0 without support either).",
+  "s03.0": "Label is MEASURED OBSERVATION but the core claim \u2014 that backstops let neoclouds without IG ratings borrow at IG pricing enabled by Jensen's personal credibility \u2014 is not in the cited spans, which only give the $530B and $36B figures. The borrowing/IG-pricing mechanism is unsupported and the label overstates."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Premise \u2014 conditional in the source.",
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}
