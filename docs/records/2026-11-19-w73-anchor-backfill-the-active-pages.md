@@ -52,7 +52,7 @@ superseded-by:
 **HOW VERIFIED.**
 - **The inputs, checked before the run:**
   - **The CIQ exports.** For all 9 names, every file on Drive (`data/manual/ciq/<T>/`) carries exactly the sha256 its page stamps (`inputs.ciq`), file for file; none is a link. They were read in place and never copied. BRBR and GOOGL differ: their pages predate the exports now on Drive.
-  - **The price store.** It is a copy of #1132's impact store (2,827,554 rows, frontier 2026-11-10), refreshed by `vinci refresh` (Polygon grouped-daily) for the 9 names. That added 6 sessions, 2026-11-11 to 2026-11-18, and 54 bars. The run was at 2026-11-19 18:10 UTC, before that day's close, so 2026-11-18 is the latest close.
+  - **The price store.** It is a copy of #1132's impact store (2,827,554 rows, frontier 2026-11-10), refreshed by `vinci refresh` (Polygon grouped-daily) for the 9 names. That added 6 sessions, 2026-11-11 to 2026-11-18, and 54 bars. The run was at about 2026-11-19 18:41 UTC (its grouped-daily cache files are stamped 18:40–18:41 UTC), before that day's 21:00 UTC close, so 2026-11-18 is the latest close.
   - **The store's control.** Each page's own-date bar equals its `stock_info.price` on 8 of 8 pages; 7 of those bars came from the refresh.
   - **EDGAR** companyfacts and submissions were fetched 2026-11-19.
 - **Dry run first.** 9 processed: 8 CHANGED, 1 unchanged (NCNO), every priced base +0%. The written run matched it.
