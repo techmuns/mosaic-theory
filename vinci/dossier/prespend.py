@@ -590,7 +590,8 @@ def gate_layer(built: Dossier) -> MechanicalLayer:
     before the checks (the covenant digest, the maturity event, the transcript drivers, the
     covenant rows) is absent here, and ``ev_gap``, which the paid build writes only after them, is
     present. ``test_prespend.py`` measures, on every committed page (which carries all of it), that
-    none of it moves the export age the freshness check gates on."""
+    none of it moves the export panel dates the freshness check's event rule reads
+    (`freshness.export_panels`, 2026-11-19)."""
     from vinci.dossier.assemble import _mark_material
 
     marked: MechanicalLayer = _mark_material(built.mechanical)

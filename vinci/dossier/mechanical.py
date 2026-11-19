@@ -5820,12 +5820,15 @@ def with_price_values(mech: MechanicalLayer, bundle: CiqBundle | None) -> Mechan
     si = si.model_copy(update={"market_cap_at_close": pv.cap_at_close(dumped["stock_info"]),
                                "cap_cross_check": pv.cross_check(dumped["stock_info"])})
     day = si.as_of.isoformat() if si.as_of is not None else None
+    tev_at = pv.tev_at_close(dumped)          # struck once, read by both consumers below
     val = mech.valuation
     if val.implied_expectations is not None:
         val = val.model_copy(update={"implied_expectations": pv.restate_implied(
-            val.implied_expectations, pv.tev_at_close(dumped), price_as_of=day)})
+            val.implied_expectations, tev_at, price_as_of=day)})
     if bundle is not None and day is not None:
-        tev_at, tev_r = pv.tev_at_close(dumped), pv.tev_ratio(dumped)
+        ciq = pv.ciq_tev(dumped)
+        tev_r = (float(tev_at.value) / ciq if tev_at.value is not None and ciq is not None
+                 and ciq > 0 else None)
         close = ciq_sheets.comps_printed_close(bundle)
         price = si.price.value if si.price.status is SourceStatus.PRESENT else None
         price_r = price / close if price and close and close > 0 else None

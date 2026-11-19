@@ -1725,6 +1725,21 @@ function deriveProposal(eb, sleeve) {
 // 52-wk · shares · book value/sh). CIK moved to Record & reproduce (an identifier, not a decision
 // figure). Fail-honest: a row is dropped when its source is absent (e.g. AORT has no
 // Book Value/Share row in its export → no Book/sh row, never a guess).
+// (2026-11-19) CIQ's comps cap beside the page's own, where it is beyond the tolerance — the
+// share-basis wording for a whole-number ratio. Twin of the tail in render.py's _brief_snapshot().
+function capCrossCheckTail(cc, capAsOf) {
+  if (!cc) return "";
+  const ciq = fmtCap(cc.ciq_market_cap);
+  if (cc.corporate_action) {
+    return ` <span class="pill unresolved">SHARE-BASIS MISMATCH</span> <span class="muted">vs CIQ `
+      + `${ciq}${capAsOf ? ` (${escapeHtml(capAsOf)})` : ""}</span>`;
+  }
+  if (!cc.beyond_tolerance) return "";
+  const pct = `${cc.gap >= 0 ? "+" : ""}${(cc.gap * 100).toFixed(1)}%`;
+  return ` <span class="muted">(CIQ ${ciq}${capAsOf ? ` at ${escapeHtml(capAsOf)}` : ""}, `
+    + `${pct})</span>`;
+}
+
 function briefSnapshot(d, m) {
   const si = m.stock_info || {};
   const ok = (f) => f && f.status === "present" && f.value != null;
@@ -1744,8 +1759,15 @@ function briefSnapshot(d, m) {
     // cap vintage rather than borrowing a neighbour's.
     const capAsOf = String(si.market_cap_as_of || "").slice(0, 10);
     const siAsOf = String(si.as_of || "").slice(0, 10);
-    const vint = capAsOf && capAsOf !== siAsOf ? ` (${escapeHtml(capAsOf)})` : "";
-    push("Market cap", fmtCap(si.market_cap.value) + vint);
+    const at = si.market_cap_at_close;
+    if (ok(at)) {
+      // (2026-11-19) THE PAGE'S CAP is its close × its count; CIQ's is a dated cross-check,
+      // printed only where it disagrees beyond the tolerance. Twin of _brief_snapshot().
+      push("Market cap", fmtCap(at.value) + capCrossCheckTail(si.cap_cross_check, capAsOf));
+    } else {
+      const vint = capAsOf && capAsOf !== siAsOf ? ` (${escapeHtml(capAsOf)})` : "";
+      push("Market cap", fmtCap(si.market_cap.value) + vint);
+    }
   }
   if (ok(si.low_52w) && ok(si.high_52w)) push("52-wk range", `$${si.low_52w.value.toFixed(2)}–$${si.high_52w.value.toFixed(2)}`);
   if (ok(si.shares_out)) push("Shares out", fmtShares(si.shares_out.value));
@@ -3536,6 +3558,27 @@ function flagsSection(caveats) {
 // (G) implied expectations — price-inverted, multiples-space. Mirrors the md: each stated multiple
 // → the fundamental level price implies (TEV ÷ multiple); consensus anchors juxtaposed, NEVER
 // differenced (no %, gap, upside, or implied price/equity). "" for a pre-G dossier.json.
+// (2026-11-19) the TEV the price-implied PEER rows divide — the TEV at the page's close — and CIQ's
+// own beside it, which the † rows divide. Twin of _implied_expectations_lines() in render.py.
+function ieTevLine(ie) {
+  const at = ie.tev_at_close;
+  const ciq = ie.tev && ie.tev.value != null ? Number(ie.tev.value) : null;
+  const asOf = escapeHtml(ie.tev_as_of || "");
+  const ciqPart = ciq != null ? `CIQ's own TEV $${fmtMoney1(ciq)}M as-of ${asOf}, which the † rows divide` : "";
+  if (at && at.value != null) {
+    return `TEV $${fmtMoney1(Number(at.value))}M at the ${escapeHtml(ie.tev_close_date || "")} close `
+      + `(CIQ claims as-of ${asOf}${ciqPart ? `; ${ciqPart}` : ""})`;
+  }
+  if (at) {
+    return `TEV at the page's close UNKNOWN — ${escapeHtml(at.note || "")}${ciqPart ? ` · ${ciqPart}` : ""}`;
+  }
+  return `TEV as-of ${asOf}`;
+}
+
+function fmtMoney1(v) {
+  return v.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+}
+
 function impliedExpectations(ie) {
   if (!ie) return "";
   // label (the multiple's name) + one cell PER column: dataTable prepends a blank <th> for the
@@ -3554,8 +3597,10 @@ function impliedExpectations(ie) {
   // keeps the gate, the vintages, and a terse † key.
   const intro = `<div class="fact"><div class="fact-label">What the current price implies (at stated multiples)</div>
     <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(gateShortref(ie.heterogeneity_gate || ""))}</div>
-    <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")} · † at the name's own multiple the implied level is consensus by identity</div></div></div>`;
-  const table = dataTable("Price-implied levels (at each stated multiple)", ie.tev && ie.tev.source_ref,
+    <div class="muted" style="font-size:11px;">${ieTevLine(ie)} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")} · † at the name's own multiple the implied level is consensus by identity</div></div></div>`;
+  const atClose = ie.tev_at_close && ie.tev_at_close.source_ref;
+  const table = dataTable("Price-implied levels (at each stated multiple)",
+    atClose || (ie.tev && ie.tev.source_ref),
     ["Multiple (× used)", "Implied level"], rows, "");  // (K5) renamed
   const readsAgainst = "";  // (declutter) the juxtapose rule is stated once, in the reading guide
   // the parallel REVENUE anchors substantiate the TEV/Rev name-row identity (†); only when present.
@@ -3638,8 +3683,8 @@ function evGap(g) {
     // NO SHAPE LINE — the label ranks three ratios and none were struck.
     return sec(H, "Our leg against the market price; the decomposition is not comparable here.",
       `<p class="ds-note">Anchor FY${escapeHtml(String(g.anchor_fy))} · consensus as-of `
-      + `${escapeHtml(consAsOf)}${escapeHtml(floorNote)} · TEV as-of `
-      + `${escapeHtml(String(vin.tev_as_of || "UNKNOWN"))} · form ${escapeHtml(String(g.form))}</p>`
+      + `${escapeHtml(consAsOf)}${escapeHtml(floorNote)} · `
+      + `${evGapTevVintage(vin)} · form ${escapeHtml(String(g.form))}</p>`
       + sup + evGapTail(g, br, consAsOf));
   }
 
@@ -3653,7 +3698,7 @@ function evGap(g) {
     { label: "product = the EV gap", cells: [ratio(r.ev_gap), ""], cls: "name-row" },
   ];
   let body = `<p class="ds-note">Anchor FY${escapeHtml(String(g.anchor_fy))} · consensus as-of `
-    + `${escapeHtml(consAsOf)}${escapeHtml(floorNote)} · TEV as-of ${escapeHtml(String(vin.tev_as_of || "UNKNOWN"))} · `
+    + `${escapeHtml(consAsOf)}${escapeHtml(floorNote)} · ${evGapTevVintage(vin)} · `
     + `form ${escapeHtml(String(g.form))}</p>`
     + dataTable("The gap, decomposed (ours / consensus, at the anchor year)", null,
         ["ratio", "consensus dispersion"], rows,
@@ -3693,6 +3738,15 @@ function evGap(g) {
 
 // The bridge, the dispersions and the D&A convention — shared by BOTH branches, so a decomposed
 // and a suppressed block cannot drift about how they report the same three things.
+// (2026-11-19) the EV gap's TEV is struck at the page's close on CIQ's claims: both dates, each
+// describing its half. Twin of _ev_gap_lines() in render.py.
+function evGapTevVintage(vin) {
+  const claims = escapeHtml(String(vin.tev_as_of || "UNKNOWN"));
+  return vin.tev_close_date
+    ? `TEV at the ${escapeHtml(String(vin.tev_close_date))} close, CIQ claims as-of ${claims}`
+    : `TEV as-of ${claims}`;
+}
+
 function evGapTail(g, br, consAsOf) {
   let body = "";
   if (["our_ev", "net_debt", "shares", "tev"].every((k) => typeof br[k] === "number")
