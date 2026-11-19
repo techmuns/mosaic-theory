@@ -21,14 +21,17 @@ GUARANTEES
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import traceback
-from collections.abc import Sequence
+from collections import deque
+from collections.abc import Callable, Sequence
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from vinci.graph.llm import LlmError, sdk_version
 from vinci.theme_intelligence.budget import BudgetExceeded, GuardedClient, SpendGuard
@@ -48,6 +51,7 @@ from vinci.theme_intelligence.config import (
     EXTRACT_PROMPT_VERSION,
     LLM_MODEL,
     LLM_PROVIDER,
+    LLM_WORKERS,
     PARSER_VERSION,
     REVIEW_PROMPT_VERSION,
     Paths,
@@ -107,6 +111,7 @@ from vinci.theme_intelligence.securities import SecResolver
 from vinci.theme_intelligence.store import RETRIEVAL_CORRECTED, Store
 
 if TYPE_CHECKING:  # the price module is imported only when the market step runs
+    from vinci.theme_intelligence.enrich import EnrichAnswer, EnrichRequest
     from vinci.theme_intelligence.market import DeepSource, EpsSource, PriceSource
 from vinci.theme_intelligence.verify import (
     ReviewOutcome,
@@ -140,6 +145,24 @@ def article_id_for(canonical_url: str) -> str:
     return "A-" + _sha(canonical_url.rstrip("/").lower())[:12]
 
 
+_T = TypeVar("_T")
+
+
+@dataclass
+class _Enrichment:
+    """One thesis of an enrichment pass (`Pipeline._enrich_theses`), taken in input order and
+    not yet written. `note`: decided without a call (skipped, no stated step, refused)."""
+    tid: str
+    note: str = ""
+    refusal: bool = False
+    no_steps: bool = False  # counted as `theses_not_enriched`
+    card: CardContent | None = None
+    version: int = 0
+    req: EnrichRequest | None = None
+    answer: EnrichAnswer | None = None  # a cached answer, or one asked on this thread
+    future: Future[EnrichAnswer] | None = None  # one asked on a worker
+
+
 @dataclass
 class ArticleResult:
     url: str
@@ -163,7 +186,12 @@ class Pipeline:
     def __init__(self, data_dir: Path, *, sources: tuple[SourceConfig, ...], taxonomy: Taxonomy,
                  client: ToolClient | None, fetcher: PoliteFetcher | None = None,
                  resolver: SecResolver | None = None, review: bool = True,
-                 store: Store | None = None, enrich: bool = False) -> None:
+                 store: Store | None = None, enrich: bool = False,
+                 llm_workers: int = LLM_WORKERS) -> None:
+        if llm_workers < 1:
+            raise ValueError(f"llm_workers must be at least 1, not {llm_workers}")
+        #: independent paid calls in flight at once (config.LLM_WORKERS; `_llm_workers`)
+        self.llm_workers = llm_workers
         self.paths = Paths(data_dir)
         self.paths.ensure()
         self.store = store or Store(self.paths.db)
@@ -1251,57 +1279,161 @@ class Pipeline:
     def _active_ids(self) -> list[str]:
         return [t.thesis_id for t in self.store.theses() if t.status is ThesisStatus.ACTIVE]
 
+    def _llm_workers(self) -> int:
+        """How many INDEPENDENT paid calls may be in flight at once: `llm_workers`, or one when
+        the client is not the guarded one or does not keep each call's usage on its own thread
+        (`GuardedClient.usage_per_thread`)."""
+        if not isinstance(self.client, GuardedClient) or not self.client.usage_per_thread:
+            return 1
+        return self.llm_workers
+
     def _enrich_theses(self, targets: list[str], *, as_of: date, refresh: bool = False
                        ) -> tuple[list[tuple[str, str]], bool]:
         """The enrichment loop inside the current run: [(thesis id, what happened)], and
         whether the spend guard refused a call — said, never pretended. A refusal by the RUN's
-        budget stops the pass; one by a thesis's own limit holds that thesis alone."""
-        from vinci.theme_intelligence.enrich import enrich_thesis
+        budget stops the pass; one by a thesis's own limit holds that thesis alone.
+
+        CONCURRENT (2026-11-19). Its paid calls are INDEPENDENT: each request is one thesis's own
+        card, and no call's prompt holds another's answer. So up to `_llm_workers()` are in
+        flight at once. Everything else stays one at a time, on this thread, in INPUT ORDER: the
+        registry reads, the request, the spend guard's admission of each call, then — as each
+        answer's turn comes — the SEC checks, the ledger row and the stored set. A run so writes
+        what a one-at-a-time pass writes, in the same order; only the wall time differs. When a
+        call fails, its error is raised at that thesis's turn, as before: the theses before it are
+        written and none after it. ONE thing differs: calls already sent for later theses are
+        paid, recorded (`*-unrecorded`) and their answers cached, so a re-run does not pay for
+        them again."""
+        from vinci.theme_intelligence.enrich import (
+            NO_CLIENT,
+            NO_STEPS,
+            SYSTEM,
+            TOOL,
+            ask_enrichment,
+            cached_answer,
+            enrichment_from,
+            enrichment_request,
+        )
         from vinci.theme_intelligence.report import thesis_groups
 
         assert self.run is not None
+        run_id = self.run.run_id
+        model = self.client.model if self.client is not None else LLM_MODEL
+        workers = self._llm_workers()
         done: list[tuple[str, str]] = []
         refused = False
-        for tid in targets:
+        queue: deque[_Enrichment] = deque()  # every thesis taken, in input order, unwritten
+        pool = (ThreadPoolExecutor(max_workers=workers, thread_name_prefix="ti-enrich")
+                if workers > 1 else None)
+
+        def finish_oldest() -> bool:
+            """Write the oldest thesis taken (waiting for its answer); False when none is left.
+            A call's error is raised HERE, at its thesis's turn."""
+            nonlocal refused
+            if not queue:
+                return False
+            it = queue.popleft()
+            if it.req is None:  # decided without a call
+                done.append((it.tid, it.note))
+                refused = refused or it.refusal
+                if it.no_steps:
+                    self._count("theses_not_enriched")
+                return True
+            answer = it.answer if it.future is None else it.future.result()
+            assert it.card is not None and answer is not None
+            res = enrichment_from(it.card, version=it.version, req=it.req, answer=answer,
+                                  resolver=self.resolver, as_of=as_of, run_id=run_id)
+            assert res.enrichment is not None
+            self._llm_call("enrich", it.tid, res.cached, res.usage, res.cost_usd, res.seconds,
+                           model, ENRICH_PROMPT_VERSION)
+            with self.store.tx():
+                self.store.add_enrichment(res.enrichment)
+            self._count("theses_enriched")
+            e = res.enrichment
+            done.append((it.tid, f"{len(e.candidates)} proposed ("
+                                 f"{sum(1 for c in e.candidates if c.listings)} with a verified "
+                                 f"US listing), {len(e.refused)} set aside"))
+            return True
+
+        def take(tid: str) -> _Enrichment:
+            """One thesis read and its request built, on this thread. Writes nothing."""
             t = self.store.thesis(tid)
             v = self.store.thesis_version(tid, t.current_version) if t else None
             if t is None or v is None:
                 raise ValueError(f"no thesis {tid} in this registry")
             if not refresh and any(x.thesis_version == v.version
                                    for x in self.store.enrichments(tid)):
-                done.append((tid, f"already proposed for version {v.version} — skipped "
-                                  f"(--refresh runs the pass again; the paid answer comes from "
-                                  f"the cache)"))
-                continue
+                return _Enrichment(tid, note=f"already proposed for version {v.version} — "
+                                             f"skipped (--refresh runs the pass again; the paid "
+                                             f"answer comes from the cache)")
             groups = [g.name for g in thesis_groups(self.store, self.store.links(tid))]
-            self.guard.begin_document(f"enrich {tid}")
+            req = enrichment_request(v.content, version=v.version, area=t.sector,
+                                     groups=groups, model=model, cache_dir=self.paths.llm_cache)
+            if req is None:
+                return _Enrichment(tid, note=NO_STEPS, no_steps=True)
+            return _Enrichment(tid, card=v.content, version=v.version, req=req)
+
+        def answered(req: EnrichRequest) -> EnrichAnswer | None:
+            answer = cached_answer(req)
+            if answer is None and self.client is None:
+                raise RuntimeError(NO_CLIENT)
+            return answer
+
+        def first_the_earlier(fn: Callable[[], _T]) -> _T:
+            """`fn`'s error is raised after every thesis taken before it is written, as one at a
+            time would have written them. (An error FROM writing one is raised as it is.)"""
             try:
-                res = enrich_thesis(v.content, version=v.version, area=t.sector,
-                                    groups=groups, client=self.client,
-                                    cache_dir=self.paths.llm_cache, resolver=self.resolver,
-                                    as_of=as_of, run_id=self.run.run_id)
-            except BudgetExceeded as exc:
-                done.append((tid, f"not run — budget: {exc}"))
-                refused = True
-                if exc.scope not in ("document", "retry"):  # the run's: none of the rest fits
-                    break
-                continue  # this thesis's own limit: the next one is asked
-            finally:
-                self.guard.end_document()
-            if res.enrichment is None:
-                done.append((tid, res.note))
-                self._count("theses_not_enriched")
-                continue
-            self._llm_call("enrich", tid, res.cached, res.usage, res.cost_usd, res.seconds,
-                           self.client.model if self.client else LLM_MODEL,
-                           ENRICH_PROMPT_VERSION)
-            with self.store.tx():
-                self.store.add_enrichment(res.enrichment)
-            self._count("theses_enriched")
-            e = res.enrichment
-            done.append((tid, f"{len(e.candidates)} proposed ("
-                              f"{sum(1 for c in e.candidates if c.listings)} with a verified "
-                              f"US listing), {len(e.refused)} set aside"))
+                return fn()
+            except Exception:
+                while finish_oldest():
+                    pass
+                raise
+
+        try:
+            for tid in targets:
+                if pool is None:  # one at a time: the previous thesis is written first
+                    while finish_oldest():
+                        pass
+                else:
+                    # a thesis named twice reads what its first turn wrote
+                    while any(it.tid == tid for it in queue):
+                        finish_oldest()
+                    while sum(1 for it in queue if it.future is not None) >= workers:
+                        finish_oldest()
+                item = first_the_earlier(functools.partial(take, tid))
+                if item.req is not None:
+                    req = item.req
+                    # the same request in flight: its answer is cached once its turn is
+                    # written — it is never paid twice
+                    while any(it.future is not None and it.req is not None
+                              and it.req.key == req.key for it in queue):
+                        finish_oldest()
+                    item.answer = first_the_earlier(functools.partial(answered, req))
+                if item.req is not None and item.answer is None:  # a paid call
+                    req = item.req
+                    if not isinstance(self.client, GuardedClient):  # an unguarded stand-in
+                        item.answer = ask_enrichment(req, self.client)
+                    else:
+                        try:  # admitted HERE, in input order; may wait for calls in flight
+                            adm = self.client.admit(system=SYSTEM, user=req.user, tool=TOOL,
+                                                    doc=self.guard.scope(f"enrich {tid}"),
+                                                    make_room=finish_oldest)
+                        except BudgetExceeded as exc:
+                            queue.append(_Enrichment(tid, note=f"not run — budget: {exc}",
+                                                     refusal=True))
+                            if exc.scope not in ("document", "retry"):  # the run's: none of
+                                break                                   # the rest fits
+                            continue  # this thesis's own limit: the next one is asked
+                        send = functools.partial(self.client.send, adm)
+                        if pool is None:
+                            item.answer = ask_enrichment(req, self.client, send)
+                        else:
+                            item.future = pool.submit(ask_enrichment, req, self.client, send)
+                queue.append(item)
+            while finish_oldest():
+                pass
+        finally:
+            if pool is not None:  # every call sent is settled before the run goes on
+                pool.shutdown(wait=True)
         return done, refused
 
     def _scan_enrichment(self, as_of: date, targets: list[str] | None = None) -> None:

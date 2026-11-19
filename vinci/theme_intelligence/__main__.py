@@ -60,6 +60,7 @@ from vinci.theme_intelligence.config import (
     DEFAULT_SCAN_DAYS,
     LLM_MAX_TOKENS,
     LLM_MODEL,
+    LLM_WORKERS,
     Paths,
     SourceConfig,
     load_sources,
@@ -105,6 +106,20 @@ def source_for_url(url: str, sources: tuple[SourceConfig, ...]) -> str:
 
 def _iso(s: str) -> date:
     return date.fromisoformat(s)
+
+
+def _workers(s: str) -> int:
+    n = int(s)
+    if n < 1:
+        raise argparse.ArgumentTypeError(f"--llm-workers must be at least 1, not {n}")
+    return n
+
+
+def _llm_workers_arg(p: argparse.ArgumentParser) -> None:
+    p.add_argument("--llm-workers", type=_workers, default=LLM_WORKERS,
+                   help=f"independent paid calls in flight at once — the enrichment pass's, "
+                        f"one per thesis (default {LLM_WORKERS}; 1 = one at a time). The spend "
+                        f"guard reserves each call's bound, so it never changes the spend")
 
 
 def _author_name(s: str) -> str:
@@ -201,7 +216,8 @@ def cmd_scan(a: argparse.Namespace) -> int:
     as_of = _iso(a.as_of) if a.as_of else w_to
     client = None if a.cache_only else _client(required=True)
     pipe = Pipeline(Path(a.data_dir), sources=sources, taxonomy=taxonomy, client=client,
-                    review=not a.no_review, enrich=not a.no_enrich)
+                    review=not a.no_review, enrich=not a.no_enrich,
+                    llm_workers=a.llm_workers)
     run = pipe.run_scan(window_from=w_from, window_to=w_to, as_of=as_of,
                         max_articles=a.max_articles, resume_run_id=a.resume, budget=a.budget)
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
@@ -307,7 +323,7 @@ def cmd_enrich(a: argparse.Namespace) -> int:
     from vinci.theme_intelligence.report import write_run_outputs
 
     pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
-                    client=_client(required=False), review=False)
+                    client=_client(required=False), review=False, llm_workers=a.llm_workers)
     run, done = pipe.run_enrich(as_of=_iso(a.as_of), thesis_ids=a.thesis or (),
                                 refresh=a.refresh, budget=a.budget)
     print(f"run {run.run_id}: enrich {run.status.value} — "
@@ -346,7 +362,8 @@ def cmd_reanalyse(a: argparse.Namespace) -> int:
     from vinci.theme_intelligence.report import write_run_outputs
 
     pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
-                    client=_client(required=True), review=not a.no_review)
+                    client=_client(required=True), review=not a.no_review,
+                    llm_workers=a.llm_workers)
     from vinci.theme_intelligence.pipeline import ReanalysisIncompleteError
 
     try:
@@ -873,6 +890,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="skip the enrichment step at the end of the scan (default: every "
                          "active thesis whose current version has no set is enriched)")
     sc.add_argument("--out")
+    _llm_workers_arg(sc)
     sc.set_defaults(fn=cmd_scan)
 
     ig = sub.add_parser("ingest-file", help="import one manually supplied document "
@@ -1048,6 +1066,7 @@ def main(argv: list[str] | None = None) -> int:
                          "SEC again as of --as-of")
     en.add_argument("--budget", type=float, help="the run's spending limit in USD")
     en.add_argument("--out", help="where the run's outputs are written")
+    _llm_workers_arg(en)
     en.set_defaults(fn=cmd_enrich)
 
     mk = sub.add_parser("market", help="is it priced? — where each thesis's exposures stand "
@@ -1074,6 +1093,7 @@ def main(argv: list[str] | None = None) -> int:
     rn.add_argument("--budget", type=float, help="the run's spending limit in USD")
     rn.add_argument("--no-review", action="store_true")
     rn.add_argument("--out", help="where the run's outputs are written")
+    _llm_workers_arg(rn)
     rn.set_defaults(fn=cmd_reanalyse)
 
     qa = sub.add_parser("qa", help="re-check a run's stored records")
