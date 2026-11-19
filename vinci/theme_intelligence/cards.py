@@ -861,7 +861,7 @@ def quote_html(text: str, tag: str = "div", *, cls: str | None = "q",
     Measured and cut on the DECODED text `e()` prints, so a cut never falls inside an entity."""
     shown, cut = desk_quote(html.unescape(text))
     attr = f' class="{cls}"' if cls else ""
-    body = f"“{e(shown)}”" if marks else e(shown)
+    body = f"“{html.escape(shown)}”" if marks else html.escape(shown)  # decoded once, above
     return (f"<{tag}{attr}>{body}</{tag}>"
             + (f' <span class="note">{e(DESK_QUOTE_NOTE)}</span>' if cut else ""))
 
@@ -2083,7 +2083,9 @@ def _other_row(c: Claim, card: CardContent, rc: RenderContext) -> str:
     flags = [c.epistemic.value] + (["APPROXIMATE"] if c.approximate else []) \
         + (["chart-derived"] if c.chart_derived else []) + list(c.qualifiers) \
         + ([] if c.span_verified and c.number_verified is not False else ["NOT VERIFIED"])
-    label = " — ".join(x for x in (c.scope, c.metric) if x) or c.statement
+    # a claim with no scope or metric is labelled by its statement — for a passage claim (the
+    # risk scan's), the source's own sentence: held to the desk's cap (review of #1140)
+    label = " — ".join(x for x in (c.scope, c.metric) if x) or desk_quote(c.statement)[0]
     role = rc.roles.get(c.claim_id, "")
     return (f'<tr id="{e(c.claim_id)}"><td>{e(label)}{quote_html(c.quote)}</td>'
             f'<td><b>{e(c.value_text or "—")}</b> {e(unit_shown(c.value_text, c.unit))}</td>'

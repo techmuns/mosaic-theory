@@ -28,6 +28,8 @@ from pydantic import (
     model_serializer,
 )
 
+from vinci.theme_intelligence.display import DESK_QUOTE_NOTE, desk_quote
+
 DB_SCHEMA_VERSION = 9
 
 
@@ -1233,8 +1235,11 @@ class MechanismCoverage(Frozen):
                      f"its paragraph holds that evidence; review" if r.thesis_titles
                      else "on NO card — a sentence cut by a page break" if r.fragment
                      else "on NO card — no thesis's evidence is in its paragraph")
+            # whole up to the desk's cap: a table block can read as ONE sentence (review of
+            # #1140); a cut says so, and the sentence is whole in the registry
+            said, cut = desk_quote(r.sentence)
             out.append(f"{page_prefix(r.page)}a risk the source states that no model pass listed — "
-                       f"“{r.sentence}” ({where})")  # whole: a cut quote misreads
+                       f"“{said}”" + (f" — {DESK_QUOTE_NOTE}" if cut else "") + f" ({where})")
         # a mechanism is argued with more than one fact; a lone uncarried figure is listed, not
         # alerted (face validity, 2026-10-12: Citi's p37 gas argument = 4 facts)
         # the SOURCE's evidence is named (every figure, as written) and kept apart from any
