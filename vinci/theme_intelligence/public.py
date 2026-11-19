@@ -8,9 +8,10 @@ headings, plus a 2,042-character and five 911-character claim quotes, and 17 + 5
 local paths. The rules, applied to every row as it is written (`public_payload`):
 - a source's own words (a `quote`, a source-risk `sentence`, and a passage claim's `statement`,
   which is the source's sentence) are at most `DESK_QUOTE_MAX_CHARS`, the desk's cap;
-- a claim's quote cut that way keeps its figure: when the head would drop its `value_text`, the
-  quote is the window around the figure's first occurrence instead (`claim_quote`), so a later
-  card citing it still finds its number;
+- a claim's quote is cut at its HEAD, never windowed on its figure: a figure occurring twice in a
+  table would put another cell's number in the window and let the number check pass on it (review
+  of #1143). A card on an imported registry citing a claim whose figure lies past the cut has its
+  line withheld instead, which fails loud;
 - a block's `section` longer than `HEADING_MAX_CHARS` is no heading (body text the reader misfiled)
   and is dropped;
 - an absolute local path becomes relative to the data directory, or `⟨local path⟩/<file name>`
@@ -26,7 +27,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 from vinci.theme_intelligence.config import DEFAULT_DATA_DIR
@@ -46,25 +47,6 @@ _ABS_PATH = re.compile(r"(?:^|(?<=[\s'\"(\[=])|(?<=file://))(?:/[\w.-]+(?:/[^\s'
 LOCAL_PATH = "⟨local path⟩"
 
 
-def claim_quote(quote: str, value_text: str | None) -> str:
-    """A claim's quote at most `DESK_QUOTE_MAX_CHARS`: its head, or — when the head drops the
-    claim's figure — the window around the figure's first occurrence, "…" on each cut side."""
-    head, cut = desk_quote(quote)
-    if not cut or not value_text or value_text in head or value_text not in quote:
-        return head
-    i = quote.index(value_text)
-    room = DESK_QUOTE_MAX_CHARS - 2  # the two "…"
-    start = max(0, min(i - (room - len(value_text)) // 2, len(quote) - room))
-    if start > 0:  # begin at a word
-        sp = quote.find(" ", start)
-        start = sp + 1 if 0 <= sp < i else start
-    end = min(len(quote), start + room)
-    if end < len(quote):  # end at a word
-        sp = quote.rfind(" ", i + len(value_text), end)
-        end = sp if sp > 0 else end
-    return ("…" if start else "") + quote[start:end].strip() + ("…" if end < len(quote) else "")
-
-
 def public_path(text: str, data_dir: Path) -> str:
     """Every absolute path in `text`, relative to `data_dir` when under it, else the file name."""
     root = str(data_dir.resolve())
@@ -78,7 +60,10 @@ def public_path(text: str, data_dir: Path) -> str:
         for base in (root, str(data_dir)):
             if p == base or p.startswith(base.rstrip("/") + "/"):
                 return f"{prefix}/{p[len(base):].lstrip('/')}".rstrip("/")
-        return f"{LOCAL_PATH}/{Path(p).name}"
+        # a drive path is read with Windows separators: on the POSIX host that pushes, `Path`
+        # would keep "C:\\Users\\…" whole as one name (Codex on #1143)
+        name = PureWindowsPath(p).name if re.match(r"[A-Za-z]:\\", p) else Path(p).name
+        return f"{LOCAL_PATH}/{name}"
 
     return _ABS_PATH.sub(one, text)
 
@@ -92,12 +77,9 @@ def public_payload(table: str, payload: Any, data_dir: Path, cut: Counter[str]) 
             out: dict[str, Any] = {}
             for k, v in o.items():
                 here = f"{path}.{k}"
-                if isinstance(v, str) and k in SOURCE_TEXT_KEYS and len(v) > DESK_QUOTE_MAX_CHARS:
-                    v = (claim_quote(v, o.get("value_text")) if table == "claims" and k == "quote"
-                         else desk_quote(v)[0])
-                    cut[here] += 1
-                elif (isinstance(v, str) and table == "claims" and k == "statement"
-                      and len(v) > DESK_QUOTE_MAX_CHARS):  # a passage claim's: the sentence
+                # a source's words; a claims row's statement too (a passage claim's: the sentence)
+                source = k in SOURCE_TEXT_KEYS or (table == "claims" and k == "statement")
+                if source and isinstance(v, str) and len(v) > DESK_QUOTE_MAX_CHARS:
                     v = desk_quote(v)[0]
                     cut[here] += 1
                 elif k == "section" and isinstance(v, str) and len(v) > HEADING_MAX_CHARS:

@@ -24,9 +24,9 @@ superseded-by:
   - a source's own words are at most 400 characters (`display.DESK_QUOTE_MAX_CHARS`, the desk's
     cap): every `quote`, a source-risk `sentence`, and a claims row's `statement` (a passage
     claim's is the source's sentence);
-  - a claim's quote shortened that way keeps its figure. When the head would drop the claim's
-    `value_text`, the export writes the window around its first occurrence instead
-    (`public.claim_quote`), so a later card citing the claim still finds its number;
+  - a claim's quote is cut at its HEAD, never windowed on its figure. Round 2, review of #1143: a
+    figure occurring twice in a table would put another cell's number in a first-occurrence
+    window, and the number check would pass on it silently;
   - a block's `section` over 150 characters is dropped (body text the reader misfiled);
   - every absolute local path is made relative to the data directory, or `⟨local path⟩/<file>`
     outside it;
@@ -83,7 +83,8 @@ characters (24 words), and every longer "section" is a pull-quote or body text (
 
     A's count of 31,207 characters was made at another threshold; this one is sections over 150.
   - claim quotes: 6 shortened. C-24fca4a9adf226 (2,042) keeps its head, which holds its figure.
-    The five 911-character table quotes are each written as the window around their own figure.
+    The five 911-character table quotes are cut at the head too, so their figures, at characters
+    506–583, are past the cut.
   - card quotes: 2 (TH-05B1B3DE4A v1, `s04_key_evidence`);
   - local paths: 78 rewritten.
 - *Real documents.* Read with this code on the 8 PDFs of 2026-11-19 (local, licensed, never
@@ -104,13 +105,22 @@ characters (24 words), and every longer "section" is a pull-quote or body text (
   named-root list, and no unit, URL, `measure_key` or `fingerprint` is touched.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- *A stale hash on one version.* QA hashes a version's content AS STORED. TH-05B1B3DE4A v1's 2 card
-  quotes are shortened in the export, so re-QA of its run (R-20261119T121614Z-ingest) on an imported
-  registry reads that version's hash as changed. The weekly job QAs only its own run, and `upload`
-  QAs only the runs it pushes. This was asked of coordinator A, with option (B), leaving card
-  content uncapped. If A rules (B), the change is one exclusion in `public_payload`.
-- *A window, not the whole cell.* A table figure that occurs more than once is windowed at its
-  first occurrence, which may be another cell's. That is enough for the number check, which reads
-  presence, and the claim's row prints its own value.
+- *A stale hash on one version (ACCEPTED, A's ruling 2026-11-19: "(A), cap them").* QA hashes a
+  version's content AS STORED. The 2 card quotes of **TH-05B1B3DE4A v1** are shortened in the
+  export, so a re-QA of its run **R-20261119T121614Z-ingest** on an imported registry reads that
+  version's hash as changed. The weekly job QAs only its own run, and `upload` only the runs it
+  pushes. Leaving them, option (B), would keep the 911 characters in the public export, which the
+  operator's ruling excludes.
+- *Five figures past the cut (ACCEPTED, fail loud).* Cut at the head, the quotes of
+  C-b7de4bc5a5ce45, C-ce3c0544c898f1, C-e4d3ceb816f845, C-e66b7ee1ede032 and C-ed5583961f0f15 no
+  longer hold their figures in the export. A later card on an imported registry that cites one has
+  its line withheld by the number check: a loud outcome, never a pass on another cell's number.
+- *No "cut for export" marker.* A suggested one, so a re-QA or the number check could name the
+  cause. It is not built. A marker is a new field on every exported record type, and a stored
+  payload re-written with it would differ from the one already held under the same id, which the
+  registry's append-only store refuses. That is more than a small change.
+- *Windows paths (round 2, Codex P2).* A drive path is read with Windows separators, so only its
+  file name stays (`PureWindowsPath`). On the POSIX host that pushes, `Path` kept
+  "C:\\Users\\alice\\report.pdf" whole.
 - *Not done here.* Re-exporting to the state branch (the tip scrub) and the history rewrite. Both
   wait for this PR to merge and for A's go, and nothing is pushed to that branch meanwhile.

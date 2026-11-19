@@ -948,8 +948,8 @@ bin/theme-intelligence-weekly
   public repository, so only titles, figures and SHORT quotes may leave this machine.
   `public.public_payload` applies to every exported row:
   - a source's own words (`quote`, a source-risk `sentence`, a passage claim's `statement`) at most
-    400 characters (`DESK_QUOTE_MAX_CHARS`). A claim's quote keeps its figure: the window around
-    it when the head would drop it;
+    400 characters (`DESK_QUOTE_MAX_CHARS`), cut at the head: a window on a figure's first
+    occurrence could hold another cell's number;
   - a block `section` over 150 characters (`documents.HEADING_MAX_CHARS`) dropped, as body text the
     reader misfiled;
   - every absolute local path made relative to the data directory, or `⟨local path⟩/<file>`.

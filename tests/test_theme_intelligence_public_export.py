@@ -11,7 +11,8 @@ The incident, at state a74c4e30:
 Pinned here:
 - the reader reads large type running past a heading's length as a paragraph;
 - an export carries no source text over its cap, no misfiled section and no local path;
-- a claim's shortened quote keeps its figure;
+- a claim's quote is cut at its head, never windowed on its figure's first occurrence (which can
+  be another cell's: review of #1143);
 - the committed fixtures pass the same guard.
 
 HYPOTHETICAL articles and synthetic text; no network, no model call.
@@ -28,9 +29,9 @@ from pathlib import Path
 from typing import Any
 
 from tests.theme_intelligence_support import Hypo, claim, extraction, hyp, ingest, make_pipeline
-from vinci.theme_intelligence.display import DESK_QUOTE_MAX_CHARS
+from vinci.theme_intelligence.display import DESK_QUOTE_MAX_CHARS, desk_quote
 from vinci.theme_intelligence.documents import HEADING_MAX_CHARS, Declared, read_document
-from vinci.theme_intelligence.public import claim_quote
+from vinci.theme_intelligence.public import public_path
 from vinci.theme_intelligence.report import write_run_outputs
 from vinci.theme_intelligence.schemas import RunStatus
 
@@ -181,16 +182,17 @@ def test_an_export_carries_no_source_text_over_its_cap_and_no_local_path(tmp_pat
     assert any("local path" in k for k in cut)
     [row] = [json.loads(json.loads(x)["payload"]) for x in
              (export / "claims.jsonl").read_text().splitlines()]
-    assert "net 95" in row["quote"] and len(row["quote"]) <= DESK_QUOTE_MAX_CHARS  # figure kept
+    # the plain head: a window on the figure's first occurrence could hold another cell's number
+    # and let the number check pass on it; a figure past the cut fails loud instead (#1143)
+    assert row["quote"] == desk_quote(TABLE)[0] and "net 95" not in row["quote"]
 
 
-def test_a_claim_quote_keeps_its_figure_and_a_short_one_is_untouched() -> None:
-    q = claim_quote(TABLE, "net 95")
-    assert "net 95" in q and len(q) <= DESK_QUOTE_MAX_CHARS and q.startswith("…")
-    assert q.strip("…") in TABLE  # verbatim between its cuts
-    head = claim_quote(TABLE, "net 20")  # the figure is in the head: the head is kept
-    assert head.startswith("Synthetic supply") and head.endswith("…")
-    assert claim_quote("A short quote of 9%.", "9%") == "A short quote of 9%."  # NEGATIVE
+def test_a_windows_path_keeps_only_its_file_name() -> None:
+    """Codex on #1143 (P2): on the POSIX host that pushes, `Path(p).name` kept a Windows path whole,
+    username and folders with it."""
+    assert public_path("see C:\\Users\\alice\\report.pdf now", Path("/x/ti")) == (
+        "see ⟨local path⟩/report.pdf now")
+    assert violations({"note": "D:\\data\\ti\\a.json"}, "runs") == ["runs.note: a local path"]
 
 
 def test_the_export_round_trips_and_a_row_it_leaves_alone_is_written_as_stored(
