@@ -12,46 +12,9 @@ import json
 import subprocess
 from collections import defaultdict
 
-from probe_common import OUT, WT
+from probe_common import OUT, WT, grid_code
 
 CENSUS = OUT / "census.json"  # written by classify.py
-
-
-def grid_arch(x: dict) -> str:  # copied from archetype-probe/scripts/grid.py (same precedence)
-    r, f, m = x["regime"], x["form"], x["model"]
-    if r.startswith("no annual") or r.startswith("UNREAD"):
-        return "G20"
-    if r.startswith("FPI"):
-        if "IFRS" in r:
-            return "G19"
-        if "US GAAP, USD" not in r:
-            return "G18"
-        return "G17" if f == "operating company" else "G17b"
-    forms = {
-        "bank": "G06",
-        "lender / specialty finance": "G07",
-        "insurer (underwriting)": "G08",
-        "managed care (SIC 6324)": "G09",
-        "broker-dealer / investment bank": "G10",
-        "asset manager / exchange": "G11",
-        "insurance broker": "G12",
-        "REIT": "G13",
-        "real-estate operator / developer": "G13b",
-        "regulated utility": "G14",
-        "partnership / MLP": "G15",
-        "royalty / patent owner": "G16",
-        "holding / investment office": "G16b",
-    }
-    if f in forms:
-        return forms[f]
-    return {
-        "operating, positive operating income in a recent year": "G01",
-        "profitable-or-unknown, OperatingIncomeLoss untagged": "G02",
-        "pre-profit (operating loss CY2024 and CY2025)": "G03",
-        "pre-revenue (< $10M revenue CY2024 and CY2025)": "G04",
-        "reserve-based (mining / E&P)": "G05",
-        "no CY2024/25 us-gaap USD frame data": "G05b",
-    }.get(m or "", f"G?? {f}/{m}")
 
 
 def s(x) -> str:
@@ -75,7 +38,7 @@ def main() -> None:
         d = json.loads(p.read_text())
         t, cik = d["ticker"], d["cik"]
         c = census.get(cik)
-        g = grid_arch(c) if c else "not in either universe"
+        g = grid_code(c) if c else "not in either universe"
         m = d.get("mechanical") or {}
         a = d.get("anchor") or {}
         v = m.get("valuation") or {}

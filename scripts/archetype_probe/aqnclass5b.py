@@ -12,8 +12,7 @@ from __future__ import annotations
 import json
 from collections import Counter
 
-from pages5b import grid_arch
-from probe_common import OUT
+from probe_common import OUT, grid_code
 
 US_VENUES = {"NYSE", "Nasdaq", "OTC", "NYSE American", "NYSE MKT", "CBOE"}
 
@@ -28,7 +27,7 @@ def main() -> None:
             o = json.loads(line)
             subs[o["cik"]] = o
     census = json.loads((OUT / "census.json").read_text())
-    g = [x for x in census if grid_arch(x) in ("G17", "G17b")]
+    g = [x for x in census if grid_code(x) in ("G17", "G17b")]
     print(
         f"POPULATION: G17 + G17b, union of both bands: {len(g)} | screen band "
         f"{sum('primary' in x['bands'] for x in g)} | large-cap band "

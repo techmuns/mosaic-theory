@@ -14,8 +14,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from pages5b import grid_arch
-from probe_common import OUT
+from probe_common import OUT, grid_code
 
 REV_TAGS = (
     "Revenues",
@@ -51,7 +50,7 @@ def main() -> None:
             rev25.setdefault(k, v)
     rows = []
     for x in census:
-        if grid_arch(x) != "G17":
+        if grid_code(x) != "G17":
             continue
         c, s, f = x["cik"], subs[x["cik"]], fpi.get(x["cik"], {})
         rows.append(

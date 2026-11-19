@@ -4,9 +4,9 @@ Lists are walked to their first 50 members, so this compares the page's own fiel
 populations. Writes out/diff5a.json."""
 
 import json
-from pathlib import Path
 
-OUT = Path(__file__).resolve().parents[1] / "out"
+from probe_common import OUT
+
 B = OUT / "build5a"
 
 
