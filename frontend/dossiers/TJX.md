@@ -1,6 +1,6 @@
 # Dossier — TJX COMPANIES INC /DE/ (NYSE: TJX)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
 
 # Brief — first cut
 
@@ -273,8 +273,6 @@ _This name's naive reported median margin, priced at the multiple it trades on t
 
 **How the screen value splits.** Screen value $136.20 at today's 16.3x = $135.12 on current EBITDA ($8,903M) + $1.08 margin reversion (mid-cycle 1.01× current). Median 15.8x: $4.06 lower (not used).
 
-**Stale multiple.** Today's multiple is the close of 2026-08-28, 75 days before the page's stored close of 2026-11-11: the value on current EBITDA is that day's.
-
 _The split's arithmetic:_
 
 - m = 16.3423x, today's multiple (the close of 2026-08-28); M = 15.8450x, the median beside it, never used.
@@ -285,7 +283,7 @@ _The split's arithmetic:_
 - multiple effect = (15.8450 − 16.3423) × 8,975.5 ÷ 1,099,974,061 = −$4.06, beside the anchor, never in it.
 - V0 + margin effect = $136.20, the screen value; + multiple effect = $132.14, the value at the median.
 - net debt ÷ EV = −3,133.0 ÷ 145,495.5 = −0.022; flagged above 0.5.
-- the multiple's close 2026-08-28, the page's stored close 2026-11-11: 75 days; stale above 30.
+- the multiple's close 2026-08-28, the page's stored close 2026-11-11: 75 days; not stale by its history's cadence: the next quarterly observation is due by 2026-12-29 (balance sheet 2026-08-01 + the longest of its last 4 quarters, 91 days, + the slowest of their pricing lags, 59 days).
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [51]  <!-- ds-table -->
@@ -697,6 +695,7 @@ _Source §: 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm_
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 29d old — 2026-10-16 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 36d old (2026-10-09, valuation.implied_expectations.multiples_as_of) — within the ceiling
