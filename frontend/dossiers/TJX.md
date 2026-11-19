@@ -1,6 +1,6 @@
 # Dossier — TJX COMPANIES INC /DE/ (NYSE: TJX)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -11,7 +11,7 @@ The TJX Companies, Inc., together with its subsidiaries, operates as an off-pric
 **Strongly-bullish** — rising absolute EBITDA, earned peer premium on superior margins/leverage/growth, raised guidance; weakness isolated to one division management says it is fixing.
 - **Segments:** United States - Marmaxx 61%; United States - Homegoods 17%; TJX International 13%; TJX Canada 9% [1]
 - **Geography:** United States 78%; Europe 12%; Canada 9%; Australia 1% [2]
-- **Snapshot:** NYSE · CMP $136.44 (2026-11-11) · cap $162.1B (2026-10-16) ⚠ implies $147.33/sh vs CMP (+8.0%) · 52-wk $122.78–$170.00 · shares 1.1B · book value/sh $9.67 [3]
+- **Snapshot:** NYSE · CMP $136.44 (2026-11-11) · cap $150.1B (CIQ $162.1B at 2026-10-16, +8.0%) · 52-wk $122.78–$170.00 · shares 1.1B · book value/sh $9.67 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the Marmaxx comp slowdown (from +6% to +1%) a temporary, self-inflicted merchandise-mix error that reverts — justifying the premium multiple as EARNED — or the start of a structural demand/execution problem in the division that is 61% of revenue, making the premium a RESIDUAL overshoot waiting to compress?**
@@ -120,7 +120,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 13.3x as-of 2026-10-16 — trailing range 7.9–21.6x (median 12.0x) over 39 closes → 77%ile → near-ceiling; P/LTM EPS 27.3x [28]
-- **vs peers:** EV/EBITDA 13.3x vs peer median 6.8x (+94%); P/E 27.3x vs peer median 15.7x (+74%) [29]
+- **vs peers:** EV/EBITDA 12.4x at the 2026-11-11 close (CIQ 13.3x, 2026-10-16) vs peer median 6.8x (CIQ, 2026-10-16) (+81%); P/E 25.3x at the 2026-11-11 close (CIQ 27.3x, 2026-10-16) vs peer median 15.7x (CIQ, 2026-10-16) (+61%) [29]
 - **Forward multiples:** P/FY27E (normalized) 26.0x (EPS $5.25); P/FY27E (GAAP) 25.6x (EPS $5.33); P/FY28E (normalized) 23.6x (EPS $5.77); P/FY28E (GAAP) 23.6x (EPS $5.79) — at $136.44 as-of 2026-11-11 [30]
 - **Multiple basis — read before the level:** rent is 45.3% of EBITDA (FY ending 2026-01-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 20.5% EBITDA margin against 14.3% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 15.8x over 38 quarters (current 16.3x at the 2026-08-28 filing; 53% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [31]
 - **What CIQ's EV/EBITDA divides:** CIQ's 13.3x divides TEV $170,372M (comps, 2026-10-16) by $12,810M: reported LTM EBITDA $8,903M + rent $3,814M (FY ending 2026-01-31) = $12,717M (0.7% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($8,903M, 30.5% below the denominator).
@@ -233,19 +233,19 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 13.3x vs peer median 6.8x (+94%); P/E 27.3x vs peer median 15.7x (+74%) [29]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 12.4x at the 2026-11-11 close (CIQ 13.3x, 2026-10-16) vs peer median 6.8x (CIQ, 2026-10-16) (+81%); P/E 25.3x at the 2026-11-11 close (CIQ 27.3x, 2026-10-16) vs peer median 15.7x (CIQ, 2026-10-16) (+61%) [29]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-10-16 · multiples as-of 2026-10-09 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $158,393.5M at the 2026-11-11 close (CIQ claims as-of 2026-10-16; the † rows divide $170,372.2M, CIQ's cap plus its net debt, as-of 2026-10-16) · multiples as-of 2026-10-09 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [50]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
 | **name NTM TEV/EBITDA** | **18.7x** | **$9,110.8M EBITDA †** |
-| peer-median NTM TEV/EBITDA | 9.15x | $18,619.9M EBITDA |
-| peer-median LTM TEV/EBITDA | 6.8x | $25,054.7M EBITDA |
+| peer-median NTM TEV/EBITDA | 9.15x | $17,310.8M EBITDA |
+| peer-median LTM TEV/EBITDA | 6.8x | $23,293.2M EBITDA |
 | **name NTM TEV/Rev** | **2.59x** | **$65,780.8M Revenue †** |
-| peer-median NTM TEV/Rev | 1.19x | $143,169.9M Revenue |
-| peer-median LTM TEV/Rev | 1.3x | $131,055.5M Revenue |
+| peer-median NTM TEV/Rev | 1.19x | $133,103.7M Revenue |
+| peer-median LTM TEV/Rev | 1.3x | $121,841.1M Revenue |
 
 - **Consensus path anchors (EBITDA):** FY27E $9005.5M · FY28E $9756.3M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY27E $64030.8M · FY28E $68035.9M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
@@ -696,6 +696,7 @@ _Source §: 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm_
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 29d old — 2026-10-16 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 36d old (2026-10-09, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -760,7 +761,7 @@ _Source §: 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm_
 [47] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)`
 [48] `cadence: EDGAR submissions (median 91d gap over 54 results 8-Ks; last print 2026-08-19)`
 [49] `CIQ capital-structure panel (maturity_date)`
-[50] `TEV = mcap 162059.2 + net debt 8313.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-10-16, exported 2026-10-18) — simple-TEV basis`
+[50] `TEV at the page's close = market cap $150,080.5M (the page's close $136.44 (EOD TJX last close, 2026-11-11) × 1,099,974,061 shares (EDGAR XBRL shares outstanding)) + CIQ claims $8,313.0M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [51] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [52] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-10-16`
 [53] `EDGAR XBRL shares, trailing 2024-11-22..2026-08-21`

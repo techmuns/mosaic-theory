@@ -1,6 +1,6 @@
 # Dossier — Vital Farms, Inc. (Nasdaq: VITL)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -12,7 +12,7 @@ Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs
 - **Segments:** Eggs and Butter — single segment [1]
 - **Geography:** United States — single geography [2]
 - **Customer concentration:** top customer 20% (from 24%) · top-2 ~31% of revenue [3]
-- **Snapshot:** Nasdaq · CMP $9.47 (2026-11-11) · cap $409M (2026-11-06) · 52-wk $7.95–$36.09 · shares 42.9M · book value/sh $6.53 [4]
+- **Snapshot:** Nasdaq · CMP $9.47 (2026-11-11) · cap $407M · 52-wk $7.95–$36.09 · shares 42.9M · book value/sh $6.53 [4]
 
 **The crux — what decides this, and what would change our mind**
 **Are the millions of households lost in 2026 cyclical (price gaps and conventional-egg oversupply that normalize) or structural (incremental bird-flu-era buyers who have permanently traded back to private label), and does the record distribution convert to velocity fast enough to restore positive EBITDA?**
@@ -122,7 +122,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 1.4x as-of 2026-11-06 — trailing range 1.3–172.5x (median 3.9x) over 25 closes → 8%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [25]
-- **vs peers:** EV/EBITDA 1.4x vs peer median 11.0x (-87%); P/E NM vs peer median 23.2 [26]
+- **vs peers:** EV/EBITDA 1.4x at the 2026-11-11 close (CIQ 1.4x, 2026-11-06) vs peer median 11.0x (CIQ, 2026-11-06) (-87%); P/E NM vs peer median 23.2x (CIQ, 2026-11-06) [26]
 - **Forward multiples:** P/FY27E (normalized) 157.8x (EPS $0.06) — at $9.47 as-of 2026-11-11 [27]
 - **Multiple basis — read before the level:** rent is 279.5% of EBITDA (FY ending 2025-12-28). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 50.1% EBITDA margin against -1.8% reported. The ex-lease history could not be built (the latest quarter (2026-09-27) has no positive LTM EBITDA, so the history has no current — an older quarter is not one), so R1 does not price this name on either series. [28]
 - **Comparability:** market caps span $75M–$83.6B (1111x); the name is $409M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [29]
@@ -228,19 +228,19 @@ _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 1.4x vs peer median 11.0x (-87%); P/E NM vs peer median 23.2 [26]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 1.4x at the 2026-11-11 close (CIQ 1.4x, 2026-11-06) vs peer median 11.0x (CIQ, 2026-11-06) (-87%); P/E NM vs peer median 23.2x (CIQ, 2026-11-06) [26]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-11-06 · multiples as-of 2026-11-04 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $511.6M at the 2026-11-11 close (CIQ claims as-of 2026-11-06; the † rows divide $513.8M, CIQ's cap plus its net debt, as-of 2026-11-06) · multiples as-of 2026-11-04 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [46]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
 | **name NTM TEV/EBITDA** | **24.91x** | **$20.6M EBITDA †** |
-| peer-median NTM TEV/EBITDA | 11.53x | $44.6M EBITDA |
-| peer-median LTM TEV/EBITDA | 11x | $46.7M EBITDA |
+| peer-median NTM TEV/EBITDA | 11.53x | $44.4M EBITDA |
+| peer-median LTM TEV/EBITDA | 11x | $46.5M EBITDA |
 | **name NTM TEV/Rev** | **0.69x** | **$744.6M Revenue †** |
-| peer-median NTM TEV/Rev | 1.42x | $361.8M Revenue |
-| peer-median LTM TEV/Rev | 1.4x | $367.0M Revenue |
+| peer-median NTM TEV/Rev | 1.42x | $360.3M Revenue |
+| peer-median LTM TEV/Rev | 1.4x | $365.4M Revenue |
 
 - **Consensus path anchors (EBITDA):** FY26E $-15.3M · FY27E $31.8M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $729.4M · FY27E $766.0M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
@@ -579,6 +579,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 8d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 10d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -639,7 +640,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [43] `EOD VITL 52-week low`
 [44] `EOD VITL 52-week high`
 [45] `cadence: EDGAR submissions (median 91d gap over 26 results 8-Ks; last print 2026-11-03)`
-[46] `TEV = mcap 408.8 + net debt 105.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-11-06, exported 2026-11-09) — simple-TEV basis`
+[46] `TEV at the page's close = market cap $406.6M (the page's close $9.47 (EOD VITL last close, 2026-11-11) × 42,936,010 shares (EDGAR XBRL shares outstanding)) + CIQ claims $105.0M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [47] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [48] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-11-06`
 [49] `EDGAR XBRL shares, trailing 2024-11-04..2026-10-30`

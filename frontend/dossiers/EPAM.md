@@ -1,6 +1,6 @@
 # Dossier — EPAM Systems, Inc. (NYSE: EPAM)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -32,7 +32,7 @@ Analysed and not buying at $97.43. Reward to risk of 1.5008 fails the two-to-one
 EPAM Systems, Inc. provides digital platform engineering and software development services worldwide.
 - **Segments:** Americas 58%; Europe 42% [1]
 - **Geography:** United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4% [2]
-- **Snapshot:** NYSE · CMP $162.82 (2026-11-11) · cap $8.1B (2026-11-06) ⚠ implies $159.31/sh vs CMP (-2.2%) · 52-wk $73.06–$222.53 · shares 51.0M · book value/sh $70.64 [3]
+- **Snapshot:** NYSE · CMP $162.82 (2026-11-11) · cap $8.3B (CIQ $8.1B at 2026-11-06, -2.2%) · 52-wk $73.06–$222.53 · shares 51.0M · book value/sh $70.64 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Does the AI-native ramp plus the newly signed large multiyear deals reaccelerate organic growth off the Q4 trough (0.5%–1.6% organic cc) into 2027, or does persistent North America / non-AI decline keep top-line near-stall, making the depressed own-history multiple an earned value trap rather than an overshoot?**
@@ -160,7 +160,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 8.7x as-of 2026-11-06 — trailing range 4.3–57.2x (median 22.2x) over 39 closes → 8%ile → near-floor; P/LTM EPS 20.0x [27]
-- **vs peers:** EV/EBITDA 8.7x vs peer median 7.4x (+18%); P/E 20x vs peer median 17.2x (+16%) [28]
+- **vs peers:** EV/EBITDA 8.9x at the 2026-11-11 close (CIQ 8.7x, 2026-11-06) vs peer median 7.4x (CIQ, 2026-11-06) (+20%); P/E 20.4x at the 2026-11-11 close (CIQ 20x, 2026-11-06) vs peer median 17.2x (CIQ, 2026-11-06) (+19%) [28]
 - **Forward multiples:** P/FY26E (normalized) 12.3x (EPS $13.28); P/FY26E (GAAP) 19.1x (EPS $8.51); P/FY27E (normalized) 11.4x (EPS $14.31); P/FY27E (GAAP) 16.4x (EPS $9.92) — at $162.82 as-of 2026-11-11 [29]
 - **Multiple basis — read before the level:** rent is 9.2% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 14.8% EBITDA margin against 13.7% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 23.8x over 35 quarters (current 9.9x at the 2026-11-05 filing; 9% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [30]
 - **What CIQ's EV/EBITDA divides:** CIQ's 8.7x divides TEV $7,310M (comps, 2026-11-06) by $840M: reported LTM EBITDA $773M + rent $65M (FY ending 2025-12-31) = $838M (0.3% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($773M, 8.0% below the denominator).
@@ -281,26 +281,26 @@ _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 8.7x vs peer median 7.4x (+18%); P/E 20x vs peer median 17.2x (+16%) [28]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 8.9x at the 2026-11-11 close (CIQ 8.7x, 2026-11-06) vs peer median 7.4x (CIQ, 2026-11-06) (+20%); P/E 20.4x at the 2026-11-11 close (CIQ 20x, 2026-11-06) vs peer median 17.2x (CIQ, 2026-11-06) (+19%) [28]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-11-06 · multiples as-of 2026-11-08 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $7,489.4M at the 2026-11-11 close (CIQ claims as-of 2026-11-06; the † rows divide $7,309.7M, CIQ's cap plus its net debt, as-of 2026-11-06) · multiples as-of 2026-11-08 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [44]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
 | **name NTM TEV/EBITDA** | **7.44x** | **$982.5M EBITDA †** |
-| peer-median NTM TEV/EBITDA | 6.78x | $1,078.1M EBITDA |
-| peer-median LTM TEV/EBITDA | 7.4x | $987.8M EBITDA |
+| peer-median NTM TEV/EBITDA | 6.78x | $1,104.6M EBITDA |
+| peer-median LTM TEV/EBITDA | 7.4x | $1,012.1M EBITDA |
 | **name NTM TEV/Rev** | **1.27x** | **$5,755.7M Revenue †** |
-| peer-median NTM TEV/Rev | 0.99x | $7,383.5M Revenue |
-| peer-median LTM TEV/Rev | 1x | $7,309.7M Revenue |
+| peer-median NTM TEV/Rev | 0.99x | $7,565.1M Revenue |
+| peer-median LTM TEV/Rev | 1x | $7,489.4M Revenue |
 
 - **Consensus path anchors (EBITDA):** FY26E $974.2M · FY27E $979.7M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $5656.2M · FY27E $5844.6M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
 
 ### The EV gap — our base case vs the street
 
-_Anchor FY2026 · consensus as-of ≥2026-11-08 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-11-06 · form three-ratio_
+_Anchor FY2026 · consensus as-of ≥2026-11-08 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV at the 2026-11-11 close, CIQ claims as-of 2026-11-06 · form three-ratio_
 
 - **The gap, decomposed (ours / consensus, at the anchor year)**  <!-- ds-table -->
 
@@ -308,8 +308,8 @@ _Anchor FY2026 · consensus as-of ≥2026-11-08 (a FLOOR — the export states n
 |---|---|---:|
 | revenue | 1.03x | sigma 2.58 on n=19 |
 | EBITDA margin | 0.80x | sigma 24.78 on n=7 |
-| exit multiple | 0.99x | street 7.58x at FY2026 |
-| **product = the EV gap** | **0.82x** |  |
+| exit multiple | 0.97x | street 7.76x at FY2026 |
+| **product = the EV gap** | **0.80x** |  |
 
 _the three ratios multiply to the gap by IDENTITY — this is a decomposition, never an attribution of cause_
 
@@ -317,7 +317,7 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
   _Declared, and immaterial to this label: the base leg is struck at FY2027 and the decomposition at FY2026, but the shape is the same at both years (checked above), so the label holds on either basis. The total gap carries no year and is unaffected._
 
-- **Bridge:** our EV $6,003M − net debt $-819M = equity $6,822M ÷ 51.657M sh = **$132.06/sh** — against TEV $7,310M.
+- **Bridge:** our EV $6,003M − net debt $-818M = equity $6,821M ÷ 51.657M sh = **$132.05/sh** — against TEV $7,489M.
 
   - _Revenue dispersion 0.2% (high−low ÷ |median|, FY2026, as-of ≥2026-11-08)_
   - _EBITDA dispersion 7.6% (high−low ÷ |median|, FY2026, as-of ≥2026-11-08)_
@@ -746,6 +746,7 @@ _Source §: 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm_
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 8d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 6d old (2026-11-08, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -804,7 +805,7 @@ _Source §: 8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm_
 [41] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
 [42] `CIQ Estimates→Revisions (Last-Month breadth, FY)`
 [43] `cadence: EDGAR submissions (median 91d gap over 51 results 8-Ks; last print 2026-11-05)`
-[44] `TEV = mcap 8128.5 + net debt -818.8 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-11-06, exported 2026-11-09) — simple-TEV basis`
+[44] `TEV at the page's close = market cap $8,307.6M (the page's close $162.82 (EOD EPAM last close, 2026-11-11) × 51,023,335 shares (EDGAR XBRL shares outstanding)) + CIQ claims $-818.2M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [45] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [46] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-11-06`
 [47] `EDGAR XBRL shares, trailing 2024-10-31..2026-11-03`
