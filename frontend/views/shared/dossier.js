@@ -2823,7 +2823,7 @@ const _SUMMARY_TERMS = [
 const _PREFIX_KEYS = new Set([_COUPON_TERM, _PREPAY_DEFAULT_TERM, _PREPAY_TERM, _DEFAULT_TERM]);
 // the labels whose value lead counts enumerated defaults and an acceleration word, as before
 const _DEFAULT_LEAD_LABELS = new Set([_DEFAULT_LABEL, _PREPAY_DEFAULT_LABEL]);
-function summaryLabel(term) {
+export function summaryLabel(term) {  // exported for the py-twin matcher parity test
   const name = (term || "").toLowerCase();
   const entry = _SUMMARY_TERMS.find(([key]) => (_PREFIX_KEYS.has(key) ? name.startsWith(key) : name.includes(key)));
   return entry ? entry[1] : null;

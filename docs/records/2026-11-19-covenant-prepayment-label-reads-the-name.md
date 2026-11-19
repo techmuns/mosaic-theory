@@ -27,8 +27,11 @@ superseded-by:
     questions, so its label names both. A bare row is labelled with its own name.
   - The value never chooses a label. A classifier on LLM-composed text is an LLM-string pin in
     disguise (CLAUDE.md).
-  - The value lead is unchanged. Both default-named labels keep the old lead: a contiguous 1..k
-    enumeration count, and "acceleration" when the clause says so.
+  - Both default-named labels take the old lead: a contiguous 1..k enumeration count, and
+    "acceleration" when the clause says so. In code that moves the lead for a bare row: a bare
+    `Mandatory prepayment` row had that lead and now has none; a bare `Events of default` row had
+    none and now has it. On the 26 committed pages no lead moves: IT's sweep leads with nothing
+    under both labels, and no PRESENT row is named `Events of default`.
 - **On the committed pages.** 26 page-body lines on 13 pages change their label only:
   - 25 lines, the combined target term, now read "Prepayment / events of default": BRBR 1,
     BURL 2, CNXC 3, EPAM 1, MCK 1 (its withheld, last-verified line), NKE 2, PARR 3, SMPL 1,
@@ -56,6 +59,11 @@ as a default trigger. A reader takes a labelled page-body line as what the label
 | (c) … a default only | 3 | BURL's security agreement, PARR's uncommitted agreement, WERN's loan and security agreement |
 | (c) … neither (a reference or a no-default representation) | 2 | PARR's credit agreement, TJX 2022 |
 
+This corrects #1128's record and row 63's opening clause, which gave WLK's Term Loans Due 2026 as a
+value stating only a prepayment. Its full stored value also states the events of default (Section
+9.1 (a)–(e)), which the page body's 120-character clip hid. The prepayment-only set is IT, BRBR,
+PARR and SMPL, not IT, SMPL and WLK. #1128's record carries an appended amendment saying so.
+
 So 4 lines printed a prepayment as an event of default (IT's sweep and the 3), and 20 state a real
 default clause, which the fix had to keep.
 
@@ -78,7 +86,7 @@ default clause, which the fix had to keep.
     V, VITL and VRRM.
   - On the 13 that move, putting "Events of default" back for each new label makes every head
     file byte-identical to its base file, in Markdown and on the web.
-- **Pins.** `tests/test_covenant_summary_label.py`, now 44 tests. The new ones read the 2026-11-17
+- **Pins.** `tests/test_covenant_summary_label.py`, now 47 tests (44, and 3 added in review round 1). The new ones read the 2026-11-17
   cut, which holds the same 26 values.
   - Matcher pins: 3 positives (the combined term, `Mandatory prepayment`, `Events of default`) and
     7 negatives, every name a committed governing row's: `Prepayment right`, `Repricing /
@@ -96,6 +104,9 @@ default clause, which the fix had to keep.
   - A walk over every covered page, both renderers, phrasing-free: per family block, the lines
     under each of the three labels equal the shown rows whose names start with that key.
   - #1128's matcher row for the combined term now expects the new label.
+  - Review round 1: the web's `summaryLabel` (exported for the test), through node, gives every
+    name of both matcher lists the Python label, so every key has py↔js parity. No committed
+    page can show the bare `Events of default` key, so before this its JS half was unpinned.
 - **Mutations.**
 
   | mutation | failing pins |
@@ -104,6 +115,7 @@ default clause, which the fix had to keep.
   | JS matcher alone back to the substring rule | 3: both web parity pins and the corpus walk |
   | the combined label loses its value lead, Python / JS | 2 / 1 |
   | the three new keys matched anywhere, not at the start, both renderers | 0: survives (WHAT IT COSTS) |
+  | the JS bare `Events of default` key deleted (review round 1) | 1: the web matcher parity pin; 0 before it existed |
 - **Preview (PREVIEW RULE).**
   - On screen, base and head of each of the 13 pages: the web app's Analysis tab, every covenant
     block, collapsed and with every `<details>` opened (the blocks hold none); and the Appendix
@@ -163,13 +175,22 @@ alone, 5 of 5. It reads nothing this build touches. Per the coordinator, it is n
   - the only name holding "events of default" other than at its start is the combined term, which
     its own key takes first.
 
-  Pinning it would need a synthetic name. FALSIFIER: a committed governing name holding "mandatory
+  Pinning it would need a synthetic name; the corpus tripwire below watches for it. FALSIFIER: a committed governing name holding "mandatory
   prepayment" or "events of default" other than at its start and outside the combined target term.
   That name is the real fixture the pin then takes.
 - **ACCEPTED RISK: A RE-WORDED COMBINED NAME.** A combined row the model names otherwise
   ("Mandatory prepayments / events of default", "Mandatory prepayment/events of default") would
-  print as "Mandatory prepayment", or not at all. Measured as above: 0 such names; all 41 combined
+  print as "Mandatory prepayment", or not at all. One with its halves reversed ("Events of default
+  / mandatory prepayment") would print as "Events of default": the defect this record fixes.
+  Measured as above: 0 such names; all 41 combined
   rows carry the target term exactly. `_TARGET_TERMS` makes the model answer it on every exhibit.
   FALSIFIER: a committed governing name naming both a prepayment and events of default that does
   not start with "Mandatory prepayment / events of default". Recorded in STATE row 63 (INVARIANT
   RULE).
+- **BOTH FALSIFIERS ARE WATCHED (review round 1).** The corpus walks derive their counts from the
+  start rule itself, so they cannot see a falsifier arrive.
+  `test_no_committed_governing_name_falsifies_the_start_rule_e2e` reads every covered page's
+  governing names. It refuses a key held anywhere but at a name's start outside the target term,
+  #1128's coupon key included, and a name naming both halves that does not start with the target
+  term. It passes on the corpus. `test_the_tripwire_rejects_each_falsifying_name` shows the check
+  rejects five crafted names, one per shape, and passes eight real ones.

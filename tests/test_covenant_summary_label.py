@@ -200,7 +200,8 @@ def test_the_coupon_key_is_the_extractors_target_term() -> None:
     assert _COUPON_TERM in {t.lower() for t in ce._TARGET_TERMS}
 
 
-@pytest.mark.parametrize(("name", "label"), [
+#: (name, label) pins for the coupon key; the web matcher is held to the same list below
+COUPON_NAMES = [
     ("Interest / coupon rate", COUPON),                                       # (+) the target term
     ("Interest / coupon rate — Eurodollar Loans", COUPON),                    # (+) IT's variants
     ("Interest / coupon rate — ABR Loans", COUPON),
@@ -212,7 +213,10 @@ def test_the_coupon_key_is_the_extractors_target_term() -> None:
     ("Maturity date — Revolving", "Maturity"),           # the other keys still match anywhere
     ("Mandatory prepayment / events of default", "Prepayment / events of default"),
     ("Governing law", None),
-])
+]
+
+
+@pytest.mark.parametrize(("name", "label"), COUPON_NAMES)
 def test_only_a_coupon_name_is_labelled_the_coupon(name: str, label: str | None) -> None:
     assert _summary_label(name) == label
 
@@ -361,7 +365,8 @@ def test_the_combined_key_is_the_extractors_target_term() -> None:
     assert _PREPAY_DEFAULT_TERM in {t.lower() for t in ce._TARGET_TERMS}
 
 
-@pytest.mark.parametrize(("name", "label"), [
+#: (name, label) pins for the prepayment and default keys; the web matcher is held to them below
+PD_NAMES = [
     (_PD, PREPAY_DEFAULT),                                 # (+) the target term: both halves
     ("Mandatory prepayment", PREPAY),                      # (+) IT's sweep: its own name
     ("Events of default", DEFAULT),                        # (+) IT's (UNKNOWN) row: its own name
@@ -372,11 +377,36 @@ def test_the_combined_key_is_the_extractors_target_term() -> None:
     ("Acceleration remedy", None),                         # (−) WLK
     ("Cross-default threshold", None),                     # (−) IT
     ("Default Rate", None),                                # (−) TJX
-])
+]
+
+
+@pytest.mark.parametrize(("name", "label"), PD_NAMES)
 def test_a_prepayment_or_default_name_earns_its_own_label(name: str, label: str | None) -> None:
     """Every name here is a committed governing row's (main e6a6c318). Only a name that starts
     with a key is labelled, and the combined term is labelled with both of its halves."""
     assert _summary_label(name) == label
+
+
+def test_the_web_matcher_labels_every_pinned_name_as_python_does() -> None:
+    """(py↔js, every key) The web's `summaryLabel`, through node, gives every name of both matcher
+    lists above the label the Python matcher gives it. No committed PRESENT row is named "Events
+    of default" (IT's is UNKNOWN), so no rendered page can see that key: without this pin the JS
+    half of it could be deleted with the suite green (round 1 of #1129)."""
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    names = [n for n, _ in COUPON_NAMES + PD_NAMES]
+    driver = (
+        'const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, '
+        'construct: () => ({}) });\n'
+        'for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } '
+        'catch {} }\n'
+        f'const {{ summaryLabel }} = await import({json.dumps(JS.as_uri())});\n'
+        f'console.log(JSON.stringify({json.dumps(names)}.map((n) => summaryLabel(n))));\n')
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    web = dict(zip(names, json.loads(out.stdout), strict=True))
+    want = dict(COUPON_NAMES + PD_NAMES)
+    assert web == {n: _summary_label(n) for n in names} == want, web
 
 
 @pytest.mark.parametrize("c", PD_CASES, ids=_PD_IDS)
@@ -463,3 +493,61 @@ def test_every_covered_page_labels_each_prepayment_row_by_its_name_e2e(
                 assert sum(ln.startswith(f"{label}:") for ln in web_block) == n, (t, fam, web_block)
             printed += sum(want.values())
     assert printed, "no prepayment or default line on any covered page — the walk counts nothing"
+
+
+# --- the falsifiers' tripwire (round 1 of #1129) ------------------------------------------------
+
+#: the keys matched at a name's start that a name could also hold elsewhere
+_ANCHORED = (_COUPON_TERM, "mandatory prepayment", "events of default")
+
+
+def _key_placement_violations(names: typing.Iterable[str]) -> list[tuple[str, str]]:
+    """Each governing name that falsifies an accepted limit or risk of row 63, with the reason.
+
+    (a) A key held anywhere but at the name's start, outside the combined target term: there a
+        start match and an anywhere match disagree, so the start rule is then a choice the corpus
+        can see (#1129's ACCEPTED LIMIT; #1128's coupon prefix).
+    (b) A name naming both halves that does not start with the target term: a re-worded combined
+        row, which prints under one half's label or none (#1129's ACCEPTED RISK)."""
+    out: list[tuple[str, str]] = []
+    for raw in names:
+        name = raw.lower()
+        rest = name[len(_PREPAY_DEFAULT_TERM):] if name.startswith(_PREPAY_DEFAULT_TERM) else name
+        start = len(name) - len(rest)  # past the target term, or 0
+        for key in _ANCHORED:
+            at = rest.find(key, 0 if start else 1)
+            if at != -1:
+                out.append((raw, f"(a) {key!r} at {start + at}, not the name's start"))
+        if ("prepayment" in name and re.search(r"\bevents? of default\b", name)
+                and not name.startswith(_PREPAY_DEFAULT_TERM)):
+            out.append((raw, "(b) names both halves without starting with the target term"))
+    return out
+
+
+def test_the_tripwire_rejects_each_falsifying_name() -> None:
+    """(−) The check itself can fail: each crafted name below falsifies one limit or risk. (+) Real
+    committed names of every labelled shape pass."""
+    bad = ["Waiver of mandatory prepayment", "Events of default / mandatory prepayment",
+           "Mandatory prepayments / events of default", "Floating interest / coupon rate",
+           "Prepayment and event of default triggers"]
+    flagged = {n for n, _ in _key_placement_violations(bad)}
+    assert flagged == set(bad), set(bad) - flagged
+    good = [_PD, f"{_PD} — Term Loans", "Interest / coupon rate — ABR Loans", "Events of default",
+            "Mandatory prepayment", "No Default condition / Event of Default reference",
+            "Repricing / prepayment premium", "Default interest"]
+    assert _key_placement_violations(good) == []
+
+
+def test_no_committed_governing_name_falsifies_the_start_rule_e2e() -> None:
+    """(+) THE CORPUS, WATCHED. Every covered page's governing names: no key sits anywhere but at
+    a name's start (outside the target term), and every name naming both halves starts with the
+    target term. The corpus walks derive their counts from the start rule itself, so only this
+    can see a falsifier arrive. Non-vacuous: it reads names and finds the target term among them."""
+    def has_rows(_t: str, d: dict[str, typing.Any]) -> bool:
+        cs = (d.get("mechanical") or {}).get("capital_structure") or {}
+        return bool((cs.get("covenant_term_rows") or {}).get("value"))
+
+    names = [g.term for _t, page in covered_where(has_rows, "with covenant term rows")
+             for g in _governing(page)]
+    assert names and any(n.lower().startswith(_PREPAY_DEFAULT_TERM) for n in names)
+    assert _key_placement_violations(names) == []
