@@ -56,6 +56,22 @@ REFUSED_NOTE_PREFIX = "(E5) refused:"
 # an older value in `governing_terms` — and the page's lead names it apart from a quote that was
 # not found (`render._refused_newer_text`, dossier.js ``refusedNewerText``).
 VALUE_REFUSED_NOTE_PREFIX = f"{REFUSED_NOTE_PREFIX} the value states"
+# The note a PRESENT term carries: the model's quote, as checked against its exhibit, between these
+# two marks. The writer (`_extract_from_exhibit`) and the reader (`note_quote`) share them, so the
+# committed quote is read back through one helper, never a parser of its own (W64, 2026-11-19).
+VERBATIM_NOTE_OPEN, VERBATIM_NOTE_CLOSE = "verbatim: “", "”"
+
+
+def note_quote(note: str | None) -> str | None:
+    """The quote a PRESENT term's note stores (`VERBATIM_NOTE_OPEN` … `VERBATIM_NOTE_CLOSE`), as
+    written; None for any other note (a refusal, a not-stated note, none). The quote itself may
+    hold curly quotes ("“ Maturity Date ” means …"): only the note's own first and last marks
+    delimit it."""
+    if (note is None or not note.startswith(VERBATIM_NOTE_OPEN)
+            or not note.endswith(VERBATIM_NOTE_CLOSE)
+            or len(note) < len(VERBATIM_NOTE_OPEN) + len(VERBATIM_NOTE_CLOSE)):
+        return None
+    return note[len(VERBATIM_NOTE_OPEN):-len(VERBATIM_NOTE_CLOSE)]
 # An exhibit larger than this is not sent in a single pass — extract by hand rather than silently
 # truncate (a term past the cut would read as a false UNKNOWN). THAT REFUSAL IS UNCHANGED; only the
 # threshold moved, because the old one was set against a window the configured model does not have.
@@ -1413,7 +1429,7 @@ def _extract_from_exhibit(
             flags.append(f"(E5) covenant term refused — its value states {shown}, which its quote "
                          f"does not, so it is UNKNOWN: {term_name} · {source_ref}")
         elif rc is not None:
-            note = f"verbatim: “{quote}”"
+            note = f"{VERBATIM_NOTE_OPEN}{quote}{VERBATIM_NOTE_CLOSE}"
             val = Sourced.present(str(t["value"]).strip(), source_ref=source_ref, note=note)
             components = {
                 "base_rate_label": _opt_str(t.get("base_rate_label")),

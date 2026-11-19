@@ -87,6 +87,9 @@ NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
     "vinci/dossier/confirmation.py": "the vote rule's ten-draw confirmation at log-verdict "
                                      "(C(iv)): seals a ledger row, never writes a page",
+    "vinci/dossier/covenant_evidence_check.py": "W64's $0 check of the committed covenant "
+                                                "quotes against their exhibits: reads pages, "
+                                                "never writes one",
     "vinci/dossier/extraction_version.py": "the version table and the stamp it derives — a bump is "
                                            "a file in vinci/dossier/extraction_versions/",
     "vinci/dossier/prespend.py": "the $0 pre-spend check: builds into a deleted folder and "
