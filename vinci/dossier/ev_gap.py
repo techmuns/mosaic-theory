@@ -536,8 +536,14 @@ def build_ev_gap(
     shares: float | None,
     tev_as_of: str | None,
     consensus_as_of: str | None,
+    tev_close_date: str | None = None,
+    tev_absent: str | None = None,
 ) -> dict[str, object]:
     """(A2b persistence) The resulting FORM for one name — always a value, never an omission.
+
+    THE TEV IS STRUCK AT THE PAGE'S OWN CLOSE (2026-11-19, `price_values`): ``tev_close_date`` is
+    that close's date, beside ``tev_as_of`` (the CIQ claims' panel). ``tev_absent`` is why there is
+    no TEV at the close, stated in the not-computed reason rather than a bare "unavailable".
 
     EVERY RETURN CARRIES `status`, AND THAT IS THE POINT. This lands render-first: the render ships
     on deploy while the refresh that computes this lags, so an ABSENT block would leave eleven
@@ -554,7 +560,8 @@ def build_ev_gap(
     it to a plain date would manufacture precision the workbook does not have.
     """
     out: dict[str, object] = {
-        "vintages": {"tev_as_of": tev_as_of, "consensus_as_of": consensus_as_of},
+        "vintages": {"tev_as_of": tev_as_of, "consensus_as_of": consensus_as_of,
+                     **({"tev_close_date": tev_close_date} if tev_close_date else {})},
         # PRINTED PER NAME WHILE THE QUESTION IS OPEN (operator ruling 2026-07-30). The two recipes
         # use opposite D&A conventions and nothing reconciles them; A2's job is to make the
         # difference VISIBLE, not to pick one.
@@ -591,7 +598,8 @@ def build_ev_gap(
                        else "and no consensus either, so neither side of the comparison exists"))
     for name, v in (("tev", tev), ("net_debt", net_debt), ("shares", shares)):
         if v is None:
-            return nope(f"{name} unavailable")
+            return nope(f"{name} unavailable" + (f" — {tev_absent}" if name == "tev" and tev_absent
+                                                 else ""))
     # SHARES MUST BE POSITIVE, and `is None` was not that check. `decompose` never divides by it,
     # so a 0 or negative count still persisted a `computed` gap — and BOTH renderers then evaluate
     # `equity / shares`, so a malformed record does not degrade the block, it takes down the page.

@@ -26,7 +26,13 @@ from datetime import date, timedelta
 from typing import Any, NamedTuple, TypeVar, cast
 
 from vinci.config import get_config
-from vinci.dossier import ciq_sheets, edgar_fundamentals, lease_basis, statement_recon
+from vinci.dossier import (
+    ciq_sheets,
+    edgar_fundamentals,
+    lease_basis,
+    price_values,
+    statement_recon,
+)
 from vinci.dossier.capital_allocation import (
     build_capital_allocation,
     build_peer_capital_intensity,
@@ -40,7 +46,14 @@ from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
 from vinci.dossier.filed_tiebreak import SAME_END_DAYS as FILED_SAME_END_DAYS
 from vinci.dossier.filed_tiebreak import _quarter_ref as _filed_quarter_ref
 from vinci.dossier.filed_tiebreak import filed_quarter
-from vinci.dossier.freshness import _COVERAGE_GAP_DAYS, matching_closes
+from vinci.dossier.freshness import (
+    _COVERAGE_GAP_DAYS,
+    EVENT_8K_ITEM,
+    EVENT_FORMS,
+    FilingEvent,
+    export_panels,
+    matching_closes,
+)
 from vinci.dossier.gaps import disclosure_gaps
 from vinci.dossier.midcycle import MIN_YEARS as _MIDCYCLE_MIN_YEARS
 from vinci.dossier.schemas import (
@@ -4807,6 +4820,34 @@ def _latest_earnings_print(edgar: EdgarClient, cik: str) -> date | None:
     return max(prints) if prints else None
 
 
+def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str, Any],
+                       built_at: date) -> tuple[list[FilingEvent] | None, str | None]:
+    """(2026-11-19) What the event rule reads (`freshness.event_verdict`): the 10-Qs and 10-Ks,
+    and the 8-K item 2.02 releases (`events`, which counts an 8-K/A only for the codes it adds),
+    filed after the build's OLDEST export panel and on or before ``built_at`` — or (None, why).
+
+    NOT FAIL-QUIET, unlike `_latest_earnings_print`'s caveat: this feeds a GATE, and a gate whose
+    filings cannot be read must not report a clean pass, so a miss comes back as its reason and
+    `check_freshness` refuses on it. No dated export panel: nothing to outdate, nothing read."""
+    days = [d for _k, d in export_panels(mechanical)]
+    if not days:
+        return [], None
+    if not cik:
+        return None, "the page carries no CIK, so its filings cannot be listed"
+    since = date.fromisoformat(min(days))
+    start = since + timedelta(days=1)
+    try:
+        periodic = edgar.recent_filings(cik, forms=EVENT_FORMS, since=start)
+        prints = [f for f in eight_k_events(edgar, cik, since=start) if EVENT_8K_ITEM in f.items]
+    except Exception as exc:  # noqa: BLE001 — any feed miss is the refusal's stated reason
+        return None, (f"EDGAR submissions for CIK {cik} could not be read "
+                      f"({type(exc).__name__}: {exc})")
+    return sorted((FilingEvent(form=f.form, filing_date=f.filing_date.isoformat(),
+                               accession=f.accession, items=tuple(f.items))
+                   for f in [*periodic, *prints] if since < f.filing_date <= built_at),
+                  key=lambda e: (e.filing_date, e.accession)), None
+
+
 def _panel_freshness_flag(
     ie: ImpliedExpectations | None, latest_print: date | None,
 ) -> str | None:
@@ -5759,6 +5800,51 @@ def with_valuation_bases(mech: MechanicalLayer, facts: dict[str, Any] | None,
         out = out.model_copy(update={
             "financial_summary": fs.model_copy(update={"ebitda_reconciliation": rec})})
     return out
+
+
+def with_price_values(mech: MechanicalLayer, bundle: CiqBundle | None) -> MechanicalLayer:
+    """`mech` with its FAST VALUES at the page's own close (2026-11-19, `price_values`): the
+    market cap (close × point-in-time count) and CIQ's cap beside it as a cross-check; the TEV at
+    the close (that cap + CIQ's claims) on the price-implied peer rows; and the name's side of the
+    cross-sectional read restated at the close, the peers CIQ's and dated.
+
+    ONE BUILDER for the assembler and `refresh.price_values_transform`, so an assembled page and
+    a refreshed one cannot strike different values. Runs after `stock_info` exists and before the
+    synthesis reads `mech`. ``bundle`` None (no comps workbook) leaves the cross-sectional read as
+    it is: there is no peer median to set the name against."""
+    pv = price_values
+    si = mech.stock_info
+    if si is None:
+        return mech
+    dumped = mech.model_dump(mode="json")
+    si = si.model_copy(update={"market_cap_at_close": pv.cap_at_close(dumped["stock_info"]),
+                               "cap_cross_check": pv.cross_check(dumped["stock_info"])})
+    day = si.as_of.isoformat() if si.as_of is not None else None
+    val = mech.valuation
+    if val.implied_expectations is not None:
+        val = val.model_copy(update={"implied_expectations": pv.restate_implied(
+            val.implied_expectations, pv.tev_at_close(dumped), price_as_of=day)})
+    if bundle is not None and day is not None:
+        tev_at, tev_r = pv.tev_at_close(dumped), pv.tev_ratio(dumped)
+        close = ciq_sheets.comps_printed_close(bundle)
+        price = si.price.value if si.price.status is SourceStatus.PRESENT else None
+        price_r = price / close if price and close and close > 0 else None
+        why: list[tuple[str, str]] = []
+        if tev_r is None:
+            why.append(("EV/EBITDA", f"no TEV at the page's close ({tev_at.note})"
+                        if tev_at.note else "CIQ's own TEV is not positive"))
+        if price_r is None:
+            why.append(("P/E", "the page carries no close" if not price
+                        else "CIQ's comps panel prints no close to restate its P/E from"))
+        # the peers' date is the page's own comps date (`market_cap_as_of`, the corrected data
+        # date `comps_as_of_date` gave at assembly) — not re-read off a bundle opened later, whose
+        # header is CIQ's export stamp
+        cd = si.market_cap_as_of
+        val = val.model_copy(update={"cross_sectional": ciq_sheets.cross_sectional_valuation(
+            bundle, at_close=ciq_sheets.NameAtClose(
+                tev_ratio=tev_r, price_ratio=price_r, price_as_of=day,
+                ciq_as_of=cd.isoformat() if cd is not None else None, why=tuple(why)))})
+    return mech.model_copy(update={"stock_info": si, "valuation": val})
 
 
 def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
@@ -6869,6 +6955,9 @@ def assemble_mechanical(
     # EDGAR facts and the releases parsed above, and BEFORE the synthesis reads `mech`, so the
     # prose argues from the stated bases rather than a bare 13.3x
     facts = _companyfacts_or_none(edgar, record.identity.cik)
+    # (2026-11-19) the market cap, the TEV and the name's cross-sectional multiples at the page's
+    # own close, CIQ's beside them as dated cross-checks (`price_values`) — before the synthesis
+    mech = with_price_values(mech, bundle)
     mech = with_valuation_bases(
         mech, facts, bundle, text_for=release_text_fn(http, record.identity.cik))
     # (2026-10-26) the annual table's revenue and operating cash flow against the filings, per
@@ -6890,6 +6979,11 @@ def assemble_mechanical(
     si_asof = mech.stock_info.as_of if mech.stock_info is not None else None
     if (stale := _price_stale_note(si_asof, reference_date)) is not None:
         flags.append(f"stock-info: {stale}")  # loud twin of the CMP-row note — machine-visible
+    # (2026-11-19) CIQ's comps cap drifted from the page's own close × count — a FLAG, never the
+    # number; a share-basis change is the freshness gate's to refuse (`price_values`)
+    if mech.stock_info is not None and (cc_flag := price_values.cross_check_flag(
+            record.identity.ticker, mech.stock_info.model_dump(mode="json"))) is not None:
+        flags.append(cc_flag)
     _warn_stale_at_assembly(record.identity.ticker, si_asof, today)
     # (row 51 (2)) the non-operating window ending more than a quarter before the filer's latest
     # filed quarter — a FLAG, never a refusal; the window is still read and shown, said so in its

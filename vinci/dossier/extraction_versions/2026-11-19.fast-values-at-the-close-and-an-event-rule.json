@@ -1,0 +1,8 @@
+{
+  "id": "2026-11-19.fast-values-at-the-close-and-an-event-rule",
+  "follows": [
+    "2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple",
+    "2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet"
+  ],
+  "names": "The page's market cap is its close × its point-in-time share count, and its TEV that cap plus CIQ's claims (its comps TEV less its comps cap); the EV gap's market side, the price-implied peer rows and the name's side of the cross-sectional read are struck at the close, the peers CIQ's and dated; CIQ's own cap and TEV stay as dated cross-checks (stock_info.cap_cross_check). A CIQ export is refused when the company filed a 10-Q, 10-K or 8-K item 2.02 after it, in place of the 45-day age ceiling"
+}

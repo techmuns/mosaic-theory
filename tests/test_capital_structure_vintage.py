@@ -140,7 +140,11 @@ def test_the_panel_is_deliberately_kept_out_of_the_freshness_gate() -> None:
     `check_freshness` RAISES past `MAX_PANEL_AGE_DAYS`. Every committed panel is past it — so
     teaching `freshness._ISO` the CIQ format would refuse the entire fleet, not tighten it. This
     asserts both halves: the panel contributes no date to `panel_dates` today, and the measurement
-    that says it must not."""
+    that says it must not.
+
+    (2026-11-19) The 45-day ceiling no longer GATES — the event rule does (`event_verdict`), over
+    the same `panel_dates`. The measurement is kept as the record of the decision; the panel's
+    date is a source FILING date, not an export's, and it still reaches neither."""
     from vinci.dossier.freshness import MAX_PANEL_AGE_DAYS, panel_dates
 
     over = 0

@@ -170,8 +170,21 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap(ticker: str) -> None:
     assert after["status"] == "computed"
     # THE RATIOS ARE THE GAP, and they are environment-independent: struck from the STORED mech and
     # the committed record, with no workbook read. This half of the claim holds everywhere.
-    assert after["ratios"] == pytest.approx(before["ratios"]), (
-        f"{ticker}: the re-assembled gap differs from the committed one")
+    # (2026-11-19) THE MARKET'S SIDE IS THE TEV AT THE PAGE'S OWN CLOSE (`price_values`), so a page
+    # struck on CIQ's comps TEV re-strikes its gap on the close's — and on NOTHING else: our EV is
+    # unchanged, the revenue and margin ratios are equal, and the ratios TEV divides scale by the
+    # committed gap's TEV over today's (1 on a page built at its close).
+    from vinci.dossier.price_values import tev_at_close
+
+    tev_was, tev_now = before["bridge"]["tev"], after["bridge"]["tev"]
+    assert tev_now == pytest.approx(tev_at_close(committed).value), (
+        f"{ticker}: the gap's market side is not the TEV at the page's close")
+    k = tev_was / tev_now
+    for key in ("revenue_ratio", "margin_ratio"):
+        assert after["ratios"][key] == pytest.approx(before["ratios"][key]), (ticker, key)
+    for key in ("multiple_ratio", "ev_gap"):
+        assert after["ratios"][key] == pytest.approx(before["ratios"][key] * k), (ticker, key)
+    assert after["bridge"]["our_ev"] == pytest.approx(before["bridge"]["our_ev"]), ticker
 
     # THE VINTAGES DEPEND ON THE LICENSED EXPORT, and CI caught this — green here, red there, for
     # the THIRD time from that class. `consensus_as_of` is read off the estimates workbook, and the
@@ -185,7 +198,10 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap(ticker: str) -> None:
     # built from. An operator re-export ahead of a re-assembly is a newer vintage, not a lost one
     # (2026-11-04: SMPL's 2026-10-28 export read ≥2026-10-27 against its page's ≥2026-07-21).
     skip_unless_pages_export(ticker, "estimates")
-    assert after["vintages"] == before["vintages"]
+    # ...and beside them the close's own date, the TEV's second vintage (2026-11-19)
+    assert {k: v for k, v in after["vintages"].items() if k != "tev_close_date"} == (
+        before["vintages"])
+    assert after["vintages"]["tev_close_date"] == committed["stock_info"]["as_of"]
 
 
 def test_the_insider_line_has_two_write_paths_and_this_file_does_not_compare_them() -> None:

@@ -80,19 +80,21 @@ def test_kind_is_mandatory_and_validated() -> None:
 
 
 def test_a_stale_export_still_fails_the_build() -> None:
-    """The half that must NOT be weakened. A panel we could have re-pulled and did not still
-    refuses — otherwise the split would be a way to switch the gate off."""
+    """The half that must NOT be weakened. An export panel the company has filed since — ours to
+    re-pull — still refuses (2026-11-19: by the EVENT RULE, the 45-day clock retired), otherwise
+    the split would be a way to switch the gate off."""
     old = {"valuation": {"implied_expectations": {"tev_as_of": "2026-01-01"}}}
-    age = fr.panel_age(old, BUILD, kind="export")
-    assert age is not None and age.days > fr.MAX_PANEL_AGE_DAYS
-    with pytest.raises(fr.FreshnessError, match="ceiling"):
-        fr.check_freshness(age, None, ticker="X")
+    filed = [fr.FilingEvent("10-Q", "2026-05-08", "X-10Q")]
+    with pytest.raises(fr.FreshnessError, match="X-10Q"):
+        fr.check_freshness(fr.event_verdict(old, filed, built_at=BUILD), None, ticker="X")
 
 
 def test_a_quiet_street_does_not_fail_the_build() -> None:
-    """THE POINT OF THE ITEM. Consensus 76d over the ceiling, export 10d inside it: the build
-    passes, and the caveat carries the fact instead."""
-    fr.check_freshness(fr.panel_age(MECH, BUILD, kind="export"), None, ticker="X")
+    """THE POINT OF THE ITEM. Consensus 76d over the ceiling, and a 10-Q filed after the consensus
+    panels but before the export one: the build passes — the event rule reads EXPORT panels only —
+    and the caveat carries the fact instead."""
+    filed = [fr.FilingEvent("10-Q", "2026-06-15", "X-10Q")]
+    fr.check_freshness(fr.event_verdict(MECH, filed, built_at=BUILD), None, ticker="X")
     note = fr.consensus_note(fr.panel_age(MECH, BUILD, kind="consensus"))
     assert note is not None and "76d" in note
     assert "re-export will NOT move it" in note and "neglect" in note
@@ -134,9 +136,11 @@ def test_the_gate_reads_the_export_age() -> None:
     restores the exact defect the split removed, and it would be invisible — the code would still
     read `check_freshness(panel_age(...))`."""
     src = inspect.getsource(__import__("vinci.dossier.assemble", fromlist=["x"])._freshness_check)
-    assert 'panel_age(dumped, built_at, kind="export")' in src, (
-        "the gate is not reading the export age — the split is undone")
+    assert "event_verdict(dumped, filings" in src, (
+        "the gate is not reading the event rule — the export panels no longer gate")
     assert 'kind="consensus"' not in src, "the gate must never key on consensus staleness"
+    # and the rule reads the EXPORT class alone: no consensus key is among its panels
+    assert not {k for k, _d in fr.export_panels(MECH)} & fr.CONSENSUS_PANELS
 
 
 def test_both_ages_reach_the_page() -> None:

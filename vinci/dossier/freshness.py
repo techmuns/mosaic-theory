@@ -43,22 +43,31 @@ from __future__ import annotations
 
 import datetime as dt
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 
-#: Days a build's OLDEST panel may be, measured against the build's own date, before it fails.
-#: Re-measured 2026-07-29 (see PanelAge): the old oldest→newest form was price-driven, so a price
-#: refresh could fail a build on unchanged CIQ panels.
+#: Days a CONSENSUS panel may be before `consensus_note` caveats it — a caveat, never a gate.
 #:
-#: Set from the measured distribution, not guessed — RE-MEASURED with the ceiling, because the
-#: figures below described the OLD gap and a constant justified by stale numbers is the
-#: assertion-integrity defect wearing a comment: **8–74d, median 39d** across the 11 committed
-#: dossiers. At 60d only BRBR fails; at 45d **BRBR, CNXC, MVST and VRRM** do — and CNXC is the
-#: name cleared under 16c on comps that are 53 days old, whose peer multiples drive the
-#: cross-sectional leg. Clearing a name on data we would fail at 45 is the reason for the tighter
-#: number (operator 2026-07-29). The remedy is a manual re-export, ordinary workflow rather than a
-#: code blocker. FUBO sits on exactly 45 and PASSES this ceiling; it fails the reconciliation.
+#: IT NO LONGER GATES AN EXPORT (2026-11-19, operator: "Yes, start there"). It was the age ceiling
+#: on the build's oldest EXPORT panel (operator 2026-07-29, "45, not 60") and `check_freshness`
+#: refused past it. On 26 of 26 committed pages that panel was the CIQ comps snapshot, so the clock
+#: measured how long ago the operator downloaded a file — refusing FUBO, PARR, BRBR, BURL, ROST and
+#: TGT at 2026-11-19 while VRRM passed at 13 days with a cap 31.9% off its close. An export is now
+#: stale when the company has FILED since it (`event_verdict`): a 10-Q, a 10-K or an 8-K item
+#: 2.02 the export cannot carry. The fast values it used to date are struck at the page's own
+#: close (`price_values`). Kept, unchanged, for the consensus caveat alone.
 MAX_PANEL_AGE_DAYS = 45
+
+#: (2026-11-19) THE EVENT RULE's filings: the periodic reports, and the 8-K item that releases
+#: results — the three things a CIQ export taken before them cannot carry.
+EVENT_FORMS: tuple[str, ...] = ("10-Q", "10-K")
+EVENT_8K_ITEM = "2.02"
+
+#: The page's own CLOSE is not an export: it is the daily feed's, read at the build, and its age is
+#: the price-staleness rule's (`mechanical._price_stale_note`), unchanged. Exempt by name, so a
+#: filing after the close does not read as a stale CIQ panel with a re-export as its remedy.
+EVENT_EXEMPT_PANELS: frozenset[str] = frozenset({"stock_info.as_of"})
 
 #: Beyond this the cap and the spot do not describe the same equity, and the cap must RENDER its own
 #: vintage rather than sit unlabelled beside a live price.
@@ -511,6 +520,89 @@ def panel_age(mechanical: object, as_of: dt.date | str, *,
                     days=(ref - dt.date.fromisoformat(ov)).days)
 
 
+@dataclass(frozen=True)
+class FilingEvent:
+    """One filing the event rule reads: a 10-Q, a 10-K, or an 8-K carrying item 2.02."""
+
+    form: str
+    filing_date: str                 # ISO
+    accession: str
+    items: tuple[str, ...] = ()
+
+    def label(self) -> str:
+        item = f" item {EVENT_8K_ITEM}" if self.form.startswith("8-K") else ""
+        return f"{self.form}{item} {self.accession} filed {self.filing_date}"
+
+
+@dataclass(frozen=True)
+class StalePanel:
+    """An export panel a later filing outdates: its key and date, and the FIRST filing after it."""
+
+    key: str
+    panel_date: str
+    filing: FilingEvent
+
+
+@dataclass(frozen=True)
+class EventVerdict:
+    """The event rule's reading of one build: every export panel a filing outdates, or why the
+    filings could not be read — in which case the rule did not run, and the build is refused."""
+
+    stale: tuple[StalePanel, ...]
+    #: every event read after the oldest export panel, up to the build — what the verdict saw
+    events: tuple[FilingEvent, ...] = ()
+    unread: str | None = None
+
+    def note(self) -> str:
+        if self.unread is not None:
+            return f"the event rule could not run — {self.unread}"
+        if not self.stale:
+            return ("no 10-Q, 10-K or 8-K item 2.02 filed after any CIQ export panel"
+                    + (f" (events read: {', '.join(e.label() for e in self.events)})"
+                       if self.events else ""))
+        first = min(self.stale, key=lambda p: (p.panel_date, p.filing.filing_date))
+        keys = sorted({p.key for p in self.stale if p.panel_date == first.panel_date})
+        return (f"the CIQ export panel dated {first.panel_date} ({', '.join(keys)}) predates "
+                f"{first.filing.label()}")
+
+
+def export_panels(mechanical: object) -> list[tuple[str, str]]:
+    """The dated EXPORT panels the event rule reads: `panel_dates` less the consensus class (the
+    street's, never gating) and the page's own close (`EVENT_EXEMPT_PANELS`)."""
+    return [(k, d) for k, d in panel_dates(mechanical)
+            if k not in CONSENSUS_PANELS and k not in EVENT_EXEMPT_PANELS]
+
+
+def event_verdict(mechanical: object, filings: Sequence[FilingEvent] | None, *,
+                  built_at: dt.date | str, unread: str | None = None) -> EventVerdict:
+    """(2026-11-19) THE EVENT RULE, in place of the 45-day clock: an export panel is STALE when
+    the company filed a 10-Q, a 10-K or an 8-K item 2.02 AFTER the panel's date and on or before
+    the build's. ``filings`` None means they could not be read (``unread`` says why): the verdict
+    then carries that, and `check_freshness` refuses — a gate that cannot see its events reports no
+    pass.
+
+    THE PANEL'S DATE IS THE ONE THE PAGE CARRIES — for the comps panel its data date, the trading
+    close before CIQ's export stamp (`corrected_ciq_as_of`) — and a filing ON that date does not
+    outdate it, `mechanical._panel_freshness_flag`'s own test (``panel < print``). Against the
+    export stamp this refuses a filing inside the routine gap between the close and the stamp;
+    the conservative side, measured on the corpus in the record."""
+    if filings is None:
+        return EventVerdict((), unread=unread or "the filing list was not read")
+    ref = (built_at.date() if isinstance(built_at, dt.datetime) else built_at
+           if isinstance(built_at, dt.date) else dt.date.fromisoformat(str(built_at)[:10]))
+    upto = sorted((f for f in filings if f.filing_date <= ref.isoformat()),
+                  key=lambda f: (f.filing_date, f.accession))
+    panels = export_panels(mechanical)
+    stale: list[StalePanel] = []
+    for key, day in panels:
+        later = [f for f in upto if f.filing_date > day]
+        if later:
+            stale.append(StalePanel(key=key, panel_date=day, filing=later[0]))
+    oldest = min((d for _k, d in panels), default=None)
+    return EventVerdict(tuple(stale), events=tuple(
+        f for f in upto if oldest is not None and f.filing_date > oldest))
+
+
 def whole_number_ratio(ratio: float) -> bool:
     """Is a positive ``ratio`` a share-basis change rather than drift — within `_INTEGER_TOLERANCE`
     of a whole number ≥2, either way up? One rule for `reconcile_cap` and the prices source's
@@ -582,15 +674,17 @@ def consensus_note(age: PanelAge | None) -> str | None:
             "re-export will NOT move it. Treat as a neglect signal, not a stale pull.")
 
 
-def check_freshness(age: PanelAge | None, recon: CapReconciliation | None,
+def check_freshness(events: EventVerdict, recon: CapReconciliation | None,
                     *, ticker: str, absent: tuple[str, ...] = ()) -> None:
-    """FAIL LOUD on the two conditions a page cannot honestly carry. Ordinary drift is NOT one of
+    """FAIL LOUD on the conditions a page cannot honestly carry. Ordinary drift is NOT one of
     them — it is a rendering obligation (clause (e)), because failing on it would fail 11 of 11 and
     a guard that stops every build is a freeze wearing a guard's name.
 
-    ``age`` MUST be the EXPORT age (``panel_age(..., kind="export")``). Passing the consensus age
-    here would restore exactly the defect the split removed — refusing a build because the street
-    went quiet. :func:`consensus_note` carries that side, and it cannot raise."""
+    ``events`` is the EVENT RULE's verdict (`event_verdict`, 2026-11-19), in place of the 45-day
+    age ceiling: an export the company has filed since is refused, naming the filing; a verdict
+    that could not read the filings is refused too. Consensus age never reaches here —
+    :func:`consensus_note` carries it, and it cannot raise. The missing-input and share-basis
+    refusals are unchanged."""
     if absent:
         raise FreshnessError(
             f"{ticker}: the build is missing {', '.join(absent)} — every ratio on the page rests "
@@ -598,11 +692,17 @@ def check_freshness(age: PanelAge | None, recon: CapReconciliation | None,
             "cannot run either, so passing here would be a guard reporting a clean pass it never "
             "made. (A fresh worktree with an unpopulated EOD store produces exactly this: run the "
             "price refresh for this name before assembling.)")
-    if age is not None and age.days > MAX_PANEL_AGE_DAYS:
+    if events.unread is not None:
         raise FreshnessError(
-            f"{ticker}: {age.note()} — beyond the {MAX_PANEL_AGE_DAYS}d ceiling. The oldest "
-            "panel drives the peer multiples and the cross-sectional leg; re-export it before "
-            "underwriting from this page.")
+            f"{ticker}: {events.note()}. A build that cannot see whether the company has filed "
+            "since its CIQ exports reports no pass; re-run when EDGAR's submissions feed answers.")
+    if events.stale:
+        first = min(events.stale, key=lambda p: (p.panel_date, p.filing.filing_date))
+        raise FreshnessError(
+            f"{ticker}: {events.note()} — the export cannot carry what that filing reports, and "
+            "its claims and peer multiples drive the page's TEV and cross-sectional read. "
+            f"Re-export the CIQ panel(s) after {first.filing.filing_date} before underwriting "
+            "from this page.")
     if recon is not None and recon.corporate_action:
         raise FreshnessError(
             f"{ticker}: {recon.note()} — the share basis disagrees with the cap's basis, so no "

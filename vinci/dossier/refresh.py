@@ -396,9 +396,21 @@ def recompute_derived(mech: dict[str, Any]) -> dict[str, Any]:
 
     NOT a re-derivation of the primitives themselves. ``market_cap`` stays whatever the stored field
     says; changing its BASIS is B1's job, and this function is the mechanism B1 will use rather than
-    a place to pre-empt it."""
+    a place to pre-empt it.
+
+    (2026-11-19) THE FAST VALUES AT THE PAGE'S CLOSE ARE DERIVED TOO, where a page carries them
+    (`price_values`): the cap at the close and its cross-check, the TEV at the close, and the
+    peer rows it divides. A page built before them gains none here — absent stays absent, so a
+    no-op refresh of such a page is still byte-identical; `price_values_transform` adds them."""
+    from vinci.dossier.price_values import cap_at_close, cross_check, restate_implied, tev_at_close
+    from vinci.dossier.schemas import ImpliedExpectations
+
     out: dict[str, Any] = json.loads(json.dumps(mech))
     si = out.get("stock_info") or {}
+    if "market_cap_at_close" in si:
+        si["market_cap_at_close"] = json.loads(cap_at_close(si).model_dump_json())
+        cc = cross_check(si)
+        si["cap_cross_check"] = json.loads(cc.model_dump_json()) if cc is not None else None
     cap = (si.get("market_cap") or {}).get("value")
     grid = ((out.get("peer_comps") or {}).get("peer_grid") or {}).get("value") or []
     name_row = next((r for r in grid if r.get("is_name")), None)
@@ -414,7 +426,44 @@ def recompute_derived(mech: dict[str, Any]) -> dict[str, Any]:
         mult = row.get("multiple")
         if isinstance(mult, (int, float)) and mult > 0:
             row["implied_level"] = round(tev / float(mult), 1)
+    if "tev_at_close" in ie:
+        day = si.get("as_of")
+        at = restate_implied(ImpliedExpectations.model_validate(ie), tev_at_close(out),
+                             price_as_of=str(day)[:10] if day else None)
+        ie["rows"] = [json.loads(r.model_dump_json()) for r in at.rows]
+        ie["tev_at_close"] = (json.loads(at.tev_at_close.model_dump_json())
+                              if at.tev_at_close is not None else None)
+        ie["tev_close_date"] = at.tev_close_date
     return out
+
+
+def price_values_transform(ticker: str) -> Transform:
+    """(2026-11-19) A `refresh_dossier` transform writing the FAST VALUES at the page's own close
+    (`mechanical.with_price_values` — the assembler's own builder): the cap at the close with CIQ's
+    beside it, the TEV at the close on the price-implied peer rows, and the name's side of the
+    cross-sectional read at the close.
+
+    THE CROSS-SECTIONAL READ NEEDS THE COMPS WORKBOOK (its peer medians and CIQ's printed close),
+    opened as `ev_gap_transform` opens it. Absent, that read is LEFT AS STORED; the rest is a pure
+    function of the stored page. The caller owns checking that the workbook on disk is the export
+    the page was built from (`inputs.ciq`), as for `ev_gap_transform`'s consensus vintage."""
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.mechanical import with_price_values
+    from vinci.dossier.schemas import MechanicalLayer
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        try:
+            bundle = CiqBundle.from_files(
+                ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+        except (FileNotFoundError, CiqUnavailableError):
+            bundle = None
+        built = with_price_values(MechanicalLayer.model_validate(mech), bundle)
+        out: dict[str, Any] = json.loads(built.model_dump_json())
+        return out
+
+    return _apply
 
 
 #: The metrics A1 persists. Both verified 11/11 against values that distinguish the consensus
@@ -747,21 +796,28 @@ def ev_gap_transform(ticker: str) -> Transform:
             # stored, so a freshly-read workbook date would describe a different extraction.
             consensus_as_of = e.value if e.status is SourceStatus.PRESENT else consensus_as_of
 
-        cap = ((out.get("implied_valuation") or {}).get("market_cap") or {}).get("value")
-        grid = ((out.get("peer_comps") or {}).get("peer_grid") or {}).get("value") or []
-        self_row = next((r for r in grid if r.get("is_name")), None)
-        nd = self_row.get("net_debt") if self_row else None
-        # TEV IS STRUCK FROM THE SAME PANEL AS ITS VINTAGE. Both come off the comps workbook, so
-        # the stamp describes the numbers rather than sitting near them.
-        tev = (float(cap) + float(nd)) if isinstance(cap, (int, float)) and isinstance(
-            nd, (int, float)) else None
+        # (2026-11-19) THE MARKET'S SIDE IS THE TEV AT THE PAGE'S OWN CLOSE — the page's close ×
+        # its point-in-time count plus CIQ's claims (`price_values`) — not CIQ's comps cap, which
+        # was the figure a weeks-old export priced. Two vintages, both stated: the claims' (the
+        # comps panel, `tev_as_of`, ours to re-export) and the close's (`tev_close_date`). With
+        # no close, count or claims the gap is NOT COMPUTED with that reason — CIQ's TEV is never
+        # put in its place.
+        from vinci.dossier.price_values import claims, tev_at_close
+
+        at = tev_at_close(out)
+        cl = claims(out)
+        tev = float(at.value) if at.value is not None else None
+        nd = float(cl.value) if cl.value is not None else None
+        price_day = (out.get("stock_info") or {}).get("as_of")
 
         leg = _base_leg(ticker)
         out["ev_gap"] = build_ev_gap(
             levels, leg,
-            tev=tev, net_debt=float(nd) if isinstance(nd, (int, float)) else None,
+            tev=tev, net_debt=nd,
             shares=(leg or {}).get("shares"),
-            tev_as_of=tev_as_of, consensus_as_of=consensus_as_of)
+            tev_as_of=tev_as_of, consensus_as_of=consensus_as_of,
+            tev_close_date=str(price_day)[:10] if price_day else None,
+            tev_absent=at.note if at.value is None else None)
         return out
 
     return _apply

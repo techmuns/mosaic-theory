@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import math
 import threading
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime
@@ -50,6 +50,7 @@ from vinci.dossier.covenant_extract import (
 )
 from vinci.dossier.driver_extract import extract_transcript_drivers, transcript_sha256s
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
+from vinci.dossier.freshness import FilingEvent
 from vinci.dossier.inputs_schema import InputChecks
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import (
@@ -58,6 +59,7 @@ from vinci.dossier.mechanical import (
     AnchorDate,
     assemble_mechanical,
     drawdown_anchor_date,
+    read_filing_events,
 )
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import (
@@ -907,9 +909,17 @@ def _mark_material(mech: Any) -> Any:
         "financial_summary": fs.model_copy(update={
             "annual": ann.model_copy(update={"value": marked})})})
 
-def _freshness_check(mech: Any, *, ticker: str, built_at: date) -> None:
-    """(item 1) FAIL LOUD on a build whose dated inputs cannot honestly sit on one page: a panel
-    older than the ceiling, or a market cap whose share basis disagrees with the price's.
+def _freshness_check(mech: Any, *, ticker: str, built_at: date,
+                     filings: Sequence[FilingEvent] | None, unread: str | None = None) -> None:
+    """(item 1) FAIL LOUD on a build whose dated inputs cannot honestly sit on one page: an export
+    panel the company has FILED since, or a market cap whose share basis disagrees with the price's.
+
+    (2026-11-19) THE EVENT RULE, in place of the 45-day ceiling: ``filings`` are the 10-Qs, 10-Ks
+    and 8-K item 2.02s filed after the oldest export panel up to ``built_at``
+    (`mechanical.read_filing_events`), or None when they could not be read (``unread`` says why),
+    which refuses (`freshness.event_verdict`). The reconciliation keeps reading CIQ's comps cap
+    (`stock_info.market_cap`) against the page's close × count — the cross-check that tells a
+    share-basis change from drift — so it is never the page's own cap set against itself.
 
     ``built_at`` IS THE DATE THIS BUILD RAN — the same instant that becomes ``assembled_at``, and
     NOT the screen's ``reference_date``. The first cut used ``reference_date`` and it was wrong in
@@ -930,7 +940,7 @@ def _freshness_check(mech: Any, *, ticker: str, built_at: date) -> None:
     from vinci.dossier.freshness import (
         absent_cap_inputs,
         check_freshness,
-        panel_age,
+        event_verdict,
         reconcile_cap,
     )
 
@@ -942,11 +952,11 @@ def _freshness_check(mech: Any, *, ticker: str, built_at: date) -> None:
 
     cap, shares, spot = val("market_cap"), val("shares_out"), val("price")
     recon = reconcile_cap(cap_musd=cap, shares=shares, spot=spot)
-    # EXPORT age only (staleness split, 2026-07-30). Consensus staleness is the street's, not ours
-    # — no re-export moves it — so it prints and caveats instead of gating. AORT is the live case:
-    # its Estimates workbook was re-exported 2026-07-30 and still reads 2026-06-30.
+    # EXPORT panels only (staleness split, 2026-07-30). Consensus staleness is the street's, not
+    # ours — no re-export moves it — so it prints and caveats instead of gating. AORT is the live
+    # case: its Estimates workbook was re-exported 2026-07-30 and still reads 2026-06-30.
     dumped = mech.model_dump(mode="json")
-    check_freshness(panel_age(dumped, built_at, kind="export"), recon,
+    check_freshness(event_verdict(dumped, filings, built_at=built_at, unread=unread), recon,
                     ticker=ticker,
                     absent=absent_cap_inputs(cap_musd=cap, shares=shares, spot=spot))
 
@@ -1421,7 +1431,11 @@ def assemble_one(
                 "did not happen (SMPL 2026-07-30 cited a $249M charge as if it were a $391.9M "
                 "writedown). Re-run: synthesis varies between runs.")
         _materiality_check(bundle, mech, synthesis, ticker=ticker)
-        _freshness_check(mech, ticker=ticker, built_at=built_at.date())
+        _ev_filings, _ev_unread = read_filing_events(
+            EdgarClient.from_config(cfg), rec.identity.cik, mech.model_dump(mode="json"),
+            built_at.date())
+        _freshness_check(mech, ticker=ticker, built_at=built_at.date(), filings=_ev_filings,
+                         unread=_ev_unread)
         # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
         # durable guard the FIX-0 incident earns); QA-channel.
         if synthesis is not None:

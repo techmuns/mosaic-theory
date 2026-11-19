@@ -106,7 +106,7 @@ import datetime as dt
 import json
 import tempfile
 from collections import Counter
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeGuard
@@ -115,7 +115,7 @@ from vinci import provenance
 from vinci.config import Config
 from vinci.dossier import input_checks
 from vinci.dossier import inputs as page_inputs
-from vinci.dossier.freshness import MAX_PANEL_AGE_DAYS, PanelAge, panel_age
+from vinci.dossier.freshness import EventVerdict, FilingEvent, PanelAge, event_verdict, panel_age
 from vinci.dossier.schemas import Dossier, MechanicalLayer, SourceStatus, dossier_json
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.impact.values import VOLATILE, SourcedPair, show, sourced_pairs, value_changes
@@ -249,8 +249,11 @@ class PostSpend:
     #: refusals the synthesis decides (``Refusal.at_zero`` False)
     undecided: tuple[Refusal, ...]
     #: the oldest export panel's age against this build's date, or None when no export panel is
-    #: dated: what the freshness verdict was measured at, since a later build sees older panels
+    #: dated — context, no longer the verdict (2026-11-19)
     age: PanelAge | None
+    #: the event rule's verdict at this build's date (`freshness.event_verdict`): what it read and
+    #: which export panel a filing outdates — the freshness verdict itself
+    events: EventVerdict | None = None
 
 
 def sourced_fields(doc: Mapping[str, Any]) -> tuple[dict[str, Field], int]:
@@ -594,13 +597,16 @@ def gate_layer(built: Dossier) -> MechanicalLayer:
     return marked
 
 
-def freshness_refusal(gate: MechanicalLayer, *, ticker: str, built_at: dt.date) -> Refusal | None:
-    """``assemble._freshness_check`` on ``gate``, measured at ``built_at``, as a refusal or None."""
+def freshness_refusal(gate: MechanicalLayer, *, ticker: str, built_at: dt.date,
+                      filings: Sequence[FilingEvent] | None,
+                      unread: str | None = None) -> Refusal | None:
+    """``assemble._freshness_check`` on ``gate``, measured at ``built_at`` against the filings the
+    event rule reads (`mechanical.read_filing_events`), as a refusal or None."""
     from vinci.dossier.assemble import _freshness_check
     from vinci.dossier.freshness import FreshnessError
 
     try:
-        _freshness_check(gate, ticker=ticker, built_at=built_at)
+        _freshness_check(gate, ticker=ticker, built_at=built_at, filings=filings, unread=unread)
     except FreshnessError as exc:
         return Refusal("_freshness_check", type(exc).__name__, str(exc))
     return None
@@ -635,20 +641,38 @@ def drawdown_refusal(built: Dossier, committed: Path) -> Refusal | None:
     return None
 
 
+def filing_events(cik: str | None, layer: dict[str, Any], day: dt.date, *,
+                  edgar: Any = None) -> tuple[list[FilingEvent] | None, str | None]:
+    """The filings the event rule reads for one $0 build (`mechanical.read_filing_events`), as the
+    paid build lists them — the ONE seam this check reads EDGAR's submissions through, so a test
+    stands in for the feed here rather than sending a request. ``edgar`` None: a client from
+    config."""
+    from vinci.dossier.mechanical import read_filing_events
+    from vinci.edgar.client import EdgarClient
+
+    return read_filing_events(edgar if edgar is not None else EdgarClient.from_config(),
+                              cik, layer, day)
+
+
 def post_spend_checks(built: Dossier, bundle: CiqBundle, *,
-                      committed: Path | None = None) -> PostSpend:
+                      committed: Path | None = None, edgar: Any = None) -> PostSpend:
     """Both ``POST_SPEND`` checks on ``built``, in the paid build's order, each measured at
     ``built``'s own ``assembled_at``, the instant the paid build's checks use for theirs; then,
-    given the committed page's folder ``committed``, the ``POST_WRITE`` refusal ``_write`` makes."""
+    given the committed page's folder ``committed``, the ``POST_WRITE`` refusal ``_write`` makes.
+    The event rule's filings come through `filing_events`."""
     gate = gate_layer(built)
     day = built.assembled_at.date()
+    dumped = gate.model_dump(mode="json")
+    filings, unread = filing_events(built.cik, dumped, day, edgar=edgar)
     found = [r for r in (materiality_refusal(gate, bundle, ticker=built.ticker),
-                         freshness_refusal(gate, ticker=built.ticker, built_at=day),
+                         freshness_refusal(gate, ticker=built.ticker, built_at=day,
+                                           filings=filings, unread=unread),
                          drawdown_refusal(built, committed) if committed is not None else None)
              if r is not None]
     return PostSpend(tuple(r for r in found if r.at_zero),
                      tuple(r for r in found if not r.at_zero),
-                     panel_age(gate.model_dump(mode="json"), day, kind="export"))
+                     panel_age(dumped, day, kind="export"),
+                     event_verdict(dumped, filings, built_at=day, unread=unread))
 
 
 def _stamps(doc: Mapping[str, Any]) -> Counter[str]:
@@ -700,9 +724,11 @@ def _post_spend_lines(post: PostSpend) -> list[str]:
     if post.age is None:
         lines.append("  freshness: no dated export panel in this build")
     else:
-        due = dt.date.fromisoformat(post.age.oldest) + dt.timedelta(days=MAX_PANEL_AGE_DAYS + 1)
-        lines.append(f"  freshness measured at this build's date: {post.age.note()}; a build on "
-                     f"or after {due.isoformat()} is refused on it (ceiling {MAX_PANEL_AGE_DAYS}d)")
+        # (2026-11-19) no ceiling and so no due date: an export is refused when the company files
+        # a 10-Q, a 10-K or an 8-K item 2.02 after it (`freshness.event_verdict`)
+        lines.append(f"  freshness measured at this build's date: {post.age.note()}; event rule: "
+                     + (post.events.note() if post.events is not None else "not run")
+                     + " — a 10-Q, 10-K or 8-K item 2.02 filed after the panel refuses the build")
     return lines
 
 
@@ -843,7 +869,11 @@ def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print,
     bundle = CiqBundle.from_files(t, LocalFolderStore.from_config(cfg).files(t))
     exports = [(wb.kind + (f"/{wb.freq}" if wb.freq else ""), file_provenance(wb.path)[0])
                for wb in bundle.workbooks]
-    post = post_spend_checks(built, bundle, committed=path.parent)
+    from vinci.edgar.client import EdgarClient
+
+    # the event rule's filings, through the run's own config (its cache), as the paid build reads
+    post = post_spend_checks(built, bundle, committed=path.parent,
+                             edgar=EdgarClient.from_config(cfg))
     result = compare(committed, fresh, forecast) if committed is not None else None
     present = page_inputs.manifest_for(reads.reads(), db_path=cfg.db_path,
                                        extraction_version=built.extraction_version or "",
