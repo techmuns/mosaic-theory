@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# GOOGL rebuilt under the operator's $6 cap ($3.94, one build, 7 calls): on the 2026-11-19 CIQ export R1 prices $227.10 at the 2026-11-18 close's 17.58x, passed by the event rule; the EV/EBITDA basis pairs one day's figures; the prose no longer quotes $144,827M. A NEW DEFECT on the page: the export's Key Developments carry other companies' rows, and the catalyst reader takes Lyft's as Alphabet's (pages only, $3.94)
+# GOOGL rebuilt under the operator's $6 cap ($3.94, one build, 7 calls): on the 2026-11-19 CIQ export R1 prices $227.10 at the 2026-11-18 close's 17.58x, passed by the event rule; the EV/EBITDA basis pairs one day's figures; the prose no longer quotes $144,827M. A known, pre-existing defect, on main too, shows more here: the catalyst reader takes other companies' Key Developments as Alphabet's (Lyft's; → W85) (pages only, $3.94)
 
 **THE RULING.** The operator's words were "Yes, cap $6", relayed by coordinator B, for a build after W73's code PR (#1144, merged as `bc1c0e16`). B's brief:
 - hash-check the Drive export (comps `8a946223e6`);
@@ -35,14 +35,16 @@ superseded-by:
   - **The four forward bands are withheld.** CIQ's forward multiple history now ends in a partial 2026-11-18 column reading "-". So W50's rule withholds EV/NTM Revenue, EBITDA, EBIT and P/NTM EPS: "no current, and an older close is not one". The 2026-09-30 bands they carried are not priced in its place.
 - **The transcript evidence** went to the operator's spool (`$VINCI_EVIDENCE_SPOOL`, the `driver-evidence` folder beside `manual/ciq` on the shared Drive). It went from 2,926 to 3,015 files: 89 new records. No page field quotes a transcript.
 
-**A NEW DEFECT, FOUND IN THE BUILT PAGE AND NOT FIXED HERE (hold scope).**
-- **The export.** The new Key Developments export (`68170f53b6`) carries rows whose subject is another company. Beside Alphabet's own rows it names Microsoft, NVIDIA, AMD, Broadcom, QUALCOMM and Lyft.
-- **The reader takes them as Alphabet's** (`mechanical.catalyst_calendar`):
-  - **2 of the page's 3 calendar rows are Lyft's**: "Early access to the Lyft app rolls out in Barcelona and Hamburg first…" (Sep-30-2026) and "starting November 5, 2026, and marks the latest expansion of Lyft's growing partnership…" (Nov-05-2026).
-  - The main body's **Next catalyst** line prints the first, dated ~2026-10, before the page's own close. So do the two scenario mirrors' "next catalyst" (`frontend/scenarios/GOOGL*.json`).
-  - One event row of the operating drivers (`operating_drivers.rows[8]`, Nov-05-2026) is Lyft's too.
-- **What it does not reach:** the synthesis does not mention Lyft. Main's page carries none of it, since its older export ended before these rows.
-- **OPEN, for the operator:** merge as is with the defect named, or hold for a reader fix that holds each row to the subject company. That fix is code with its own test; a $0 refresh of the mechanical layer, or a rebuild, would then correct the page.
+**A KNOWN, PRE-EXISTING DEFECT, OUT OF SCOPE HERE → W85** (coordinator B, 2026-11-19).
+- **The reader.** `mechanical._catalyst_calendar` turns any forward-dated sentence in CIQ Key Developments into a "management-stated" catalyst. It never checks whose development it is.
+- **It is already on main.** Main's GOOGL page prints a Lyft row (Sep-30-2026) as its Next catalyst. Per B, UBER carries a Wonder/Zipline row and AMZN a Kartoon Studios row. B is proposing the fix to the operator as W85: $0 code, then a $0 refresh of the pages it reaches.
+- **What this rebuild adds on GOOGL.** The new export (`68170f53b6`) names other companies' developments alongside Alphabet's: Microsoft, NVIDIA, AMD, Broadcom, QUALCOMM and Lyft.
+  - **The calendar's 3 rows.** Two are Lyft's: "Early access to the Lyft app rolls out in Barcelona and Hamburg first…" (Sep-30-2026, on main too) and "starting November 5, 2026, and marks the latest expansion of Lyft's growing partnership…" (Nov-05-2026, new).
+  - **The main body's Next catalyst** prints the Sep-30 row, dated ~2026-10, as on main.
+  - **The two scenario mirrors** (`frontend/scenarios/GOOGL*.json`) now take the Nov-05 row as their next catalyst. On main they read "Next results print, 2027-01-30".
+  - **One operating-driver event row** (`operating_drivers.rows[8]`, Nov-05-2026) is Lyft's.
+  - The synthesis does not mention Lyft.
+- *Corrected 2026-11-20, before merge.* This section first called the defect new and said main's page carried none of it. B's review showed main's page already prints the Sep-30 row.
 
 **HOW VERIFIED.**
 - **The inputs:**
@@ -80,9 +82,9 @@ superseded-by:
 - **Build:** started 2026-11-19T22:31:21Z, finished 22:48:20Z.
 - **The store:** frontier 2026-11-18. `price_store.declared_path` names the build's worktree folder, `w73-googl-rebuild`, since removed; the store is kept in this session's scratch. Its 15 series each cover at least the window the committed page read.
 - **Spend:** list price over the build's 7 metered calls, as `run_metrics` priced them.
-- **The defect's count:** this page's `catalyst_calendar` (3 rows) and `operating_drivers` event rows, at this build. Other pages' Key Developments exports were not measured.
+- **The defect's count:** this page's `catalyst_calendar` (3 rows) and `operating_drivers` event rows, at this build, against main's page. Other pages are B's, measured for W85.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **$3.94 of the $6 cap.**
-- **The defect ships with the page if the operator merges as is**, until the reader is fixed and the page refreshed.
+- **The Lyft rows stay on the page** until W85's reader fix and its $0 refresh. Main's page already carries the first of them.
 - **The forward bands stay withheld** until CIQ's history carries a current at its export date.
