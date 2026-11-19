@@ -222,3 +222,52 @@ superseded-by:
 - **Follow-up, not here:** `mechanical._STALE_CLOSE_DAYS` (45 days) still ages the same close in the
   assembly's EV/EBITDA integrity caveat (`_ev_ebitda_integrity_flag`). That is a caveat only, and
   never gates.
+
+## Found by the impact run, fixed before the PR opened: the anchor's EOD read sat after the store closed
+
+- **What happened.** The first head's impact run (RUNBOOKS §o; base `2ecf6da0`, head `d10c5888`)
+  built 25 of 26 pages at $0. On all 25, head's anchor was the fallback: "anchor computation failed:
+  ProgrammingError", every R1 field null.
+  - The cause: `assemble_one` read the store's EOD closes for the drift flag with
+    `store.get_price_history` AFTER its `with Store(...)` block had closed the store.
+  - The in-process derives, the 42-file neighbour run and the full gate never reached
+    `assemble_one` with a real store. A $0 build is the first path that does.
+- **The fix.** The closes are read inside the block (`assemble._eod`) and passed to
+  `_assembly_anchor`.
+- **The pins, both failing on `d10c5888` and passing on the fix:**
+  - END TO END (TEST-LAYER RULE; coordinator B): `test_a_zero_dollar_build_of_it_computes_its_anchor_end_to_end`.
+    It is a real $0 build of IT, a committed active page, in the impact check's own child
+    (`vinci/impact/child.py`): HEAD's committed data, the licensed CIQ export and SEC cache in
+    place, a copy of the price store, the cache frozen and every socket refused. It asserts the
+    anchor is computed: no fallback, R1's inputs and multiple present, the event rule's note on
+    the close.
+    - On `d10c5888` it fails with "anchor computation failed: ProgrammingError". It was run in a
+      temporary worktree at that commit, since removed.
+    - It needs the uncommitted inputs, so it skips where they are absent (CI), as the suite's
+      other licensed-input pins do. About 13 s.
+  - STRUCTURAL, beside it: every `store.<call>` in `assemble_one` sits inside its
+    `with Store(...)` block (AST). On `d10c5888` it fails at source line 310.
+- `tests/test_libreoffice_exit.py`'s stub store gains the one read the build now makes
+  (`get_price_history`, no bars).
+- **Main merged at `6e03501f`** (#1141, #1142 W80). STATE.md row 10 was carried character by
+  character: the merged file differs from main on row 10 alone, by W73's two insertions. W80's
+  edits to the row (around character 5,400) and W73's (around 6,800) do not overlap.
+
+## The impact run on the merged head (RUNBOOKS §o; base `6e03501f`, head `28cba7c3`)
+
+- **Fail first:** 139 of 605 tests fail on base and pass on head; **0 fail at head**.
+- **Pages:** 25 of 26 built (PARR not, its mislabelled export). 20 of 25 move, every moved field an
+  anchor field W73 owns or `valuation_basis.current_multiple.as_of`.
+  - **The store's own frontier makes three refusals.** The impact store prices to 2026-11-10,
+    while today's exports for BRBR and GOOGL close on 2026-11-18 and IT's on 2026-11-11. W68
+    refuses those closes as after the page's own close, which is the rule working on an older
+    store; a build priced at today's close passes them.
+  - The `as_of` moves (BRBR 11-19 → 11-18, IT 11-12 → 11-11, LLY 10-30 → 11-02) are finding B:
+    each multiple now carries its own close's date, not the comps TEV's.
+- **Synthesis requests:** 0 of 25 differ, and the frozen panel 0 of 6, so the row-53 check is
+  not owed.
+- **Rendered surface:** 0 of 26 committed `dossier.md` re-render. The report notes that
+  `dossier.js` changes, and it runs no JavaScript. Rendering all 26 committed pages with base's
+  and head's `dossier.js` in node gives 26 of 26 identical.
+- **Downstream:** the decision ledger, the scoring report and the monitor are identical at both
+  refs.
