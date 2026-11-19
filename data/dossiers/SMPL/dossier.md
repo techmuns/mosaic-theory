@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
 
 # Brief — first cut
 
@@ -353,7 +353,7 @@ _The split's arithmetic:_
 - multiple effect = (18.2256 − 5.1351) × 233.0 ÷ 86,861,967 = $35.11, beside the anchor, never in it.
 - V0 + margin effect = $11.37, the screen value; + multiple effect = $46.48, the value at the median.
 - net debt ÷ EV = 208.8 ÷ 1,055.7 = 0.198; flagged above 0.5.
-- the multiple's close 2026-10-27, the page's stored close 2026-11-11: 15 days; stale above 30.
+- the multiple's close 2026-10-27, the page's stored close 2026-11-11: 15 days; not stale by its history's cadence: the next quarterly observation is due by 2027-01-26 (balance sheet 2026-08-29 + the longest of its last 4 quarters, 91 days, + the slowest of their pricing lags, 59 days).
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [51]  <!-- ds-table -->
@@ -723,6 +723,7 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 11d old — 2026-11-03 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 16d old (2026-10-29, valuation.implied_expectations.multiples_as_of) — within the ceiling

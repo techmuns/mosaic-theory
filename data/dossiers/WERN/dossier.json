@@ -16574,13 +16574,21 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-18T15:50:55.226710Z",
+    "computed_at": "2026-11-19T03:35:07.253672Z",
     "reason": null,
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
@@ -16695,7 +16703,7 @@
         "multiple effect = (6.6883 − 6.8962) × 464.5 ÷ 59,977,156 = −$1.61, beside the anchor, never in it.",
         "V0 + margin effect = $39.93, the screen value; + multiple effect = $38.32, the value at the median.",
         "net debt ÷ EV = 808.2 ÷ 2,481.2 = 0.326; flagged above 0.5.",
-        "the multiple's close 2026-11-09, the page's stored close 2026-11-11: 2 days; stale above 30."
+        "the multiple's close 2026-11-09, the page's stored close 2026-11-11: 2 days; not stale by its history's cadence: the next quarterly observation is due by 2027-02-26 (balance sheet 2026-09-30 + the longest of its last 4 quarters, 92 days, + the slowest of their pricing lags, 57 days)."
       ]
     },
     "scenario_eligibility": {
