@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# The committed covenant quotes are checked against the exhibits they cite, from the primary checkout's cache: 301 of 305 are found, none is missing, and 4 are uncached (WERN's one exhibit that cache does not hold). A test now refuses a new miss, and a cache that holds less, wherever the cache is held ($0 but one authorised fetch; P2-14, the covenant half, W64)
+# The committed covenant quotes are checked against the exhibits they cite, from the primary checkout's cache: all 305, and all 32 component clauses, are found, and none is missing or uncached. A test now refuses a new miss wherever the cache is held, and says how much it checked ($0 bar five authorised exhibit fetches; P2-14, the covenant half, W64)
 
 **WHAT.**
 - `python -m vinci.dossier.covenant_evidence_check [--pages D] [--ticker T …] [--cache-root C …]
@@ -42,17 +42,17 @@ superseded-by:
 - **The guard** is `tests/test_covenant_evidence_check.py::
   test_every_committed_covenant_quote_is_in_the_exhibit_it_cites`.
   - It walks every covered page that stores a covenant quote (`covered_where`), reading from the
-    default roots, and prints how much it checked (quotes and held exhibits).
+    default roots, and prints how much it checked: quotes checked of the total, cited exhibits
+    held, and every exhibit not held.
   - It fails on a not_found quote unless `KNOWN_MISSES` names it with its cause. It also fails on
     an entry that has left the pages or is found now (the ratchet only shrinks), and on an entry
     whose stored cause is not the cause the check reads. `KNOWN_MISSES` is empty, because the
     corpus has no miss.
-  - **A coverage floor.** It fails when it checks fewer than 331 quotes in fewer than 54 held
-    exhibits, today's count from the primary checkout's cache, because a cache that holds less
-    would otherwise check less in silence. A change that takes quotes off the pages lowers the
-    floor in the same change.
-  - An uncached quote is not a failure in itself. The guard SKIPS only where no cited exhibit is
-    held at all. CI holds no SEC cache, so there it skips, by that stated condition.
+  - **How much it checks is reported, never held to a number** (review round 2). Each Mac holds
+    its own SEC cache, so a count from this one cannot be a floor on another: round 1's floor
+    (331 quotes in 54 exhibits) would have refused every commit on a machine whose cache holds
+    fewer. The guard FAILS only where a cache root exists and holds none of the cited exhibits,
+    since then it checked nothing. It SKIPS where there is no cache at all, as in CI.
 
 **WHY.**
 - P2-14 of the engineering report asks that every verbatim quote the pipeline commits be checked
@@ -65,18 +65,19 @@ superseded-by:
 
 **HOW VERIFIED.**
 - **Corpus first: the 26 committed pages at main `8bc138cd`, from the primary checkout's cache
-  alone.** Twenty carry covenant quotes, citing 55 exhibits (counted per page), 54 of them held.
+  alone.** Twenty carry covenant quotes, citing 55 exhibits (counted per page), all 55 held.
   GOOGL, LLY, ORKA, ROST, TECX and VITL carry none.
-  - **Terms: found 301 (verbatim 228, elided 73), not_found 0, uncached 4.**
-  - **Component clauses: found 30 (verbatim 26, elided 4), not_found 0, uncached 2.**
-  - The 6 uncached quotes are all in WERN's 2026-10-05 exhibit (`0000793074-26-000159`), which
-    the primary cache does not hold. On round 0's first read one other worktree's cache on this
-    Mac held it and all 6 were found there; that root is no longer read.
-  - **MCK's 23 quotes are all found.** Round 0 left them uncached, because their four exhibits
-    were held in no cache on this Mac: `0000927653-21-000019`, `-26-000045`, `-26-000167` and
-    `0001193125-13-450016`. In round 1 coordinator A authorised fetching exactly those four, and
-    the operator approved sending the repo's SEC User-Agent. They were fetched through the repo's
-    own paced, cached client into the primary cache, four requests and no other.
+  - **Terms: found 305 (verbatim 230, elided 75), not_found 0, uncached 0.**
+  - **Component clauses: found 32 (verbatim 27, elided 5), not_found 0, uncached 0.**
+  - Round 0 left 23 quotes uncached, MCK's, because their four exhibits were held in no cache on
+    this Mac (`0000927653-21-000019`, `-26-000045`, `-26-000167`, `0001193125-13-450016`). Round 1
+    left 6 more, because the primary cache did not hold WERN's 2026-10-05 exhibit
+    (`0000793074-26-000159`): another worktree's cache did, and that root is no longer read.
+  - Each of those five exhibits was fetched into the primary cache, one request each, through the
+    repo's own paced, cached SEC client: MCK's four in round 1 and WERN's in round 2. Coordinator A
+    asked for each, and the operator approved each, since the client's User-Agent carries the
+    operator's contact. No other request was sent. **All 23 of MCK's quotes and all 6 of WERN's are
+    found.**
 - **A check that finds nothing is suspect, so it was run where misses exist.** On the 21 pages
   committed at main `545403de` (2026-10-26, the commit #804 measured), from the primary's cache:
   - **393 quotes: found 353, not_found 40, uncached 0.**
@@ -106,13 +107,14 @@ superseded-by:
     by pairwise order, and it read AORT's 2016 interest clause as `not_a_span`: its piece "(a)"
     occurs everywhere, and a sort cannot place it. Trying every order reads that clause
     `reordered`, as before.
-- **Pins.** `tests/test_covenant_evidence_check.py`, 20 tests:
+- **Pins.** `tests/test_covenant_evidence_check.py`, 21 tests:
   - 12 read a real committed row as committed;
-  - 6 start from one and change one thing: three probe quotes on AMZN's row, a note with no
-    quote, a page trimmed to one row, and one synthetic ratchet key;
+  - 7 start from one and change one thing: three probe quotes on AMZN's row, a note with no
+    quote, a page trimmed to one row, two pages trimmed for the guard's partial cache, and one
+    synthetic ratchet key;
   - 1 reads no row (the miss cases name all six causes);
   - the guard reads the living pages.
-  - 19 run in CI; the guard skips there.
+  - 20 run in CI; the guard skips there.
   - The rows come from their frozen copies (the cut for the positives, the dated `2026-08-18/IT`
     and `2026-09-17/WERN` copies for four negatives). For the two causes no frozen copy holds
     (`wrong_exhibit`, `label_added`), they are stored verbatim from main `545403de` in the
@@ -137,7 +139,9 @@ superseded-by:
     - the CLI printing every miss whole and exiting 1;
     - the ratchet: a new miss, a stale entry, an unheld entry, a stored cause that is not the
       computed one;
-    - and the guard with its floor.
+    - the guard's own three answers: a partial cache passes and says "2 of 3 quotes checked",
+      a root holding none of the exhibits fails, and no root skips;
+    - and the guard itself.
   - Any socket fails a test.
 - **Mutation: 20 of 20 killed, each by a pin that runs in CI** (the guard deselected). The
   mutants:
@@ -178,6 +182,11 @@ superseded-by:
   - NIT 5, a known miss's stored cause is compared.
   - NIT 6, the coverage floor.
   - NIT 7, the wording of the pin counts and of `not_a_span`.
+- **Review round 2** (coordinator A).
+  - WERN's exhibit fetched (above): its 6 quotes are found.
+  - The hard floor is removed. It is replaced by a report of what was checked and a failure only
+    where nothing could be. Pinned both ways: with round 1's floor put back, the partial-cache pin
+    fails; without the none-held check, the empty-root case passes, and the pin refuses it.
 - **One rule was dropped on measurement.** A first cut kept a bracket the filing itself prints (a
   template's "[Borrower]") out of `editorial_bracket`. Across all 50 misses on every corpus above,
   it changed no answer, so it was removed and the docstring states the limit.
@@ -189,9 +198,9 @@ superseded-by:
 - History corpus: the 21 pages under `data/dossiers` at main `545403de`, 393 terms. That corpus has
   no component clauses: the field post-dates it.
 - Source: each quote's own exhibit, read from the SEC cache under the operator's primary checkout
-  as held on 2026-11-19 after round 1's four fetches, with no other request sent. Matching is
+  as held on 2026-11-19 after the five fetches of rounds 1 and 2, with no other request sent. Matching is
   `vinci.verbatim` and the converter is `html_to_text`, both unchanged since `5e380efc`.
-- The guard's cost: about 8 s on this Mac, reading 54 exhibits.
+- The guard's cost: about 8 s on this Mac, reading 55 exhibits.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Presence, not support.** A find says the words are in the exhibit, not that they carry the
@@ -201,20 +210,19 @@ superseded-by:
   - They are #873's residual (audit E2-D19, STATE row 41's "PHASE 2 D2") plus #961's wider fence.
     Each page withholds them at its next re-assembly, and row 41 already tracks the rebuilds.
   - They are printed here, not guarded or fixed.
-- **CI cannot read a filing.** In CI the guard skips and the 19 pins run, so a converter change
+- **CI cannot read a filing.** In CI the guard skips and the 20 pins run, so a converter change
   that makes a committed quote miss is caught where a cache is held. That covers this Mac's suite
   and every pre-push run the artifact pass makes there, since the build that writes a page caches
   the exhibits it read. FALSIFIER: a committed quote found missing by a later run of this check,
   on a page whose push passed the suite.
-- **The floor has a price.** A machine whose caches hold fewer of these exhibits fails the guard
-  rather than skipping it, and so does a re-assembly that leaves fewer quotes, until the floor is
-  lowered in the same change. Both are what it is for: the count it checked is stated, never
-  assumed.
+- **How much the guard checks depends on the machine.** A cache that holds fewer of these exhibits
+  checks fewer quotes, and the guard passes there. It says so in its report line ("k of n quotes
+  checked", every exhibit not held), and it fails only when it checked none. FALSIFIER: a quote
+  missing from its exhibit, on a page whose suite run passed on a machine whose cache held that
+  exhibit.
 - **A cached copy is the document as EDGAR served it when fetched.** An EDGAR archive file does
   not change. The row's `document_sha256` names the copy read.
 - **Found, not fixed:**
-  - WERN's 2026-10-05 exhibit is not in the primary cache, so its 6 quotes are checked only where
-    a cache holds it;
   - two older readers of the same note keep their own parse: `vinci/evals/variants.py`'s
     `fenced_covenant_rows` (a decision-line file) and `vinci/quality/sources/release.py`'s
     `_NOTE_OPEN`. Each could read through `note_quote`;

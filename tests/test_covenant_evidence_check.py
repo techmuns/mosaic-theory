@@ -48,12 +48,6 @@ MISS_CASES = ("wern-editorial-bracket", "wern-unmarked-join", "wern-reordered", 
 #: 20 pages with covenant quotes: none. A change that makes a committed quote miss (a converter or
 #: a span rule that reads a filing differently) either fixes it or names it here with its cause.
 KNOWN_MISSES: dict[tuple[str, str, str, str, str], str] = {}
-#: THE COVERAGE FLOOR (review round 1): what the guard checked on this Mac at main 8bc138cd from the
-#: primary checkout's cache: 54 of the 55 cited exhibits, 331 of the 337 quotes (WERN's 2026-10-05
-#: exhibit, 6 quotes, is the one it does not hold). A cache that holds less fails the guard rather
-#: than checking less in silence; only a cache that holds none of them skips it (CI).
-HELD_FLOOR = 54
-CHECKED_FLOOR = 331
 
 
 @pytest.fixture(autouse=True)
@@ -276,28 +270,28 @@ def test_the_ratchet_refuses_a_new_miss_and_a_stale_entry(tmp_path: pathlib.Path
     assert _ratchet([unheld], {_key(miss): cec.NOT_A_SPAN}) == ([], [], [])
 
 
-def test_every_committed_covenant_quote_is_in_the_exhibit_it_cites() -> None:
-    """THE GUARD, over every covered page with a covenant quote: each quote whose exhibit a cache
-    root holds is a span of it, unless `KNOWN_MISSES` names it; no entry there is stale."""
-    pages = dict(covered_where(lambda _t, d: next(cec.page_quotes(d), None) is not None,
-                               "stores a covenant quote"))
-    roots = cec.default_cache_roots(ROOT)
-    results = cec.check_pages(pages, cec.readers_for(roots)) if roots else []
-    if not any(r.outcome != cec.UNCACHED for r in results):
-        pytest.skip(f"no exhibit the {len(pages)} pages' covenant quotes cite is held under "
-                    f"{[str(r) for r in roots] or 'any data/cache/sec'}: the guard reads the SEC "
-                    "cache, and CI holds none")
+def _guard(pages: dict[str, dict[str, Any]], roots: list[pathlib.Path],
+           known: dict[_Key, str]) -> str:
+    """THE GUARD's body: what it checked, in one line, after refusing a miss `known` does not
+    name, a stale entry and a wrong cause. HOW MUCH it checks is per machine (each Mac holds its
+    own SEC cache), so it is REPORTED, never held to a number (review round 2): a cache holding
+    some of the cited exhibits checks those. It FAILS only where a cache root exists and holds none
+    of them, since then it checked nothing; it SKIPS where there is no cache at all (CI)."""
+    if not roots:
+        pytest.skip(f"no data/cache/sec in this checkout or its primary: the guard reads the SEC "
+                    f"cache, and CI holds none ({len(pages)} pages not checked)")
+    results = cec.check_pages(pages, cec.readers_for(roots))
+    cited = sorted({(r.ticker, r.accession, r.filename) for r in results})
     held = {(r.ticker, r.accession, r.filename) for r in results if r.outcome != cec.UNCACHED}
     checked = sum(1 for r in results if r.outcome != cec.UNCACHED)
-    print(f"covenant guard: {checked} of {len(results)} quotes checked, {len(held)} of "
-          f"{len({(r.ticker, r.accession, r.filename) for r in results})} cited exhibits held, "
-          f"roots {[str(r) for r in roots]}")
-    assert len(held) >= HELD_FLOOR and checked >= CHECKED_FLOOR, (
-        f"the guard checked {checked} quotes in {len(held)} held exhibits, under its floor of "
-        f"{CHECKED_FLOOR} in {HELD_FLOOR}: a cache that holds less checks less, silently. Point a "
-        "root at a cache that holds them; a change that takes quotes off the pages lowers the "
-        "floor in the same change.")
-    new, stale, wrong = _ratchet(results, KNOWN_MISSES)
+    unheld = [f"{t} {a} · {f}" for t, a, f in cited if (t, a, f) not in held]
+    report = (f"covenant guard: {checked} of {len(results)} quotes checked, {len(held)} of "
+              f"{len(cited)} cited exhibits held, from {[str(r) for r in roots]}; not held "
+              f"({len(unheld)} of {len(unheld)}): {'; '.join(unheld) or 'none'}")
+    assert checked, (f"the cache roots {[str(r) for r in roots]} hold none of the {len(cited)} "
+                     f"exhibits the {len(pages)} pages cite, so the guard checked nothing: "
+                     "point a root at a cache that holds them")
+    new, stale, wrong = _ratchet(results, known)
     assert not new, (
         f"{len(new)} committed covenant quote(s) are not in the exhibit each cites: "
         + "; ".join(f"{r.ticker} | {r.term} | {r.quote_of} | {r.source_ref} | {r.cause}"
@@ -307,7 +301,47 @@ def test_every_committed_covenant_quote_is_in_the_exhibit_it_cites() -> None:
     assert not stale, (f"{len(stale)} KNOWN_MISSES entr(ies) are found now or left the pages: "
                        f"{stale}. Delete each: the ratchet only shrinks.")
     assert not wrong, (f"{len(wrong)} KNOWN_MISSES entr(ies) name another cause than the check "
-                       f"reads: {[(k, KNOWN_MISSES[k]) for k in wrong]}.")
+                       f"reads: {[(k, known[k]) for k in wrong]}.")
+    return report
+
+
+def test_every_committed_covenant_quote_is_in_the_exhibit_it_cites() -> None:
+    """THE GUARD, over every covered page with a covenant quote: each quote whose exhibit a cache
+    root holds is a span of it, unless `KNOWN_MISSES` names it; no entry there is stale or names
+    another cause; and it says how much it checked."""
+    pages = dict(covered_where(lambda _t, d: next(cec.page_quotes(d), None) is not None,
+                               "stores a covenant quote"))
+    print(_guard(pages, cec.default_cache_roots(ROOT), KNOWN_MISSES))
+
+
+def test_the_guard_reports_a_partial_cache_fails_an_empty_one_and_skips_without_one(
+        tmp_path: pathlib.Path) -> None:
+    """Review round 2. (+) A cache holding only some of the exhibits real pages cite passes and
+    says how much it checked: the cut's AMZN and IT, each cut to its pinned row, AMZN's keeping
+    too a row of another exhibit, which is not served; (−) a cache root that holds none of them
+    fails, since it checked nothing; and with no cache root at all, as in CI, the guard skips."""
+    cases = [_CASES["amzn-verbatim"], _CASES["it-elided"]]
+    pages = {}
+    for c in cases:
+        page = _page(c)
+        block = page["mechanical"]["capital_structure"]["covenant_term_rows"]
+        keep = [r for r in block["value"] if (r["name"], r["value"].get("source_ref"))
+                == (c["term"], c["source_ref"])]
+        if c["ticker"] == "AMZN":
+            keep.append(next(r for r in block["value"] if r["value"]["status"] == "present"
+                             and r["value"]["source_ref"] != c["source_ref"]))
+        block["value"] = keep
+        pages[c["ticker"]] = page
+    report = _guard(pages, [_serve(tmp_path / "some", cases)], {})
+    assert report.startswith("covenant guard: 2 of 3 quotes checked, 2 of 3 cited exhibits held"), (
+        report)
+    assert "not held (1 of 1): AMZN " in report
+    empty = tmp_path / "none"
+    (empty / "sec").mkdir(parents=True)
+    with pytest.raises(AssertionError, match="hold none of the"):
+        _guard(pages, [empty], {})
+    with pytest.raises(pytest.skip.Exception, match="CI holds none"):
+        _guard(pages, [], {})
 
 
 def test_a_quote_with_no_ellipsis_is_never_called_reordered(tmp_path: pathlib.Path) -> None:
