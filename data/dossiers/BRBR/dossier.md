@@ -468,7 +468,7 @@ _industry = 38 Personal Care Products companies (GICS industry), the primary pan
 - **Capital-structure aggregates:** senior bonds 840.0; total principal 1,177.8; total debt 1,173.1 (3 months FQ3/CQ2 Jun-30-2026) ($M) [57]
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans — per an 8-K filed 2021-02-26
-  - **Events of default:** Repricing Event (Section 2.05(b)(ix)): if within 6 months after Amendment No. 2 Effective Date a repricing/refinancing… — per an 8-K filed 2021-02-26
+  - **Prepayment / events of default:** Repricing Event (Section 2.05(b)(ix)): if within 6 months after Amendment No. 2 Effective Date a repricing/refinancing… — per an 8-K filed 2021-02-26
 
 ### Filing cross-checks — going concern · leverage basis
 

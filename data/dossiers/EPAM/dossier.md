@@ -515,7 +515,7 @@ _industry = 41 IT Consulting and Other Services companies (GICS industry), the p
   - **Interest / coupon:** Base Rate plus the Applicable Margin (Base Rate Option); or Euro-Rate plus the Applicable Margin (Euro-Rate Option) — per an 8-K filed 2017-05-26
   - **Maturity:** May 24, 2022 · May 24, 2022 (Expiration Date) — per an 8-K filed 2017-05-26
   - **Financial maintenance:** Maximum Leverage Ratio (Section 7.2.13); Minimum Interest Coverage Ratio (Section 7.2.14) — per an 8-K filed 2017-05-26
-  - **Events of default:** Mandatory Prepayments: Section 4.7 (4.7.1 and 4.7.2 Intentionally omitted; 4.7.3 Currency Fluctuations; 4.7.4 Applicati… — per an 8-K filed 2017-05-26
+  - **Prepayment / events of default:** Mandatory Prepayments: Section 4.7 (4.7.1 and 4.7.2 Intentionally omitted; 4.7.3 Currency Fluctuations; 4.7.4 Applicati… — per an 8-K filed 2017-05-26
 - **Covenants — REVOLVING CREDIT FACILITY AMENDED AND RESTATED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Base Rate Option: Base Rate plus the Applicable Margin; Eurocurrency Rate Option: Adjusted Eurocurrency Rate plus the A… — per an 8-K filed 2021-10-25
   - **Maturity:** October 21, 2026 · October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section 12.1 — per an 8-K filed 2021-10-25

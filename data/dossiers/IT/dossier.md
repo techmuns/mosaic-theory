@@ -518,7 +518,7 @@ _industry = 41 IT Consulting and Other Services companies (GICS industry), the p
   - **Maturity:** the fifth anniversary of the Closing Date — per an 8-K filed 2020-09-28
   - **Maturity:** the fifth anniversary of the Closing Date — per an 8-K filed 2020-09-28
   - **Financial maintenance:** Consolidated Leverage Ratio not to exceed 5.00 to 1.00 through Dec 31, 2021; thereafter 4.50 to 1.00 (or 5.00 to 1.00 d… — per an 8-K filed 2020-09-28
-  - **Events of default:** 50% of Net Cash Proceeds from Asset Sale/Recovery Event applied to Term Loans (subject to reinvestment and leverage-bas… — per an 8-K filed 2020-09-28
+  - **Mandatory prepayment:** 50% of Net Cash Proceeds from Asset Sale/Recovery Event applied to Term Loans (subject to reinvestment and leverage-bas… — per an 8-K filed 2020-09-28
 
 ### Filing cross-checks — going concern · leverage basis
 

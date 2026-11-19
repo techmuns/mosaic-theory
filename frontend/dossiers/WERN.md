@@ -517,11 +517,11 @@ _1 undated / later aggregate line item(s) in the appendix panel_
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR + 1.50% (Floor 0.00%) · Base Rate + Applicable Margin (Base Rate Loans) or Term SOFR + Applicable Margin (SOFR Loans); Swingline at Daily Simpl… — per an 8-K filed 2026-10-08
   - **Maturity:** October 5, 2031 · October 5, 2031 (Revolving Credit Maturity Date; earliest to occur of (a) October 5, 2031, (b) termination of the entir… — per an 8-K filed 2026-10-08
-  - **Events of default:** Mandatory prepayment: if Revolving Credit Outstandings exceed the Revolving Credit Commitment, repay the excess (applie… — per an 8-K filed 2026-10-08
+  - **Prepayment / events of default:** Mandatory prepayment: if Revolving Credit Outstandings exceed the Revolving Credit Commitment, repay the excess (applie… — per an 8-K filed 2026-10-08
 - **Covenants — LOAN AND SECURITY AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Each Loan accrues interest at the then applicable Interest Rate for such Loan (defined term not quantified in this exhi… — per an 8-K filed 2025-04-02, amended 2026-06-10
   - **Maturity:** Final Maturity Date = date that (i) is thirty (30) days following the Scheduled Termination Date or (ii) such earlier d… — per an 8-K filed 2026-06-10
-  - **Events of default:** Events of Default enumerated (clauses (s)–(bb)) include: investment company/covered fund status; material provision cea… — per an 8-K filed 2026-06-10
+  - **Prepayment / events of default:** Events of Default enumerated (clauses (s)–(bb)) include: investment company/covered fund status; material provision cea… — per an 8-K filed 2026-06-10
 
 ### Filing cross-checks — going concern · leverage basis
 
