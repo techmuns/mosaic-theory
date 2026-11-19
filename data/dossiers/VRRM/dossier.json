@@ -14546,11 +14546,21 @@
       }
     ]
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-18T17:04:03.597628Z",
+    "computed_at": "2026-11-19T03:35:07.064108Z",
     "reason": null,
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [
@@ -14668,7 +14678,7 @@
         "multiple effect = (13.8659 − 3.5566) × 322.8 ÷ 152,009,343 = $21.89, beside the anchor, never in it.",
         "V0 + margin effect = $1.34, the screen value; + multiple effect = $23.23, the value at the median.",
         "net debt ÷ EV = 943.7 ÷ 1,231.9 = 0.766; flagged above 0.5.",
-        "the multiple's close 2026-11-06, the page's stored close 2026-11-17: 11 days; stale above 30."
+        "the multiple's close 2026-11-06, the page's stored close 2026-11-17: 11 days; not stale by its history's cadence: CIQ's history is stale past 30 days."
       ]
     },
     "scenario_eligibility": {

@@ -1,6 +1,6 @@
 # Dossier — ELI LILLY & Co (NYSE: LLY)
 
-_November 14, 2026 · extraction 2026-11-14.form4-price-its-filing-contradicts-is-refused · layers refreshed to 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect_
+_November 14, 2026 · extraction 2026-11-14.form4-price-its-filing-contradicts-is-refused · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
 
 # Brief — first cut
 
@@ -284,7 +284,7 @@ _The split's arithmetic:_
 - multiple effect = (25.6827 − 27.8531) × 27,957.6 ÷ 893,400,000 = −$67.92, beside the anchor, never in it.
 - V0 + margin effect = $820.15, the screen value; + multiple effect = $752.24, the value at the median.
 - net debt ÷ EV = 45,980.0 ÷ 1,294,860.9 = 0.036; flagged above 0.5.
-- the multiple's close 2026-11-02, the page's stored close 2026-11-11: 9 days; stale above 30.
+- the multiple's close 2026-11-02, the page's stored close 2026-11-11: 9 days; not stale by its history's cadence: CIQ's history is stale past 30 days.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [46]  <!-- ds-table -->
@@ -673,6 +673,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 15d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 15d old (2026-10-30, valuation.implied_expectations.multiples_as_of) — within the ceiling
