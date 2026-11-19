@@ -29,6 +29,7 @@ from typing import Any
 import pytest
 
 from tests.frozen_support import CUT, frozen_doc
+from tests.test_w81_two_ebitdas import w81_relabel
 from vinci.dossier import anchor_split as sp
 from vinci.dossier import ev_ebitda_basis as eb
 from vinci.dossier import freshness as fr
@@ -117,15 +118,17 @@ def test_an_older_page_twelve_days_apart_read_neither_and_now_measures_nothing()
 def test_one_date_or_adjacent_sessions_measure_exactly_as_before(ticker: str, apart: int,
                                                                  reading: str) -> None:
     """NEGATIVE, on three pages as frozen at the cut: the reading, the quotient and both ratios are
-    the committed block's, to the digit, and the block now states the two dates it measured on."""
+    the committed block's, to the digit, and the block now states the two dates it measured on. The
+    line is the committed one with W81's words moved and nothing else (`w81_relabel`)."""
     raw = frozen_doc(ticker)
     committed = raw["mechanical"]["valuation"]["ev_ebitda_basis"]
     got = eb.headline_basis(_mech(raw))
     assert got is not None
     assert got.reading == reading == committed["reading"]
     for key in ("implied_denominator", "ratio_to_reported", "ratio_to_reported_plus_rent",
-                "line", "multiple", "tev", "tev_as_of"):
+                "multiple", "tev", "tev_as_of"):
         assert getattr(got, key) == committed[key], key
+    assert got.line == w81_relabel(committed["line"])
     assert got.days_apart == apart and got.multiple_close is not None
     assert got.days_apart_tolerance == eb.SAME_PRICE_DAYS
 

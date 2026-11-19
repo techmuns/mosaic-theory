@@ -76,8 +76,23 @@ def _money(v: float) -> str:
     return f"{'−' if v < 0 else ''}${abs(v):,.0f}M"
 
 
+#: THE TWO CIQ EBITDAs A PAGE CARRIES, EACH NAMED ONE WAY WHEREVER IT PRINTS (W81, SP-D20; operator
+#: 2026-11-19, "Approve with correction"). They are different figures: MORN's annual LTM is 719.4
+#: and its four quarters sum to 822.1, the annual leaving out the Cash Flow's 'Other Amortization'.
+#:
+#: The LTM column of CIQ's ANNUAL export — what `_ltm_ebitda` reads, and what this block's
+#: pairings are measured against. It was printed as "reported LTM EBITDA", which reads as the
+#: company's filed figure; it sat beyond 2% of the filing-rebuilt EBITDA on 10 of the 17 committed
+#: pages carrying both (main 6e03501f, 2026-11-19). The stored key keeps its name
+#: (`EvEbitdaBasis.reported_ltm_ebitda`); only the printed words change.
+ANNUAL_LTM = "CIQ's annual LTM EBITDA"
+#: The QUARTERLY export's EBITDA summed over four quarters: the ex-lease history's denominator
+#: (`lease_basis`), the at-price multiple's, and the EBITDA reconciliation's LTM (`ebitda_recon`).
+FOUR_QUARTER = "CIQ's four-quarter EBITDA"
+
+
 def _ltm_ebitda(mech: MechanicalLayer) -> float | None:
-    """Reported LTM EBITDA, $M — the financial summary's structured `LTM` value, never a cell."""
+    """CIQ's annual LTM EBITDA, $M: the financial summary's structured `LTM` value, never a cell."""
     fs = mech.financial_summary
     if fs is None or fs.annual.status is not SourceStatus.PRESENT or fs.annual.value is None:
         return None
@@ -207,13 +222,13 @@ def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
     fy = lb.rent_fiscal_year if lb is not None else None
     tev_day = _iso(ie.tev_as_of) or "date unstated"
     head = f"CIQ's {mult:.1f}x divides TEV ${tev:,.0f}M (comps, {tev_day}) by ${implied:,.0f}M"
-    rent_txt = (f"reported LTM EBITDA ${ltm:,.0f}M + rent ${rent:,.0f}M"
+    rent_txt = (f"{ANNUAL_LTM} ${ltm:,.0f}M + rent ${rent:,.0f}M"
                 f"{f' (FY ending {fy})' if fy else ''} = ${ltm + rent:,.0f}M" if rent is not None
                 else "")
     if ok_rep and ok_rent:
         assert rent is not None                          # `ok_rent` needs a measured rent
         reading = "indistinguishable"
-        line = (f"{head}, which reproduces reported LTM EBITDA (${ltm:,.0f}M) and EBITDA plus rent "
+        line = (f"{head}, which reproduces {ANNUAL_LTM} (${ltm:,.0f}M) and that plus rent "
                 f"alike — rent is {rent / ltm:.1%} of EBITDA, too small for the pairing to change "
                 "the reading.")
     elif ok_rent:
@@ -221,19 +236,19 @@ def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
         reading = "ebitda_plus_rent"
         line = (f"{head}: {rent_txt} ({abs(r_rent - 1):.1%} apart) — TEV WITH the operating "
                 f"leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT "
-                f"a multiple of reported EBITDA (${ltm:,.0f}M, {1 - 1 / r_rep:.1%} below the "
-                "denominator).")
+                f"a multiple of {ANNUAL_LTM}, after rent (${ltm:,.0f}M, {1 - 1 / r_rep:.1%} below "
+                "the denominator).")
     elif ok_rep:
         reading = "reported"
-        line = (f"{head}: reported LTM EBITDA ${ltm:,.0f}M ({abs(r_rep - 1):.1%} apart) — a "
-                "multiple of reported EBITDA.")
+        line = (f"{head}: {ANNUAL_LTM} ${ltm:,.0f}M ({abs(r_rep - 1):.1%} apart) — a "
+                "multiple of that figure, after rent.")
     else:
         reading = "not_reproduced"
         alt = (f" and {rent_txt} ({r_rent - 1:+.1%})" if rent is not None and r_rent is not None
                else "")
-        line = (f"{head}, which reproduces neither pairing: reported LTM EBITDA ${ltm:,.0f}M "
+        line = (f"{head}, which reproduces neither pairing: {ANNUAL_LTM} ${ltm:,.0f}M "
                 f"({r_rep - 1:+.1%}){alt}. Read CIQ's own denominator before comparing it with a "
-                "multiple of reported EBITDA.")
+                "multiple struck after rent.")
     return EvEbitdaBasis(
         multiple=mult, tev=round(tev, 3), tev_as_of=_iso(ie.tev_as_of),
         implied_denominator=round(implied, 3), reported_ltm_ebitda=round(ltm, 3),
@@ -286,7 +301,7 @@ def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
     value = ev / last.ltm_ebitda
     line = (f"at the page's ${price:,.2f} close ({_iso(si.as_of) or 'date unstated'}): "
             f"(${price:,.2f} × {shares:,.0f} {shares_basis} + net debt {_money(nd_m)} excluding "
-            f"operating leases) ÷ LTM EBITDA ${last.ltm_ebitda:,.0f}M (four quarters to "
+            f"operating leases) ÷ {FOUR_QUARTER} ${last.ltm_ebitda:,.0f}M (to "
             f"{last.balance_sheet_date}) = {value:.1f}x")
     return EvEbitdaAtPrice(
         value=round(value, 6), price=float(price), price_as_of=_iso(si.as_of),

@@ -69,9 +69,12 @@ TopLevelTransform = Callable[[dict[str, Any]], dict[str, Any]]
 #: the export date each recorded CIQ export states of itself, and `filed_through_transform` the
 #: latest filing date each recorded Financials export's columns state; `refresh_dossier` refuses
 #: any other change to the record (`_only_stated_dates`).
+#: `qa_flags` since 2026-11-19 (W81), for ONE use: `ltm_quarters_transform` re-runs the LTM check on
+#: the page's own recorded exports so an EBITDA DIFFER carries its cause, and refuses unless that
+#: cause is all that moves.
 _TOP_LEVEL_REFRESHABLE = frozenset({"forward_consensus", "forward_multiple_history",
                                     "historical_forecast_error", "ev_bridge",
-                                    "ev_bridge_unbuilt", "caveats", "inputs"})
+                                    "ev_bridge_unbuilt", "caveats", "inputs", "qa_flags"})
 
 
 #: The keys a CIQ row of the input record states of its file, and the only ones the `inputs` seam
@@ -1872,6 +1875,79 @@ def leverage_caveat_transform() -> TopLevelTransform:
                              f"from the stored ratio ({len(old)} candidate(s)) — re-assemble")
         cav[old[0]] = fresh
         return {"caveats": cav}
+
+    return _apply
+
+
+def refreshed_ltm_flags(doc: dict[str, Any], bundle: Any, shas: dict[str, str]) -> list[str]:
+    """The page's `qa_flags` with its LTM-quarters flags re-run on ``bundle`` (W81, SP-D20), so an
+    EBITDA DIFFER states its cause or says it was not read (`ltm_quarters._ebitda_cause`).
+
+    ``shas`` is {"annual": sha256, "quarterly": sha256} of the bundle's two Financials exports.
+
+    REFUSED, never guessed, unless:
+    * the page records both Financials exports (`inputs.ciq`) and ``shas`` are THOSE files: a re-run
+      on any other export would state another export's figures under this page's;
+    * with every cause taken off, the re-run reproduces the page's LTM flags exactly, in order. Then
+      the cause is the only thing that moves, and nothing the page was built from has changed.
+    Every other flag keeps its text and its place."""
+    from dataclasses import replace
+
+    from vinci.dossier import ltm_quarters as lq
+    from vinci.dossier.schemas import MechanicalLayer
+
+    t = doc.get("ticker")
+    rec: dict[str, str] = {str(c.get("freq")): str(c.get("sha256") or "")
+                           for c in (doc.get("inputs") or {}).get("ciq") or []
+                           if isinstance(c, dict) and c.get("kind") == "financials"}
+    for freq in ("annual", "quarterly"):
+        if not rec.get(freq):
+            raise RefreshRefusedError(
+                f"{t}: the page records no {freq} Financials export, so a re-run of its LTM check "
+                "cannot be shown to read the exports it was built from")
+        if shas.get(freq) != rec[freq]:
+            raise RefreshRefusedError(
+                f"{t}: the {freq} Financials export on hand ({(shas.get(freq) or 'none')[:10]}) is "
+                f"not the one the page records ({rec[freq][:10]}); its LTM check is not re-run")
+    fs = MechanicalLayer.model_validate(doc.get("mechanical") or {}).financial_summary
+    read = lq.check(bundle, fs.annual.value if fs is not None and fs.annual.value else None)
+    bare = lq.LtmQuarterRead(tuple(replace(r, cause=None) for r in read.rows),
+                             read.not_run).flags()
+    flags = list(doc.get("qa_flags") or [])
+    held = [f for f in flags if f.startswith(lq.FLAG_PREFIX)]
+    if bare != held:
+        first = next((f"{a!r} → {b!r}" for a, b in zip(held, bare, strict=False) if a != b),
+                     "in the count")
+        raise RefreshRefusedError(
+            f"{t}: re-run on the page's own exports, the LTM check no longer reproduces the page's "
+            f"flags ({len(held)} held, {len(bare)} re-run; first difference: {first}), so more "
+            "than the cause would move; re-assemble instead")
+    fresh = iter(read.flags())
+    return [next(fresh) if f.startswith(lq.FLAG_PREFIX) else f for f in flags]
+
+
+def ltm_quarters_transform(ticker: str, files: Sequence[Path] | None = None) -> TopLevelTransform:
+    """A `refresh_dossier` top-level step writing `qa_flags` through :func:`refreshed_ltm_flags`,
+    from ``files`` (default: the name's CIQ folder, `LocalFolderStore`). $0: it reads two CIQ
+    exports and nothing else. A folder with no Financials export refuses: an export this machine
+    does not hold is never read as a page with no cause to state."""
+    import hashlib
+
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        paths = (list(files) if files is not None
+                 else LocalFolderStore.from_config(get_config()).files(ticker))
+        bundle = CiqBundle.from_files(ticker, paths)
+        shas = {}
+        # each address a literal: `test_ciq_modules_covers_every_address_the_extractors_consume`
+        for freq, wb in (("annual", bundle.workbook("financials", freq="annual")),
+                         ("quarterly", bundle.workbook("financials", freq="quarterly"))):
+            if wb is not None:
+                shas[freq] = hashlib.sha256(wb.path.read_bytes()).hexdigest()
+        return {"qa_flags": refreshed_ltm_flags(doc, bundle, shas)}
 
     return _apply
 
