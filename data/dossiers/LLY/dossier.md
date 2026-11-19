@@ -1,6 +1,6 @@
 # Dossier — ELI LILLY & Co (NYSE: LLY)
 
-_November 14, 2026 · extraction 2026-11-14.form4-price-its-filing-contradicts-is-refused · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
+_November 14, 2026 · extraction 2026-11-14.form4-price-its-filing-contradicts-is-refused · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -11,7 +11,7 @@ Eli Lilly and Company discovers, develops, manufactures, and markets human pharm
 **Strongly-bullish** — accelerating absolute EBITDA, rising 35.5% ROIC and raised guidance on low-penetration volume growth outweigh a demanding, partly optical valuation premium.
 - **Segments:** Discovery, Dev., Manufacturing, Marketing, and Sales of Pharmaceutical Products — single segment [1]
 - **Geography:** United States (U.S.) 67%; Europe 18%; Rest of world 9%; Japan 3%; China 3% [2]
-- **Snapshot:** NYSE · CMP $1,437.29 (2026-11-11) · cap $1262.7B (2026-10-30) ⚠ implies $1,342.21/sh vs CMP (-6.6%) · 52-wk $850.51–$1,453.00 · shares 940.7M · book value/sh $45.19 [3]
+- **Snapshot:** NYSE · CMP $1,437.29 (2026-11-11) · cap $1352.1B (CIQ $1262.7B at 2026-10-30, -6.6%) · 52-wk $850.51–$1,453.00 · shares 940.7M · book value/sh $45.19 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Will incretin volume growth (and the broadening oncology/immunology/neuroscience portfolio) keep compounding fast enough to beat the embedded expectations as net price erodes and the ~$2B of 2026 one-time items roll off?**
@@ -117,7 +117,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 27.9x as-of 2026-11-02 — trailing range 13.3–61.9x (median 25.7x) over 39 closes → 59%ile → above-center; P/LTM EPS 45.8x [29]
-- **vs peers:** EV/EBITDA 28x vs peer median 15.0x (+87%); P/E 46x vs peer median 29.0x (+59%) [30]
+- **vs peers:** EV/EBITDA 29.9x at the 2026-11-11 close (CIQ 28x, 2026-10-30) vs peer median 15.0x (CIQ, 2026-10-30) (+99%); P/E 46.6x at the 2026-11-11 close (CIQ 46x, 2026-10-30) vs peer median 29.0x (CIQ, 2026-10-30) (+61%) [30]
 - **Forward multiples:** P/FY26E (normalized) 40.8x (EPS $35.19); P/FY26E (GAAP) 42.0x (EPS $34.22); P/FY27E (normalized) 28.9x (EPS $49.74); P/FY27E (GAAP) 30.4x (EPS $47.30) — at $1,437.29 as-of 2026-11-11 [31]
 - **Comparability:** market caps span $99.6B–$657.7B (7x); the name is $1262.7B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [32]
 - **The street, for contrast (target · ratings):** Target price: mean $1,421.06, median $1,450.00, high/low 1,650.00/930.00, N 29/30; Ratings: Buy 20, Outperform 6, Hold 3, Underperform 1, Sell 1, No Opinion 1  [data ≥ 2026-10-30 · export date unverified] [33]
@@ -230,19 +230,19 @@ _Reproducibility: 5 of 5 draws strongly-bullish (the 5-of-5 rule) — the rule i
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 28x vs peer median 15.0x (+87%); P/E 46x vs peer median 29.0x (+59%) [30]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 29.9x at the 2026-11-11 close (CIQ 28x, 2026-10-30) vs peer median 15.0x (CIQ, 2026-10-30) (+99%); P/E 46.6x at the 2026-11-11 close (CIQ 46x, 2026-10-30) vs peer median 29.0x (CIQ, 2026-10-30) (+61%) [30]
 - **What the current price implies (at stated multiples)** — market caps span $99.6B–$657.7B (7x); the name is $1262.7B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.
-  - _TEV as-of 2026-10-30 · multiples as-of 2026-10-30 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $1,395,981.4M at the 2026-11-11 close (CIQ claims as-of 2026-10-30; the † rows divide $1,306,533.3M, CIQ's cap plus its net debt, as-of 2026-10-30) · multiples as-of 2026-10-30 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [45]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
 | **name NTM TEV/EBITDA** | **23.96x** | **$54,529.8M EBITDA †** |
-| peer-median NTM TEV/EBITDA | 13.23x | $98,755.4M EBITDA |
-| peer-median LTM TEV/EBITDA | 15x | $87,102.2M EBITDA |
+| peer-median NTM TEV/EBITDA | 13.23x | $105,516.4M EBITDA |
+| peer-median LTM TEV/EBITDA | 15x | $93,065.4M EBITDA |
 | **name NTM TEV/Rev** | **13.13x** | **$99,507.5M Revenue †** |
-| peer-median NTM TEV/Rev | 5.8x | $225,264.4M Revenue |
-| peer-median LTM TEV/Rev | 5.9x | $221,446.3M Revenue |
+| peer-median NTM TEV/Rev | 5.8x | $240,686.5M Revenue |
+| peer-median LTM TEV/Rev | 5.9x | $236,607.0M Revenue |
 
 - **Consensus path anchors (EBITDA):** FY26E $41347.3M · FY27E $56742.0M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $91654.9M · FY27E $105041.9M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
@@ -674,6 +674,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 15d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 15d old (2026-10-30, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -733,7 +734,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [42] `CIQ Estimates→Revisions (Last-Month breadth, FY)`
 [43] `cadence: EDGAR submissions (median 84d gap over 23 results 8-Ks; last print 2026-10-29)`
 [44] `CIQ capital-structure panel (maturity_date)`
-[45] `TEV = mcap 1262675.3 + net debt 43858.0 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-10-30, exported 2026-11-02) — simple-TEV basis`
+[45] `TEV at the page's close = market cap $1,352,123.4M (the page's close $1,437.29 (EOD LLY last close, 2026-11-11) × 940,745,031 shares (EDGAR XBRL shares outstanding)) + CIQ claims $43,858.0M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [46] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [47] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-10-30`
 [48] `EDGAR XBRL shares, trailing 2024-10-25..2026-10-26`

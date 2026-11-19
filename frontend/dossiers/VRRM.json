@@ -8,7 +8,7 @@
   "mechanical": {
     "valuation": {
       "cross_sectional": {
-        "value": "EV/EBITDA 3.6x vs peer median 11.6x (-69%); P/E 9.1x vs peer median 21.7x (-58%)",
+        "value": "EV/EBITDA 3.4x at the 2026-11-17 close (CIQ 3.6x, 2026-11-06) vs peer median 11.6x (CIQ, 2026-11-06) (-71%); P/E 6.9x at the 2026-11-17 close (CIQ 9.1x, 2026-11-06) vs peer median 21.7x (CIQ, 2026-11-06) (-68%)",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "status": "present",
         "note": null
@@ -393,22 +393,22 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied EBITDA — simple TEV ÷ peer-median NTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied EBITDA — TEV at the page's close ÷ peer-median NTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median NTM TEV/EBITDA",
             "metric": "EBITDA",
             "multiple": 8.88,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 143.2,
+            "implied_level": 134.1,
             "is_identity": false,
             "note": null
           },
           {
-            "source_ref": "Assembler: implied EBITDA — simple TEV ÷ peer-median LTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied EBITDA — TEV at the page's close ÷ peer-median LTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median LTM TEV/EBITDA",
             "metric": "EBITDA",
             "multiple": 11.6,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 109.6,
+            "implied_level": 102.6,
             "is_identity": false,
             "note": null
           },
@@ -423,22 +423,22 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied Revenue — simple TEV ÷ peer-median NTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied Revenue — TEV at the page's close ÷ peer-median NTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median NTM TEV/Rev",
             "metric": "Revenue",
             "multiple": 2.54,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 500.5,
+            "implied_level": 468.8,
             "is_identity": false,
             "note": null
           },
           {
-            "source_ref": "Assembler: implied Revenue — simple TEV ÷ peer-median LTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied Revenue — TEV at the page's close ÷ peer-median LTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median LTM TEV/Rev",
             "metric": "Revenue",
             "multiple": 2.9,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 438.3,
+            "implied_level": 410.6,
             "is_identity": false,
             "note": null
           }
@@ -468,7 +468,14 @@
         "vintage_check": "agree",
         "coherence_note": "vintage-coherent: derived FY26 $365.3M vs direct consensus $365.4M (residual 0.000 ≤ 0.10 tolerance)",
         "net_debt_reconciled": true,
-        "net_debt_check": "agree"
+        "net_debt_check": "agree",
+        "tev_at_close": {
+          "value": 1190.636,
+          "source_ref": "TEV at the page's close = market cap $252.3M (the page's close $1.66 (EOD VRRM last close, 2026-11-17) × 152,009,343 shares (EDGAR XBRL shares outstanding)) + CIQ claims $938.3M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')",
+          "status": "present",
+          "note": null
+        },
+        "tev_close_date": "2026-11-17"
       },
       "lease_basis": {
         "rent_expense": 10.3,
@@ -696,7 +703,8 @@
     "ev_gap": {
       "vintages": {
         "tev_as_of": "2026-11-06",
-        "consensus_as_of": "≥2026-11-03"
+        "consensus_as_of": "≥2026-11-03",
+        "tev_close_date": "2026-11-17"
       },
       "d_and_a_convention": null,
       "anchor_fy": "2026",
@@ -7140,7 +7148,30 @@
         "note": null
       },
       "as_of": "2026-11-17",
-      "market_cap_as_of": "2026-11-06"
+      "market_cap_as_of": "2026-11-06",
+      "market_cap_at_close": {
+        "value": 252.336,
+        "source_ref": "the page's close $1.66 (EOD VRRM last close, 2026-11-17) × 152,009,343 shares (EDGAR XBRL shares outstanding)",
+        "status": "present",
+        "note": null
+      },
+      "cap_cross_check": {
+        "ciq_market_cap": 332.9,
+        "implied_price": 2.189997,
+        "gap": 0.319275,
+        "ratio": 0.757992,
+        "corporate_action": false,
+        "beyond_tolerance": true,
+        "tolerance": 0.02,
+        "note": "market cap implies $2.19/sh against a $1.66 close (+31.9%) — the cap is an older panel's, and is labelled with its own as-of",
+        "source_ref": "freshness.reconcile_cap: CIQ Comparable Analysis→Financial Data, name Market Capitalization Latest (as of 2026-11-06), against the page's close (EOD VRRM last close, 2026-11-17) × EDGAR XBRL shares outstanding"
+      },
+      "ciq_tev_claims": {
+        "value": 938.3,
+        "source_ref": "CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization'",
+        "status": "present",
+        "note": null
+      }
     },
     "stock_performance": {
       "points": [
@@ -14553,6 +14584,16 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.ev_gap",
+        "mechanical.stock_info",
+        "mechanical.valuation"
       ]
     }
   ],

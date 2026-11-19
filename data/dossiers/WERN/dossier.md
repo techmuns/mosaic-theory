@@ -1,6 +1,6 @@
 # Dossier — WERNER ENTERPRISES INC (Nasdaq: WERN)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -158,7 +158,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 6.2x as-of 2026-11-11 — trailing range 4.8–9.1x (median 6.7x) over 39 closes → 38%ile → below-center; P/LTM EPS NM (no meaningful trailing P/E at this close) [31]
-- **vs peers:** EV/EBITDA 6.2x vs peer median 14.0x (-56%); P/E NM vs peer median 32.2 [32]
+- **vs peers:** EV/EBITDA 6.2x at the 2026-11-11 close (CIQ 6.2x, 2026-11-11) vs peer median 14.0x (CIQ, 2026-11-11) (-56%); P/E NM vs peer median 32.2x (CIQ, 2026-11-11) [32]
 - **Forward multiples:** P/FY26E (normalized) 42.2x (EPS $0.66); P/FY26E (GAAP) 71.4x (EPS $0.39); P/FY27E (normalized) 15.0x (EPS $1.85); P/FY27E (GAAP) 14.4x (EPS $1.94) — at $27.84 as-of 2026-11-11 [33]
 - **Multiple basis — read before the level:** rent is 8.1% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 12.3% EBITDA margin against 10.5% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 6.7x over 34 quarters (current 6.9x at the 2026-11-09 filing; 62% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [34]
 - **What CIQ's EV/EBITDA divides:** CIQ's 6.2x divides TEV $2,626M (comps, 2026-11-11) by $423M, which reproduces neither pairing: reported LTM EBITDA $360M (+17.7%) and reported LTM EBITDA $360M + rent $28M (FY ending 2025-12-31) = $387M (+9.3%). Read CIQ's own denominator before comparing it with a multiple of reported EBITDA.
@@ -278,9 +278,9 @@ _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 6.2x vs peer median 14.0x (-56%); P/E NM vs peer median 32.2 [32]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 6.2x at the 2026-11-11 close (CIQ 6.2x, 2026-11-11) vs peer median 14.0x (CIQ, 2026-11-11) (-56%); P/E NM vs peer median 32.2x (CIQ, 2026-11-11) [32]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-11-11 · multiples as-of 2026-11-05 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $2,625.7M at the 2026-11-11 close (CIQ claims as-of 2026-11-11; the † rows divide $2,625.7M, CIQ's cap plus its net debt, as-of 2026-11-11) · multiples as-of 2026-11-05 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [54]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
@@ -290,14 +290,14 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 | peer-median LTM TEV/EBITDA | 14x | $187.5M EBITDA |
 | **name NTM TEV/Rev** | **0.68x** | **$3,861.3M Revenue †** |
 | peer-median NTM TEV/Rev | 1.14x | $2,303.2M Revenue |
-| peer-median LTM TEV/Rev | 1.3x | $2,019.8M Revenue |
+| peer-median LTM TEV/Rev | 1.3x | $2,019.7M Revenue |
 
 - **Consensus path anchors (EBITDA):** FY26E $400.2M · FY27E $524.8M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $3659.2M · FY27E $3964.1M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
 
 ### The EV gap — our base case vs the street
 
-_Anchor FY2026 · consensus as-of ≥2026-11-05 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-11-11 · form three-ratio_
+_Anchor FY2026 · consensus as-of ≥2026-11-05 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV at the 2026-11-11 close, CIQ claims as-of 2026-11-11 · form three-ratio_
 
 - **The gap, decomposed (ours / consensus, at the anchor year)**  <!-- ds-table -->
 
@@ -747,6 +747,7 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm · amended by 0000
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 9d old (2026-11-05, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -815,7 +816,7 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm · amended by 0000
 [51] `CIQ Key Developments: Werner Enterprises Inc NasdaqGS WERN Key Developments.rtf · Oct-06-2026`
 [52] `cadence: EDGAR submissions (median 91d gap over 62 results 8-Ks; last print 2026-10-27)`
 [53] `CIQ capital-structure panel (maturity_date)`
-[54] `TEV = mcap 1669.8 + net debt 955.9 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-11-11, exported 2026-11-12) — simple-TEV basis`
+[54] `TEV at the page's close = market cap $1,669.8M (the page's close $27.84 (EOD WERN last close, 2026-11-11) × 59,977,156 shares (EDGAR XBRL shares outstanding)) + CIQ claims $955.9M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [55] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [56] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
 [57] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-11-11`

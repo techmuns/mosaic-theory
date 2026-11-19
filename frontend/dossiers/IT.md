@@ -1,6 +1,6 @@
 # Dossier — GARTNER INC (NYSE: IT)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -158,7 +158,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 9.4x as-of 2026-11-11 — trailing range 7.5–37.8x (median 23.0x) over 39 closes → 5%ile → near-floor; P/LTM EPS 13.8x [30]
-- **vs peers:** EV/EBITDA 9.4x vs peer median 13.4x (-30%); P/E 13.8x vs peer median 25.1x (-45%) [31]
+- **vs peers:** EV/EBITDA 9.4x at the 2026-11-11 close (CIQ 9.4x, 2026-11-11) vs peer median 13.4x (CIQ, 2026-11-11) (-30%); P/E 13.8x at the 2026-11-11 close (CIQ 13.8x, 2026-11-11) vs peer median 25.1x (CIQ, 2026-11-11) (-45%) [31]
 - **Forward multiples:** P/FY26E (normalized) 12.8x (EPS $15.08); P/FY26E (GAAP) 13.6x (EPS $14.20); P/FY27E (normalized) 11.6x (EPS $16.62); P/FY27E (GAAP) 12.5x (EPS $15.44) — at $193.00 as-of 2026-11-11 [32]
 - **Comparability:** market caps span $1.5B–$137.7B (93x); the name is $12.2B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [33]
 - **The street, for contrast (target · ratings):** Target price: mean $201.46, median $198.00, high/low 231.00/170.00, N 13/13; Ratings: Buy 2, Outperform 0, Hold 10, Underperform 2, Sell 1, No Opinion 0  [data ≥ 2026-11-06 · export date unverified] [34]
@@ -272,9 +272,9 @@ _Reproducibility: all 5 of 5 draws on this build returned the same lean._
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 9.4x vs peer median 13.4x (-30%); P/E 13.8x vs peer median 25.1x (-45%) [31]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 9.4x at the 2026-11-11 close (CIQ 9.4x, 2026-11-11) vs peer median 13.4x (CIQ, 2026-11-11) (-30%); P/E 13.8x at the 2026-11-11 close (CIQ 13.8x, 2026-11-11) vs peer median 25.1x (CIQ, 2026-11-11) (-45%) [31]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-11-11 · multiples as-of 2026-11-06 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $13,855.0M at the 2026-11-11 close (CIQ claims as-of 2026-11-11; the † rows divide $13,855.0M, CIQ's cap plus its net debt, as-of 2026-11-11) · multiples as-of 2026-11-06 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [50]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
@@ -291,7 +291,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 
 ### The EV gap — our base case vs the street
 
-_Anchor FY2026 · consensus as-of ≥2026-11-06 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV as-of 2026-11-11 · form three-ratio_
+_Anchor FY2026 · consensus as-of ≥2026-11-06 (a FLOOR — the export states no as-of, so the true date is on or after this) · TEV at the 2026-11-11 close, CIQ claims as-of 2026-11-11 · form three-ratio_
 
 - **The gap, decomposed (ours / consensus, at the anchor year)**  <!-- ds-table -->
 
@@ -735,6 +735,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm_
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 8d old (2026-11-06, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -799,7 +800,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm_
 [47] `CIQ Key Developments: Gartner Inc NYSE IT Key Developments.rtf · Oct-08-2026`
 [48] `cadence: EDGAR submissions (median 91d gap over 19 results 8-Ks; last print 2026-11-03)`
 [49] `CIQ capital-structure panel (maturity_date)`
-[50] `TEV = mcap 12174.7 + net debt 1680.3 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-11-11, exported 2026-11-12) — simple-TEV basis`
+[50] `TEV at the page's close = market cap $12,174.7M (the page's close $193.00 (EOD IT last close, 2026-11-11) × 63,081,351 shares (EDGAR XBRL shares outstanding)) + CIQ claims $1,680.3M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [51] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [52] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
 [53] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-11-11`
