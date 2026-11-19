@@ -45,6 +45,7 @@ import functools
 import hashlib
 import re
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -294,36 +295,89 @@ class EnrichmentResult:
     notes: list[str] = field(default_factory=list)
 
 
+#: why a thesis with no stated step to earnings is not sent
+NO_STEPS = ("no stated step to company earnings — nothing for a company to be exposed through; "
+            "no call made")
+#: a thesis version with no cached answer, and no model to ask
+NO_CLIENT = ("no cached enrichment for this thesis version and no LLM client — run with "
+             "ANTHROPIC_API_KEY set")
+
+
+@dataclass(frozen=True)
+class EnrichRequest:
+    """One thesis version's enrichment request, and where its answer is cached (by content)."""
+    user: str
+    model: str
+    key: str
+    path: Path
+
+
+@dataclass(frozen=True)
+class EnrichAnswer:
+    out: Any
+    usage: dict[str, int] | None
+    seconds: float
+    cached: bool
+
+
+def enrichment_request(card: CardContent, *, version: int, area: str, groups: list[str],
+                       model: str, cache_dir: Path) -> EnrichRequest | None:
+    """The request, or None when the card states no step to earnings (no call is made)."""
+    if not earnings_steps(card):
+        return None
+    user = user_message(card, version=version, area=area, groups=groups)
+    key = cache_key(model, ENRICH_PROMPT_VERSION, TOOL, SYSTEM, user)
+    return EnrichRequest(user, model, key, cache_dir / "enrich" / f"{key}.json")
+
+
+def cached_answer(req: EnrichRequest) -> EnrichAnswer | None:
+    rec = read_json(req.path) if req.path.exists() else None  # a torn file reads as absent (U22)
+    return None if rec is None else EnrichAnswer(rec["output"], rec.get("usage"), 0.0, True)
+
+
+def ask_enrichment(req: EnrichRequest, client: ToolClient,
+                   send: Callable[[], Any] | None = None) -> EnrichAnswer:
+    """The PAID call, its answer kept FIRST in the cache. `send`: the same request, already
+    admitted by the spend guard (a concurrent pass, `Pipeline._enrich_theses`); it runs on this
+    thread, so the usage read after it is its own."""
+    t0 = time.monotonic()
+    out = send() if send is not None else client.extract(system=SYSTEM, user=req.user,
+                                                         tool=TOOL)
+    seconds = time.monotonic() - t0
+    usage = getattr(client, "last_usage", None)
+    write_json(req.path, {"model": req.model, "prompt_version": ENRICH_PROMPT_VERSION,
+                          "usage": usage, "output": out}, sort_keys=True, indent=1)
+    return EnrichAnswer(out, usage, seconds, False)
+
+
 def enrich_thesis(card: CardContent, *, version: int, area: str, groups: list[str],
                   client: ToolClient | None, cache_dir: Path, resolver: SecResolver,
                   as_of: date, run_id: str) -> EnrichmentResult:
     """One enrichment pass over one thesis version (see the module docstring). No stated step to
     earnings → no call, and the result says so."""
+    model = client.model if client is not None else LLM_MODEL
+    req = enrichment_request(card, version=version, area=area, groups=groups, model=model,
+                             cache_dir=cache_dir)
+    if req is None:
+        return EnrichmentResult(None, note=NO_STEPS)
+    answer = cached_answer(req)
+    if answer is None:
+        if client is None:
+            raise RuntimeError(NO_CLIENT)
+        answer = ask_enrichment(req, client)
+    return enrichment_from(card, version=version, req=req, answer=answer, resolver=resolver,
+                           as_of=as_of, run_id=run_id)
+
+
+def enrichment_from(card: CardContent, *, version: int, req: EnrichRequest,
+                    answer: EnrichAnswer, resolver: SecResolver, as_of: date,
+                    run_id: str) -> EnrichmentResult:
+    """One answer CHECKED (steps, duplicates, sides) and every name resolved at the SEC, as the
+    module docstring says — the deterministic half of the pass, $0."""
     tid = card.header.thesis_id
     steps = earnings_steps(card)
-    if not steps:
-        return EnrichmentResult(None, note="no stated step to company earnings — nothing for a "
-                                           "company to be exposed through; no call made")
-    user = user_message(card, version=version, area=area, groups=groups)
-    model = client.model if client is not None else LLM_MODEL
-    key = cache_key(model, ENRICH_PROMPT_VERSION, TOOL, SYSTEM, user)
-    path = cache_dir / "enrich" / f"{key}.json"
-    rec = read_json(path) if path.exists() else None  # a torn file reads as absent (U22)
-    cached = rec is not None
-    usage: dict[str, int] | None = None
-    seconds = 0.0
-    if rec is not None:
-        out, usage = rec["output"], rec.get("usage")
-    else:
-        if client is None:
-            raise RuntimeError("no cached enrichment for this thesis version and no LLM client "
-                               "— run with ANTHROPIC_API_KEY set")
-        t0 = time.monotonic()
-        out = client.extract(system=SYSTEM, user=user, tool=TOOL)
-        seconds = time.monotonic() - t0
-        usage = getattr(client, "last_usage", None)
-        write_json(path, {"model": model, "prompt_version": ENRICH_PROMPT_VERSION,  # kept FIRST
-                          "usage": usage, "output": out}, sort_keys=True, indent=1)
+    model, key, out, usage = req.model, req.key, answer.out, answer.usage
+    cached, seconds = answer.cached, answer.seconds
     av = card.s05_affected  # every organisation the source names (`named_by_source`), listings too
     named_l = [(c.name_as_written, c.listings) for grp in (
         av.companies, av.instruments, av.private_or_unlisted, av.not_securities, av.also_named)

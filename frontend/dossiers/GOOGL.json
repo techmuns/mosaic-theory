@@ -477,22 +477,22 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied EBITDA — simple TEV ÷ peer-median NTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied EBITDA — TEV at the page's close ÷ peer-median NTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median NTM TEV/EBITDA",
             "metric": "EBITDA",
             "multiple": 9.39,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 353200.0,
+            "implied_level": 373901.0,
             "is_identity": false,
             "note": null
           },
           {
-            "source_ref": "Assembler: implied EBITDA — simple TEV ÷ peer-median LTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied EBITDA — TEV at the page's close ÷ peer-median LTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median LTM TEV/EBITDA",
             "metric": "EBITDA",
             "multiple": 15.7,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 211245.1,
+            "implied_level": 223626.1,
             "is_identity": false,
             "note": null
           },
@@ -507,22 +507,22 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied Revenue — simple TEV ÷ peer-median NTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied Revenue — TEV at the page's close ÷ peer-median NTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median NTM TEV/Rev",
             "metric": "Revenue",
             "multiple": 3.61,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 918711.4,
+            "implied_level": 972556.9,
             "is_identity": false,
             "note": null
           },
           {
-            "source_ref": "Assembler: implied Revenue — simple TEV ÷ peer-median LTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied Revenue — TEV at the page's close ÷ peer-median LTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median LTM TEV/Rev",
             "metric": "Revenue",
             "multiple": 4.0,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 829137.0,
+            "implied_level": 877732.6,
             "is_identity": false,
             "note": null
           }
@@ -552,7 +552,14 @@
         "vintage_check": "agree",
         "coherence_note": "vintage-coherent: derived FY26 $226695.0M vs direct consensus $227919.0M (residual 0.005 ≤ 0.10 tolerance)",
         "net_debt_reconciled": true,
-        "net_debt_check": "agree"
+        "net_debt_check": "agree",
+        "tev_at_close": {
+          "value": 3510930.3,
+          "source_ref": "TEV at the page's close = market cap $3,607,674.3M (the page's close $293.45 (EOD GOOGL last close, 2026-11-11) × 12,294,000,000 shares (EDGAR XBRL shares outstanding)) + CIQ claims $-96,744.0M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')",
+          "status": "present",
+          "note": null
+        },
+        "tev_close_date": "2026-11-11"
       },
       "lease_basis": {
         "rent_expense": 5084.0,
@@ -780,7 +787,8 @@
     "ev_gap": {
       "vintages": {
         "tev_as_of": "2026-10-30",
-        "consensus_as_of": "≥2026-11-01"
+        "consensus_as_of": "≥2026-11-01",
+        "tev_close_date": "2026-11-11"
       },
       "d_and_a_convention": null,
       "anchor_fy": "2026",
@@ -7333,7 +7341,30 @@
         "note": null
       },
       "as_of": "2026-11-11",
-      "market_cap_as_of": "2026-10-30"
+      "market_cap_as_of": "2026-10-30",
+      "market_cap_at_close": {
+        "value": 3607674.3,
+        "source_ref": "the page's close $293.45 (EOD GOOGL last close, 2026-11-11) × 12,294,000,000 shares (EDGAR XBRL shares outstanding)",
+        "status": "present",
+        "note": null
+      },
+      "cap_cross_check": {
+        "ciq_market_cap": 3431315.0,
+        "implied_price": 279.104848,
+        "gap": -0.048884,
+        "ratio": 1.051397,
+        "corporate_action": false,
+        "beyond_tolerance": true,
+        "tolerance": 0.02,
+        "note": "market cap implies $279.10/sh against a $293.45 close (-4.9%) — the cap is an older panel's, and is labelled with its own as-of",
+        "source_ref": "freshness.reconcile_cap: CIQ Comparable Analysis→Financial Data, name Market Capitalization Latest (as of 2026-10-30), against the page's close (EOD GOOGL last close, 2026-11-11) × EDGAR XBRL shares outstanding"
+      },
+      "ciq_tev_claims": {
+        "value": -96744.0,
+        "source_ref": "CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization'",
+        "status": "present",
+        "note": null
+      }
     },
     "stock_performance": {
       "points": [
@@ -19757,6 +19788,16 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.ev_gap",
+        "mechanical.stock_info",
+        "mechanical.valuation"
       ]
     }
   ],

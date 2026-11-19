@@ -77,6 +77,12 @@ BASELINE: frozenset[tuple[str, ...]] = frozenset({
     # (`test_anchored_drawdown.py::test_anchor_words_twin`), so a one-sided edit reds there.
     ('Drawdown at underwrite', 'Since underwrite', 'underwrite'),
     ('Drawdown when followed', 'Since followed', 'follow'),
+    # (W65, 2026-11-19) The `ev_ebitda_basis` readings whose line the page prints
+    # (`render._BASIS_WORTH_STATING`, dossier.js `_BASIS_WORTH_STATING`). It held two readings
+    # since 2026-10-21, below this detector's three; W65's two unmeasured readings made it four.
+    # Unavoidable for the A2 reason: the JS cannot import the Python set. Bound by a parity pin
+    # (`test_w65_basis_one_date.py::test_the_readings_worth_stating_are_one_set_in_both_twins`).
+    ('date_unstated', 'dates_differ', 'ebitda_plus_rent', 'not_reproduced'),
 })
 
 

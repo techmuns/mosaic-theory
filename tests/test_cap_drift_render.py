@@ -18,19 +18,77 @@ KEYED ON THE GAP, NOT THE DATE, and that is the load-bearing choice: 8 of 14 nam
 inputs are present.
 
 THESE PINS READ THE COMMITTED ARTIFACTS, so they hold what a human actually receives.
+
+TWO PAGE SHAPES SINCE #1132 (2026-11-19, operator: "Approve, $0 refresh"). A page built or
+refreshed since then carries `stock_info.market_cap_at_close`: its cap is its close × its count,
+and CIQ's comps cap is the dated cross-check printed beside it, "(CIQ $8.1B at 2026-11-06, -2.2%)".
+A page built before keeps CIQ's cap with the "implies $X/sh" mark. Each pin holds the form owed BY
+THE PAGE'S OWN SHAPE. #1132's suite never met the new shape — these read committed pages, and none
+carried the fields until the refresh — so the old-form pins went red on the first refreshed page.
 """
 from __future__ import annotations
 
 import pathlib
+import re
 
 import pytest
 
 from tests.frozen_support import covered_where
 from vinci.dossier import render as render_mod
-from vinci.dossier.schemas import Dossier
+from vinci.dossier.schemas import Dossier, SourceStatus, StockInfo
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOSSIERS = ROOT / "data" / "dossiers"
+
+#: The cross-check CIQ's cap prints beside the page's own, parsed rather than rebuilt with the
+#: renderer's formatter, so a pin on it is not the renderer checking itself.
+_CIQ_TAIL = re.compile(r"\(CIQ \$(?P<num>[\d.]+)(?P<unit>[MB])"
+                       r"(?: at (?P<date>\d{4}-\d{2}-\d{2}))?, (?P<pct>[+-]\d+\.\d)%\)")
+
+
+def _at_close(si: StockInfo) -> bool:
+    """The page's shape: True where its cap is struck at its own close (#1132)."""
+    at = si.market_cap_at_close
+    return at is not None and at.status is SourceStatus.PRESENT and at.value is not None
+
+
+def _cap_segment(line: str) -> str:
+    return line.split("cap ", 1)[1].split("· 52-wk")[0]
+
+
+def _musd(num: str, unit: str) -> float:
+    return float(num) * (1000.0 if unit == "B" else 1.0)
+
+
+def _assert_drift_at_close(ticker: str, line: str, si: StockInfo, gap: float) -> None:
+    """A page whose cap is struck at its close states CIQ's cap, CIQ's date and the gap beside
+    its own cap — every figure read off the page and checked against the JSON it came from."""
+    cc = si.cap_cross_check
+    assert cc is not None, f"{ticker}: a cap at the close with no cross-check against CIQ's"
+    assert cc.gap == pytest.approx(gap, abs=1e-6), (
+        f"{ticker}: the stored cross-check's gap {cc.gap} is not the one its own inputs give "
+        f"({gap}) — a stale cross-check")
+    seg = _cap_segment(line)
+    m = _CIQ_TAIL.search(seg)
+    assert m, (f"{ticker}: the cap drifts {gap:+.1%} from CIQ's and the page does not say so: "
+               f"{line!r}")
+    assert f"{m['pct']}%" == f"{cc.gap:+.1%}", (
+        f"{ticker}: the page prints {m['pct']}% where the cross-check gives {cc.gap:+.1%}")
+    iso = si.market_cap_as_of.isoformat() if si.market_cap_as_of is not None else None
+    assert m["date"] == iso, f"{ticker}: CIQ's cap is dated {m['date']}, its as-of is {iso}"
+    assert si.market_cap.value is not None and cc.ciq_market_cap == si.market_cap.value, (
+        f"{ticker}: the cross-check's CIQ cap {cc.ciq_market_cap} is not the page's CIQ cap "
+        f"{si.market_cap.value}")
+    half_step = 50.0 if m["unit"] == "B" else 0.5          # the last printed digit, halved
+    assert abs(_musd(m["num"], m["unit"]) - cc.ciq_market_cap) <= half_step, (
+        f"{ticker}: the page prints CIQ's cap as ${m['num']}{m['unit']}, the JSON holds "
+        f"${cc.ciq_market_cap:,.1f}M")
+    own = re.match(r"\$(?P<num>[\d.]+)(?P<unit>[MB])", seg)
+    assert own and si.market_cap_at_close is not None and si.market_cap_at_close.value is not None
+    own_step = 50.0 if own["unit"] == "B" else 0.5
+    assert abs(_musd(own["num"], own["unit"]) - si.market_cap_at_close.value) <= own_step, (
+        f"{ticker}: the cap printed is not the cap at the close: {seg!r}")
+    assert "implies" not in seg, f"{ticker}: a cap at the close also carries the old mark: {seg!r}"
 
 
 def _dossier(ticker: str) -> Dossier:
@@ -56,11 +114,11 @@ def test_a_drifting_name_states_its_drift_on_the_page() -> None:
     now RECONCILES and correctly carries no mark — the pin broke on the page becoming right, which
     is the sibling test's lesson (2026-08-13) arriving here. What this owns is that EVERY page whose
     cap and price disagree SAYS so, with the implied price and the magnitude, beside the cap; which
-    names drift is data (15 of 26 on 2026-10-11, NFLX -2.3% to MVST +57.1%)."""
-    import re
+    names drift is data (15 of 26 on 2026-10-11, NFLX -2.3% to MVST +57.1%).
 
+    A page whose cap is struck at its close (#1132) states the same drift as CIQ's dated cap beside
+    its own (`_assert_drift_at_close`); a page built before states it as the implied price."""
     from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
-    from vinci.dossier.schemas import SourceStatus
 
     checked = 0
     for folder in sorted(DOSSIERS.iterdir()):
@@ -77,6 +135,9 @@ def test_a_drifting_name_states_its_drift_on_the_page() -> None:
             continue                       # reconciling names and share-basis breaks are elsewhere
         checked += 1
         line = _snapshot(folder.name)
+        if _at_close(si):
+            _assert_drift_at_close(folder.name, line, si, recon.gap)
+            continue
         implied = f"implies ${recon.implied_price:,.2f}/sh"
         assert implied in line, (
             f"{folder.name}: the cap's implied price is not on the page: {line!r}")
@@ -95,9 +156,9 @@ def test_a_reconciling_name_says_nothing() -> None:
     MEASURED, NOT LISTED (2026-08-13). This named NFLX/BRBR/V as the reconciling three; the
     2026-08-12 re-assembly moved BRBR into DRIFT (+6.5%), so a roster written when the fleet looked
     one way failed on a page that had simply changed. Whether a given name reconciles is data, and
-    the rule — reconciling names carry no mark — is what this owns."""
+    the rule — reconciling names carry no mark — is what this owns. On a page whose cap is struck
+    at its close (#1132) the mark is CIQ's dated cap, so that is what must be absent there."""
     from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
-    from vinci.dossier.schemas import SourceStatus
 
     checked = 0
     for folder in sorted(DOSSIERS.iterdir()):
@@ -116,6 +177,9 @@ def test_a_reconciling_name_says_nothing() -> None:
         assert "implies" not in line, f"{folder.name} reconciles; it must not carry a drift mark"
         assert "⚠" not in line.split("· 52-wk")[0].split("cap ")[-1], (
             f"{folder.name}: a clean cap carries a warning mark")
+        if _at_close(si):
+            assert not _CIQ_TAIL.search(_cap_segment(line)), (
+                f"{folder.name} reconciles; its cap at the close must not carry CIQ's beside it")
     assert checked, "no committed name reconciles — this pin checked nothing"
 
 
@@ -200,9 +264,10 @@ def test_the_undated_names_are_exactly_why_the_gap_keys_this() -> None:
 
 def test_every_committed_name_either_reconciles_or_says_why() -> None:
     """THE FLEET PIN. Measured rather than listed: whatever the reconciliation computes, the page
-    must state it. A name silently drifting past the tolerance is the defect this closes."""
+    must state it. A name silently drifting past the tolerance is the defect this closes. What
+    "states it" means follows the page's shape: CIQ's dated cap beside a cap struck at the close
+    (#1132), else the implied price."""
     from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
-    from vinci.dossier.schemas import SourceStatus
 
     silent: list[tuple[str, float]] = []
     for p in sorted(DOSSIERS.iterdir()):
@@ -216,7 +281,14 @@ def test_every_committed_name_either_reconciles_or_says_why() -> None:
                               spot=si.price.value)
         if recon is None or abs(recon.gap) <= RECONCILE_TOLERANCE:
             continue
-        if "implies" not in _snapshot(p.name):
+        line = _snapshot(p.name)
+        if _at_close(si):
+            seg = _cap_segment(line)
+            said = (_CIQ_TAIL.search(seg) is not None if not recon.corporate_action
+                    else "SHARE-BASIS MISMATCH" in seg)
+        else:
+            said = "implies" in line
+        if not said:
             silent.append((p.name, recon.gap))
     assert not silent, f"these drift past the tolerance and the page is silent on it: {silent}"
 

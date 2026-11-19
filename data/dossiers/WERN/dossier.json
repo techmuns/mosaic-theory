@@ -8,7 +8,7 @@
   "mechanical": {
     "valuation": {
       "cross_sectional": {
-        "value": "EV/EBITDA 6.2x vs peer median 14.0x (-56%); P/E NM vs peer median 32.2",
+        "value": "EV/EBITDA 6.2x at the 2026-11-11 close (CIQ 6.2x, 2026-11-11) vs peer median 14.0x (CIQ, 2026-11-11) (-56%); P/E NM vs peer median 32.2x (CIQ, 2026-11-11)",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "status": "present",
         "note": null
@@ -302,7 +302,7 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied EBITDA — simple TEV ÷ peer-median NTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied EBITDA — TEV at the page's close ÷ peer-median NTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median NTM TEV/EBITDA",
             "metric": "EBITDA",
             "multiple": 12.65,
@@ -312,7 +312,7 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied EBITDA — simple TEV ÷ peer-median LTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied EBITDA — TEV at the page's close ÷ peer-median LTM TEV/EBITDA (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median LTM TEV/EBITDA",
             "metric": "EBITDA",
             "multiple": 14.0,
@@ -332,7 +332,7 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied Revenue — simple TEV ÷ peer-median NTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied Revenue — TEV at the page's close ÷ peer-median NTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median NTM TEV/Rev",
             "metric": "Revenue",
             "multiple": 1.14,
@@ -342,12 +342,12 @@
             "note": null
           },
           {
-            "source_ref": "Assembler: implied Revenue — simple TEV ÷ peer-median LTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
+            "source_ref": "Assembler: implied Revenue — TEV at the page's close ÷ peer-median LTM TEV/Rev (CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High))",
             "label": "peer-median LTM TEV/Rev",
             "metric": "Revenue",
             "multiple": 1.3,
             "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-            "implied_level": 2019.8,
+            "implied_level": 2019.7,
             "is_identity": false,
             "note": null
           }
@@ -377,7 +377,14 @@
         "vintage_check": "agree",
         "coherence_note": "vintage-coherent: derived FY26 $400.3M vs direct consensus $400.2M (residual 0.000 ≤ 0.10 tolerance)",
         "net_debt_reconciled": true,
-        "net_debt_check": "agree"
+        "net_debt_check": "agree",
+        "tev_at_close": {
+          "value": 2625.664,
+          "source_ref": "TEV at the page's close = market cap $1,669.8M (the page's close $27.84 (EOD WERN last close, 2026-11-11) × 59,977,156 shares (EDGAR XBRL shares outstanding)) + CIQ claims $955.9M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')",
+          "status": "present",
+          "note": null
+        },
+        "tev_close_date": "2026-11-11"
       },
       "lease_basis": {
         "rent_expense": 27.6,
@@ -1208,7 +1215,8 @@
     "ev_gap": {
       "vintages": {
         "tev_as_of": "2026-11-11",
-        "consensus_as_of": "≥2026-11-05"
+        "consensus_as_of": "≥2026-11-05",
+        "tev_close_date": "2026-11-11"
       },
       "d_and_a_convention": "fixed $M anchor (R1, mid-cycle)",
       "anchor_fy": "2026",
@@ -1242,14 +1250,14 @@
       "ratios": {
         "revenue_ratio": 0.8493446210320195,
         "margin_ratio": 1.4194505767753278,
-        "multiple_ratio": 0.9857561793045664,
-        "ev_gap": 1.188430323342347
+        "multiple_ratio": 0.9857696948276702,
+        "ev_gap": 1.1884466176936577
       },
       "at_adjacent": {
         "revenue_ratio": 0.7867615042519575,
         "margin_ratio": 1.1723077502460102,
-        "multiple_ratio": 1.2885135392466773,
-        "ev_gap": 1.188430323342347
+        "multiple_ratio": 1.288531205820699,
+        "ev_gap": 1.1884466176936577
       },
       "shape": {
         "anchor": "earnings",
@@ -1258,12 +1266,12 @@
         "note": "the shape MOVES between years — earnings at the anchor, multiple adjacent; neither is the answer on its own"
       },
       "bridge": {
-        "tev": 2625.7,
+        "tev": 2625.664,
         "net_debt": 955.9,
         "shares": 59.950115,
         "our_ev": 3120.4615000000003,
         "our_ebitda": 480.071,
-        "market_multiple": 6.593922651933702
+        "market_multiple": 6.593832245102964
       },
       "consensus": {
         "Revenue": {
@@ -7682,7 +7690,30 @@
         "note": null
       },
       "as_of": "2026-11-11",
-      "market_cap_as_of": "2026-11-11"
+      "market_cap_as_of": "2026-11-11",
+      "market_cap_at_close": {
+        "value": 1669.764,
+        "source_ref": "the page's close $27.84 (EOD WERN last close, 2026-11-11) × 59,977,156 shares (EDGAR XBRL shares outstanding)",
+        "status": "present",
+        "note": null
+      },
+      "cap_cross_check": {
+        "ciq_market_cap": 1669.8,
+        "implied_price": 27.8406,
+        "gap": 0.000022,
+        "ratio": 0.999978,
+        "corporate_action": false,
+        "beyond_tolerance": false,
+        "tolerance": 0.02,
+        "note": "market cap implies $27.84/sh against a $27.84 close (+0.0%) — the cap is an older panel's, and is labelled with its own as-of",
+        "source_ref": "freshness.reconcile_cap: CIQ Comparable Analysis→Financial Data, name Market Capitalization Latest (as of 2026-11-11), against the page's close (EOD WERN last close, 2026-11-11) × EDGAR XBRL shares outstanding"
+      },
+      "ciq_tev_claims": {
+        "value": 955.9,
+        "source_ref": "CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization'",
+        "status": "present",
+        "note": null
+      }
     },
     "stock_performance": {
       "points": [
@@ -16581,6 +16612,16 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.ev_gap",
+        "mechanical.stock_info",
+        "mechanical.valuation"
       ]
     }
   ],

@@ -46,14 +46,21 @@ def _frozen_doc(t: str) -> ds.Dossier:
 
 def _with(m: ds.MechanicalLayer, *, rent: float | None = ..., multiple: float | None = None,
           ) -> ds.MechanicalLayer:
-    """`m` with its rent or its headline multiple replaced — the REAL page, one field moved."""
+    """`m` with its rent or its headline multiple replaced — the REAL page, one field moved. The
+    multiple moves with the own-history band's current, the one cell both read (W65: the band
+    dates the multiple only while it carries it)."""
     v = m.valuation
     if rent is not ...:
         assert v.lease_basis is not None
         v = v.model_copy(update={"lease_basis": v.lease_basis.model_copy(
             update={"rent_expense": rent})})
     if multiple is not None:
-        v = v.model_copy(update={"ev_ebitda": v.ev_ebitda.model_copy(update={"value": multiple})})
+        assert v.own_history.value is not None
+        bands = [b.model_copy(update={"current": multiple}) if "EBITDA" in b.metric else b
+                 for b in v.own_history.value]
+        v = v.model_copy(update={
+            "ev_ebitda": v.ev_ebitda.model_copy(update={"value": multiple}),
+            "own_history": v.own_history.model_copy(update={"value": bands})})
     return m.model_copy(update={"valuation": v})
 
 
@@ -161,7 +168,8 @@ def test_the_brief_states_the_basis_where_it_matters_md_e2e() -> None:
         brief = dr.render_markdown(doc, card=_read_scenario_card(doc.ticker)).split(
             "# Analysis — full dossier", 1)[0]
         b = v.ev_ebitda_basis
-        if b is not None and b.reading in ("ebitda_plus_rent", "not_reproduced"):
+        if b is not None and b.reading in ("ebitda_plus_rent", "not_reproduced", "dates_differ",
+                                           "date_unstated"):
             assert f"- **What CIQ's EV/EBITDA divides:** {b.line}" in brief, doc.ticker
             stated += 1
         else:

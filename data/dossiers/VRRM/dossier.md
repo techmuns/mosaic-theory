@@ -1,6 +1,6 @@
 # Dossier — VERRA MOBILITY Corp (Nasdaq: VRRM)
 
-_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect · layers refreshed to 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet_
+_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
 
 # Brief — first cut
 
@@ -12,7 +12,7 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 - **Segments:** Government Solutions 47%; Commercial Services 45%; Parking Solutions 8% [1]
 - **Geography:** United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1% [2]
 - **Customer concentration:** top customer ≥10% of revenue [3]
-- **Snapshot:** Nasdaq · CMP $1.66 (2026-11-17) · cap $333M (2026-11-06) ⚠ implies $2.19/sh vs CMP (+31.9%) · 52-wk $1.64–$23.41 · shares 152.0M · book value/sh $1.74 [4]
+- **Snapshot:** Nasdaq · CMP $1.66 (2026-11-17) · cap $252M (CIQ $333M at 2026-11-06, +31.9%) · 52-wk $1.64–$23.41 · shares 152.0M · book value/sh $1.74 [4]
 
 **The crux — what decides this, and what would change our mind**
 **Is the FY27 earnings base at or above the reset FY26 adjusted run-rate — i.e. do the renewed Avis/Hertz contracts plus $20M of cost takeout stabilise EBITDA, or does consensus's further FY27 step-down to $283M prove the pricing reset is the first leg of a continuing decline?**
@@ -117,7 +117,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 3.6x as-of 2026-11-06 — trailing range 4.1–23.2x (median 13.9x) over 32 closes → 0%ile → near-floor; P/LTM EPS 9.1x [32]
-- **vs peers:** EV/EBITDA 3.6x vs peer median 11.6x (-69%); P/E 9.1x vs peer median 21.7x (-58%) [15]
+- **vs peers:** EV/EBITDA 3.4x at the 2026-11-17 close (CIQ 3.6x, 2026-11-06) vs peer median 11.6x (CIQ, 2026-11-06) (-71%); P/E 6.9x at the 2026-11-17 close (CIQ 9.1x, 2026-11-06) vs peer median 21.7x (CIQ, 2026-11-06) (-68%) [15]
 - **Forward multiples:** P/FY26E (normalized) 1.4x (EPS $1.15); P/FY26E (GAAP) 8.3x (EPS $0.20); P/FY27E (normalized) 2.2x (EPS $0.74); P/FY27E (GAAP) 3.5x (EPS $0.48) — at $1.66 as-of 2026-11-17 [14]
 - **Comparability:** market caps span $834M–$21.5B (26x); the name is $333M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [33]
 - **The street, for contrast (target · ratings):** Target price: mean $3.50, median $3.00, high/low 5.00/3.00, N 4/4; Ratings: Buy 0, Outperform 0, Hold 5, Underperform 1, Sell 0, No Opinion 0  [data ≥ 2026-11-03 · export date unverified] [34]
@@ -242,19 +242,19 @@ _Reproducibility: 5 of 5 draws strongly-bearish (the 5-of-5 rule) — the rule i
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
 ## Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 3.6x vs peer median 11.6x (-69%); P/E 9.1x vs peer median 21.7x (-58%) [15]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 3.4x at the 2026-11-17 close (CIQ 3.6x, 2026-11-06) vs peer median 11.6x (CIQ, 2026-11-06) (-71%); P/E 6.9x at the 2026-11-17 close (CIQ 9.1x, 2026-11-06) vs peer median 21.7x (CIQ, 2026-11-06) (-68%) [15]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _TEV as-of 2026-11-06 · multiples as-of 2026-11-03 · † at the name's own multiple the implied level is consensus by identity_
+  - _TEV $1,190.6M at the 2026-11-17 close (CIQ claims as-of 2026-11-06; the † rows divide $1,271.2M, CIQ's cap plus its net debt, as-of 2026-11-06) · multiples as-of 2026-11-03 · † at the name's own multiple the implied level is consensus by identity_
 - **Price-implied levels (at each stated multiple)** — [50]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
 | **name NTM TEV/EBITDA** | **3.97x** | **$320.2M EBITDA †** |
-| peer-median NTM TEV/EBITDA | 8.88x | $143.2M EBITDA |
-| peer-median LTM TEV/EBITDA | 11.6x | $109.6M EBITDA |
+| peer-median NTM TEV/EBITDA | 8.88x | $134.1M EBITDA |
+| peer-median LTM TEV/EBITDA | 11.6x | $102.6M EBITDA |
 | **name NTM TEV/Rev** | **1.45x** | **$876.7M Revenue †** |
-| peer-median NTM TEV/Rev | 2.54x | $500.5M Revenue |
-| peer-median LTM TEV/Rev | 2.9x | $438.3M Revenue |
+| peer-median NTM TEV/Rev | 2.54x | $468.8M Revenue |
+| peer-median LTM TEV/Rev | 2.9x | $410.6M Revenue |
 
 - **Consensus path anchors (EBITDA):** FY26E $365.4M · FY27E $283.2M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
 - **Consensus path anchors (Revenue):** FY26E $962.5M · FY27E $872.8M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
@@ -646,6 +646,7 @@ _Source §: 8-K 0001193125-25-242530 · vrrm-ex10_2.htm_
 - **Extraction:** 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect — the page's R1 screening anchor carries anchor.gap_split: the value today's multiple puts on the EBITDA it is struck on (V0, the multiple's own denominator on its own lease basis, never market-implied), the margin effect that takes it to the anchor, and the multiple effect to the median beside it, never priced; each term's source, the multiple's close against the page's price date (stale past 30 days), and net debt's share of that EV (flagged past 0.5); a denominator the page does not identify is refused, never substituted, the multiple effect standing; no term reads a price; an anchor written before carries no gap_split
 - **Refreshed since assembly** (oldest first):
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
+  - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
 - **Price store:** `vrrm-rebuild-1118` · reaching 2026-11-17
 - **Panel age:** oldest panel 12d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-18 build
 - **Consensus age:** consensus 15d old (2026-11-03, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -710,7 +711,7 @@ _Source §: 8-K 0001193125-25-242530 · vrrm-ex10_2.htm_
 [47] `CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · Oct-15-2026`
 [48] `CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · Oct-02-2026`
 [49] `cadence: EDGAR submissions (median 91d gap over 34 results 8-Ks; last print 2026-10-30)`
-[50] `TEV = mcap 332.9 + net debt 938.3 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-11-06, exported 2026-11-09) — simple-TEV basis`
+[50] `TEV at the page's close = market cap $252.3M (the page's close $1.66 (EOD VRRM last close, 2026-11-17) × 152,009,343 shares (EDGAR XBRL shares outstanding)) + CIQ claims $938.3M (CIQ Comparable Analysis→Financial Data 'Total Enterprise Value' − 'Market Capitalization')`
 [51] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt + EOD price × shares`
 [52] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
 [53] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
