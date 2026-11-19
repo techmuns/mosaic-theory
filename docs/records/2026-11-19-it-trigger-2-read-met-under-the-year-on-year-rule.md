@@ -120,25 +120,38 @@ exists. None writes a verdict amendment, so the seal is the guard.
   shows four files with one line each, the rationale. The frontend mirror is byte-identical to
   `data/dossiers/IT/dossier.md`, and it moved no other file of the 26 pages and 13 underwrites
   it emits.
-- **Note B's arithmetic, re-derived from the levels in B's tables.**
-  - 5 of its 12 figures re-derive from those levels:
-    - contract value, Q3: +$129.0M on $5,340M is +2.48%;
-    - client enterprises, Q1: 12,913 against 13,600 is −5.05%;
-    - client enterprises, Q3: 12,680 against 13,218 is −4.07%;
-    - salesforce, Q3: 4,929 against 5,018 is −1.77%;
-    - wallet retention, Q3: 99.0% against 99.5% is −0.5 pts.
-  - The other 7 need a year-ago value that the sheet's tables do not carry, and rest on B's
-    computation from the filings and the deck:
-    - contract value, Q1 and Q2;
-    - client enterprises, Q2;
-    - salesforce, Q1 and Q2 (they match the deck's YoY row, and the record's Q1 baseline −3.4%);
-    - wallet retention, Q1 and Q2.
-  - None of the 5 disagrees with the note's rounding.
+- **Note B's arithmetic, re-derived from levels: 10 of its 12 figures, and all 10 agree with
+  its rounding.**
+  - The year-ago levels for Q1 and Q2 2026 are the deck's 1Q25 and 2Q25 columns. B sent them
+    on 2026-11-19, read visually from the same slides as the rest:
+    - client enterprises 13,600 and 13,374;
+    - quota-bearing headcount 5,038 and 5,034;
+    - global wallet retention 103.0% and 101.3%;
+    - global client retention 84.4% and 84.6%, which Note B does not quote.
+  - The ten that re-derive:
+
+    | figure | Q1 2026 | Q2 2026 | Q3 2026 |
+    |---|---:|---:|---:|
+    | client enterprises | 12,913 / 13,600 → −5.05% | 12,775 / 13,374 → −4.48% | 12,680 / 13,218 → −4.07% |
+    | salesforce | 4,866 / 5,038 → −3.41% | 4,874 / 5,034 → −3.18% | 4,929 / 5,018 → −1.77% |
+    | wallet retention, global | 97.7 − 103.0 → −5.3 pts | 98.2 − 101.3 → −3.1 pts | 99.0 − 99.5 → −0.5 pts |
+    | contract value | not re-derived | not re-derived | +$129.0M on $5,340M → +2.48% |
+
+  - **Two are not re-derived here: contract value in Q1 and Q2 (+1.0%, +1.7%).** Their dollar
+    levels are in each 10-Q's business-measurements table, which this session did not read.
+    B's +1.04% and +1.67% are computed from those dollar pairs, and the deck's printed Y/Y row
+    reads 1.0% and 1.7%. Both agree with the note.
+  - The salesforce figures also match the deck's own Y/Y row (−3.4%, −3.2%, −1.8%) and the
+    record's Q1 baseline (4,866, −3.4%).
+  - **What this check does and does not establish.** It confirms the arithmetic from the levels
+    to the note. It does not check the reading of the deck: every deck level, the year-ago
+    columns included, is B's visual reading.
 - **Suite:** `pytest -m "not network"` on the branch (result in the PR body).
 
 **BOUNDARY.**
-- "5 of 12": the twelve year-on-year figures in Note B's text. The population is the levels in
-  sections 1–2 of B's fact sheet, Q3 2025 to Q3 2026, in % or percentage points.
+- "10 of 12": the twelve year-on-year figures in Note B's text, in % or percentage points. The
+  population is two sets of levels: the levels in sections 1–2 of B's fact sheet (Q3 2025 to
+  Q3 2026), and the deck's 1Q25 and 2Q25 columns, which B sent on 2026-11-19.
 - "Four files, one line each": `git diff --stat` against main `5e380efc`.
 - "96 words": `seal.tag_parts`'s body count, the text after the colon without the closing bracket.
 - "26 pages and 13 underwrites": `frontend/build.py`'s own summary line on this run.
@@ -157,12 +170,13 @@ exists. None writes a verdict amendment, so the seal is the guard.
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **$0:** no model call and no page rebuild, only a deterministic re-render of one page from its
   stored JSON.
-- **ACCEPTED: 7 of Note B's 12 figures, and every deck row, rest on B's reading, not on a second
-  extraction.** The operator chose the note with those figures in it, and B's deck rows match the
-  10-Qs where both state a figure.
-  - *Falsifier:* a re-read of the deck or the 10-Qs that gives a different value for any of the 7.
-    That is a correction appended to this record and a new dated tag. The sealed tag is never
-    edited.
+- **ACCEPTED: every deck level rests on B's visual reading, not on a second extraction.** The
+  year-ago columns are included. Two of the note's figures (contract value, Q1 and Q2) rest on
+  B's computation from 10-Q dollar pairs this session did not read. The operator chose the note
+  with those figures in it, and B's deck rows match the 10-Qs where both state a figure.
+  - *Falsifier:* a re-read of the deck or the 10-Qs that gives a different level, or moves any of
+    the 12 figures off the note's rounding. That is a correction appended to this record and a
+    new dated tag. The sealed tag is never edited.
 - **The rule is now part of the reading.** Rule Y is weaker than the ordinary sense of "turning"
   (B's sheet: "the decline is slowing" is a weaker condition than "the level stops falling"). The
   operator ruled on that difference in choosing Note B, and the record says so rather than leaving
