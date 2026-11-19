@@ -93,7 +93,7 @@ superseded-by:
   - The frozen page copies hold 10 real committed misses: `2026-08-18/IT` has 5, and
     `2026-09-17/` has 5 (WERN 4, MVST 1). Every other frozen folder has none, the cut
     (`cut-4889ddba`) included. Run over those two folders, the guard's ratchet refuses all 10.
-- **Pins.** `tests/test_covenant_evidence_check.py`, 17 tests. Each pinned row is a REAL committed
+- **Pins.** `tests/test_covenant_evidence_check.py`, 18 tests. Each pinned row is a REAL committed
   row:
   - read from its frozen copy: the cut for the three positives, and the dated `2026-08-18/IT` and
     `2026-09-17/WERN` copies for four negatives;
@@ -109,7 +109,7 @@ superseded-by:
     (`_extract_from_exhibit`), on AMZN's quote with curly quotes inside it; a PRESENT term with no
     quote raising; the CLI printing every miss whole and exiting 1; the ratchet (a new miss, a
     stale entry, an unheld entry); and the guard. Any socket fails a test.
-- **Mutation: 17 of 17 killed.** The mutants:
+- **Mutation: 18 of 18 killed.** The mutants:
   1. every quote found;
   2. an unheld exhibit read as not_found;
   3. the first root only;
@@ -123,9 +123,19 @@ superseded-by:
   14. UNKNOWN terms read;
   15. raw HTML matched without `html_to_text`;
   16. a cause's piece dropped;
-  17. the reader keeping a mark.
+  17. the reader keeping a mark;
+  18. a one-piece quote called `reordered` (review round 0).
   - Mutant 15 is killed only by the guard, which skips in CI. Each of the others is killed by a
     pin that runs everywhere.
+- **Review round 0** (`/code-review high --fix`, 6 findings). Fixed: a quote with no ellipsis
+  whose only defect is leading punctuation was named `reordered`, since one piece has no order to
+  break (pinned on AMZN's committed clause with a stray leading comma, failing first); and the
+  ratchet test rebuilds a row through `dataclasses.replace`. Skipped: the CLI reads paths from the
+  working directory, as #1115's does; the cause split re-implements verbatim's ellipsis split on
+  raw text, so the printed piece stays readable; the wrong-exhibit search reads only exhibits
+  PRESENT rows cite, and no miss needs more; every held exhibit's text is kept for the run, at a
+  memory cost only. The corpus answers are unchanged: 284 / 0 / 21 today, 40 at `545403de`, by
+  the same causes.
 - **One rule was dropped on measurement.** A first cut kept a bracket the filing itself prints (a
   template's "[Borrower]") out of `editorial_bracket`. Across all 50 misses on every corpus above,
   it changed no answer, so it was removed and the docstring states the limit.
@@ -148,7 +158,7 @@ superseded-by:
     PARR 5, FUBO 2, BRBR 1, MCK 1, TGT 1, UBER 1. All 32 are found. This is #961's
     value-versus-quote population, which each page withholds at its next re-assembly. It is
     printed here, not guarded or fixed.
-- **CI cannot read a filing.** In CI the guard skips and the 16 pins run, so a converter change
+- **CI cannot read a filing.** In CI the guard skips and the 17 pins run, so a converter change
   that makes a committed quote miss is caught where a cache is held. That covers this Mac's suite
   and every pre-push run the artifact pass makes there, since the build that writes a page caches
   the exhibits it read. FALSIFIER: a committed quote found missing by a later run of this check,

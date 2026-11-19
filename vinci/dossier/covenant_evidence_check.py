@@ -187,9 +187,11 @@ def _cause(quote: str, source: SourceText, others: tuple[str, ...]) -> tuple[str
         return WRONG_EXHIBIT, ""
     pieces = _pieces(quote)
     unfound = [p for p in pieces if not source.match(p).found]
-    if not unfound:
+    if not unfound and len(pieces) > 1:
         return REORDERED, ""
-    first = unfound[0]
+    # one piece has no order to break: a quote this trim makes a span is still no span (`vinci.
+    # verbatim` trims a cut's punctuation at its end only), so it is read for its other causes
+    first = unfound[0] if unfound else quote
     bare = [p.strip(" .,;:") for p in _BRACKET.split(first) if p.strip(" .,;:")]
     if _BRACKET.search(first) and (not bare or _in_order(source, bare)):
         return EDITORIAL_BRACKET, first

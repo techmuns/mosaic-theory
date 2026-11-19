@@ -22,6 +22,7 @@ Every socket is refused while a test runs.
 
 from __future__ import annotations
 
+import dataclasses
 import html
 import json
 import pathlib
@@ -256,7 +257,7 @@ def test_the_ratchet_refuses_a_new_miss_and_a_stale_entry(tmp_path: pathlib.Path
     assert _ratchet([miss, hit], {}) == ([miss], [])
     assert _ratchet([miss, hit], {_key(miss): "x", _key(hit): "x", gone: "x"}) == (
         [], sorted([_key(hit), gone]))
-    unheld = cec.QuoteCheck(**{**miss.__dict__, "outcome": cec.UNCACHED})
+    unheld = dataclasses.replace(miss, outcome=cec.UNCACHED)
     assert _ratchet([unheld], {_key(miss): "x"}) == ([], [])
 
 
@@ -280,3 +281,20 @@ def test_every_committed_covenant_quote_is_in_the_exhibit_it_cites() -> None:
         "(python -m vinci.dossier.covenant_evidence_check prints them all).")
     assert not stale, (f"{len(stale)} KNOWN_MISSES entr(ies) are found now or left the pages: "
                        f"{stale}. Delete each: the ratchet only shrinks.")
+
+
+def test_a_quote_with_no_ellipsis_is_never_called_reordered(tmp_path: pathlib.Path) -> None:
+    """(−) Review round 0: AMZN's committed commitment clause with a stray leading comma is no span
+    (`vinci.verbatim` trims a cut's punctuation only at its end), and a quote of ONE piece has no
+    order to break: it reads `not_a_span`, its piece named, never `reordered`."""
+    case = json.loads(json.dumps(_CASES["amzn-verbatim"]))
+    page = _page(case)
+    row = next(r for r in page["mechanical"]["capital_structure"]["covenant_term_rows"]["value"]
+               if r["name"] == case["term"] and r["value"]["source_ref"] == case["source_ref"])
+    quote = ce.note_quote(row["value"]["note"])
+    row["value"]["note"] = f"{ce.VERBATIM_NOTE_OPEN}, {quote}{ce.VERBATIM_NOTE_CLOSE}"
+    want = (case["term"], cec.ROW_QUOTE, case["source_ref"])
+    readers = cec.readers_for([_serve(tmp_path, [case])])
+    r = next(x for x in cec.check_pages({"AMZN": page}, readers)
+             if (x.term, x.quote_of, x.source_ref) == want)
+    assert (r.outcome, r.cause) == (cec.NOT_FOUND, cec.NOT_A_SPAN) and r.unfound_piece
