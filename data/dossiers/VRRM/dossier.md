@@ -457,7 +457,6 @@ _industry = 37 Data Processing and Outsourced Services companies (GICS industry)
   - _reconciliation: itemized $1,075.2M + 1 with no principal stated (panel A 2025 filed Feb-24-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 681.9 (3 months Q2 Jun-30-2026 683.6 → 3 months Q3 Sep-30-2026 681.9); senior bonds 350.0; leases 52.5; total principal 1,092.8; total debt 1,085.1 (3 months Q3 Sep-30-2026) ($M) [70]
 - **Covenants — AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** 2.00% per annum in excess of otherwise applicable rate — per an 8-K filed 2025-10-17
   - **Financial maintenance:** Springing Consolidated Fixed Charge Coverage Ratio of at least 1.0 to 1.0, tested when Availability is less than the gr… — per an 8-K filed 2025-10-17
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR + 2.00% (Floor 0.00%) · Base Rate Term Loans: Base Rate plus 1.00%; Term SOFR Term Loans: Term SOFR plus 2.00% — per an 8-K filed 2025-10-17

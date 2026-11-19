@@ -515,7 +515,6 @@ _industry = 41 IT Consulting and Other Services companies (GICS industry), the p
 - **Covenants — AMENDED AND RESTATED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Adjusted LIBO Rate plus the Applicable Margin — per an 8-K filed 2020-09-28
   - **Interest / coupon:** ABR plus the Applicable Margin — per an 8-K filed 2020-09-28
-  - **Interest / coupon:** otherwise applicable rate plus 2% — per an 8-K filed 2020-09-28
   - **Maturity:** the fifth anniversary of the Closing Date — per an 8-K filed 2020-09-28
   - **Maturity:** the fifth anniversary of the Closing Date — per an 8-K filed 2020-09-28
   - **Financial maintenance:** Consolidated Leverage Ratio not to exceed 5.00 to 1.00 through Dec 31, 2021; thereafter 4.50 to 1.00 (or 5.00 to 1.00 d… — per an 8-K filed 2020-09-28
