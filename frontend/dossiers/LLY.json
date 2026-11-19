@@ -19406,7 +19406,7 @@
       "metric": "EV/EBITDA (TEV/LTM)",
       "period": "LTM",
       "value": 27.9,
-      "as_of": "2026-10-30",
+      "as_of": "2026-11-02",
       "source": "mechanical.valuation.ev_ebitda (CIQ Financials→Multiples); its pairing, measured: indistinguishable",
       "snapshot_as_of": "2026-10-30",
       "snapshot_market_cap": 1262675.3,
@@ -19823,13 +19823,22 @@
         "mechanical.stock_info",
         "mechanical.valuation"
       ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor",
+        "valuation_basis"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-19T03:35:06.314621Z",
+    "computed_at": "2026-11-19T18:42:29.642409Z",
     "reason": null,
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
@@ -19851,7 +19860,21 @@
       "confidence": "firm",
       "statistic": "current",
       "as_of": "2026-11-02",
-      "median": 25.682746
+      "median": 25.682746,
+      "close_stale": false,
+      "close_note": "nothing reported after it by the page's close of 2026-11-11",
+      "close_drift": {
+        "close_date": "2026-11-02",
+        "close_bar_date": "2026-11-02",
+        "close_eod": 1410.99,
+        "page_date": "2026-11-11",
+        "move": 0.018639,
+        "ratio": 1.018639,
+        "corporate_action": false,
+        "beyond_tolerance": false,
+        "tolerance": 0.1,
+        "source_ref": "EOD close 2026-11-02 (the store's bar on or before the multiple's close) against stock_info.price at 2026-11-11"
+      }
     },
     "d_and_a": {
       "value": 2174.0,
@@ -19908,7 +19931,7 @@
       "basis_ciq_margin": null,
       "same_source": true,
       "basis": "LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: financial_summary (short history) — EBIT/Revenue reported median; flagged at ≥5 points; sources said to agree within 2",
-      "read": "The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount."
+      "read": "The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 prices that median at its own history's multiple at the latest close, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The latest close's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount."
     },
     "anchor_ev_ebit": 30.2016,
     "overall_confidence": "weak",
@@ -19942,12 +19965,12 @@
       "equity_sensitivity": 1.0368,
       "leverage_flag": false,
       "refusal": null,
-      "basis": "V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = (M − m) × E_mid / S. The anchor at today's multiple = V0 + margin effect; at the median = V0 + margin effect + multiple effect. m and M are the band's current and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No term reads a price. The margin effect carries every difference between E_mid and E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.",
-      "read": "Screen value $820.15 at today's 27.9x = $1,397.90 on current EBITDA ($46,489M) − $577.74 margin reversion (mid-cycle 0.60× current). Median 25.7x: $67.92 lower (not used).",
+      "basis": "V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = (M − m) × E_mid / S. The anchor at the latest close's multiple = V0 + margin effect; at the median = V0 + margin effect + multiple effect. m and M are the band's current and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No term reads a price. The margin effect carries every difference between E_mid and E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.",
+      "read": "Screen value $820.15 at 27.9x (the 2026-11-02 close) = $1,397.90 on current EBITDA ($46,489M) − $577.74 margin reversion (mid-cycle 0.60× current). Median 25.7x: $67.92 lower (not used).",
       "stale_line": null,
       "leverage_line": null,
       "arithmetic": [
-        "m = 27.8531x, today's multiple (the close of 2026-11-02); M = 25.6827x, the median beside it, never used.",
+        "m = 27.8531x, the multiple at the 2026-11-02 close; M = 25.6827x, the median beside it, never used.",
         "E_mid = 86,462.0 × 29.8207% + 2,174.0 = $27,958M — LTM revenue × the median margin + D&A, the anchor's EBITDA.",
         "E_cur = $46,489M — mechanical.financial_summary LTM 'EBITDA ($M)' (CIQ), which CIQ's TEV ÷ 27.9x reproduces (valuation.ev_ebitda_basis: indistinguishable; $46,829M implied, TEV as of 2026-10-30).",
         "V0 = (27.8531 × 46,489.0 − net debt 45,980.0) ÷ 893,400,000 shares = $1,397.90.",
@@ -19955,7 +19978,7 @@
         "multiple effect = (25.6827 − 27.8531) × 27,957.6 ÷ 893,400,000 = −$67.92, beside the anchor, never in it.",
         "V0 + margin effect = $820.15, the screen value; + multiple effect = $752.24, the value at the median.",
         "net debt ÷ EV = 45,980.0 ÷ 1,294,860.9 = 0.036; flagged above 0.5.",
-        "the multiple's close 2026-11-02, the page's stored close 2026-11-11: 9 days; not stale by its history's cadence: CIQ's history is stale past 30 days."
+        "the multiple's close 2026-11-02, the page's stored close 2026-11-11: 9 days; passed by the event rule: nothing the event rule counts was filed after the 2026-11-02 close, on or before the page's price date, 2026-11-11."
       ]
     },
     "scenario_eligibility": {

@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
 
 # Brief — first cut
 
@@ -330,22 +330,22 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple of its own trading history's latest close — dated below, and refused once the company reports after it — the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × today's multiple of its own history | applicable |
+| Method | mid-cycle margin × its own history's multiple at the latest close | applicable |
 | Mid-cycle margin | 15.4% | 9y history · firm |
-| Current multiple, own history | 5.1x | latest close 2026-10-27 · median 18.2x beside it, not used · 34 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
+| Multiple at the latest close, own history | 5.1x | close of 2026-10-27 · nothing reported after it by the page's close of 2026-11-11 · ⚠ the stock has risen 29.6% since that close · median 18.2x beside it, not used · 34 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
 | Screen value / share | $11.37 | spot-independent · EV/EBIT 5.7x · on 86,861,967 shares outstanding |
 | Dilution test / share | $11.37 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
-**How the screen value splits.** Screen value $11.37 at today's 5.1x = $9.75 on current EBITDA ($206M) + $1.62 margin reversion (mid-cycle 1.13× current). Median 18.2x: $35.11 higher (not used).
+**How the screen value splits.** Screen value $11.37 at 5.1x (the 2026-10-27 close) = $9.75 on current EBITDA ($206M) + $1.62 margin reversion (mid-cycle 1.13× current). Median 18.2x: $35.11 higher (not used).
 
 _The split's arithmetic:_
 
-- m = 5.1351x, today's multiple (the close of 2026-10-27); M = 18.2256x, the median beside it, never used.
+- m = 5.1351x, the multiple at the 2026-10-27 close; M = 18.2256x, the median beside it, never used.
 - E_mid = 1,356.5 × 15.3855% + 24.3 = $233M — LTM revenue × the median margin + D&A, the anchor's EBITDA.
 - E_cur = $206M — valuation.lease_basis.observations (the observation of 2026-10-27): CIQ Income Statement 'EBITDA' over four quarters to 2026-08-29, the denominator of the ex-lease multiple 5.13509x = (TEV 1,106.0 − leases 50.3) ÷ 205.6.
 - V0 = (5.1351 × 205.6 − net debt 208.8) ÷ 86,861,967 shares = $9.75.
@@ -353,7 +353,7 @@ _The split's arithmetic:_
 - multiple effect = (18.2256 − 5.1351) × 233.0 ÷ 86,861,967 = $35.11, beside the anchor, never in it.
 - V0 + margin effect = $11.37, the screen value; + multiple effect = $46.48, the value at the median.
 - net debt ÷ EV = 208.8 ÷ 1,055.7 = 0.198; flagged above 0.5.
-- the multiple's close 2026-10-27, the page's stored close 2026-11-11: 15 days; not stale by its history's cadence: the next quarterly observation is due by 2027-01-26 (balance sheet 2026-08-29 + the longest of its last 4 quarters, 91 days, + the slowest of their pricing lags, 59 days).
+- the multiple's close 2026-10-27, the page's stored close 2026-11-11: 15 days; passed by the event rule: nothing the event rule counts was filed after the 2026-10-27 close, on or before the page's price date, 2026-11-11.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [51]  <!-- ds-table -->
@@ -725,6 +725,7 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 11d old — 2026-11-03 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 16d old (2026-10-29, valuation.implied_expectations.multiples_as_of) — within the ceiling
