@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.event_gate_support import W82_VINTAGE
 from tests.frozen_support import frozen_page
 from vinci.config import Config
 from vinci.dossier import freshness as fr
@@ -44,10 +45,6 @@ from vinci.dossier.prespend import (
 from vinci.dossier.schemas import Dossier
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-#: (W82) the vintage of the gate that counts a filing on a panel's own day: a page whose stamp
-#: does not include it ran the strict gate (`freshness.first_event_after`) — judged by the
-#: code that built it, never the calendar (a page built today on older code ran the old gate).
-W82_VINTAGE = "2026-11-20.a-report-on-a-dated-values-own-day-counts-as-after-it"
 DOSS = ROOT / "data" / "dossiers"
 #: the event rule's real filings, read 2026-11-19 (`test_event_rule.py`)
 FILINGS: dict[str, Any] = json.loads(
@@ -615,7 +612,9 @@ def test_every_committed_page_passes_the_freshness_check_at_its_own_build_date(
     page = Dossier.model_validate_json(path.read_text())
     day = page.assembled_at.date()
     assert page.ticker in FILINGS, f"{page.ticker}: no filings frozen — re-freeze the fixture"
-    if not includes(page.extraction_version, W82_VINTAGE):
+    ran_w82 = includes(page.extraction_version, W82_VINTAGE)
+    assert ran_w82 is not None, f"{page.ticker}: undeclared stamp {page.extraction_version!r}"
+    if not ran_w82:
         real = fr.first_event_after
         monkeypatch.setattr(fr, "first_event_after",
                             lambda *a, **k: real(*a, **{**k, "same_day_counts": False}))

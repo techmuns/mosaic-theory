@@ -15,17 +15,13 @@ from typing import Any
 
 import pytest
 
+from tests.event_gate_support import W82_VINTAGE, own_gate_refusal
 from tests.frozen_support import FROZEN_PAGES, covered_pages, frozen_doc
 from vinci.dossier import freshness as fr
 from vinci.dossier.assemble import _freshness_check
-from vinci.dossier.extraction_version import includes
 from vinci.dossier.mechanical import read_filing_events
 
 ROOT = Path(__file__).resolve().parents[1]
-#: (W82) the vintage of the gate that counts a filing on a panel's own day: a page whose stamp
-#: does not include it ran the strict gate (`freshness.first_event_after`) — judged by the
-#: code that built it, never the calendar (a page built today on older code ran the old gate).
-W82_VINTAGE = "2026-11-20.a-report-on-a-dated-values-own-day-counts-as-after-it"
 FILINGS: dict[str, Any] = json.loads(
     (ROOT / "tests" / "fixtures" / "event_rule_filings.json").read_text())["filings"]
 MEASURED = "2026-11-19"
@@ -86,20 +82,43 @@ def test_every_committed_page_was_built_before_any_later_filing() -> None:
     """ROSTER WALK: every committed page was built before any filing AFTER its panels' day — the
     gate the paid build ran would have let each through. Since W82 a filing ON a panel's own day
     outdates it too, and the pages built on such a panel (AMZN, MCK and UBER at 2026-11-19) are
-    refused at their own build date by that filing alone: the walk holds every refusal at a build
-    whose stamp does not include W82's vintage to a same-day filing, and pins nothing on which
-    pages those are; a page whose stamp includes it must pass outright. It fails loud on an
-    empty roster or a page the fixture never read."""
+    refused at their own build date by that filing alone: the walk holds each page to the gate
+    its own stamp ran, whole (`tests/event_gate_support.py`), and pins nothing on which pages
+    those are. It fails loud on an empty roster, a page the fixture never read, or a stamp this
+    code does not declare."""
     pages = covered_pages()
     assert pages, "no committed page to walk"
     for t in pages:
         doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
         assert t in FILINGS, f"{t}: no filings read — re-freeze the fixture with the page"
-        v = _verdict(t, doc["mechanical"], doc["assembled_at"])
-        if includes(doc.get("extraction_version"), W82_VINTAGE):
-            assert not v.stale, f"{t}: {v.note()}"
-        for p in v.stale:
-            assert p.filing.filing_date == p.panel_date, f"{t}: {v.note()}"
+        why = own_gate_refusal(doc["mechanical"], _events(t), built_at=doc["assembled_at"],
+                               stamp=doc.get("extraction_version"))
+        assert why is None, f"{t}: {why}"
+
+
+def test_a_page_is_held_to_its_own_gate_whole() -> None:
+    """(Review round 1 of #1146) The roster walks' judge, `own_gate_refusal`, on MCK's frozen page
+    (comps 2026-11-04, its 8-K item 2.02 and 10-Q filed that day) and its own older stamp:
+    (−) built 2026-11-05 on those filings it passes, the strict gate it ran not counting them;
+    (+) a 10-Q filed 2026-11-07, BEHIND the same-day pair, built 2026-11-09, is refused, naming it
+    — the round-0 walk read only each panel's FIRST filing, a same-day one, and passed it;
+    (+) the same page on W82's stamp is refused by the same-day filing itself;
+    (+) a stamp this code does not declare is refused, its gate unknown."""
+    doc = frozen_doc("MCK")
+    mech, stamp = doc["mechanical"], doc["extraction_version"]
+    same_day = [e for e in _events("MCK") if e.filing_date == "2026-11-04"]
+    assert len(same_day) == 2, "fixture precondition"
+    assert own_gate_refusal(mech, same_day, built_at="2026-11-05", stamp=stamp) is None
+    later = [*same_day, fr.FilingEvent("10-Q", "2026-11-07", "X-LATER")]
+    v = fr.event_verdict(mech, later, built_at="2026-11-09")
+    blind = all(p.filing.filing_date == p.panel_date for p in v.stale)
+    assert blind, "the round-0 walk passed this"
+    why = own_gate_refusal(mech, later, built_at="2026-11-09", stamp=stamp)
+    assert why is not None and "X-LATER" in why
+    on_w82 = own_gate_refusal(mech, same_day, built_at="2026-11-05", stamp=W82_VINTAGE)
+    assert on_w82 is not None and "0000927653-26-000279" in on_w82
+    assert own_gate_refusal(mech, same_day, built_at="2026-11-05",
+                            stamp="not-a-vintage") is not None
 
 
 def test_the_boundary_is_on_or_after_the_panels_day_and_on_or_before_the_build() -> None:
