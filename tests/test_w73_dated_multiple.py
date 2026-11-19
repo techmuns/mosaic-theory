@@ -499,3 +499,77 @@ process.stdout.write(JSON.stringify(out));
         row = re.search(r"Multiple at the latest close, own history.*?</tr>", b, re.S)
         assert row is not None and "<details" not in row.group(0)
         assert not SIGNED_PCT.search(re.sub(r"<[^>]+>", " ", b))
+
+
+# --- (+) assembly reads the store while it is open (found by the impact run, 2026-11-19) -----
+def test_assembly_reads_every_store_call_inside_its_with_block() -> None:
+    """REGRESSION (W73, caught by `vinci.impact run` on this PR's first head): `assemble_one` read
+    the anchor's EOD closes with `store.get_price_history` AFTER its `with Store(...)` block had
+    closed the store, so every $0 build raised `sqlite3.ProgrammingError` inside the anchor and fell
+    back to "anchor computation failed" — 25 of 25 pages lost their anchor. Every `store.<call>` in
+    `assemble_one` must sit lexically inside the `with Store(...) as store:` block that opens it."""
+    import ast
+    import inspect
+    import textwrap
+
+    from vinci.dossier import assemble
+
+    tree = ast.parse(textwrap.dedent(inspect.getsource(assemble.assemble_one)))
+    blocks = [n for n in ast.walk(tree) if isinstance(n, ast.With) and any(
+        isinstance(i.optional_vars, ast.Name) and i.optional_vars.id == "store" for i in n.items)]
+    assert len(blocks) == 1, "assemble_one opens its store in one with-block"
+    inside = {id(n) for n in ast.walk(blocks[0])}
+    calls = [n for n in ast.walk(tree) if isinstance(n, ast.Attribute)
+             and isinstance(n.value, ast.Name) and n.value.id == "store"]
+    assert calls, "the scan found no store reads — it checks nothing"
+    outside = [n.lineno for n in calls if id(n) not in inside]
+    assert not outside, f"store read after its with-block closed (source lines {outside})"
+
+
+def test_a_zero_dollar_build_of_it_computes_its_anchor_end_to_end(tmp_path: Path) -> None:
+    """END TO END (TEST-LAYER RULE; coordinator B, 2026-11-19): the closed-store defect was OBSERVED
+    in built pages — the impact run's $0 builds wrote "anchor computation failed: ProgrammingError"
+    on 25 of 25 — so it is pinned on a real build: IT, a committed active page, through
+    `prespend.mechanical_build` in the impact check's own child (`vinci/impact/child.py`), from the
+    committed data at HEAD, the licensed CIQ export and SEC cache in place, a COPY of the price
+    store, the cache frozen and every socket refused. The anchor must be COMPUTED: never the
+    fallback, R1's inputs and multiple present, and the W73 verdict recorded on its close.
+
+    LOCAL ONLY: it needs the CIQ export, the SEC cache and a store, none of them committed, so it
+    skips where they are absent (CI), as the suite's other licensed-input pins do."""
+    from vinci.impact import run as rn
+
+    primary = rn.primary_checkout(ROOT)
+    ciq, cache, db = (primary / "data" / "manual" / "ciq", primary / "data" / "cache",
+                      primary / "data" / "vinci.db")
+    env_file = primary / ".env"   # vendor keys the build reads at start; every socket is refused
+    if not ((ciq / "IT").is_dir() and cache.is_dir() and db.is_file() and env_file.is_file()):
+        pytest.skip("no licensed CIQ export, SEC cache, price store or .env on this machine")
+    box = tmp_path / "inputs"
+    rn._extract(ROOT, "HEAD", ["data", "scenarios", "frontend"], box)
+    store = tmp_path / "impact-store" / "data" / "vinci.db"   # the layout `Store` stamps from
+    rn.snapshot_store(db, store)
+    (box / "data" / "manual").mkdir(parents=True, exist_ok=True)
+    for link, target in ((box / "data" / "manual" / "ciq", ciq), (box / "data" / "cache", cache),
+                         (box / "data" / "vinci.db", store)):
+        link.symlink_to(target.resolve())
+    out = tmp_path / "out"
+    code = Path(anc.__file__).resolve().parents[2]   # the checkout whose vinci is under test
+    done = subprocess.run(
+        [rn.sys.executable, "-P", str(rn.CHILD), "--tickers", "IT", "--out", str(out),
+         "--expect-root", str(code / "vinci"), "--capture-child", str(rn.CAPTURE_CHILD),
+         "--frozen-cache", "--no-network", "--no-requests", "--no-committed"],
+        cwd=box, env=rn.child_env(code, env_file), capture_output=True, text=True, timeout=900)
+    built_path = out / "IT" / "built.json"
+    assert built_path.exists(), (done.returncode, (out / "IT" / "build.error.json").read_text()
+                                 if (out / "IT" / "build.error.json").exists()
+                                 else done.stdout[-2000:] + done.stderr[-2000:])
+    page = json.loads(built_path.read_text())
+    a = page["anchor"]
+    notes = json.dumps([a.get("reason"), page.get("caveats"), page.get("qa_flags")])
+    assert "anchor computation failed" not in notes, notes[:600]
+    assert a["recipe_hint"] == anc.RECIPE_R1, a.get("recipe_hint")
+    for k in ("margin", "ltm_revenue", "net_debt", "multiple"):
+        assert a.get(k), (k, a.get(k))
+    assert a["multiple"]["statistic"] == anc.MULTIPLE_CURRENT
+    assert a["multiple"].get("close_note"), a["multiple"]   # the event rule judged the close
