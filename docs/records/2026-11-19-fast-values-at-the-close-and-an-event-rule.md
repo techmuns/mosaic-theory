@@ -40,9 +40,10 @@ superseded-by:
   - The page's market cap is its close (`stock_info.price` at `stock_info.as_of`) × its
     point-in-time share count (`stock_info.shares_out`, the count `valuation_basis` and the anchor
     read) → `stock_info.market_cap_at_close`.
-  - The TEV at the close is that cap + CIQ's claims, i.e. CIQ's comps TEV less its comps cap, the
-    name row's net debt → `implied_expectations.tev_at_close` and `tev_close_date`. It is
-    `valuation_basis.value_at_page_price`'s construction.
+  - The TEV at the close is that cap + CIQ's claims, i.e. CIQ's comps 'Total Enterprise Value'
+    less its 'Market Capitalization' (`stock_info.ciq_tev_claims`, since review round 1 — the
+    first cut read the comps 'Net Debt' line, see below) → `implied_expectations.tev_at_close`
+    and `tev_close_date`. It is `valuation_basis.value_at_page_price`'s construction.
   - No close, count or claims leaves the value UNKNOWN, naming what is absent. CIQ's figure is
     never put in its place and claims are never taken as zero.
 - **CIQ's own figures stay as DATED cross-checks.**
