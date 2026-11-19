@@ -119,7 +119,9 @@ def _llm_workers_arg(p: argparse.ArgumentParser) -> None:
     p.add_argument("--llm-workers", type=_workers, default=LLM_WORKERS,
                    help=f"independent paid calls in flight at once — the enrichment pass's, "
                         f"one per thesis (default {LLM_WORKERS}; 1 = one at a time). The spend "
-                        f"guard reserves each call's bound, so it never changes the spend")
+                        f"guard reserves each call's bound, so it never lets the spend pass a "
+                        f"limit; a failed call or an interrupt can leave up to N-1 calls already "
+                        f"sent, and billed")
 
 
 def _author_name(s: str) -> str:

@@ -34,7 +34,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from vinci.graph.llm import LlmError, sdk_version
-from vinci.theme_intelligence.budget import BudgetExceeded, GuardedClient, SpendGuard
+from vinci.theme_intelligence.budget import BudgetExceeded, DocScope, GuardedClient, SpendGuard
 from vinci.theme_intelligence.cachefile import take_set_aside
 from vinci.theme_intelligence.completeness import (
     CompletenessOutput,
@@ -156,6 +156,7 @@ class _Enrichment:
     note: str = ""
     refusal: bool = False
     no_steps: bool = False  # counted as `theses_not_enriched`
+    scope: DocScope | None = None  # the spend guard's document its call drew on
     card: CardContent | None = None
     version: int = 0
     req: EnrichRequest | None = None
@@ -328,11 +329,13 @@ class Pipeline:
 
     def _llm_call(self, purpose: str, ref: str, res_cached: bool, usage: dict[str, int] | None,
                   cost: float | None, seconds: float, model: str, prompt_version: str,
-                  note: str = "") -> None:
+                  note: str = "", document: str | None = None) -> None:
+        """`document`: the guard's label of the call's document, when it is known — the sent
+        call this row records is then matched by it as well as by its usage."""
         assert self.run is not None
         self._calls += 1
         if not res_cached:
-            self.guard.recorded(usage)
+            self.guard.recorded(usage, document)
         self.store.add_llm_call(
             "LC-" + _sha(self.run.run_id, purpose, ref, str(self._calls),
                          datetime.now(tz=UTC).isoformat())[:14], self.run.run_id, purpose,
@@ -1344,7 +1347,8 @@ class Pipeline:
                                   resolver=self.resolver, as_of=as_of, run_id=run_id)
             assert res.enrichment is not None
             self._llm_call("enrich", it.tid, res.cached, res.usage, res.cost_usd, res.seconds,
-                           model, ENRICH_PROMPT_VERSION)
+                           model, ENRICH_PROMPT_VERSION,
+                           document=it.scope.label if it.scope is not None else None)
             with self.store.tx():
                 self.store.add_enrichment(res.enrichment)
             self._count("theses_enriched")
@@ -1413,10 +1417,10 @@ class Pipeline:
                     if not isinstance(self.client, GuardedClient):  # an unguarded stand-in
                         item.answer = ask_enrichment(req, self.client)
                     else:
+                        item.scope = self.guard.scope(f"enrich {tid}")
                         try:  # admitted HERE, in input order; may wait for calls in flight
                             adm = self.client.admit(system=SYSTEM, user=req.user, tool=TOOL,
-                                                    doc=self.guard.scope(f"enrich {tid}"),
-                                                    make_room=finish_oldest)
+                                                    doc=item.scope, make_room=finish_oldest)
                         except BudgetExceeded as exc:
                             queue.append(_Enrichment(tid, note=f"not run — budget: {exc}",
                                                      refusal=True))

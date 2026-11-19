@@ -139,7 +139,9 @@ PROMPT_CACHE_PARTS = False
 #: engine) are a chain, and stay one at a time. 8 because the dossier assembler already sends 8
 #: at once on this account (`vinci/dossier/assemble.py`); its rate limits were never measured
 #: here, so a 429 in an enrichment step means lower this. The spend guard reserves every call's
-#: bound, so the number moves the wall time, never the spend.
+#: bound, so the number never lets the spend pass a limit. It is not spend-neutral: when a call
+#: fails, or the run is interrupted, up to this many minus one calls are already sent and billed
+#: (each recorded and cached, `Pipeline._enrich_theses`).
 LLM_WORKERS = 8
 
 

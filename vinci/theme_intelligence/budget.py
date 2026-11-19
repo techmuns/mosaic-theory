@@ -45,6 +45,11 @@ document (`scope`). When the run's budget is what refuses a call while others ar
 pass first waits for them (`reserve(make_room=)`), so a refusal is decided only with nothing in
 flight: the same call a one-at-a-time pass would have refused. The rows of `calls` are written
 at admission, in that order.
+
+BOTH CLAIMS ASSUME EACH CALL COSTS NO MORE THAN ITS BOUND — the guard's own premise above, and
+`summary()` counts the calls that broke it (`calls_over_their_bound`). A call that costs more
+spends past its bound whether it ran alone or beside others, and a concurrent pass may then admit
+a call a one-at-a-time pass, which would already have seen that overrun, refuses.
 """
 
 from __future__ import annotations
@@ -280,13 +285,17 @@ class SpendGuard:
                                     "document": (doc or self.doc).label,
                                     "usage": usage, "cost_usd": cost, "error": error})
 
-    def recorded(self, usage: dict[str, int] | None) -> None:
-        """A ledger row was written for one sent call (matched by its usage)."""
+    def recorded(self, usage: dict[str, int] | None, document: str | None = None) -> None:
+        """A ledger row was written for one sent call: matched by its usage and, when the caller
+        knows it, its document's label. By usage alone, two calls in flight with equal token
+        counts could swap rows, so a paid call left unrecorded is labelled with another
+        document's name (round 1 of #1141). A call with no label, or none sent under it, matches
+        by usage, as before — never left over as a paid call no row recorded."""
         with self._lock:
-            for i, e in enumerate(self.unrecorded):
-                if e["usage"] == usage:
-                    del self.unrecorded[i]
-                    return
+            hits = [i for i, e in enumerate(self.unrecorded) if e["usage"] == usage]
+            own = [i for i in hits if self.unrecorded[i]["document"] == document]
+            if own or hits:
+                del self.unrecorded[(own or hits)[0]]
 
     def take_unrecorded(self) -> list[dict[str, Any]]:
         with self._lock:

@@ -16,7 +16,9 @@ or without compromising the quality". This build maps every paid call and change
   pass a run's or a document's limit. Each item of a concurrent pass draws on its own document
   (`SpendGuard.scope`). When the RUN's budget is what refuses, the pass first waits for the calls
   in flight (`reserve(make_room=)`), so it refuses exactly the call one-at-a-time would refuse.
-  The guard's ledger rows are written at admission, in input order.
+  The guard's ledger rows are written at admission, in input order. **Both claims assume each
+  call costs no more than its bound**, the guard's own premise: a call that costs more overruns
+  alone or beside others, and `summary()` counts such calls (`calls_over_their_bound`).
 - **The enrichment pass sends up to 8 calls at once** (`Pipeline._enrich_theses`; `enrich.py`
   split into `enrichment_request`, `ask_enrichment`, `enrichment_from`). Everything else stays on
   one thread, in input order: the registry reads, each call's admission, and, as each answer's
@@ -74,15 +76,18 @@ notes (`ti-concurrency-proof/`, outside the repo).
     pull rewrote.
   - Macro and Markets were replayed as new (`force_new`). The real Markets upload was
     `--as-new`. The real Macro one read as new, but today the identity check on that backup holds
-    it for REVIEW. Not investigated: `ingest.py` is untouched here. A likely cause, UNVERIFIED:
-    the one-step upload's state pull holds no article text to compare.
+    it for REVIEW. Not investigated here (see FOUND, NOT FIXED).
 - **Replay B: enrichment over the real registry.** 74 active theses, their real cards as the
-  requests. The answers are a STAND-IN, a fixed function of each request: no recorded enrichment
-  answer is held on this machine, because they live in the weekly job's Actions cache. SEC
-  offline: 9 misses, the same in every run.
+  requests. The answers are a STAND-IN, a fixed function of each request: when this replay ran,
+  no recorded enrichment answer was held on this machine (they live in the weekly job's Actions
+  cache). SEC offline: 9 misses, the same in every run.
   - Main, 1 worker and 8 workers wrote identical output text, sets (in write order), ledger
     rows, cache files and run records.
-- **Tests** (`tests/test_theme_intelligence_concurrency.py`, 8). Each was shown failing on the
+  - CORRECTION (coordinator A's review, 2026-11-19): 14 REAL enrichment answers were written to
+    the primary's `llm_cache/enrich` at 20:25–20:30 local time, after this replay. A's review
+    replayed them at main, 1 worker and 8 workers: identical digests, and the ledger identical in
+    rowid order.
+- **Tests** (`tests/test_theme_intelligence_concurrency.py`, 10). Each was shown failing on the
   version it pins:
   - eight threads against a limit that holds three bounds: main's guard sent all 8 at once
     (`assert 8 == 3`), the reserving guard 3;
@@ -94,10 +99,19 @@ notes (`ti-concurrency-proof/`, outside the repo).
     it. Calls already sent for theses 3–5 are recorded and cached, and a re-run pays only for
     thesis 2. It fails against a "best effort" loop that skips failures;
   - a client without per-thread usage gets one call at a time;
+  - (round 1) `[t0, t1, t0]` with t0 slowest: the second t0 reads its first turn's set ("already
+    proposed … skipped"). It fails against mutant M3 of A's review, which drops the wait;
+  - (round 1) three calls with EQUAL usage, the middle failing and the last answering first:
+    each unused paid call is recorded under its own thesis. It fails against matching by usage
+    alone, which recorded the last one's call under the first thesis's name (`recorded()` now
+    matches the document's label too);
   - plus the reservation unit, the `make_room` unit, and the CLI flag.
 - **Suite:** ruff, `mypy --strict` and the full offline suite are green.
 
-**SPEED** (delay client: each call sleeps a fixed time).
+**SPEED** (delay client: each call sleeps a fixed time). These are MODEL time. The stand-in
+answers need ~0 s of SEC checks, and those stay serial on the main thread. On the 14 REAL
+answers, A's review measured the serial SEC checks alone at 63.6 s with 1 worker and 48.7 s
+with 8. So the 6.9× below is the speed-up of the model calls, not of the pass's wall time.
 - **The enrichment pass:**
 
   | pass | 1 worker | 8 workers | main |
@@ -118,10 +132,13 @@ notes (`ti-concurrency-proof/`, outside the repo).
 - **Replays:** code at main `377bfe86` and this branch, 2026-11-19.
 - **Timings:** wall clock on one Mac with nothing else running. Sleeps dominate them, so they
   measure overlap, not this machine.
+- **A run's `llm_seconds`** is the SUM of its calls' own seconds, so with calls sent at once it can
+  exceed the run's wall time (`schemas.WeeklyRun`).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **A failed call can leave up to 7 calls already sent and paid.** One-at-a-time would not have
-  sent them. Each is recorded (`enrichment-unrecorded`) and its answer cached, so a re-run takes
+- **A failed call, or an interrupt, can leave up to 7 calls already sent and paid.** One-at-a-time
+  would not have sent them, so concurrency never lets the spend pass a limit, but it is not
+  spend-neutral on that path. Each is recorded (`enrichment-unrecorded`) and its answer cached, so a re-run takes
   it at $0.
 - **Rate limits were never measured for 8 enrichment calls at once on this key.** The SDK
   retries a 429 or 529 twice. FALSIFIER: an enrichment step's run warns "enrichment not run" with
@@ -133,3 +150,18 @@ notes (`ti-concurrency-proof/`, outside the repo).
   - one registry list frozen per batch: a prompt change across documents.
 
   Each needs a ruling and a quality measurement first (STATE §5.0 row 32, item (35)).
+
+**FOUND, NOT FIXED** (out of scope here; each a STATE §5.0 row 32 item).
+- **The cross-setup check's theme-desk consumer fails on a WAL-mode registry**
+  (`vinci/impact/run.py` `run_consumer`). Snapshotting the `--theme-data` folder's `registry.db`
+  for the base side leaves `registry.db-wal` and `-shm` beside the SOURCE. The head side then
+  symlinks every other entry of that folder, these two included, beside its own copy, and SQLite
+  cannot open it: head exits 1 with `unable to open database file`, and the consumer reads
+  DIFFERS. Seen on this PR's first impact run. Workaround used: `PRAGMA journal_mode=DELETE` on
+  the copy passed. Fix: skip `-wal` / `-shm` / `-journal` when linking. Row 32, item (36).
+- **The identity check holds the Goldman Sachs Macro Outlook for REVIEW** on its pre-upload backup:
+  an uncertain match to the Bond Supply note, title overlap 6%, 56% of the held text found in
+  the new document. The real upload read it as new. Two candidate causes, neither verified. The
+  56% fits row 32 item (8)'s open note, "the identity check counts a publisher's legal footer as
+  argument text" (Goldman's shared disclosure pages). Why the real upload did not match is
+  possibly that the one-step upload's state pull held no article text to compare. Linked there.

@@ -52,12 +52,13 @@ class Model:
     usage_per_thread = True
 
     def __init__(self, delays: dict[str, float] | None = None, *, output_tokens: int = 300,
-                 fail: frozenset[str] = frozenset()) -> None:
+                 fail: frozenset[str] = frozenset(), same_usage: bool = False) -> None:
         self._local = threading.local()
         self._lock = threading.Lock()
         self.delays = delays or {}
         self.output_tokens = output_tokens
         self.fail = fail
+        self.same_usage = same_usage  # every call reports the same token counts
         self.started: list[str] = []
         self.finished: list[str] = []
         self.live = 0
@@ -82,7 +83,7 @@ class Model:
         try:
             time.sleep(self.delays.get(tid, 0.0))
             # a usage that differs by request, so no two calls' rows could be confused
-            self._local.usage = {"input_tokens": 900 + len(user) // 10,
+            self._local.usage = {"input_tokens": 900 + (0 if self.same_usage else len(user) // 10),
                                  "output_tokens": self.output_tokens,
                                  "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0}
             if tid in self.fail:  # billed, then unusable — as a truncated call is
@@ -328,6 +329,46 @@ def test_a_failed_call_is_raised_at_its_turn_and_later_paid_calls_are_kept(
     assert rows[1] == [f"enrich:{tids[0]}", f"enrichment-unrecorded:enrich {tids[1]}"]
     assert rows[8] == sorted([f"enrich:{tids[0]}",
                               *(f"enrichment-unrecorded:enrich {t}" for t in tids[1:])])
+
+
+def test_a_thesis_named_twice_is_enriched_once_as_one_at_a_time_does(tmp_path: Path) -> None:
+    """`[t0, t1, t0]`, t0's call the slowest. POSITIVE: with eight workers, the second t0 reads
+    what its first turn wrote — "already proposed … skipped", one set, one paid call — exactly as
+    one at a time. NEGATIVE (round 1 of #1141, mutant M3): without the wait for its first turn,
+    the second t0 is taken while the first is in flight, finds no set yet, and writes a second
+    one."""
+    tids = _targets(_theses(tmp_path / "probe", 1, Model()))
+    t0, t1 = tids[0], tids[1]
+    out: dict[int, Any] = {}
+    for workers in (1, 8):
+        model = Model({t0: 0.3, t1: 0.05})
+        pipe = _theses(tmp_path / f"w{workers}", workers, model)
+        run, done = pipe.run_enrich(as_of=CALM_AS_OF, thesis_ids=[t0, t1, t0])
+        assert run.status is RunStatus.SUCCEEDED
+        assert sorted(model.started) == sorted([t0, t1]) and len(pipe.store.enrichments(t0)) == 1
+        out[workers] = (done, _written(pipe, run.run_id))
+    assert out[8] == out[1]
+    assert out[8][0][2][0] == t0 and out[8][0][2][1].startswith("already proposed for version")
+
+
+def test_calls_with_equal_usage_keep_their_own_ledger_label_when_one_fails(
+        tmp_path: Path) -> None:
+    """Three theses whose calls report the SAME token counts; the middle one fails, the last one
+    answers first. POSITIVE: the paid calls no row used are recorded under their OWN theses —
+    the failed one and the one sent after it. NEGATIVE (round 1 of #1141): matched by usage
+    alone, the first thesis's row took the last one's entry, and the last one's paid call was
+    recorded under the first thesis's name."""
+    tids = _targets(_theses(tmp_path / "probe", 1, Model()))
+    t0, t1, t2 = tids[:3]
+    model = Model({t0: 0.3, t1: 0.35, t2: 0.05}, fail=frozenset({t1}), same_usage=True)
+    pipe = _theses(tmp_path / "w8", 8, model)
+    with pytest.raises(LlmError, match="truncated"):
+        pipe.run_enrich(as_of=CALM_AS_OF, thesis_ids=[t0, t1, t2])
+    (run,) = [r for r in pipe.store.runs() if r.mode == "enrich"]
+    assert model.finished == [t2, t0, t1]
+    assert sorted(f"{c['purpose']}:{c['ref']}" for c in pipe.store.llm_calls(run.run_id)) == [
+        f"enrich:{t0}", f"enrichment-unrecorded:enrich {t1}",
+        f"enrichment-unrecorded:enrich {t2}"]
 
 
 def test_a_client_that_does_not_keep_usage_per_thread_is_sent_one_call_at_a_time(
