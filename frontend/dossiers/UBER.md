@@ -439,7 +439,7 @@ _13 undated / later aggregate line item(s) in the appendix panel_
 - **Covenants — TERM LOAN AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Adjusted Term SOFR + 2.75% (Floor 0.00%) · SOFR Loans: Adjusted Term SOFR plus 2.75%; ABR Loans: Alternate Base Rate plus 1.75% — per an 8-K filed 2021-03-01, amended 2023-03-14
   - **Maturity:** March 3, 2030 · March 3, 2030 — per an 8-K filed 2023-03-03, amended 2023-03-14
-  - **Events of default:** Mandatory prepayment in full of the Refinanced 2021 Refinancing Term Loans on the Amendment Effective Date; Events of D… — per an 8-K filed 2021-03-01, amended 2023-03-14
+  - **Prepayment / events of default:** Mandatory prepayment in full of the Refinanced 2021 Refinancing Term Loans on the Amendment Effective Date; Events of D… — per an 8-K filed 2021-03-01, amended 2023-03-14
 - **Covenants — REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Adjusted Term SOFR + 1.00% (Floor 0.00%) · Each Eurodollar/Term SOFR Borrowing: Adjusted Term SOFR plus the Applicable Rate; ABR Borrowing: Alternate Base Rate pl… — per an 8-K filed 2022-04-05
   - **Maturity:** April 4, 2027 · April 4, 2027 (as amended; prior text June 13, 2023 struck through), as such date may be extended pursuant to Section 2… — per an 8-K filed 2022-04-05

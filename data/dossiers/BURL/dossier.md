@@ -420,12 +420,12 @@ _4 undated / later aggregate line item(s) in the appendix panel_
 - **Covenants — SECURITY AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** 6.250% Senior Secured Notes due 2025 — per an 8-K filed 2020-04-16
   - **Maturity:** 6.250% Senior Secured Notes due 2025 — per an 8-K filed 2020-04-16
-  - **Events of default:** “Event of Default” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Ad… — per an 8-K filed 2020-04-16
+  - **Prepayment / events of default:** “Event of Default” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Ad… — per an 8-K filed 2020-04-16
 - **Covenants — SECOND AMENDED AND RESTATED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** UNKNOWN — not verified since 2021-12-22: a later exhibit (filed 2025-07-29) states this term, but its quote could not be matched to the filing, so its value is withheld. Last verified: Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Ap…
   - **Maturity:** July 25, 2030 · July 25, 2030 (amended from December 22, 2026) — per an 8-K filed 2018-07-02, amended 2025-07-29
   - **Financial maintenance:** Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00, tested only during the continuance of a… — per an 8-K filed 2018-07-02, amended 2025-07-29
-  - **Events of default:** Mandatory prepayment required if Total Outstandings cause Availability to be less than zero (prepay to eliminate defici… — per an 8-K filed 2018-07-02, amended 2025-07-29
+  - **Prepayment / events of default:** Mandatory prepayment required if Total Outstandings cause Availability to be less than zero (prepay to eliminate defici… — per an 8-K filed 2018-07-02, amended 2025-07-29
 
 ### Filing cross-checks — going concern · leverage basis
 

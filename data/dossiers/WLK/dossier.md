@@ -476,19 +476,19 @@ _11 undated / later aggregate line item(s) in the appendix panel_
 - **Covenants — AMENDED AND RESTATED LOAN AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** an interest rate at all times equal to the interest rate borne by the Bonds (converted to a Term Rate to the Maturity D… — per an 8-K filed 2010-07-08
   - **Maturity:** the stated maturity or such earlier date as the Bonds shall be redeemed — per an 8-K filed 2010-07-08
-  - **Events of default:** Events of Default (Section 10.1): (a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b… — per an 8-K filed 2010-07-08
+  - **Prepayment / events of default:** Events of Default (Section 10.1): (a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b… — per an 8-K filed 2010-07-08
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Adjusted LIBO Rate + 125 bps · Eurodollar Borrowings: Adjusted LIBO Rate plus the Applicable Rate; ABR Borrowings: Alternate Base Rate plus the Applic… — per an 8-K filed 2016-08-24
   - **Maturity:** the fifth anniversary of the Effective Date — per an 8-K filed 2016-08-24
   - **Financial maintenance:** Total Leverage Ratio not to exceed: (a) 3.00 to 1.00 to Changeover Date; (b) 3.50 to 1.00 from Changeover Date to Decem… — per an 8-K filed 2016-08-24
-  - **Events of default:** Events of Default per Section 7.01 (clauses (a)-(n)) including payment defaults, covenant breaches, cross-default on Ma… — per an 8-K filed 2016-08-24
+  - **Prepayment / events of default:** Events of Default per Section 7.01 (clauses (a)-(n)) including payment defaults, covenant breaches, cross-default on Ma… — per an 8-K filed 2016-08-24
 - **Covenants — Term Loans Due 2026** (governing values; full verbatim in appendix):
   - **Interest / coupon:** the Note ... (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds, paya… — per an 8-K filed 2010-12-08
-  - **Events of default:** The Borrower shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extr… — per an 8-K filed 2010-12-08
+  - **Prepayment / events of default:** The Borrower shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extr… — per an 8-K filed 2010-12-08
 - **Covenants — Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027** (governing values; full verbatim in appendix):
   - **Interest / coupon:** The Loan Agreement does not state a numeric interest rate; the Notes bear "interest at an interest rate at all times eq… — per an 8-K filed 2007-12-18
   - **Maturity:** "the stated maturity or such earlier date as the Bonds shall be redeemed" (no calendar date stated in this exhibit; Not… — per an 8-K filed 2007-12-18
-  - **Events of default:** acceleration · Section 4.5: Borrower shall prepay as necessary to accomplish the extraordinary mandatory redemption of the Bonds; Spec… — per an 8-K filed 2007-12-18
+  - **Prepayment / events of default:** acceleration · Section 4.5: Borrower shall prepay as necessary to accomplish the extraordinary mandatory redemption of the Bonds; Spec… — per an 8-K filed 2007-12-18
 
 ### Filing cross-checks — going concern · leverage basis
 

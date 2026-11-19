@@ -436,17 +436,17 @@ _8 undated / later aggregate line item(s) in the appendix panel_
   - **Interest / coupon:** Term SOFR Loan: Term SOFR + Applicable Rate; Base Rate Loan: Base Rate + Applicable Rate; Daily SOFR Loan: Daily SOFR +… — per an 8-K filed 2025-04-11
   - **Maturity:** April 11, 2030 · Revolving Maturity Date: April 11, 2030; Term A-1 Facility Maturity Date: September 30, 2028; Term A-2 Facility Maturit… — per an 8-K filed 2025-04-11
   - **Financial maintenance:** Consolidated Leverage Ratio not greater than 3.75:1.00 (steps up to 4.25:1.00 upon a Qualified Acquisition, max two Lev… — per an 8-K filed 2025-04-11
-  - **Events of default:** Mandatory prepayment: Section 2.05(b)(i) — pay down to the extent Aggregate Revolving Credit Exposure exceeds Aggregate… — per an 8-K filed 2025-04-11
+  - **Prepayment / events of default:** Mandatory prepayment: Section 2.05(b)(i) — pay down to the extent Aggregate Revolving Credit Exposure exceeds Aggregate… — per an 8-K filed 2025-04-11
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** each Term SOFR Loan shall bear interest ... equal to the Adjusted Term SOFR for such Interest Period plus the Applicabl… — per an 8-K filed 2023-04-26
   - **Maturity:** December 27, 2026 · December 27, 2026 (Revolving Loans and Term A Loans) — per an 8-K filed 2023-04-26
   - **Financial maintenance:** Consolidated Leverage Ratio not greater than 3.75:1.00 (increasable to 4.25:1.00 upon a Qualified Acquisition via Lever… — per an 8-K filed 2023-04-26
-  - **Events of default:** Mandatory prepayment on Aggregate Revolving Credit Exposure exceeding Aggregate Revolving Commitments (Section 2.05(b))… — per an 8-K filed 2023-04-26
+  - **Prepayment / events of default:** Mandatory prepayment on Aggregate Revolving Credit Exposure exceeding Aggregate Revolving Commitments (Section 2.05(b))… — per an 8-K filed 2023-04-26
 - **Covenants — CREDIT AGREEMENT AND JOINDER AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR plus the Applicable Rate (Term SOFR Loans); Base Rate plus the Applicable Rate (Base Rate Loans); Daily Simpl… — per an 8-K filed 2021-12-30
   - **Maturity:** December 27, 2026 · December 27, 2026 (Revolving Loans, Swing Line Loans, Letters of Credit and Term A Loan); Incremental Term Loan: as spe… — per an 8-K filed 2021-12-30
   - **Financial maintenance:** Consolidated Leverage Ratio not greater than 3.75:1.0 (increased to 4.25:1.0 during a Leverage Increase Period followin… — per an 8-K filed 2021-12-30
-  - **Events of default:** Mandatory prepayments: (i) Total Revolving Outstandings exceeding Aggregate Revolving Commitments; (ii) 100% of Net Cas… — per an 8-K filed 2021-12-30
+  - **Prepayment / events of default:** Mandatory prepayments: (i) Total Revolving Outstandings exceeding Aggregate Revolving Commitments; (ii) 100% of Net Cas… — per an 8-K filed 2021-12-30
 
 ### Filing cross-checks — going concern · leverage basis
 

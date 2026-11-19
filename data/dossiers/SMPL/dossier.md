@@ -513,7 +513,7 @@ _industry = 41 Packaged Foods and Meats companies (GICS industry), the primary p
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** UNKNOWN — not verified since 2018-03-20: a later exhibit (filed 2019-11-07) states this term, but its value could not be verified against the filing, so it is withheld. Last verified: Eurodollar + 3.50% · at any date on or after the 2018 Amendment Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2…
   - **Maturity:** July 7, 2024 · July 7, 2024 — per an 8-K filed 2019-11-07
-  - **Events of default:** Voluntary prepayment permitted at any time without premium or penalty, subject to 1.00% prepayment premium for a Repric… — per an 8-K filed 2018-03-20, amended 2019-11-07
+  - **Prepayment / events of default:** Voluntary prepayment permitted at any time without premium or penalty, subject to 1.00% prepayment premium for a Repric… — per an 8-K filed 2018-03-20, amended 2019-11-07
 
 ### Filing cross-checks — going concern · leverage basis
 

@@ -414,14 +414,14 @@ _comps = the 11 companies of the CIQ comps template · S&P-MI relative score: 1 
   - **Interest / coupon:** LIBOR Rate + 225 bps · Revolving & Term Loans bear interest at Base Rate or LIBOR Rate plus Applicable Margin. Revolving Loan margins (LIBOR):… — per an 8-K filed 2015-04-02
   - **Maturity:** Revolving Loan Maturity Date: three (3) years after the Closing Date. Term Loan Maturity Date: seven (7) years after th… — per an 8-K filed 2015-04-02
   - **Financial maintenance:** Amends the definition of “Combined Fixed Charges” (component of fixed charge coverage); no numeric maintenance ratio le… — per an 8-K filed 2015-04-02, amended 2017-07-05
-  - **Events of default:** References Default/Event of Default under the Credit Agreement; also amends Excess Cash Flow (ECF Certification) report… — per an 8-K filed 2015-04-02, amended 2017-07-05
+  - **Prepayment / events of default:** References Default/Event of Default under the Credit Agreement; also amends Excess Cash Flow (ECF Certification) report… — per an 8-K filed 2015-04-02, amended 2017-07-05
 - **Covenants — UNCOMMITTED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Maturity:** May 11, 2015 · Revolving Credit Termination Date: the earliest of (i) May 11, 2015, (ii) the date the Administrative Agent at the dire… — per an 8-K filed 2014-10-31
   - **Financial maintenance:** not less than $10,000,000 · Minimum Net Working Capital (Section 8.1(a)): not less than $10,000,000 if Elected Facility Amount is $30,000,000; not… — per an 8-K filed 2014-10-31
-  - **Events of default:** This Amendment constitutes a Loan Document and any breach of any representation or warranty made herein or covenant or… — per an 8-K filed 2014-10-31
+  - **Prepayment / events of default:** This Amendment constitutes a Loan Document and any breach of any representation or warranty made herein or covenant or… — per an 8-K filed 2014-10-31
 - **Covenants — ASSET-BASED REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Financial maintenance:** Excess Availability shall be at least $100,000,000 (pro forma, as a condition to the Billings Acquisition Date and as a… — per an 8-K filed 2023-06-01
-  - **Events of default:** Mandatory prepayment: if Billings Acquisition Date does not occur on or before June 5, 2023, Revolving Commitments auto… — per an 8-K filed 2023-06-01
+  - **Prepayment / events of default:** Mandatory prepayment: if Billings Acquisition Date does not occur on or before June 5, 2023, Revolving Commitments auto… — per an 8-K filed 2023-06-01
 
 ### Filing cross-checks — going concern · leverage basis
 

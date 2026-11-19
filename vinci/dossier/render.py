@@ -1567,20 +1567,37 @@ def _clip120(s: str) -> str:
 # on VRRM's A&R revolver the default rate was the only coupon line. A coupon row is the extractor's
 # target term (`covenant_extract._TARGET_TERMS`) or a qualified variant of it ("… — ABR Loans"),
 # so it is matched by prefix; an exact-name test would drop IT's two qualified rate rows.
+# THE PREPAYMENT AND DEFAULT LABELS NAME WHAT THE TERM'S NAME ASKS (STATE row 63, found 2026-11-19):
+# the key was the bare substring "mandatory prepayment", labelled "Events of default", so IT's bare
+# "Mandatory prepayment" row (a 50% net-cash-proceeds sweep) and the combined target term, whose
+# value may state only a prepayment (BRBR, PARR, SMPL), read as a default trigger. The combined
+# term is labelled with both halves, the bare rows with their own; each is matched at the name's
+# START, and the value is never read to choose a label.
 _COUPON_TERM = "interest / coupon rate"
+_PREPAY_DEFAULT_TERM = "mandatory prepayment / events of default"
+_PREPAY_TERM = "mandatory prepayment"
+_DEFAULT_TERM = "events of default"
+_PREPAY_DEFAULT_LABEL = "Prepayment / events of default"
+_DEFAULT_LABEL = "Events of default"
 _SUMMARY_TERMS = (
     ("financial-maintenance", "Financial maintenance"), ("conversion", "Conversion"),
     (_COUPON_TERM, "Interest / coupon"), ("maturity date", "Maturity"),
-    ("mandatory prepayment", "Events of default"),
+    (_PREPAY_DEFAULT_TERM, _PREPAY_DEFAULT_LABEL),
+    (_PREPAY_TERM, "Mandatory prepayment"), (_DEFAULT_TERM, _DEFAULT_LABEL),
 )
+#: the keys matched at the name's START (first match wins, so the combined term precedes its half)
+_PREFIX_KEYS = frozenset({_COUPON_TERM, _PREPAY_DEFAULT_TERM, _PREPAY_TERM, _DEFAULT_TERM})
+#: the labels whose value lead counts enumerated defaults and an acceleration word, as before
+_DEFAULT_LEAD_LABELS = frozenset({_DEFAULT_LABEL, _PREPAY_DEFAULT_LABEL})
 
 
 def _summary_label(term: str) -> str | None:
     """The curated label of a governing term's name, or None (the term stays appendix-only). The
-    coupon key matches the name's START; every other key matches anywhere in it, as before."""
+    coupon, prepayment and default keys match the name's START; every other key matches anywhere
+    in it, as before."""
     name = term.lower()
     return next((lbl for key, lbl in _SUMMARY_TERMS
-                 if (name.startswith(key) if key == _COUPON_TERM else key in name)), None)
+                 if (name.startswith(key) if key in _PREFIX_KEYS else key in name)), None)
 
 
 _MONTHS = ("January|February|March|April|May|June|July|August|September|October|November|December")
@@ -1694,7 +1711,7 @@ def _covenant_value_lead(label: str, raw: str, term: GoverningTerm | None = None
                          re.IGNORECASE)  # else a maturity-anchored date, not a random first date
         m = repl or anch or re.search(_DATE_RE, raw)  # else first date (case-sensitive on months)
         return m.group(1 if (repl or anch) else 0) if m else ""
-    if label == "Events of default":
+    if label in _DEFAULT_LEAD_LABELS:
         nums = {int(n) for n in re.findall(r"(?<![\$\d.])\b(\d{1,2})\.\s", raw)}  # contiguous 1..k
         k = 0
         while k + 1 in nums:  # a section number / dollar figure can't inflate the count

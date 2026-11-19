@@ -137,3 +137,11 @@ coordinator, it is not this build's.
 - Falsifier: a committed governing term naming a coupon that does not start with "Interest /
   coupon rate". `_TARGET_TERMS` makes the model answer the target term on every exhibit. Recorded
   in STATE row 63 (INVARIANT RULE).
+## Amendments
+
+**2026-11-19 — CORRECTION (#1129):** "FOUND, NOT FIXED" above gives WLK's Term Loans Due 2026 as an
+example of a value stating only a prepayment. Its full stored value also states the events of
+default (Section 9.1 (a)–(e)); the page body's 120-character clip hid them. #1129's census, over the
+26 committed pages at main e6a6c318, finds 4 lines that state a prepayment and no default trigger:
+IT's sweep, BRBR, PARR's asset-based revolver and SMPL. WLK's line states both
+(`docs/records/2026-11-19-covenant-prepayment-label-reads-the-name.md`).

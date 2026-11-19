@@ -466,22 +466,22 @@ _7 undated / later aggregate line item(s) in the appendix panel_
 - **Covenants — 2022 REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Eurodollar Base Rate equal to LIBOR; provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate sha… — per an 8-K filed 2020-05-21
   - **Financial maintenance:** Maximum Leverage Ratio: not greater than 3.25:1.00 for any Test Period ending on or before February 1, 2020; (a) 5.00:1… — per an 8-K filed 2020-05-21
-  - **Events of default:** as of the date hereof, no Default or Event of Default has occurred and is continuing (representation; underlying Events… — per an 8-K filed 2020-05-21
+  - **Prepayment / events of default:** as of the date hereof, no Default or Event of Default has occurred and is continuing (representation; underlying Events… — per an 8-K filed 2020-05-21
 - **Covenants — 364 DAY REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Eurodollar Rate plus the Applicable Margin (Eurodollar Rate Loans); Base Rate plus the Applicable Margin (Base Rate Loa… — per an 8-K filed 2020-08-11
   - **Maturity:** August 9, 2021 · August 9, 2021 — per an 8-K filed 2020-08-11
   - **Financial maintenance:** not less than $650,000,000 · Maximum Leverage Ratio: not greater than 5.00 to 1.00 (Test Period ending May 1, 2021) and not greater than 4.50 to 1.0… — per an 8-K filed 2020-08-11
-  - **Events of default:** Mandatory prepayment: if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay Revolvi… — per an 8-K filed 2020-08-11
+  - **Prepayment / events of default:** Mandatory prepayment: if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay Revolvi… — per an 8-K filed 2020-08-11
 - **Covenants — 2026 REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Eurodollar Rate plus the Applicable Margin (for Eurodollar Rate Loans); Base Rate plus the Applicable Margin (for Base… — per an 8-K filed 2021-06-29
   - **Maturity:** June 25, 2026 · the later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date — per an 8-K filed 2021-06-29
   - **Financial maintenance:** Maximum Leverage Ratio: (a) 4.50 to 1.00 for the Test Period ending July 31, 2021, (b) 4.00 to 1.00 for the Test Period… — per an 8-K filed 2021-06-29
-  - **Events of default:** Mandatory prepayment (Section 2.06(c)): prepay Loans/Cash Collateralize L/C Obligations to the extent Total Outstanding… — per an 8-K filed 2021-06-29
+  - **Prepayment / events of default:** Mandatory prepayment (Section 2.06(c)): prepay Loans/Cash Collateralize L/C Obligations to the extent Total Outstanding… — per an 8-K filed 2021-06-29
 - **Covenants — 2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Adjusted Term SOFR + 0.68% (Floor 0.00%) · Adjusted Term SOFR for such Interest Period plus the Applicable Margin (Term SOFR Loans); Base Rate plus the Applicable… — per an 8-K filed 2025-05-09
   - **Maturity:** May 9, 2029 · the later of (a) May 9, 2029 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date — per an 8-K filed 2025-05-09
   - **Financial maintenance:** Leverage Ratio not greater than 3.50 to 1.00 as of the last day of any Test Period — per an 8-K filed 2025-05-09
-  - **Events of default:** Mandatory prepayment: if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay the exc… — per an 8-K filed 2025-05-09
+  - **Prepayment / events of default:** Mandatory prepayment: if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay the exc… — per an 8-K filed 2025-05-09
 
 ### Filing cross-checks — going concern · leverage basis
 
