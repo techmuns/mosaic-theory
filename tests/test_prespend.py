@@ -22,6 +22,7 @@ import pytest
 
 from tests.frozen_support import frozen_page
 from vinci.config import Config
+from vinci.dossier import freshness as fr
 from vinci.dossier import prespend
 from vinci.dossier.prespend import (
     ABSENT,
@@ -42,6 +43,9 @@ from vinci.dossier.prespend import (
 from vinci.dossier.schemas import Dossier
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+#: (W82) the first build day of the gate that counts a filing on a panel's own day: a page
+#: assembled before it ran the strict gate (`freshness.first_event_after`).
+W82_FROM = "2026-11-20"
 DOSS = ROOT / "data" / "dossiers"
 #: the event rule's real filings, read 2026-11-19 (`test_event_rule.py`)
 FILINGS: dict[str, Any] = json.loads(
@@ -594,15 +598,24 @@ def test_a_material_item_the_summary_omits_is_left_to_the_synthesis(
 
 @pytest.mark.parametrize("path", _pages(), ids=lambda p: p.parent.name)
 def test_every_committed_page_passes_the_freshness_check_at_its_own_build_date(
-    path: pathlib.Path,
+    path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Each page was written by a build that passed it, so the $0 check must agree (27 of 27 on
     2026-11-04). A page re-read later is NOT re-measured at today's date: the company may have
     filed since. Since 2026-11-19 the gate is the event rule, read against the page's real
-    filings, cut at its build date."""
+    filings, cut at its build date.
+
+    (W82, 2026-11-20) The rule now counts a filing ON a panel's own day. A page built before that
+    ran the STRICT gate, so it is checked against that gate (`first_event_after` read strictly):
+    AMZN, MCK and UBER, whose panels share their day with a report, pass it and the head gate
+    refuses them. A page built from W82 on must pass the head gate itself."""
     page = Dossier.model_validate_json(path.read_text())
     day = page.assembled_at.date()
     assert page.ticker in FILINGS, f"{page.ticker}: no filings frozen — re-freeze the fixture"
+    if day.isoformat() < W82_FROM:
+        real = fr.first_event_after
+        monkeypatch.setattr(fr, "first_event_after",
+                            lambda *a, **k: real(*a, **{**k, "same_day_counts": False}))
     assert freshness_refusal(gate_layer(page), ticker=page.ticker, built_at=day,
                              filings=[e for e in _events(page.ticker)
                                       if e.filing_date <= day.isoformat()]) is None

@@ -21,6 +21,9 @@ from vinci.dossier.assemble import _freshness_check
 from vinci.dossier.mechanical import read_filing_events
 
 ROOT = Path(__file__).resolve().parents[1]
+#: (W82) the first build day of the gate that counts a filing on a panel's own day: a page
+#: assembled before it ran the strict gate (`freshness.first_event_after`).
+W82_FROM = "2026-11-20"
 FILINGS: dict[str, Any] = json.loads(
     (ROOT / "tests" / "fixtures" / "event_rule_filings.json").read_text())["filings"]
 MEASURED = "2026-11-19"
@@ -77,29 +80,39 @@ def test_vrrm_passes_the_rule_its_cap_drift_is_the_cross_checks_to_state() -> No
     assert not v.stale and [e.filing_date for e in v.events] == []
 
 
-def test_every_committed_page_passed_the_rule_at_its_own_build_date() -> None:
-    """ROSTER WALK: every committed page was built before any filing outdated its panels — the
-    gate the paid build ran would have let each through. It walks every page and fails loud on
-    an empty roster or a page the fixture never read."""
+def test_every_committed_page_was_built_before_any_later_filing() -> None:
+    """ROSTER WALK: every committed page was built before any filing AFTER its panels' day — the
+    gate the paid build ran would have let each through. Since W82 a filing ON a panel's own day
+    outdates it too, and the pages built on such a panel (AMZN, MCK and UBER at 2026-11-19) are
+    refused at their own build date by that filing alone: the walk holds every refusal at a build
+    before W82 to a same-day filing, and pins nothing on which pages those are; a page built from
+    W82 on must pass outright. It fails loud on an empty roster or a page the fixture never
+    read."""
     pages = covered_pages()
     assert pages, "no committed page to walk"
     for t in pages:
         doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
         assert t in FILINGS, f"{t}: no filings read — re-freeze the fixture with the page"
         v = _verdict(t, doc["mechanical"], doc["assembled_at"])
-        assert not v.stale, f"{t}: {v.note()}"
+        if str(doc["assembled_at"])[:10] >= W82_FROM:
+            assert not v.stale, f"{t}: {v.note()}"
+        for p in v.stale:
+            assert p.filing.filing_date == p.panel_date, f"{t}: {v.note()}"
 
 
-def test_the_boundary_is_strictly_after_the_panel_and_on_or_before_the_build() -> None:
+def test_the_boundary_is_on_or_after_the_panels_day_and_on_or_before_the_build() -> None:
     """MCK's real case: its 10-Q 0000927653-26-000281 and its 8-K item 2.02
     0000927653-26-000279 were filed 2026-11-04, its comps panel's own data date — ON the panel
-    does not outdate it (`_panel_freshness_flag`'s ``panel < print``). A day later does; one
-    after the build date is not counted."""
+    outdates it since W82 (operator 2026-11-19, "Yes, that rule"; it passed before). A day
+    before does not; a day later does; one after the build date is not counted."""
     mech = frozen_doc("MCK")["mechanical"]
     assert {d for _k, d in fr.export_panels(mech)} == {"2026-11-04"}, "fixture precondition"
     same_day = [e for e in _events("MCK") if e.filing_date == "2026-11-04"]
     assert {e.form for e in same_day} == {"8-K", "10-Q"}
-    assert not fr.event_verdict(mech, same_day, built_at=MEASURED).stale
+    v = fr.event_verdict(mech, same_day, built_at=MEASURED)
+    assert v.stale and v.stale[0].filing.accession == "0000927653-26-000279"
+    day_before = [fr.FilingEvent("10-Q", "2026-11-03", "X-0")]
+    assert not fr.event_verdict(mech, day_before, built_at=MEASURED).stale
     next_day = [fr.FilingEvent("10-Q", "2026-11-05", "X-1")]
     assert fr.event_verdict(mech, next_day, built_at=MEASURED).stale
     assert not fr.event_verdict(mech, next_day, built_at="2026-11-04").stale
@@ -174,7 +187,8 @@ def test_a_feed_that_cannot_be_read_refuses_rather_than_passing() -> None:
 
 def test_the_reader_keeps_the_three_events_inside_the_window_and_nothing_else() -> None:
     """Only 10-Q, 10-K and an 8-K carrying 2.02 — not a 10-K/A, an S-8 or an 8-K without 2.02 —
-    filed after the oldest export panel and on or before the build."""
+    filed on or after the oldest export panel's day (W82: the 10-Q of 2026-09-25, the panel's own
+    day, which the reader dropped before) and on or before the build."""
     mech = frozen_doc("BURL")["mechanical"]          # comps 2026-09-25
     feed = _Feed([_filing("10-Q", "2026-09-25"), _filing("10-Q", "2026-10-01"),
                   _filing("10-K/A", "2026-10-02"), _filing("S-8", "2026-10-03"),
@@ -183,7 +197,8 @@ def test_the_reader_keeps_the_three_events_inside_the_window_and_nothing_else() 
     filings, unread = read_filing_events(feed, "0001579298", mech,  # type: ignore[arg-type]
                                          dt.date(2026, 11, 19))
     assert unread is None and filings is not None
-    assert [(f.form, f.filing_date) for f in filings] == [("10-Q", "2026-10-01"),
+    assert [(f.form, f.filing_date) for f in filings] == [("10-Q", "2026-09-25"),
+                                                          ("10-Q", "2026-10-01"),
                                                           ("8-K", "2026-10-05")]
 
 

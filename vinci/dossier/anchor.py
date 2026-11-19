@@ -360,19 +360,30 @@ def r1_close(mechanical: dict[str, Any]) -> date | None:
 
 def close_verdict(close: Any, price_date: date | None,
                   filings: Sequence[FilingEvent] | None, *,
-                  unread: str | None = None) -> CloseVerdict:
+                  unread: str | None = None, priced_at_its_report: bool = False) -> CloseVerdict:
     """(W73, 2026-11-19) THE EVENT RULE ON R1'S MULTIPLE, in place of W62's two clocks.
 
     The multiple is a DATED value: the market's TEV over the EBITDA known at its close. It may be
     priced until the company reports again — a 10-Q, a 10-K, an 8-K item 2.02 or a foreign or
     transition filer's report (`freshness.first_event_after`, the rule #1132 judges an export panel
-    by, never a second copy) filed strictly after the close and on or before the page's price
+    by, never a second copy) filed on or after the close's day and on or before the page's price
     date. Then the market has priced news the close has not, so the value is withheld; an export
     carrying a close after that report clears it. One rule for both bands: CIQ's history (its
     quarter columns and the partial column at the export date) and the ex-lease history (one
     observation a quarter, priced about its filing). W62's 30-day clock refused BRBR's close
     although nothing had been reported since, and its ex-lease due date passed TJX's after TJX had
     reported (2026-11-18), until 2026-12-29.
+
+    A REPORT ON THE CLOSE'S OWN DAY COUNTS AS AFTER IT (W82; operator 2026-11-19, "Yes, that
+    rule"): the rule reads dates, and a release after the bell is dated the close's day. BRBR's
+    2026-11-19 export closes 2026-11-18, the day of its 8-K item 2.02 and 10-K.
+
+    ``priced_at_its_report`` (the EX-LEASE band) keeps the strict reading, by ruling (operator
+    2026-11-19, "Yes, option 1 + W84"): its close is CIQ's "Pricing as of" date, by construction
+    the filing date of the very report the quarter is built from, so that report is not later news.
+    Counting it would refuse every ex-lease close for good (16 of 26 committed pages, measured
+    2026-11-19). Where the release came out the same day, after the bell, that close may predate
+    it; pricing such a quarter at the first close after its filing is W84's, in `lease_basis`.
 
     REFUSED, never passed, where it cannot be judged: an undated close or page, a filing list that
     was not read (``filings`` None), and a close AFTER the page's price date (W68: GOOGL's
@@ -399,12 +410,14 @@ def close_verdict(close: Any, price_date: date | None,
         return CloseVerdict(age, None, f"the event rule could not run — {why}",
                             f"the event rule could not read the company's filings ({why})",
                             "reading them")
-    f = first_event_after(cd, filings, upto=price_date)
+    f = first_event_after(cd, filings, upto=price_date, same_day_counts=not priced_at_its_report)
     if f is not None:
+        # (W82) a report on the close's own day is not "after" it: say which it is
+        when = "after the" if f.filing_date > cd else "on the day of the"
         return CloseVerdict(
-            age, True, f"{f.label()} — reported after the {cd} close, on or before the page's "
+            age, True, f"{f.label()} — reported {when} {cd} close, on or before the page's "
                        f"price date, {pd}",
-            f"the company reported after the {cd} close ({f.form}"
+            f"the company reported {when} {cd} close ({f.form}"
             + (f" item {EVENT_8K_ITEM}" if f.form.startswith("8-K") else "")
             + f", filed {f.filing_date})",
             "a CIQ export carrying a close after that filing, on or before the page's close,",
@@ -1838,7 +1851,14 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # close, else the reference date), or when it is after that date. A refusal withholds the
     # screen VALUE, never the recipe (W62): `applicable`, the tag and the tier are untouched. The
     # close stays on show with its date; the median is never priced in its place.
-    ca = close_verdict(mult["as_of"], cut, filings, unread=filings_unread)
+    # (W82) A DELIBERATE DIVERGENCE, by ruling (operator 2026-11-19, "Yes, option 1 + W84"): a
+    # report on the close's own day outdates CIQ's history (BRBR's 2026-11-18 export close and
+    # results), but NOT the ex-lease close, which is CIQ's "Pricing as of" date — by construction
+    # the filing date of the report its quarter is built from. That band keeps the strict reading;
+    # the same-day releasers it lets through (BURL, EPAM, MCK, NCNO, PARR, SMPL, UBER, WLK at
+    # 2026-11-19) are W84's, and W73's drift flag beside the multiple bounds them meanwhile.
+    ca = close_verdict(mult["as_of"], cut, filings, unread=filings_unread,
+                       priced_at_its_report=sel.ex_lease)
     stale = mult_cur is not None and ca.stale is not False
     # (W73, correction 1) the stock's move since that close: a FLAG beside it, never a withholding
     drift, drift_note = ((None, None) if mult_cur is None else close_drift(
