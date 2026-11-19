@@ -458,7 +458,7 @@ def test_an_anchor_with_no_gap_down_is_not_asked_about_a_cause_it_never_named() 
     assert since["gaps"] == [] and since["shape"]["status"] == "present"
     ask = _ask(_brief_with_at_anchor(since))
     assert "cause named at the" not in ask
-    assert "names no cause" in ask and "shows no discrete gap-down" in ask
+    assert "names no cause" in ask and "discrete gap-down" not in ask  # Y18: no shape
 
 
 def test_a_gap_down_with_no_company_filing_names_no_cause() -> None:
@@ -471,7 +471,7 @@ def test_a_gap_down_with_no_company_filing_names_no_cause() -> None:
     assert nofiling["gaps"]
     ask = _ask(_brief_with_at_anchor(nofiling))
     assert "cause named at the" not in ask
-    assert "names no cause" in ask and "no gap-down with a company filing" in ask
+    assert "names no cause" in ask and "none of its drops carries a company filing" in ask
 
 
 def test_an_unread_at_anchor_part_is_not_called_a_part_with_no_drop() -> None:

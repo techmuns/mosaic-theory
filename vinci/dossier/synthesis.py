@@ -3417,7 +3417,15 @@ def _drawdown_anchor_ask(at: dict[str, Any], word: str) -> str:
     (`GapDown.accession`): a drop with no company filing (NCNO's underwrite, TECX's follow) names
     none. A part built before `gaps` existed lists its drops only in `gap_down_dates` and keeps
     the question it was always asked. A part whose shape is not PRESENT could not be read, which is
-    not the same as no drop."""
+    not the same as no drop.
+
+    THE NO-CAUSE QUESTION NAMES NO SHAPE (Y18, operator 2026-11-18: "Reword it now"). Fix 4b told a
+    part with no gap-down that it "shows no discrete gap-down, so it names no cause", and 2 of 5 MCK
+    panel draws restated that and filled it with "a gradual bleed": a shape named as if it were a
+    cause, the label #923 removed. So the part read with no gap-down is told only that it names no
+    cause. A part with unfiled drops, or one not read, keeps its reason in brackets, and all three
+    are asked one question: what is dated and sourced after the anchor, or, where nothing names a
+    cause, a plain statement that the page identifies none."""
     tail = (" Answer inside your points (a bull or bear point, or the decisive question's "
             "evidence), citing these source_refs verbatim; where the facts cannot tell, say so in "
             "key_unknowns. An outlook marked SUPERSEDED is history, never the current guide.")
@@ -3430,11 +3438,12 @@ def _drawdown_anchor_ask(at: dict[str, Any], word: str) -> str:
                 "current facts against it — did the outlook that came with the drop hold, get cut "
                 "again, or recover; did a later drop repeat the cause or name a new one." + tail)
     read = (at.get("shape") or {}).get("status") == "present"
-    why = ("shows no gap-down with a company filing" if gaps
-           else "shows no discrete gap-down" if read else "could not be read (UNKNOWN)")
-    return (f"ASK: the part at the {word} {why}, so it names no cause — never state or assume "
-            f"one. Set the since part and the current facts against the {word}: did a drop come "
-            "after it, and what does its filing name; what does the current outlook say." + tail)
+    why = (" (none of its drops carries a company filing)" if gaps
+           else "" if read else " (it could not be read: UNKNOWN)")
+    return (f"ASK: the part at the {word} names no cause{why} — never state or assume one. From "
+            "the since part and the current facts, state only what is dated and sourced after "
+            f"the {word}: a later drop and the cause its filing names, and the current outlook; "
+            "where nothing names a cause, say plainly that the page identifies no cause." + tail)
 
 
 def _material_figures_digest(figs: list[MaterialFigure]) -> str:
