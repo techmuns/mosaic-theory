@@ -24,6 +24,7 @@ from tests.frozen_support import frozen_page
 from vinci.config import Config
 from vinci.dossier import freshness as fr
 from vinci.dossier import prespend
+from vinci.dossier.extraction_version import includes
 from vinci.dossier.prespend import (
     ABSENT,
     BLOCKS,
@@ -43,9 +44,10 @@ from vinci.dossier.prespend import (
 from vinci.dossier.schemas import Dossier
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-#: (W82) the first build day of the gate that counts a filing on a panel's own day: a page
-#: assembled before it ran the strict gate (`freshness.first_event_after`).
-W82_FROM = "2026-11-20"
+#: (W82) the vintage of the gate that counts a filing on a panel's own day: a page whose stamp
+#: does not include it ran the strict gate (`freshness.first_event_after`) — judged by the
+#: code that built it, never the calendar (a page built today on older code ran the old gate).
+W82_VINTAGE = "2026-11-20.a-report-on-a-dated-values-own-day-counts-as-after-it"
 DOSS = ROOT / "data" / "dossiers"
 #: the event rule's real filings, read 2026-11-19 (`test_event_rule.py`)
 FILINGS: dict[str, Any] = json.loads(
@@ -608,11 +610,12 @@ def test_every_committed_page_passes_the_freshness_check_at_its_own_build_date(
     (W82, 2026-11-20) The rule now counts a filing ON a panel's own day. A page built before that
     ran the STRICT gate, so it is checked against that gate (`first_event_after` read strictly):
     AMZN, MCK and UBER, whose panels share their day with a report, pass it and the head gate
-    refuses them. A page built from W82 on must pass the head gate itself."""
+    refuses them. A page whose stamp includes W82's vintage must pass the head gate itself —
+    the code that built it decides, never the calendar."""
     page = Dossier.model_validate_json(path.read_text())
     day = page.assembled_at.date()
     assert page.ticker in FILINGS, f"{page.ticker}: no filings frozen — re-freeze the fixture"
-    if day.isoformat() < W82_FROM:
+    if not includes(page.extraction_version, W82_VINTAGE):
         real = fr.first_event_after
         monkeypatch.setattr(fr, "first_event_after",
                             lambda *a, **k: real(*a, **{**k, "same_day_counts": False}))

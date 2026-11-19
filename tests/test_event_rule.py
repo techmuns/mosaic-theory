@@ -18,12 +18,14 @@ import pytest
 from tests.frozen_support import FROZEN_PAGES, covered_pages, frozen_doc
 from vinci.dossier import freshness as fr
 from vinci.dossier.assemble import _freshness_check
+from vinci.dossier.extraction_version import includes
 from vinci.dossier.mechanical import read_filing_events
 
 ROOT = Path(__file__).resolve().parents[1]
-#: (W82) the first build day of the gate that counts a filing on a panel's own day: a page
-#: assembled before it ran the strict gate (`freshness.first_event_after`).
-W82_FROM = "2026-11-20"
+#: (W82) the vintage of the gate that counts a filing on a panel's own day: a page whose stamp
+#: does not include it ran the strict gate (`freshness.first_event_after`) — judged by the
+#: code that built it, never the calendar (a page built today on older code ran the old gate).
+W82_VINTAGE = "2026-11-20.a-report-on-a-dated-values-own-day-counts-as-after-it"
 FILINGS: dict[str, Any] = json.loads(
     (ROOT / "tests" / "fixtures" / "event_rule_filings.json").read_text())["filings"]
 MEASURED = "2026-11-19"
@@ -85,16 +87,16 @@ def test_every_committed_page_was_built_before_any_later_filing() -> None:
     gate the paid build ran would have let each through. Since W82 a filing ON a panel's own day
     outdates it too, and the pages built on such a panel (AMZN, MCK and UBER at 2026-11-19) are
     refused at their own build date by that filing alone: the walk holds every refusal at a build
-    before W82 to a same-day filing, and pins nothing on which pages those are; a page built from
-    W82 on must pass outright. It fails loud on an empty roster or a page the fixture never
-    read."""
+    whose stamp does not include W82's vintage to a same-day filing, and pins nothing on which
+    pages those are; a page whose stamp includes it must pass outright. It fails loud on an
+    empty roster or a page the fixture never read."""
     pages = covered_pages()
     assert pages, "no committed page to walk"
     for t in pages:
         doc = json.loads((ROOT / "data" / "dossiers" / t / "dossier.json").read_text())
         assert t in FILINGS, f"{t}: no filings read — re-freeze the fixture with the page"
         v = _verdict(t, doc["mechanical"], doc["assembled_at"])
-        if str(doc["assembled_at"])[:10] >= W82_FROM:
+        if includes(doc.get("extraction_version"), W82_VINTAGE):
             assert not v.stale, f"{t}: {v.note()}"
         for p in v.stale:
             assert p.filing.filing_date == p.panel_date, f"{t}: {v.note()}"

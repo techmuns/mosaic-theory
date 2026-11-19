@@ -141,13 +141,14 @@ superseded-by:
     - the boundary pin now refuses MCK on its own day (it passed before);
     - the reader keeps BURL's 2026-09-25 10-Q, its panel's own day;
     - the roster walk holds every refusal at a page's own build to a same-day filing, and names
-      none of them. A page built from W82 on (`assembled_at` 2026-11-20 or later) must pass
-      outright.
+      none of them. A page whose `extraction_version` includes W82's vintage must pass outright.
   - `test_freshness.py`'s wiring pin (every committed page passes its own gate at `assembled_at`)
-    takes the same split: before W82, only a same-day filing may refuse; from W82 on, nothing may.
-  - `test_prespend.py`'s own-build walk, through the $0 check's `freshness_refusal`: a page
-    built before W82 must pass the strict gate it ran (`first_event_after` read strictly),
-    and one built from W82 on must pass the head gate.
+    takes the same split: on an older stamp only a same-day filing may refuse; on W82's, nothing may.
+  - `test_prespend.py`'s own-build walk, through the $0 check's `freshness_refusal`: a page on
+    an older stamp must pass the strict gate it ran (`first_event_after` read strictly), and one
+    whose stamp includes W82's vintage must pass the head gate.
+  - **Which gate a page ran is read from its stamp** (`extraction_version.includes`), never its
+    `assembled_at`: a page built today on main's older code ran the strict gate (review round 0).
   - `test_w73_dated_multiple.py`'s one-rule pin now walks both bands:
     - a CIQ-history close equals `event_verdict`;
     - an ex-lease close equals the strict `first_event_after`;

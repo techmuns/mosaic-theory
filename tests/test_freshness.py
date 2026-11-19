@@ -20,11 +20,13 @@ import pytest
 
 from tests.frozen_support import frozen_doc
 from vinci.dossier import freshness as fr
+from vinci.dossier.extraction_version import includes
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-#: (W82) the first build day of the gate that counts a filing on a panel's own day: a page
-#: assembled before it ran the strict gate (`freshness.first_event_after`).
-W82_FROM = "2026-11-20"
+#: (W82) the vintage of the gate that counts a filing on a panel's own day: a page whose stamp
+#: does not include it ran the strict gate (`freshness.first_event_after`) — judged by the
+#: code that built it, never the calendar (a page built today on older code ran the old gate).
+W82_VINTAGE = "2026-11-20.a-report-on-a-dated-values-own-day-counts-as-after-it"
 
 
 def _num(x: object) -> float | None:
@@ -441,8 +443,8 @@ def test_no_committed_dossier_was_built_on_a_panel_its_own_gate_would_refuse() -
 
     (W82, 2026-11-20) The rule now counts a filing ON a panel's own day. A page built BEFORE that
     ran the strict gate, so it may be refused today only by such a filing (AMZN, MCK and UBER at
-    2026-11-19), the one thing its gate did not count; a page built from W82 on must pass
-    outright."""
+    2026-11-19), the one thing its gate did not count; a page whose stamp includes W82's
+    vintage must pass outright."""
     filings = json.loads((ROOT / "tests" / "fixtures" / "event_rule_filings.json").read_text())[
         "filings"]
     checked = 0
@@ -456,7 +458,7 @@ def test_no_committed_dossier_was_built_on_a_panel_its_own_gate_would_refuse() -
                                  accession=e["accession"], items=tuple(e["items"]))
                   for e in filings[d.name]["events"]]
         v = fr.event_verdict(doc.get("mechanical") or {}, events, built_at=doc["assembled_at"])
-        if str(doc["assembled_at"])[:10] >= W82_FROM:
+        if includes(doc.get("extraction_version"), W82_VINTAGE):
             assert not v.stale, f"{d.name}: built on a panel its gate refuses — {v.note()}"
         for p in v.stale:   # before W82: only a filing on the panel's own day, which it did not see
             assert p.filing.filing_date == p.panel_date, (
