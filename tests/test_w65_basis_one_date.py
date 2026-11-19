@@ -154,8 +154,8 @@ def test_the_limit_is_a_boundary_both_ways() -> None:
 @pytest.mark.parametrize("cut", ["no_band", "other_multiple", "undated_band"])
 def test_an_undated_multiple_divides_nothing(cut: str) -> None:
     """NEGATIVE for the dividing: a multiple the page cannot date is never shown to be of one date
-    with the TEV, so nothing is divided (W62's undated rule). The TEV's own date is required by
-    the schema (`ImpliedExpectations.tev_as_of`), so only the multiple's side can be undated."""
+    with the TEV, so nothing is divided (W62's undated rule). The TEV's side is
+    `test_a_tev_date_that_is_no_date_is_stated_never_raised`."""
     raw = frozen_doc("IT")
     v = raw["mechanical"]["valuation"]
     band = next(b for b in v["own_history"]["value"] if "EBITDA" in b["metric"])
@@ -174,6 +174,16 @@ def test_an_undated_multiple_divides_nothing(cut: str) -> None:
 
 
 # --- what the readers do with it -----------------------------------------------------------------
+
+def test_a_tev_date_that_is_no_date_is_stated_never_raised() -> None:
+    """Review round 0: `mechanical` writes `tev_as_of` = "UNKNOWN" when the comps date cannot be
+    corrected. The block states it (`date_unstated`, no quotient), never raises out of the build."""
+    got = eb.headline_basis(_it_with_tev_dated("UNKNOWN"))
+    assert got is not None and got.reading == "date_unstated", got
+    assert got.implied_denominator is None and got.days_apart is None
+    assert got.multiple_close == "2026-11-11"
+    assert "'UNKNOWN', not a date" in got.line
+
 
 def test_the_split_names_the_dates_never_a_pairing() -> None:
     """`anchor_split` read GOOGL's 30-day quotient as "neither reported LTM EBITDA nor that plus

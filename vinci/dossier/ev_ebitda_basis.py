@@ -29,7 +29,7 @@ $283.72, and called the $144,827M quotient an EBITDA that "reproduces neither pa
 the same 30 days, and there the quotient landed on reported EBITDA, a rent-free reading on a page
 whose rent is material. So :func:`headline_basis` reads the multiple's close first: within
 :data:`SAME_PRICE_DAYS` of the TEV's date it measures as before; beyond it, or with either date
-unstated, it STATES both dates and divides nothing.
+unstated or not a date, it STATES both dates and divides nothing.
 
 Every threshold is set by face validity, never by what any name's figure would come to.
 """
@@ -117,12 +117,20 @@ def multiple_close(mech: MechanicalLayer) -> tuple[str | None, str]:
     return band.as_of, ""
 
 
+def _day(s: str | None) -> date | None:
+    """An ISO date, or None when the string is not one: `implied_expectations.tev_as_of` carries
+    the placeholder "UNKNOWN" when the comps date could not be corrected (`mechanical`)."""
+    try:
+        return date.fromisoformat(s[:10]) if s else None
+    except ValueError:
+        return None
+
+
 def days_apart(tev_as_of: str | None, close: str | None) -> int | None:
     """The comps TEV's date less the multiple's close, in calendar days; None when either is
-    unstated."""
-    if not tev_as_of or not close:
-        return None
-    return (date.fromisoformat(tev_as_of[:10]) - date.fromisoformat(close[:10])).days
+    unstated or not a date (never a raise: an undated pair is stated, not a failed build)."""
+    t, c = _day(tev_as_of), _day(close)
+    return (t - c).days if t is not None and c is not None else None
 
 
 def _not_one_date(mech: MechanicalLayer, mult: float, tev: float, ltm: float,
@@ -146,13 +154,16 @@ def _not_one_date(mech: MechanicalLayer, mult: float, tev: float, ltm: float,
                 "measured. It is measured again when the Multiples sheet's latest close sits "
                 f"within {SAME_PRICE_DAYS} days of the comps TEV's date.")
     else:
-        # the comps TEV is always dated (`ImpliedExpectations.tev_as_of` is required), so an
-        # unstated pair is an undated multiple, and `why` says what the page lacks
+        # an undated multiple (`why` says what the page lacks), or a comps TEV whose date is not
+        # one (`tev_as_of` reads "UNKNOWN" when the comps date could not be corrected)
         reading = "date_unstated"
-        line = (f"CIQ's {mult:.1f}x and the comps TEV (${tev:,.0f}M, "
-                f"{tev_day or 'date unstated'}) are not shown to be of one date "
-                f"({why or 'the comps TEV is not dated'}), so which EBITDA the multiple divides "
-                "is not measured.")
+        if why:
+            what, tev_when = why, tev_day or "date unstated"
+        else:
+            what, tev_when = f"the comps TEV's date reads {tev_day!r}, not a date", "undated"
+        line = (f"CIQ's {mult:.1f}x and the comps TEV (${tev:,.0f}M, {tev_when}) are not shown "
+                f"to be of one date ({what}), so which EBITDA the multiple divides is not "
+                "measured.")
     return EvEbitdaBasis(
         multiple=mult, tev=round(tev, 3), tev_as_of=tev_day,
         implied_denominator=None, reported_ltm_ebitda=round(ltm, 3),

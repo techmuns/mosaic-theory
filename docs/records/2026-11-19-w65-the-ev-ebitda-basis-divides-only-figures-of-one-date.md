@@ -23,9 +23,10 @@ superseded-by:
   - Both dates and the gap are stated.
   - The quotient (`implied_denominator`) and both ratios are null.
   - `line` says which EBITDA the multiple divides is not measured, and when it will be again.
-- **An undated multiple** (no band, a band carrying another multiple, or an undated close) gives
-  `date_unstated`, with no division. The comps TEV's date is required by the schema
-  (`ImpliedExpectations.tev_as_of`), so only the multiple's side can be undated.
+- **An undated pair** gives `date_unstated`, with no division. That is an undated multiple (no
+  band, a band carrying another multiple, or an undated close), or a comps TEV whose date is no
+  date. `mechanical` writes `tev_as_of` = "UNKNOWN" when the comps date cannot be corrected; the
+  first cut raised on it, and review round 0 made it a stated reading.
 - **The readers:**
   - Both renderers print the line for the two new readings (`_BASIS_WORTH_STATING`, md and web
     twins).
@@ -107,19 +108,20 @@ superseded-by:
     `implied_expectations.tev` as CIQ's comps TEV, and no committed `dossier.json` moved.
 - **Frozen corpus** (`tests/fixtures/frozen_pages/*`, 43 blocks): 8 move to `dates_differ`. The
   gaps are 0 days (31 blocks), −1 (2), −3 (2), 12 (2), 30 (3), 63, 98 and 119.
-- **Pins:** `tests/test_w65_basis_one_date.py`, 19, built from real committed JSON.
+- **Pins:** `tests/test_w65_basis_one_date.py`, 20, built from real committed JSON.
   - **Positive:** GOOGL and AMZN at the cut, and IT frozen 2026-08-18.
   - **Negative:** IT (0 days), UBER (−1) and LLY (−3) at the cut, with reading, quotient, both
     ratios and line identical to the committed block.
   - **Boundary:** ±4 days measured, ±5 days not, on IT with its TEV's date moved.
-  - **Undated multiple:** three cuts (no band, another multiple, an undated close).
+  - **Undated pair:** three multiple cuts (no band, another multiple, an undated close),
+    and a TEV dated "UNKNOWN" (review round 0).
   - **Readers:** `anchor_split`'s refusal, and the md and web e2e (real JSON → render).
   - **Gate unmoved:** the freshness gate's oldest panel does not move.
   - **Committed pages:** a roster walk, and a presence-parity round trip.
   - **The synthesis facts:** a pre-W65 block sends no new key (every committed page), and a
     rebuilt one sends them.
   - **Parity:** the two renderers hold one set of readings.
-- **17 of the 19 FAIL on main `8bc138cd`.** That was checked inside a full export of main with
+- **18 of the 20 FAIL on main `8bc138cd`.** That was checked inside a full export of main with
   `vinci` asserted to load from it. The other two are a check that the cut holds the pages, and the
   panel-stamp guard, which the rename mutant below proves.
 - **Mutation, on the rebased code: 14 of 14 mutants red:**
