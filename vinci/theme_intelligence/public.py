@@ -1,0 +1,110 @@
+"""WHAT THE REGISTRY EXPORT MAY CARRY. The export (`Store.export_jsonl`, behind `state push`) is
+the registry of record on the `theme-intelligence-state` branch of a PUBLIC repository, so
+everything it writes is published. Operator ruling 2026-11-19 ("Fix source + scrub tip"): only
+titles, figures and SHORT quotes may leave this machine.
+
+On a74c4e30 the branch carried 31,207 distinct characters of report body misfiled as section
+headings, plus a 2,042-character and five 911-character claim quotes, and 17 + 57 + 3 absolute
+local paths. The rules, applied to every row as it is written (`public_payload`):
+- a source's own words (a `quote`, a source-risk `sentence`, and a passage claim's `statement`,
+  which is the source's sentence) are at most `DESK_QUOTE_MAX_CHARS`, the desk's cap;
+- a claim's quote cut that way keeps its figure: when the head would drop its `value_text`, the
+  quote is the window around the figure's first occurrence instead (`claim_quote`), so a later
+  card citing it still finds its number;
+- a block's `section` longer than `HEADING_MAX_CHARS` is no heading (body text the reader misfiled)
+  and is dropped;
+- an absolute local path becomes relative to the data directory, or `⟨local path⟩/<file name>`
+  outside it.
+
+An SEC filing's own sentence (`basis_quote`) is a public record, not a publisher's text, and is not
+capped. Text the model wrote (card lines, reasons, rule traces) is not a source's words and is not
+capped. A field the export shortens is shortened in the export ONLY: this machine's registry keeps
+every word, and an import holds the shortened text.
+"""
+
+from __future__ import annotations
+
+import re
+from collections import Counter
+from pathlib import Path
+from typing import Any
+
+from vinci.theme_intelligence.config import DEFAULT_DATA_DIR
+from vinci.theme_intelligence.display import DESK_QUOTE_MAX_CHARS, desk_quote
+from vinci.theme_intelligence.documents import HEADING_MAX_CHARS
+
+#: keys whose string value is a SOURCE's own words, wherever they sit in a payload
+SOURCE_TEXT_KEYS = frozenset({"quote", "sentence"})
+#: an absolute path: a POSIX root a machine's files sit under, or a Windows drive
+_ABS_PATH = re.compile(r"(?<![\w.~])(?:/(?:Users|private|home|var|tmp|Volumes|opt|root)/"
+                       r"[^\s'\"()\[\]<>,;]+|[A-Za-z]:\\[^\s'\"()\[\]<>,;]+)")
+LOCAL_PATH = "⟨local path⟩"
+
+
+def claim_quote(quote: str, value_text: str | None) -> str:
+    """A claim's quote at most `DESK_QUOTE_MAX_CHARS`: its head, or — when the head drops the
+    claim's figure — the window around the figure's first occurrence, "…" on each cut side."""
+    head, cut = desk_quote(quote)
+    if not cut or not value_text or value_text in head or value_text not in quote:
+        return head
+    i = quote.index(value_text)
+    room = DESK_QUOTE_MAX_CHARS - 2  # the two "…"
+    start = max(0, min(i - (room - len(value_text)) // 2, len(quote) - room))
+    if start > 0:  # begin at a word
+        sp = quote.find(" ", start)
+        start = sp + 1 if 0 <= sp < i else start
+    end = min(len(quote), start + room)
+    if end < len(quote):  # end at a word
+        sp = quote.rfind(" ", i + len(value_text), end)
+        end = sp if sp > 0 else end
+    return ("…" if start else "") + quote[start:end].strip() + ("…" if end < len(quote) else "")
+
+
+def public_path(text: str, data_dir: Path) -> str:
+    """Every absolute path in `text`, relative to `data_dir` when under it, else the file name."""
+    root = str(data_dir.resolve())
+    # the conventional layout's own relative name ("data/theme_intelligence/…"), the form the
+    # registry already holds for paths it recorded relative; any other folder by its name
+    prefix = (DEFAULT_DATA_DIR.as_posix() if data_dir.resolve().parts[-2:] == DEFAULT_DATA_DIR.parts
+              else data_dir.name)
+
+    def one(m: re.Match[str]) -> str:
+        p = m.group(0)
+        for base in (root, str(data_dir)):
+            if p == base or p.startswith(base.rstrip("/") + "/"):
+                return f"{prefix}/{p[len(base):].lstrip('/')}".rstrip("/")
+        return f"{LOCAL_PATH}/{Path(p).name}"
+
+    return _ABS_PATH.sub(one, text)
+
+
+def public_payload(table: str, payload: Any, data_dir: Path, cut: Counter[str]) -> Any:
+    """`payload` as the export may carry it (the module rules). `cut` counts each rule's cuts by
+    `table.field`, so a caller can say what an export shortened."""
+
+    def walk(o: Any, path: str) -> Any:
+        if isinstance(o, dict):
+            out: dict[str, Any] = {}
+            for k, v in o.items():
+                here = f"{path}.{k}"
+                if isinstance(v, str) and k in SOURCE_TEXT_KEYS and len(v) > DESK_QUOTE_MAX_CHARS:
+                    v = (claim_quote(v, o.get("value_text")) if table == "claims" and k == "quote"
+                         else desk_quote(v)[0])
+                    cut[here] += 1
+                elif (isinstance(v, str) and table == "claims" and k == "statement"
+                      and len(v) > DESK_QUOTE_MAX_CHARS):  # a passage claim's: the sentence
+                    v = desk_quote(v)[0]
+                    cut[here] += 1
+                elif k == "section" and isinstance(v, str) and len(v) > HEADING_MAX_CHARS:
+                    v = None
+                    cut[here] += 1
+                out[k] = walk(v, here)
+            return out
+        if isinstance(o, list):
+            return [walk(v, f"{path}[]") for v in o]
+        if isinstance(o, str) and _ABS_PATH.search(o):
+            cut[f"{path} (local path)"] += 1
+            return public_path(o, data_dir)
+        return o
+
+    return walk(payload, table)

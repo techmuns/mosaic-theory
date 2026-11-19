@@ -61,6 +61,12 @@ SUPPORTED = {".pdf": "pdf", ".html": "html", ".htm": "html", ".md": "markdown",
 SCANNED_MAX_WORDS = 15
 #: vector objects (curves / rects) on one page above which it is said to carry a chart
 CHART_MIN_OBJECTS = 40
+#: THE LONGEST HEADING A PDF's large type is read as (characters, face validity, 2026-11-19). The
+#: registry's sections at state a74c4e30: every real headline is at most 149 characters (24 words);
+#: every longer one is a pull-quote or body text (183–1,204). Two Goldman Sachs reports set whole
+#: paragraphs in large type, and the wrapped-heading merge read them as ONE heading of 1,089 and
+#: 1,204 characters, the section of every block after it. Past this, large type is a paragraph.
+HEADING_MAX_CHARS = 150
 _GENERIC_TITLE = re.compile(r"^(untitled|microsoft (word|powerpoint)|document\d*|slide \d+)\b|"
                             r"\.(docx?|pdf|pptx?|html?|txt|md)$", re.I)
 #: a PDF's Author field as an authoring tool fills it, not a person (U30b: "Microsoft Office User")
@@ -418,6 +424,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
         dropped = 0
         blocks: list[Block] = []
         section: str | None = None
+        before_heading: str | None = None  # the section a heading run replaced
         title_lines: list[tuple[float, str]] = []
         page1_texts: list[str] = []
         for n, (page_lines, tables) in enumerate(zip(lines_by_page, tables_by_page,
@@ -426,6 +433,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
             last_bottom: float | None = None
             last_size = body_size
             heading_bottom: float | None = None
+            large_para = False  # inside a paragraph set in large type (HEADING_MAX_CHARS)
             pending = sorted(tables, key=lambda tb: tb[0])
             for ln in page_lines:
                 top = float(ln.get("top", 0))
@@ -459,14 +467,26 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                             # back UP the page: the next column begins a paragraph of its own
                             or gap < -max(4.0, body_size)
                             or abs(size - last_size) > 1.0)
-                if heading and heading_bottom is not None and blocks \
-                        and blocks[-1].kind == "heading" and top - heading_bottom < size:
+                wrapped = (heading and heading_bottom is not None and top - heading_bottom < size
+                           and (large_para or (bool(blocks) and blocks[-1].kind == "heading")))
+                if wrapped and large_para:  # a paragraph in large type goes on
+                    para.append(text)
+                    heading_bottom = float(ln.get("bottom", top))
+                elif wrapped and len(f"{blocks[-1].text} {text}") > HEADING_MAX_CHARS:
+                    # no heading runs this long: large type setting a PARAGRAPH. Its lines are
+                    # that paragraph, and the blocks after it keep the section before it
+                    para = [blocks.pop().text, text]
+                    section = before_heading
+                    large_para = True
+                    heading_bottom = float(ln.get("bottom", top))
+                elif wrapped:
                     # a heading wrapped onto a second line is ONE heading
                     section = f"{blocks.pop().text} {text}"
                     _block(blocks, "heading", section, n, section)
                     heading_bottom = float(ln.get("bottom", top))
                 elif heading:
                     _flush(blocks, para, n, section)
+                    before_heading, large_para = section, False
                     section = text
                     _block(blocks, "heading", text, n, section)
                     heading_bottom = float(ln.get("bottom", top))
@@ -478,7 +498,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                         _flush(blocks, para, n, section)
                     para.append(text)
                 if not heading:
-                    heading_bottom = None
+                    heading_bottom, large_para = None, False
                 last_bottom = float(ln.get("bottom", top))
                 last_size = size
             _flush(blocks, para, n, section)

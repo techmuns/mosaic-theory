@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections import Counter
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 from datetime import UTC, datetime
@@ -805,12 +806,19 @@ class Store:
               "source_health", "documents", "enrichments", "market_contexts",
               "review_resolutions")
 
-    def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False) -> dict[str, int]:
+    def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False,
+                     cut: Counter[str] | None = None) -> dict[str, int]:
         """Deterministic text dump, one file per table, rows sorted by primary key. Article BODY
         TEXT is excluded by default (licensed third-party text never leaves this machine); block
-        hashes stay, so provenance survives."""
+        hashes stay, so provenance survives. The export is PUBLIC (the state branch), so every row
+        passes `public.public_payload`: a source's words at most the desk's quote cap, no
+        misfiled section, no local path (operator 2026-11-19). `cut` counts what it shortened;
+        a row it leaves alone is written as stored."""
+        from vinci.theme_intelligence.public import public_payload
+
         out_dir.mkdir(parents=True, exist_ok=True)
         counts: dict[str, int] = {}
+        cut = Counter() if cut is None else cut
         for table in self.TABLES:
             cols = [r[1] for r in self.conn.execute(f"PRAGMA table_info({table})")]
             order = ", ".join(self._pk_cols(table) or cols[:1])
@@ -822,6 +830,11 @@ class Store:
                     p = json.loads(rec["payload"])
                     p["blocks"] = [{**b, "text": ""} for b in p.get("blocks", [])]
                     rec["payload"] = json.dumps(p, sort_keys=True)
+                if isinstance(rec.get("payload"), str) and not include_article_text:
+                    p = json.loads(rec["payload"])
+                    q = public_payload(table, p, self.path.parent, cut)
+                    if q != p:
+                        rec["payload"] = json.dumps(q, sort_keys=True)
                 lines.append(json.dumps(rec, sort_keys=True))
             (out_dir / f"{table}.jsonl").write_text("".join(f"{x}\n" for x in lines))
             counts[table] = len(lines)

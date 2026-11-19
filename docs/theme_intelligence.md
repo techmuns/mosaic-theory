@@ -370,6 +370,12 @@ python -m vinci.theme_intelligence documents --status HELD
   NAME --by WHO --reason "…"` removes an operator-stated author (at upload or later), never one the
   page names. A name may not contain `;`. Push the registry right after (`state push`): a pull
   refuses to discard a local run it cannot replay.
+- **Large type is a heading only while it is short** (`documents.HEADING_MAX_CHARS`, 2026-11-19).
+  A heading wrapped onto a second line is one heading, but no heading runs past 150 characters:
+  every real headline in the registry is at most 149. Two Goldman Sachs reports set whole
+  paragraphs in large type, and the merge read them as headings of up to 1,204 characters, the
+  section of every block after them. Past the limit, the large lines are one paragraph, and the
+  blocks after it keep the section before it.
 - **A tool's login is no author** (`documents._LOGIN_AUTHOR`, 2026-11-19). A PDF's Author field is
   often filled by the software that made it: its placeholder user ("Microsoft Office User") or
   the login it ran under (QuarkXPress wrote "girquark" on four Goldman Sachs reports). A login has
@@ -937,6 +943,20 @@ bin/theme-intelligence-weekly
   open; code refuses to open a registry NEWER than itself.
 - Backups: `backup` (consistent SQLite copy); `export-state` / `import-state` for a portable,
   diff-able JSONL copy (article text excluded).
+- **THE EXPORT IS PUBLIC** (operator 2026-11-19, "Fix source + scrub tip"). `export-state` and
+  `state push` write the registry of record to the `theme-intelligence-state` branch of this
+  public repository, so only titles, figures and SHORT quotes may leave this machine.
+  `public.public_payload` applies to every exported row:
+  - a source's own words (`quote`, a source-risk `sentence`, a passage claim's `statement`) at most
+    400 characters (`DESK_QUOTE_MAX_CHARS`). A claim's quote keeps its figure: the window around
+    it when the head would drop it;
+  - a block `section` over 150 characters (`documents.HEADING_MAX_CHARS`) dropped, as body text the
+    reader misfiled;
+  - every absolute local path made relative to the data directory, or `⟨local path⟩/<file>`.
+
+  An SEC filing's sentence (`basis_quote`) is a public record and is not capped. This machine's
+  registry keeps every word, and an import holds the shortened text.
+  `tests/test_theme_intelligence_public_export.py` guards an export and the committed fixtures.
 
 ## Secrets
 
