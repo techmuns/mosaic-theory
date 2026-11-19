@@ -261,6 +261,60 @@ def moved_cited_release_figures(before: dict[str, Any], after: dict[str, Any],
     return hits
 
 
+#: The basis blocks' money figures ($M) a synthesis can quote (W80, 2026-11-19) — what
+#: `valuation_bases_transform` rewrites, and what `material_figures` (the financial tables) never
+#: reads: the headline's basis (`valuation.ev_ebitda_basis`) and R1's ex-lease multiple at the
+#: page's price (`valuation.ev_ebitda_ex_lease_at_price`), the two blocks one transform writes.
+_BASIS_FIGURES: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("ev_ebitda_basis", ("tev", "implied_denominator", "reported_ltm_ebitda", "rent")),
+    ("ev_ebitda_ex_lease_at_price", ("ev", "net_debt", "ltm_ebitda")),
+)
+
+
+def _basis_figures(mech: dict[str, Any]) -> dict[str, float]:
+    """Every money figure the basis blocks state, keyed by where it sits — plus reported LTM EBITDA
+    plus rent, the sum the basis line prints ("= $190,600M") and a synthesis quotes."""
+    val = mech.get("valuation") or {}
+    out: dict[str, float] = {}
+    for block, keys in _BASIS_FIGURES:
+        node = val.get(block) if isinstance(val, dict) else None
+        if not isinstance(node, dict):
+            continue
+        for key in keys:
+            x = node.get(key)
+            if isinstance(x, (int, float)) and not isinstance(x, bool):
+                out[f"{block}.{key}"] = float(x)
+    ltm = out.get("ev_ebitda_basis.reported_ltm_ebitda")
+    rent = out.get("ev_ebitda_basis.rent")
+    if ltm is not None and rent is not None:
+        out["ev_ebitda_basis.reported_ltm_ebitda + rent"] = ltm + rent
+    return out
+
+
+def moved_cited_basis_figures(before: dict[str, Any], after: dict[str, Any],
+                              doc: dict[str, Any]) -> list[str]:
+    """Basis-block figures that MOVED and that the stored prose CITES at their OLD value (W80).
+
+    `material_figures` reads the financial tables only, so a refresh of the basis blocks was
+    invisible to this file's guards: W65's $0 basis refresh of GOOGL would have nulled the
+    $144,827M quotient its kept synthesis quotes ("an implied $144,827M denominator that
+    reproduces NEITHER …") and passed, leaving the page with two explanations of one multiple.
+    A figure that vanished counts as moved; a value the block still carries (under any key) does
+    not, as in `moved_cited_release_figures`. Cited means dollar-anchored (`_total_cited`)."""
+    old, new = _basis_figures(before), _basis_figures(after)
+    still = {round(v, 6) for v in new.values()}
+    prose = _prose(doc)
+    hits: list[str] = []
+    for key, val in old.items():
+        if new.get(key) == val or round(val, 6) in still:
+            continue
+        if _total_cited(prose, val):
+            now = new.get(key)
+            hits.append(f"{key} = {val:,.1f} → "
+                        f"{'absent' if now is None else format(now, ',.1f')}")
+    return hits
+
+
 #: A revision count as the catalyst-path strings print it: '41↑/4↓'.
 _COUNT_TOKEN = re.compile(r"\d+↑/\d+↓")
 
@@ -607,7 +661,8 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
     if doc.get("synthesis") is not None and (bad := [
             *moved_cited_claims(before, after, doc), *moved_cited_counts(before, after, doc),
             *moved_cited_returns(before, after, doc),
-            *moved_cited_release_figures(before, after, doc)]):
+            *moved_cited_release_figures(before, after, doc),
+            *moved_cited_basis_figures(before, after, doc)]):
         raise RefreshRefusedError(
             f"{doc.get('ticker')}: this refresh moves figures the stored synthesis CITES — "
             f"{'; '.join(bad)}. Preserving the prose would leave the page citing numbers its own "
