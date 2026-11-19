@@ -391,8 +391,10 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
     It replaces the "same TEV over REPORTED EBITDA" restatement for these names, because that
     figure is neither basis: CIQ's TEV carries the operating leases while reported EBITDA is after
     rent (TJX's read 19.1x where the consistent ex-lease figure is about 16x). The two consistent
-    pairs are TEV with leases over EBITDA plus rent, or TEV without them over reported EBITDA; R1's
-    earnings are reported EBITDA, so the line names the second, and the bridge that goes with it.
+    pairs are TEV with leases over EBITDA plus rent, or TEV without them over EBITDA after rent;
+    R1's earnings (its mid-cycle EBIT + D&A) are after rent, so the line names the second, and the
+    bridge that goes with it. (W81) On a page at that vintage the band's denominator is named
+    CIQ's four-quarter EBITDA, the margin CIQ's annual LTM EBITDA's (:func:`names_ebitdas_apart`).
 
     WHAT R1 PRICES IS READ OFF THE ANCHOR, not the lease block (review of #750): the block can land
     before the anchor is re-derived, and a line asserting the ex-lease pricing beside a screening

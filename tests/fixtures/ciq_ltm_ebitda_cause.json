@@ -2,7 +2,7 @@
  "_about": "W81 (defect D20): CIQ's annual LTM EBITDA against its four quarters, and the cause the LTM check names (2026-11-19). Cut at main ac3c9479 from each page's OWN Financials exports, found by the sha256 its inputs.ciq records (each workbook's sha256 is below), read through vinci.dossier.ciq's real decode path. Kept: each sheet's period-header row whole; on the two Income Statements the rows the LTM check reads (the annual summary's core money rows, 'EBIT', and the unusual-items block with its delimiters), values only in the LTM column (annual) or the four quarters ending on it (quarterly); on the annual Cash Flow, 'Depreciation & Amort., Total' and 'Other Amortization', the LTM column only. Every other row is an empty row, so each kept row keeps its position in the export. DERIVED values only; the workbooks are never committed.",
  "names": {
   "IT": {
-   "page": "data/dossiers/IT/dossier.json",
+   "page": "tests/fixtures/frozen_pages/cut-4889ddba/IT/dossier.json",
    "workbooks": {
     "annual": {
      "file": "Gartner Inc NYSE IT Financials_Annual.xls",
@@ -1154,7 +1154,7 @@
    }
   },
   "MCK": {
-   "page": "data/dossiers/MCK/dossier.json",
+   "page": "tests/fixtures/frozen_pages/cut-4889ddba/MCK/dossier.json",
    "workbooks": {
     "annual": {
      "file": "McKesson Corporation NYSE MCK Financials_Annual.xls",
@@ -2438,7 +2438,7 @@
    }
   },
   "VITL": {
-   "page": "data/dossiers/VITL/dossier.json",
+   "page": "tests/fixtures/frozen_pages/cut-4889ddba/VITL/dossier.json",
    "workbooks": {
     "annual": {
      "file": "Vital Farms Inc NasdaqGM VITL Financials_Annual.xls",
@@ -3405,7 +3405,7 @@
    }
   },
   "WLK": {
-   "page": "data/dossiers/WLK/dossier.json",
+   "page": "tests/fixtures/frozen_pages/cut-4889ddba/WLK/dossier.json",
    "workbooks": {
     "annual": {
      "file": "Westlake Corporation NYSE WLK Financials_Annual.xls",

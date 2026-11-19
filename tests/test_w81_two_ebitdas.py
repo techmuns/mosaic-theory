@@ -17,7 +17,8 @@ THE FIX, IN THREE PARTS, each pinned here.
   check's own tolerance, and otherwise says the cause was not read. Pinned on frozen cells of four
   pages' own exports (`tests/fixtures/ciq_ltm_ebitda_cause.json`), through the real check.
 * `refresh.refreshed_ltm_flags` carries that cause to a committed page at $0, and refuses unless the
-  cause is all that moves. Pinned on the real committed pages.
+  cause is all that moves. Pinned on the four pages as frozen at the cut (`cut-4889ddba`, the same
+  recorded exports, LTM flags and annual table as the living pages at `bc1c0e16`).
 """
 from __future__ import annotations
 
@@ -29,6 +30,7 @@ from typing import Any
 
 import pytest
 
+from tests.frozen_support import frozen_doc
 from vinci.dossier import ebitda_recon as er
 from vinci.dossier import ev_ebitda_basis as eb
 from vinci.dossier import ltm_quarters as lq
@@ -214,7 +216,7 @@ def _bundle(name: str, sheets: dict[str, list[list[str]]] | None = None) -> CiqB
 
 
 def _table(name: str) -> Any:
-    fs = _mech(_doc(ROOT / FIX["names"][name]["page"])).financial_summary
+    fs = _mech(frozen_doc(name)).financial_summary
     assert fs is not None
     return fs.annual.value
 
@@ -317,7 +319,7 @@ def test_the_refresh_moves_only_the_ebitda_flag(name: str, lead: str) -> None:
     """(+) The committed page, re-run on frozen cells of its own recorded exports: exactly one flag
     moves, the EBITDA one, and only by gaining its cause; every other flag keeps its text and
     place."""
-    doc = _doc(ROOT / FIX["names"][name]["page"])
+    doc = frozen_doc(name)
     new = rf.refreshed_ltm_flags(doc, _bundle(name), _shas(name))
     old = doc["qa_flags"]
     moved = [(a, b) for a, b in zip(old, new, strict=True) if a != b]
@@ -328,7 +330,7 @@ def test_the_refresh_moves_only_the_ebitda_flag(name: str, lead: str) -> None:
 
 def test_another_export_is_refused() -> None:
     """(−) An export whose sha256 is not the one the page records is never read under it."""
-    doc = _doc(ROOT / FIX["names"]["IT"]["page"])
+    doc = frozen_doc("IT")
     wrong = {**_shas("IT"), "annual": "0" * 64}
     with pytest.raises(rf.RefreshRefusedError, match="not the one the page records"):
         rf.refreshed_ltm_flags(doc, _bundle("IT"), wrong)
@@ -336,7 +338,7 @@ def test_another_export_is_refused() -> None:
 
 def test_a_page_recording_no_export_is_refused() -> None:
     """(−) A page that records no Financials export cannot show the re-run reads its own."""
-    doc = _doc(ROOT / FIX["names"]["IT"]["page"])
+    doc = frozen_doc("IT")
     doc["inputs"]["ciq"] = [c for c in doc["inputs"]["ciq"] if c.get("kind") != "financials"]
     with pytest.raises(rf.RefreshRefusedError, match="records no annual Financials export"):
         rf.refreshed_ltm_flags(doc, _bundle("IT"), _shas("IT"))
@@ -350,7 +352,7 @@ def test_a_re_run_that_moves_more_than_the_cause_is_refused() -> None:
     i = next(k for k, r in enumerate(q) if r and r[0].strip() == "EBITDA")
     j = next(k for k, c in enumerate(q[i]) if k and c.strip())
     q[i][j] = str(float(q[i][j]) + 10.0)
-    doc = _doc(ROOT / FIX["names"]["IT"]["page"])
+    doc = frozen_doc("IT")
     with pytest.raises(rf.RefreshRefusedError, match="more than the cause would move"):
         rf.refreshed_ltm_flags(doc, _bundle("IT", sheets), _shas("IT"))
 
@@ -474,3 +476,102 @@ def _stamped_old(path: Path) -> dict[str, Any]:
     doc["layer_refreshes"][-1]["extraction_version"] = (
         "2026-11-19.the-ev-ebitda-basis-divides-only-figures-of-one-date")
     return doc
+
+
+# --- coherence: a W81 page carries no old name on any line the code owns (B, 2026-11-19) ---------
+#
+# The renderer's words follow the page's vintage, and ANY writer that records a layer refresh
+# stamps the current version: `refresh_dossier` with any transform (price values, the EV gap,
+# consensus…), `anchor-backfill`, `financials-backfill`, `caveat-reword`, `ciq-reread`,
+# `driver-facts-pass`, `transcript-run-cut`. None of them rebuilds the stored basis, at-price or
+# reconciliation lines, so a W81-stamped page can carry old stored lines beside new rendered ones:
+# one figure, two names. This pin turns that red on the committed pages. The block's `source_ref`
+# is exempt by design: it is a citation key the kept prose matches verbatim, and it prints only as
+# the synthesis's own copy.
+
+#: The old names, on the lines that name either CIQ EBITDA.
+_OLD_WORDS = re.compile(r"reported LTM EBITDA|reported EBITDA|% reported\b|\bits LTM\b"
+                        r"|÷ LTM EBITDA|is the reported figure")
+#: The rendered lines the code words (md main body), by their leads.
+_PRINTED = ("- **What CIQ's EV/EBITDA divides:**", LEASE,
+            "- **R1's basis (ex-lease EV/EBITDA) at the page's price:**",
+            "> **CIQ's EBITDA against the filings.**")
+
+
+def incoherent(doc: dict[str, Any], mds: dict[str, str]) -> list[str]:
+    """Every code-owned line of ``doc`` (stored) and of ``mds`` (rendered, by name) still carrying
+    an old name. Empty for a coherent page."""
+    mech = doc["mechanical"]
+    v = mech.get("valuation") or {}
+    rec = (mech.get("financial_summary") or {}).get("ebitda_reconciliation") or {}
+    stored = (("valuation.ev_ebitda_basis.line", (v.get("ev_ebitda_basis") or {}).get("line")),
+              ("valuation.ev_ebitda_ex_lease_at_price.line",
+               (v.get("ev_ebitda_ex_lease_at_price") or {}).get("line")),
+              ("financial_summary.ebitda_reconciliation.line", rec.get("line")))
+    out = [where for where, line in stored if line and _OLD_WORDS.search(line)]
+    for name, md in mds.items():
+        out += [f"{name}: {ln[:70]}" for ln in md.splitlines()
+                if ln.startswith(_PRINTED) and _OLD_WORDS.search(ln)]
+    return out
+
+
+def _is_w81(doc: dict[str, Any]) -> bool:
+    from vinci.dossier.render import names_ebitdas_apart
+    from vinci.dossier.schemas import Dossier
+
+    return names_ebitdas_apart(Dossier.model_validate(doc))
+
+
+def test_every_w81_committed_page_is_coherent() -> None:
+    """(+) THE INVARIANT, on the committed tree: every page built or refreshed at W81 or later
+    carries no old name on a code-owned line, stored or rendered (`dossier.md` and its
+    `frontend/dossiers` mirror). Pages built before W81 are exempt: they keep the old words
+    throughout, which `test_an_old_page_renders_byte_identical_to_its_committed_md` holds."""
+    for path in PAGES:
+        doc = _doc(path)
+        if not _is_w81(doc):
+            continue
+        t = path.parent.name
+        mds = {"dossier.md": (path.parent / "dossier.md").read_text()}
+        mirror = ROOT / "frontend" / "dossiers" / f"{t}.md"
+        if mirror.exists():
+            mds["frontend md"] = mirror.read_text()
+        assert not incoherent(doc, mds), (t, incoherent(doc, mds))
+
+
+def test_a_w81_stamp_over_old_stored_lines_is_caught() -> None:
+    """(−) TJX's page as frozen at the cut, stamped as refreshed at this code, its stored lines
+    left as built (what any writer but `valuation_bases_transform` would do): the check names all
+    three stored lines, and the rendered basis, at-price and reconciliation lines printing them."""
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier
+
+    doc = _stamped(frozen_doc("TJX"))
+    assert _is_w81(doc)
+    found = incoherent(doc, {"dossier.md": render_markdown(Dossier.model_validate(doc))})
+    assert {"valuation.ev_ebitda_basis.line", "valuation.ev_ebitda_ex_lease_at_price.line",
+            "financial_summary.ebitda_reconciliation.line"} <= set(found), found
+    printed = [f for f in found if f.startswith("dossier.md:")]
+    assert len(printed) == 3 and not any(LEASE in f for f in printed), printed
+
+
+def test_a_w81_page_with_its_lines_rebuilt_is_coherent() -> None:
+    """(+) TJX's frozen page with its three stored lines rebuilt by this code (the basis block, the
+    at-price line from its frozen companyfacts, the reconciliation's own sentence), then stamped:
+    nothing old remains, stored or rendered."""
+    from tests.test_ev_ebitda_basis import _fixture
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier
+
+    raw = frozen_doc("TJX")
+    mech = _mech(raw)
+    v = raw["mechanical"]["valuation"]
+    v["ev_ebitda_basis"] = json.loads(eb.headline_basis(mech).model_dump_json())  # type: ignore[union-attr]
+    v["ev_ebitda_ex_lease_at_price"] = json.loads(
+        eb.ex_lease_at_price(mech, _fixture("TJX")).model_dump_json())  # type: ignore[union-attr]
+    rec = mech.financial_summary.ebitda_reconciliation  # type: ignore[union-attr]
+    assert rec is not None and rec.ciq_ltm is not None
+    raw["mechanical"]["financial_summary"]["ebitda_reconciliation"]["line"] = er._line(
+        list(rec.quarters), rec.ciq_ltm, rec.filing_ltm, rec.ltm_gap)
+    doc = _stamped(raw)
+    assert incoherent(doc, {"dossier.md": render_markdown(Dossier.model_validate(doc))}) == []

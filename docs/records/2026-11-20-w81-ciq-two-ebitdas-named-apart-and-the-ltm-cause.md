@@ -101,9 +101,10 @@ beside a stored "reported" basis line.
   - "reported LTM EBITDA" sat in 21 page JSONs: the 20 with `ev_ebitda_basis`, plus SMPL.
   - The basis line is printed on 13 pages and JSON-only on 7.
   - The lease line's "reported" margin prints on 16 pages.
-- **Pins:** `tests/test_w81_two_ebitdas.py`, 100 tests. 89 of the 99 present at the fail-first run
+- **Pins:** `tests/test_w81_two_ebitdas.py`, 103 tests. 89 of the 99 present at the fail-first run
   failed on base `bc1c0e16`; the ten that pass there are population and control checks. The 100th
-  (the zero-row reason pin) was added after it, for the one live mutant. The pins:
+  (the zero-row reason pin) was added after it, for the one live mutant, and the three coherence
+  pins below after review round 0. The pins:
   - every committed basis page's line, rebuilt by the head code, names the annual figure with its
     stored value, never "reported", and differs from the committed line by W81's words alone (18
     pages; the 2 pre-W65 pages, AMZN and GOOGL, are named and set apart);
@@ -119,6 +120,22 @@ beside a stored "reported" basis line.
 - **Mutants:** 11 of 11 red. The first run left one live: a non-positive 'Other Amortization'
   reached the same verdict by a wrong stated reason, and a pin on the reason closed it.
 - `tests/test_refresh_path.py::test_a_noop_refresh_is_byte_identical` stays green, untouched.
+- **The coherence pin** (`test_every_w81_committed_page_is_coherent`; review round 0, B: an accepted
+  risk with a cheap fix is not accepted). On every committed page at W81 or later, no code-owned
+  line carries an old name: not the stored basis, at-price or reconciliation line, and not their
+  rendered lines in `dossier.md` or its `frontend/dossiers` mirror.
+  - **The path is LIVE, not latent.** Every writer that records a layer refresh stamps the current
+    version whenever anything moves: `refresh_dossier` with any transform (price values, the EV gap,
+    consensus…), `anchor-backfill`, `financials-backfill`, `caveat-reword`, `ciq-reread`,
+    `driver-facts-pass` and `transcript-run-cut`. Only `valuation_bases_transform` rebuilds the three
+    stored lines.
+  - **Red** on TJX's committed page stamped at W81 with its stored lines left as built: it names all
+    three stored lines and their three rendered lines.
+  - **Green** on TJX's frozen page with the three lines rebuilt, on today's pages (all old-vintage,
+    so exempt), and on the 9 active pages after the rehearsed refresh (MCK and WLK stay old and
+    exempt).
+  - The block's `source_ref` is exempt by design: it is a citation key the kept prose matches
+    verbatim.
 - **The $0 refresh, rehearsed on scratch copies** against each page's recorded exports (head
   code). All 9 active pages move (BRBR and GOOGL excluded; see the boundary), and none refuses.
   - No figure moves.
@@ -153,4 +170,7 @@ beside a stored "reported" basis line.
 - **The two active pages with kept prose.** After the refresh, NCNO's and TJX's kept bear points
   still say "reported" about the figure the block now names. Accepted by B as imprecise, not
   contradicting, until the next paid rebuild.
+- **A partial refresh after W81 can stamp the vintage without rebuilding the stored lines.** Such a
+  page fails the coherence pin in CI, so it cannot ship two names for one figure; the writer must
+  run `valuation_bases_transform` with it.
 - **The $0 refresh of the active pages is its own PR, after this one merges.**
