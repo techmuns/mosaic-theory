@@ -66,6 +66,14 @@ _GENERIC_TITLE = re.compile(r"^(untitled|microsoft (word|powerpoint)|document\d*
 #: a PDF's Author field as an authoring tool fills it, not a person (U30b: "Microsoft Office User")
 _PLACEHOLDER_AUTHOR = re.compile(r"^(microsoft office user|windows user|user|administrator|admin|"
                                  r"author|owner|unknown)$", re.I)
+#: ...or the LOGIN the tool ran under, written in as the Author (2026-11-19: QuarkXPress put its
+#: user's id "girquark" on four Goldman Sachs reports, and it was credited as their author). A
+#: login has the form an operating system gives a user id: ONE token of lowercase letters and
+#: digits, joined by at most "." "_" "-". A name written for a reader carries a capital or a
+#: space ("Reuters", "e.e. cummings"), so one word alone is never enough. Read on the PDF Author
+#: field only — a byline, front matter or an operator's statement is typed by a person. A real
+#: name left out this way costs a question (`--author`); a login kept is credited for good.
+_LOGIN_AUTHOR = re.compile(r"^[a-z0-9]+(?:[._-][a-z0-9]+)*$")
 #: lowercase words a name may hold ("Ursula von der Leyen")
 _NAME_PARTICLES = frozenset({"de", "van", "von", "der", "den", "da", "di", "le", "la", "du"})
 
@@ -492,7 +500,8 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
         title_src = "the largest text on page 1"
     authors = ([Author(name=a.strip(), source_field="PDF document metadata (Author)")
                 for a in re.split(r"[;,]| and ", read.meta.get("Author", "")) if a.strip()
-                and not _GENERIC_TITLE.search(a) and not _PLACEHOLDER_AUTHOR.match(a.strip())])
+                and not _GENERIC_TITLE.search(a) and not _PLACEHOLDER_AUTHOR.match(a.strip())
+                and not _LOGIN_AUTHOR.match(a.strip())])
     doc_date = _date_from(page1_texts[:80])
     back = ""
     if read.quarantined:
