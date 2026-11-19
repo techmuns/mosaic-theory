@@ -70,7 +70,9 @@ def main() -> None:
     print("vinci:", vinci.__file__)
     try:
         for t, suf, freq, sheet, labels, k in WANT:
-            src = next(p for p in (FRESH / t).iterdir() if p.name.endswith(suf))
+            src = next((p for p in (FRESH / t).iterdir() if p.name.endswith(suf)), None)
+            if src is None:
+                raise SystemExit(f"{t}: no file ending {suf!r} under the CIQ root")
             (TMP / t).mkdir(parents=True, exist_ok=True)
             dst = TMP / t / src.name
             shutil.copy2(src, dst)

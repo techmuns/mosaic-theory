@@ -48,7 +48,11 @@ def one(t: str) -> dict[str, Any]:
             None,
         )
         ntm_pe = next(
-            (r.get("value") for r in rows if r.get("metric") == "P/E" and r.get("period") == "NTM"),
+            (
+                r.get("value")
+                for r in rows
+                if r.get("metric") in ("P/E", "Price/Earnings") and r.get("period") == "NTM"
+            ),
             None,
         )
         out.update(
@@ -58,7 +62,9 @@ def one(t: str) -> dict[str, Any]:
                 "ntm_pe": ntm_pe,
                 "pe_eps_basis_fy": (basis or {}).get("fiscal_years"),
                 "pe_eps_basis_ntm": (basis or {}).get("ntm"),
+                # a sample, and it says so: the first 14 of the picked multiples
                 "multiples_seen": cut(json.dumps(dict(list(pick.items())[:14]), default=str), 700),
+                "multiples_seen_shown": f"{min(len(pick), 14)} of {len(pick)}",
                 "as_of": cut(
                     str(fc.get("as_of") if isinstance(fc, dict) else getattr(fc, "as_of", None)), 60
                 ),
@@ -78,6 +84,8 @@ def main() -> None:
     import vinci
 
     print("vinci:", vinci.__file__)
+    if not CIQ_SETS:
+        raise SystemExit("no 2026-10-28 packs: set ARCHETYPE_PROBE_CIQ_PACKS (README)")
     res = []
     try:
         for t in CIQ_SETS:
@@ -85,7 +93,8 @@ def main() -> None:
             copy_ciq([t])
             r = one(t)
             res.append(r)
-            print(json.dumps(r, default=str)[:1600])
+            line = json.dumps(r, default=str)
+            print(line[:1600] + (f" …[cut: 1600 of {len(line)} chars]" if len(line) > 1600 else ""))
     finally:
         delete_ciq()
         print("CIQ scratch copies deleted:", not MANUAL.exists())

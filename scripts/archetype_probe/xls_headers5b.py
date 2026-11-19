@@ -32,7 +32,9 @@ def main(args: list[str]) -> None:
     try:
         tmp.mkdir(exist_ok=True)
         for suf in suffixes:
-            src = next(p for p in (ciq_root() / ticker).iterdir() if p.name.endswith(suf))
+            src = next((p for p in (ciq_root() / ticker).iterdir() if p.name.endswith(suf)), None)
+            if src is None:
+                raise SystemExit(f"{ticker}: no file ending {suf!r} under the CIQ root")
             dst = tmp / src.name
             shutil.copy2(src, dst)
             sha = hashlib.sha256(src.read_bytes()).hexdigest()
