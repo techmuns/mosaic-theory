@@ -5979,13 +5979,33 @@ def _peer_gap_question(bundle: CiqBundle) -> str:
     return ""
 
 
-def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
+class NameAtClose(NamedTuple):
+    """(2026-11-19) The factors the NAME's own comps multiples are restated at the page's close
+    by (`vinci.dossier.price_values`): the peers stay CIQ's, dated by its panel."""
+
+    #: TEV at the page's close ÷ CIQ's simple TEV — restates TEV/EBITDA; None: not restated
+    tev_ratio: float | None
+    #: the page's close ÷ the close CIQ's comps panel prints — restates P/E; None: not restated
+    price_ratio: float | None
+    price_as_of: str            # the page's price date
+    ciq_as_of: str | None       # the comps panel's data date — the peers' date
+    #: why each absent ratio is absent, by the label it restates
+    why: tuple[tuple[str, str], ...] = ()
+
+
+def cross_sectional_valuation(bundle: CiqBundle,
+                              at_close: NameAtClose | None = None) -> Sourced[str]:
     """The CROSS-SECTIONAL read — the fund's edge: where the name's multiples sit vs the PEER
     cross-section (not its own history). Name EV/EBITDA & P/E vs the peer MEDIAN, NUMBERS ONLY — the
     earned-vs-residual framing and peer comparability live in the Peer-comps section (where the
     inputs are), so a fixed 'is the discount earned or residual?' tail here would be identical on
     every dossier and add no per-name value. A raw discount is not a verdict; the synthesis
-    PEER-COMP-BARE guardrail resists reading it as one. Reads the Comparable-Analysis sheet."""
+    PEER-COMP-BARE guardrail resists reading it as one. Reads the Comparable-Analysis sheet.
+
+    ``at_close`` (2026-11-19): the NAME's side at the page's own close — CIQ's TEV/EBITDA scaled
+    by the TEV at the close over CIQ's TEV, its P/E by the close over CIQ's printed close — with
+    CIQ's own figure and the peers' date beside it. A ratio that cannot be struck leaves that
+    multiple UNKNOWN with its reason, never CIQ's figure as today's."""
     try:
         tm = bundle.sheet("comps", "Trading Multiples")
     except CiqUnavailableError as exc:
@@ -5995,7 +6015,9 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
         return Sourced.unknown(note="Trading Multiples: no target row / peer rows")
     bits: list[str] = []
     for lab, nv, mv, gap in _peer_gaps(tm, peers, tgt):
-        if isinstance(nv, (int, float)) and mv is not None and gap is not None:
+        if at_close is not None:
+            bits.append(_name_at_close(lab, nv, mv, at_close))
+        elif isinstance(nv, (int, float)) and mv is not None and gap is not None:
             bits.append(f"{lab} {nv:g}x vs peer median {mv:.1f}x ({gap:+.0%})")
         else:
             bits.append(f"{lab} {_tok(nv)} vs peer median {_tok(mv)}")
@@ -6007,6 +6029,25 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
         "; ".join(bits),
         source_ref="CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
     )
+
+
+def _name_at_close(lab: str, nv: float | str | None, mv: float | None,
+                   at: NameAtClose) -> str:
+    """One multiple of the cross-sectional read with the NAME at the page's close: today's figure,
+    CIQ's beside it, and the peer median with the date it carries."""
+    ciq_day = f", {at.ciq_as_of}" if at.ciq_as_of else ""
+    peer = (f"peer median {mv:.1f}x (CIQ{ciq_day})" if mv is not None
+            else f"peer median {_tok(mv)}")
+    if not isinstance(nv, (int, float)):
+        return f"{lab} {_tok(nv)} vs {peer}"
+    ratio = at.tev_ratio if lab == "EV/EBITDA" else at.price_ratio
+    if ratio is None:
+        why = dict(at.why).get(lab, "the page's close cannot restate it")
+        return (f"{lab} UNKNOWN at the {at.price_as_of} close — {why} (CIQ {nv:g}x{ciq_day}) "
+                f"vs {peer}")
+    now = nv * ratio
+    gap = f" ({now / mv - 1:+.0%})" if mv else ""
+    return f"{lab} {now:.1f}x at the {at.price_as_of} close (CIQ {nv:g}x{ciq_day}) vs {peer}{gap}"
 
 
 def comps_ev_ebitda(bundle: CiqBundle) -> Sourced[float]:

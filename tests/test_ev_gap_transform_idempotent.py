@@ -46,9 +46,26 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     shutil.copytree(ROOT / "data" / "dossiers" / ticker, folder)
     path = folder / "dossier.json"
 
-    before = _gap(path)
-    assert before["status"] == "computed", "fixture precondition"
+    committed = _gap(path)
+    assert committed["status"] == "computed", "fixture precondition"
 
+    # (2026-11-19) THE FIRST REFRESH RE-STRIKES THE MARKET'S SIDE at the page's own close
+    # (`price_values`), so on a page built on CIQ's comps TEV it moves the gap — by the TEV and
+    # nothing else, pinned in `test_consensus_parity`. Idempotence is the claim from there on.
+    # It runs as the refresh will: `price_values_transform` first, handed CIQ's TEV less its cap
+    # from the page's own `ev_bridge` (round 1 of #1132), then the gap; the later refreshes run
+    # the gap ALONE, so the claims must survive the model round trip for it to stay computed.
+    from vinci.dossier.refresh import price_values_transform
+
+    eb = json.loads(path.read_text()).get("ev_bridge") or {}
+    claims = (eb["ciq_tev_claims"], eb.get("ciq_tev_claims_source") or "ev_bridge")
+    first = price_values_transform(ticker, ciq_tev_claims=claims)
+    refresh_dossier(path, transform=lambda m: ev_gap_transform(ticker)(first(m)))
+    before = _gap(path)
+    assert before["status"] == "computed", (
+        f"{ticker}: a refresh degraded the gap to {before.get('status')!r} — "
+        f"{before.get('reason')!r}. The transform reads something the write path does not "
+        "preserve.")
     refresh_dossier(path, transform=ev_gap_transform(ticker))
     after = _gap(path)
     assert after["status"] == "computed", (
@@ -72,6 +89,8 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     # folder the prior stamp is carried and this runs as before.
     skip_unless_pages_export(ticker, "estimates")
     assert after["vintages"] == before["vintages"]
+    assert {k: v for k, v in before["vintages"].items() if k != "tev_close_date"} == (
+        committed["vintages"])
 
 
 @pytest.mark.parametrize("ticker", COMPUTED)
@@ -129,6 +148,13 @@ def test_the_gap_reads_its_market_cap_from_the_comps_panel_structurally() -> Non
     Structural, following the #310 precedent: three attempts at a behavioural pin could not redden,
     so the pin reads the source. If the basis is deliberately changed, the STAMP must change with
     it and this test is where that argument happens.
+
+    THE BASIS WAS CHANGED, DELIBERATELY, AND THE STAMP WITH IT (2026-11-19, operator: "Yes, start
+    there"). The market's side is the TEV at the page's own CLOSE: the close and the count off
+    `stock_info`, plus CIQ's CLAIMS off the comps panel (`price_values.tev_at_close`). So the gap
+    carries TWO vintages, each describing its half: `tev_as_of`, the comps panel the claims come
+    from, and `tev_close_date`, `stock_info.as_of`, the close the cap is struck at. CIQ's comps cap
+    is no longer read for the number — it is the dated cross-check (`stock_info.cap_cross_check`).
     """
     src = (ROOT / "vinci" / "dossier" / "refresh.py").read_text()
     # ITS OWN BODY, to the next top-level def. It was cut at `def _base_leg`, the function that
@@ -138,10 +164,11 @@ def test_the_gap_reads_its_market_cap_from_the_comps_panel_structurally() -> Non
     start = src.index("def ev_gap_transform")
     body = src[start:src.index("\ndef ", start + 1)]
     assert body.rstrip().endswith("return _apply"), "the slice is not the transform's whole body"
-    assert 'get("implied_valuation")' in body, (
-        "ev_gap_transform no longer reads the COMPS market cap. Its net_debt and its tev_as_of "
-        "both come off the comps workbook; a cap from another panel makes the persisted vintage a "
-        "false stamp. Change the stamp too, or do not change the source.")
-    assert 'get("stock_info")' not in body, (
-        "ev_gap_transform reads stock_info — that panel's as_of differs from comps_as_of on 10 of "
-        "11 names, so its cap cannot sit under a comps-panel vintage.")
+    assert "tev_at_close(out)" in body and "claims(out)" in body, (
+        "ev_gap_transform no longer strikes the TEV at the page's close from the close, the count "
+        "and CIQ's claims — the basis the two vintages below describe.")
+    assert 'get("stock_info") or {}).get("as_of")' in body and "tev_close_date=" in body, (
+        "the TEV at the close is written without the close's own date — a stock-panel cap under "
+        "a comps-panel stamp alone is the `financial_summary.as_of` defect.")
+    assert 'get("implied_valuation") or {}).get("market_cap")' not in body, (
+        "ev_gap_transform reads CIQ's comps cap for the number again — it is the cross-check")

@@ -22,9 +22,6 @@ from tests.frozen_support import frozen_doc
 from vinci.dossier import freshness as fr
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-#: The gate began measuring against the BUILD date on this day. Artifacts assembled
-#: BEFORE it were guarded by the old rule and report its staleness honestly.
-GATE_FIXED_ON = "2026-07-30"
 
 
 def _num(x: object) -> float | None:
@@ -147,7 +144,7 @@ def test_a_build_with_no_price_bars_fails_rather_than_passing_silently() -> None
     absent = fr.absent_cap_inputs(cap_musd=909.4, shares=88_460_545, spot=None)
     assert absent == ("spot price",), absent
     with pytest.raises(fr.FreshnessError, match="not underwritable"):
-        fr.check_freshness(None, None, ticker="SMPL", absent=absent)
+        fr.check_freshness(fr.EventVerdict(()), None, ticker="SMPL", absent=absent)
 
     # every combination of absence is named, not just the first
     assert fr.absent_cap_inputs(cap_musd=None, shares=None, spot=None) == (
@@ -156,7 +153,7 @@ def test_a_build_with_no_price_bars_fails_rather_than_passing_silently() -> None
 
     # ...and a complete build still passes: the check must not fire on the fleet
     assert fr.absent_cap_inputs(cap_musd=909.4, shares=88_460_545, spot=10.53) == ()
-    fr.check_freshness(None, None, ticker="SMPL", absent=())      # must not raise
+    fr.check_freshness(fr.EventVerdict(()), None, ticker="SMPL", absent=())   # must not raise
 
 
 def test_every_committed_name_has_the_inputs_the_gate_requires() -> None:
@@ -217,16 +214,18 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
         if recon is not None and recon.corporate_action:
             basis_break.add(name)
         try:
-            fr.check_freshness(age, recon, ticker=name)
+            # (2026-11-19) NO FILING outdates any panel here — the event rule is pinned on real
+            # filings in `test_event_rule.py` — so what is left is exactly the age leg, retired
+            fr.check_freshness(fr.event_verdict(mech, [], built_at=_assembled(name)), recon,
+                               ticker=name)
             quiet.add(name)
         except fr.FreshnessError as exc:
             (basis_fail if "share basis" in str(exc) else age_fail).add(name)
 
-    # SELF-CONSISTENT, not hardcoded: the gate must refuse exactly the names whose computed age is
-    # over the ceiling. Written this way deliberately — comps re-exports move names off the list,
-    # and a hardcoded set would red on a WIN and read as a regression. (It was hardcoded to
-    # {BRBR, MVST, CNXC} before the 2026-07-29 re-measure; VRRM joined at 48d.)
-    assert age_fail == over_ceiling, (age_fail, over_ceiling)
+    # THE AGE LEG IS RETIRED (2026-11-19, operator: "Yes, start there"): a panel past the 45-day
+    # clock, with nothing filed since, is no longer refused. `over_ceiling` is still computed so a
+    # page built on an old panel shows here as passing, never as refused by age.
+    assert not age_fail, (age_fail, over_ceiling)
     # THE SAME TREATMENT, FINALLY APPLIED TO THE BASIS LEG. This read `basis_fail == {"FUBO"}` —
     # a hardcoded set sitting one line under the comment explaining why hardcoded sets are wrong.
     # It reds on a name ARRIVING exactly as loudly as on the share-basis check breaking, and the
@@ -305,48 +304,40 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
         "assertions to a constructed fixture before deleting this one")
 
 
-def test_the_ceiling_is_a_boundary_not_a_range() -> None:
-    """`> 45`, not `>= 45`. Pinned because a silent flip to `>=` would fail an extra name and read
-    as a data change rather than a code change.
-
-    Driven off a CONSTRUCTED PanelAge, not off a fleet name. It used to key on VRRM sitting at
-    exactly 45d — but the 2026-07-29 re-measure moved VRRM to 48d and put FUBO on the boundary
-    instead, so a fleet-keyed boundary test silently stops testing the boundary whenever the
-    fleet moves. The boundary is a property of the guard, so it is tested as one."""
-    at = fr.PanelAge(oldest="2026-01-01", oldest_key="a", as_of="2026-02-15",
-                     days=fr.MAX_PANEL_AGE_DAYS)
-    fr.check_freshness(at, None, ticker="X")               # exactly at the ceiling: must not raise
-
-    over = fr.PanelAge(oldest="2026-01-01", oldest_key="a", as_of="2026-02-16",
-                       days=fr.MAX_PANEL_AGE_DAYS + 1)
-    with pytest.raises(fr.FreshnessError, match="ceiling"):
-        fr.check_freshness(over, None, ticker="X")
+def test_an_export_of_any_age_nothing_has_outdated_passes() -> None:
+    """THE CLOCK IS RETIRED (2026-11-19): it was `> 45` days on the oldest export panel. An export
+    a year old with nothing filed since passes; the same export with a 10-Q after it refuses,
+    naming the filing. The boundary that remains is the EVENT's (`test_event_rule.py`)."""
+    old = {"valuation": {"implied_expectations": {"tev_as_of": "2025-11-01"}}}
+    age = fr.panel_age(old, "2026-11-19", kind="export")
+    assert age is not None and age.days > fr.MAX_PANEL_AGE_DAYS
+    fr.check_freshness(fr.event_verdict(old, [], built_at="2026-11-19"), None, ticker="X")
+    filed = [fr.FilingEvent("10-Q", "2026-02-05", "X-10Q")]
+    with pytest.raises(fr.FreshnessError, match="X-10Q filed 2026-02-05"):
+        fr.check_freshness(fr.event_verdict(old, filed, built_at="2026-11-19"), None, ticker="X")
 
 
-def test_age_is_refused_before_the_share_basis() -> None:
+def test_a_filed_since_export_is_refused_before_the_share_basis() -> None:
     """WHICH refusal a doubly-broken build reports — pinned on CONSTRUCTED inputs, because the live
     corpus cannot reach this state.
 
-    The e2e gate asserts `basis_fail == basis_break - over_ceiling`; that subtraction encodes this
-    precedence, but `over_ceiling` is empty today, so the corpus proves nothing about the order and
-    a mutation flipping the two blocks passes it. MEASURED, not assumed — the first draft of that
-    comment claimed the flip would break the equality and it does not.
-
-    The order is load-bearing for the reader: age is REMEDIABLE by a re-export, a share-basis break
-    is NOT ("a panel re-export will NOT resolve it"). A doubly-broken build reporting the basis
-    error first would send the operator to fix the thing that cannot be fixed that way.
+    The order is load-bearing for the reader: an export the company has filed since is REMEDIABLE
+    by a re-export (it was the age ceiling until 2026-11-19, the event rule since), a share-basis
+    break is NOT ("a panel re-export will NOT resolve it"). A doubly-broken build reporting the
+    basis error first would send the operator to fix the thing that cannot be fixed that way.
     """
-    over = fr.PanelAge(oldest="2026-01-01", oldest_key="a", as_of="2026-02-16",
-                       days=fr.MAX_PANEL_AGE_DAYS + 1)
+    # (2026-11-19) the remediable refusal is now the EVENT's: an export filed since
+    over = fr.event_verdict({"stock_info": {"market_cap_as_of": "2026-01-01"}},
+                            [fr.FilingEvent("10-Q", "2026-02-05", "X-10Q")], built_at="2026-02-16")
     # ratio spot/implied ≈ 3 → reads as a split straddling the panels, exactly FUBO's shape
     split = fr.reconcile_cap(cap_musd=100.0, shares=3e6, spot=100.0)
     assert split is not None and split.corporate_action, "the fixture is not a basis break"
 
-    with pytest.raises(fr.FreshnessError, match="ceiling"):
+    with pytest.raises(fr.FreshnessError, match="X-10Q"):
         fr.check_freshness(over, split, ticker="X")
     # and each still fires alone, so the precedence is an ORDER, not one check masking the other
     with pytest.raises(fr.FreshnessError, match="share basis"):
-        fr.check_freshness(None, split, ticker="X")
+        fr.check_freshness(fr.EventVerdict(()), split, ticker="X")
 
 
 def test_the_panel_age_note_renders_on_a_passing_build_too() -> None:
@@ -393,11 +384,12 @@ def test_the_gate_measures_against_the_build_date_not_the_screens_reference_date
             return {"valuation": {"multiples_as_of": "2026-06-01"}}
 
     mech = _M()
-    # one day inside the ceiling: passes
-    _freshness_check(mech, ticker="X", built_at=dt.date(2026, 6, 1) + dt.timedelta(days=45))
-    # one day past it: refuses
-    with pytest.raises(fr.FreshnessError, match="ceiling"):
-        _freshness_check(mech, ticker="X", built_at=dt.date(2026, 6, 1) + dt.timedelta(days=46))
+    # (2026-11-19) the EVENT rule counts a filing only on or before the build: a 10-Q filed
+    # 2026-07-16 does not refuse a 07-15 build, and refuses a 07-16 one
+    filed = [fr.FilingEvent("10-Q", "2026-07-16", "X-10Q")]
+    _freshness_check(mech, ticker="X", built_at=dt.date(2026, 7, 15), filings=filed)
+    with pytest.raises(fr.FreshnessError, match="X-10Q"):
+        _freshness_check(mech, ticker="X", built_at=dt.date(2026, 7, 16), filings=filed)
 
 
 def test_the_gate_is_wired_to_the_build_instant_not_the_screen_date() -> None:
@@ -435,47 +427,30 @@ def test_a_date_before_the_panel_yields_a_negative_age_which_is_the_tell() -> No
 
 
 @pytest.mark.skipif(not (ROOT / "data" / "dossiers").is_dir(), reason="no committed dossiers")
-def test_no_committed_dossier_renders_an_age_its_own_gate_never_applied() -> None:
-    """THE WIRING PIN, and the one that would have caught the defect where the unit tests did not.
-
-    Everything above tests `_freshness_check` by CALLING it with a date. That leaves the call SITE
-    unpinned — and the call site was the bug: it passed `fin.reference_date` where the render uses
-    `assembled_at`. Reverting it reds nothing above.
-
-    This asserts the property a reader depends on: **a committed dossier's rendered panel age is
-    within the ceiling.** CNXC shipped at a rendered 54d having passed its gate at 31d; under this
-    pin that artifact cannot be committed at all. It is an e2e invariant on a living corpus, so it
-    asserts a THRESHOLD rather than any particular value — re-assembly moves the numbers and must
-    not red it."""
-    # GRANDFATHERED BY ASSEMBLY DATE, not exempted by name. An artifact built under the old gate
-    # honestly reports a staleness the old rule allowed; re-assembling it is what fixes it, and
-    # names that CANNOT re-assemble (FUBO's corporate action, MVST/WERN outside the screen cohort)
-    # would otherwise red this forever for a reason that is not a wiring defect. The scope clears
-    # itself as names rebuild — no exemption list to go stale.
-    over, checked = [], 0
+def test_no_committed_dossier_was_built_on_a_panel_its_own_gate_would_refuse() -> None:
+    """THE WIRING PIN, re-pointed at the gate that now refuses (2026-11-19). It asserted every
+    committed page RENDERS a panel age within the 45-day ceiling, measured at `assembled_at` — the
+    instant the gate is handed — since CNXC once shipped a rendered 54d having passed at 31d. The
+    ceiling no longer gates, so a page legitimately built on a 60-day panel nothing has outdated
+    would red that form for no defect. The property kept: measured at the SAME instant the page is
+    stamped with, its own gate passes it — the event rule against the real filings of
+    `tests/fixtures/event_rule_filings.json`. Walks every committed page; none is skipped."""
+    filings = json.loads((ROOT / "tests" / "fixtures" / "event_rule_filings.json").read_text())[
+        "filings"]
+    checked = 0
     for d in sorted((ROOT / "data" / "dossiers").iterdir()):
         j = d / "dossier.json"
         if not j.exists():
             continue
         doc = json.loads(j.read_text())
-        if str(doc["assembled_at"])[:10] < GATE_FIXED_ON:
-            continue
+        assert d.name in filings, f"{d.name}: no filings read — re-freeze the fixture"
+        events = [fr.FilingEvent(form=e["form"], filing_date=e["filing_date"],
+                                 accession=e["accession"], items=tuple(e["items"]))
+                  for e in filings[d.name]["events"]]
+        v = fr.event_verdict(doc.get("mechanical") or {}, events, built_at=doc["assembled_at"])
+        assert not v.stale, f"{d.name}: built on a panel its gate refuses — {v.note()}"
         checked += 1
-        age = fr.panel_age(doc.get("mechanical") or {}, doc["assembled_at"], kind="export")
-        if age is not None and age.days > fr.MAX_PANEL_AGE_DAYS:
-            over.append(f"{d.name}: renders {age.days}d, ceiling {fr.MAX_PANEL_AGE_DAYS}d")
-    assert not over, (
-        "committed dossiers render a panel age their own gate would refuse — the gate and the page "
-        f"are measuring against different dates: {over}")
-    # DECLARE VACUITY. Every committed artifact predates GATE_FIXED_ON today, so this pin currently
-    # covers ZERO names and passes for that reason — not because the property holds. A guard that
-    # cannot fire must say so rather than read as evidence; it starts covering names as the fleet
-    # re-assembles. (This was claimed as "stronger than a batch run" before it was measured; it is
-    # stronger ONLY once names are built under the new gate.)
-    if not checked:
-        pytest.skip(
-            f"vacuous: no committed dossier is assembled on/after {GATE_FIXED_ON}, so this "
-            "invariant covers nothing yet — it begins covering names as the fleet re-assembles")
+    assert checked, "no committed dossier to walk"
 
 
 def test_a_lease_basis_date_is_not_a_panel_arrival() -> None:

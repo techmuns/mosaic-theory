@@ -209,8 +209,30 @@ class ImpliedExpectations(SourceRefWhenBuilt):
     net_debt_reconciled: bool  # (cond. b) net_debt agrees with the cash/debt bridge, in tolerance
     # the comparison's outcome — `net_debt_reconciled` is also True with no bridge (`CrossCheck`)
     net_debt_check: CrossCheck | None = None
+    #: (2026-11-19) THE TEV AT THE PAGE'S OWN CLOSE — the page's market cap at its price
+    #: (`StockInfo.market_cap_at_close`) plus CIQ's claims (its comps TEV less its comps market
+    #: cap, the name row's net debt, dated ``tev_as_of``) — what the PEER-median rows divide
+    #: (`vinci.dossier.price_values`). ``tev`` above stays CIQ's own simple TEV, a dated
+    #: cross-check: the G5 probe and the name's own forward-multiple rows divide it, since those
+    #: multiples were struck at it. UNKNOWN, never CIQ's TEV in its place, when the page has no
+    #: close, share count or claims. ABSENT until a page is built or refreshed with it.
+    tev_at_close: Sourced[float] | None = None
+    #: the close ``tev_at_close`` is struck at — `StockInfo.as_of`, the page's price date
+    tev_close_date: str | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        # ABSENT, never null, until built — and so the synthesis request of a page built before
+        # them is byte-identical (the `covenant_exhibit_outcomes` lesson, 2026-11-16); the
+        # parent's `source_ref` rule is kept, since this serializer replaces it
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("source_ref", "tev_at_close", "tev_close_date"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+        return out
 
 
 class OwnHistoryBand(BaseModel):
@@ -2632,6 +2654,29 @@ class PrimarySource(BaseModel):
     model_config = {"frozen": True}
 
 
+class CapCrossCheck(BaseModel):
+    """(2026-11-19) CIQ's comps market cap read against the page's own — a DATED CROSS-CHECK that
+    never supplies the number. The two are struck on different dates (CIQ's panel, the page's
+    close) and on two share counts (CIQ's, the filer's point-in-time count), so they differ by
+    drift and by a noise floor (MCK, both on 2026-11-04: CIQ $124,686.4M, the page $123,474.0M,
+    −1.0%). A ``ratio`` on a whole number is the signature of a SHARE-BASIS change between the
+    two (FUBO's 11.13×), which the build refuses (`freshness.check_freshness`); anything else
+    beyond ``tolerance`` is drift, flagged."""
+
+    ciq_market_cap: float       # $M — `StockInfo.market_cap`, CIQ's, at `market_cap_as_of`
+    implied_price: float        # CIQ's cap ÷ the page's share count, $/share
+    gap: float                  # CIQ's cap ÷ the page's − 1 (= implied ÷ close − 1)
+    ratio: float                # close ÷ implied — the diagnostic a share-basis change sits on
+    corporate_action: bool      # the ratio is a whole number ≥ 2, either way up
+    beyond_tolerance: bool      # |gap| > ``tolerance`` — FLAGGED
+    tolerance: float            # `freshness.RECONCILE_TOLERANCE`
+    note: str                   # the reconciliation's own sentence
+    #: what was set against what — CIQ's comps cap and its date, the page's close and its count
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
 class StockInfo(BaseModel):
     """(Phase-2) The market-data 'stock info' box — CMP + 52-week range (EOD price features), shares
     outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound and
@@ -2657,8 +2702,34 @@ class StockInfo(BaseModel):
     #: in. None for a line that is not a depositary receipt, and on every page written before
     #: 2026-10-28.
     ads_ratio: AdsRatio | None = None
+    #: (2026-11-19) THE PAGE'S MARKET CAP, $M: its own close (``price``, at ``as_of``) × its
+    #: point-in-time share count (``shares_out``), the count `valuation_basis` and the anchor read
+    #: (`vinci.dossier.price_values`). ``market_cap`` above stays CIQ's comps figure, at
+    #: ``market_cap_as_of`` — a dated cross-check (``cap_cross_check``), never the number. UNKNOWN
+    #: when the close or the count is absent. ABSENT until a page is built or refreshed with it.
+    market_cap_at_close: Sourced[float] | None = None
+    #: CIQ's cap against the page's, by the reconciliation that tells a share-basis change from
+    #: drift (`freshness.reconcile_cap`); a gap beyond its tolerance FLAGS. ABSENT until built.
+    cap_cross_check: CapCrossCheck | None = None
+    #: CIQ's claims on the enterprise beyond its equity, $M: its comps 'Total Enterprise Value'
+    #: less its 'Market Capitalization', read off the SAME comps row as ``market_cap``
+    #: (`ciq_sheets._ciq_tev_claims`) — what the TEV at the close adds to the cap at the close.
+    #: Not the comps 'Net Debt' line, which leaves out preferred, minority and other claims (MCK
+    #: 4,633 against 7,571). ABSENT until built.
+    ciq_tev_claims: Sourced[float] | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        # ABSENT, never null, until built: a page built before them, and its synthesis request,
+        # are byte-identical (the `covenant_exhibit_outcomes` lesson, 2026-11-16)
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("market_cap_at_close", "cap_cross_check", "ciq_tev_claims"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+        return out
 
 
 class RegistrationFiling(BaseModel):
@@ -3555,6 +3626,12 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("capital_structure", "covenant_exhibit_outcomes"),
     # a depositary line's ADS ratio (`StockInfo.ads_ratio`, FPI4, 2026-10-28)
     ("stock_info", "ads_ratio"),
+    # the fast values at the page's own close, CIQ's beside them (`price_values`, 2026-11-19)
+    ("stock_info", "market_cap_at_close"),
+    ("stock_info", "cap_cross_check"),
+    ("stock_info", "ciq_tev_claims"),
+    ("valuation.implied_expectations", "tev_at_close"),
+    ("valuation.implied_expectations", "tev_close_date"),
     # a ≤12m wall stated on a basis other than principal (`MaturityWall.basis`, audit E2-D15)
     ("primary_source.filing.maturity_wall", "basis"),
     # each gap sorted by the gap test (`DisclosureGap`, fix 4a, 2026-11-07)

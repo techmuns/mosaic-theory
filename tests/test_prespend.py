@@ -43,6 +43,29 @@ from vinci.dossier.schemas import Dossier
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOSS = ROOT / "data" / "dossiers"
+#: the event rule's real filings, read 2026-11-19 (`test_event_rule.py`)
+FILINGS: dict[str, Any] = json.loads(
+    (ROOT / "tests" / "fixtures" / "event_rule_filings.json").read_text())["filings"]
+
+
+def _events(t: str) -> list[Any]:
+    from vinci.dossier.freshness import FilingEvent
+
+    return [FilingEvent(form=e["form"], filing_date=e["filing_date"], accession=e["accession"],
+                        items=tuple(e["items"])) for e in FILINGS.get(t, {}).get("events", [])]
+
+
+@pytest.fixture(autouse=True)
+def _no_submissions_request(monkeypatch: pytest.MonkeyPatch) -> None:
+    """NO TEST HERE SENDS A REQUEST (2026-11-19). The event rule lists the filer's filings through
+    `prespend.filing_events`; every test reads the REAL filings frozen 2026-11-19 for its ticker,
+    cut at the build's date, never EDGAR's live feed."""
+    def frozen(cik: str | None, layer: dict[str, Any], day: Any, *,
+               edgar: Any = None) -> tuple[list[Any], None]:
+        t = next((t for t, v in FILINGS.items() if v["cik"] == cik), None)
+        return [e for e in _events(t) if e.filing_date <= day.isoformat()] if t else [], None
+
+    monkeypatch.setattr(prespend, "filing_events", frozen)
 FROZEN_PAGE = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
 BUILD = ROOT / "tests" / "fixtures" / "prespend" / "2026-11-04"
 
@@ -362,7 +385,7 @@ def test_rd_d4_run_exits_one_on_a_list_member_that_reads_worse(
     monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: built)
     monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})
     monkeypatch.setattr(prespend, "post_spend_checks",
-                        lambda built, bundle, committed: PostSpend((), (), None))
+                        lambda built, bundle, committed, edgar: PostSpend((), (), None))
     out: list[str] = []
     assert prespend.run("smpl", Config(data_dir=tmp_path), emit=out.append) == 1
     assert "  drawdown_cause.filings[gap_date=2026-04-09].drivers: present → unknown" in out
@@ -480,7 +503,7 @@ def test_mnsts_paid_refusal_is_decided_at_zero() -> None:
     assert paid["usd"] > 3.3
     built = _built("MNST")
     refusal = freshness_refusal(gate_layer(built), ticker="MNST",
-                                built_at=built.assembled_at.date())
+                                built_at=built.assembled_at.date(), filings=[])
     assert refusal is not None and refusal.at_zero
     # the paid run's own record, character for character, as the run log caps it
     assert _capped(f"{refusal.error}: {refusal.message}") == paid["error"]
@@ -574,10 +597,15 @@ def test_every_committed_page_passes_the_freshness_check_at_its_own_build_date(
     path: pathlib.Path,
 ) -> None:
     """Each page was written by a build that passed it, so the $0 check must agree (27 of 27 on
-    2026-11-04). A page re-read later is NOT re-measured at today's date: its panels have aged."""
+    2026-11-04). A page re-read later is NOT re-measured at today's date: the company may have
+    filed since. Since 2026-11-19 the gate is the event rule, read against the page's real
+    filings, cut at its build date."""
     page = Dossier.model_validate_json(path.read_text())
-    assert freshness_refusal(gate_layer(page), ticker=page.ticker,
-                             built_at=page.assembled_at.date()) is None
+    day = page.assembled_at.date()
+    assert page.ticker in FILINGS, f"{page.ticker}: no filings frozen — re-freeze the fixture"
+    assert freshness_refusal(gate_layer(page), ticker=page.ticker, built_at=day,
+                             filings=[e for e in _events(page.ticker)
+                                      if e.filing_date <= day.isoformat()]) is None
 
 
 def test_googls_page_passes_every_post_spend_check_on_its_export() -> None:
@@ -589,7 +617,7 @@ def test_googls_page_passes_every_post_spend_check_on_its_export() -> None:
     page = Dossier.model_validate_json((frozen_page("GOOGL") / "dossier.json").read_text())
     post = post_spend_checks(page, pinned)
     assert (post.refusals, post.undecided) == ((), ())
-    assert post.age is not None and post.age.days <= 45
+    assert post.events is not None and not post.events.stale and post.events.unread is None
 
 
 def test_googls_page_run_against_itself_exits_zero(
@@ -638,6 +666,12 @@ def test_what_the_paid_gate_does_not_see_moves_no_export_age(path: pathlib.Path)
         (seen.get("capital_structure") or {}).pop(field, None)
     assert (panel_age(layer, page.assembled_at, kind="export")
             == panel_age(seen, page.assembled_at, kind="export"))
+    # and the DATES the event rule reads, the gate since 2026-11-19 (`ev_gap` repeats the comps
+    # date under its own key, so a key leaves with it while the dates a filing is set against stay)
+    from vinci.dossier.freshness import export_panels
+
+    assert ({d for _k, d in export_panels(layer)}
+            == {d for _k, d in export_panels(seen)}), path.parent.name
 
 
 def test_the_gate_layer_carries_the_material_marks_a_zero_build_lacks() -> None:
