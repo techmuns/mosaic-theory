@@ -27,6 +27,7 @@ from typing import Any, cast
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import frozen_doc
 from vinci.dossier import anchor as anc
 from vinci.edgar import concepts
@@ -114,7 +115,8 @@ def _burl_anchor(lease_basis: dict[str, Any] | None) -> Any:
     if lease_basis is not None:
         mech["valuation"]["lease_basis"] = lease_basis
     return anc.compute_anchor(mech, facts=_facts("BURL"),
-                              computed_at=datetime(2026, 10, 19, tzinfo=UTC), ciq=None)
+                              computed_at=datetime(2026, 10, 19, tzinfo=UTC), ciq=None,
+                              filings=NO_FILINGS, eod_closes=NO_BARS)
 
 
 def test_the_page_field_carries_the_reading_on_both_bridges() -> None:

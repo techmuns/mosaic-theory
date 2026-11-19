@@ -11,6 +11,7 @@ import pathlib
 
 import pytest
 
+from tests.anchor_reads import rederived
 from tests.frozen_support import covered_where, frozen_doc
 from vinci.dossier.anchor import RECIPE_R1
 from vinci.dossier.propose import (
@@ -68,7 +69,8 @@ def test_exactly_three_axes_are_proposed_two_medians_and_the_current_multiple() 
     read claimed. Revenue and margin are MEDIANS: a median absorbs one bad year, while a
     min/max/band-low IS the statistic one observation defines. The multiple is TODAY'S (recipe 3a,
     2026-11-17): the median sat 2.4x-3.9x above the current on the de-rated pages."""
-    ancs = propose_anchors(frozen_doc("SMPL"))
+    # (W73) the anchor's verdict, derived (tests/anchor_reads.py)
+    ancs = propose_anchors(rederived(frozen_doc("SMPL")))
     assert {(a.axis, a.leg) for a in ancs} == set(ANCHORED)
     assert all(a.leg == "base" for a in ancs), "a non-base leg acquired a default"
     assert {a.axis: a.role for a in ancs} == {"revenue": "consensus", "margin": "median",
@@ -143,14 +145,17 @@ def test_stating_the_adjustment_clears_it_and_matching_the_anchor_needs_nothing(
     living page proposing all three base anchors (the roster, since W27; 20 of the 26 covered
     pages on 2026-11-17), where every at-anchor leg is read off the proposal."""
     def three_base(_t: str, d: dict) -> bool:
-        have = {(a.axis, a.leg) for a in propose_anchors(d)}
+        have = {(a.axis, a.leg) for a in propose_anchors(rederived(d))}
         return {("revenue", "base"), ("margin", "base"), ("multiple", "base")} <= have
 
     stated = _legs(base={"revenue": 1330.0, "margin": 0.14, "multiple": 12.5,
                          "margin_adjustment": "−1.45pp: this year's gross-margin reset treated as "
                                               "partly structural"})
-    for doc, revenue in ((_frozen_smpl(), 1351.7), *(
-            (d, None) for _t, d in covered_where(three_base, "proposes all three base anchors"))):
+    # (W73) every page re-derived through the real path, so its anchor records the event rule's
+    # verdict that the multiple's proposal reads (tests/anchor_reads.py)
+    for doc, revenue in ((rederived(_frozen_smpl()), 1351.7), *(
+            (rederived(d), None)
+            for _t, d in covered_where(three_base, "proposes all three base anchors"))):
         ancs = propose_anchors(doc)
         m = next(a for a in ancs if a.axis == "margin")
         # the multiple the ANCHOR proposes, read off the proposal like the margin — not a literal
@@ -277,7 +282,8 @@ def test_applicable_false_is_a_disagreement_on_every_live_case() -> None:
 
 def test_the_template_prefills_three_and_leaves_six_empty_with_their_reasons() -> None:
     from vinci.dossier.propose import build_template, legs_from_template
-    tpl = build_template(frozen_doc("BRBR"))
+    # (W73) the anchor's verdict, derived (tests/anchor_reads.py)
+    tpl = build_template(rederived(frozen_doc("BRBR")))
     legs = legs_from_template(tpl)
     filled = [(lg, ax) for lg in LEGS for ax in AXES if legs[lg][ax] is not None]
     assert sorted(filled) == sorted((lg, ax) for ax, lg in ANCHORED), filled
@@ -354,7 +360,8 @@ def test_the_anchors_reach_the_record_as_sourced_vintaged_references() -> None:
     (`ScenarioRecord` refuses a 1.4 record whose assumptions miss an axis, so the path was BROKEN
     rather than silently lossy — but a create path that cannot write is not a create path.)"""
     from vinci.dossier.propose import assumptions_from, build_template, legs_from_template
-    doc = frozen_doc("BRBR")
+    # (W73) the anchor's verdict, derived (tests/anchor_reads.py)
+    doc = rederived(frozen_doc("BRBR"))
     legs = legs_from_template(build_template(doc))
     asm = assumptions_from(doc, legs)
     assert set(asm) == set(AXES)
@@ -377,13 +384,15 @@ def test_the_composed_method_names_the_statistic_not_the_house_label() -> None:
     and it is right. Analyst words are never edited; this sentence is the MACHINE's, so it is the
     machine's to get right."""
     from vinci.dossier.propose import assumptions_from, build_template, legs_from_template
-    doc = frozen_doc("BRBR")
+    # (W73) the anchor's verdict, derived (tests/anchor_reads.py)
+    doc = rederived(frozen_doc("BRBR"))
     asm = assumptions_from(doc, legs_from_template(build_template(doc)))
     for axis, a in asm.items():
         assert "computed anchor" not in a["method"], (axis, a["method"])
-        # the statistic named in words: the multiple's is the CURRENT multiple since recipe 3a
-        assert ("current multiple" if axis == "multiple" else "median") in a["method"], (
-            axis, a["method"])
+        # the statistic named in words: the multiple's is the CURRENT multiple since recipe 3a,
+        # named since W73 for its dated close (never "today's")
+        assert ("multiple at the 2026-09-21 close" if axis == "multiple" else "median") in (
+            a["method"]), (axis, a["method"])
 
 
 def test_the_shares_fact_labels_its_unit_as_millions() -> None:
@@ -650,7 +659,8 @@ def test_r3_multiple_is_not_anchored_to_the_ev_ebitda_band():
     Dropping that anchor does not weaken the check — it makes it STRICTER: the leg becomes
     unanchored, so it must state its `multiple_derivation` or be refused.
     """
-    ancs = propose_anchors(frozen_doc("GOOGL"))
+    # (W73) the anchor's verdict, derived (tests/anchor_reads.py)
+    ancs = propose_anchors(rederived(frozen_doc("GOOGL")))
     mult = [a for a in ancs if a.axis == "multiple"]
     assert mult and mult[0].basis and "EBITDA" in mult[0].basis.upper(), (
         f"GOOGL's committed multiple anchor is no longer an EV/EBITDA statistic ({mult}) — this "

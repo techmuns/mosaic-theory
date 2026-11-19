@@ -18,6 +18,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from vinci.dossier import band_guards as bg
 from vinci.dossier.anchor import compute_anchor
 from vinci.dossier.schemas import OwnHistoryBand
@@ -267,7 +268,7 @@ def test_coherent_band_reaches_the_anchor_without_a_guard_flag() -> None:
     """CONTROL, through compute_anchor: a band implying 1% D&A on $1,000M revenue against $10M
     recorded (1.0x), reconciling at 0.96x, raises neither flag — and the multiple leg stays firm."""
     a = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
-                       computed_at=_now())
+                       computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.data_quality is None
     assert bg.BAND_INCOHERENT not in str(a.reason or "")
     assert a.multiple is not None and a.multiple.confidence == "firm"
@@ -279,9 +280,9 @@ def test_tripped_band_publishes_no_anchor_base_through_compute_anchor() -> None:
     yield no ``anchor_base_value_per_share`` at all. 'Weak confidence' would not be enough — the
     number would still be read as the fundamental — so a tripped guard disqualifies the multiple."""
     coherent = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
-                              computed_at=_now())
+                              computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     tripped = compute_anchor(_synth_mech(da_margin=0.419146, current=8.0), facts=_synth_facts(),
-                             computed_at=_now())
+                             computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     # the ONLY input that moved is the band's coherence evidence
     assert tripped.margin == coherent.margin
     assert tripped.data_quality == bg.BAND_INCOHERENT
@@ -297,7 +298,7 @@ def test_market_reconciliation_alone_disqualifies_the_anchor() -> None:
     JSON) is still caught when the market says the multiple's denominator dwarfs reported EBITDA —
     TEV 1,300 ÷ 1.6x = $812M implied against $130M recorded (6.25x)."""
     a = compute_anchor(_synth_mech(da_margin=None, current=1.6), facts=_synth_facts(),
-                       computed_at=_now())
+                       computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.data_quality == bg.BAND_UNRECONCILED
     assert a.anchor_base_value_per_share is None and a.applicable is False
 
@@ -312,7 +313,7 @@ def test_net_debt_reaches_the_market_guard_in_millions_not_dollars() -> None:
     net debt correctly scaled the band reconciles at 1.25x and no flag fires. A regression would
     make this ~1e6x and turn the assertion red."""
     a = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
-                       computed_at=_now())
+                       computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.net_debt is not None and a.net_debt.value == pytest.approx(300.0)
     assert a.data_quality is None, (
         f"honest band tripped {a.data_quality!r} — net debt is reaching the guard in dollars")
@@ -323,10 +324,12 @@ def test_guard_reads_market_cap_but_no_anchor_value_depends_on_it() -> None:
     """SPOT-INDEPENDENCE HOLDS. Market cap feeds ``data_quality`` only: doubling it while the band
     still reconciles leaves every VALUE on the anchor byte-identical."""
     mech = _synth_mech(da_margin=0.010, current=8.0)
-    a1 = compute_anchor(mech, facts=_synth_facts(), computed_at=_now())
+    a1 = compute_anchor(mech, facts=_synth_facts(), computed_at=_now(),
+                        filings=NO_FILINGS, eod_closes=NO_BARS)
     mech2 = _synth_mech(da_margin=0.010, current=8.0)
     mech2["implied_valuation"]["market_cap"]["value"] = 2000.0
-    a2 = compute_anchor(mech2, facts=_synth_facts(), computed_at=_now())
+    a2 = compute_anchor(mech2, facts=_synth_facts(), computed_at=_now(),
+                        filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a1.anchor_base_value_per_share == a2.anchor_base_value_per_share
     assert a1.margin == a2.margin and a1.multiple == a2.multiple
 

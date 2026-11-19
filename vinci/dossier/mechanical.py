@@ -4822,20 +4822,24 @@ def _latest_earnings_print(edgar: EdgarClient, cik: str) -> date | None:
 
 
 def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str, Any],
-                       built_at: date) -> tuple[list[FilingEvent] | None, str | None]:
+                       built_at: date, *, since: date | None = None
+                       ) -> tuple[list[FilingEvent] | None, str | None]:
     """(2026-11-19) What the event rule reads (`freshness.event_verdict`): the 10-Qs and 10-Ks,
     and the 8-K item 2.02 releases (`events`, which counts an 8-K/A only for the codes it adds),
     filed after the build's OLDEST export panel and on or before ``built_at`` — or (None, why).
+    ``since`` reads them after that date instead: the R1 anchor's multiple close (W73,
+    `anchor.r1_close`), which can predate every export panel on the page.
 
     NOT FAIL-QUIET, unlike `_latest_earnings_print`'s caveat: this feeds a GATE, and a gate whose
     filings cannot be read must not report a clean pass, so a miss comes back as its reason and
     `check_freshness` refuses on it. No dated export panel: nothing to outdate, nothing read."""
     days = [d for _k, d in export_panels(mechanical)]
-    if not days:
-        return [], None
+    if since is None:
+        if not days:
+            return [], None
+        since = date.fromisoformat(min(days))
     if not cik:
         return None, "the page carries no CIK, so its filings cannot be listed"
-    since = date.fromisoformat(min(days))
     start = since + timedelta(days=1)
     try:
         periodic = edgar.recent_filings(cik, forms=(*EVENT_FORMS, *EVENT_ANY_FORMS), since=start)

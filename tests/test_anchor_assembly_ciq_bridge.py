@@ -24,6 +24,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.stale_gate_support import stale_gate_held_open
 from vinci.dossier import assemble as asm
 from vinci.dossier import ciq_balance, recipe_proposal
@@ -102,7 +103,8 @@ def _assembled(t: str, ciq: CiqFacts | None, monkeypatch: pytest.MonkeyPatch) ->
     with stale_gate_held_open():
         fresh = asm._assembly_anchor(page["mechanical"], facts=CUT[t]["companyfacts"],
                                      bundle=CiqBundle.from_files(t, []), ticker=t,
-                                     computed_at=T0, reference_date=REF)
+                                     computed_at=T0, reference_date=REF,
+                                     filings=NO_FILINGS, eod_closes=NO_BARS)
     kept, _notes = preserve_operator_tag(_committed(t), recipe_proposal.propose(page, fresh))
     return kept
 

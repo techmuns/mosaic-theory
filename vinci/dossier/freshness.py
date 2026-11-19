@@ -579,6 +579,23 @@ def export_panels(mechanical: object) -> list[tuple[str, str]]:
             if k not in CONSENSUS_PANELS and k not in EVENT_EXEMPT_PANELS]
 
 
+def _day(v: dt.date | str) -> dt.date:
+    return (v.date() if isinstance(v, dt.datetime) else v if isinstance(v, dt.date)
+            else dt.date.fromisoformat(str(v)[:10]))
+
+
+def first_event_after(day: dt.date | str, filings: Sequence[FilingEvent], *,
+                      upto: dt.date | str) -> FilingEvent | None:
+    """THE EVENT RULE ON ONE DATED VALUE: the first filing the rule counts that was filed strictly
+    AFTER ``day`` and on or before ``upto``, or None. A filing ON ``day`` does not outdate it
+    (`_panel_freshness_flag`'s own ``panel < print``). :func:`event_verdict` reads every export
+    panel through it, and the R1 anchor reads its multiple's close through it (W73), so the two
+    cannot disagree about what outdates a date."""
+    d, ref = _day(day).isoformat(), _day(upto).isoformat()
+    return next((f for f in sorted(filings, key=lambda f: (f.filing_date, f.accession))
+                 if d < f.filing_date <= ref), None)
+
+
 def event_verdict(mechanical: object, filings: Sequence[FilingEvent] | None, *,
                   built_at: dt.date | str, unread: str | None = None) -> EventVerdict:
     """(2026-11-19) THE EVENT RULE, in place of the 45-day clock: an export panel is STALE when
@@ -594,16 +611,14 @@ def event_verdict(mechanical: object, filings: Sequence[FilingEvent] | None, *,
     the conservative side, measured on the corpus in the record."""
     if filings is None:
         return EventVerdict((), unread=unread or "the filing list was not read")
-    ref = (built_at.date() if isinstance(built_at, dt.datetime) else built_at
-           if isinstance(built_at, dt.date) else dt.date.fromisoformat(str(built_at)[:10]))
+    ref = _day(built_at)
     upto = sorted((f for f in filings if f.filing_date <= ref.isoformat()),
                   key=lambda f: (f.filing_date, f.accession))
     panels = export_panels(mechanical)
     stale: list[StalePanel] = []
     for key, day in panels:
-        later = [f for f in upto if f.filing_date > day]
-        if later:
-            stale.append(StalePanel(key=key, panel_date=day, filing=later[0]))
+        if (first := first_event_after(day, upto, upto=ref)) is not None:
+            stale.append(StalePanel(key=key, panel_date=day, filing=first))
     oldest = min((d for _k, d in panels), default=None)
     return EventVerdict(tuple(stale), events=tuple(
         f for f in upto if oldest is not None and f.filing_date > oldest))

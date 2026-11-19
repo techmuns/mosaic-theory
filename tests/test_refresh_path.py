@@ -17,6 +17,7 @@ import shutil
 
 import pytest
 
+from tests.w73_lly_expected import as_derived
 from vinci.dossier.refresh import (
     RefreshRefusedError,
     material_figures,
@@ -136,7 +137,8 @@ def test_a_noop_refresh_is_byte_identical(tmp_path: pathlib.Path) -> None:
             continue
         folder = data / "dossiers" / src.parent.name
         folder.mkdir()
-        shutil.copy(src, folder / "dossier.json")
+        # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
+        (folder / "dossier.json").write_text(as_derived(src.parent.name, src.read_text()))
         shutil.copy(src.parent / "dossier.md", folder / "dossier.md")
         copy = folder / "dossier.json"
         original = copy.read_text()

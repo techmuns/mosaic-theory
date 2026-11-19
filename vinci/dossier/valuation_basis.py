@@ -30,8 +30,9 @@ from vinci.dossier.anchor import (
     lease_basis_mismatch,
 )
 from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
+from vinci.dossier.ev_ebitda_basis import DATE_READINGS, SAME_PRICE_DAYS, multiple_close
 from vinci.dossier.midcycle import R1_FORMULA
-from vinci.dossier.schemas import DateSemantics, Dossier, ValuationBasis
+from vinci.dossier.schemas import DateSemantics, Dossier, MechanicalLayer, ValuationBasis
 
 #: Recipe ids and formulas, mirrored from `vinci.scenarios` (pinned equal in the tests): this
 #: module sits on the dossier side, which must not import the scenario engine.
@@ -190,19 +191,47 @@ def _r1_current(d: dict[str, Any], ex_lease: bool) -> dict[str, Any] | None:
     tev = _num(_get(v, "implied_expectations", "tev", "value"))
     mc = _num(_get(si, "market_cap", "value"))
     reading = _get(v, "ev_ebitda_basis", "reading")
+    # (W73; W65's deferred finding B) THE MULTIPLE'S OWN CLOSE, never the comps TEV's date: dated by
+    # W65's reader (`ev_ebitda_basis.multiple_close`, the own-history band's latest close, the same
+    # cell this 1-dp headline rounds — LLY 27.9 against 27.85306, closed 2026-11-02, its comps TEV
+    # 2026-10-30). Where the two dates agree every string is the one written before, byte for byte.
+    close, _why = multiple_close(MechanicalLayer.model_validate(_get(d, "mechanical") or {}))
+    # a pairing W65 did NOT measure (its two figures are not of one date, or one is undated) is
+    # never called measured
+    pairing = ("" if not reading else
+               f"; its pairing not measured: {reading}" if reading in DATE_READINGS else
+               f"; its pairing, measured: {reading}")
     out = {"metric": "EV/EBITDA (TEV/LTM)", "period": "LTM", "value": val,
-           "as_of": _get(v, "implied_expectations", "tev_as_of"),
-           "source": ("mechanical.valuation.ev_ebitda (CIQ Financials→Multiples)"
-                      + (f"; its pairing, measured: {reading}" if reading else "")),
+           "as_of": close,
+           "source": "mechanical.valuation.ev_ebitda (CIQ Financials→Multiples)" + pairing,
            "snapshot_as_of": si.get("market_cap_as_of"), "snapshot_market_cap": mc,
            "snapshot_tev": tev, "page_price": price, "page_price_as_of": si.get("as_of")}
-    if tev and mc and price and shares:
+    # RE-STATED AT THE PAGE'S PRICE ONLY THROUGH A TEV OF THE MULTIPLE'S OWN DATE: TEV ÷ the
+    # multiple is the EBITDA it divides only when both are one price (W63: GOOGL's 30-day gap read
+    # a $144.8bn "EBITDA"). Two dates apart, no value is re-stated, and the field says why.
+    tev_as_of = _get(v, "implied_expectations", "tev_as_of")
+    gap = _days_apart(close, tev_as_of)
+    if tev and mc and price and shares and gap is not None and gap <= SAME_PRICE_DAYS:
         ev_at = price * shares / 1e6 + (tev - mc)
         out.update(value_at_page_price=round(val * ev_at / tev, 6),
                    value_at_page_price_basis=(
                        "(page price × point-in-time shares outstanding + CIQ claims) ÷ (snapshot "
                        "TEV ÷ the multiple)"))
+    elif tev and mc and price and shares:
+        out["value_at_page_price_basis"] = (
+            "not re-stated at the page's price: the snapshot TEV is dated "
+            f"{tev_as_of or 'unstated'} and the multiple's close {close or 'unstated'}"
+            + (f", {gap} days apart (past {SAME_PRICE_DAYS})" if gap is not None else "")
+            + ", so TEV ÷ the multiple is not the EBITDA it divides")
     return out
+
+
+def _days_apart(a: Any, b: Any) -> int | None:
+    """|a − b| in days for two ISO dates, or None where either is unstated or not a date."""
+    try:
+        return abs((date.fromisoformat(str(a)[:10]) - date.fromisoformat(str(b)[:10])).days)
+    except (TypeError, ValueError):
+        return None
 
 
 def _share_count(d: dict[str, Any]) -> dict[str, Any]:

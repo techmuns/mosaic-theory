@@ -9,6 +9,7 @@ from __future__ import annotations
 import inspect
 import pathlib
 
+from tests.w73_lly_expected import as_derived
 from vinci.dossier.anchor import _BRIDGE_FIELDS, DQ_VENDOR_BRIDGE, _with_bridge
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -129,7 +130,8 @@ def test_the_backfill_write_moves_nothing_but_the_anchor(tmp_path: pathlib.Path)
 
     derived = {"anchor", "valuation_basis", "date_semantics", "qa_flags", "layer_refreshes"}
     for src in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
-        original = src.read_text()
+        # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
+        original = as_derived(src.parent.name, src.read_text())
         path = tmp_path / f"{src.parent.name}.json"
         d = Dossier.model_validate_json(original)
         assert d.anchor is not None

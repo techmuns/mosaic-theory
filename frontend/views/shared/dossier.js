@@ -1468,8 +1468,12 @@ function anchorInner(a) {
   // `multiple.statistic`; a page committed before priced the median and keeps its words.
   // Twin of _screens_at_current() in render.py.
   const current = !!(mu && mu.statistic === "current");
+  // (W73) a DATED close the event rule judged, read off the anchor's recorded verdict; an anchor
+  // derived before W73 keeps W50's words until re-derived. Twin of _screens_at_dated_close()
+  const dated = current && mu.close_note != null;
   const methodName = isR1
-    ? (current ? "mid-cycle margin × today's multiple of its own history"
+    ? (dated ? "mid-cycle margin × its own history's multiple at the latest close"
+       : current ? "mid-cycle margin × today's multiple of its own history"
                : "mid-cycle margin × the median multiple of its own history")
     : (a.recipe_hint || "—");
   // WHOSE BIT IS `applicable` (2026-10-09) — R1's, so beside any other tag it says so; beside an
@@ -1480,9 +1484,16 @@ function anchorInner(a) {
     mg ? row("Mid-cycle margin", mg.value != null ? `${(mg.value * 100).toFixed(1)}%` : "—",
              `${mg.anchor_years}y history · ${conf(mg.confidence)}`) : "",
     // the ex-lease history names its lease convention (2026-10-19). Twin of _screening_context_lines()
-    mu ? row(current ? "Current multiple, own history" : "Median multiple, own history",
+    // (W73) the close is DATED, never "today's"; the event rule's pass beside it, written once in
+    // anchor.py (a refusal rides on the "not priced" row). Twin of _screening_context_lines()
+    mu ? row(dated ? "Multiple at the latest close, own history"
+             : current ? "Current multiple, own history" : "Median multiple, own history",
              mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
-             `${current ? `latest close ${escapeHtml(mu.as_of || "—")} · median ${mu.median != null ? `${mu.median.toFixed(1)}x` : "—"} beside it, not used · ` : ""}${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}${
+             `${dated ? `close of ${escapeHtml(mu.as_of || "—")}${
+               mu.close_stale === false && mu.close_note ? ` · ${escapeHtml(mu.close_note)}` : ""}${
+               // (W73, correction 1) the stock's move since that close, written once in anchor.py
+               mu.close_drift_note ? ` · ${escapeHtml(mu.close_drift_note)}` : ""} · median ${mu.median != null ? `${mu.median.toFixed(1)}x` : "—"} beside it, not used · `
+               : current ? `latest close ${escapeHtml(mu.as_of || "—")} · median ${mu.median != null ? `${mu.median.toFixed(1)}x` : "—"} beside it, not used · ` : ""}${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}${
                String(mu.source || "").startsWith("valuation.lease_basis")
                  ? " ex-lease (TEV less operating leases; net debt likewise)" : ""}`) : "",
     base != null ? row("Screen value / share", `$${base.toFixed(2)}`,
@@ -1533,7 +1544,9 @@ function anchorInner(a) {
     ? `<details class="uw-screen-split-math" style="margin-top:8px;"><summary class="muted" style="font-size:11.5px;">The split's arithmetic</summary>${
         (gs.arithmetic || []).map((x) => `<div class="mono" style="font-size:11px; margin-top:2px;">${escapeHtml(x)}</div>`).join("")}</details>` : "";
   return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
-    <div class="subtitle muted" style="margin:2px 0 8px;">${current
+    <div class="subtitle muted" style="margin:2px 0 8px;">${dated
+      ? "This name's naive reported median margin, priced at the multiple of its own trading history's latest close — dated below, and refused once the company reports after it — the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."
+      : current
       ? "This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."
       : "A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite."}</div>
     <table class="data"><tbody>${rows}</tbody></table>${split}${mid}${dq}${why}${splitMath}</div>`;

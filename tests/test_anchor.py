@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import covered_where, frozen_page
 from vinci.dossier import anchor as anc
 from vinci.dossier import midcycle as mc
@@ -75,9 +76,12 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}
     # (W50) which statistic was priced, its close date and the median beside it — absent on a
-    # committed pre-W50 anchor (`anchor_absent_fields`)
+    # committed pre-W50 anchor (`anchor_absent_fields`); (W73) the event rule's verdict on that
+    # close and the stock's move since it, absent on an anchor derived before W73
     assert set(AnchorMultiple.model_fields) == {"value", "unit", "source", "history_quarters",
-                                                "confidence", "statistic", "as_of", "median"}
+                                                "confidence", "statistic", "as_of", "median",
+                                                "close_stale", "close_note", "close_drift",
+                                                "close_drift_note"}
     assert set(AnchorInput.model_fields) == {"value", "unit", "basis", "source"}
     # optional on the Dossier, default None (byte-identical round-trip of pre-anchor JSON)
     assert Dossier.model_fields["anchor"].default is None
@@ -142,7 +146,8 @@ def test_positivity_guard_sets_r2_when_margin_nonpositive() -> None:
         _TOTAL: dict.fromkeys(range(2018, 2026), 100e6),
         "OperatingIncomeLoss": dict.fromkeys(range(2018, 2026), -8e6),  # persistently loss-making
     })
-    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.recipe_hint == RECIPE_R2 and a.applicable is False
     assert "revenue-anchored" in (a.reason or "")
     assert a.anchor_base_value_per_share is None and a.margin is None  # "store nothing else"
@@ -150,7 +155,8 @@ def test_positivity_guard_sets_r2_when_margin_nonpositive() -> None:
 
 def test_missing_own_history_multiple_is_inapplicable_not_crash() -> None:
     """No committed own-history multiple → applicable False with a reason (must not crash)."""
-    a = compute_anchor({"valuation": {}}, facts={"facts": {}}, computed_at=_now())
+    a = compute_anchor({"valuation": {}}, facts={"facts": {}}, computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.applicable is False and "own-history multiple missing" in (a.reason or "")
 
 
@@ -238,7 +244,8 @@ def test_revenue_tag_conflict_guard_fires_and_total_tag_wins() -> None:
         _TOTAL: dict.fromkeys(range(2016, 2026), 160e6),
         "OperatingIncomeLoss": dict.fromkeys(range(2016, 2026), 16e6),
     })
-    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT
     assert a.data_quality_detail and any("Revenues" in d and "apart" in d
                                          for d in a.data_quality_detail)
@@ -255,7 +262,8 @@ def test_data_quality_flag_caps_confidence_at_weak() -> None:
         _TOTAL: dict.fromkeys(range(2016, 2026), 160e6),
         "OperatingIncomeLoss": dict.fromkeys(range(2016, 2026), 16e6),
     })
-    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.margin is not None and a.margin.anchor_years >= ANCHOR_FIRM_MIN_YEARS
     assert a.multiple is not None and a.multiple.confidence == "firm"   # the count leg IS firm
     assert a.margin.confidence == "weak" and a.overall_confidence == "weak"
@@ -280,7 +288,8 @@ def test_uncomputable_margin_is_unresolved_not_r2() -> None:
         _TOTAL: dict.fromkeys(range(2018, 2022), 100e6),
         "OperatingIncomeLoss": dict.fromkeys(range(2010, 2014), 5e6),   # NO overlapping FY
     })
-    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.recipe_hint == anc.RECIPE_UNRESOLVED and a.applicable is False
     assert "not computable" in (a.reason or "")
     assert a.margin is None and a.anchor_base_value_per_share is None
@@ -298,7 +307,8 @@ def test_the_flagged_years_leave_the_median_wlk() -> None:
     still took its median over those years: 16.31% on fifteen, where the clean decade gives 9.78%.
     A flag beside a contaminated number is not a guard. The years go, the source names them, and
     the flag and the cap stay (real companyfacts)."""
-    a = compute_anchor(_MECH_OK, facts=_real("WLK"), computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=_real("WLK"), computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.margin is not None
     assert a.margin.value == pytest.approx(0.097831, abs=5e-7) and a.margin.anchor_years == 10
     assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT and a.margin.confidence == "weak"
@@ -309,7 +319,8 @@ def test_the_flagged_years_leave_the_median_wlk() -> None:
 def test_a_disputed_year_the_preferred_tag_wins_stays_in_the_median_vrrm() -> None:
     """VRRM's 606 total is the LARGER figure in all six disputed years, so the partial line is the
     other tag: the committed eight-year 20.9061% stands, still flagged (real companyfacts)."""
-    a = compute_anchor(_MECH_OK, facts=_real("VRRM"), computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=_real("VRRM"), computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.margin is not None
     assert a.margin.value == pytest.approx(0.209061, abs=5e-7) and a.margin.anchor_years == 8
     assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT
@@ -322,7 +333,8 @@ def test_a_restated_year_filed_with_its_operating_income_stays_hwm() -> None:
     Arconic separation, filed beside that year's $775M operating income — against Arconic's
     $14,014M from the 2019 10-K. Size alone dropped the SMALLER figure, which is the right basis
     here; the filing decides it, and the ten-year 13.47% stands (real companyfacts)."""
-    a = compute_anchor(_MECH_OK, facts=_real("HWM"), computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=_real("HWM"), computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.margin is not None
     assert a.margin.value == pytest.approx(0.134738, abs=5e-7) and a.margin.anchor_years == 10
     assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT and "EXCLUDED" not in a.margin.source
@@ -334,7 +346,8 @@ def test_a_larger_figure_from_an_older_filing_than_its_operating_income_leaves_w
     restated without steel, which restated revenue too ($1,309M, $1,418M, under `Revenues`). Pairing
     them pulled the median to 0.93%. The mismatched figure is the LARGER one, so size alone kept it;
     the filing test drops both years (real companyfacts)."""
-    a = compute_anchor(_MECH_OK, facts=_real("WOR"), computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=_real("WOR"), computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.margin is not None
     assert a.margin.anchor_years == 3 and a.margin.value == pytest.approx(0.038506, abs=5e-7)
     assert all(f"FY{y}" in a.margin.source for y in (2022, 2023))
@@ -348,7 +361,8 @@ def test_a_margin_emptied_by_excluded_years_says_so_in_its_reason() -> None:
         "Revenues": dict.fromkeys(range(2016, 2022), 160e6),
         "OperatingIncomeLoss": dict.fromkeys(range(2016, 2022), 16e6),
     })
-    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.recipe_hint == anc.RECIPE_UNRESOLVED and a.margin is None
     assert all(f"FY{y}" in (a.reason or "") for y in range(2016, 2022))
 
@@ -357,7 +371,8 @@ def test_no_total_revenue_tag_flips_applicability_to_unresolved() -> None:
     """Only partial/absent revenue tags → ANCHOR_UNRESOLVED, applicable False. The anchor refuses to
     emit a margin off a partial denominator rather than publishing a fabricated one."""
     facts = _facts(OperatingIncomeLoss=dict.fromkeys(range(2016, 2026), 5000000.0))
-    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now(),
+                       filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.recipe_hint == anc.RECIPE_UNRESOLVED and a.applicable is False
     assert "total-revenue tag" in (a.reason or "")
     assert a.margin is None and a.anchor_base_value_per_share is None
@@ -399,19 +414,19 @@ def test_multiple_leg_confidence_is_span_based_not_point_count() -> None:
         "OperatingIncomeLoss": dict.fromkeys(range(2016, 2026), 20e6),
     })
     firm = compute_anchor(_mech(window_span_years=9.0, periodicity="quarterly"),
-                          facts=facts, computed_at=_now())
+                          facts=facts, computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert firm.multiple is not None and firm.multiple.confidence == "firm"
     short = compute_anchor(_mech(window_span_years=4.0, periodicity="quarterly"),
-                           facts=facts, computed_at=_now())
+                           facts=facts, computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert short.multiple is not None and short.multiple.confidence == "weak"   # < 5y span
     ann = compute_anchor(
         _mech(window_span_years=20.0, periodicity="annual", data_quality="periodicity_mismatch"),
-        facts=facts, computed_at=_now())
+        facts=facts, computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert ann.multiple is not None and ann.multiple.confidence == "weak"       # annual, flagged
     assert ann.data_quality and "periodicity_mismatch" in ann.data_quality      # flag rides anchor
     legacy = compute_anchor({"valuation": {"own_history": {"value": [
         {"metric": "EV/EBITDA (TEV/LTM)", "median": 10.0, "n_closes": 40}]}}},  # pre-metadata JSON
-        facts=facts, computed_at=_now())
+        facts=facts, computed_at=_now(), filings=NO_FILINGS, eod_closes=NO_BARS)
     assert legacy.multiple is not None and legacy.multiple.confidence == "weak"  # span-UNKNOWN
 
 

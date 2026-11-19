@@ -32,6 +32,7 @@ import pytest
 
 import vinci.cli as cli
 from tests.frozen_support import frozen_page
+from tests.w73_lly_expected import as_derived
 from vinci.dossier import assemble as asm
 from vinci.dossier import layer_refresh
 from vinci.dossier.anchor import (
@@ -169,7 +170,8 @@ def test_a_hand_retag_without_its_block_is_refused_and_nothing_is_written(tmp_pa
 # --- the guard, on every write (positive AND negative pins) --------------------------------------
 
 def _live(ticker: str) -> tuple[str, Dossier]:
-    text = (DOSS / ticker / "dossier.json").read_text()
+    # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
+    text = as_derived(ticker, (DOSS / ticker / "dossier.json").read_text())
     return text, Dossier.model_validate_json(text)
 
 
