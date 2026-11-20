@@ -4826,9 +4826,15 @@ def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str
                        ) -> tuple[list[FilingEvent] | None, str | None]:
     """(2026-11-19) What the event rule reads (`freshness.event_verdict`): the 10-Qs and 10-Ks,
     and the 8-K item 2.02 releases (`events`, which counts an 8-K/A only for the codes it adds),
-    filed after the build's OLDEST export panel and on or before ``built_at`` — or (None, why).
-    ``since`` reads them after that date instead: the R1 anchor's multiple close (W73,
+    filed ON OR AFTER the build's OLDEST export panel and on or before ``built_at`` — or (None,
+    why). ``since`` reads them from that date instead: the R1 anchor's multiple close (W73,
     `anchor.r1_close`), which can predate every export panel on the page.
+
+    THE START DAY IS READ (W82): a filing on the panel's or the close's own day counts as after it
+    (`freshness.first_event_after`). This reader dropped it first (``since + 1 day``, ``since <
+    filed``), so neither gate could see BellRing's 8-K item 2.02 and 10-K of 2026-11-18 against
+    its export's 2026-11-18 close. The ex-lease close's strict reading is its caller's
+    (`anchor.close_verdict`), so the list itself keeps every same-day filing.
 
     NOT FAIL-QUIET, unlike `_latest_earnings_print`'s caveat: this feeds a GATE, and a gate whose
     filings cannot be read must not report a clean pass, so a miss comes back as its reason and
@@ -4844,10 +4850,9 @@ def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str
         since = date.fromisoformat(min(days))
     if not cik:
         return None, "the page carries no CIK, so its filings cannot be listed"
-    start = since + timedelta(days=1)
     try:
-        periodic = edgar.recent_filings(cik, forms=(*EVENT_FORMS, *EVENT_ANY_FORMS), since=start)
-        prints = [f for f in eight_k_events(edgar, cik, since=start) if EVENT_8K_ITEM in f.items]
+        periodic = edgar.recent_filings(cik, forms=(*EVENT_FORMS, *EVENT_ANY_FORMS), since=since)
+        prints = [f for f in eight_k_events(edgar, cik, since=since) if EVENT_8K_ITEM in f.items]
     except SecRateLimitedError:
         raise  # SEC refused this run: it stops, never a withheld value or a "could not run"
     except Exception as exc:  # noqa: BLE001 — any feed miss is the refusal's stated reason
@@ -4855,7 +4860,7 @@ def read_filing_events(edgar: EdgarClient, cik: str | None, mechanical: dict[str
                       f"({type(exc).__name__}: {exc})")
     return sorted((FilingEvent(form=f.form, filing_date=f.filing_date.isoformat(),
                                accession=f.accession, items=tuple(f.items))
-                   for f in [*periodic, *prints] if since < f.filing_date <= built_at),
+                   for f in [*periodic, *prints] if since <= f.filing_date <= built_at),
                   key=lambda e: (e.filing_date, e.accession)), None
 
 

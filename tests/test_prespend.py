@@ -20,9 +20,12 @@ from typing import Any
 
 import pytest
 
+from tests.event_gate_support import W82_VINTAGE
 from tests.frozen_support import frozen_page
 from vinci.config import Config
+from vinci.dossier import freshness as fr
 from vinci.dossier import prespend
+from vinci.dossier.extraction_version import includes
 from vinci.dossier.prespend import (
     ABSENT,
     BLOCKS,
@@ -594,15 +597,27 @@ def test_a_material_item_the_summary_omits_is_left_to_the_synthesis(
 
 @pytest.mark.parametrize("path", _pages(), ids=lambda p: p.parent.name)
 def test_every_committed_page_passes_the_freshness_check_at_its_own_build_date(
-    path: pathlib.Path,
+    path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Each page was written by a build that passed it, so the $0 check must agree (27 of 27 on
     2026-11-04). A page re-read later is NOT re-measured at today's date: the company may have
     filed since. Since 2026-11-19 the gate is the event rule, read against the page's real
-    filings, cut at its build date."""
+    filings, cut at its build date.
+
+    (W82, 2026-11-20) The rule now counts a filing ON a panel's own day. A page built before that
+    ran the STRICT gate, so it is checked against that gate (`first_event_after` read strictly):
+    AMZN, MCK and UBER, whose panels share their day with a report, pass it and the head gate
+    refuses them. A page whose stamp includes W82's vintage must pass the head gate itself —
+    the code that built it decides, never the calendar."""
     page = Dossier.model_validate_json(path.read_text())
     day = page.assembled_at.date()
     assert page.ticker in FILINGS, f"{page.ticker}: no filings frozen — re-freeze the fixture"
+    ran_w82 = includes(page.extraction_version, W82_VINTAGE)
+    assert ran_w82 is not None, f"{page.ticker}: undeclared stamp {page.extraction_version!r}"
+    if not ran_w82:
+        real = fr.first_event_after
+        monkeypatch.setattr(fr, "first_event_after",
+                            lambda *a, **k: real(*a, **{**k, "same_day_counts": False}))
     assert freshness_refusal(gate_layer(page), ticker=page.ticker, built_at=day,
                              filings=[e for e in _events(page.ticker)
                                       if e.filing_date <= day.isoformat()]) is None
