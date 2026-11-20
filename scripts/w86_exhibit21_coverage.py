@@ -92,6 +92,12 @@ def cmd_survey(args: argparse.Namespace) -> int:
 
 def cmd_measure(args: argparse.Namespace) -> int:
     rows = [json.loads(x) for x in Path(args.rows).read_text().splitlines() if x.strip()]
+    for i, row in enumerate(rows, 1):
+        if "ticker" not in row or "entity" not in row:
+            raise SystemExit(f"{args.rows} row {i} carries no ticker or entity: {row}")
+        if row.get("own") not in (True, False, None):
+            raise SystemExit(f"{args.rows} row {i}: `own` must be true, false or absent, "
+                             f"not {row['own']!r}")
     edgar, http = _client()
     reads: dict[str, Exhibit21Read] = {}
     results: list[dict[str, Any]] = []
@@ -138,9 +144,10 @@ def cmd_measure(args: argparse.Namespace) -> int:
 FIXTURES: dict[str, tuple[str, ...] | None] = {
     "AMZN": None, "GOOGL": None, "TGT": None, "SMPL": None, "PARR": None, "WERN": None,
     "V": None, "UBER": None,
-    "LLY": ("LillyDirect Pharmacy, LLC", "Eli Lilly (Philippines), Incorporated"),
-    "TJX": ("Leasing Subsidiaries", "NBC Sixth Realty Corp."),
-    "EPAM": (),
+    "LLY": ("LillyDirect Pharmacy, LLC", "Eli Lilly (Philippines), Incorporated", "Aparito LLC",
+            "Eli Lilly and Company Limited", "Eli Lilly S.A."),
+    "TJX": ("Leasing Subsidiaries", "NBC Sixth Realty Corp.", "NBC Apparel"),
+    "EPAM": ("EPAM Systems LLC",),
 }
 _CUT_KEEP = 6
 #: The SGML headers kept whole: a 10-K that types its EX-21, and a 10-Q that files none.

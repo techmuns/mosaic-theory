@@ -54,7 +54,7 @@ import bisect
 import html
 import re
 import unicodedata
-from datetime import date
+from datetime import date, timedelta
 from typing import Literal, NamedTuple
 
 from bs4 import BeautifulSoup
@@ -116,6 +116,9 @@ _AFFILIATES = re.compile(r"\baffiliat(?:e|es|ed)\b", re.I)
 #: A text line longer than this is prose, not one company's name.
 _MAX_NAME_LINE = 160
 _TRAILING_PAREN = re.compile(r"\s*\(([^()]*)\)\s*$")
+#: How far back of ``through`` the 10-Ks are read: a year and a half, so a late filer's newest 10-K
+#: by that day is inside the window.
+_TENK_LOOKBACK_DAYS = 550
 
 
 Status = Literal["listed", "no_ex21", "no_names", "unread", "no_10k"]
@@ -210,6 +213,20 @@ def normalise_name(name: str) -> str:
     return " ".join(_strip_suffixes(_tokens(name)))
 
 
+#: A corporate form's abbreviation and its spelt-out word, so the registrant's EDGAR name ("TARGET
+#: CORP") and its own heading line ("Target Corporation") read as one name.
+_FORM_WORDS = {"corp": "corporation", "inc": "incorporated", "co": "company", "ltd": "limited"}
+
+
+def _full_key(name: str) -> str:
+    """A name with its corporate form KEPT, spelt out: "Gartner, LLC" and "Gartner, Inc." differ,
+    "TARGET CORP" and "Target Corporation" do not. The registrant is dropped from its own list only
+    on this key: the normalised key would also drop every subsidiary that shares its base name."""
+    s = unicodedata.normalize("NFKC", name).casefold().replace("&", " and ")
+    toks = re.sub(r"[^\w\s]|_", " ", s).split()
+    return " ".join(_FORM_WORDS.get(t, t) for t in toks)
+
+
 def _ends_in_suffix(name: str) -> bool:
     toks = _tokens(name)
     return any(len(toks) > len(s) and tuple(toks[-len(s):]) == s for s in _SUFFIXES)
@@ -295,8 +312,9 @@ def parse_exhibit21(doc: str, *, registrant: str | None = None) -> tuple[list[Li
     """``(rows, prose)`` of one Exhibit 21 document: each listed row in the exhibit's order, and the
     exhibit's text outside its tables, one line per text block (where it states what it omits).
 
-    The registrant's own name is dropped. Names are deduplicated by their normalised key, first
-    listing kept."""
+    The registrant's own name is dropped (:func:`_full_key`). A row repeated verbatim (the same name
+    and jurisdiction) is kept once; two rows that differ only in corporate form or jurisdiction are
+    two companies and are both kept ("EPAM Systems LLC" in four countries)."""
     is_html = re.search(r"<\s*(?:html|body|table|tr|p|div|br)\b", doc, re.I) is not None
     if is_html:
         soup = BeautifulSoup(doc, "html.parser")
@@ -312,16 +330,20 @@ def parse_exhibit21(doc: str, *, registrant: str | None = None) -> tuple[list[Li
         lines = doc.splitlines()
         rows = _text_rows(lines)
     prose = "\n".join(c for c in (_collapse(x) for x in lines) if c)
-    own = normalise_name(registrant) if registrant else None
-    seen: set[str] = set()
+    own = _full_key(registrant) if registrant else None
+    seen: set[tuple[str, str]] = set()
     kept: list[ListedRow] = []
     for row in rows:
-        key = normalise_name(row.name)
-        if not key or key == own or key in seen:
+        key = _row_key(row.name, row.jurisdiction)
+        if not normalise_name(row.name) or key[0] == own or key in seen:
             continue
         seen.add(key)
         kept.append(row)
     return kept, prose
+
+
+def _row_key(name: str, jurisdiction: str | None) -> tuple[str, str]:
+    return _full_key(name), _collapse(jurisdiction or "").casefold()
 
 
 def _omission_sentence(prose: str) -> str | None:
@@ -363,7 +385,9 @@ def read_exhibit21(edgar: EdgarClient, http: CachedHttp, cik: int | str, *,
     ``http`` is the SEC client ``edgar`` reads through (the archive documents are fetched with it,
     cached forever: a filed exhibit is immutable)."""
     cik10 = pad_cik(cik)
-    tenks = [f for f in edgar.recent_filings(cik10, forms=("10-K",))
+    # a cut in the past reads back far enough to reach that year's 10-K, beyond the recent page
+    since = None if through is None else through - timedelta(days=_TENK_LOOKBACK_DAYS)
+    tenks = [f for f in edgar.recent_filings(cik10, forms=("10-K",), since=since)
              if through is None or f.filing_date <= through]
     # the same submissions document `recent_filings` just read: a cache hit, not a second fetch
     registrant = edgar.registrant_history(cik10).current or None
@@ -396,16 +420,16 @@ def bind_exhibit21(cik: str, accession: str, filing_date: date,
                    registrant: str | None) -> Exhibit21Read:
     """The read of one 10-K's Exhibit 21 documents, each ``(type, url, text)`` as EDGAR serves
     it: every listed name bound to its ``source_ref``. No HTTP here (:func:`read_exhibit21`
-    fetches); a name listed in two of the filing's exhibits is kept once, at its first."""
+    fetches); a row listed verbatim in two of the filing's exhibits is kept once, at its first."""
     names: list[Subsidiary] = []
     prose_parts: list[str] = []
-    seen: set[str] = set()
+    seen: set[tuple[str, str]] = set()
     for ty, url, doc in documents:
         rows, prose = parse_exhibit21(doc, registrant=registrant)
         prose_parts.append(prose)
         ref = f"10-K {accession} {ty} · {url}"
         for row in rows:
-            key = normalise_name(row.name)
+            key = _row_key(row.name, row.jurisdiction)
             if key in seen:
                 continue
             seen.add(key)
@@ -425,17 +449,21 @@ def bind_exhibit21(cik: str, accession: str, filing_date: date,
 
 
 def match_entity(entity: str, read: Exhibit21Read) -> EntityMatch:
-    """``entity`` against ``read``'s list, at the tightest tier it reaches (see module doc)."""
+    """``entity`` against ``read``'s list, at the tightest tier it reaches (see module doc).
+
+    A name listed exactly is that listing, even when it shares the registrant's base name ("Eli
+    Lilly and Company Limited" is Lilly's UK subsidiary, not Lilly); otherwise an entity that
+    normalises to the registrant is the registrant."""
     partial = read.states_omission is not None
-    if read.registrant and normalise_name(entity) == normalise_name(read.registrant):
-        return EntityMatch(entity=entity, tier="registrant", list_states_omission=partial)
-    if read.status != "listed":
-        return EntityMatch(entity=entity, tier=read.status, list_states_omission=partial)
     want = _collapse(entity)
     for sub in read.names:
         if _collapse(sub.name) == want:
             return EntityMatch(entity=entity, tier="exact", listed=sub,
                                list_states_omission=partial)
+    if read.registrant and normalise_name(entity) == normalise_name(read.registrant):
+        return EntityMatch(entity=entity, tier="registrant", list_states_omission=partial)
+    if read.status != "listed":
+        return EntityMatch(entity=entity, tier=read.status, list_states_omission=partial)
     key = normalise_name(entity)
     if key:
         for sub in read.names:

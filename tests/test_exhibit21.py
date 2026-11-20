@@ -165,6 +165,28 @@ def test_table_header_rows_are_not_names() -> None:
     assert "Eli Lilly (Philippines), Incorporated" in lly
 
 
+def test_rows_differing_in_form_or_jurisdiction_are_two_companies() -> None:
+    """Review round 0: a dedup on the normalised key merged them (EPAM lost 13 rows, CNXC 15)."""
+    epam = [(n.name, n.jurisdiction) for n in _read("EPAM").names if n.name == "EPAM Systems LLC"]
+    assert epam == [("EPAM Systems LLC", "Armenia"), ("EPAM Systems LLC", "Kyrgyzstan"),
+                    ("EPAM Systems LLC", "Ukraine"), ("EPAM Systems LLC", "New Jersey, USA")]
+    lly = _names("LLY")
+    assert "Aparito Limited" in lly and "Aparito LLC" in lly
+    assert match_entity("Aparito LLC", _read("LLY")).tier == "exact"
+    tjx = _names("TJX")
+    assert "NBC Apparel, Inc." in tjx and "NBC Apparel, LLC" in tjx
+
+
+def test_only_the_registrant_itself_is_dropped() -> None:
+    """Review round 0: a drop on the normalised key removed every subsidiary sharing the filer's
+    base name. Lilly (EDGAR: "ELI LILLY & Co") keeps its Limited and S.A.; Target's own heading
+    "Target Corporation" ("TARGET CORP") is still dropped."""
+    lly = _names("LLY")
+    assert "Eli Lilly and Company Limited" in lly and "Eli Lilly S.A." in lly
+    assert "Target Corporation" not in _names("TGT")
+    assert match_entity("Eli Lilly and Company Limited", _read("LLY")).tier == "exact"
+
+
 def test_numbered_rows_give_the_name_not_the_number() -> None:
     wern = _read("WERN")
     assert len(wern.names) == 21
@@ -240,7 +262,9 @@ class _Edgar:
 
     def recent_filings(self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",),
                        since: date | None = None) -> list[Filing]:
-        return [f for f in self.filings if f.form in forms]
+        self.since = since
+        return [f for f in self.filings if f.form in forms
+                and (since is None or f.filing_date >= since)]
 
     def registrant_history(self, cik: int | str) -> RegistrantHistory:
         return RegistrantHistory(current=self.registrant, former=())
@@ -294,5 +318,7 @@ def test_through_reads_the_newest_10k_filed_by_then() -> None:
     read = read_exhibit21(edgar, http, 1652044, through=date(2026, 11, 20))  # type: ignore[arg-type]
     assert read.accession == TENK_ACC and read.status == "listed"
     assert not any(later.replace("-", "") in u for u in http.asked)
+    # review round 0: a cut in the past reads a window behind it, beyond the recent page
+    assert edgar.since is not None and edgar.since <= date(2025, 6, 1)
     newest = read_exhibit21(edgar, _Http(_googl_pages()), 1652044)  # type: ignore[arg-type]
     assert newest.accession == later and newest.status == "unread"

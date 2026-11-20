@@ -100,7 +100,10 @@
    "cut": true,
    "kept_rows": [
     "LillyDirect Pharmacy, LLC",
-    "Eli Lilly (Philippines), Incorporated"
+    "Eli Lilly (Philippines), Incorporated",
+    "Aparito LLC",
+    "Eli Lilly and Company Limited",
+    "Eli Lilly S.A."
    ]
   },
   "TJX": {
@@ -114,7 +117,8 @@
    "cut": true,
    "kept_rows": [
     "Leasing Subsidiaries",
-    "NBC Sixth Realty Corp."
+    "NBC Sixth Realty Corp.",
+    "NBC Apparel"
    ]
   },
   "EPAM": {
@@ -126,7 +130,9 @@
    "type": "EX-21.1",
    "url": "https://www.sec.gov/Archives/edgar/data/1352010/000135201026000015/exhibit211subsidiariesofth.htm",
    "cut": true,
-   "kept_rows": []
+   "kept_rows": [
+    "EPAM Systems LLC"
+   ]
   }
  },
  "headers": {
