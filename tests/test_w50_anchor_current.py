@@ -246,7 +246,7 @@ def _md(a: anc.Anchor | None) -> str:
     return "\n".join(dr._screening_context_lines(a))
 
 
-def test_both_renderers_print_what_each_anchor_priced() -> None:
+def test_both_renderers_print_what_each_anchor_priced(tmp_path: Path) -> None:
     """(+/-) TEST-LAYER RULE, real committed JSON → render → assertion. SMPL's COMMITTED anchor
     (median) prints the median words on both surfaces; its W50 anchor prints today's multiple, the
     close it was struck at and the median beside it, and none of the median-pricing words."""
@@ -282,16 +282,13 @@ for (const [k, f] of [["old", process.argv[2]], ["new", process.argv[3]]]) {
 }
 process.stdout.write(JSON.stringify(out));
 """
-    tmp = ROOT / ".pytest_w50_tmp"
-    tmp.mkdir(exist_ok=True)
-    try:
-        (tmp / "drv.mjs").write_text(driver)
-        (tmp / "after.json").write_text(json.dumps(after))
-        before = frozen_page("SMPL") / "dossier.json"
-        res = subprocess.run(["node", str(tmp / "drv.mjs"), str(before), str(tmp / "after.json")],
-                             cwd=ROOT, capture_output=True, text=True, check=True)
-    finally:
-        shutil.rmtree(tmp, ignore_errors=True)
+    # tmp_path, never a fixed folder in the checkout (2026-11-20); node still runs from ROOT
+    (tmp_path / "drv.mjs").write_text(driver)
+    (tmp_path / "after.json").write_text(json.dumps(after))
+    before = frozen_page("SMPL") / "dossier.json"
+    res = subprocess.run(["node", str(tmp_path / "drv.mjs"), str(before),
+                          str(tmp_path / "after.json")],
+                         cwd=ROOT, capture_output=True, text=True, check=True)
     html = json.loads(res.stdout)
     assert "Median multiple, own history" in html["old"]
     assert "Multiple at the latest close, own history" not in html["old"]
