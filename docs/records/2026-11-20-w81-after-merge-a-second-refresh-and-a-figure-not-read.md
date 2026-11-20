@@ -2,7 +2,7 @@
 id:
 status: open
 date: 2026-11-20
-prs: []
+prs: [1169]
 supersedes:
 superseded-by:
 ---
@@ -129,6 +129,18 @@ so under row 53 they wait for a measurement rather than ride a $0 fix.
 - **NIT 3's count:** every string field of the 26 committed `dossier.json` at `ddf0374c`.
 - **The byte check:** 2 panel pages (MCK, LLY) at freeze `bcda7ce3`, one draw's request each (the
   request is per-draw identical, `replay._one`).
+
+**A DATA ISSUE FOR THE OPERATOR, NOT A CODE FINDING.** PARR's on-disk
+`Par Pacific Holdings Inc NYSE PARR Financials_Quarterly.xls` (exported 2026-11-12, sha256
+`29debc32…`) is byte-identical to its Financials_Annual, and states Period Type 'annual' on all
+three statements. It is a mislabelled export, refused by `ciq.CiqMislabelledError`.
+- It is not the quarterly export PARR's page records (`abe14427…`).
+- With this worktree linked to the primary's `data/manual/ciq`, the full suite failed 57 CIQ-bound
+  tests (PARR's among them). The same 57 fail at base `ddf0374c` on the same folder, so they are
+  the on-disk exports, not this change.
+- Unlinked, those tests skip, as in CI, and the gate is green.
+- PARR is a watch page and waits for the operator's re-export of its quarterly Financials
+  (coordinator A is telling the operator).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **$0.** No model call. The captures use a recorder in place of the client.
