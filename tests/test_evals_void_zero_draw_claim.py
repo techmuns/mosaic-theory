@@ -403,10 +403,23 @@ def test_the_real_2f2314_row_is_voided_by_its_claim_and_only_once_the_void_is_on
     its own approval, 1d6fdd4e, names that claim by its row, stamps its `drawn_at`
     12:55:17Z, carries the ruling and no path (the repository is public). (−) While the void
     is in this checkout only, it cancels nothing (item 1a), and a second void is refused.
-    (+) On main, the claim is cancelled: the 12 pins no longer count as drawn."""
-    lines = [x for x in registry.main_rows(ROOT, "HEAD") if x.get("registration") == REAL_SHA]
-    assert [r["event"] for r in lines] == ["registered"]
+    (+) On main, the claim is cancelled: the 12 pins no longer count as drawn.
+
+    It reads only the REGISTERED row of the committed index. W85's later rows for 2f2314 (the
+    `drawn` and `void` rows its docs-only PR lands) are appended to the same file, and the first
+    version of this pin read every 2f2314 row, so it
+    would have failed the very PR that lands the void (shown on a local commit of those two
+    rows over main `67614c8d`). Once the committed index holds the stopped claim and its void,
+    they are checked as the rows this pin assumes: the claim is `REAL_DRAWN`, and the void names
+    it by its row."""
+    committed = [x for x in registry.main_rows(ROOT, "HEAD") if x.get("registration") == REAL_SHA]
+    lines = [x for x in committed if x.get("event") == "registered"]
     (real,) = lines
+    stopped = [x for x in committed if x.get("event") == "drawn"
+               and x.get("drawn_at") == REAL_DRAWN["drawn_at"]]
+    assert stopped in ([], [REAL_DRAWN])
+    assert all(x.get("voids") == registry._row_id(REAL_DRAWN)
+               for x in committed if x.get("event") == "void")
     assert (real["approval"], real["kind"], len(real["pins"])) == (REAL_APPROVAL, "compare", 12)
     repo = _repo_with_index(tmp_path, [])
     (repo / registry.INDEX).write_text(json.dumps(real, sort_keys=True) + "\n", encoding="utf-8")
