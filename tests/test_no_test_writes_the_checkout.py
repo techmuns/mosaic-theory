@@ -46,10 +46,15 @@ _PATH_STEPS = frozenset({"resolve", "absolute", "joinpath", "with_name", "with_s
 
 
 def _is_own_location(node: ast.AST) -> bool:
-    """`Path(__file__)`."""
-    return (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
-            and node.func.id == "Path" and len(node.args) == 1
-            and isinstance(node.args[0], ast.Name) and node.args[0].id == "__file__")
+    """`Path(__file__)`, however `Path` is reached: bare, `pathlib.Path`, an alias such as
+    `_pl.Path`, or `__import__("pathlib").Path` (all four are spelled under tests/; review round
+    1: the bare form alone missed the 147 modules that write `pathlib.Path`)."""
+    if not (isinstance(node, ast.Call) and len(node.args) == 1
+            and isinstance(node.args[0], ast.Name) and node.args[0].id == "__file__"):
+        return False
+    f = node.func
+    return (isinstance(f, ast.Name) and f.id == "Path") or (
+        isinstance(f, ast.Attribute) and f.attr == "Path")
 
 
 def _in_checkout(node: ast.AST, names: set[str]) -> bool:
@@ -72,12 +77,39 @@ def _in_checkout(node: ast.AST, names: set[str]) -> bool:
             return False
 
 
+_FUNCS = (ast.FunctionDef, ast.AsyncFunctionDef)
+
+
+def _split(scope: ast.AST) -> tuple[list[ast.AST], list[ast.FunctionDef | ast.AsyncFunctionDef]]:
+    """`scope`'s own nodes, and the functions nested directly in it (through classes, ifs and
+    the like), which are scopes of their own and are not descended into."""
+    own: list[ast.AST] = []
+    funcs: list[ast.FunctionDef | ast.AsyncFunctionDef] = []
+    todo = list(ast.iter_child_nodes(scope))
+    while todo:
+        node = todo.pop()
+        if isinstance(node, _FUNCS):
+            funcs.append(node)
+        else:
+            own.append(node)
+            todo.extend(ast.iter_child_nodes(node))
+    return own, funcs
+
+
+def _own_nodes(scope: ast.AST) -> list[ast.AST]:
+    return _split(scope)[0]
+
+
+def _nested_functions(scope: ast.AST) -> list[ast.FunctionDef | ast.AsyncFunctionDef]:
+    return _split(scope)[1]
+
+
 def _bound(scope: ast.AST, names: set[str]) -> set[str]:
     """`names` plus every name `scope` binds to a path in the checkout, to a fixed point."""
     out = set(names)
     while True:
         before = len(out)
-        for node in ast.walk(scope):
+        for node in _own_nodes(scope):
             if isinstance(node, (ast.Assign, ast.AnnAssign)) and node.value is not None:
                 targets = node.targets if isinstance(node, ast.Assign) else [node.target]
                 if _in_checkout(node.value, out):
@@ -116,7 +148,7 @@ def _scratch_name(node: ast.AST, names: set[str]) -> str | None:
 
 def _findings(scope: ast.AST, names: set[str]) -> list[tuple[int, str]]:
     out: list[tuple[int, str]] = []
-    for node in ast.walk(scope):
+    for node in _own_nodes(scope):
         scratch = _scratch_name(node, names)
         if scratch is not None and isinstance(node, ast.expr):
             out.append((node.lineno, f"names the scratch folder {scratch!r}"))
@@ -143,17 +175,22 @@ def checkout_writes(source: str) -> list[tuple[int, str]]:
     """Every (line, what) in `source` that writes a path in the checkout, or names a `.pytest_*`
     folder there. Names are bound per function, so a `tmp` that is a temp dir in one test and a
     checkout path in another is judged in each by its own binding, and a parameter that shadows a
-    module name (`def f(ROOT)`) is whatever its caller passes, not the module's path."""
-    tree = ast.parse(source)
-    scopes = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
-    top = ast.Module(body=[n for n in tree.body if not isinstance(n, scopes)], type_ignores=[])
-    module_names = _bound(top, set())
-    found = set(_findings(top, module_names))
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            a = node.args
-            params = {p.arg for p in [*a.posonlyargs, *a.args, *a.kwonlyargs]}
-            found |= set(_findings(node, _bound(node, module_names - params)))
+    module name (`def f(ROOT)`) is whatever its caller passes, not the module's path. Each function
+    is its own scope: it inherits its enclosing scope's names, less its own parameters, so a nested
+    `def seed(ROOT)` is judged by its parameter and a closure writing an outer checkout path is
+    still refused."""
+    found: set[tuple[int, str]] = set()
+
+    def scan(scope: ast.AST, inherited: set[str]) -> None:
+        names = _bound(scope, inherited)
+        found.update(_findings(scope, names))
+        for f in _nested_functions(scope):
+            a = f.args
+            params = {p.arg for p in [*a.posonlyargs, *a.args, *a.kwonlyargs, a.vararg, a.kwarg]
+                      if p is not None}
+            scan(f, names - params)
+
+    scan(ast.parse(source), set())
     return sorted(found)
 
 
@@ -243,9 +280,17 @@ def test_the_fixed_shape_passes_with_node_still_run_from_the_checkout() -> None:
     'def t(tmp_path):\n    os.replace(tmp_path / "a.json", ROOT / "data" / "a.json")\n',
     'ROOT = Path(__file__).resolve().parents[1]\n'
     'def t():\n    d = ROOT.joinpath(".pytest_w90_tmp")\n    subprocess.run(["node", str(d)])\n',
+    'ROOT = Path(__file__).resolve().parents[1]\ndef t():\n    out = ROOT / "build"\n'
+    '    def emit():\n        out.mkdir()\n    emit()\n',
+    'ROOT = pathlib.Path(__file__).resolve().parents[1]\ndef t():\n    (ROOT / "x").mkdir()\n',
+    'ROOT = _pl.Path(__file__).resolve().parents[1]\ndef t():\n    (ROOT / "x").mkdir()\n',
+    'ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]\ndef t():\n'
+    '    (ROOT / "x").mkdir()\n',
 ], ids=["mkdir-another-name", "write-text-beside-the-test", "append-under-a-bound-subdir",
         "copy-into-the-checkout", "rmtree-on-own-location", "unlink-each-globbed-file",
-        "path-open-for-writing", "os-replace-into-the-checkout", "joinpath-a-scratch-name"])
+        "path-open-for-writing", "os-replace-into-the-checkout", "joinpath-a-scratch-name",
+        "a-closure-writes-an-outer-checkout-path", "pathlib-spelled-root", "aliased-pathlib-root",
+        "imported-pathlib-root"])
 def test_a_write_in_the_checkout_is_refused_whatever_the_folder_is_called(src: str) -> None:
     """(+) Keyed on the call, not on the `.pytest_` name: none of these names one."""
     assert checkout_writes(src), src
@@ -266,9 +311,11 @@ def test_a_write_in_the_checkout_is_refused_whatever_the_folder_is_called(src: s
     '    assert (ROOT / ".pytest_cache").name\n',
     'ROOT = Path(__file__).resolve().parents[1]\ndef _seed(ROOT):\n    (ROOT / "x").mkdir()\n'
     'def t(tmp_path):\n    _seed(tmp_path)\n',
+    'ROOT = Path(__file__).resolve().parents[1]\ndef t(tmp_path):\n    def seed(ROOT):\n'
+    '        (ROOT / "x").mkdir()\n    seed(tmp_path)\n',
 ], ids=["read-from-the-checkout-write-to-tmp", "open-for-reading", "a-checkout-name-under-tmp",
         "copy-out-of-the-checkout", "one-name-two-functions", "pytests-own-cache",
-        "a-parameter-shadows-root"])
+        "a-parameter-shadows-root", "a-nested-parameter-shadows-root"])
 def test_reads_of_the_checkout_and_writes_elsewhere_pass(src: str) -> None:
     """(−) Reading the checkout, or writing tmp_path, is what tests do: none is refused."""
     assert checkout_writes(src) == [], src
