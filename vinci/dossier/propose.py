@@ -219,13 +219,56 @@ def propose_anchors(doc: dict[str, Any]) -> list[Anchor]:
     # proposed even though it sits in the same object: see UNPROPOSED_REASON.
     oh, where = _r1_proposal_band(doc)
     cur = _usable_multiple(oh.get("current")) if oh is not None else None
-    if oh is not None and cur is not None:
+    # (W73) THE SAME DATED CLOSE AND THE SAME VERDICT AS R1: proposed only where the page's anchor
+    # prices this close and its event rule passed it; otherwise `multiple_base_refusal` says why
+    if oh is not None and cur is not None and (ok := _close_passed(doc, oh, cur)) is not None:
         out.append(Anchor("multiple", "base", round(cur, 4), "x", cur, "current",
-                          f"{oh.get('metric')} current multiple",  # basis= below
-                          f"{where}.current {oh.get('metric')} (latest close {oh.get('as_of')}, "
-                          f"{oh.get('source_file')})",
+                          f"{oh.get('metric')} multiple at the {oh.get('as_of')} close",
+                          f"{where}.current {oh.get('metric')} (the latest close, "
+                          f"{oh.get('as_of')}: {ok}; {oh.get('source_file')})",
                           str(oh.get("as_of")), basis=str(oh.get("metric") or "") or None))
     return out
+
+
+def _close_refusal(doc: dict[str, Any], oh: dict[str, Any], cur: float) -> str | None:
+    """Why the band's latest close may not be proposed, by the verdict R1's anchor RECORDED on
+    it (`anchor.multiple.close_note`, written by `anchor.close_verdict`, W73) — or None when it
+    passed. Never re-decided here: one verdict for the page's screen and the record's base, read
+    off the anchor that priced it.
+
+    Four refusals, each naming what clears it: the anchor prices no multiple (an R2 page); it
+    does not price this close (a band refreshed after the anchor, or an anchor before W50); it
+    carries no verdict (derived before W73); or the event rule refused it (a report after the
+    close, or a close after the page's date). The record would otherwise take a base multiple the
+    page itself withholds (GOOGL's 22.9x at the 2026-09-30 close, before this change)."""
+    held = _get(doc, "anchor", "multiple") or {}
+    close = oh.get("as_of")
+    if not held:
+        return (f"the page's R1 anchor prices no multiple (its arithmetic stops before the "
+                f"multiple leg: {_get(doc, 'anchor', 'recipe_hint')!r}), so no event-rule verdict "
+                f"on the {close} close exists to propose it by")
+    if held.get("statistic") != "current" or str(held.get("as_of")) != str(close) \
+            or _usable_multiple(held.get("value")) is None \
+            or abs(float(held["value"]) - cur) > 1e-9:
+        return (f"the page's R1 anchor does not price the {close} close the band carries (it "
+                f"prices {held.get('value')!r}"
+                + (f" at the {held.get('as_of')} close" if held.get("as_of") else
+                   ", the median, from before 2026-11-17") + "); re-derive the anchor "
+                "(anchor-backfill), which judges that close by the event rule")
+    if "close_stale" not in held:
+        return (f"the page's R1 anchor carries no event-rule verdict on the {close} close (derived "
+                "before 2026-11-19); re-derive the anchor (anchor-backfill) to judge it")
+    if held.get("close_stale") is not False:
+        return (f"the {close} close is refused by the event rule on the page's R1 anchor: "
+                f"{held.get('close_note')}")
+    return None
+
+
+def _close_passed(doc: dict[str, Any], oh: dict[str, Any], cur: float) -> str | None:
+    """The anchor's own words for a close the event rule passed, or None when it did not."""
+    if _close_refusal(doc, oh, cur) is not None:
+        return None
+    return str(_get(doc, "anchor", "multiple", "close_note") or "")
 
 
 def _r1_proposal_band(doc: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
@@ -258,8 +301,16 @@ def multiple_base_refusal(doc: dict[str, Any]) -> str | None:
     exactly the pages where the data is weakest, the bias this default removes. The cell arrives
     empty with this reason, and the analyst states the number's derivation."""
     oh, where = _r1_proposal_band(doc)
-    if oh is None or _usable_multiple(oh.get("current")) is not None:
+    if oh is None:
         return None
+    if (cur := _usable_multiple(oh.get("current"))) is not None:
+        # (W73) a usable close the event rule did not pass: refused with R1's own verdict, the
+        # median never in its place
+        why = _close_refusal(doc, oh, cur)
+        return None if why is None else (
+            f"R1's base multiple ({where}, {oh.get('metric')}, {cur:g}x) is not proposed: {why}. "
+            "The trailing median is never put in its place. State where this number comes from "
+            "in multiple_derivation.")
     med = oh.get("median")
     return (f"the band R1 prices on ({where}, {oh.get('metric')}) carries no usable current "
             f"multiple (current={oh.get('current')!r}: absent, NM or not positive), and the "
@@ -277,7 +328,8 @@ def multiple_base_corroborator(doc: dict[str, Any]) -> RefPoint | None:
     `validate_legs` measures the deviation against the current alone. RUNBOOKS §m's use for it:
     a reference that may not GENERATE a target can still DETECT a distorted anchor."""
     oh, where = _r1_proposal_band(doc)
-    if oh is None or _usable_multiple(oh.get("current")) is None:
+    if oh is None or (cur := _usable_multiple(oh.get("current"))) is None \
+            or _close_refusal(doc, oh, cur) is not None:   # (W73) only beside a proposed close
         return None
     med = _usable_multiple(oh.get("median"))
     if med is None:

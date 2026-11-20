@@ -27,6 +27,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS, page_filings
 from tests.frozen_support import CUT, frozen_doc
 from vinci.dossier import anchor as anc
 from vinci.dossier import anchor_split as sp
@@ -92,8 +93,10 @@ def test_lly_reads_its_reported_ltm_ebitda_and_a_large_negative_margin_effect() 
     assert s.anchor_at_current == pytest.approx(820.1522, abs=1e-4)
     assert s.anchor_at_median == pytest.approx(752.2356, abs=1e-4)
     assert s.leverage_flag is False and s.net_debt_to_ev == pytest.approx(0.03551, abs=1e-5)
+    # (W73) the cut's anchor predates W73, so it records no event-rule verdict and the split states
+    # none (`committed_gap_split` never re-decides one)
     assert (s.multiple_close, s.price_date, s.close_age_days, s.stale_close) == (
-        "2026-11-02", "2026-11-11", 9, False)
+        "2026-11-02", "2026-11-11", 9, None)
 
 
 def test_wern_reads_the_ex_lease_observation_the_current_is_struck_on() -> None:
@@ -141,26 +144,37 @@ def test_net_debt_beyond_the_ev_flags_and_states_no_sensitivity() -> None:
     assert s.leverage_flag is True and s.equity_sensitivity is None
 
 
-def test_the_stale_notice_states_the_anchors_cadence_verdict() -> None:
-    """(W62, 2026-11-18; coordinator: "the split's stale notice follows the anchor's cadence
-    verdict") TJX's ex-lease current is the 2026-08-28 quarterly close, 75 days before its
-    2026-11-11 price date, and the newest its history could carry (its next observation is due
-    2026-12-29): NOT stale, no notice, and the arithmetic says why. BRBR's CIQ close is 32 days
-    old, past CIQ's 30: stale, the notice printed. LLY's 9 days are not. Until W62 the notice ran
-    on a flat 30-day clock, so it called TJX's multiple stale while the anchor priced on it."""
-    s = _split(frozen_doc("TJX"))
-    assert (s.multiple_close, s.price_date, s.close_age_days, s.stale_close) == (
-        "2026-08-28", "2026-11-11", 75, False)
-    assert s.stale_line is None
-    assert s.arithmetic[-1].startswith("the multiple's close 2026-08-28, the page's stored close "
-                                       "2026-11-11: 75 days; not stale by its history's cadence: "
-                                       "the next quarterly observation is due by 2026-12-29")
-    b = _split(frozen_doc("BRBR"))
-    assert (b.close_age_days, b.stale_close) == (32, True) and b.stale_line is not None
-    assert b.arithmetic[-1].endswith(
-        "32 days; stale by its history's cadence: CIQ's history is stale past 30 days.")
-    assert sp.STALE_CLOSE_DAYS == 30
-    assert _split(frozen_doc("LLY")).stale_close is False
+def test_the_stale_notice_states_the_verdict_the_anchor_recorded() -> None:
+    """(W73, 2026-11-19; operator: "Approve with corrections") The split states the verdict the
+    ANCHOR recorded on its close by the event rule (`anchor.close_verdict`), never a clock of its
+    own and never one re-decided from a committed page.
+
+    (+) TJX derived with its real filings: its ex-lease close of 2026-08-28 is 75 days before its
+    2026-11-11 page, and nothing was reported between (its next results, 2026-11-18, came after):
+    passed, no notice, and the arithmetic says why. BRBR's CIQ close of 2026-09-21 is 32 days
+    before its 2026-10-23 page and nothing was reported between: passed, where W62's 30-day clock
+    called it stale. (-) The cut's pages predate W73, so they record no verdict: the split states
+    none and prints no notice."""
+    for t, close, page, age in (("TJX", "2026-08-28", "2026-11-11", 75),
+                                ("BRBR", "2026-09-21", "2026-10-23", 32)):
+        doc = frozen_doc(t)
+        facts = json.loads((FACTS / f"{t}.json").read_text())
+        a = anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW,
+                               filings=page_filings(t), eod_closes=NO_BARS)
+        assert a.multiple is not None and a.multiple.close_stale is False, t
+        assert a.anchor_base_value_per_share is not None and a.gap_split is not None, t
+        s = a.gap_split
+        assert (s.multiple_close, s.price_date, s.close_age_days, s.stale_close) == (
+            close, page, age, False), t
+        assert s.stale_line is None, t
+        assert s.arithmetic[-1] == (
+            f"the multiple's close {close}, the page's stored close {page}: {age} days; passed by "
+            f"the event rule: nothing the event rule counts was filed after the {close} close, on "
+            f"or before the page's price date, {page}."), t
+    for t in ("TJX", "BRBR", "LLY"):
+        s = _split(frozen_doc(t))
+        assert s.stale_close is None and s.stale_line is None, t
+        assert "event rule" not in s.arithmetic[-1] and "cadence" not in s.arithmetic[-1], t
 
 
 def test_googl_is_refused_never_substituted() -> None:
@@ -229,7 +243,8 @@ def test_a_derived_anchor_carries_its_split_at_todays_multiple() -> None:
     and it rebuilds the base it published at today's multiple (W50)."""
     doc = frozen_doc("SMPL")
     facts = json.loads((FACTS / "SMPL.json").read_text())
-    a = anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW)
+    a = anc.compute_anchor(doc["mechanical"], facts=facts, computed_at=NOW,
+                           filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.anchor_base_value_per_share is not None and a.gap_split is not None
     assert a.gap_split.refusal is None
     assert sp.reproduces(a.gap_split, a.anchor_base_value_per_share, anc.MULTIPLE_CURRENT)
@@ -276,19 +291,23 @@ def test_the_words_stay_inside_the_fence_and_carry_their_flags() -> None:
 
 
 @pytest.mark.parametrize(("ticker", "line"), [
-    ("LLY", "Screen value $820.15 at today's 27.9x = $1,397.90 on current EBITDA ($46,489M) − "
-            "$577.74 margin reversion (mid-cycle 0.60× current). Median 25.7x: $67.92 lower "
-            "(not used)."),
-    ("WERN", "Screen value $39.93 at today's 6.9x = $27.90 on current EBITDA ($360M) + $12.04 "
-             "margin reversion (mid-cycle 1.29× current). Median 6.7x: $1.61 lower (not used)."),
-    ("IT", "Screen value $136.91 at today's 9.4x = $185.70 on current EBITDA ($1,421M) − $48.79 "
-           "margin reversion (mid-cycle 0.77× current). Median 23.0x: $234.77 higher (not used)."),
+    ("LLY", "Screen value $820.15 at 27.9x (the 2026-11-02 close) = $1,397.90 on current EBITDA "
+            "($46,489M) − $577.74 margin reversion (mid-cycle 0.60× current). Median 25.7x: "
+            "$67.92 lower (not used)."),
+    ("WERN", "Screen value $39.93 at 6.9x (the 2026-11-09 close) = $27.90 on current EBITDA "
+             "($360M) + $12.04 margin reversion (mid-cycle 1.29× current). Median 6.7x: $1.61 "
+             "lower (not used)."),
+    ("IT", "Screen value $136.91 at 9.4x (the 2026-11-11 close) = $185.70 on current EBITDA "
+           "($1,421M) − $48.79 margin reversion (mid-cycle 0.77× current). Median 23.0x: $234.77 "
+           "higher (not used)."),
 ])
 def test_the_main_body_line_is_the_approved_one(ticker: str, line: str) -> None:
-    """The operator approved this line's shape on LLY (2026-11-18: "Approve, shorter line"). The
-    shape holds on every page: the margin sign follows the margin effect (WERN's is +), "lower" or
-    "higher" follows the multiple effect (IT's is higher), and the ratio is the computed one. A
-    deterministic string on a frozen page, so it is pinned word for word."""
+    """The operator approved this line's shape on LLY (2026-11-18: "Approve, shorter line"), and
+    its dated multiple in W73 (2026-11-19: "Approve with corrections" — "at today's 16.3x" became
+    "at 16.3x (the 2026-08-28 close)"). The shape holds on every page: the margin sign follows the
+    margin effect (WERN's is +), "lower" or "higher" follows the multiple effect (IT's is
+    higher), and the ratio is the computed one. A deterministic string on a frozen page, so it is
+    pinned word for word."""
     assert _split(frozen_doc(ticker)).read == line
 
 
@@ -323,6 +342,6 @@ def test_review_round_0_a_close_in_another_shape_or_after_the_page_never_mislead
     smpl = _copy(frozen_doc("SMPL"))
     day = date.fromisoformat(smpl["mechanical"]["stock_info"].pop("as_of"))
     derived = anc.compute_anchor(smpl["mechanical"], facts=facts, computed_at=NOW,
-                                 reference_date=day)
+                                 reference_date=day, filings=NO_FILINGS, eod_closes=NO_BARS)
     assert derived.gap_split is not None and derived.gap_split.price_date is None
     assert derived.gap_split.stale_line is None

@@ -1,18 +1,18 @@
-"""Test support (W62, 2026-11-18): derive an anchor with the stale-close check HELD OPEN.
+"""Test support: derive an anchor with the close's two checks HELD OPEN (W62, 2026-11-18;
+re-cut for W73, 2026-11-19).
 
-Since W62 `compute_anchor` withholds the screen value when its band's current is not today's by
-the band's own cadence (`anchor.close_age`): CIQ's history past 30 days before the page's price
-date, the ex-lease history once a newer quarter could exist. Two pages of the cut at 4889ddba are
-stale (BRBR 32 days, GOOGL 42, both CIQ's history), and several pins use them for something else:
-BRBR for W61's two flags and the dilution input watch, GOOGL for the CIQ bridge. Such a pin derives
-inside :func:`stale_gate_held_open`, so it keeps guarding its own subject, exactly as W50's pins
-hold the multiple at the committed one.
+Since W73 `compute_anchor` withholds the screen value when the event rule refuses the close R1
+prices (`anchor.close_verdict`: a report filed after it by the page's price date, a filing list
+that could not be read, or a date that cannot be measured), and it flags the stock's move since
+that close (`anchor.close_drift`). Several pins use pages for something else: the CIQ bridge
+(GOOGL, whose 2026-09-30 close predates Alphabet's 2026-10-28 results) and the backfill path,
+whose stub EDGAR client and config read no filings and no store. Such a pin derives inside
+:func:`stale_gate_held_open`, so it keeps guarding its own subject, exactly as W50's pins hold the
+multiple at the committed one.
 
-What it holds open is the ANCHOR's check only: a measured stale verdict reads as fresh. The split's
-own notice (`anchor_split.STALE_CLOSE_DAYS`) is untouched, so a split derived inside still states
-it: the shape a page written before W62 carries until it is re-derived. An age that cannot be
-measured still refuses, since holding a check open does not measure anything. W62's own pins
-(`tests/test_w62_anchor_stale_multiple.py`) never hold it open.
+What it holds open: a refused close reads as passed, EXCEPT a close after the page's price date
+(W68), which no holding-open makes knowable; and the price-drift flag states nothing. The event
+rule's and the flag's own pins (`tests/test_w73_dated_multiple.py`) never hold either open.
 """
 from __future__ import annotations
 
@@ -26,12 +26,20 @@ from vinci.dossier import anchor as anc
 
 @contextmanager
 def stale_gate_held_open() -> Iterator[None]:
-    """`compute_anchor` as the code before W62 ran it: a dated close of any age prices."""
-    real = anc.close_age
+    """`compute_anchor` with the event rule passing every dated close at or before the page's date,
+    and no price-drift flag."""
+    real = anc.close_verdict
 
-    def fresh(*args: Any, **kw: Any) -> anc.CloseAge:
+    def passed(*args: Any, **kw: Any) -> anc.CloseVerdict:
         got = real(*args, **kw)
-        return got._replace(stale=False) if got.stale else got
+        if got.after_page or got.age is None:
+            return got
+        # ONE held-open verdict whatever was read, so two paths that read different filings (the
+        # assembly's stated list, the backfill's unread stub) derive one block
+        return got._replace(stale=False, clears=None, filing=None,
+                            rule="held open: the event rule is not this pin's subject",
+                            cause="held open: the event rule is not this pin's subject")
 
-    with mock.patch.object(anc, "close_age", fresh):
+    with (mock.patch.object(anc, "close_verdict", passed),
+          mock.patch.object(anc, "close_drift", lambda *_a, **_k: (None, None))):
         yield

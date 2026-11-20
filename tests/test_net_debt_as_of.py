@@ -33,6 +33,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import CUT
 from vinci.dossier import anchor as anc
 from vinci.edgar import net_debt as nd
@@ -81,7 +82,8 @@ def test_a_refiling_by_the_price_date_is_read() -> None:
 
 
 def _anchor_nd(page: dict[str, Any], facts: dict[str, Any]) -> Any:
-    return anc.compute_anchor(page, facts=facts, computed_at=NOW).net_debt
+    return anc.compute_anchor(page, facts=facts, computed_at=NOW,
+                              filings=NO_FILINGS, eod_closes=NO_BARS).net_debt
 
 
 def test_the_anchors_net_debt_is_cut_at_the_pages_price_date() -> None:
@@ -196,22 +198,28 @@ def test_every_leg_of_the_anchor_reads_the_facts_as_filed_by_the_price_date() ->
         if not (FIXTURES / f"{t}.json").is_file():
             continue
         mech, facts, ref, cut = _page(t)
-        got = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref))
+        got = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref,
+                                         filings=NO_FILINGS, eod_closes=NO_BARS))
         assert got == _values(anc.compute_anchor(mech, facts=facts_as_of(facts, cut),
-                                                 computed_at=NOW, reference_date=ref)), t
+                                                 computed_at=NOW, reference_date=ref,
+                                                 filings=NO_FILINGS, eod_closes=NO_BARS)), t
         assert got == _values(anc.compute_anchor(mech, facts=_filed_later(facts, cut),
-                                                 computed_at=NOW, reference_date=ref)), t
+                                                 computed_at=NOW, reference_date=ref,
+                                                 filings=NO_FILINGS, eod_closes=NO_BARS)), t
         compared.append(t)
     assert len(compared) >= 20, compared
     # THE TWO CASES ROUND 1 CAUGHT, on their pages as frozen at the cut, beside the walk: the walk
     # no longer names them, so a retirement of LLY or NCNO moves nothing (A's review of #1111)
     for name in ("LLY", "NCNO"):
         mech, facts, ref, cut = _page(name, CUT)
-        got = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref))
+        got = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref,
+                                         filings=NO_FILINGS, eod_closes=NO_BARS))
         assert got == _values(anc.compute_anchor(mech, facts=facts_as_of(facts, cut),
-                                                 computed_at=NOW, reference_date=ref)), name
+                                                 computed_at=NOW, reference_date=ref,
+                                                 filings=NO_FILINGS, eod_closes=NO_BARS)), name
         assert got == _values(anc.compute_anchor(mech, facts=_filed_later(facts, cut),
-                                                 computed_at=NOW, reference_date=ref)), name
+                                                 computed_at=NOW, reference_date=ref,
+                                                 filings=NO_FILINGS, eod_closes=NO_BARS)), name
 
 
 def test_ncnos_filings_after_its_price_date_reach_every_leg_unless_cut() -> None:
@@ -222,9 +230,11 @@ def test_ncnos_filings_after_its_price_date_reach_every_leg_unless_cut() -> None
     rebuild priced NCNO at 2026-11-11, no real filing in its fixture falls after the price date."""
     mech, facts, ref, cut = _page("NCNO", CUT)
     later = _filed_later(facts, cut)
-    cut_read = anc.compute_anchor(mech, facts=later, computed_at=NOW, reference_date=ref)
+    cut_read = anc.compute_anchor(mech, facts=later, computed_at=NOW, reference_date=ref,
+                                  filings=NO_FILINGS, eod_closes=NO_BARS)
     uncut = {**mech, "stock_info": {**mech["stock_info"], "as_of": None}}
-    whole = anc.compute_anchor(uncut, facts=later, computed_at=NOW)
+    whole = anc.compute_anchor(uncut, facts=later, computed_at=NOW,
+                               filings=NO_FILINGS, eod_closes=NO_BARS)
     moved = {k for k in anc._BRIDGE_FIELDS
              if getattr(cut_read, k).value != getattr(whole, k).value}
     assert moved == {"d_and_a", "net_debt", "diluted_shares", "shares_outstanding",
@@ -235,12 +245,16 @@ def test_the_cut_falls_back_to_the_reference_date_without_a_stored_close() -> No
     """Item 8: no stored close → the page's reference date (`vinci.edgar.asof.page_price_date`).
     NEGATIVE PIN: neither date → the facts are read whole."""
     mech, facts, ref, cut = _page("NCNO", FROZEN_0818)
-    at_close = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref))
+    at_close = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref,
+                                          filings=NO_FILINGS, eod_closes=NO_BARS))
     no_close = {**mech, "stock_info": {**mech["stock_info"], "as_of": None}}
     assert ref < cut
+    # nothing filed between
     assert _values(anc.compute_anchor(no_close, facts=facts, computed_at=NOW,
-                                      reference_date=ref)) == at_close   # nothing filed between
-    assert _values(anc.compute_anchor(no_close, facts=facts, computed_at=NOW)) != at_close
+                                      reference_date=ref,
+                                      filings=NO_FILINGS, eod_closes=NO_BARS)) == at_close
+    assert _values(anc.compute_anchor(no_close, facts=facts, computed_at=NOW,
+                                      filings=NO_FILINGS, eod_closes=NO_BARS)) != at_close
 
 
 def test_the_assemblys_cross_check_is_cut_at_the_pages_price_date() -> None:

@@ -775,7 +775,21 @@ refuses a registry holding test-domain articles (the synthetic stress registries
 with code) and merge it the way the dossier artifacts are; Cloudflare Pages deploys it with the site.
 What is published is derived analysis with titles, figures and short source quotes for internal use
 on the authed deploy (operator decision 2026-10-13) — never an article's text, never a local path.
-The weekly Actions run does NOT publish (it commits only to the state branch); publishing stays a
+**A source quote is at most 400 characters** (`display.DESK_QUOTE_MAX_CHARS`, operator 2026-11-19):
+a longer one — a forecast table read as one block — is cut at a word with "…" and the note
+"quote shortened for the desk — the claim keeps the source's full words"; its figure and paragraph
+still print, and the claim, the JSON and the registry keep every word. The cap holds wherever the
+desk prints a source's own words:
+- quote elements, through `cards.quote_html` (claim tables, named sectors, business-group
+  excerpts, the Evidence tab);
+- the risk scan's sentence, on its card line and in the background alerts;
+- a claim labelled by its own statement (a passage claim's label is the source's sentence).
+
+The one exception is an SEC filing's own sentence beside a proposed company. It is a public
+record, not a publisher's text.
+
+A test reads the committed desk's quote elements, risk-scan lines and alert sentences for one
+over the cap. The weekly Actions run does NOT publish (it commits only to the state branch); publishing stays a
 deliberate step. **Operator decision 2026-10-13:** publish the current snapshot once #703 is merged;
 keep weekly publishing MANUAL for now (one `publish` + an artifact commit each week), and revisit
 automatic publishing after the first few weekly runs look right.

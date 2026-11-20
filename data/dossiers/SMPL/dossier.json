@@ -16011,13 +16011,21 @@
         "mechanical.stock_info",
         "mechanical.valuation"
       ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-19T03:35:06.595415Z",
+    "computed_at": "2026-11-19T18:42:31.950955Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [
@@ -16040,7 +16048,22 @@
       "confidence": "firm",
       "statistic": "current",
       "as_of": "2026-10-27",
-      "median": 18.2256495
+      "median": 18.2256495,
+      "close_stale": false,
+      "close_note": "nothing reported after it by the page's close of 2026-11-11",
+      "close_drift": {
+        "close_date": "2026-10-27",
+        "close_bar_date": "2026-10-27",
+        "close_eod": 9.75,
+        "page_date": "2026-11-11",
+        "move": 0.29641,
+        "ratio": 1.29641,
+        "corporate_action": false,
+        "beyond_tolerance": true,
+        "tolerance": 0.1,
+        "source_ref": "EOD close 2026-10-27 (the store's bar on or before the multiple's close) against stock_info.price at 2026-11-11"
+      },
+      "close_drift_note": "⚠ the stock has risen 29.6% since that close"
     },
     "d_and_a": {
       "value": 24.255,
@@ -16118,12 +16141,12 @@
       "equity_sensitivity": 1.2465,
       "leverage_flag": false,
       "refusal": null,
-      "basis": "V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = (M − m) × E_mid / S. The anchor at today's multiple = V0 + margin effect; at the median = V0 + margin effect + multiple effect. m and M are the band's current and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No term reads a price. The margin effect carries every difference between E_mid and E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.",
-      "read": "Screen value $11.37 at today's 5.1x = $9.75 on current EBITDA ($206M) + $1.62 margin reversion (mid-cycle 1.13× current). Median 18.2x: $35.11 higher (not used).",
+      "basis": "V0 = (m × E_cur − ND) / S; margin effect = m × (E_mid − E_cur) / S; multiple effect = (M − m) × E_mid / S. The anchor at the latest close's multiple = V0 + margin effect; at the median = V0 + margin effect + multiple effect. m and M are the band's current and median; E_mid = LTM revenue × the median margin + D&A (the anchor's EBITDA); E_cur = the EBITDA m is struck on; ND and S are the anchor's net debt and share count. No term reads a price. The margin effect carries every difference between E_mid and E_cur, including the GAAP-versus-CIQ basis the mid-cycle gap reports.",
+      "read": "Screen value $11.37 at 5.1x (the 2026-10-27 close) = $9.75 on current EBITDA ($206M) + $1.62 margin reversion (mid-cycle 1.13× current). Median 18.2x: $35.11 higher (not used).",
       "stale_line": null,
       "leverage_line": null,
       "arithmetic": [
-        "m = 5.1351x, today's multiple (the close of 2026-10-27); M = 18.2256x, the median beside it, never used.",
+        "m = 5.1351x, the multiple at the 2026-10-27 close; M = 18.2256x, the median beside it, never used.",
         "E_mid = 1,356.5 × 15.3855% + 24.3 = $233M — LTM revenue × the median margin + D&A, the anchor's EBITDA.",
         "E_cur = $206M — valuation.lease_basis.observations (the observation of 2026-10-27): CIQ Income Statement 'EBITDA' over four quarters to 2026-08-29, the denominator of the ex-lease multiple 5.13509x = (TEV 1,106.0 − leases 50.3) ÷ 205.6.",
         "V0 = (5.1351 × 205.6 − net debt 208.8) ÷ 86,861,967 shares = $9.75.",
@@ -16131,7 +16154,7 @@
         "multiple effect = (18.2256 − 5.1351) × 233.0 ÷ 86,861,967 = $35.11, beside the anchor, never in it.",
         "V0 + margin effect = $11.37, the screen value; + multiple effect = $46.48, the value at the median.",
         "net debt ÷ EV = 208.8 ÷ 1,055.7 = 0.198; flagged above 0.5.",
-        "the multiple's close 2026-10-27, the page's stored close 2026-11-11: 15 days; not stale by its history's cadence: the next quarterly observation is due by 2027-01-26 (balance sheet 2026-08-29 + the longest of its last 4 quarters, 91 days, + the slowest of their pricing lags, 59 days)."
+        "the multiple's close 2026-10-27, the page's stored close 2026-11-11: 15 days; passed by the event rule: nothing the event rule counts was filed after the 2026-10-27 close, on or before the page's price date, 2026-11-11."
       ]
     },
     "scenario_eligibility": {

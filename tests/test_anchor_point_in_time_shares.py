@@ -20,6 +20,7 @@ from typing import Any
 
 import pytest
 
+from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import frozen_doc, frozen_page
 from vinci.dossier import anchor as an
 from vinci.edgar.concepts import points_for_tag
@@ -240,16 +241,19 @@ def test_lillys_real_page_refuses_its_count_and_keeps_its_equity() -> None:
     PRICED THE DAY THAT 10-Q WAS FILED (review of #885). The anchor reads its facts as filed by the
     page's price date, and LLY's was 2026-10-28, the day BEFORE: cut there, the averages are the Q2
     10-Q's and no EDGAR D&A covers the window to 2026-09-30, so there is no base to divide
-    (`tests/test_net_debt_as_of.py`). Setting the close to 2026-10-29 keeps this pin on the count.
-    It is SET, not asserted first: the page's own date is a living value (2026-11-02 since its
-    2026-11-03 re-assembly), and this pin is about the count, not about when the page was priced."""
+    (`tests/test_net_debt_as_of.py`). Setting the close to 2026-11-02 keeps this pin on the count:
+    that 10-Q is filed by then, and 2026-11-02 is the close LLY's multiple is struck at, so the
+    event rule does not refuse a close after the page's date (W73's W68; 2026-10-29 would). It is
+    SET, not asserted first: the page's own date is a living value, and this pin is about the
+    count, not about when the page was priced."""
     from datetime import UTC, datetime
 
     mech = frozen_doc("LLY")["mechanical"]   # LLY's page, as frozen at the cut
-    mech["stock_info"]["as_of"] = "2026-10-29"
+    mech["stock_info"]["as_of"] = "2026-11-02"
     facts = json.loads(Path("tests/fixtures/companyfacts/LLY.json").read_text())
     now = datetime.now(UTC)
-    a = an.compute_anchor(mech, facts=facts, computed_at=now)
+    a = an.compute_anchor(mech, facts=facts, computed_at=now,
+                          filings=NO_FILINGS, eod_closes=NO_BARS)
     assert a.shares_outstanding is not None and a.shares_outstanding.value is None
     assert a.shares_outstanding.source.startswith(an.SHARES_REFUSED)
     assert a.anchor_base_value_per_share is not None
@@ -257,7 +261,8 @@ def test_lillys_real_page_refuses_its_count_and_keeps_its_equity() -> None:
     assert a.diluted_shares is not None and a.diluted_shares.value == 893_400_000
     fixed = json.loads(json.dumps(mech))
     fixed["stock_info"]["shares_out"]["value"] = 891_900_000
-    b = an.compute_anchor(fixed, facts=facts, computed_at=now)
+    b = an.compute_anchor(fixed, facts=facts, computed_at=now,
+                          filings=NO_FILINGS, eod_closes=NO_BARS)
     assert b.shares_outstanding is not None and b.shares_outstanding.value == 891_900_000
     assert b.anchor_base_value_per_share is not None
     assert a.anchor_base_value_per_share * 893_400_000 == pytest.approx(

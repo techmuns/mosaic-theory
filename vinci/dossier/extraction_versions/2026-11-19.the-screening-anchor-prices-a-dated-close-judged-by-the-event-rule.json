@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule",
+  "follows": [
+    "2026-11-19.the-ev-ebitda-basis-divides-only-figures-of-one-date"
+  ],
+  "names": "the page's R1 screening anchor prices its band's latest close (W50's value), dated wherever it is shown and never called today's, and the event rule judges it: refused, its value withheld and its recipe kept, once the company files a 10-Q, a 10-K, an 8-K item 2.02 or a foreign or transition filer's report after the close by the page's price date, or when the close is after that date (W68), undated or the filings unread; W62's 30-day clock and ex-lease due date retire; anchor.multiple records the verdict (close_stale, close_note) and the stock's move from the close to the page's close beside it (close_drift, a flag past 10%, PRICE over PRICE, never the anchor); the scenario proposal's base multiple is that dated close and the verdict the anchor recorded, refused with its reason otherwise; valuation_basis dates R1's CIQ multiple by its own close and re-states it at the page's price only through a TEV of that date; an anchor written before carries none of the new fields"
+}

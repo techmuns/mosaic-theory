@@ -1189,13 +1189,15 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     writes and `anchor-retag` records beside an operator's decision, in ONE place (2026-10-22), so
     the two cannot read different machines. None when EDGAR will not fetch (skipped, never
     guessed)."""
-    from vinci.dossier.anchor import ciq_bridge, compute_anchor
+    from vinci.dossier.anchor import ciq_bridge, compute_anchor, r1_close
     from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
     from vinci.dossier.ciq_balance import scale_outcome
     from vinci.dossier.ciq_sheets import CiqCurrencyError, CiqUnitError
+    from vinci.dossier.mechanical import read_filing_events
 
     try:
-        facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
+        ident = resolver.resolve_ticker(t)
+        facts = edgar.companyfacts(ident.cik)
     except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
         print(f"  {t}: EDGAR fetch failed ({type(exc).__name__}) — skip, not written")
         return None
@@ -1218,9 +1220,25 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
     # cut at the page's price date, its reference date when there is no stored close (E2-D21)
-    anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
-                            computed_at=datetime.now(UTC), ciq=ciq,
-                            reference_date=d.reference_date)
+    # (W73) the event rule on the close R1 prices: the company's reports after that close
+    mech = d.mechanical.model_dump(mode="json")
+    close = r1_close(mech)
+    filings, unread = (read_filing_events(edgar, ident.cik, mech,
+                                          datetime.now(UTC).date(), since=close)
+                       if close is not None else ([], None))
+    # (W73, correction 1) the store's EOD closes, for the stock's move since the multiple's close.
+    # A store that cannot be read is STATED on the page ("not measured"), never read as no move.
+    eod: list[tuple[date, float]] | None
+    eod_unread: str | None = None
+    try:
+        with Store(cfg.db_path) as _st:
+            eod = [(b.bar_date, b.close)
+                   for b in _st.get_price_history(ident.internal_id)]
+    except Exception as exc:  # noqa: BLE001 — the reason is printed on the page, never swallowed
+        eod, eod_unread = None, f"the EOD store could not be read ({type(exc).__name__}: {exc})"
+    anchor = compute_anchor(mech, facts=facts, computed_at=datetime.now(UTC), filings=filings,
+                            eod_closes=eod, filings_unread=unread, eod_unread=eod_unread,
+                            ciq=ciq, reference_date=d.reference_date)
     if scale is not None:
         anchor = anchor.model_copy(update={"ciq_scale_check": scale})
     # (2026-10-09) the machine's R4 proposal, on the page as committed — the same rule the

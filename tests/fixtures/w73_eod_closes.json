@@ -1,0 +1,157 @@
+{
+ "_about": "Real EOD closes for the W73 price-drift pins (tests/test_w73_dated_multiple.py): the bars on and up to a week before the close each pinned page's R1 multiple is struck at, read from the repo's EOD store (polygon-grouped daily bars) as copied from #1132's impact store on 2026-11-19. Published under the operator's licence ruling of 2026-11-04: each value carries its vendor, symbol and bar date.",
+ "closes": {
+  "VRRM": [
+   {
+    "bar_date": "2026-10-30",
+    "close": 2.8,
+    "vendor": "polygon-grouped",
+    "symbol": "VRRM"
+   },
+   {
+    "bar_date": "2026-11-02",
+    "close": 2.68,
+    "vendor": "polygon-grouped",
+    "symbol": "VRRM"
+   },
+   {
+    "bar_date": "2026-11-03",
+    "close": 2.66,
+    "vendor": "polygon-grouped",
+    "symbol": "VRRM"
+   },
+   {
+    "bar_date": "2026-11-04",
+    "close": 2.48,
+    "vendor": "polygon-grouped",
+    "symbol": "VRRM"
+   },
+   {
+    "bar_date": "2026-11-05",
+    "close": 2.32,
+    "vendor": "polygon-grouped",
+    "symbol": "VRRM"
+   },
+   {
+    "bar_date": "2026-11-06",
+    "close": 2.19,
+    "vendor": "polygon-grouped",
+    "symbol": "VRRM"
+   }
+  ],
+  "TJX": [
+   {
+    "bar_date": "2026-08-21",
+    "close": 140.53,
+    "vendor": "polygon-grouped",
+    "symbol": "TJX"
+   },
+   {
+    "bar_date": "2026-08-24",
+    "close": 140.71,
+    "vendor": "polygon-grouped",
+    "symbol": "TJX"
+   },
+   {
+    "bar_date": "2026-08-25",
+    "close": 139.48,
+    "vendor": "polygon-grouped",
+    "symbol": "TJX"
+   },
+   {
+    "bar_date": "2026-08-26",
+    "close": 136.83,
+    "vendor": "polygon-grouped",
+    "symbol": "TJX"
+   },
+   {
+    "bar_date": "2026-08-27",
+    "close": 134.22,
+    "vendor": "polygon-grouped",
+    "symbol": "TJX"
+   },
+   {
+    "bar_date": "2026-08-28",
+    "close": 135.12,
+    "vendor": "polygon-grouped",
+    "symbol": "TJX"
+   }
+  ],
+  "SMPL": [
+   {
+    "bar_date": "2026-10-20",
+    "close": 10.99,
+    "vendor": "polygon-grouped",
+    "symbol": "SMPL"
+   },
+   {
+    "bar_date": "2026-10-21",
+    "close": 10.67,
+    "vendor": "polygon-grouped",
+    "symbol": "SMPL"
+   },
+   {
+    "bar_date": "2026-10-22",
+    "close": 11.08,
+    "vendor": "polygon-grouped",
+    "symbol": "SMPL"
+   },
+   {
+    "bar_date": "2026-10-23",
+    "close": 10.41,
+    "vendor": "polygon-grouped",
+    "symbol": "SMPL"
+   },
+   {
+    "bar_date": "2026-10-26",
+    "close": 10.09,
+    "vendor": "polygon-grouped",
+    "symbol": "SMPL"
+   },
+   {
+    "bar_date": "2026-10-27",
+    "close": 9.75,
+    "vendor": "polygon-grouped",
+    "symbol": "SMPL"
+   }
+  ],
+  "GOOGL": [
+   {
+    "bar_date": "2026-09-23",
+    "close": 337.83,
+    "vendor": "polygon-grouped",
+    "symbol": "GOOGL"
+   },
+   {
+    "bar_date": "2026-09-24",
+    "close": 342.36,
+    "vendor": "polygon-grouped",
+    "symbol": "GOOGL"
+   },
+   {
+    "bar_date": "2026-09-25",
+    "close": 343.92,
+    "vendor": "polygon-grouped",
+    "symbol": "GOOGL"
+   },
+   {
+    "bar_date": "2026-09-28",
+    "close": 342.75,
+    "vendor": "polygon-grouped",
+    "symbol": "GOOGL"
+   },
+   {
+    "bar_date": "2026-09-29",
+    "close": 340.92,
+    "vendor": "polygon-grouped",
+    "symbol": "GOOGL"
+   },
+   {
+    "bar_date": "2026-09-30",
+    "close": 344.08,
+    "vendor": "polygon-grouped",
+    "symbol": "GOOGL"
+   }
+  ]
+ }
+}
