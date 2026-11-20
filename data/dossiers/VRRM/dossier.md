@@ -1,6 +1,6 @@
 # Dossier — VERRA MOBILITY Corp (Nasdaq: VRRM)
 
-_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
+_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect · layers refreshed to 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read_
 
 # Brief — first cut
 
@@ -65,7 +65,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $346M against $240M rebuilt from the filings (+$106M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M); the quarter to 2026-03-31: CIQ $73M against $81M (−$8M) — CIQ's own export itemises unusual items of $-7.865M for the quarter, which it leaves out; the quarter to 2026-06-30: CIQ $100M against $-4M (+$104M) — its release states a matching amount: “on our first half 2026 results and our outlook for the remainder of the year, we are revising our 2026 full year financial outlook to the following: • Total Revenue of $945 million to $965 million • Adjusted EBITDA of $360 million to $370 million • Adjusted EPS of $1.11 to $1.17 • Free Cash Flow of $105 million to $115 million Underlying Assumptions for 2026 Full Year Guidance • Weighted average fully diluted share count expected to be approximately 153 million shares for the full year 2026 • Effective tax” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: CIQ's four-quarter EBITDA $346M against $240M rebuilt from the filings (+$106M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M); the quarter to 2026-03-31: CIQ $73M against $81M (−$8M) — CIQ's own export itemises unusual items of $-7.865M for the quarter, which it leaves out; the quarter to 2026-06-30: CIQ $100M against $-4M (+$104M) — its release states a matching amount: “on our first half 2026 results and our outlook for the remainder of the year, we are revising our 2026 full year financial outlook to the following: • Total Revenue of $945 million to $965 million • Adjusted EBITDA of $360 million to $370 million • Adjusted EPS of $1.11 to $1.17 • Free Cash Flow of $105 million to $115 million Underlying Assumptions for 2026 Full Year Guidance • Weighted average fully diluted share count expected to be approximately 153 million shares for the full year 2026 • Effective tax” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -648,6 +648,7 @@ _Source §: 8-K 0001193125-25-242530 · vrrm-ex10_2.htm_
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
+  - 2026-11-20 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read
 - **Price store:** `vrrm-rebuild-1118` · reaching 2026-11-17
 - **Panel age:** oldest panel 12d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-18 build
 - **Consensus age:** consensus 15d old (2026-11-03, valuation.implied_expectations.multiples_as_of) — within the ceiling

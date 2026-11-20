@@ -593,7 +593,10 @@
         "ratio_to_reported_plus_rent": 1.004103,
         "reading": "indistinguishable",
         "tolerance": 0.05,
-        "line": "CIQ's 27.9x divides TEV $1,306,533M (comps, 2026-10-30) by $46,829M, which reproduces reported LTM EBITDA ($46,489M) and EBITDA plus rent alike — rent is 0.3% of EBITDA, too small for the pairing to change the reading."
+        "line": "CIQ's 27.9x divides TEV $1,306,533M (comps, 2026-10-30) by $46,829M, which reproduces CIQ's annual LTM EBITDA ($46,489M) and that plus rent alike — rent is 0.3% of EBITDA, too small for the pairing to change the reading.",
+        "multiple_close": "2026-11-02",
+        "days_apart": -3,
+        "days_apart_tolerance": 4
       }
     },
     "quality": {
@@ -7768,7 +7771,7 @@
         "filing_ltm": null,
         "ltm_gap": null,
         "any_different": false,
-        "line": "CIQ's EBITDA matches the filings in each quarter set against them (rebuilt as pre-tax income + interest expense + D&A (interest income and other non-operating items stay inside)) (3 of the four quarters could not be rebuilt) — the LTM the multiples divide is the reported figure.",
+        "line": "CIQ's EBITDA matches the filings in each quarter set against them (rebuilt as pre-tax income + interest expense + D&A (interest income and other non-operating items stay inside)) (3 of the four quarters could not be rebuilt) — CIQ's four-quarter EBITDA is the filings' figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -19831,6 +19834,15 @@
       "layers": [
         "anchor",
         "valuation_basis"
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "extraction_version": "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
       ]
     }
   ],

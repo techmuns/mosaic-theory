@@ -1,6 +1,6 @@
 # Dossier — WERNER ENTERPRISES INC (Nasdaq: WERN)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read_
 
 # Brief — first cut
 
@@ -160,9 +160,9 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 6.2x as-of 2026-11-11 — trailing range 4.8–9.1x (median 6.7x) over 39 closes → 38%ile → below-center; P/LTM EPS NM (no meaningful trailing P/E at this close) [31]
 - **vs peers:** EV/EBITDA 6.2x at the 2026-11-11 close (CIQ 6.2x, 2026-11-11) vs peer median 14.0x (CIQ, 2026-11-11) (-56%); P/E NM vs peer median 32.2x (CIQ, 2026-11-11) [32]
 - **Forward multiples:** P/FY26E (normalized) 42.2x (EPS $0.66); P/FY26E (GAAP) 71.4x (EPS $0.39); P/FY27E (normalized) 15.0x (EPS $1.85); P/FY27E (GAAP) 14.4x (EPS $1.94) — at $27.84 as-of 2026-11-11 [33]
-- **Multiple basis — read before the level:** rent is 8.1% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 12.3% EBITDA margin against 10.5% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 6.7x over 34 quarters (current 6.9x at the 2026-11-09 filing; 62% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [34]
-- **What CIQ's EV/EBITDA divides:** CIQ's 6.2x divides TEV $2,626M (comps, 2026-11-11) by $423M, which reproduces neither pairing: reported LTM EBITDA $360M (+17.7%) and reported LTM EBITDA $360M + rent $28M (FY ending 2025-12-31) = $387M (+9.3%). Read CIQ's own denominator before comparing it with a multiple of reported EBITDA.
-- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $27.84 close (2026-11-11): ($27.84 × 59,977,156 shares outstanding + net debt $808M excluding operating leases) ÷ LTM EBITDA $360M (four quarters to 2026-09-30) = 6.9x
+- **Multiple basis — read before the level:** rent is 8.1% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 12.3% EBITDA margin against 10.5% on CIQ's annual LTM EBITDA. R1's earnings are its mid-cycle EBITDA (EBIT + D&A), after rent; on that basis — TEV less operating leases over CIQ's four-quarter EBITDA — the median is 6.7x over 34 quarters (current 6.9x at the 2026-11-09 filing; 62% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [34]
+- **What CIQ's EV/EBITDA divides:** CIQ's 6.2x divides TEV $2,626M (comps, 2026-11-11) by $423M, which reproduces neither pairing: CIQ's annual LTM EBITDA $360M (+17.7%) and CIQ's annual LTM EBITDA $360M + rent $28M (FY ending 2025-12-31) = $387M (+9.3%). Read CIQ's own denominator before comparing it with a multiple struck after rent.
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $27.84 close (2026-11-11): ($27.84 × 59,977,156 shares outstanding + net debt $808M excluding operating leases) ÷ CIQ's four-quarter EBITDA $360M (to 2026-09-30) = 6.9x
 - **Comparability:** market caps span $3.0B–$35.1B (12x); the name is $1.7B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [35]
 - **The street, for contrast (target · ratings):** Target price: mean $36.67, median $34.00, high/low 52.00/29.00, N 15/15; Ratings: Buy 3, Outperform 1, Hold 10, Underperform 2, Sell 0, No Opinion 0  [data ≥ 2026-11-05 · export date unverified] [36]
 
@@ -749,6 +749,7 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm · amended by 0000
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
+  - 2026-11-20 · mechanical.valuation — refresh at 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 9d old (2026-11-05, valuation.implied_expectations.multiples_as_of) — within the ceiling

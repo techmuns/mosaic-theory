@@ -988,7 +988,7 @@
         "ev": 1306.729,
         "ltm_ebitda": 205.585,
         "ltm_through": "2026-08-29",
-        "line": "at the page's $12.64 close (2026-11-11): ($12.64 × 86,861,967 shares outstanding + net debt $209M excluding operating leases) ÷ LTM EBITDA $206M (four quarters to 2026-08-29) = 6.4x"
+        "line": "at the page's $12.64 close (2026-11-11): ($12.64 × 86,861,967 shares outstanding + net debt $209M excluding operating leases) ÷ CIQ's four-quarter EBITDA $206M (to 2026-08-29) = 6.4x"
       }
     },
     "quality": {
@@ -7086,7 +7086,7 @@
         "filing_ltm": -155.46,
         "ltm_gap": 361.045,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $206M against $-155M rebuilt from the filings (+$361M); the quarter to 2025-11-29: CIQ $50M against $44M (+$6M) — its release states a matching amount: “thirteen weeks ended November 29, 2025, and November 30, 2024: (In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 … Integration expense 5,918”; the quarter to 2026-02-28: CIQ $51M against $-207M (+$258M) — CIQ's own export itemises unusual items of $258.206M for the quarter, which it leaves out; the quarter to 2026-05-30: CIQ $52M against $-44M (+$96M) — CIQ's own export itemises unusual items of $95.465M for the quarter, which it leaves out; the quarter to 2026-08-29: CIQ $53M against $52M (+$1M) — its filing tags a matching amount: RestructuringAndRelatedCostIncurredCost 1,400,000 USD for the quarter to 2026-08-29 (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: CIQ's four-quarter EBITDA $206M against $-155M rebuilt from the filings (+$361M); the quarter to 2025-11-29: CIQ $50M against $44M (+$6M) — its release states a matching amount: “thirteen weeks ended November 29, 2025, and November 30, 2024: (In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 … Integration expense 5,918”; the quarter to 2026-02-28: CIQ $51M against $-207M (+$258M) — CIQ's own export itemises unusual items of $258.206M for the quarter, which it leaves out; the quarter to 2026-05-30: CIQ $52M against $-44M (+$96M) — CIQ's own export itemises unusual items of $95.465M for the quarter, which it leaves out; the quarter to 2026-08-29: CIQ $53M against $52M (+$1M) — its filing tags a matching amount: RestructuringAndRelatedCostIncurredCost 1,400,000 USD for the quarter to 2026-08-29 (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -16018,6 +16018,15 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "extraction_version": "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
       ]
     }
   ],
