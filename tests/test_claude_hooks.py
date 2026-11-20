@@ -1246,6 +1246,9 @@ BASH_WRITES = (
     ("cd, then sed -i", "cd vinci && sed -i.bak 's/1/2/' evals/variants.py",
      "vinci/evals/variants.py"),
     ("bash -c", "bash -c \"echo '{}' > scenarios/IT.json\"", "scenarios/IT.json"),
+    # Codex on #1155, round 1: a subshell's `cd` ends with the subshell.
+    ("after a cd inside a subshell",
+     "(cd vinci && true); printf 'X = 2\\n' >> vinci/evals/variants.py", "vinci/evals/variants.py"),
 )
 
 
@@ -1354,6 +1357,24 @@ def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path) 
     _, ran, after = _bash_call(command, repo, _session())
     assert ran.returncode == 0, ran.stderr
     assert "11 protected file(s) (showing 10 of 11)" in str(after.get("systemMessage"))
+
+
+@W77
+def test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file(
+        tmp_path: pathlib.Path) -> None:
+    """Codex on #1155, round 1. Inline Python that only READS `scenarios/IT.json` while writing
+    another file asks (the accepted over-ask). The grant must not cover the file for the session:
+    the call never changed it, so a later write through the record API is still reported."""
+    repo = _protected_checkout(tmp_path)
+    session = _session()
+    reads = ("python3 -c \"import json; d = json.load(open('scenarios/IT.json')); "
+             "open('notes/o.json', 'w').write(json.dumps(d))\"")
+    first, ran, after = _bash_call(reads, repo, session)
+    assert ran.returncode == 0, ran.stderr
+    assert "`scenarios/IT.json`" in _asked(first) and after == {}
+    later = _bash_call(RECORD_REWRITE, repo, session)[2]
+    assert later.get("decision") == "block", later
+    assert "`scenarios/IT.json`" in str(later["reason"])
 
 
 #: (form, command) — a Bash call that writes no protected file, or only reads one.

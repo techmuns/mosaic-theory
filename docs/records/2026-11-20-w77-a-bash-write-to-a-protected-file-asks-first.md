@@ -41,17 +41,19 @@ superseded-by:
   3. **The patch removes the strict xfail markers** and adds `PostToolUseFailure` to the wiring
      pin's event set. The suite is green the moment the patch is applied.
 - **The tests in this PR**, in `tests/test_claude_hooks.py`:
-  - **17 strict-xfail nodes (W77).** Eleven reproduce one Bash write each: `>`, `>>`, `tee`,
+  - **19 strict-xfail nodes (W77).** Twelve reproduce one Bash write each: `>`, `>>`, `tee`,
     `python -c`, a Python heredoc, `sed -i`, `cp`, `mv`, `cp` into the directory, `cd` then
-    `sed -i`, and `bash -c`. Each command really runs in a scratch checkout and changes the file.
+    `sed -i`, `bash -c`, and a write after a `cd` inside a subshell (review round 1). Each command really runs in a scratch checkout and changes the file.
     That half passes today. The ask is the half that fails.
-  - The other six xfails pin:
+  - The other seven xfails pin:
     - the wiring;
     - #1133's shape reported after the call;
     - a script that wrote and then exited 1;
     - the once-per-file-per-session grant shared with the Edit path;
     - a granted ask on a directory covering the files the call writes in it (review round 0);
-    - the operator's notice stating its truncation, "showing 10 of 11" (review round 0).
+    - the operator's notice stating its truncation, "showing 10 of 11" (review round 0);
+    - a granted over-ask (a path only named) not covering a later write of that file (review
+      round 1).
   - **20 negative pins**, passing today and binding the patched guard:
     - 18 Bash calls that write no protected file, or only read one. Among them: a heredoc body
       that names writes, a quoted string naming a write, a comment, a restore from the index, and
@@ -93,14 +95,14 @@ comment 7031763467).
 **HOW VERIFIED.**
 - **Reproduction, on this branch.** The five hook and gate suites (`test_claude_hooks`,
   `test_protected_approval`, `test_one_gate`, `test_rg_d20_instructions_match_the_code`,
-  `test_no_local_paths`) give **215 passed, 17 xfailed**.
+  `test_no_local_paths`) give **215 passed, 19 xfailed**.
   - Run with `--runxfail`, each of the 11 write nodes fails at its ask, after its own disk
     assertion passed, e.g. "redirect: scenarios/IT.json changed on disk and nothing asked first".
   - The wiring node fails on `'decision_path_guard.py' in ['review_gate.py']`.
 - **The patch, applied in a throwaway worktree of this branch** (never committed; removed after):
-  - the same five suites give **232 passed**;
+  - the same five suites give **234 passed**;
   - with the hook and wiring patched but the test file left as this PR has it,
-    `test_claude_hooks.py` gives **18 failures**: the 17 W77 nodes as XPASS(strict), and the
+    `test_claude_hooks.py` gives **20 failures**: the 19 W77 nodes as XPASS(strict), and the
     wiring pin's event set, which lacks `PostToolUseFailure`. So the markers cannot outlive the
     fix unnoticed.
 - **#1133 replayed on real data**, in that worktree, through the patched guard, under the system
@@ -166,6 +168,23 @@ comment 7031763467).
    asks (1 of 100 in the census). Accepted below.
 
 The census was re-run on the fixed guard: the same 100 calls ask.
+
+**REVIEW ROUND 1** (Codex on `352bc35c`, 2 findings, both P2): 2 FIXED, each behind a pin that fails
+on the PR head's patch and passes on the fixed one (2 failed → 2 passed, in a throwaway worktree):
+1. FIX — a granted ask recorded approval for every path it named, even one the call never wrote.
+   So the accepted over-ask (inline Python that reads a protected file and writes another) covered
+   that file for the rest of the session, and a later record-API write to it was neither asked
+   about nor reported. Now the grant is recorded only for the protected files the call changed. A
+   pending ask still covers that call's own after-check. Pin:
+   `test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file`.
+2. FIX — a `cd` inside `( … )` (or `$( … )`) carried into the commands after the subshell, so
+   `(cd vinci && true); echo x >> vinci/dossier/verdict.py` resolved to `vinci/vinci/…` and did not
+   ask. Each `(` now saves the directory and its `)` restores it. Pin: the `after a cd inside a
+   subshell` write node.
+
+The census's 100 asks are unchanged. Its 38 prompts assumed every granted ask covers its file for
+the session. Under round 1's rule, a path the call only named is asked again; of the 100, at most
+4 named a file they did not write.
 
 **BOUNDARY.**
 - **The census.** Population: every assistant `tool_use` named `Bash` in

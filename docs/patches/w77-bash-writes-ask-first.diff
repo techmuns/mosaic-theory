@@ -1,5 +1,5 @@
 diff --git a/.claude/hooks/decision_path_guard.py b/.claude/hooks/decision_path_guard.py
-index 949b68ec..7e313872 100644
+index 949b68ec..fe77074e 100644
 --- a/.claude/hooks/decision_path_guard.py
 +++ b/.claude/hooks/decision_path_guard.py
 @@ -12,16 +12,40 @@ hook forces, 47 of the 48 asks logged 2026-11-04 → 11-17 (every one in auto mo
@@ -32,10 +32,10 @@ index 949b68ec..7e313872 100644
 +  file, `git checkout|restore` from a ref other than HEAD or main, the files of `git apply`, `git
 +  mv` / `git rm`, and inline Python (`-c`, or a heredoc on stdin) that names a protected path and
 +  makes a write call — through `cd`, `bash -c`, `eval`, `find -exec`, `xargs` and a shell script it
-+  runs. A protected one asks, once per file per session, as an Edit does; the approval is recorded
-+  when the call has run. Each form is one real calls use: over 34,778 of this project's Bash calls
-+  (2026-11-09 → 11-20), `install`, `truncate`, `dd` and `patch` appeared 0 times and are left to
-+  the after-check.
++  runs. A protected one asks, once per file per session, as an Edit does; when the call has run,
++  the grant is recorded for each protected file it changed, never for one it only named. Each
++  form is one that real calls use: over 34,778 of this project's Bash calls (2026-11-09 → 11-20),
++  `install`, `truncate`, `dd` and `patch` appeared 0 times and are left to the after-check.
 +- AFTER it runs (PostToolUse, and PostToolUseFailure for a call that exits non-zero), every
 +  protected file whose content the call changed, read from `git status` before and after. One no
 +  ask covered — a write the command did not show — is reported to the agent, told to stop and ask,
@@ -71,7 +71,7 @@ index 949b68ec..7e313872 100644
  
  #: (path or directory prefix ending in "/", what it is) — relative to the repo root.
  PROTECTED: tuple[tuple[str, str], ...] = (
-@@ -108,48 +142,826 @@ def protected_reason(rel: str) -> str | None:
+@@ -108,48 +142,838 @@ def protected_reason(rel: str) -> str | None:
      return None
  
  
@@ -267,6 +267,7 @@ index 949b68ec..7e313872 100644
 +
 +    tokens = _tokens(_HEREDOC.sub(keep, text).replace("\\\n", ""))
 +    directory = cwd
++    outer: list[str | None] = []                       # the directory each open `(` will restore
 +    words: list[str] = []
 +    writes: list[str] = []
 +    stdin: str | None = None
@@ -290,6 +291,11 @@ index 949b68ec..7e313872 100644
 +                    dirs.add(directory)
 +                yield _Command(command, directory, writes, stdin, stdin_file)
 +            words, writes, stdin, stdin_file = [], [], None, None
++            for char in token if redirect is None else redirect.group("sep"):
++                if char == "(":                        # a subshell, `$(…)` or `>(…)`: its `cd`
++                    outer.append(directory)            # ends with it (Codex on #1155)
++                elif char == ")" and outer:
++                    directory = outer.pop()
 +            if redirect is None:
 +                i += 1
 +                continue
@@ -843,21 +849,27 @@ index 949b68ec..7e313872 100644
 +        pending_file.unlink()
 +    except (OSError, ValueError):
 +        return 0                                       # no reading from before the call
-+    for rel in pending.get("asked") or []:
-+        record_approval(session, str(rel))             # the call ran: the ask was granted
-+    ok = approved(session)
++    asked = {str(r) for r in pending.get("asked") or []}   # the call ran: each ask was granted
++    ok = approved(session) | asked
 +    reported_file = _state_file(session, "-reported")
 +    told = _read_set(reported_file)
 +    changed: dict[str, str] = {}
++    wrote: set[str] = set()
 +    for root_name, before in (pending.get("before") or {}).items():
 +        root = Path(root_name)
 +        after = fingerprint(root)
 +        if after is None:
 +            continue
-+        moved = sorted(r for r in set(before) | set(after) if before.get(r) != after.get(r)
-+                       and not _covered(r, ok) and r not in told)
-+        for rel in sorted(set(moved) - known_states(root, moved, after)):
++        moved = sorted(r for r in set(before) | set(after) if before.get(r) != after.get(r))
++        wrote |= {r for r in moved if _covered(r, asked)}
++        unasked = [r for r in moved if not _covered(r, ok) and r not in told]
++        for rel in sorted(set(unasked) - known_states(root, unasked, after)):
 +            changed[rel] = protected_reason(rel) or "protected"
++    # A grant covers the session only for the files the call CHANGED (Codex on #1155): a path it
++    # merely named, as inline Python that reads a protected file and writes another does, is
++    # asked about again next time.
++    for rel in sorted(wrote):
++        record_approval(session, rel)
 +    if not changed:
 +        return 0
 +    STATE_DIR.mkdir(parents=True, exist_ok=True)
@@ -952,7 +964,7 @@ index 9466a923..f668b7cb 100644
          ]
        }
 diff --git a/tests/test_claude_hooks.py b/tests/test_claude_hooks.py
-index 32ad3a35..604bdcb3 100644
+index c74f39be..6fd05459 100644
 --- a/tests/test_claude_hooks.py
 +++ b/tests/test_claude_hooks.py
 @@ -56,7 +56,8 @@ def _session() -> str:
@@ -979,7 +991,7 @@ index 32ad3a35..604bdcb3 100644
  
  IT_RECORD = '{"ticker": "IT", "note": "A"}\n'
  #: A stand-in for vinci/scenarios.py's record API (`read_record` → `model_copy` → `write_record`):
-@@ -1249,7 +1245,6 @@ BASH_WRITES = (
+@@ -1252,7 +1248,6 @@ BASH_WRITES = (
  )
  
  
@@ -987,7 +999,7 @@ index 32ad3a35..604bdcb3 100644
  @pytest.mark.parametrize(("form", "command", "rel"), BASH_WRITES, ids=[c[0] for c in BASH_WRITES])
  def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
          tmp_path: pathlib.Path, form: str, command: str, rel: str) -> None:
-@@ -1268,7 +1263,6 @@ def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
+@@ -1271,7 +1266,6 @@ def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
      assert f"`{rel}`" in reason and f'Operator-approved: {rel} "' in reason
  
  
@@ -995,7 +1007,7 @@ index 32ad3a35..604bdcb3 100644
  def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs() -> None:
      """Before (PreToolUse: ask on a visible write), after (PostToolUse: report a write the command
      did not show) and after a failure (PostToolUseFailure: a script that wrote, then exited 1)."""
-@@ -1276,7 +1270,6 @@ def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs()
+@@ -1279,7 +1273,6 @@ def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs()
          assert "decision_path_guard.py" in _wired(event, "Bash"), event
  
  
@@ -1003,7 +1015,7 @@ index 32ad3a35..604bdcb3 100644
  def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_it_runs(
          tmp_path: pathlib.Path) -> None:
      """#1133's shape (2026-11-19): the record read, changed and written back through an API that
-@@ -1297,7 +1290,6 @@ def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_
+@@ -1300,7 +1293,6 @@ def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_
      assert again == {}                            # reported once per file per session
  
  
@@ -1011,7 +1023,7 @@ index 32ad3a35..604bdcb3 100644
  def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
          tmp_path: pathlib.Path) -> None:
      """A Bash call that exits non-zero gets no PostToolUse, only PostToolUseFailure (Claude Code's
-@@ -1313,7 +1305,6 @@ def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
+@@ -1316,7 +1308,6 @@ def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
      assert "`scenarios/IT.json`" in str(context.get("additionalContext"))
  
  
@@ -1019,7 +1031,7 @@ index 32ad3a35..604bdcb3 100644
  def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does(
          tmp_path: pathlib.Path) -> None:
      """Asked once per file per session, whichever tool asked: the grant is recorded when the call
-@@ -1330,7 +1321,6 @@ def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does
+@@ -1333,7 +1324,6 @@ def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does
      assert _asked(_bash_call("echo '{}' > scenarios/IT.json", repo, _session())[0])
  
  
@@ -1027,7 +1039,7 @@ index 32ad3a35..604bdcb3 100644
  def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
          tmp_path: pathlib.Path) -> None:
      """Review round 0: a Python literal naming the folder asks about `scenarios/`; once granted,
-@@ -1344,7 +1334,6 @@ def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
+@@ -1347,7 +1337,6 @@ def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
      assert after == {}
  
  
@@ -1035,3 +1047,11 @@ index 32ad3a35..604bdcb3 100644
  def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path) -> None:
      """CLAUDE.md: a truncated output prints its own truncation. Eleven records written through the
      API: the notice lists ten and says so."""
+@@ -1359,7 +1348,6 @@ def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path)
+     assert "11 protected file(s) (showing 10 of 11)" in str(after.get("systemMessage"))
+ 
+ 
+-@W77
+ def test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file(
+         tmp_path: pathlib.Path) -> None:
+     """Codex on #1155, round 1. Inline Python that only READS `scenarios/IT.json` while writing
