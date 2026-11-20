@@ -575,3 +575,24 @@ def test_a_w81_page_with_its_lines_rebuilt_is_coherent() -> None:
         list(rec.quarters), rec.ciq_ltm, rec.filing_ltm, rec.ltm_gap)
     doc = _stamped(raw)
     assert incoherent(doc, {"dossier.md": render_markdown(Dossier.model_validate(doc))}) == []
+
+
+def test_the_seam_refuses_a_qa_flags_write_that_moves_another_flag(tmp_path: Path) -> None:
+    """(−) Review round 1. `refresh_dossier` admits `qa_flags` for one use, and enforces it: a
+    top-level step that moves any flag but an LTM-quarters one is refused before anything is
+    written, whatever transform sent it. (+) One that moves only an LTM-quarters flag passes the
+    seam (`refresh._only_ltm_flags_moved`)."""
+    page = tmp_path / "data" / "dossiers" / "IT" / "dossier.json"
+    page.parent.mkdir(parents=True)
+    page.write_text(json.dumps(frozen_doc("IT")))
+    before = page.read_text()
+    flags = frozen_doc("IT")["qa_flags"]
+    other = next(i for i, f in enumerate(flags) if not f.startswith(lq.FLAG_PREFIX))
+    dropped = flags[:other] + flags[other + 1:]
+    with pytest.raises(ValueError, match="only an LTM-quarters flag"):
+        rf.refresh_dossier(page, top_level=lambda _doc: {"qa_flags": dropped})
+    assert page.read_text() == before
+    ltm = next(i for i, f in enumerate(flags) if f.startswith(lq.FLAG_PREFIX))
+    caused = [f + ". Its cause was not read: …" if i == ltm else f for i, f in enumerate(flags)]
+    assert rf._only_ltm_flags_moved(flags, caused)
+    assert not rf._only_ltm_flags_moved(flags, dropped)

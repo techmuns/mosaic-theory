@@ -87,6 +87,18 @@ _STATED_KEYS = CIQ_EXPORT_DROP_WHEN_NONE
 _STATED_ON: dict[str, str] = {"export_date": "comps", "filed_through": "financials"}
 
 
+def _only_ltm_flags_moved(old: Any, new: Any) -> bool:
+    """The `qa_flags` seam's one use (W81): the same flags in the same places, where any that
+    differs is an LTM-quarters flag on both sides (`ltm_quarters.FLAG_PREFIX`), so a cause is
+    added and nothing else moves."""
+    from vinci.dossier.ltm_quarters import FLAG_PREFIX
+
+    a, b = list(old or []), list(new or [])
+    return len(a) == len(b) and all(
+        x == y or (isinstance(x, str) and isinstance(y, str) and x.startswith(FLAG_PREFIX)
+                   and y.startswith(FLAG_PREFIX)) for x, y in zip(a, b, strict=True))
+
+
 def _only_stated_dates(old: Any, new: Any) -> bool:
     """True when two input records differ in nothing but their CIQ rows' stated dates
     (`_STATED_KEYS`) — the one change the `inputs` seam admits. The record says what a page was
@@ -683,6 +695,11 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
         if stray := sorted(set(extra) - _TOP_LEVEL_REFRESHABLE):
             raise ValueError(f"{doc.get('ticker')}: a top-level refresh may set only "
                              f"{sorted(_TOP_LEVEL_REFRESHABLE)}, not {stray}")
+        if "qa_flags" in extra and not _only_ltm_flags_moved(doc.get("qa_flags"),
+                                                             extra["qa_flags"]):
+            raise ValueError(f"{doc.get('ticker')}: a top-level refresh may move only an "
+                             "LTM-quarters flag in `qa_flags`; every other flag keeps its text "
+                             "and its place (W81, `ltm_quarters_transform`)")
         if "inputs" in extra and not _only_stated_dates(doc.get("inputs"), extra["inputs"]):
             raise ValueError(f"{doc.get('ticker')}: a top-level refresh may change the input "
                              "record only by its CIQ exports' export_date or filed_through, "

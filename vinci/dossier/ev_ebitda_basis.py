@@ -261,6 +261,17 @@ def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
                     + (f" (TEV as of {_iso(ie.tev_as_of)})" if _iso(ie.tev_as_of) else "")))
 
 
+def at_price_line(*, price: float, price_as_of: str | None, shares: float, shares_basis: str,
+                  net_debt: float, ltm_ebitda: float, ltm_through: str, value: float) -> str:
+    """The at-price block's sentence, from its own stored fields — ONE writer, so the panel's
+    transform (`vinci.evals.variants.w81_ebitda_names`) re-reads it exactly as the builder writes
+    it (W81: the denominator is CIQ's four-quarter EBITDA)."""
+    return (f"at the page's ${price:,.2f} close ({price_as_of or 'date unstated'}): "
+            f"(${price:,.2f} × {shares:,.0f} {shares_basis} + net debt {_money(net_debt)} "
+            f"excluding operating leases) ÷ {FOUR_QUARTER} ${ltm_ebitda:,.0f}M (to "
+            f"{ltm_through}) = {value:.1f}x")
+
+
 def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
                       ) -> EvEbitdaAtPrice | None:
     """R1's ex-lease EV/EBITDA at the page's stored close — only where R1 prices that basis (rent
@@ -299,10 +310,9 @@ def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
     nd_m = nd[0] / 1e6
     ev = price * shares / 1e6 + nd_m
     value = ev / last.ltm_ebitda
-    line = (f"at the page's ${price:,.2f} close ({_iso(si.as_of) or 'date unstated'}): "
-            f"(${price:,.2f} × {shares:,.0f} {shares_basis} + net debt {_money(nd_m)} excluding "
-            f"operating leases) ÷ {FOUR_QUARTER} ${last.ltm_ebitda:,.0f}M (to "
-            f"{last.balance_sheet_date}) = {value:.1f}x")
+    line = at_price_line(price=float(price), price_as_of=_iso(si.as_of), shares=float(shares),
+                         shares_basis=shares_basis, net_debt=nd_m, ltm_ebitda=last.ltm_ebitda,
+                         ltm_through=last.balance_sheet_date, value=value)
     return EvEbitdaAtPrice(
         value=round(value, 6), price=float(price), price_as_of=_iso(si.as_of),
         shares=float(shares), shares_basis=shares_basis,

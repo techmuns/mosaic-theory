@@ -55,6 +55,15 @@ the proof that the export and the code are the page's — and is otherwise left 
 the registration's note names (BURL's guidance predates A-D8's block discovery, so no code at this
 ref rebuilds it).
 
+W81 (SP-D20), `W81`'s ``w81_ebitda_names``: CIQ's two EBITDAs named apart in the three lines the
+mechanical layer writes them into, each re-read by the ref's own code from the line's own stored
+block: the basis line (`ev_ebitda_basis.headline_basis`), the at-price line
+(`ev_ebitda_basis.at_price_line`) and the EBITDA reconciliation (`ebitda_recon._line`). The
+identity at a ref without the change (no `ev_ebitda_basis.FOUR_QUARTER`). A line is written only
+where the re-read, with W81's words turned back into the old ones, equals the committed line — the
+proof that nothing but the words moved — and is otherwise left as committed. The LTM-quarters
+flag's cause is a `qa_flags` entry, outside the layer, and reaches no request.
+
 THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
 releases filed after its price date; this moves them out of `primary_source.releases` and
 re-derives the two fields the assembly takes from that list (`current_guide`, a release-read
@@ -72,7 +81,14 @@ from datetime import date
 from types import SimpleNamespace
 from typing import Any
 
-from vinci.dossier import capital_allocation, ciq_sheets, gaps, mechanical
+from vinci.dossier import (
+    capital_allocation,
+    ciq_sheets,
+    ebitda_recon,
+    ev_ebitda_basis,
+    gaps,
+    mechanical,
+)
 from vinci.dossier import schemas as _schemas
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import ForwardMultipleHistory, MechanicalLayer, Sourced, SourceStatus
@@ -744,6 +760,68 @@ def same_day_guides(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     return mech.model_copy(update={"catalyst_path": cp.model_copy(update=upd)}) if upd else mech
 
 
+# ------------------------------------------------------------ W81. the two CIQ EBITDAs' names
+
+#: W81's words in each line, and the words a ref before it wrote there, in the order undone.
+_W81_BASIS: tuple[tuple[str, str], ...] = (
+    ("It is NOT a multiple of CIQ's annual LTM EBITDA, after rent (",
+     "It is NOT a multiple of reported EBITDA ("),
+    ("— a multiple of that figure, after rent.", "— a multiple of reported EBITDA."),
+    ("before comparing it with a multiple struck after rent.",
+     "before comparing it with a multiple of reported EBITDA."),
+    ("which reproduces CIQ's annual LTM EBITDA (", "which reproduces reported LTM EBITDA ("),
+    (") and that plus rent alike", ") and EBITDA plus rent alike"),
+    ("CIQ's annual LTM EBITDA $", "reported LTM EBITDA $"),
+)
+_W81_RECON: tuple[tuple[str, str], ...] = (
+    ("CIQ's four-quarter EBITDA matches the filings (", "its LTM matches the filings ("),
+    (" — CIQ's four-quarter EBITDA is the filings' figure.",
+     " — the LTM the multiples divide is the reported figure."),
+    ("CIQ's four-quarter EBITDA $", "its LTM $"),
+)
+_W81_AT_PRICE = re.compile(r"÷ CIQ's four-quarter EBITDA (\$[\d,]+M) \(to ")
+
+
+def _undo(line: str, words: tuple[tuple[str, str], ...]) -> str:
+    for new, old in words:
+        line = line.replace(new, old)
+    return line
+
+
+def w81_ebitda_names(mech: MechanicalLayer, ctx: Context | None = None) -> MechanicalLayer:
+    """(W81) The basis, at-price and reconciliation lines as THIS ref's code writes them from each
+    line's own stored block. The identity at a ref without the change. Each line is written only
+    where the re-read with W81's words undone is the committed line; otherwise it is left as
+    committed (a block an older builder wrote, such as a basis block from before W65)."""
+    if getattr(ev_ebitda_basis, "FOUR_QUARTER", None) is None:
+        return mech
+    v = mech.valuation
+    vupd: dict[str, Any] = {}
+    eb = v.ev_ebitda_basis
+    if eb is not None:
+        new = ev_ebitda_basis.headline_basis(mech)
+        if new is not None and new.line != eb.line and _undo(new.line, _W81_BASIS) == eb.line:
+            vupd["ev_ebitda_basis"] = eb.model_copy(update={"line": new.line})
+    at = v.ev_ebitda_ex_lease_at_price
+    if at is not None:
+        line = ev_ebitda_basis.at_price_line(
+            price=at.price, price_as_of=at.price_as_of, shares=at.shares,
+            shares_basis=at.shares_basis, net_debt=at.net_debt, ltm_ebitda=at.ltm_ebitda,
+            ltm_through=at.ltm_through, value=at.value)
+        if line != at.line and _W81_AT_PRICE.sub(
+                r"÷ LTM EBITDA \1 (four quarters to ", line) == at.line:
+            vupd["ev_ebitda_ex_lease_at_price"] = at.model_copy(update={"line": line})
+    out = mech.model_copy(update={"valuation": v.model_copy(update=vupd)}) if vupd else mech
+    fs = out.financial_summary
+    rec = fs.ebitda_reconciliation if fs is not None else None
+    if fs is not None and rec is not None and rec.ciq_ltm is not None and rec.quarters:
+        line = ebitda_recon._line(list(rec.quarters), rec.ciq_ltm, rec.filing_ltm, rec.ltm_gap)
+        if line != rec.line and _undo(line, _W81_RECON) == rec.line:
+            out = out.model_copy(update={"financial_summary": fs.model_copy(update={
+                "ebitda_reconciliation": rec.model_copy(update={"line": line})})})
+    return out
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -759,6 +837,7 @@ TRANSFORMS: dict[str, Transform] = {
     "covenant_value_figures": covenant_value_figures,
     "dividend_level": dividend_level,
     "same_day_guides": same_day_guides,
+    "w81_ebitda_names": w81_ebitda_names,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
@@ -787,3 +866,6 @@ RE2_D16: tuple[str, ...] = ("covenant_value_figures",)
 RA_D2: tuple[str, ...] = ("dividend_level",)
 #: RA-D4's one transform (split from #967; RA-D2 is measured on its own): the same-day guides.
 RA_D4: tuple[str, ...] = ("same_day_guides",)
+#: W81's one transform (SP-D20): CIQ's two EBITDAs named apart in the basis, at-price and
+#: reconciliation lines.
+W81: tuple[str, ...] = ("w81_ebitda_names",)
