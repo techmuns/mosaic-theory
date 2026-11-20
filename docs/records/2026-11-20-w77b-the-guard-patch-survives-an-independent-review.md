@@ -13,7 +13,8 @@ superseded-by:
 fixes below, one patch against main's unpatched `.claude/hooks/decision_path_guard.py` and
 `.claude/settings.json`. No hook is changed by this PR; the operator applies the patch (STATE row
 32, item (37)). The operator's ruling on B's review, 2026-11-20, verbatim: "Hold and fix first".
-The held `w77-apply` branch, which applies the patch as merged, is not to be pushed.
+The `w77-apply` worktree and branch that applied the patch as merged were local, never pushed,
+and A removed them on 2026-11-20.
 
 B's review is on #1004, comment 7037804674. Each fix, with the finding it answers:
 1. **B#1 — a long string switched the after-check off, silently.**
@@ -23,7 +24,8 @@ B's review is on #1004, comment 7037804674. Each fix, with the finding it answer
      per-call reading was kept, and the after-check said nothing about a write the command did not
      show.
    - The fix: `locate` reads with `os.path.isdir` / `os.path.exists`, which answer False, and
-     returns None on any `OSError` or `ValueError` (a NUL byte). `_roots` does the same.
+     returns None on any `OSError`, `ValueError` (a NUL byte) or `RuntimeError` (3.9's
+     `Path.resolve()` on a symlink loop, found in review round 1). `_roots` does the same.
    - A reading that crashes for any other reason no longer ends the hook: the fingerprint is still
      taken, the after-check still runs, and the crash is printed to the operator.
 2. **B#3 — slow git lost the ask.**
@@ -32,9 +34,15 @@ B's review is on #1004, comment 7037804674. Each fix, with the finding it answer
      with nothing printed: a visible write went through with no ask.
    - The fix: every git call of one hook run shares ONE budget, `BUDGET_S = 10.0` s from the
      hook's start. The ask is built before any `git status` and is printed whatever git does.
+   - And no git stands between a command and its ask (review round 1, SF3): a path's checkout is
+     found by walking up for `.git` and `vinci/__init__.py`, not by `git rev-parse`, which drew on
+     the same budget, so with EVERY git call slow nothing was placed in a checkout and nothing
+     asked. The one git call a reading still makes, `git ls-files` for a removal, counts the
+     removal as tracked when git does not answer, so it asks.
    - Fails open, loudly: a checkout git did not answer for (a timeout, a non-zero exit, the budget
      spent) is named in a `systemMessage`, before the call ("the after-check is off for it in …")
-     and after it ("it could not read git status in …").
+     and after it ("it could not read git status in …"). It says the ask still stands only when
+     there was one.
 3. **B#2 — wrong blame and wrong advice.**
    - The after-check sees WHAT changed during a call, never WHO changed it. W77 told the agent
      "if it is not [intended], restore the file". That can undo approved work: another process's
@@ -47,10 +55,12 @@ B's review is on #1004, comment 7037804674. Each fix, with the finding it answer
      notice, so a report about a change the call never made silenced the next unasked write of that
      file. A file that does not change again is not reported again, since each call compares its
      own before and after.
-   - The fix, background calls: a `run_in_background` call's grant covers the files it visibly
-     writes. Its PostToolUse runs before its command writes, and W77 grants only what a call
-     changed, so its own asked, granted write was reported as unasked when it landed. The operator
-     is told the grant was made.
+   - The fix, background calls: a `run_in_background` call's grant covers the FILES its command
+     names. Its PostToolUse runs before its command writes, and W77 grants only what a call
+     changed, so its own asked, granted write was reported as unasked when it landed. Never a
+     directory the command reaches, nor the entries a whole-tree write (`git checkout <ref> -- .`)
+     expands to (review round 1, SF2), and only on `PostToolUse` (round 0). The operator is told
+     the grant was made.
 4. **B#7 — misses before the call.** Now read:
    - the shell keywords `if`, `then`, `else`, `elif`, `do`, `while`, `until`, `!` and `{` in
      front of a command;
@@ -60,7 +70,8 @@ B's review is on #1004, comment 7037804674. Each fix, with the finding it answer
    - a shell script run by its path (`./tools/write.sh`), by a `.sh` / `.bash` name or a shell
      shebang, as one run by `bash` already was.
 5. **B#8 — the guard's own grant store.** A Bash write into the store (`guard-<session>.json`
-   there IS a grant) asks every time, as does an Edit or Write of a file there. No grant covers the
+   there IS a grant) asks every time, as does an Edit or Write of a file there, and the removal of
+   a folder the store sits in (round 1, NIT 9). No grant covers the
    store, not even a grant naming the store file itself.
 
 **WHY.** B reviewed the patch as merged before the operator applied it, as an independent check
@@ -70,8 +81,9 @@ B's review is on #1004, comment 7037804674. Each fix, with the finding it answer
 replaced rather than followed by a second one: the operator applies one patch, reviewed once more.
 
 **HOW VERIFIED.**
-- **The pins.** 18 new nodes and 1 changed in `tests/test_claude_hooks.py`. Each is a strict xfail
-  on main, like the rest of W77, since main's guard reads no Bash call:
+- **The pins.** 18 new nodes and 1 changed in `tests/test_claude_hooks.py` (6 more in review
+  round 1, below). Each is a strict xfail on main, like the rest of W77, since main's guard reads
+  no Bash call (round 1's `locate` pin excepted: it skips there):
   - B#1: `test_a_long_string_in_a_writing_script_does_not_switch_the_after_check_off` (B's repro,
     a 282-byte sentence plus `(Path('scen'+'arios')/'IT.json').write_text('{}')`, run under the
     hooks' own interpreter); `test_a_path_the_filesystem_refuses_to_read_locates_nowhere` (`locate`
@@ -99,13 +111,15 @@ replaced rather than followed by a second one: the operator applies one patch, r
   a grant names the store file: the grant-store pin fails on it. A background grant recorded on
   `PostToolUseFailure` too: the background pin fails on it (review round 0, item 1). Each passes
   on the guard.
-- **The strict-xfail scheme.** With this PR as merged (main's hooks and wiring, the new pins
-  marked), `test_claude_hooks.py` gives **93 passed, 57 xfailed** (W77's 39 and these 18), and the five
-  suites below give 229 passed, 57 xfailed. With the patch applied, the five hook and
-  gate suites (`test_claude_hooks`, `test_protected_approval`, `test_one_gate`,
-  `test_rg_d20_instructions_match_the_code`, `test_no_local_paths`) give **286 passed**. With
-  the hook and wiring patched but this PR's test file left as merged: **58 failed** — the 57 as XPASS(strict) and the wiring pin's event set, which
-  lacks `PostToolUseFailure`. So no marker can outlive the fix unnoticed.
+- **The strict-xfail scheme**, after review round 1. With this PR as merged (main's hooks and
+  wiring, the new pins marked), `test_claude_hooks.py` gives **93 passed, 1 skipped, 62 xfailed**
+  (W77's 39 and these 23; the skip is round 1's `locate` pin), and the five suites below give
+  229 passed, 1 skipped, 62 xfailed. With the patch applied, the five hook and gate suites
+  (`test_claude_hooks`, `test_protected_approval`, `test_one_gate`,
+  `test_rg_d20_instructions_match_the_code`, `test_no_local_paths`) give **292 passed**. With the
+  hook and wiring patched but this PR's test file left as merged: **63 failed** — the 62 as
+  XPASS(strict) and the wiring pin's event set, which lacks `PostToolUseFailure`. So no marker can
+  outlive the fix unnoticed.
 - **The patch** applies with `git apply --check` to this branch's tip, and the result is
   byte-identical to the tree the tests above ran on. Regenerating it from the merged patch's own
   application gave a byte-identical copy of the merged file, so `git diff` is the generator.
@@ -139,6 +153,11 @@ replaced rather than followed by a second one: the operator applies one patch, r
   this measurement passed relative script paths, so every run failed at once and timed nothing;
   it was caught because the patched guards timed the same as today's, and every run is now
   asserted to exit 0 with nothing on stderr.
+
+  Re-measured after review round 1 at a 1-minute load of 3.9–4.0 (12:52Z), primary checkout:
+  today's guard 25 / 24 ms, #1163's 67 / 64 ms, round 1's 62 / 59 ms. Placing a checkout without
+  git saves a few milliseconds. A measured about 110 ms before and after at load 11–17, against
+  40 ms today. So the cost is about 40 ms each side at low load and 100 ms each side at load 50.
 - **The patched guard itself:** `mypy --strict --warn-unused-ignores` clean. `ruff` (the repo's
   config) is clean but for line 7's E501, which main's file has too. It parses at
   `feature_version=(3, 9)`, and every pin that runs it as a hook runs it under `/usr/bin/python3`
@@ -163,6 +182,56 @@ worktree): 6 findings, 4 FIXED, 2 SKIPPED.
    under load is outside it. Python 3.9's standard library has no portable process-start clock;
    the residual is accepted under WHAT IT COSTS.
 
+**REVIEW ROUND 1** (coordinator A's independent review of #1163 at `143cd213`, 2026-11-20, under
+`/usr/bin/python3` 3.9; Codex found nothing). A confirmed B#1, #2, #3, #7 and #8 against B's
+repros, #6 and the case variant as recorded, and 18 of 19 mutants killed. Each FIX is behind a pin
+that fails on #1163's patch and passes on the fixed one: on #1163's guard, with this round's
+tests, **8 failed, 148 passed**; fixed, **156 passed**. Five mutants of the fixed lines are each
+killed by their pin (1 failed each).
+1. **BLOCKER 1, FIX (the procedure).** It failed at its first step while `w77-apply` was checked
+   out in a worktree, and its later blocks then ran on local main. It now applies in a fresh
+   worktree under a new branch, `w77b-apply` (above).
+2. **SF2, FIX.** This record's B#2 fix granted a background call EVERY visible hit, directories
+   included: a granted background `git checkout <ref> -- .` granted 18 entries,
+   `.claude/hooks/`, `vinci/ledger/` and `scenarios/` among them. Now only a file the command
+   itself names. Pin: `test_a_background_grant_covers_only_the_files_its_command_names` (a later
+   hidden write under `vinci/evals/` is reported; a later visible write to `scenarios/` asks).
+3. **SF3, FIX.** "Slow git no longer costs the ask" held only for `git status`: placing a path in
+   a checkout ran `git rev-parse` on the same budget, so with every git call at 11 s the hook
+   returned at 10.04 s with NO ask, saying "an ask still stands". A checkout is now found without
+   git, and the notice names an ask only when there was one. Pins:
+   `test_a_git_that_answers_nothing_still_costs_no_ask`, and a line in
+   `test_a_git_status_that_fails_is_said_out_loud`.
+4. **SF4, FIX.** Two after-check paths were silent or lost the report:
+   - (a) the per-call reading was removed in the same `try` as its read, so a store made
+     read-only after the call silenced the report;
+   - (b) the grant was written before the report was built, unguarded, so a store refusing it lost
+     the report, with a notice saying the call was "let through unread".
+
+   The removal and the grant are each guarded and said, and the crash notice names what failed
+   after a call. Pins: `test_a_store_that_turns_read_only_during_the_call_still_reports`,
+   `test_a_grant_that_cannot_be_recorded_still_leaves_the_report`.
+5. **SF5, FIX (the procedure).** It claimed that staging by name keeps untracked files out, but
+   `bin/commit` refuses while any untracked file exists and advises `git add -A`. It also left the
+   primary checkout on the apply branch. The fresh worktree fixes both.
+6. **NIT 8, PIN.** A mutant dropping `OSError` from `locate`'s catch survived. Pin:
+   `test_locate_answers_none_where_resolving_a_path_raises`. It is a negative pin: it passes on
+   #1163's guard and kills the mutant. Found while pinning it: 3.9's `Path.resolve()` raises
+   `RuntimeError` on a symlink loop, which `locate` now catches. That pin, a loop in
+   `test_a_path_the_filesystem_refuses_to_read_locates_nowhere`, fails on #1163's guard.
+7. **NIT 6, FIX.** A `/dev/null` target ran `git -C /dev rev-parse` (no git now, item 3), and a
+   call that changed nothing still ran `git hash-object`. Pin:
+   `test_a_call_that_changes_nothing_runs_no_wasted_git` (a logging git stand-in).
+8. **NIT 9, FIX.** `rm -rf` of the folder the store sits in was not read as a store write. Pin: a
+   line in the grant-store test.
+9. **NIT 7, RECORDED.** The reading's own CPU time is outside the budget (WHAT IT COSTS).
+10. **NIT 10, RECORDED.** B#6's reason covers 431 of the 530 targets; the 99 literal ones are
+    DEFERRED (WHAT IT COSTS).
+
+The census was re-run on round 1's guard: 42,628 calls, the 42,485 above and 143 since. It found
+0 crashes and 107 asks. No call's asks moved against #1163's guard on the 42,485 both read, and
+the 143 newer calls ask nothing.
+
 **BOUNDARY.**
 - **The census.** Population: every assistant `tool_use` named `Bash` in
   `~/.claude/projects/*mosaic-theory*/**/*.jsonl` on this machine, read 2026-11-20 between about
@@ -186,8 +255,8 @@ worktree): 6 findings, 4 FIXED, 2 SKIPPED.
   commit).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **About 0.2–0.25 s on every Bash call here** (0.4 s on B's machine; HOW VERIFIED), where W77 said
-  0.15 s. It runs beside the hook already on each event (`review_gate.py` before,
+- **About 0.08 s on every Bash call at low load, 0.2–0.25 s at load 50 here** (0.4 s on B's
+  machine, 0.14 s in A's measurement; HOW VERIFIED), where W77 said 0.15 s. It runs beside the hook already on each event (`review_gate.py` before,
   `codex_request.py` after), and hooks on one event run in parallel.
 - **Each change is reported.** A script an agent re-runs, writing a protected file through a path
   it builds, is reported on each run that changes the file, where W77 reported it once per
@@ -201,14 +270,19 @@ worktree): 6 findings, 4 FIXED, 2 SKIPPED.
 - **The git budget is a cut-off.** Past 10 s of git in one hook run, the remaining checkouts go
   unread for that call, and the hashing of what `git status` lists stops. Each is named to the
   operator; the commit gate stays the record.
+- **The reading's own CPU time is outside the budget** (A's review, NIT 7). A command that took
+  seconds of Python to read would eat the margin to the 15 s timeout. A found 0 such calls in
+  42,706; none is guarded.
 - **The after-check still cannot see** (W77's list stands, with B's correction to its scratchpad
   line in W77's amendment):
   - **a worktree created inside the same call** (B#6): `git worktree add X && cd X && echo x >
     scenarios/IT.json` is silent before and after, and only the commit gate sees it. It is common:
     483 of the census's 42,485 calls run `git worktree add`, 407 of them with a write-shaped command
     after it in the same call (a regex over the text, not a reading). Of their 530 `add` targets,
-    431 are a `$VAR` path no reading resolves and 99 are literal. Catching it means resolving shell
-    variables, which the reader does not do.
+    431 are a `$VAR` path no reading resolves and 99 are literal. For the 431, catching it means
+    resolving shell variables, which the reader does not do. The 99 literal ones could be read and
+    fingerprinted after the call (a new worktree starts at its HEAD), and are not: DEFERRED, since
+    most land in scratch folders whose commits only the gate's check would ever see.
   - a store path built at run time (`tempfile.gettempdir()` in Python, `$TMPDIR` in a shell word).
     The store is outside git, so the after-check cannot see it either.
 - **Known misses before the call**, each one the after-check catches once the call has run:
@@ -219,23 +293,29 @@ worktree): 6 findings, 4 FIXED, 2 SKIPPED.
   - W77's own list.
 - **Fails open, loudly**, except where the hook process itself is killed (Claude Code's
   `hook_cancelled`). Under the budget that needs more than about 5 s of interpreter start-up and
-  Python work on top of the 10 s of git.
+  Python work on top of the 10 s of git. A store that cannot remove the per-call reading, or
+  record a grant, is said after the call, and the call's report stands (round 1, SF4).
 
-**For the operator, to apply** (STATE row 32, item (37)). This is the same procedure as W77's,
-naming the same path, which now holds the updated patch, with one step first. Apply it on a
-branch, never on local main: worktrees are cut from local main, so a hook committed there would
-reach new sessions before review. From a checkout whose main holds this PR:
+**For the operator, to apply** (STATE row 32, item (37)). Apply it in a FRESH worktree under a
+NEW branch, never in the primary checkout (A's review of #1163, BLOCKER 1 and SF5):
+- W77's procedure re-used the branch `w77-apply`. The branch that applied the patch as merged was
+  checked out in the worktree `.claude/worktrees/w77-apply`, so `git branch -D w77-apply` failed
+  ("checked out at") and `git switch -c w77-apply` failed ("already exists"). The blocks after
+  them then ran `git apply` and `bin/commit` on local main. A removed that worktree and branch on
+  2026-11-20; they were local and never pushed. These steps use a new name and never touch it.
+- `bin/commit` refuses while ANY untracked file exists, and advises `git add -A`. In the primary
+  checkout, which held one on 2026-11-20, that advice would sweep the file into a public PR. A
+  fresh worktree has none, and staging the three paths by name keeps it so.
+- The primary checkout never leaves main, so a session started there runs main's hooks until the
+  apply PR merges. In a worktree, `bin/commit` uses the primary checkout's `.venv`.
 
-First, drop the held branch that applied the patch as merged (it was never pushed):
+From the primary checkout's root, once this PR is on origin/main:
 
 ```bash
-git switch main && git branch -D w77-apply
+git fetch origin && git worktree add .claude/worktrees/w77b-apply -b w77b-apply origin/main
 ```
 ```bash
-git fetch origin && git switch -c w77-apply origin/main
-```
-```bash
-git apply --check docs/patches/w77-bash-writes-ask-first.diff
+cd .claude/worktrees/w77b-apply && git apply --check docs/patches/w77-bash-writes-ask-first.diff
 ```
 ```bash
 git apply docs/patches/w77-bash-writes-ask-first.diff && git rm -q docs/patches/w77-bash-writes-ask-first.diff
@@ -244,11 +324,20 @@ git apply docs/patches/w77-bash-writes-ask-first.diff && git rm -q docs/patches/
 git add .claude/hooks/decision_path_guard.py .claude/settings.json tests/test_claude_hooks.py && bin/commit -m "W77 applied: the decision-line guard reads Bash calls" -m 'Operator-approved: .claude/hooks/decision_path_guard.py "<your words>" <YYYY-MM-DD>' -m 'Operator-approved: .claude/settings.json "<your words>" <YYYY-MM-DD>'
 ```
 ```bash
-git push -u origin w77-apply && gh pr create --fill
+git push -u origin w77b-apply && gh pr create --fill
 ```
 
-The paths are staged by name, so no untracked file rides along. A session started before the
-merge may keep the old wiring, because Claude Code reads hook settings at startup.
+Each block assumes the one before it succeeded. If the first fails because a previous attempt left
+`w77b-apply` behind, remove it from the primary checkout's root and start again. The branch is
+local unless the last block ran:
+
+```bash
+git worktree remove --force .claude/worktrees/w77b-apply && git branch -D w77b-apply
+```
+
+Once the apply PR merges, remove the worktree from the primary checkout's root with `git worktree
+remove .claude/worktrees/w77b-apply`. A session started before the merge may keep the old wiring,
+because Claude Code reads hook settings at startup.
 - **After the merge, in a fresh session** (B's suggestion): make one Bash write of a protected
   file in a worktree under a scratchpad, and one under `.claude/worktrees/`. Each should ask
   before it runs. A script write that names no path should be reported after it. No ask, or no

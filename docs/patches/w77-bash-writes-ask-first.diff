@@ -1,5 +1,5 @@
 diff --git a/.claude/hooks/decision_path_guard.py b/.claude/hooks/decision_path_guard.py
-index 949b68ec..fc5deeca 100644
+index 949b68ec..29d50aca 100644
 --- a/.claude/hooks/decision_path_guard.py
 +++ b/.claude/hooks/decision_path_guard.py
 @@ -12,16 +12,54 @@ hook forces, 47 of the 48 asks logged 2026-11-04 → 11-17 (every one in auto mo
@@ -85,20 +85,10 @@ index 949b68ec..fc5deeca 100644
  
  #: (path or directory prefix ending in "/", what it is) — relative to the repo root.
  PROTECTED: tuple[tuple[str, str], ...] = (
-@@ -108,63 +156,1127 @@ def protected_reason(rel: str) -> str | None:
+@@ -108,41 +156,1110 @@ def protected_reason(rel: str) -> str | None:
      return None
  
  
--def repo_relative(file_path: str) -> str | None:
--    """The path relative to its mosaic-theory checkout, or None outside one."""
--    p = Path(file_path)
--    probe = p.parent if not p.is_dir() else p
--    while not probe.exists() and probe != probe.parent:
--        probe = probe.parent
--    try:
--        out = subprocess.run(["git", "-C", str(probe), "rev-parse", "--show-toplevel"],
--                             capture_output=True, text=True, timeout=10)
--    except (OSError, subprocess.SubprocessError):
 +#: ONE budget for every git call of a hook run, from its start (B's review of the W77 patch,
 +#: finding 3). settings.json gives the hook 15 s; each git call had its own 10 s timeout, so `git
 +#: status` slowed to 8 s in two checkouts outlived the hook, which was killed with nothing printed
@@ -115,8 +105,7 @@ index 949b68ec..fc5deeca 100644
 +    left = BUDGET_S - (time.monotonic() - _STARTED)
 +    if left < 0.05:
 +        _TROUBLE.append(f"{what}: not run, the guard's {BUDGET_S:.0f} s git budget was spent")
-         return None
--    root = Path(out.stdout.strip()) if out.returncode == 0 else None
++        return None
 +    try:
 +        return subprocess.run(args, timeout=left, **kwargs)
 +    except subprocess.TimeoutExpired:
@@ -128,13 +117,18 @@ index 949b68ec..fc5deeca 100644
 +
 +@functools.lru_cache(maxsize=256)
 +def _checkout_root(probe: str) -> str | None:
-+    """The mosaic-theory checkout ``probe`` (an existing directory) is in, or None."""
-+    out = _git_run(["git", "-C", probe, "rev-parse", "--show-toplevel"],
-+                   f"`git rev-parse` in {probe}", capture_output=True, text=True)
-+    root = Path(out.stdout.strip()) if out is not None and out.returncode == 0 else None
-     if root is None or not (root / "vinci" / "__init__.py").exists():
-         return None
-+    return str(root)
++    """The mosaic-theory checkout ``probe`` (an existing directory) is in, or None: the nearest
++    folder at or above it holding `.git` (a folder, or a worktree's file), when that checkout has
++    `vinci/__init__.py`. Found WITHOUT git (A's review of #1163, SF3): `git rev-parse` drew on the
++    git budget, so with every git call slow no path was placed in a checkout and nothing asked."""
++    here = os.path.realpath(probe)
++    while True:
++        if os.path.lexists(os.path.join(here, ".git")):
++            return here if os.path.exists(os.path.join(here, "vinci", "__init__.py")) else None
++        up = os.path.dirname(here)
++        if up == here:
++            return None
++        here = up
 +
 +
 +def locate(file_path: str) -> tuple[str, str] | None:
@@ -142,9 +136,7 @@ index 949b68ec..fc5deeca 100644
 +    error. B's review of the W77 patch, finding 1: under the system 3.9 a 256–299-byte name (a
 +    string literal in a writing script, read as a path) made `Path.is_dir()` raise `OSError` 63,
 +    and the crash switched that call's after-check off. `os.path` answers False instead."""
-     try:
--        return p.resolve().relative_to(root.resolve()).as_posix()
--    except ValueError:
++    try:
 +        p = Path(file_path)
 +        probe = p if os.path.isdir(p) else p.parent
 +        while not os.path.exists(probe) and probe != probe.parent:
@@ -153,13 +145,16 @@ index 949b68ec..fc5deeca 100644
 +        if root is None:
 +            return None
 +        return root, p.resolve().relative_to(Path(root).resolve()).as_posix()
-+    except (OSError, ValueError):                      # not under it; a NUL byte; refused
-         return None
- 
- 
--def _state_file(session_id: str) -> Path:
-+def repo_relative(file_path: str) -> str | None:
-+    """The path relative to its mosaic-theory checkout, or None outside one."""
++    except (OSError, ValueError, RuntimeError):        # not under it; a NUL byte; refused; and
++        return None                                    # 3.9's resolve() on a symlink loop
++
++
+ def repo_relative(file_path: str) -> str | None:
+     """The path relative to its mosaic-theory checkout, or None outside one."""
+-    p = Path(file_path)
+-    probe = p.parent if not p.is_dir() else p
+-    while not probe.exists() and probe != probe.parent:
+-        probe = probe.parent
 +    found = locate(file_path)
 +    return found[1] if found else None
 +
@@ -173,21 +168,20 @@ index 949b68ec..fc5deeca 100644
 +
 +
 +def _state_file(session_id: str, kind: str = "") -> Path:
-     safe = "".join(c for c in session_id if c.isalnum() or c in "-_") or "unknown"
--    return STATE_DIR / f"guard-{safe}.json"
++    safe = "".join(c for c in session_id if c.isalnum() or c in "-_") or "unknown"
 +    return STATE_DIR / f"guard-{safe}{kind}.json"
- 
- 
--def approved(session_id: str) -> set[str]:
++
++
 +def _read_set(path: Path) -> set[str]:
      try:
--        return set(json.loads(_state_file(session_id).read_text()))
--    except (OSError, ValueError):
+-        out = subprocess.run(["git", "-C", str(probe), "rev-parse", "--show-toplevel"],
+-                             capture_output=True, text=True, timeout=10)
+-    except (OSError, subprocess.SubprocessError):
 +        return set(json.loads(path.read_text()))
 +    except (OSError, ValueError, TypeError):
-         return set()
- 
- 
++        return set()
++
++
 +def approved(session_id: str) -> set[str]:
 +    return _read_set(_state_file(session_id))
 +
@@ -198,11 +192,11 @@ index 949b68ec..fc5deeca 100644
 +    return key in granted or any(key.startswith(g.rstrip("/") + "/") for g in granted)
 +
 +
- def record_approval(session_id: str, rel: str) -> None:
-     STATE_DIR.mkdir(parents=True, exist_ok=True)
-     _state_file(session_id).write_text(json.dumps(sorted(approved(session_id) | {rel})))
- 
- 
++def record_approval(session_id: str, rel: str) -> None:
++    STATE_DIR.mkdir(parents=True, exist_ok=True)
++    _state_file(session_id).write_text(json.dumps(sorted(approved(session_id) | {rel})))
++
++
 +#: A protected path a Bash command touches: its checkout, its path there, what it is, how the
 +#: command reaches it ("writes", or "names" for a path inline Python only names beside a write
 +#: call), and whether it is a directory.
@@ -223,7 +217,9 @@ index 949b68ec..fc5deeca 100644
 +    try:
 +        real, store = os.path.realpath(path), _store()
 +    except (OSError, ValueError):
-+        return None
+         return None
+-    root = Path(out.stdout.strip()) if out.returncode == 0 else None
+-    if root is None or not (root / "vinci" / "__init__.py").exists():
 +    if real == store:
 +        return "."
 +    return os.path.relpath(real, store) if real.startswith(store + os.sep) else None
@@ -368,7 +364,7 @@ index 949b68ec..fc5deeca 100644
 +    operands = [a for a in args if not a.startswith("-") or a == "-"]
 +    arg = operands[0] if operands else "~"
 +    if current is None or arg == "-" or any(c in arg for c in "$`"):
-+        return None
+         return None
 +    path = os.path.expanduser(arg)
 +    return os.path.normpath(path if os.path.isabs(path) else os.path.join(current, path))
 +
@@ -689,7 +685,8 @@ index 949b68ec..fc5deeca 100644
 +    """The string literals ``code`` holds, whether it makes a write call, and the shell commands it
 +    runs (`subprocess.run([...])`, `os.system(...)`) — by its syntax tree, or by its text when it
 +    does not parse."""
-+    try:
+     try:
+-        return p.resolve().relative_to(root.resolve()).as_posix()
 +        with warnings.catch_warnings():
 +            warnings.simplefilter("ignore")            # a `\$` in shell-built code warns on stderr
 +            tree = ast.parse(code)
@@ -851,7 +848,7 @@ index 949b68ec..fc5deeca 100644
 +    dirs: set[str] = {cwd}
 +    try:
 +        return _targets(command, cwd, 0, dirs), dirs
-+    except ValueError:
+     except ValueError:
 +        return [], dirs
 +
 +
@@ -868,6 +865,9 @@ index 949b68ec..fc5deeca 100644
 +    """``(checkout, path relative to it, what it is)`` for each protected path the target writes —
 +    the guard's own grant store included, as ``(the store, the name in it, …)``."""
 +    name = in_store(target.path)
++    if name is None and target.kind in ("tree", "gone"):   # a folder the store sits in, removed
++        real = os.path.realpath(target.path)             # or overwritten (A's review, NIT 9)
++        name = "." if _store().startswith(real.rstrip(os.sep) + os.sep) else None
 +    if name is not None:
 +        return [(_store(), name, _STORE_WHY)]
 +    found = where(target.path)
@@ -923,7 +923,7 @@ index 949b68ec..fc5deeca 100644
 +        shown = ("" if not said else f" ({said})" if len(said) <= 200 else
 +                 f" (the first 200 of {len(said)} characters: {said[:200]})")
 +        _TROUBLE.append(f"`git status` in {root}: exit {out.returncode}{shown}")
-+        return None
+         return None
 +    prints: dict[str, str] = {}
 +    for entry in out.stdout.decode("utf-8", "surrogateescape").split("\0"):
 +        rel = entry[3:]
@@ -934,8 +934,11 @@ index 949b68ec..fc5deeca 100644
 +                return None
 +            prints[rel] = _content(root / rel)
 +    return prints
-+
-+
+ 
+ 
+-def _state_file(session_id: str) -> Path:
+-    safe = "".join(c for c in session_id if c.isalnum() or c in "-_") or "unknown"
+-    return STATE_DIR / f"guard-{safe}.json"
 +def _git_out(root: Path, *args: str, stdin: str | None = None) -> str | None:
 +    what = f"`git {args[0] if args else ''}` in {root}"
 +    if stdin is None:
@@ -945,8 +948,9 @@ index 949b68ec..fc5deeca 100644
 +        out = _git_run([*_GIT, "-C", str(root), *args], what, input=stdin, capture_output=True,
 +                       text=True)
 +    return out.stdout if out is not None and out.returncode == 0 else None
-+
-+
+ 
+ 
+-def approved(session_id: str) -> set[str]:
 +def known_states(root: Path, rels: list[str], after: dict[str, str]) -> set[str]:
 +    """The ``rels`` whose content after the call is one the gate already holds: HEAD's (a discard,
 +    a commit), origin/main's or main's (a re-sync), or that of the commit a merge, rebase or
@@ -1010,6 +1014,7 @@ index 949b68ec..fc5deeca 100644
 +def _bash_before(command: str, cwd: str, session: str, call: str, background: bool) -> int:
 +    notices: list[str] = []
 +    found: dict[str, Hit] = {}
++    exact: set[str] = set()                            # hits that ARE a path the command names
 +    targets: list[Target] = []
 +    dirs: set[str] = {cwd}
 +    try:
@@ -1020,6 +1025,8 @@ index 949b68ec..fc5deeca 100644
 +                if key not in found or (found[key][3] == "names" and target.how == "writes"):
 +                    found[key] = (root, rel, why, target.how,
 +                                  rel.endswith("/") or os.path.isdir(os.path.join(root, rel)))
++                if os.path.realpath(os.path.join(root, rel)) == os.path.realpath(target.path):
++                    exact.add(key)
 +    except Exception as exc:                           # noqa: BLE001 — B's review, finding 1:
 +        notices.append(                                # the fingerprint is still taken below
 +            f"decision-line guard (W77): its reading of this Bash call failed "
@@ -1033,8 +1040,13 @@ index 949b68ec..fc5deeca 100644
 +        output["hookSpecificOutput"] = {"hookEventName": "PreToolUse",
 +                                        "permissionDecision": "ask",
 +                                        "permissionDecisionReason": _ask_reason(asked)}
++    stands = "the ask above still stands" if asked else "nothing was asked before it ran"
 +    if call:
-+        visible = {k: hit[1] for k, hit in asked.items() if hit[3] == "writes" and hit[0] != store}
++        # What a BACKGROUND call's grant may cover: a file the command itself names. Never a
++        # directory it reaches, nor the entries a whole-tree write (`git checkout <ref> -- .`)
++        # expands to (A's review of #1163, SF2), and never the store.
++        visible = {k: hit[1] for k, hit in asked.items()
++                   if hit[3] == "writes" and hit[0] != store and not hit[4] and k in exact}
 +        before: dict[str, dict[str, str]] = {}
 +        unread: list[str] = []
 +        try:
@@ -1053,7 +1065,7 @@ index 949b68ec..fc5deeca 100644
 +            notices.append(
 +                "decision-line guard (W77): git did not answer for this Bash call"
 +                + (f", so the after-check is off for it in {', '.join(unread)}" if unread else "")
-+                + f"; an ask still stands, and the commit gate is the record (.claude/hooks/"
++                + f"; {stands}, and the commit gate is the record (.claude/hooks/"
 +                f"decision_path_guard.py). {_listing(_TROUBLE)}.")
 +        try:                    # the ask above stands whatever the temp store does (SF5)
 +            STATE_DIR.mkdir(parents=True, exist_ok=True)
@@ -1064,8 +1076,8 @@ index 949b68ec..fc5deeca 100644
 +        except OSError as exc:
 +            notices.append(
 +                f"decision-line guard (W77) could not keep its reading of this Bash call ({exc}), "
-+                "so the after-check is off for it; an ask still stands, and the commit gate is "
-+                "the record (.claude/hooks/decision_path_guard.py).")
++                f"so the after-check is off for it; {stands}, and the commit gate is the record "
++                "(.claude/hooks/decision_path_guard.py).")
 +    if notices:
 +        output["systemMessage"] = "\n".join(notices)
 +    if output:
@@ -1082,11 +1094,18 @@ index 949b68ec..fc5deeca 100644
 +
 +def _bash_after(session: str, call: str, event: str, command: str) -> int:
 +    pending_file = _pending_file(session, call)
-+    try:
+     try:
+-        return set(json.loads(_state_file(session_id).read_text()))
 +        pending = json.loads(pending_file.read_text())
-+        pending_file.unlink()
-+    except (OSError, ValueError):
+     except (OSError, ValueError):
+-        return set()
 +        return 0                                       # no reading from before the call
++    notices: list[str] = []
++    try:                       # apart from the read: a store that cannot drop the reading must
++        pending_file.unlink()  # not silence the check (A's review of #1163, SF4)
++    except OSError as exc:
++        notices.append(f"decision-line guard (W77) could not remove its reading of this Bash call "
++                       f"({exc}); the after-check below still ran.")
 +    asked = {str(k) for k in pending.get("asked") or []}   # the call ran: each ask was granted
 +    visible = pending.get("visible") or {}
 +    ok = approved(session) | asked
@@ -1102,7 +1121,8 @@ index 949b68ec..fc5deeca 100644
 +        moved = sorted(r for r in set(before) | set(after) if before.get(r) != after.get(r))
 +        wrote.update({_key(root_name, r): r for r in moved if _covered(_key(root_name, r), asked)})
 +        unasked = [r for r in moved if not _covered(_key(root_name, r), ok)]
-+        for rel in sorted(set(unasked) - known_states(root, unasked, after)):
++        known = known_states(root, unasked, after) if unasked else set()   # (A's NIT 6)
++        for rel in sorted(set(unasked) - known):
 +            changed[_key(root_name, rel)] = (root_name, rel, protected_reason(rel) or "protected")
 +    # A grant covers the session only for the files the call CHANGED (Codex on #1155): a path it
 +    # merely named, as inline Python that reads a protected file and writes another does, is
@@ -1112,22 +1132,25 @@ index 949b68ec..fc5deeca 100644
 +    later = ({str(k): str(v) for k, v in visible.items() if str(k) not in wrote}
 +             if pending.get("background") is True and isinstance(visible, dict)
 +             and event == "PostToolUse" else {})     # a launch that FAILED writes nothing later
-+    for key in sorted(set(wrote) | set(later)):
-+        record_approval(session, key)
-+    notices: list[str] = []
++    covers = "The grant now covers them for this session."
++    try:                       # guarded: a store that refuses the grant (a full disk) must not
++        for key in sorted(set(wrote) | set(later)):   # cost this call's report (A's SF4)
++            record_approval(session, key)
++    except OSError as exc:
++        covers = (f"The guard could not record the grant ({exc}), so each is asked about again "
++                  "next time.")
 +    if wrote:                  # the ask may have been answered by a mode, not a person (SF7)
 +        names = sorted(wrote.values())
 +        notices.append(f"decision-line guard: this Bash call was approved to write a protected "
 +                       f"path, and it changed {len(names)} protected file(s) "
 +                       f"(showing {min(len(names), 10)} of {len(names)}): "
-+                       f"{', '.join(names[:10])}. The grant now covers them for this session.")
++                       f"{', '.join(names[:10])}. {covers}")
 +    if later:
 +        names = sorted(later.values())
 +        notices.append(f"decision-line guard: this Bash call runs in the background and was "
-+                       f"approved to write {len(names)} protected path(s) (showing "
++                       f"approved to write {len(names)} protected file(s) (showing "
 +                       f"{min(len(names), 10)} of {len(names)}): {', '.join(names[:10])}. Its "
-+                       "write lands after this check, so the grant covers them for this session "
-+                       "from now.")
++                       f"write lands after this check. {covers}")
 +    output: dict[str, object] = {}
 +    if changed:
 +        # B's review of the W77 patch, finding 2: the after-check sees WHAT changed, never WHO
@@ -1171,8 +1194,11 @@ index 949b68ec..fc5deeca 100644
 +        output["systemMessage"] = "\n".join([*notices, _shown_command(command)])
 +        print(json.dumps(output))
 +    return 0
-+
-+
+ 
+ 
+-def record_approval(session_id: str, rel: str) -> None:
+-    STATE_DIR.mkdir(parents=True, exist_ok=True)
+-    _state_file(session_id).write_text(json.dumps(sorted(approved(session_id) | {rel})))
 +def bash_guard(payload: dict[str, object]) -> int:
 +    event = str(payload.get("hook_event_name") or "")
 +    session = str(payload.get("session_id") or "unknown")
@@ -1186,10 +1212,10 @@ index 949b68ec..fc5deeca 100644
 +    if event in ("PostToolUse", "PostToolUseFailure") and call:
 +        return _bash_after(session, call, event, command)
 +    return 0
-+
-+
+ 
+ 
  def main() -> int:
-     try:
+@@ -150,21 +1267,44 @@ def main() -> int:
          payload = json.load(sys.stdin)
      except (ValueError, OSError):
          return 0
@@ -1197,9 +1223,12 @@ index 949b68ec..fc5deeca 100644
 +        try:
 +            return bash_guard(payload)
 +        except Exception as exc:                       # noqa: BLE001 — fails open, but loudly
++            what = ("let it through unread" if payload.get("hook_event_name") == "PreToolUse"
++                    else "did not finish its after-check, so a protected change the call made "
++                    "may be unreported")
 +            print(json.dumps({"systemMessage": (
 +                f"decision-line guard (W77) failed on this Bash call ({type(exc).__name__}: "
-+                f"{exc}) and let it through unread; the commit gate is still the record "
++                f"{exc}) and {what}; the commit gate is still the record "
 +                "(.claude/hooks/decision_path_guard.py).")}))
 +            return 0
      tool_input = payload.get("tool_input") or {}
@@ -1277,7 +1306,7 @@ index 9466a923..f668b7cb 100644
          ]
        }
 diff --git a/tests/test_claude_hooks.py b/tests/test_claude_hooks.py
-index fae9ce37..0b22b3dc 100644
+index ddc3719b..9062c703 100644
 --- a/tests/test_claude_hooks.py
 +++ b/tests/test_claude_hooks.py
 @@ -58,7 +58,8 @@ def _session() -> str:
@@ -1429,18 +1458,18 @@ index fae9ce37..0b22b3dc 100644
  
  
 -@W77
- def test_a_path_the_filesystem_refuses_to_read_locates_nowhere() -> None:
+ def test_a_path_the_filesystem_refuses_to_read_locates_nowhere(tmp_path: pathlib.Path) -> None:
      """B's finding 1, at the unit, under the hooks' own interpreter: a path `stat` refuses — a
-     name longer than 255 bytes, a NUL byte — is in no checkout, never a crash in the reading."""
-@@ -1598,7 +1578,6 @@ def test_a_path_the_filesystem_refuses_to_read_locates_nowhere() -> None:
-     assert out.stdout.split() == ["[]", "[]"]
+     name longer than 255 bytes, a NUL byte, a symlink loop (3.9's `Path.resolve()` raises
+@@ -1602,7 +1582,6 @@ def test_a_path_the_filesystem_refuses_to_read_locates_nowhere(tmp_path: pathlib
+     assert out.stdout.split() == ["[]", "[]", "[]"]
  
  
 -@W77
  def test_a_reading_that_crashes_still_keeps_the_after_check(
          tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
          capsys: pytest.CaptureFixture[str]) -> None:
-@@ -1647,7 +1626,6 @@ def _wired_timeout(event: str) -> float:
+@@ -1653,7 +1632,6 @@ def _wired_timeout(event: str) -> float:
      return 15.0
  
  
@@ -1448,7 +1477,7 @@ index fae9ce37..0b22b3dc 100644
  def test_slow_git_never_costs_the_ask(tmp_path: pathlib.Path) -> None:
      """B's finding 3. The ask was printed only after every checkout's `git status` (each with its
      own 10 s timeout) had run, inside the hook's 15 s. With status slowed to 8 s in two checkouts
-@@ -1673,7 +1651,6 @@ def test_slow_git_never_costs_the_ask(tmp_path: pathlib.Path) -> None:
+@@ -1679,7 +1657,6 @@ def test_slow_git_never_costs_the_ask(tmp_path: pathlib.Path) -> None:
      assert str(b.resolve()) in told and "after-check is off" in told, told
  
  
@@ -1456,7 +1485,7 @@ index fae9ce37..0b22b3dc 100644
  def test_a_git_status_that_fails_is_said_out_loud(tmp_path: pathlib.Path) -> None:
      """B's finding 3, "fails open, loudly". A `None` fingerprint was dropped without a word: a
      status that failed BEFORE the call switched its after-check off silently, and one that failed
-@@ -1695,7 +1672,6 @@ def test_a_git_status_that_fails_is_said_out_loud(tmp_path: pathlib.Path) -> Non
+@@ -1702,7 +1679,6 @@ def test_a_git_status_that_fails_is_said_out_loud(tmp_path: pathlib.Path) -> Non
      assert str(repo.resolve()) in told and "could not read" in told, after
  
  
@@ -1464,7 +1493,7 @@ index fae9ce37..0b22b3dc 100644
  def test_a_change_another_process_makes_during_a_call_is_not_blamed_on_it(
          tmp_path: pathlib.Path) -> None:
      """B's finding 2. A protected file changed while an `ls` ran (another process, a subagent
-@@ -1717,7 +1693,6 @@ def test_a_change_another_process_makes_during_a_call_is_not_blamed_on_it(
+@@ -1724,7 +1700,6 @@ def test_a_change_another_process_makes_during_a_call_is_not_blamed_on_it(
      assert later.get("decision") == "block", later   # the next unasked write is still reported
  
  
@@ -1472,7 +1501,7 @@ index fae9ce37..0b22b3dc 100644
  def test_a_granted_background_write_is_not_reported_when_it_lands(tmp_path: pathlib.Path) -> None:
      """B's finding 2, `run_in_background`. The call returns at once and PostToolUse runs before its
      command writes, so W77 recorded no grant (it grants only what the call changed) and reported
-@@ -1745,7 +1720,6 @@ def test_a_granted_background_write_is_not_reported_when_it_lands(tmp_path: path
+@@ -1752,7 +1727,6 @@ def test_a_granted_background_write_is_not_reported_when_it_lands(tmp_path: path
      assert _bash_call(hidden, repo, fresh)[2].get("decision") == "block"
  
  
@@ -1480,3 +1509,43 @@ index fae9ce37..0b22b3dc 100644
  def test_a_write_to_the_guards_own_grant_store_is_asked_about(tmp_path: pathlib.Path) -> None:
      """B's finding 8. The store's `guard-<session>.json` IS the grant: a file written there with a
      checkout's path silences both checks for that file. A visible Bash write there, or an Edit/
+@@ -1786,7 +1760,6 @@ HIDDEN_PROBE = ("python3 -c \"from pathlib import Path; "
+                 "(Path('vinci') / ('ev' + 'als') / 'zz_probe.py').write_text('X = 1')\"")
+ 
+ 
+-@W77
+ def test_a_background_grant_covers_only_the_files_its_command_names(
+         tmp_path: pathlib.Path) -> None:
+     """A's review of #1163, SF2. A background call's grant recorded EVERY visible hit, directories
+@@ -1805,7 +1778,6 @@ def test_a_background_grant_covers_only_the_files_its_command_names(
+         _bash_call("echo '{}' > scenarios/GOOGL.json", repo, session)[0])
+ 
+ 
+-@W77
+ def test_a_git_that_answers_nothing_still_costs_no_ask(tmp_path: pathlib.Path) -> None:
+     """A's review of #1163, SF3. Finding a path's checkout ran `git rev-parse`, which drew on the
+     same budget as `git status`: with every git call slowed to 11 s the hook returned at the
+@@ -1828,7 +1800,6 @@ def test_a_git_that_answers_nothing_still_costs_no_ask(tmp_path: pathlib.Path) -
+     assert "after-check is off" in str(answer.get("systemMessage")), answer
+ 
+ 
+-@W77
+ def test_a_store_that_turns_read_only_during_the_call_still_reports(
+         tmp_path: pathlib.Path) -> None:
+     """A's review of #1163, SF4(a). The per-call reading was read and removed in one `try`, so a
+@@ -1850,7 +1821,6 @@ def test_a_store_that_turns_read_only_during_the_call_still_reports(
+     assert after.get("decision") == "block" and "`scenarios/IT.json`" in str(after["reason"])
+ 
+ 
+-@W77
+ def test_a_grant_that_cannot_be_recorded_still_leaves_the_report(tmp_path: pathlib.Path) -> None:
+     """A's review of #1163, SF4(b). The grant was written before the report was built, unguarded:
+     a store that refused it (here the grant file is a folder; a full disk does the same) crashed
+@@ -1871,7 +1841,6 @@ def test_a_grant_that_cannot_be_recorded_still_leaves_the_report(tmp_path: pathl
+     assert "could not record" in told and "unread" not in told, told
+ 
+ 
+-@W77
+ def test_a_call_that_changes_nothing_runs_no_wasted_git(tmp_path: pathlib.Path) -> None:
+     """A's review of #1163, NIT 6. A `/dev/null` target sent `git -C /dev rev-parse`, and a call
+     that changed nothing still ran `git hash-object`. Each Bash call pays for every git process."""

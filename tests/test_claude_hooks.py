@@ -1584,18 +1584,22 @@ def test_a_long_string_in_a_writing_script_does_not_switch_the_after_check_off(
 
 
 @W77
-def test_a_path_the_filesystem_refuses_to_read_locates_nowhere() -> None:
+def test_a_path_the_filesystem_refuses_to_read_locates_nowhere(tmp_path: pathlib.Path) -> None:
     """B's finding 1, at the unit, under the hooks' own interpreter: a path `stat` refuses — a
-    name longer than 255 bytes, a NUL byte — is in no checkout, never a crash in the reading."""
+    name longer than 255 bytes, a NUL byte, a symlink loop (3.9's `Path.resolve()` raises
+    `RuntimeError` on one; A's review of #1163) — is in no checkout, never a crash."""
+    repo = _protected_checkout(tmp_path)
+    (repo / "loop").symlink_to("loop")
     probe = ("import importlib.util, sys\n"
              "spec = importlib.util.spec_from_file_location('g', sys.argv[1])\n"
              "g = importlib.util.module_from_spec(spec)\nspec.loader.exec_module(g)\n"
-             "for path in (sys.argv[2] + '/' + 'x' * 282, sys.argv[2] + '/a\\x00b'):\n"
+             "for path in (sys.argv[2] + '/' + 'x' * 282, sys.argv[2] + '/a\\x00b',\n"
+             "             sys.argv[2] + '/loop'):\n"
              "    print(g.protected_hits(g.Target(path, 'dir', 'names')))\n")
     out = subprocess.run([HOOK_PYTHON, "-c", probe, str(HOOKS / "decision_path_guard.py"),
-                          str(ROOT)], capture_output=True, text=True, timeout=60)
+                          str(repo)], capture_output=True, text=True, timeout=60)
     assert out.returncode == 0, out.stderr
-    assert out.stdout.split() == ["[]", "[]"]
+    assert out.stdout.split() == ["[]", "[]", "[]"]
 
 
 @W77
@@ -1624,15 +1628,17 @@ def test_a_reading_that_crashes_still_keeps_the_after_check(
     assert after.get("decision") == "block" and "`scenarios/IT.json`" in after["reason"]
 
 
-def _git_wrapper(tmp_path: pathlib.Path, on_status: str) -> dict[str, str]:
-    """An environment whose `git` runs ``on_status`` (shell) before a `status`, then the real git:
-    a stand-in for a slow or broken git, which the hook's own subprocesses meet first on PATH."""
+def _git_wrapper(tmp_path: pathlib.Path, on_status: str, sub: str = "status") -> dict[str, str]:
+    """An environment whose `git` runs ``on_status`` (shell) before a ``sub`` call ("*": before
+    every call), then the real git: a stand-in for a slow or broken git, which the hook's own
+    subprocesses meet first on PATH."""
     real = shutil.which("git")
     assert real
     folder = tmp_path / "slow-git"
     folder.mkdir(parents=True)
-    (folder / "git").write_text(f'#!/bin/sh\nfor a in "$@"; do\n  if [ "$a" = status ]; then\n'
-                                f'    {on_status}\n    break\n  fi\ndone\nexec "{real}" "$@"\n')
+    (folder / "git").write_text(f'#!/bin/sh\nfor a in "$@"; do\n  if [ "{sub}" = "*" ] || '
+                                f'[ "$a" = "{sub}" ]; then\n    {on_status}\n    break\n  fi\n'
+                                f'done\nexec "{real}" "$@"\n')
     (folder / "git").chmod(0o755)
     return {"PATH": f"{folder}{os.pathsep}{os.environ['PATH']}"}
 
@@ -1684,6 +1690,7 @@ def test_a_git_status_that_fails_is_said_out_loud(tmp_path: pathlib.Path) -> Non
     assert ran.returncode == 0, ran.stderr
     told = str(before.get("systemMessage"))
     assert str(repo.resolve()) in told and "after-check is off" in told, before
+    assert "ask still stands" not in told, told    # A's review, SF3: nothing was asked here
     marker = tmp_path / "break-git-now"
     later = _git_wrapper(tmp_path / "later", f"[ -e '{marker}' ] && exit 128")
     session, call = _session(), f"toolu_{uuid.uuid4().hex}"
@@ -1768,6 +1775,127 @@ def test_a_write_to_the_guards_own_grant_store_is_asked_about(tmp_path: pathlib.
         "session_id": session, "hook_event_name": "PreToolUse", "tool_name": "Write",
         "tool_input": {"file_path": str(forged)}}, env=env)
     assert "grant store" in _asked(json.loads(edit.stdout) if edit.stdout.strip() else {})
+    # A's review, NIT 9: removing a folder the store sits in removes the store too.
+    gone = _bash_guard("PreToolUse", f"rm -rf {store.resolve()}", repo, session, "toolu_rm",
+                       True, env=env)
+    assert "grant store" in _asked(gone), gone
+
+
+#: A write through a path no command names: `vinci/evals/zz_probe.py`, a new protected file.
+HIDDEN_PROBE = ("python3 -c \"from pathlib import Path; "
+                "(Path('vinci') / ('ev' + 'als') / 'zz_probe.py').write_text('X = 1')\"")
+
+
+@W77
+def test_a_background_grant_covers_only_the_files_its_command_names(
+        tmp_path: pathlib.Path) -> None:
+    """A's review of #1163, SF2. A background call's grant recorded EVERY visible hit, directories
+    included: a granted background `git checkout <ref> -- .` granted `vinci/evals/`, `scenarios/`
+    and every other protected entry, so a later write through a path no command names went
+    unreported and a later visible write went unasked. Only the files the command itself names
+    are granted; a directory it reaches is not."""
+    repo = _protected_checkout(tmp_path)
+    session, call = _session(), f"toolu_{uuid.uuid4().hex}"
+    command = "git checkout HEAD~1 -- ."
+    assert _asked(_bash_guard("PreToolUse", command, repo, session, call, True, background=True))
+    _bash_guard("PostToolUse", command, repo, session, call, True, background=True)
+    later = _bash_call(HIDDEN_PROBE, repo, session)[2]
+    assert "`vinci/evals/zz_probe.py`" in str(later.get("reason")), later
+    assert "`scenarios/GOOGL.json`" in _asked(
+        _bash_call("echo '{}' > scenarios/GOOGL.json", repo, session)[0])
+
+
+@W77
+def test_a_git_that_answers_nothing_still_costs_no_ask(tmp_path: pathlib.Path) -> None:
+    """A's review of #1163, SF3. Finding a path's checkout ran `git rev-parse`, which drew on the
+    same budget as `git status`: with every git call slowed to 11 s the hook returned at the
+    budget with NO ask, saying "an ask still stands". A checkout is now found without git."""
+    repo = _protected_checkout(tmp_path)
+    env = _git_wrapper(tmp_path, "sleep 11 </dev/null >/dev/null 2>&1", sub="*")
+    answer: dict[str, object] = {}
+    if "decision_path_guard.py" in _wired("PreToolUse", "Bash"):
+        try:
+            out = _run("decision_path_guard.py", {
+                "session_id": _session(), "hook_event_name": "PreToolUse", "tool_name": "Bash",
+                "tool_use_id": "toolu_slow_all", "cwd": str(repo),
+                "tool_input": {"command": "echo '{}' > scenarios/IT.json"}},
+                cwd=repo, env={**env, "CLAUDE_PROJECT_DIR": str(repo)}, python=HOOK_PYTHON,
+                timeout=_wired_timeout("PreToolUse"))
+        except subprocess.TimeoutExpired:
+            pytest.fail("killed at the hook's own timeout with nothing printed: no ask")
+        answer = json.loads(out.stdout)
+    assert "`scenarios/IT.json`" in _asked(answer), answer
+    assert "after-check is off" in str(answer.get("systemMessage")), answer
+
+
+@W77
+def test_a_store_that_turns_read_only_during_the_call_still_reports(
+        tmp_path: pathlib.Path) -> None:
+    """A's review of #1163, SF4(a). The per-call reading was read and removed in one `try`, so a
+    store that could not be written after the call (here made read-only) silenced the after-check
+    while the command wrote a protected file through a path it never named."""
+    repo = _protected_checkout(tmp_path)
+    store = tmp_path / "tmp"
+    store.mkdir()
+    env = {"TMPDIR": str(store)}
+    session, call = _session(), f"toolu_{uuid.uuid4().hex}"
+    assert _bash_guard("PreToolUse", RECORD_REWRITE, repo, session, call, True, env=env) == {}
+    subprocess.run(["bash", "-c", RECORD_REWRITE], cwd=repo, check=True)
+    folder = store / "mosaic-theory-hooks"
+    folder.chmod(0o555)
+    try:
+        after = _bash_guard("PostToolUse", RECORD_REWRITE, repo, session, call, True, env=env)
+    finally:
+        folder.chmod(0o755)
+    assert after.get("decision") == "block" and "`scenarios/IT.json`" in str(after["reason"])
+
+
+@W77
+def test_a_grant_that_cannot_be_recorded_still_leaves_the_report(tmp_path: pathlib.Path) -> None:
+    """A's review of #1163, SF4(b). The grant was written before the report was built, unguarded:
+    a store that refused it (here the grant file is a folder; a full disk does the same) crashed
+    the after-check, losing the report of the call's unasked write, and the notice said the call
+    was let through unread. The report is built first, and a grant that fails is said."""
+    repo = _protected_checkout(tmp_path)
+    store = tmp_path / "tmp"
+    session, call = _session(), f"toolu_{uuid.uuid4().hex}"
+    (store / "mosaic-theory-hooks" / f"guard-{session}.json").mkdir(parents=True)
+    env = {"TMPDIR": str(store)}
+    command = f"echo '{{}}' > scenarios/IT.json && {HIDDEN_PROBE}"
+    assert _asked(_bash_guard("PreToolUse", command, repo, session, call, True, env=env))
+    subprocess.run(["bash", "-c", command], cwd=repo, check=True)
+    after = _bash_guard("PostToolUse", command, repo, session, call, True, env=env)
+    assert after.get("decision") == "block", after
+    assert "`vinci/evals/zz_probe.py`" in str(after["reason"])
+    told = str(after.get("systemMessage"))
+    assert "could not record" in told and "unread" not in told, told
+
+
+@W77
+def test_a_call_that_changes_nothing_runs_no_wasted_git(tmp_path: pathlib.Path) -> None:
+    """A's review of #1163, NIT 6. A `/dev/null` target sent `git -C /dev rev-parse`, and a call
+    that changed nothing still ran `git hash-object`. Each Bash call pays for every git process."""
+    repo = _protected_checkout(tmp_path)
+    log = tmp_path / "git-calls.log"
+    env = _git_wrapper(tmp_path, f"echo \"$*\" >> '{log}'", sub="*")
+    _bash_call("echo x > /dev/null", repo, _session(), env=env)
+    calls = log.read_text().splitlines() if log.exists() else []
+    assert sum(" status " in f" {c} " for c in calls) == 2, calls     # before and after
+    assert not [c for c in calls if "hash-object" in c or "-C /dev" in c], calls
+
+
+def test_locate_answers_none_where_resolving_a_path_raises(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A's review of #1163, NIT 8: a mutant dropping `OSError` from `locate`'s catch survived.
+    NEGATIVE PIN on main too (it has no `locate`; skipped there)."""
+    guard = _load("decision_path_guard.py")
+    if not hasattr(guard, "locate"):
+        pytest.skip("main's guard has no locate (W77 not applied)")
+
+    def refuse(self: pathlib.Path, strict: bool = False) -> pathlib.Path:
+        raise OSError(13, "Permission denied")
+
+    monkeypatch.setattr(pathlib.Path, "resolve", refuse)
+    assert guard.locate(str(ROOT / "scenarios" / "IT.json")) is None
 
 
 def test_the_after_check_never_rewrites_the_index(tmp_path: pathlib.Path) -> None:

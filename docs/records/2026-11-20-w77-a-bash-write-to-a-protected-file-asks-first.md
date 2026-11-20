@@ -429,4 +429,6 @@ The census was re-run on round 2's guard: the same 100 calls, the same hits.
   change is now reported), the census's "0 raised", and "about 0.15 s on every Bash call". The
   body's apply procedure is superseded by the one in
   `docs/records/2026-11-20-w77b-the-guard-patch-survives-an-independent-review.md`, which names
-  the same path and adds a first step for the held `w77-apply` branch.
+  the same path and applies it in a fresh worktree under a new branch, `w77b-apply`: this
+  body's `git switch -c w77-apply` fails while that branch is checked out in a worktree, and
+  its later blocks then run on local main (A's review of #1163).
