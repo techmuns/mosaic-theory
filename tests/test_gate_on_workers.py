@@ -94,7 +94,7 @@ def test_a_run_on_workers_states_what_the_selection_left_out(tmp_path: Path) -> 
 
 
 def test_on_one_process_the_hooks_change_nothing(tmp_path: Path) -> None:
-    """NEGATIVE: on one process (`bin/commit`, which has no pytest-xdist) the hooks send nothing
+    """NEGATIVE: on one process (`bin/commit` on a venv without pytest-xdist) the hooks send nothing
     and print nothing; pytest counts the 2 once, in the summary line, as it always has."""
     tail = _tail(_suite(tmp_path, hooks=True))
     assert tail[-1] == "2 passed, 1 skipped, 2 deselected", tail

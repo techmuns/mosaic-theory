@@ -16,11 +16,16 @@ interpreter is a stand-in that records what it was asked to run.
 from __future__ import annotations
 
 import datetime as dt
+import importlib.util
 import os
+import re
 import shlex
 import shutil
 import subprocess
+import sys
 from pathlib import Path
+
+import pytest
 
 from tests.test_no_local_paths import local_paths
 
@@ -30,9 +35,10 @@ GATE_YML = ROOT / ".github" / "workflows" / "gate.yml"
 #: Options that take the next token as their value.
 _VALUED = {"-m", "-p", "-k", "-n"}
 #: HOW the suite is spread over processes, never WHICH tests run or what a log reports: `-n`,
-#: pytest-xdist's worker count. gate.yml runs the suite over the runner's cores (2026-11-13); every
-#: other gate may run it on one. `bin/commit` runs in the shared venv, which agents may not
-#: reinstall (STATE row 62), and that venv has no pytest-xdist until it is re-synced from the lock.
+#: pytest-xdist's worker count. gate.yml runs the suite over the runner's cores (2026-11-13), and
+#: `bin/commit` over the machine's when its venv imports pytest-xdist (W83, 2026-11-20; the shared
+#: venv has carried 3.8.0 since 2026-11-16). Every other gate, and `bin/commit` on a venv without
+#: it, may run it on one.
 _SCHEDULING = {"-n"}
 
 
@@ -116,6 +122,12 @@ def test_the_local_gate_carries_no_machines_path() -> None:
 
 _FAKE_PYTHON = """#!/bin/sh
 printf '%s\\n' "$*" >> "$FAKE_LOG"
+if [ "$1" = "-c" ] && [ -n "$FAKE_NO_XDIST" ]; then
+  exit 1
+fi
+if [ "$2" = "pytest" ] && [ -n "$FAKE_RED" ]; then
+  exit 1
+fi
 if [ "$1" = "frontend/build.py" ] && [ -n "$FAKE_STALE" ]; then
   echo rebuilt >> frontend/page.txt
 fi
@@ -166,16 +178,96 @@ def _commits(repo: Path) -> int:
                               capture_output=True, text=True, check=True).stdout)
 
 
+def _steps(repo: Path) -> list[str]:
+    calls = (repo.parent / "calls.log").read_text().splitlines()
+    return [c.split()[1] if c.startswith("-m") else c.split()[0] for c in calls]
+
+
+def _pytest_call(repo: Path) -> list[str]:
+    (call,) = [c for c in (repo.parent / "calls.log").read_text().splitlines()
+               if c.startswith("-m pytest")]
+    return call.split()
+
+
 def test_the_local_gate_finds_the_checkouts_own_interpreter(tmp_path: Path) -> None:
     """RH-D3, run: with VENV unset it uses the checkout's .venv, runs every check gate.yml runs —
-    ruff, mypy, pytest, then the mirror build — and commits."""
+    ruff, mypy, pytest, then the mirror build — and commits. Before pytest it asks the venv
+    whether pytest-xdist imports (W83, 2026-11-20)."""
     repo = _checkout(tmp_path)
     out = _commit(repo)
     assert out.returncode == 0, out.stderr
-    calls = (repo.parent / "calls.log").read_text().splitlines()
-    assert [c.split()[1] if c.startswith("-m") else c.split()[0] for c in calls] == [
-        "ruff", "mypy", "pytest", "frontend/build.py"], calls
+    assert _steps(repo) == ["ruff", "mypy", "-c", "pytest", "frontend/build.py"], _steps(repo)
     assert _commits(repo) == 2
+
+
+def test_the_local_gate_runs_the_suite_on_workers_when_the_venv_has_xdist(tmp_path: Path) -> None:
+    """W83 (2026-11-20; operator: "Approve bin/commit + gate.yml comment (Recommended)"), run:
+    `-n auto`, as gate.yml runs it, and no warning."""
+    repo = _checkout(tmp_path)
+    out = _commit(repo)
+    assert out.returncode == 0, out.stderr
+    argv = _pytest_call(repo)
+    assert argv[argv.index("-n") + 1] == "auto", argv
+    assert "WARNING" not in out.stdout + out.stderr
+
+
+def test_the_local_gate_runs_on_one_process_and_says_so_without_xdist(tmp_path: Path) -> None:
+    """W83, run, NEGATIVE: a venv whose pytest-xdist does not import runs the same suite on one
+    process, prints one loud line saying so, and still commits: a warning, never a refusal (the
+    fast gate's rule since #1086, RH-D2)."""
+    repo = _checkout(tmp_path)
+    out = _commit(repo, FAKE_NO_XDIST="1")
+    assert out.returncode == 0, out.stderr
+    assert "-n" not in _pytest_call(repo), _pytest_call(repo)
+    warned = [ln for ln in out.stderr.splitlines() if "WARNING" in ln]
+    assert len(warned) == 1 and "pytest-xdist" in warned[0] and "ONE process" in warned[0], (
+        out.stderr)
+    assert _commits(repo) == 2
+
+
+@pytest.mark.parametrize("no_xdist", ["", "1"], ids=["on-workers", "on-one-process"])
+def test_a_red_suite_commits_nothing_on_either_branch(tmp_path: Path, no_xdist: str) -> None:
+    """W83, run, NEGATIVE: pytest now runs inside an if/else. A failing suite still stops the gate
+    before the mirror build and the commit, on workers and on one process."""
+    repo = _checkout(tmp_path)
+    out = _commit(repo, FAKE_RED="1", FAKE_NO_XDIST=no_xdist)
+    assert out.returncode != 0, out.stdout + out.stderr
+    assert "gate green" not in out.stdout and "frontend/build.py" not in _steps(repo)
+    assert _commits(repo) == 1
+
+
+def _addopts() -> str:
+    for line in (ROOT / "pyproject.toml").read_text().splitlines():
+        if line.startswith("addopts"):
+            return line
+    raise AssertionError("pyproject.toml has no addopts line")
+
+
+def test_the_local_gate_has_one_pytest_line_on_workers_and_one_on_one_process() -> None:
+    commands = _pytest_commands(BIN_COMMIT)
+    assert [_has(argv, ("-n", "auto")) for argv in commands] == [True, False], commands
+
+
+@pytest.mark.parametrize("which", [0, 1], ids=["on-workers", "on-one-process"])
+def test_every_pytest_line_of_the_local_gate_prints_its_outcome_counts(
+        tmp_path: Path, which: int) -> None:
+    """W83, run: each pytest command `bin/commit` can run, executed as written on a two-test
+    suite under this repository's own addopts, ends with its outcome counts. bin/commit's `-q` on
+    top of addopts' `-q` made `-qq`, which prints none, so its log never stated what passed."""
+    argv = [sys.executable if a == "$VENV" else a for a in _pytest_commands(BIN_COMMIT)[which]]
+    if _has(argv, ("-n", "auto")) and importlib.util.find_spec("xdist") is None:
+        pytest.skip("pytest-xdist is not importable in this venv: bin/commit runs the other line")
+    suite = tmp_path / "suite"
+    (suite / "tests").mkdir(parents=True)
+    (suite / "pyproject.toml").write_text(f"[tool.pytest.ini_options]\n{_addopts()}\n")
+    (suite / "tests" / "test_two.py").write_text("def test_a():\n    pass\n\n"
+                                                 "def test_b():\n    pass\n")
+    # two workers are enough for two tests: `auto` stays in the command as written
+    out = subprocess.run([*argv, "-p", "no:cacheprovider"], cwd=suite, capture_output=True,
+                         text=True, timeout=120,
+                         env={**os.environ, "PYTEST_XDIST_AUTO_NUM_WORKERS": "2"})
+    assert out.returncode == 0, out.stdout + out.stderr
+    assert re.search(r"^2 passed in [\d.]+s", out.stdout, re.M), (argv, out.stdout)
 
 
 def test_the_local_gate_refuses_a_stale_mirror(tmp_path: Path) -> None:
