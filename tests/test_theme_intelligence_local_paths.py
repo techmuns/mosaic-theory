@@ -25,7 +25,7 @@ import json
 import subprocess
 import traceback
 from dataclasses import replace
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -44,7 +44,7 @@ from vinci.theme_intelligence.localpaths import (
 )
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.report import write_run_outputs
-from vinci.theme_intelligence.schemas import IssueSeverity, RunStatus
+from vinci.theme_intelligence.schemas import IssueSeverity, RunStatus, VerificationIssue
 from vinci.theme_intelligence.store import Store
 
 AS_OF = date(2026, 11, 20)
@@ -67,6 +67,7 @@ REFUSED = [
     'sers/work/Documents/GitHub/mosaic-theory/vinci/x.py", line 5, in f',  # a cut traceback
     "RUN ERROR: boom\nrs/work/Documents/x.py\", line 5",  # cut further in, on its own line
     "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/s/documents/a.pdf",
+    "a session folder -Users-work-Documents-GitHub-x/s/a.pdf, no temporary root",
     "/Users/someone/[draft]/r.pdf",
 ]
 PASSED = [
@@ -205,7 +206,8 @@ LEGACY_WARNING = (
     '  File "/Users/someone/Documents/GitHub/mosaic-theory/.claude/worktrees/t/vinci/'
     'theme_intelligence/extract.py", line 88, in parse\n'
     '  File "/Users/someone/.venv/lib/python3.12/site-packages/pydantic/main.py", line 5, in v\n'
-    "pydantic.ValidationError: 1 error")
+    "pydantic.ValidationError: 1 error\n"
+    "OSError: [Errno 2] '/Users/someone/Downloads/report.pdf'")  # a home path beyond any frame
 LEGACY_LOCATIONS = [
     "/Users/someone/dev/mosaic-theory/data/theme_intelligence/documents/abc.pdf",
     "data/theme_intelligence/http_cache/abc.body",
@@ -259,12 +261,13 @@ def test_an_export_writes_old_rows_relative_and_every_other_row_as_stored(
 # --- export-state and state push refuse a path the rewrite does not know --------------------------
 
 def _with_unknown_path(tmp_path: Path) -> Pipeline:
+    """A row whose writer does NOT scrub (straight to the store; `_issue` would scrub it), in a
+    field no export rewrites: only the guard stands between it and the branch."""
     pipe, rid = _run(tmp_path)
-    run = pipe.store.run(rid)
-    assert run is not None
-    pipe.run = run
-    pipe._issue("run", rid, IssueSeverity.INFO, "TEST_NOTE",
-                "read from /Users/someone/Downloads/report.pdf")  # a field nothing rewrites
+    pipe.store.add_issue(VerificationIssue(
+        issue_id="VI-unscrubbed0001", run_id=rid, scope="run", ref_id=rid,
+        severity=IssueSeverity.INFO, code="TEST_NOTE",
+        detail="read from /Users/someone/Downloads/report.pdf", created_at=datetime.now(tz=UTC)))
     return pipe
 
 
@@ -365,3 +368,111 @@ def test_a_heading_wrapped_onto_two_lines_is_still_one_heading(tmp_path: Path) -
     blocks = _read(tmp_path, [(18.0, t) for t in two])
     assert [h.text for h in blocks if h.kind == "heading"] == [" ".join(two)]
     assert {b.section for b in blocks if b.kind == "paragraph"} == {" ".join(two)}
+
+
+# --- round 2 (A's review of #1156): the scrub never keeps a username; scratch folders refused --
+
+@pytest.mark.parametrize(("text", "names"), [
+    ("PermissionError: '/Users/work'", ["work"]),
+    ("/Users/Alice Smith/Downloads/x.pdf", ["Alice", "Smith"]),
+    (r"C:\Users\Alice Smith\x.pdf", ["Alice", "Smith"]),
+    ("/home/alice: not a directory", ["alice"]),
+    ("open /private/var/folders/w1/abc/T/pytest-of-alice/x.pdf", ["alice", "folders"]),
+    ("/tmp/pytest-of-alice", ["alice"]),
+])
+def test_the_scrub_never_keeps_a_username_or_a_home_directory(
+        text: str, names: list[str]) -> None:
+    """S1: a path ending, or cut, at its username keeps no part of it as a "file name"."""
+    out = localpaths.scrub_text(text)
+    assert path_findings(out) == [], out
+    assert [n for n in names if n in out] == [], out
+
+
+def test_this_machines_home_is_replaced_whole_and_only_whole(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """S1 and M7: a home outside /Users and /home is scrubbed too, and only at a boundary —
+    "/Users/macbook" is not "/Users/mac" + "book"."""
+    monkeypatch.setenv("HOME", "/opt/someone")
+    assert "someone" not in localpaths.scrub_text("open /opt/someone/notes/x.pdf failed")
+    monkeypatch.setenv("HOME", "/Users/mac")
+    out = localpaths.scrub_text("cannot read /Users/macbook/x.pdf")
+    assert "book" not in out.replace("x.pdf", "") and path_findings(out) == [], out
+
+
+@pytest.mark.parametrize("text", [
+    "/private/var/folders/w1/abc/T/pytest-of-alice/x.pdf",
+    "saved to /var/folders/w1/abc/T/x.pdf earlier",
+    "read /tmp/x/y.pdf",
+    "/private/tmp/claude-501/0c5e1f2a-9d1b-4f6e-8a1b-2c3d4e5f6a7b/x.pdf",
+    "/home/alice",
+    "/root/x.pdf",
+    "~alice/notes.txt",
+    "//server/share/x.pdf",
+    "%2FUsers%2Falice%2Fx.pdf",
+    "/Volumes/Alice Backup/x.pdf",
+    "/users/alice/x.pdf",
+])
+def test_a_scratch_folder_and_the_rarer_home_shapes_are_refused(text: str) -> None:
+    """S2 and N3."""
+    assert path_findings(text), text
+
+
+@pytest.mark.parametrize("text", [
+    "https://api.example.com/Users/123",  # N4: a URL's path is no home directory
+    "https://www.example.com/users/123/profile",
+    "https://www.example.com/root-cause/analysis",
+    "https://www.example.com/tmp/x",
+    "a 3/4 share and 10/20 vision",
+    "~3/4 of the market and about ~10/20 basis points",
+])
+def test_a_url_or_a_fraction_is_still_not_a_path(text: str) -> None:
+    assert path_findings(text) == [], text
+
+
+@pytest.mark.parametrize("home", ["/", "/root"])
+def test_a_short_home_never_turns_every_slash_into_a_finding(
+        home: str, monkeypatch: pytest.MonkeyPatch) -> None:
+    """N2: with HOME=/ every slash was refused; with HOME=/root a URL's /root-cause was."""
+    monkeypatch.setenv("HOME", home)
+    assert path_findings("runs/R-1 and 3/4 at https://www.example.com/root-cause") == []
+
+
+def test_a_dict_key_holding_a_path_is_refused_and_never_printed(tmp_path: Path) -> None:
+    """N1: keys are scanned, and a refusal prints the field without the key's text."""
+    out = tmp_path / "export"
+    out.mkdir()
+    payload = json.dumps({"counts": {"/Users/someone/x.pdf": 1}})
+    (out / "runs.jsonl").write_text(json.dumps({"run_id": "R-1", "payload": payload}) + "\n")
+    found = export_findings(out)
+    assert found and all("someone" not in f for f in found), found
+
+
+def test_an_issue_or_a_warning_built_from_an_exception_is_scrubbed_where_it_is_stored(
+        tmp_path: Path) -> None:
+    """N5: an exception message reaches `verification_issues` through `_issue` — scrubbed there,
+    before its id is hashed, so a message naming no path keeps the id it always had."""
+    pipe = make_pipeline(tmp_path)
+    run = pipe.start_run("ingest", as_of=AS_OF)
+    pipe._issue("run", run.run_id, IssueSeverity.WARN, "TEST_NOTE",
+                "PermissionError: [Errno 13] '/Users/someone/Downloads/report.pdf'")
+    pipe._issue("run", run.run_id, IssueSeverity.WARN, "TEST_NOTE", "no path here")
+    details = {i.detail for i in pipe.store.issues(run_id=run.run_id)}
+    assert "no path here" in details
+    assert all(path_findings(d) == [] for d in details), details
+
+
+def test_a_refusal_names_the_way_out(tmp_path: Path) -> None:
+    """N5: a stored row is append-only, so the refusal says how a registry is rebuilt."""
+    pipe = _with_unknown_path(tmp_path)
+    pipe.store.close()
+    remote = tmp_path / "remote.git"
+    subprocess.run(["git", "init", "--quiet", "--bare", str(remote)], check=True)
+    with pytest.raises(state.StateSyncError, match="state pull --force"):
+        state.push(pipe.paths.root, str(remote))
+
+
+def test_a_path_outside_the_data_directory_keeps_only_its_file_name(tmp_path: Path) -> None:
+    """N7."""
+    assert localpaths.data_relative(tmp_path / "data" / "runs" / "R-1", tmp_path / "data") \
+        == "runs/R-1"
+    assert localpaths.data_relative("/elsewhere/cache/x.body", tmp_path) == "⟨local path⟩/x.body"

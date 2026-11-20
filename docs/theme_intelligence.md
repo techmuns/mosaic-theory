@@ -941,8 +941,8 @@ bin/theme-intelligence-weekly
   `output_dir` (`runs/<run id>`) and a version's `evidence_location` (`http_cache/…`) are stored
   relative to the data directory, and a traceback is scrubbed before its 1,500-character cut. An
   export writes rows stored before 2026-11-20 relative too (those three fields only). `export-state`
-  (exit 1, nothing written) and `state push` refuse any home-directory or username path shape in
-  any exported string.
+  (exit 1, nothing written) and `state push` refuse any home-directory, username or scratch-folder
+  path shape in any exported string, keys included.
 
 ## Secrets
 

@@ -441,7 +441,10 @@ def cmd_export(a: argparse.Namespace) -> int:
         if found:
             print(f"export-state REFUSED: {len(found)} string(s) hold a home-directory or "
                   f"username path, so nothing was written — "
-                  f"{first_of(found, 10, sep='; ')}", file=sys.stderr)
+                  f"{first_of(found, 10, sep='; ')}. A stored row is append-only: scrub the "
+                  f"code that wrote it; on Actions the next run restores the branch, which does "
+                  f"not hold it, and locally `state pull --force` rebuilds this registry from "
+                  f"the branch (backing it up first)", file=sys.stderr)
             return 1
         out = Path(a.out)
         out.mkdir(parents=True, exist_ok=True)

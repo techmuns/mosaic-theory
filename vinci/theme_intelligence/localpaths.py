@@ -97,14 +97,33 @@ def _absolute(name: str) -> bool:
     return name.startswith(("/", "\\")) or re.match(r"[A-Za-z]:[\\/]", name) is not None
 
 
-def scrub_text(text: str) -> str:
+def scrub_text(text: str, data_dir: Path | None = None) -> str:
     """`text` with every root this module knows replaced by its name, this machine's home
     directory by `LOCAL`, and any other home-directory or temporary path reduced to its file
-    name: for an exception's MESSAGE, which can name a file on any machine."""
+    name: for an exception's MESSAGE, which can name a file on any machine. A file under
+    `data_dir` is named relative to it first ("llm_cache/…"), as a stored path is."""
+    if data_dir is not None:
+        for d in dict.fromkeys((str(data_dir), str(Path(data_dir).resolve()))):
+            text = text.replace(d.rstrip("/\\") + "/", "")
     for root, label in _roots():
         text = text.replace(root + "/", f"{label}/" if label else "")
-    text = text.replace(str(Path.home()), LOCAL)
-    return _HOME_PATH.sub(lambda m: _legacy_name(m.group(0)), text)
+    text = _HOME_PATH.sub(lambda m: _legacy_name(m.group(0)), text)
+    home = _home_pattern()  # a home outside /Users and /home ("/opt/someone")
+    return home.sub(LOCAL, text) if home is not None else text
+
+
+#: where a path ends: a separator, a space, a quote, a bracket, punctuation or the end
+_PATH_END = r"(?=$|[\\/\s'\"<>()\[\]:,;`])"
+
+
+def _home_pattern() -> re.Pattern[str] | None:
+    """This machine's home directory as a WHOLE path prefix: never inside a longer name
+    ("/Users/mac" is not in "/Users/macbook") nor in a URL, and never a home of one component
+    ("/", where every slash would match, or "/root" in "/root-cause") — #1156 review, S1 and N2."""
+    home = str(Path.home()).rstrip("/\\")
+    if not home:  # "/" — the boundaries below keep "/root" out of "/root-cause"
+        return None
+    return re.compile(rf"(?<![\w.:/-]){re.escape(home)}{_PATH_END}")
 
 
 def traceback_text(limit: int = TRACEBACK_CHARS) -> str:
@@ -126,8 +145,17 @@ _STDLIB = re.compile(r"^.*?[\\/]lib[\\/]python\d+(?:\.\d+)?[\\/](.*)$")
 #: a file name in a traceback line, whole (`File "…"`) or cut at the traceback's start
 _FRAME = re.compile(r'(?m)^(\s*File ")?([^"\n]*?)(", line \d+)')
 #: a home-directory path anywhere else in a stored traceback or message
-_HOME_PATH = re.compile(r"(?:[A-Za-z]:)?[\\/](?:Users|home|private|var[\\/]folders|tmp)[\\/]"
-                        r"[^\s'\"<>()\[\]]+")
+_SEG = r"[^\s\\/'\"<>()\[\]`:,;]+"
+_HOME_PATH = re.compile(
+    # a home directory, its user's segment (two words only where the path goes on after it)
+    rf"(?:(?<![\w.-])|(?<=localhost))(?:[A-Za-z]:)?[\\/](?:Users|users|home|Volumes)[\\/]"
+    rf"(?:{_SEG} {_SEG}(?=[\\/])|{_SEG})(?:[\\/]{_SEG})*[\\/]?"
+    # a scratch folder, or root's home
+    rf"|(?<![\w.:/-])[\\/](?:private[\\/])?(?:tmp|var[\\/]folders|root)[\\/]"
+    rf"(?:{_SEG}[\\/]?)*")
+#: the one segment after which a reduced path may keep its last part: a FILE name, a dotted one
+#: with a stamped tail included ("answer.json.torn-20261120T103718Z", a set-aside cache file)
+_FILE = re.compile(r"[\w.-]*\w\.[\w-]{1,40}")
 
 
 def _legacy_name(name: str) -> str:
@@ -140,7 +168,21 @@ def _legacy_name(name: str) -> str:
         if m:
             rest = m.group(1).replace("\\", "/")
             return f"{label}/{rest}" if label else rest
-    return f"{LOCAL}/{_file_name(name)}"
+    return _reduced(name)
+
+
+def _reduced(name: str) -> str:
+    """A local path no root names, reduced to `LOCAL` and at most its FILE name. A path that ends,
+    or is cut, at a username keeps no part of it (#1156 review, S1: "/Users/work" read as a file
+    named "work"); nor does a folder named after one ("pytest-of-alice", "-Users-work-…")."""
+    parts = [p for p in re.split(r"[\\/]", name) if p]
+    homes = [i for i, p in enumerate(parts) if p in ("Users", "users", "home", "Volumes")]
+    first = homes[0] + 2 if homes else 1  # the first part that is no root and no user
+    last = parts[-1] if parts else ""
+    if (len(parts) > first and _FILE.fullmatch(last)
+            and not re.search(r"Users-|pytest-of-", last)):
+        return f"{LOCAL}/{last}"
+    return LOCAL
 
 
 def legacy_traceback(text: str) -> str:
@@ -186,12 +228,22 @@ def exported_payload(table: str, payload: dict[str, Any]) -> dict[str, Any]:
 
 #: (what it is, its shape): a HOME DIRECTORY or a USERNAME, wherever it sits in a string. Never
 #: every slash: "$40 /kW/month" and "(/kWh/yr)" are figures (#1143 review, finding 6).
+#: A shape that can start a URL's path is anchored: not after a letter, a digit, a dot or a hyphen
+#: ("https://api.example.com/Users/123" is no home directory — #1156 review, N4), except after
+#: "localhost" ("file://localhost/Users/…").
+_START = r"(?:(?<![\w.-])|(?<=localhost))"
 PATH_SHAPES: tuple[tuple[str, re.Pattern[str]], ...] = (
-    ("a macOS home directory", re.compile(r"/Users/[^/\s]")),
+    ("a macOS home directory", re.compile(rf"{_START}/[Uu]sers/[^/\s]")),
     ("a Windows home directory", re.compile(r"(?i)\b[A-Z]:[\\/]+Users[\\/]")),
-    ("a Linux home directory", re.compile(r"(?:(?<![\w.-])|(?<=localhost))/home/[^/\s]+/")),
-    ("a path from a home directory (~/)", re.compile(r"(?:^|[\s\"'(\[=`:])~/\S")),
-    ("a network share", re.compile(r"\\\\[\w.$-]+\\[\w.$-]+")),
+    ("a Linux home directory", re.compile(rf"{_START}/home/[^/\s'\"<>]")),
+    ("root's home directory", re.compile(r"(?<![\w.:/-])/root/")),
+    ("a mounted volume", re.compile(rf"{_START}/Volumes/[^/\s]")),
+    ("a temporary folder", re.compile(r"(?<![\w.:/-])/(?:private/)?(?:tmp|var/folders)/")),
+    ("a path from a home directory (~/, ~user/)",
+     re.compile(r"(?:^|[\s\"'(\[=`:])~(?:[A-Za-z_][\w.-]*)?/\S")),
+    ("a network share",
+     re.compile(r"\\\\[\w.$-]+\\[\w.$-]+|(?<![\w:/])//[\w.$-]+/[\w.$-]+")),
+    ("a URL-encoded home directory", re.compile(r"(?i)%2F(?:Users|home)%2F")),
     ("a session folder named from a home directory", re.compile(r"-Users-[\w.]+-")),
     ("a home-directory path cut at its start",
      re.compile(r"(?m)^\s*(?:U?s?ers|h?ome|rs|me)/[^/\s\"']+/")),
@@ -201,7 +253,8 @@ PATH_SHAPES: tuple[tuple[str, re.Pattern[str]], ...] = (
 def path_findings(text: str) -> list[str]:
     """The home-directory or username path shapes `text` holds: their names, never the path."""
     found = [name for name, rx in PATH_SHAPES if rx.search(text)]
-    if str(Path.home()) in text:
+    home = _home_pattern()
+    if home is not None and home.search(text):
         found.append("this machine's home directory")
     return found
 
@@ -209,7 +262,9 @@ def path_findings(text: str) -> list[str]:
 def _strings(obj: Any, path: str) -> Iterator[tuple[str, str]]:
     if isinstance(obj, dict):
         for k, v in obj.items():
-            yield from _strings(v, f"{path}.{k}")
+            key = k if re.fullmatch(r"[\w-]{1,64}", str(k)) else "⟨key⟩"
+            yield f"{path}.{key} (a key)", str(k)  # keys are strings too (#1156 review, N1)
+            yield from _strings(v, f"{path}.{key}")
     elif isinstance(obj, list):
         for v in obj:
             yield from _strings(v, f"{path}[]")

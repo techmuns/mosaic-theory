@@ -262,7 +262,7 @@ class Pipeline:
         assert self.run is not None
         run = self.run
         if error:  # the exception's message can name a file: scrubbed as its traceback is
-            run.warnings.append(f"RUN ERROR: {scrub_text(error)}")
+            run.warnings.append(f"RUN ERROR: {scrub_text(error, self.paths.root)}")
         # a paid call whose answer no path recorded (it ended in an exception — a truncated
         # review, a failed completeness part, a refused split) is still a paid call: written to
         # the ledger before the run's cost is summed (2026-10-14: $0.45 of reviews read as $0)
@@ -417,18 +417,19 @@ class Pipeline:
                 # articles, two limits) are two records — one id with two payloads failed the
                 # whole article (2026-10-14)
                 issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "budget",
-                                      str(exc))[:14],
+                                      scrub_text(str(exc), self.paths.root))[:14],
                 run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
                 severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
-                detail=f"pass-2 review not run — budget: {exc}",
+                detail=f"pass-2 review not run — budget: {scrub_text(str(exc), self.paths.root)}",
                 created_at=datetime.now(tz=UTC)))
             return ReviewOutcome(issues)
         except RuntimeError as exc:  # no client and no cache: say so, never pretend reviewed
             issues.append(VerificationIssue(
                 issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "noreview",
-                                      str(exc))[:14],
+                                      scrub_text(str(exc), self.paths.root))[:14],
                 run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
-                severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN", detail=str(exc),
+                severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
+                detail=scrub_text(str(exc), self.paths.root),
                 created_at=datetime.now(tz=UTC)))
             return ReviewOutcome(issues)
         self._llm_call("review", card.header.thesis_id + ":" + card.header.title[:40], rr.cached,
@@ -1008,6 +1009,9 @@ class Pipeline:
 
     def _issue(self, scope: str, ref: str, sev: IssueSeverity, code: str, detail: str) -> None:
         assert self.run is not None
+        # an exception's message can name a file: scrubbed BEFORE the id hashes it, so a detail
+        # naming no path keeps the id it always had (#1156 review, N5)
+        detail = scrub_text(detail, self.paths.root)
         self.store.add_issue(VerificationIssue(
             issue_id="VI-" + _sha(self.run.run_id, scope, ref, code, detail)[:14],
             run_id=self.run.run_id,
@@ -1458,7 +1462,8 @@ class Pipeline:
                 self._active_ids() if targets is None else targets, as_of=as_of)
         except Exception as exc:  # noqa: BLE001 — no model, no cached answer, an API outage
             # (the SDK's errors are not RuntimeErrors): a WARNING, never the finished run's status
-            self.run.warnings.append(f"enrichment not run: {type(exc).__name__}: {exc}")
+            self.run.warnings.append(
+                scrub_text(f"enrichment not run: {type(exc).__name__}: {exc}", self.paths.root))
             return
         if refused:
             left = next((what for _tid, what in done if what.startswith("not run")), "")
@@ -1636,7 +1641,7 @@ class Pipeline:
                         # one article's unusable model answer (its spend recorded) is THAT
                         # article's failure — said, checkpointed — never the whole week's scan
                         res = ArticleResult(url, "FAILED", article_id_for(url), note=str(exc))
-                        run.warnings.append(f"{url}: {exc}"[:400])
+                        run.warnings.append(scrub_text(f"{url}: {exc}", self.paths.root)[:400])
                 if res.status == "LOOKAHEAD":
                     # published after this run's as-of (a listing date can be a day off the
                     # page's instant): offered to the next run, never dropped — next week's

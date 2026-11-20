@@ -550,8 +550,11 @@ def _check_tree(tree: Path) -> None:
     # fix paths ahead"): read from the files, never from the export's own field list
     found = export_findings(tree / "registry")
     if found:
-        raise StateSyncError(f"refusing to push: {len(found)} string(s) hold a home-directory or "
-                             f"username path — {first_of(found, 5, sep='; ')}")
+        raise StateSyncError(
+            f"refusing to push: {len(found)} string(s) hold a home-directory or username path — "
+            f"{first_of(found, 5, sep='; ')}. A stored row is append-only: scrub the code that "
+            f"wrote it, then rebuild this registry from the branch without it (`state pull "
+            f"--force`, which backs the local registry up first)")
 
 
 def push(data_dir: Path, remote: str, branch: str = BRANCH, *,

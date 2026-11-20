@@ -24,6 +24,18 @@ section drops in the export.** The licence ruling is recorded in
   - It scrubs the whole traceback first: each file is named relative to the checkout or the Python
     installation, and any other home-directory or temporary path is cut to its file name.
   - Only then does it cut.
+  - A path that ends, or is cut, at its username keeps no part of it: `/Users/work` reads
+    `⟨local path⟩`, never `⟨local path⟩/work`. Nor does a folder named after one
+    (`pytest-of-alice`). Only a FILE name after the user's segment survives (round 2, S1).
+  - This machine's home is replaced only as a whole prefix, so `/Users/macbook` is not
+    `/Users/mac` + `book` (S1).
+  - `Pipeline._issue` scrubs a detail BEFORE its id hashes it, so a detail naming no path keeps
+    the id it always had. So do the two issues built from a review's exception and the two run
+    warnings built from one (N5).
+  - A file under the data directory is named relative to it before that scrub
+    (`llm_cache/…/answer.json.torn-…`), so a set-aside cache file is still named. The gate's run
+    of `test_a_torn_file_is_recorded_on_the_run_that_set_it_aside` caught the round-2 scrub
+    reducing it to a bare `⟨local path⟩`.
   - `finish_run` scrubs the exception's message too, which every caller stores before the
     traceback (found by the pre-PR review).
   - The old cut could fall inside `/Users/<name>` and leave `sers/<name>/…` (#1143 review, finding 6).
@@ -43,12 +55,20 @@ A row that holds none is written exactly as stored. The branch's history is not 
 - **What it reads.** Every string of every exported JSONL file, JSON held as text included. It
   never reads the rewrite's field list, so a path in a field nothing rewrites is still refused.
 - **What it refuses:**
-  - a home directory: `/Users/…`, `C:\Users\…` or `C:/Users/…`, `/home/<name>/`, `~/`;
-  - a network share;
+  - a home directory: `/Users/…` (either case), `C:\Users\…` or `C:/Users/…`, `/home/<name>`,
+    `/root/`, `~/` or `~<name>/`, a URL-encoded `%2FUsers%2F`;
+  - a mounted volume (`/Volumes/<name>`) and a network share (`\\server\share`, `//server/share`);
+  - a temporary or scratch folder (`/tmp/`, `/private/tmp/`, `/var/folders/`, `/private/var/
+    folders/`): 42 of the tip's 77 path fields were one, and before round 2 they were caught only
+    through the `-Users-work-` in their names (#1156 review, S2);
   - a session folder named from a home directory (`-Users-<name>-`);
   - a home-directory path cut at its start (`sers/<name>/…`);
-  - this machine's own home directory.
-- **Shapes, never every slash.** "$40 /kW/month", "(/kWh/yr)" and a URL's `/home/` path pass.
+  - this machine's own home directory, as a whole path prefix only (round 2, N2).
+- **Keys are read too,** and a refusal never prints a key that is not a plain name (round 2, N1).
+- **Shapes, never every slash.** "$40 /kW/month", "(/kWh/yr)", "~3/4" and a URL's own path
+  (`https://api.example.com/Users/123`, `…/home/…`, `…/root-cause`) pass: a shape that can begin a
+  URL's path is refused only where no letter, digit, dot or hyphen comes before it, `localhost`
+  excepted (`file://localhost/Users/…`).
 - **It names the shape, never the path.**
 - **Where it runs:**
   - in `export-state`, which exits 1 and writes nothing, so the weekly workflow's push step stops
@@ -71,14 +91,18 @@ A row that holds none is written exactly as stored. The branch's history is not 
 
 **HOW VERIFIED.**
 - **The live registry** (a copy of `theme-intelligence-state@a74c4e30`, 25 JSONL files, 8,899 rows):
-  - **The tip as committed:** the guard finds 95 shapes in 77 fields:
-    - `output_dir`: 57 fields, 67 shapes;
-    - `evidence_location`: 17 fields, 25 shapes;
-    - `warnings`: 3 fields, 3 shapes.
-
-    By shape: a macOS home directory 35, a session folder named from one 42, this machine's home
-    directory 18. A path can show more than one shape.
+  - **The tip as committed:** the guard finds 137 shapes in 77 fields: `output_dir` 57 fields,
+    `evidence_location` 17, `warnings` 3. By shape: a macOS home directory 35, a temporary folder
+    42, a session folder named from a home directory 42, this machine's home directory 18. A path
+    can show more than one shape. Before round 2 the same fields showed 95: the temporary-folder
+    shape is new.
   - **This code's export of the same registry:** 0.
+  - **No false alarm.** The guard finds nothing in:
+    - the 3,251 blocks of source text recovered for 51 of the 57 versions;
+    - the 334 files of main's committed desk at `cd082d0b`.
+
+    The weekly runs' 5 public job logs hold 68 lines of the runner's own `/home/runner/…` and
+    temporary paths; a log is not an export.
   - **Rows written as stored:** 8,745 are byte-identical to the tip. The 154 that change are every
     version (57) and every run (97). Their changed keys are `evidence_location` 57, `output_dir` 97
     and `warnings` 4. The 4th warning is a CI traceback whose `/opt/hostedtoolcache/…` frames now
@@ -99,8 +123,10 @@ A row that holds none is written exactly as stored. The branch's history is not 
   - **Blocks whose section runs over 150 characters:** 283 / 0 / 0.
   - **The width rule:** 60 runs cross the length. The 11 that open with a headline are at most 0.56
     of the run's widest line, and the 49 others at least 0.86.
-- **Tests:** `tests/test_theme_intelligence_local_paths.py`, 42 tests.
-  - **The guard:** the 15 shapes the review and the tip hold, and 11 that must pass.
+- **Tests:** `tests/test_theme_intelligence_local_paths.py`, 73 tests.
+  - **The guard:** the shapes the two reviews and the tip hold (27), and 17 that must pass.
+  - **The scrub:** six paths that end at or hold a username, and this machine's home outside
+    `/Users` (`/opt/someone`) or inside a longer name (`/Users/macbook`).
   - **The traceback:** none of its cut points leaves a home directory, with the old `format_exc()`
     cut as the control that does.
   - **Creation:** a run's and a version's paths are relative, and a re-render from another working
@@ -110,8 +136,12 @@ A row that holds none is written exactly as stored. The branch's history is not 
     called a no-op.
   - **The refusals:** `export-state` and `state push` refuse a path in a field nothing rewrites.
   - **The reader:** four pins.
-- **Mutations: 16 mutants on the final code, all killed.**
-  - A first run of 17 left three alive, and each was fixed:
+- **Mutations: 31 on the final code, all killed** (15 from round 1, 16 from round 2).
+  - Round 2's left three alive, each fixed:
+    - a pass of `legacy_traceback` over non-frame home paths, now pinned;
+    - the session-folder shape, now pinned without a temporary root;
+    - a length check on the home directory that the boundary already did, now removed.
+  - A first run of round 1's 17 left three alive, each fixed:
     - a frame renaming that duplicated the scrub, now removed;
     - a fixture whose cut fragment held no username, now holding one;
     - a size-rule fixture the width rule already passed, now a wide two-line headline.
@@ -133,13 +163,28 @@ A row that holds none is written exactly as stored. The branch's history is not 
 - **Width ratios:** each crossing's first line against the widest line of its run, by `x1 − x0`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **The guard refuses HOME-DIRECTORY and USERNAME shapes, not every absolute path** (Codex P2 on
-  #1156, deferred). A machine path that names no person, such as `/opt/build/report.pdf`, in a field
-  nothing rewrites would pass. The scope is A's brief: "any home-directory or username path shape".
-  #1143's catch-every-absolute-path regex is what read "$40 /kW/month" as a path (review finding 6).
-  The three fields that held paths are relative wherever they are created.
-  - *Falsifier:* an absolute path in an exported string, found by `rg '"/(opt|mnt|var|srv)/'` over
-    the branch's `registry/`.
+- **The guard refuses home-directory, username and scratch-folder shapes, not every absolute
+  path** (Codex P2 on #1156, deferred). A machine path that names no person, such as
+  `/opt/build/report.pdf`, in a field nothing rewrites would pass.
+  - The scope is A's brief: "any home-directory or username path shape", widened in round 2 to
+    scratch folders.
+  - #1143's catch-every-absolute-path regex is what read "$40 /kW/month" as a path (review finding 6).
+  - The three fields that held paths are relative wherever they are created.
+  - *Falsifier:* an absolute path ANYWHERE in an exported string, mid-string included:
+    `rg '(^|[^A-Za-z0-9.:/-])/(opt|mnt|srv|var|data|etc)/'` over the branch's `registry/`.
+- **A false positive blocks the weekly's commit step, and nothing overrides it** (round 2, N4).
+  - None was found in the export, the source text or the desk.
+  - A research string that does trip a shape stops `export-state`; the remedy is a change to the
+    shape, in code, under review.
+- **An exception message reaches a stored row from about 40 more sites,** in market, discovery,
+  securities, health and enrichment notes, interpolating `{exc}`. Those are not scrubbed where they
+  are written (N5). Each such row reaches the branch only through `export-state` or `state push`,
+  which refuse it. The refusal now names the way out: the row is append-only, so its writer is
+  scrubbed, and on Actions the next run restores the branch, which does not hold it; locally
+  `state pull --force` rebuilds the registry (backing it up first).
+- **Code from before this PR reads a relative `output_dir` against the working directory** (N6). A
+  checkout older than this one, re-rendering a registry exported by this one, writes a run's
+  readout under its current directory's `runs/<run id>`. Run current code.
 - **`readouts/` on the state branch is not guarded.** The workflow copies it after `export-state`.
   It held 0 home-directory paths at `a74c4e30`, and the runner writes its manifest's folder relative
   to its working directory.
