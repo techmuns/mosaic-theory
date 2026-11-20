@@ -228,3 +228,26 @@ beside a stored "reported" basis line.
   - Coordinator B raised W77 with the operator: the ask-first hook should also cover script
     writes. This was its second occurrence that day.
   - The session's rule from here is to edit protected files with the Edit tool only.
+## Amendments
+
+**2026-11-20 — after the merge (#1147, `ddf0374c`): four corrections to the panel result, from coordinator A's final review.** The body stands as merged.
+- **(a) "The held-out pages are 0 → 0 on every metric" says nothing.**
+  - The figure sums only the panel pages in the registration's held-out set (`vinci/evals/compare.py:1047`, `ho = [x for x in pd if x.page in held]`).
+  - That set is the panel pages the change does not move (`compare.py:655`). All six moved, so it was empty.
+  - The harness's held-out pages (NKE, VITL, PARR, WLK, TJX, TGT) are not on the panel either.
+  - So 0 → 0 is a sum over no page. It is not a reading of how held-out pages behave.
+- **(b) LLY's modal lean did not move.**
+  - It is strongly-bullish in both arms: 3 of 5 in BASE, 5 of 5 in CAND.
+  - What moved is its unanimity, and the proposal with it. At five draws the gate proposes only on 5 of 5 (R1, `vinci/dossier/verdict.py`, #982), so none → BUY is one dissent fewer.
+  - "The one block is LLY's lean" names the scorer's listed move, not a change of the modal lean.
+- **(c) This flip has happened four times before, twice on a byte-identical request.** Each time LLY's proposal went none → BUY:
+  - fix 3b (#930): bullish 3 / mixed 2 → bullish 5 (`docs/records/2026-11-09-fix3b-measured-on-the-panel.md`);
+  - #941, on a request byte-identical to main's: bullish 4 / mixed 1 → bullish 5 (`docs/records/2026-11-10-driver-facts-measured-on-the-panel.md`);
+  - RA-D2 (#981): strongly-bullish 4 / mixed 1 → strongly-bullish 5 (`docs/records/2026-11-11-ra-d2-measured-on-the-panel.md`);
+  - #953, again on byte-identical requests: strongly-bullish 4 / mixed 1 → strongly-bullish 5 (`docs/records/2026-11-13-pr953-measured-on-the-panel.md`).
+
+  LLY's proposal flips on one dissent with no change at all, and W81's is the fifth such flip.
+- **(d) The §6.1 call is made: accepted.** Coordinator A, reviewing #1147 for merge, accepted the explanation under the harness design record's §6.1 (`docs/records/2026-11-06-synthesis-eval-harness-design.md`), and #1147 merged as `ddf0374c`.
+- **Found in the same review, after merge** (`docs/records/2026-11-20-w81-after-merge-a-second-refresh-and-a-figure-not-read.md`):
+  - fixed in code: SF1 (`refreshed_ltm_flags` refused its own second run), NIT 4 (a cause that could not read a figure printed Python's None) and NIT 5 (`_ebitda_cause`'s docstring cited 0-based rows);
+  - recorded open, unchanged, because each moves request bytes: SF2 (the reconciliation's "is the filings' figure" where no four-quarter filing figure exists) and NIT 3 (two refusals' bare "LTM EBITDA").
