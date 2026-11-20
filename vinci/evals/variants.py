@@ -55,6 +55,12 @@ the proof that the export and the code are the page's — and is otherwise left 
 the registration's note names (BURL's guidance predates A-D8's block discovery, so no code at this
 ref rebuilds it).
 
+W85, `W85`'s ``kd_attribution``: each CIQ Key Developments driver row's party, re-read from the
+page's OWN CIQ folder (`Context.ciq`) by the ref's code, which the synthesis digest groups the
+rows by. The identity at a ref without the change. It refuses unless every Key Development row
+of the page is among those the export re-reads, and wherever the attributed rows would move the
+page's catalyst calendar, which it does not rewrite (no panel page's does, measured 2026-11-20).
+
 THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
 releases filed after its price date; this moves them out of `primary_source.releases` and
 re-derives the two fields the assembly takes from that list (`current_guide`, a release-read
@@ -744,6 +750,59 @@ def same_day_guides(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
     return mech.model_copy(update={"catalyst_path": cp.model_copy(update=upd)}) if upd else mech
 
 
+# ------------------------------------------- W85: whose development a Key Development is
+
+#: How a driver row read from the CIQ Key Developments export cites it.
+_KD_REF = "CIQ Key Developments"
+
+
+def _kd_key(r: Any) -> tuple[Any, ...]:
+    """A Key Development driver row, but for its attribution and the export's file name."""
+    return (r.kind, r.metric, r.period, r.value, r.verbatim)
+
+
+def kd_attribution(mech: MechanicalLayer, ctx: Context) -> MechanicalLayer:
+    """(W85) Each CIQ Key Developments driver row's ``attribution`` — its party, the Company cell
+    CIQ files it under, the party its Situation opens on — re-read from the page's own CIQ folder
+    by THIS ref's code (`ciq_sheets.key_developments`); the synthesis digest groups the rows by it.
+    The identity at a ref without the change (no `ciq_sheets.kd_attribution`).
+
+    Refuses (`TransformError`) when no CIQ folder was given; when any of the page's Key
+    Development rows is not among those the export re-reads, the proof that the export is the
+    page's own (every other field equal); and when the attributed rows would leave a dated event
+    off the page's catalyst calendar (`mechanical._operating_events`), which this transform does
+    not rewrite, so a page whose calendar would move is never replayed as if it did not."""
+    if getattr(ciq_sheets, "kd_attribution", None) is None:
+        return mech
+    ticker = ctx.page.get("ticker")
+    b = ctx.ciq
+    if b is None:
+        raise TransformError(f"{ticker}: this transform re-reads the page's own CIQ exports "
+                             "(`--ciq`), and no folder was given")
+    od = mech.operating_drivers
+    if od is None:
+        return mech
+    read = {_kd_key(r): r for r in ciq_sheets.key_developments(b)[0]}
+    kd = [r for r in od.rows if r.source_ref.startswith(_KD_REF)]
+    missing = [r for r in kd if _kd_key(r) not in read]
+    if missing:
+        raise TransformError(
+            f"{ticker}: {len(missing)} of the page's {len(kd)} Key Development rows are not in "
+            f"the export re-read from its CIQ folder (first: {missing[0].period} "
+            f"{missing[0].metric}), so it is not the page's own export")
+    rows = [r.model_copy(update={"attribution": getattr(read[_kd_key(r)], "attribution", None)})
+            if r.source_ref.startswith(_KD_REF) else r for r in od.rows]
+    attributed = od.model_copy(update={"rows": rows})
+    events = getattr(mechanical, "_operating_events", None)
+    if events is not None:
+        left_off = events(attributed, date.fromisoformat(str(ctx.page["reference_date"])[:10]))[1]
+        if left_off:
+            raise TransformError(
+                f"{ticker}: the attributed rows leave {len(left_off)} dated event(s) off the "
+                "catalyst calendar, which this transform does not rewrite")
+    return mech.model_copy(update={"operating_drivers": attributed})
+
+
 Transform = Callable[[MechanicalLayer, Context], MechanicalLayer]
 
 TRANSFORMS: dict[str, Transform] = {
@@ -759,6 +818,7 @@ TRANSFORMS: dict[str, Transform] = {
     "covenant_value_figures": covenant_value_figures,
     "dividend_level": dividend_level,
     "same_day_guides": same_day_guides,
+    "kd_attribution": kd_attribution,
 }
 
 #: Fix 3a's five labels (#923), in the order applied.
@@ -787,3 +847,5 @@ RE2_D16: tuple[str, ...] = ("covenant_value_figures",)
 RA_D2: tuple[str, ...] = ("dividend_level",)
 #: RA-D4's one transform (split from #967; RA-D2 is measured on its own): the same-day guides.
 RA_D4: tuple[str, ...] = ("same_day_guides",)
+#: W85's one transform: each Key Development row's party, which the digest groups the rows by.
+W85: tuple[str, ...] = ("kd_attribution",)
