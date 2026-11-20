@@ -296,3 +296,11 @@ def test_a_subsidiary_of_opener_reads_its_owner(situation: str, lead: str,
     att = cs.kd_attribution("Royal Group Inc.", situation, ticker="WLK", words=("westlake",),
                             entities=(("royal",),))
     assert att.party is party
+
+
+def test_the_same_withheld_event_is_named_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(+) Review round 0: a Key Development CIQ carries twice is kept once when it is the
+    company's (`seen`), and was named twice when it is not."""
+    (row,) = _rows(monkeypatch, "GOOGL")
+    _, withheld = dm._operating_events(OperatingDriversExtract(rows=[row, row]), date(2026, 10, 16))
+    assert len(withheld) == 1

@@ -4666,7 +4666,9 @@ def _operating_events(
             att = r.attribution
             if att is not None and att.party not in ciq_sheets.KD_OWN_PARTIES:
                 whose = att.lead_party or att.filed_under or "no party read"
-                withheld.append(f"{stamp} “{event}” ({att.party.value}: {whose}; {r.source_ref})")
+                note = f"{stamp} “{event}” ({att.party.value}: {whose}; {r.source_ref})"
+                if note not in withheld:  # named once, as a kept row is kept once (`seen`)
+                    withheld.append(note)
                 continue
             seen.add(key)
             rows.append(CatalystRow(
