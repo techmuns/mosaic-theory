@@ -60,6 +60,16 @@ def _page_cik(ticker: str) -> str:
     return str(cik)
 
 
+def _page_date(ticker: str) -> date:
+    """The page's own date, ``date_semantics.analysis_as_of``: what a wired read passes as
+    ``through``. A page that states none is refused, never given a date."""
+    page = json.loads((_DOSSIERS / ticker / "dossier.json").read_text())
+    raw = (page.get("date_semantics") or {}).get("analysis_as_of")
+    if not raw:
+        raise SystemExit(f"{ticker}'s page states no date_semantics.analysis_as_of")
+    return date.fromisoformat(str(raw))
+
+
 def _client() -> tuple[EdgarClient, CachedHttp]:
     http = build_sec_http()
     return EdgarClient(http), http
@@ -105,7 +115,8 @@ def cmd_measure(args: argparse.Namespace) -> int:
     for row in rows:
         t = str(row["ticker"])
         if t not in reads:
-            reads[t] = read_exhibit21(edgar, http, _page_cik(t), through=args.through)
+            cut = _page_date(t) if args.through_page else args.through
+            reads[t] = read_exhibit21(edgar, http, _page_cik(t), through=cut)
         m = match_entity(str(row[args.entity_field]), reads[t])
         results.append({**row, "tier": m.tier,
                         "listed": m.listed.model_dump(mode="json") if m.listed else None,
@@ -123,7 +134,8 @@ def cmd_measure(args: argparse.Namespace) -> int:
     filers = sorted(reads)
     print(f"\n{len(results)} rows from {args.rows}, matched on `{args.entity_field}`, "
           f"{len(filers)} filers ({', '.join(filers)}), "
-          f"each filer's newest original 10-K filed by {args.through or 'any day'}, EDGAR read "
+          f"each filer's newest original 10-K filed by "
+          f"{'its page date' if args.through_page else args.through or 'any day'}, EDGAR read "
           f"{_stamp()}:")
 
     def counts(sub: list[dict[str, Any]]) -> str:
@@ -148,9 +160,9 @@ FIXTURES: dict[str, tuple[str, ...] | None] = {
     "AMZN": None, "GOOGL": None, "TGT": None, "SMPL": None, "PARR": None, "WERN": None,
     "V": None, "UBER": None,
     "LLY": ("LillyDirect Pharmacy, LLC", "Eli Lilly (Philippines), Incorporated", "Aparito LLC",
-            "Eli Lilly and Company Limited", "Eli Lilly S.A."),
+            "Eli Lilly and Company Limited", "Eli Lilly S.A.", "UAB Eli Lilly Lietuva"),
     "TJX": ("Leasing Subsidiaries", "NBC Sixth Realty Corp.", "NBC Apparel"),
-    "EPAM": ("EPAM Systems LLC",),
+    "EPAM": ("EPAM Systems LLC", "LLC IT-PARK UNIVERSITY"),
 }
 _CUT_KEEP = 6
 #: The SGML headers kept whole: a 10-K that types its EX-21, and a 10-Q that files none.
@@ -205,6 +217,11 @@ def cmd_fixtures(args: argparse.Namespace) -> int:
         name = f"{t}_{acc}-index-headers.html"
         (out / name).write_text(http.get_text(url, ttl_seconds=None))
         headers[acc] = {"ticker": t, "cik": cik, "url": url, "file": name}
+    # a real page at a header URL that is not an SGML header: the filing's own index.json
+    acc = HEADER_FILINGS[0][1]
+    a = acc.replace("-", "")
+    idx_url = f"https://www.sec.gov/Archives/edgar/data/{int(_page_cik('GOOGL'))}/{a}/index.json"
+    (out / f"GOOGL_{acc}-index.json").write_text(http.get_text(idx_url, ttl_seconds=None))
     historical: dict[str, Any] = {}
     for t, cut in HISTORICAL:
         cik = _page_cik(t)
@@ -237,6 +254,8 @@ def main(argv: list[str] | None = None) -> int:
     m = sub.add_parser("measure")
     m.add_argument("--rows", required=True)
     m.add_argument("--through", type=date.fromisoformat)
+    m.add_argument("--through-page", action="store_true",
+                   help="read each filer at its own page's date_semantics.analysis_as_of")
     m.add_argument("--entity-field", default="entity",
                    help="the row key holding the name to match (B's rows: filed_under, lead_party)")
     m.add_argument("--out")

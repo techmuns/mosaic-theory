@@ -16,8 +16,12 @@ tables (its header rows among them), plus the rows `cases.json` names under `kep
 table row is removed through BeautifulSoup, so the markup that remains is the filing's own. A cut
 document's name count is the cut's, never the filing's.
 
-**Two SGML headers, whole:** Alphabet's 10-K `0001652044-26-000018`, which types its list
-`EX-21.01`, and its 10-Q `0001652044-26-000084`, which files none.
+**Three SGML headers, whole:** Alphabet's 10-K `0001652044-26-000018`, which types its list
+`EX-21.01`; its 10-Q `0001652044-26-000084`, which files none; and Oruka Therapeutics' 10-K
+`0000950170-24-009809`, filed 2024-02-01 as "ARCA biopharma, Inc.", which files no Exhibit 21
+(`cases.json` `historical` carries ORKA's real submissions `formerNames`).
+
+**One index, whole:** Alphabet's 10-K `index.json`, a real EDGAR page that is not an SGML header.
 
 What each case pins:
 - **GOOGL:** "Google" is the filer's own and listed (`Google LLC`). "Lyft" is not listed (a company

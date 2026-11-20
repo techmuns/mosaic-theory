@@ -20,9 +20,12 @@ from bs4 import BeautifulSoup
 from vinci.edgar.client import Filing
 from vinci.edgar.exhibit21 import (
     Exhibit21Read,
+    _is_ex21_type,
+    _text_rows,
     bind_exhibit21,
     ex21_documents,
     match_entity,
+    name_in_force,
     normalise_name,
     parse_exhibit21,
     read_exhibit21,
@@ -42,7 +45,8 @@ def _read(ticker: str) -> Exhibit21Read:
     c = EXHIBITS[ticker]
     doc = (FIX / f"{ticker}.htm").read_text()
     return bind_exhibit21(c["cik"], c["accession"], date.fromisoformat(c["filing_date"]),
-                          [(c["type"], c["url"], doc)], registrant=c["registrant"])
+                          [(c["type"], c["url"], doc)], registrant=c["registrant"],
+                          filed_as=c["registrant"])  # none of these filers renamed since
 
 
 def _names(ticker: str) -> list[str]:
@@ -59,6 +63,7 @@ def test_positive_google_is_alphabets_own_and_listed() -> None:
     assert TENK_ACC in m.listed.source_ref and "EX-21.01" in m.listed.source_ref
     assert m.listed.source_ref.endswith(EXHIBITS["GOOGL"]["url"])
     assert match_entity("Google LLC", read).tier == "exact"
+    assert match_entity("GOOGLE LLC", read).tier == "normalised"  # exact is the name as listed
 
 
 def test_negative_lyft_is_not_on_alphabets_list() -> None:
@@ -163,6 +168,10 @@ def test_table_header_rows_are_not_names() -> None:
     assert not any("Jurisdiction" in n for n in lly)
     # header vocabulary inside a real name that ends in a corporate form is still a name
     assert "Eli Lilly (Philippines), Incorporated" in lly
+    # a form some jurisdictions put first is a name in a text exhibit too (review round 2)
+    leading = ["UAB Eli Lilly Lietuva", "LLC IT-PARK UNIVERSITY"]
+    assert {r.name for r in _text_rows(leading)} == set(leading)
+    assert "LLC IT-PARK UNIVERSITY" in _names("EPAM") and "UAB Eli Lilly Lietuva" in lly
 
 
 def test_rows_differing_in_form_or_jurisdiction_are_two_companies() -> None:
@@ -345,3 +354,164 @@ def test_a_past_cut_names_the_registrant_in_force_then() -> None:
     # with no cut, today's name
     today = read_exhibit21(edgar, http, h["cik"])  # type: ignore[arg-type]
     assert today.registrant == "Oruka Therapeutics, Inc."
+
+
+# --- review round 2 (coordinator A's independent review of #1152 at 5b8732e1) -------------------
+
+def _tables_removed(ticker: str) -> Exhibit21Read:
+    c = EXHIBITS[ticker]
+    soup = BeautifulSoup((FIX / f"{ticker}.htm").read_text(), "html.parser")
+    for table in soup.find_all("table"):
+        table.decompose()
+    return bind_exhibit21(c["cik"], c["accession"], date.fromisoformat(c["filing_date"]),
+                          [(c["type"], c["url"], str(soup))], registrant=c["registrant"])
+
+
+@pytest.mark.parametrize("ticker", ["V", "SMPL", "GOOGL"])
+def test_text_mode_never_reads_the_heading_as_a_subsidiary(ticker: str) -> None:
+    """A1: with its table taken out, Visa's and Simply Good Foods' exhibits read `listed` with
+    one name, their own heading ("Subsidiaries of …", ending in "Inc."/"Company")."""
+    read = _tables_removed(ticker)
+    assert read.status == "no_names", [n.name for n in read.names]
+
+
+#: Real listed names with no corporate form at all, which text mode cannot tell from prose.
+_FORMLESS = {"Visa International Service Association", "TJX UK", "Emakina Branch QFC"}
+
+
+@pytest.mark.parametrize("ticker", sorted(EXHIBITS))
+def test_text_mode_keeps_every_real_name_a_table_lists(ticker: str) -> None:
+    """A1: the names each committed exhibit's table lists, laid one per line as a text exhibit
+    lays them, are all kept. Text mode dropped every name ending in a form `_SUFFIXES` lacked
+    (K.K., s.r.o., S.A.C., Trust, Limited Partnership …)."""
+    names = [n.name for n in _read(ticker).names]
+    kept = {r.name for r in _text_rows(names)}
+    assert [n for n in names if n not in kept and n not in _FORMLESS] == []
+
+
+def test_text_mode_reads_a_dash_jurisdiction() -> None:
+    """A1: Uber's 13 real (name, jurisdiction) pairs laid out "Name - Delaware" keep all 13."""
+    pairs = [(n.name, n.jurisdiction) for n in _read("UBER").names]
+    rows = _text_rows([f"{name} - {juris}" for name, juris in pairs])
+    assert [(r.name, r.jurisdiction) for r in rows] == pairs
+
+
+def test_an_edgar_state_tag_is_not_part_of_the_registrant_name() -> None:
+    """A2: EDGAR names TJX "TJX COMPANIES INC /DE/"; the tag kept the filer from matching itself."""
+    assert EXHIBITS["TJX"]["registrant"] == "TJX COMPANIES INC /DE/"
+    assert normalise_name("TJX COMPANIES INC /DE/") == "tjx companies"
+    assert match_entity("The TJX Companies, Inc.", _read("TJX")).tier == "registrant"
+    assert normalise_name("Example Holdings Corp /NEW/") == "example holdings"
+
+
+def test_only_exact_normalised_and_registrant_confirm_own() -> None:
+    """A3: `confirms_own` names the tiers that may promote a row to own. `word_prefix` is a lead,
+    never a confirmation ("NBC" leads 28 of TJX's names); a list that names affiliates, or a stated
+    minority share, confirms nothing even on an exact match."""
+    googl = _read("GOOGL")
+    assert match_entity("Google LLC", googl).confirms_own            # exact
+    assert match_entity("Google", googl).confirms_own                # normalised
+    assert match_entity("Alphabet Inc.", googl).confirms_own         # registrant
+    assert not match_entity("Lyft", googl).confirms_own              # not_listed
+    nbc = match_entity("NBC", _read("TJX"))
+    assert nbc.tier == "word_prefix" and not nbc.confirms_own
+    quest = match_entity("Quest", _read("SMPL"))
+    assert quest.tier == "word_prefix" and not quest.confirms_own
+    lilly = match_entity("LillyDirect Pharmacy, LLC", _read("LLY"))
+    assert lilly.tier == "exact" and not lilly.confirms_own          # LLY names affiliates
+    yellowstone = match_entity("Yellowstone Pipe Line Company", _read("PARR"))
+    assert yellowstone.tier == "normalised" and not yellowstone.confirms_own  # 40.0%
+    assert match_entity("Hawaii Renewables, LLC", _read("PARR")).confirms_own  # no share stated
+
+
+def _orka_history() -> RegistrantHistory:
+    h = CASES["historical"]["ORKA"]
+    return RegistrantHistory(current=h["registrant_current"],
+                             former=tuple(FormerName.model_validate(f) for f in h["former"]))
+
+
+@pytest.mark.parametrize(("day", "name"), [
+    (date(1990, 1, 1), "HYSEQ INC"),           # before the first span: the first name
+    (date(2003, 1, 28), "HYSEQ INC"),          # a span's last day is in it
+    (date(2003, 2, 1), "NUVELO INC"),          # between two spans: the next name
+    (date(2009, 1, 28), "ARCA biopharma, Inc."),
+    (date(2024, 8, 30), "ARCA biopharma, Inc."),
+    (date(2024, 8, 31), "Oruka Therapeutics, Inc."),
+    (None, "Oruka Therapeutics, Inc."),
+])
+def test_name_in_force_has_no_gap_that_reads_todays_name(day: date | None, name: str) -> None:
+    """A4: on ORKA's real formerNames a day between two spans, or before the first, read TODAY's
+    name — the look-ahead round 1 fixed, left open in the gaps."""
+    assert name_in_force(_orka_history(), day) == name
+
+
+def test_the_list_drops_the_name_the_filer_filed_under() -> None:
+    """A4: the self-drop and the registrant tier read the name in force when the 10-K was FILED as
+    well as at `through`. At a 2024-12-31 cut Oruka's newest 10-K is still ARCA's (filed
+    2024-02-01): the filer is "Oruka" at the cut and filed as "ARCA biopharma, Inc."."""
+    h = CASES["historical"]["ORKA"]
+    tenk = Filing(cik=h["cik"], form="10-K", filing_date=date.fromisoformat(h["filing_date"]),
+                  accession=h["accession"], items=[], primary_doc=None)
+    edgar = _Edgar([tenk], h["registrant_current"], _orka_history().former)
+    http = _Http({h["header_url"]: (FIX / h["header_file"]).read_text()})
+    read = read_exhibit21(edgar, http, h["cik"], through=date(2024, 12, 31))  # type: ignore[arg-type]
+    assert read.registrant == "Oruka Therapeutics, Inc."
+    assert read.filed_as == "ARCA biopharma, Inc."
+    assert match_entity("ARCA biopharma", read).tier == "registrant"
+    assert match_entity("Oruka Therapeutics", read).tier == "registrant"
+    # the drop: a list that names the filer under its filing-day name is not read as a subsidiary
+    rows, _ = parse_exhibit21("<p>ARCA biopharma, Inc.</p><p>ARCA Operating, LLC</p>",
+                              registrant="ARCA biopharma, Inc.")
+    assert [r.name for r in rows] == ["ARCA Operating, LLC"]
+
+
+def test_a_header_page_that_is_not_sgml_is_unread_never_no_ex21() -> None:
+    """A5: a header URL that answers with something other than EDGAR's SGML header (here the
+    filing's real index.json) is `None` → `unread`; mutated to `[]` it read `no_ex21`."""
+    pages = {_header_url(TENK_ACC): (FIX / f"GOOGL_{TENK_ACC}-index.json").read_text()}
+    assert ex21_documents(_Http(pages), "1652044", TENK_ACC) is None
+    edgar = _Edgar([_tenk(TENK_ACC, date(2026, 2, 5))], "Alphabet Inc.")
+    assert read_exhibit21(edgar, _Http(pages), 1652044).status == "unread"  # type: ignore[arg-type]
+
+
+def test_an_unreadable_exhibit_is_unread_never_no_names() -> None:
+    """A5: the header types EX-21.01 and the exhibit itself cannot be fetched: `unread`, naming the
+    URL; mutated to skip it, it read `no_names` ("a parse failure")."""
+    pages = {_header_url(TENK_ACC): (FIX / CASES["headers"][TENK_ACC]["file"]).read_text()}
+    edgar = _Edgar([_tenk(TENK_ACC, date(2026, 2, 5))], "Alphabet Inc.")
+    read = read_exhibit21(edgar, _Http(pages), 1652044)  # type: ignore[arg-type]
+    assert read.status == "unread" and EXHIBITS["GOOGL"]["url"] in read.note
+
+
+def test_an_unreadable_submissions_document_is_unread_never_a_crash() -> None:
+    """Nit: an HttpError on the filer's submissions document aborted `measure` for every filer;
+    the reader returns `unread` for that filer alone."""
+    class _Down(_Edgar):
+        def recent_filings(self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",),
+                           since: date | None = None) -> list[Filing]:
+            raise HttpError("submissions unavailable")
+    read = read_exhibit21(_Down([], "Alphabet Inc."), _Http({}), 1652044)  # type: ignore[arg-type]
+    assert read.status == "unread" and "submissions" in read.note
+
+
+def test_a_10k_filed_on_the_cut_day_is_read() -> None:
+    """Nit: `through` is inclusive: Alphabet's 10-K filed 2026-02-05 is read at that day's cut."""
+    edgar = _Edgar([_tenk(TENK_ACC, date(2026, 2, 5))], "Alphabet Inc.")
+    read = read_exhibit21(edgar, _Http(_googl_pages()), 1652044,  # type: ignore[arg-type]
+                          through=date(2026, 2, 5))
+    assert read.accession == TENK_ACC
+
+
+def test_the_exhibit_type_is_matched_whole() -> None:
+    """Nit: EX-21, EX-21.1 and EX-21.01 are the list; EX-210 and EX-2.1 are not."""
+    assert all(_is_ex21_type(t) for t in ("EX-21", "EX-21.1", "EX-21.01", "ex-21.1"))
+    assert not any(_is_ex21_type(t) for t in ("EX-210", "EX-2.1", "EX-21A", "EX-211"))
+
+
+@pytest.mark.parametrize(("a", "b"), [
+    ("Procter & Gamble Co.", "Procter and Gamble Company"),    # the & rule
+    ("Concentrix Legal Services Co., Ltd.", "Concentrix Legal Services"),  # stacked forms
+    ("Netflix Pte. Ltd.", "Netflix"),
+])
+def test_normalise_equates(a: str, b: str) -> None:
+    assert normalise_name(a) == normalise_name(b)

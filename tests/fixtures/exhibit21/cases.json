@@ -103,7 +103,8 @@
     "Eli Lilly (Philippines), Incorporated",
     "Aparito LLC",
     "Eli Lilly and Company Limited",
-    "Eli Lilly S.A."
+    "Eli Lilly S.A.",
+    "UAB Eli Lilly Lietuva"
    ]
   },
   "TJX": {
@@ -131,7 +132,8 @@
    "url": "https://www.sec.gov/Archives/edgar/data/1352010/000135201026000015/exhibit211subsidiariesofth.htm",
    "cut": true,
    "kept_rows": [
-    "EPAM Systems LLC"
+    "EPAM Systems LLC",
+    "LLC IT-PARK UNIVERSITY"
    ]
   }
  },

@@ -25,9 +25,13 @@ HOW IT READS.
 - A table exhibit gives one name per row, taken from the row's first non-empty cell, and the next
   non-empty cell as its jurisdiction. A row whose first cell is column vocabulary ("Name of
   Subsidiary", "Jurisdiction") with no corporate suffix is the header and is skipped.
-- An exhibit with no table gives one name per text line that ends in a corporate suffix ("Inc.",
-  "LLC", "Ltd" …) once a trailing parenthetical is set aside as its jurisdiction ("Target Brands,
-  Inc. (MN)").
+- An exhibit with no table gives one name per text line that ends in a corporate form ("Inc.",
+  "LLC", "s.r.o." …), once a trailing "(MN)" or "- Delaware" is set aside as its jurisdiction
+  ("Target Brands, Inc. (MN)"). A note after the form ("dba …", "… Branch", "i.L.") does not hide
+  it. The exhibit's own heading ("Subsidiaries of … Company") is never a name, in either mode. A
+  name with no form text mode can see ("Visa International Service Association", "Concentrix
+  Maroc") is not read in text mode: of the 1,105 names the 26 page filers' tables list (EDGAR read
+  2026-11-20), 62 are such names, 49 of them Concentrix's. Only TGT's exhibit has no table.
 - The registrant's own name is never a subsidiary of itself, and is dropped from the list. It is
   carried beside it (:attr:`Exhibit21Read.registrant`), and an entity that IS the registrant
   matches at its own tier, ``registrant``.
@@ -43,6 +47,12 @@ knowingly:
 - ``word_prefix``: the normalised entity is the leading whole words of a listed name ("Whole Foods"
   in "Whole Foods Market, Inc."; "LillyDirect" in "LillyDirect Pharmacy, LLC"). It is looser, and
   it is reported as its own tier, never folded into the other two.
+
+WHICH TIERS CONFIRM OWN (:attr:`EntityMatch.confirms_own`): ``exact`` and ``normalised`` on a list
+that names no affiliates, for a row that states no share of 50% or less, and ``registrant``.
+``word_prefix`` is a lead only: "NBC" leads 28 of TJX's names and "Global" a Concentrix trustee.
+A bare filer name ("Uber", "Amazon") lands on one subsidiary's row ("Uber B.V.", "Amazon.com
+Services LLC"): it is the filer's own, and the row it names is one of several. No tier refutes.
 
 Every listed name carries its ``source_ref``: the form, the accession, the exhibit's own type and
 its URL.
@@ -86,7 +96,23 @@ _SUFFIXES: tuple[tuple[str, ...], ...] = tuple(sorted({
     ("s", "l"), ("sa", "de", "cv"), ("s", "a", "de", "c", "v"), ("de", "cv"), ("de", "c", "v"),
     ("s", "de", "rl", "de", "cv"), ("s", "de", "r", "l", "de", "c", "v"), ("ltda",), ("lda",),
     ("sp", "z", "o", "o"), ("pvt",), ("private",), ("bhd",), ("sdn",), ("ehf",), ("aps",),
+    # forms a corpus survey found missing (review round 2 of #1152: 182 of 1,105 listed names
+    # ended in a form this table lacked, so a text exhibit dropped them)
+    ("s", "p", "z", "o", "o"), ("s", "r", "o"), ("d", "o", "o"), ("dooel",), ("s", "a", "c"),
+    ("s", "a", "e"), ("s", "l", "u"), ("slu",), ("s", "a", "u"), ("k", "k"), ("g", "k"), ("kft",),
+    ("eood",), ("ood",), ("shpk",), ("wll",), ("c", "v"), ("cv",),
+    ("limited", "partnership"), ("şirketi",), ("sirketi",), ("sia",), ("uab",), ("oü",), ("ou",),
+    ("fzco",), ("fze",), ("fz", "llc"), ("a", "e"), ("p", "c"), ("sasu",), ("limitada",),
+    ("ges", "m", "b", "h"), ("s", "a", "c", "i"), ("s", "a", "l"), ("s", "c"), ("şti",), ("sti",),
+    ("fllc",),
 }, key=len, reverse=True))
+
+#: Words that mark a line as a company in a text exhibit and are NOT set aside when names are
+#: compared: "NBC Trust" is a company, and not the same one as an "NBC".
+_FORM_MARKS: tuple[tuple[str, ...], ...] = (("trust",),)
+#: Forms some jurisdictions put FIRST ("PT Concentrix Services Indonesia", "UAB Eli Lilly
+#: Lietuva", "LLC IT-PARK UNIVERSITY"): a text line that opens with one is a company.
+_LEADING_FORMS = frozenset({"pt", "uab", "llc", "llp", "spa", "ooo", "ao", "tov", "sia", "oy"})
 
 #: A header cell's vocabulary: a column title ("Name of Subsidiary", "Entity", "Jurisdiction") or a
 #: section title ("Operating Subsidiaries", TJX's), never a company.
@@ -94,6 +120,19 @@ _HEADER_CELL = re.compile(
     r"^(?:(?:legal|company|entity|exact)\s+)?names?\b|^subsidiar(?:y|ies)\b|^entit(?:y|ies)\b"
     r"|\bsubsidiar(?:y|ies)$|jurisdiction|incorporat|\borgani[sz]ation\b|^state\b|^country\b"
     r"|percent|owner|^%", re.I)
+#: The exhibit's own heading ("Subsidiaries of The Simply Good Foods Company", "List of Significant
+#: Subsidiaries of Visa Inc."): never a subsidiary, though it may end in a corporate form.
+_HEADING = re.compile(r"^(?:exhibit\s+[\d.]+\W*)?(?:list\s+of\s+)?(?:(?:significant|principal)\s+)?"
+                      r"subsidiar(?:y|ies)\b", re.I)
+#: A note after a listed name's form that is not part of the form: a trade name ("…, Inc., dba
+#: Werner Fleet Sales"), a branch ("… Ltd ROHQ", "… - Philippine Branch"), or a liquidation
+#: ("Emakina.DE GmbH i.L."). Set aside only to find the form; the name is kept as listed.
+_TAIL_NOTE = re.compile(r"(?:,?\s+(?:dba|d/b/a)\b.*"
+                        r"|\s*[-–—(]?\s*(?:[\w'’.,-]+\s+){0,3}\(?branch\b.*"
+                        r"|\s+(?:[-–—]\s+)?(?:sucursal|sucrsal|succursale)\b.*|\s+rohq\b.*|\s+.*\bşubesi"
+                        r"|\s+i\.\s?l\.?|\s+in\s+liquidation)$", re.I)
+#: EDGAR's conformed-name tags ("TJX COMPANIES INC /DE/", "… /NEW/"): never part of the name.
+_STATE_TAG = re.compile(r"(?:\s*/[^/\s]{1,8}/)+\s*$")
 #: A cell that only numbers its row ("1.", Werner's; "(a)"): skipped when looking for the name.
 _ENUM_CELL = re.compile(r"\(?\d{1,4}[.)]?|\(?(?:[a-z]|[ivx]+)[.)]", re.I)
 #: A stated ownership share in a row ("100 %", "(40.0% interest)"). A share below 100 says the
@@ -148,6 +187,8 @@ class Exhibit21Read(BaseModel, frozen=True):
     #: The filer's registrant name in force at the read's ``through`` (today's when None), from
     #: EDGAR's submissions document; None when it states none.
     registrant: str | None = None
+    #: The registrant's name when the 10-K was filed (its list is written under it), or None.
+    filed_as: str | None = None
     accession: str | None = None
     filing_date: date | None = None
     exhibit_urls: tuple[str, ...] = ()
@@ -171,6 +212,11 @@ class EntityMatch(BaseModel, frozen=True):
     #: Copied from the read: the exhibit says it omits insignificant subsidiaries. ``not_listed`` is
     #: never evidence that the entity is not the filer's own, and here the filer says so itself.
     list_states_omission: bool = False
+    #: Whether this match is the filer's own statement that the entity is its own: ``exact`` or
+    #: ``normalised`` on a list that names no affiliates and states no share of 50% or less, or
+    #: ``registrant``. ``word_prefix`` never confirms ("NBC" leads 28 of TJX's names, "Global" a
+    #: Concentrix trustee); ``not_listed`` never refutes. The one-sided rule, as a value.
+    confirms_own: bool = False
 
 
 # --- normalisation ------------------------------------------------------------------------------
@@ -181,7 +227,7 @@ def _collapse(s: str) -> str:
 
 def _tokens(name: str) -> list[str]:
     """The name's words, casefolded, punctuation set aside, a trailing parenthetical dropped."""
-    s = unicodedata.normalize("NFKC", name).casefold()
+    s = _STATE_TAG.sub("", unicodedata.normalize("NFKC", name)).casefold()
     s = _TRAILING_PAREN.sub("", s)
     s = s.replace("&", " and ")
     s = re.sub(r"[^\w\s]|_", " ", s)
@@ -224,17 +270,35 @@ def _full_key(name: str) -> str:
     """A name with its corporate form KEPT, spelt out: "Gartner, LLC" and "Gartner, Inc." differ,
     "TARGET CORP" and "Target Corporation" do not. The registrant is dropped from its own list only
     on this key: the normalised key would also drop every subsidiary that shares its base name."""
-    s = unicodedata.normalize("NFKC", name).casefold().replace("&", " and ")
+    s = _STATE_TAG.sub("", unicodedata.normalize("NFKC", name)).casefold().replace("&", " and ")
     toks = re.sub(r"[^\w\s]|_", " ", s).split()
     return " ".join(_FORM_WORDS.get(t, t) for t in toks)
 
 
-def _ends_in_suffix(name: str) -> bool:
+def _form_at_end(name: str) -> bool:
     toks = _tokens(name)
-    return any(len(toks) > len(s) and tuple(toks[-len(s):]) == s for s in _SUFFIXES)
+    if len(toks) > 1 and toks[0] in _LEADING_FORMS:
+        return True
+    return any(len(toks) > len(s) and tuple(toks[-len(s):]) == s
+               for s in (*_SUFFIXES, *_FORM_MARKS))
+
+
+def _ends_in_suffix(name: str) -> bool:
+    """Whether ``name`` ends in a corporate form, or in one followed by a note
+    (:data:`_TAIL_NOTE`). Each place a note could start is tried, so a note never swallows the
+    form before it ("… Group Inc. Costa Rica Branch")."""
+    if _form_at_end(name):
+        return True
+    return any(_TAIL_NOTE.fullmatch(name[m.start():]) and _form_at_end(name[:m.start()])
+               for m in re.finditer(r"[\s,(]", name) if m.start() > 0)
 
 
 # --- the exhibit ---------------------------------------------------------------------------------
+
+def _is_ex21_type(ty: str) -> bool:
+    """An SGML document TYPE that is an Exhibit 21, whole: never EX-210 or EX-21A."""
+    return _EX21_TYPE.fullmatch(ty.strip()) is not None
+
 
 def ex21_documents(http: CachedHttp, cik: str, accession: str) -> list[tuple[str, str]] | None:
     """``(type, url)`` for every document EDGAR's SGML header types as Exhibit 21 in a filing.
@@ -252,7 +316,7 @@ def ex21_documents(http: CachedHttp, cik: str, accession: str) -> list[tuple[str
         return None
     return [(ty.upper(), _ARCHIVE.format(cik=int(pad_cik(cik)), acc=acc, doc=fn))
             for ty, fn in _SGML_DOC.findall(text)
-            if _EX21_TYPE.fullmatch(ty.strip()) and fn.lower().endswith(_TEXT_DOC)]
+            if _is_ex21_type(ty) and fn.lower().endswith(_TEXT_DOC)]
 
 
 class ListedRow(NamedTuple):
@@ -264,9 +328,15 @@ class ListedRow(NamedTuple):
 
 
 def _split_jurisdiction(line: str) -> tuple[str, str | None]:
+    """A text line's name and jurisdiction: a trailing "(MN)" or "- Delaware" is the jurisdiction
+    when what precedes it ends in a corporate form. A parenthetical that states a share ("(40.0%
+    interest)") stays in the name, as a table row keeps it."""
     m = _TRAILING_PAREN.search(line)
-    if m and m.start() > 0:
+    if m and m.start() > 0 and _PERCENT.search(m.group(1)) is None:
         return line[:m.start()].strip(), (m.group(1).strip() or None)
+    dash = re.match(r"^(.*\S)\s+[-–—]\s+([^-–—]+)$", line)
+    if dash and _ends_in_suffix(dash.group(1)):
+        return dash.group(1).strip(), dash.group(2).strip()
     return line.strip(), None
 
 
@@ -288,8 +358,8 @@ def _table_rows(soup: BeautifulSoup) -> list[ListedRow]:
         if not filled:
             continue
         name = filled[0]
-        if _HEADER_CELL.search(name) and not _ends_in_suffix(name):
-            continue  # a column or section title
+        if _HEADING.match(name) or (_HEADER_CELL.search(name) and not _ends_in_suffix(name)):
+            continue  # the exhibit's heading, or a column or section title
         if len(name) > _MAX_NAME_LINE:
             continue
         rest = filled[1:]
@@ -305,18 +375,20 @@ def _text_rows(lines: list[str]) -> list[ListedRow]:
         if not line or len(line) > _MAX_NAME_LINE:
             continue
         name, juris = _split_jurisdiction(line)
-        if name and _ends_in_suffix(name):
+        if name and not _HEADING.match(name) and _ends_in_suffix(name):
             out.append(ListedRow(name, juris, _percent(line)))
     return out
 
 
-def parse_exhibit21(doc: str, *, registrant: str | None = None) -> tuple[list[ListedRow], str]:
+def parse_exhibit21(doc: str, *, registrant: str | None = None,
+                    filed_as: str | None = None) -> tuple[list[ListedRow], str]:
     """``(rows, prose)`` of one Exhibit 21 document: each listed row in the exhibit's order, and the
     exhibit's text outside its tables, one line per text block (where it states what it omits).
 
-    The registrant's own name is dropped (:func:`_full_key`). A row repeated verbatim (the same name
-    and jurisdiction) is kept once; two rows that differ only in corporate form or jurisdiction are
-    two companies and are both kept ("EPAM Systems LLC" in four countries)."""
+    The registrant's own name is dropped (:func:`_full_key`), under either of its names: the one in
+    force at the read's cut and the one the 10-K was filed under. A row repeated verbatim (the same
+    name and jurisdiction) is kept once; two rows that differ only in corporate form or
+    jurisdiction are two companies and are both kept ("EPAM Systems LLC" in four countries)."""
     is_html = re.search(r"<\s*(?:html|body|table|tr|p|div|br)\b", doc, re.I) is not None
     if is_html:
         soup = BeautifulSoup(doc, "html.parser")
@@ -332,12 +404,12 @@ def parse_exhibit21(doc: str, *, registrant: str | None = None) -> tuple[list[Li
         lines = doc.splitlines()
         rows = _text_rows(lines)
     prose = "\n".join(c for c in (_collapse(x) for x in lines) if c)
-    own = _full_key(registrant) if registrant else None
+    own = {_full_key(n) for n in (registrant, filed_as) if n}
     seen: set[tuple[str, str]] = set()
     kept: list[ListedRow] = []
     for row in rows:
         key = _row_key(row.name, row.jurisdiction)
-        if not normalise_name(row.name) or key[0] == own or key in seen:
+        if not normalise_name(row.name) or key[0] in own or key in seen:
             continue
         seen.add(key)
         kept.append(row)
@@ -381,15 +453,20 @@ def _cut(statement: str) -> str:
 
 
 def name_in_force(history: RegistrantHistory, day: date | None) -> str | None:
-    """The registrant's name ON ``day``: the former-name span containing it, else the current name
-    (today's when ``day`` is None). A read at a past cut must not take a later name (Codex, round 1
-    of #1152: Oruka Therapeutics filed as "ARCA biopharma, Inc." until 2024-08-30). The same rule
-    as `mechanical._former_name_flags`' name in force at its reference date."""
+    """The registrant's name ON ``day``: the earliest former-name span that ends on or after it,
+    else the current name (today's when ``day`` is None). A read at a past cut must not take a
+    later name (Codex, round 1 of #1152: Oruka Therapeutics filed as "ARCA biopharma, Inc." until
+    2024-08-30).
+
+    A day between two spans takes the NEXT span's name (the rename came before its first filing),
+    and a day before the first span takes the first name: neither is today's (review round 2 of
+    #1152 — ORKA's 2003-02-01, between HYSEQ's and NUVELO's spans, read "Oruka"). A span's start is
+    not read, so EDGAR's inverted rows (a start after the end) cannot hide a span.
+    `mechanical._former_name_flags` keeps the containing-span rule and its gap; B's to change."""
     if day is not None:
-        covering = [r for r in history.former
-                    if r.to_date >= day and (r.from_date or date.min) <= day]
-        if covering:
-            return min(covering, key=lambda r: r.to_date).name
+        later = [r for r in history.former if r.to_date >= day]
+        if later:
+            return min(later, key=lambda r: r.to_date).name
     return history.current or None
 
 
@@ -402,24 +479,35 @@ def read_exhibit21(edgar: EdgarClient, http: CachedHttp, cik: int | str, *,
     cik10 = pad_cik(cik)
     # a cut in the past reads back far enough to reach that year's 10-K, beyond the recent page
     since = None if through is None else through - timedelta(days=_TENK_LOOKBACK_DAYS)
-    tenks = [f for f in edgar.recent_filings(cik10, forms=("10-K",), since=since)
-             if through is None or f.filing_date <= through]
-    # the same submissions document `recent_filings` just read: a cache hit, not a second fetch
-    registrant = name_in_force(edgar.registrant_history(cik10), through)
+    try:
+        tenks = [f for f in edgar.recent_filings(cik10, forms=("10-K",), since=since)
+                 if through is None or f.filing_date <= through]
+        # the same submissions document `recent_filings` just read: a cache hit
+        history = edgar.registrant_history(cik10)
+    except (HttpError, ValueError) as exc:
+        return Exhibit21Read(cik=cik10, status="unread",
+                             note=f"the submissions document for CIK{cik10} could not be read: "
+                                  f"{exc}")
+    registrant = name_in_force(history, through)
     if not tenks:
+        window = (f"filed by {through}, in the {_TENK_LOOKBACK_DAYS} days before it"
+                  if through else "on the submissions document's recent page")
         return Exhibit21Read(cik=cik10, registrant=registrant, status="no_10k",
-                             note="no 10-K on the submissions document's recent page"
-                                  + (f" filed by {through}" if through else ""))
+                             note=f"no original 10-K {window}")
     tenk = max(tenks, key=lambda f: f.filing_date)
+    filed_as = name_in_force(history, tenk.filing_date)
     docs = ex21_documents(http, cik10, tenk.accession)
-    base = {"cik": cik10, "registrant": registrant, "accession": tenk.accession,
-            "filing_date": tenk.filing_date}
+    base = {"cik": cik10, "registrant": registrant, "filed_as": filed_as,
+            "accession": tenk.accession, "filing_date": tenk.filing_date}
     if docs is None:
         return Exhibit21Read(**base, status="unread",
                              note=f"the SGML header of 10-K {tenk.accession} could not be read")
     if not docs:
         return Exhibit21Read(**base, status="no_ex21",
-                             note=f"10-K {tenk.accession}'s header types no document EX-21")
+                             note=f"10-K {tenk.accession}'s SGML header types no EX-21 document. "
+                                  f"An exhibit incorporated by reference to another filing, "
+                                  f"filed in a 10-K/A, or in a format other than text is not "
+                                  f"seen")
     texts: list[tuple[str, str, str]] = []
     for ty, url in docs:
         try:
@@ -427,12 +515,13 @@ def read_exhibit21(edgar: EdgarClient, http: CachedHttp, cik: int | str, *,
         except (HttpError, ValueError) as exc:
             return Exhibit21Read(**base, status="unread", exhibit_urls=tuple(u for _, u in docs),
                                  note=f"{ty} at {url} could not be read: {exc}")
-    return bind_exhibit21(cik10, tenk.accession, tenk.filing_date, texts, registrant=registrant)
+    return bind_exhibit21(cik10, tenk.accession, tenk.filing_date, texts, registrant=registrant,
+                          filed_as=filed_as)
 
 
 def bind_exhibit21(cik: str, accession: str, filing_date: date,
                    documents: list[tuple[str, str, str]], *,
-                   registrant: str | None) -> Exhibit21Read:
+                   registrant: str | None, filed_as: str | None = None) -> Exhibit21Read:
     """The read of one 10-K's Exhibit 21 documents, each ``(type, url, text)`` as EDGAR serves
     it: every listed name bound to its ``source_ref``. No HTTP here (:func:`read_exhibit21`
     fetches); a row listed verbatim in two of the filing's exhibits is kept once, at its first."""
@@ -440,7 +529,7 @@ def bind_exhibit21(cik: str, accession: str, filing_date: date,
     prose_parts: list[str] = []
     seen: set[tuple[str, str]] = set()
     for ty, url, doc in documents:
-        rows, prose = parse_exhibit21(doc, registrant=registrant)
+        rows, prose = parse_exhibit21(doc, registrant=registrant, filed_as=filed_as)
         prose_parts.append(prose)
         ref = f"10-K {accession} {ty} · {url}"
         for row in rows:
@@ -451,7 +540,8 @@ def bind_exhibit21(cik: str, accession: str, filing_date: date,
             names.append(Subsidiary(name=row.name, jurisdiction=row.jurisdiction,
                                     stated_percent=row.stated_percent, source_ref=ref))
     prose_all = "\n".join(prose_parts)
-    common = {"cik": pad_cik(cik), "registrant": registrant, "accession": accession,
+    common = {"cik": pad_cik(cik), "registrant": registrant, "filed_as": filed_as,
+              "accession": accession,
               "filing_date": filing_date,
               "exhibit_urls": tuple(u for _, u, _ in documents),
               "states_omission": _omission_sentence(prose_all),
@@ -463,28 +553,36 @@ def bind_exhibit21(cik: str, accession: str, filing_date: date,
     return Exhibit21Read(**common, status="listed", names=tuple(names))
 
 
+def _confirms(sub: Subsidiary, read: Exhibit21Read) -> bool:
+    share = sub.stated_percent
+    return not read.names_affiliates and (share is None or share > 50)
+
+
 def match_entity(entity: str, read: Exhibit21Read) -> EntityMatch:
     """``entity`` against ``read``'s list, at the tightest tier it reaches (see module doc).
 
     A name listed exactly is that listing, even when it shares the registrant's base name ("Eli
     Lilly and Company Limited" is Lilly's UK subsidiary, not Lilly); otherwise an entity that
-    normalises to the registrant is the registrant."""
+    normalises to the registrant, under its name at the cut or the one its 10-K was filed under,
+    is the registrant."""
     partial = read.states_omission is not None
     want = _collapse(entity)
     for sub in read.names:
         if _collapse(sub.name) == want:
             return EntityMatch(entity=entity, tier="exact", listed=sub,
-                               list_states_omission=partial)
-    if read.registrant and normalise_name(entity) == normalise_name(read.registrant):
-        return EntityMatch(entity=entity, tier="registrant", list_states_omission=partial)
+                               list_states_omission=partial, confirms_own=_confirms(sub, read))
+    key = normalise_name(entity)
+    if key and key in {normalise_name(n) for n in (read.registrant, read.filed_as) if n}:
+        return EntityMatch(entity=entity, tier="registrant", list_states_omission=partial,
+                           confirms_own=True)
     if read.status != "listed":
         return EntityMatch(entity=entity, tier=read.status, list_states_omission=partial)
-    key = normalise_name(entity)
     if key:
         for sub in read.names:
             if normalise_name(sub.name) == key:
                 return EntityMatch(entity=entity, tier="normalised", listed=sub,
-                                   list_states_omission=partial)
+                                   list_states_omission=partial,
+                                   confirms_own=_confirms(sub, read))
         want_toks = key.split()
         for sub in read.names:
             toks = normalise_name(sub.name).split()
