@@ -402,3 +402,31 @@ The census was re-run on round 2's guard: the same 100 calls, the same hits.
   - **Emergency off-switch:** `{"disableAllHooks": true}` in `.claude/settings.local.json`. That
     file is git-ignored, so it is per machine. It turns off EVERY hook, the fast gate and the
     review gate included, so remove it once the revert lands.
+## Amendments
+
+- **2026-11-20 — B's correction: the scratchpad gap is three cases, not a rule** (B on #1004,
+  comment 7037804674, finding 5). The body reports B's reading that a file-tool write inside a
+  session's scratchpad is pre-allowed and the PreToolUse guard is not run for it, and its "cannot
+  see" list carries a scratchpad worktree's Edit as getting no ask. B withdrew the generalisation:
+  - on 2026-11-19 09:55Z, session 426214d2's Edit of its own scratchpad's `schemas.py` got the
+    guard's ask, and the user granted it, on the same CLI;
+  - a hook leaves a transcript record only when it prints, so "no guard record" did not prove "the
+    guard did not run".
+
+  So the three cases of 2026-11-20 (W81 in 1eded771, W85 in d4ee2767, B's reproduction) stand as
+  observed, and their mechanism is NOT established. B's interim rule, protected edits only in a
+  worktree under `.claude/worktrees/`, stands as a precaution, not as a description of the app.
+  The patch has no scratchpad exemption: in B's probe, `sed -i` of `variants.py` with the call's
+  directory and its target under a scratchpad asks, and a script's write there is reported after
+  the call. B also found SF1 live on B's machine: 426214d2's scratchpad grant silenced two later
+  Edits of the project worktree's `schemas.py` at 11:37Z, which per-checkout keys stop.
+- **2026-11-20 — the patch is replaced before anyone applied it (W77b).** B's review of the patch
+  as merged found a reader crash that switched the after-check off silently, an ask lost to slow
+  git, and a report that blamed the call for a change it may not have made and told the agent to
+  restore it. The operator ruled "Hold and fix first". `docs/patches/w77-bash-writes-ask-first.diff`
+  is now W77 plus those fixes, one patch against main's unpatched hooks. Three claims of the body
+  are corrected there: the after-check's "Reported once per file per checkout per session" (each
+  change is now reported), the census's "0 raised", and "about 0.15 s on every Bash call". The
+  body's apply procedure is superseded by the one in
+  `docs/records/2026-11-20-w77b-the-guard-patch-survives-an-independent-review.md`, which names
+  the same path and adds a first step for the held `w77-apply` branch.
