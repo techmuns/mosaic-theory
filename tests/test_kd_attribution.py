@@ -233,8 +233,9 @@ def test_the_facts_carry_no_attribution(monkeypatch: pytest.MonkeyPatch) -> None
 @pytest.mark.parametrize(("situation", "lead"), [
     # a dated lead-in, then the party (GOOGL's page)
     ("Situation: On June 4, 2026, Alphabet Inc. closed the transaction.", "Alphabet Inc."),
-    # a lead-in onto a lower-case opener reads no party: the Company cell decides (AMZN's page)
-    ("Situation: On September 8, 2026, the Board of Directors of Amazon.com, Inc. elected", None),
+    # a board speaking for its company, after a dated lead-in (AMZN's page)
+    ("Situation: On September 8, 2026, the Board of Directors of Amazon.com, Inc. elected",
+     "Amazon.com, Inc."),
     # a camel-case brand continues the run (NCNO's page)
     ("Situation: Parlay and nCino announced a partnership", "Parlay and nCino"),
     # "&" inside a name (AMZN's page)
@@ -304,3 +305,128 @@ def test_the_same_withheld_event_is_named_once(monkeypatch: pytest.MonkeyPatch) 
     (row,) = _rows(monkeypatch, "GOOGL")
     _, withheld = dm._operating_events(OperatingDriversExtract(rows=[row, row]), date(2026, 10, 16))
     assert len(withheld) == 1
+
+
+# --- coordinator B's review of #1157 (round 2), each on the real rows it names ----------------
+
+
+@pytest.mark.parametrize(("situation", "party"), [
+    # (+) B #1: no lead party read. The Company cell names Target, and the row is not Target's
+    # (TGT c2f01e35537c, Aug-26-2026 and Feb-03-2026): UNREAD, never a guess
+    ("Situation: k2o announced its launch at Target stores nationwide", KdParty.UNREAD),
+    ("Situation: After a buzzy debut in 2024 via exclusive partnership with Walmart, being "
+     "haircare, the community-led haircare brand", KdParty.UNREAD),
+    # (-) a lead party read that names Target stays the company's
+    ("Situation: Target Corporation provided earnings guidance for the full-year of 2026",
+     KdParty.COMPANY),
+])
+def test_no_lead_party_is_unread_not_the_cells_guess(situation: str, party: KdParty) -> None:
+    att = cs.kd_attribution("Target Corporation (NYSE:TGT)", situation, ticker="TGT",
+                            words=("target",), entities=())
+    assert att.party is party
+
+
+def _corporate(monkeypatch: pytest.MonkeyPatch, ticker: str, filename: str, cell: str,
+               kd_type: str, situation: str) -> OperatingDriver:
+    text = ("Date|Company|Type|Headline|Other Parties|\n"
+            f"Jan-14-2026|{cell}|{kd_type}|A headline|-|\n{situation}")
+    monkeypatch.setattr(cs, "read_text", lambda path, fmt=None: text)
+    wb = CiqWorkbook(kind="key_developments", path=Path(filename), fmt=CiqFormat.RTF_TEXT,
+                     freq=None)
+    (row,) = cs.key_development_drivers(CiqBundle(ticker=ticker, workbooks=(wb,)))
+    return row
+
+
+@pytest.mark.parametrize(("ticker", "filename", "cell", "situation", "lead"), [
+    # (+) B #2: V 7d605112ec68 (Jan-14-2026, Dec-02-2025) — Diginex's acquisition, Visa a seller
+    ("V", "Visa Inc NYSE V Key Developments.rtf", "Visa Inc. (NYSE:V)",
+     "Situation: Diginex Limited (NasdaqCM:DGNX) signed a non-binding memorandum of "
+     "understanding to acquire planA.earth GmbH", "Diginex Limited (NasdaqCM:DGNX)"),
+    # (+) LLY 4175d82ecd70 (May-04-2026, Mar-25-2026) — Merck's acquisition of Terns
+    ("LLY", "Eli Lilly and Company NYSE LLY Key Developments.rtf",
+     "Eli Lilly Investment Consulting (Shanghai) Co., Ltd.",
+     "Situation: Merck Sharp & Dohme LLC signed a definitive agreement to acquire Terns",
+     "Merck Sharp & Dohme LLC"),
+])
+def test_a_corporate_row_opening_on_another_organisation_is_not_the_companys(
+        monkeypatch: pytest.MonkeyPatch, ticker: str, filename: str, cell: str,
+        situation: str, lead: str) -> None:
+    row = _corporate(monkeypatch, ticker, filename, cell, "M&A Transaction Announcement",
+                     situation)
+    assert row.attribution == KdAttribution(party=KdParty.OTHER, filed_under=cell,
+                                            lead_party=lead)
+
+
+@pytest.mark.parametrize(("situation", "words", "ticker", "entities", "party"), [
+    # (+) B #4: "Lilly" alone is Eli Lilly, not Lilly Ventures (LLY's export lists both)
+    ("Situation: Lilly announced new data", ("eli", "lilly"), "LLY", (("lilly", "ventures"),),
+     KdParty.COMPANY),
+    # (-) a party sharing only the first word is not the company (General Mills on GM)
+    ("Situation: General Mills, Inc. announced a partnership", ("general", "motors"), "GM", (),
+     KdParty.OTHER),
+])
+def test_a_name_matches_on_its_identifying_words_not_the_first_alone(
+        situation: str, words: tuple[str, ...], ticker: str,
+        entities: tuple[tuple[str, ...], ...], party: KdParty) -> None:
+    att = cs.kd_attribution(None, situation, ticker=ticker, words=words, entities=entities)
+    assert att.party is party
+
+
+@pytest.mark.parametrize(("situation", "lead"), [
+    # (+) B #5: the run stops at its verb (LLY Oct-29-2026, V Aug-26-2026) …
+    ("Situation: Eli Lilly and Company Raised earning guidance for the year 2026",
+     "Eli Lilly and Company"),
+    ("Situation: Visa Inc. Announced the appointment of Kunal Chatterjee", "Visa Inc."),
+    # … and steps over an appositive to the party it joins (NFLX Jun-15-2026)
+    ("Situation: iHeartMedia, the No. 1 audio company in America, and Netflix announced",
+     "iHeartMedia and Netflix"),
+])
+def test_the_lead_party_is_a_party_not_a_capitalised_run(situation: str, lead: str) -> None:
+    assert cs.kd_lead_party(situation) == lead
+
+
+def test_an_entity_must_lead_its_part() -> None:
+    """(+) B #5: GOOGL Oct-08-2026 — Balyasny announces with Google Cloud (CIQ drops the 'and'):
+    the part opens on Balyasny, so it is another party's, not the entity's. (-) "Google Cloud"
+    opening its part is the entity's."""
+    ent = (("google",),)
+    assert cs.kd_attribution(
+        "Google LLC", "Situation: Balyasny Asset Management Google Cloud announced a "
+        "collaboration", ticker="GOOGL", words=("alphabet",), entities=ent).party is KdParty.OTHER
+    assert cs.kd_attribution(
+        "Google LLC", "Situation: Google Cloud announced a new strategic partnership",
+        ticker="GOOGL", words=("alphabet",), entities=ent).party is KdParty.ENTITY
+
+
+@pytest.mark.parametrize(("cell", "situation", "words", "ticker", "entities", "party"), [
+    # (-) the review round's own corpus check: a place or occasion leading in (V Jun-10-2026)
+    ("Visa Inc. (NYSE:V)", "Situation: At Visa Payments Forum 2026, Visa announced new AI",
+     ("visa",), "V", (), KdParty.COMPANY),
+    # (-) an entity's brand is the entity's, not another party's (BRBR Jan-07-2026)
+    ("Premier Nutrition Company, LLC", "Situation: Premier Protein® partnered with Hometown",
+     ("bellring",), "BRBR", (("premier", "nutrition"),), KdParty.ENTITY),
+])
+def test_the_corpus_checks_of_the_review_round(cell: str, situation: str,
+                                               words: tuple[str, ...], ticker: str,
+                                               entities: tuple[tuple[str, ...], ...],
+                                               party: KdParty) -> None:
+    att = cs.kd_attribution(cell, situation, ticker=ticker, words=words, entities=entities)
+    assert att.party is party
+
+
+@pytest.mark.parametrize(("ticker", "filename", "cell", "kd_type", "situation"), [
+    # (-) a corporate row whose lead names the company stays the company's: its board under
+    # CIQ's spelling (VITL Feb-19-2026), its executive with his title (WLK Feb-23-2026)
+    ("VITL", "Vital Farms Inc NasdaqGM VITL Key Developments.rtf", "Vital Farms, Inc.",
+     "Buyback Transaction Announcement",
+     "Situation: The Board of Diectors of Vital Farms, Inc. authorized a buyback plan"),
+    ("WLK", "Westlake Corporation NYSE WLK Key Developments.rtf",
+     "Westlake Corporation (NYSE:WLK)", "Executive/Board Change - Other",
+     "Situation: M. Steven Bender, Executive Vice President of Westlake Corporation, will "
+     "retire"),
+])
+def test_a_corporate_row_naming_the_company_stays_its_own(
+        monkeypatch: pytest.MonkeyPatch, ticker: str, filename: str, cell: str, kd_type: str,
+        situation: str) -> None:
+    row = _corporate(monkeypatch, ticker, filename, cell, kd_type, situation)
+    assert row.attribution is not None and row.attribution.party is KdParty.COMPANY

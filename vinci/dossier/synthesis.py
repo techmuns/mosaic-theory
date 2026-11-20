@@ -2723,9 +2723,9 @@ def driver_value_as_read(value: str | None, status: str | None, reason: str | No
 #: ONE HEADER PER GROUP, NOT A LINE PER ROW (W85's design question, coordinator B 2026-11-20). On
 #: the 26 committed pages at main `51c84843` a line under each such row added 29,264 bytes to the
 #: digests (AMZN +14.1%); the headline the digest prints already names who states the row on 510
-#: of the 523, so the group header says "not the company's own" once and the row says whose. The
-#: 13 whose headline does not name it carry "(stated by …)" (`driver_party_note`): +5,114 bytes
-#: over the 17 pages that move (MCK's +3.43% the most), and CNXC's and ROST's digests unchanged.
+#: of the 532, so the group header says "not the company's own" once and the row says whose. The
+#: 21 whose headline does not name it carry "(stated by …)" (`driver_party_note`): +5,920 bytes
+#: over the 19 pages that move (FUBO's +4.04% the most), and CNXC's and ROST's digests unchanged.
 KD_GROUP_HEADS: dict[str, str] = {
     "other": ("=== KEY DEVELOPMENTS STATED BY ANOTHER PARTY — not the company's own statement; "
               "the headline names who states it (a client announcing that it chose the company is "

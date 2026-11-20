@@ -2573,19 +2573,23 @@ class KdParty(enum.StrEnum):
     rows under the company's subsidiaries and investments (Lyft, Inc. (NasdaqGS:LYFT) on GOOGL's,
     Zipline International Inc. on UBER's), and under the company itself it files partners' and
     suppliers' news (Kartoon Studios contracting with Amazon Prime Video, under Amazon.com Services
-    LLC). Measured on the 26 committed pages at main `51c84843` (2026-11-20): of 1,056 rows, 492
-    are the company's, 41 joint, 464 another party's and 59 name only such an entity.
+    LLC). Measured on the 26 committed pages at main `51c84843` (2026-11-20, after coordinator B's
+    review of #1157): of 1,056 rows, 481 are the company's, 43 joint, 470 another party's, 58 name
+    only such an entity and 4 name no party that is read.
 
-    ``company`` — the row's lead party (`ciq_sheets.kd_lead_party`) names the company and no other
-    party; or no lead party is read and CIQ files the row under the company; or the row is a
-    corporate type, which `ciq_sheets._kd_subject_row` keeps only when it is the company's.
-    ``joint`` — the lead party names the company with another party ("Best Buy and Amazon").
-    ``entity`` — the lead party names only an UNLISTED entity this export files rows under, which
+    ``company`` — the row's lead party (`ciq_sheets.kd_lead_party`) is the company and no other
+    party (`ciq_sheets.kd_is`); or the row is a corporate type `ciq_sheets._kd_subject_row` keeps
+    whose lead party is a person, or names the company (an executive change).
+    ``joint`` — the lead party is the company with another party ("Best Buy and Amazon").
+    ``entity`` — the lead party opens on an UNLISTED entity this export files rows under, which
     the row does not name as the company: a subsidiary or an investment, and the export does not
     say which (Google LLC on GOOGL's, Zipline on UBER's).
-    ``other`` — the lead party names anyone else, or the row is filed under another LISTED company
-    and no lead party is read.
-    ``unread`` — no lead party is read, and CIQ does not file the row under the company."""
+    ``other`` — the lead party is anyone else (a corporate row opening on another organisation
+    included: Diginex acquiring planA.earth on Visa's export), or no lead party is read and the
+    row is filed under another LISTED company.
+    ``unread`` — no lead party is read, and the row is not filed under another listed company: the
+    Company cell says whom CIQ files a row under, not who states it, so it is never taken as the
+    company's."""
 
     COMPANY = "company"
     JOINT = "joint"

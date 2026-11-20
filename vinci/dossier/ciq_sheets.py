@@ -5660,7 +5660,12 @@ _KD_DATE_WORDS = (r"(?:[A-Z][a-z]+\.?\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4}"
 #: A dated lead-in before the party: "On September 8, 2026, the Board of Directors of Amazon.com,
 #: Inc. elected …". Without it the run would open on the date.
 _KD_LEADIN = re.compile(r"^(?:(?:On|As of|Effective|Since|By|In)\s+" + _KD_DATE_WORDS
-                        + r"|(?:Today|Recently|Earlier|Later)\b[^,]{0,30}),\s*")
+                        + r"|(?:Today|Recently|Earlier|Later)\b[^,]{0,30}"
+                        # a place or occasion: "At Visa Payments Forum 2026, Visa announced …"
+                        + r"|(?:At|During)\s+[^,]{1,60}),\s*")
+#: A board speaking for its company: "The Board of Diectors of Vital Farms, Inc. authorized …"
+#: (CIQ's spelling) — the company is the party.
+_KD_BOARD_OF = re.compile(r"^(?:The\s+)?Board\s+of\s+\w+\s+of\s+", re.IGNORECASE)
 #: "A subsidiary of Westlake Royal Building Products, which is owned by Westlake Corporation
 #: announced …": the party is the owner (the W85 audit's one unread row, on WLK's page).
 _KD_OWNED_BY = re.compile(r"^(?:A|An|The)\s+(?:wholly[- ]owned\s+)?(?:subsidiary|unit|division)"
@@ -5694,37 +5699,92 @@ def kd_identity_words(name: str) -> tuple[str, ...]:
     return tuple(w for w in bare.split() if w not in _KD_GENERIC and len(w) > 1)
 
 
+#: Words a capitalised run ends at: CIQ sometimes capitalises the verb after the party ("Eli
+#: Lilly and Company Raised earning guidance", "Visa Inc. Announced the appointment"). Only the
+#: announcement verbs, so a name ending in a noun ("… Partners", "… Services") is never cut.
+_KD_VERBS = frozenset({
+    "announced", "announces", "announce", "raised", "raises", "lowered", "lowers", "reaffirmed",
+    "reaffirms", "reported", "reports", "launched", "launches", "unveiled", "unveils",
+    "introduced", "introduces", "signed", "completed", "completes", "provided", "provides",
+    "updated", "updates", "appointed", "appoints", "acquired", "acquires", "agreed", "agrees",
+    "received", "receives", "selected", "selects", "confirmed", "confirms"})
+#: An appositive between a party and the party it is joined with: "iHeartMedia, the No. 1 audio
+#: company in America, and Netflix announced" is read as "iHeartMedia and Netflix".
+_KD_APPOSITIVE_AND = re.compile(r"^([^,]{1,60}),\s+(?:the|a|an)\s+[^,]{1,80},\s+(?=and\s)",
+                                re.IGNORECASE)
+#: The legal forms that make a lead party an ORGANISATION rather than a person: a corporate row
+#: (an executive change) opens on a person, and is the company's by #458's filter; one opening on
+#: another organisation (an acquirer) is not.
+_KD_LEGAL = frozenset({
+    "inc", "incorporated", "corp", "corporation", "co", "company", "companies", "llc", "lp",
+    "llp", "ltd", "limited", "plc", "sa", "sas", "ag", "nv", "se", "gmbh", "pte", "bv", "spa",
+    "holdings", "group", "aktiengesellschaft"})
+
+
+def kd_is(party: str | None, words: tuple[str, ...], ticker: str | None = None) -> bool:
+    """Is ``party`` — ONE party's name: a part of a lead party, a Company cell — the party
+    identified by ``words`` (or its ``(Exchange:TICKER)``)? Its first identifying word must be one
+    of ``words``, and then either every one of ``words`` is in it ("Amazon Web Services" for
+    amazon; "Eli Lilly Canada Inc." for eli lilly) or every one of its own is among ``words``, a
+    short form ("Lilly" for eli lilly). So "General Mills" is not General Motors, and "Balyasny
+    Asset Management Google Cloud" is not Google, where the first word alone took both (coordinator
+    B's review of #1157). A one-word identity still takes a namesake ("Target Hospitality")."""
+    if not party:
+        return False
+    if ticker and f":{ticker})" in party:
+        return True
+    own = kd_identity_words(party)
+    if not words or not own or own[0] not in words:
+        return False
+    return set(words) <= set(own) or set(own) <= set(words)
+
+
+def _kd_leads_with(party: str, words: tuple[str, ...]) -> bool:
+    """Does ``party`` open on the first of ``words`` (an entity's brand: "Google Cloud", "Premier
+    Protein®")? Never a party that merely contains it ("Balyasny Asset Management Google Cloud")."""
+    own = kd_identity_words(party)
+    return bool(own) and bool(words) and own[0] == words[0]
+
+
 def kd_names(text: str | None, words: tuple[str, ...], ticker: str | None = None) -> bool:
-    """Does ``text`` name the party identified by ``words`` (or by its ``(Exchange:TICKER)``)? Its
-    first identifying word, as a whole word, when that word has three letters or more ("Amazon
-    Web Services", "the Board of Directors of Amazon.com, Inc."); otherwise its first two words as
-    a phrase."""
+    """Does ``text`` — a headline, a sentence — name the party identified by ``words`` anywhere:
+    its ``(Exchange:TICKER)``, or every one of its identifying words ("Kartoon Studios, Inc.
+    Contracts with Amazon Prime Video …" names Kartoon Studios)."""
     if not text:
         return False
     if ticker and f":{ticker})" in text:
         return True
-    if not words:
+    return bool(words) and set(words) <= set(_kd_norm(text).split())
+
+
+def kd_is_organisation(lead: str | None) -> bool:
+    """Does a lead party name an organisation — a legal form (`_KD_LEGAL`) or a listing — rather
+    than a person ("Carmen A. Tapio, Director")?"""
+    if not lead:
         return False
-    toks = _kd_norm(text).split()
-    if len(words[0]) >= 3:
-        return words[0] in toks
-    return f" {' '.join(words[:2])} " in f" {' '.join(toks)} "
+    return bool(_KD_LISTING.search(lead)) or any(
+        w in _KD_LEGAL for w in _kd_norm(lead).split())
 
 
 def kd_lead_party(situation: str | None) -> str | None:
     """THE ONE READER of whom a Key Development's Situation opens on: its leading proper-noun run,
-    after a dated lead-in ("Kartoon Studios Inc.", "Best Buy and Amazon", "Lyft, Inc."). None when
-    there is no Situation, the run is a sentence opener (`_KD_OPENER`), or it names nothing
-    (`kd_identity_words` is empty: "A subsidiary of …")."""
+    after a dated lead-in ("Kartoon Studios Inc.", "Best Buy and Amazon", "Lyft, Inc."), cut at a
+    capitalised announcement verb (`_KD_VERBS`) and at an appositive (", the No. 1 …"), stepping
+    over one that ends in "and" another party. None when there is no Situation, the run is a
+    sentence opener (`_KD_OPENER`), or it names nothing (`kd_identity_words` is empty)."""
     s = " ".join((situation or "").split())
     if not s.lower().startswith("situation:"):
         return None
     s = _KD_OWNED_BY.sub("", _KD_LEADIN.sub("", s[len("situation:"):].strip()))
+    s = _KD_APPOSITIVE_AND.sub(r"\1 ", _KD_BOARD_OF.sub("", s))
     run: list[str] = []
     for k, tok in enumerate(s.split(" ")):
         bare = tok.lstrip("(\"'“‘")
         # a capital, a digit, or a camel-case brand's second letter ("nCino", "iHeartMedia")
         capital = bare[:1].isupper() or bare[:1].isdigit() or bare[1:2].isupper()
+        appositive = bool(run) and run[-1].endswith(",") and tok.lower() in ("the", "a", "an")
+        if k > 0 and (tok.lower().strip(".,;:") in _KD_VERBS or appositive):
+            break
         if (any(ch.isupper() for ch in tok) if k == 0
                 else capital or tok.lower() in _KD_CONNECT):
             run.append(tok)
@@ -5745,23 +5805,28 @@ def kd_attribution(company: str | None, situation: str | None, *, ticker: str,
     (`kd_identity_words` of its export's name); ``entities`` every UNLISTED Company cell of the
     export that does not name it, as identity words — the entities the export files rows under.
 
-    The lead party decides when one is read: it names the company (alone → company; with another
-    party → joint), or names only such an entity (entity), or names anyone else (other). With no
-    lead party read, the Company cell does: it names the company (company), names another listed
-    company (other), or neither (unread)."""
+    The lead party decides when one is read, part by part (`_kd_parties`, `kd_is`): a part is the
+    company (alone → company; with another party → joint), or a part is such an entity and none
+    is the company (entity), or neither (other). With NO lead party read, the row is unread: the
+    Company cell answers whom CIQ files it under, not who states it (320 of the 626 rows filed
+    under a cell naming the company whose lead WAS read are another party's, coordinator B
+    measured on #1157's head `4482be8d`), so it decides only
+    a row filed under another LISTED company (other) — never a guess that the row is the
+    company's (coordinator B's review of #1157)."""
     lead = kd_lead_party(situation)
     if lead is None:
-        if company is not None and kd_names(company, words, ticker):
-            party = KdParty.COMPANY
-        elif company is not None and _KD_LISTING.search(company):
-            party = KdParty.OTHER
-        else:
-            party = KdParty.UNREAD
-    elif kd_names(lead, words, ticker):
-        parts = _kd_parties(lead)
-        party = (KdParty.JOINT if any(not kd_names(p, words, ticker) for p in parts)
-                 else KdParty.COMPANY)
-    elif any(kd_names(lead, e) for e in entities):
+        listed_other = (company is not None and _KD_LISTING.search(company) is not None
+                        and not kd_is(company, words, ticker))
+        party = KdParty.OTHER if listed_other else KdParty.UNREAD
+        return KdAttribution(party=party, filed_under=company, lead_party=lead)
+    parts = _kd_parties(lead) or [lead]
+    own = [p for p in parts if kd_is(p, words, ticker)]
+    if own:
+        party = KdParty.JOINT if len(own) < len(parts) else KdParty.COMPANY
+    elif any(_kd_leads_with(p, e) for p in parts for e in entities):
+        # an entity's brand ("Premier Protein®" under Premier Nutrition Company, LLC): a part
+        # opening on the entity's first word, which only moves a row between labels that are
+        # not the company's
         party = KdParty.ENTITY
     else:
         party = KdParty.OTHER
@@ -5774,10 +5839,10 @@ KD_OWN_PARTIES = frozenset({KdParty.COMPANY, KdParty.JOINT})
 
 def kd_headline_names(headline: str | None, lead_party: str | None) -> bool:
     """Does a row's headline already name the party its Situation opens on — any one of them, for
-    "Best Buy and Amazon"? By `kd_names`, the one matcher. On the committed pages at main
-    `51c84843` it does on 510 of the 523 rows that are not the company's own ("Kartoon Studios,
-    Inc. Contracts with Amazon Prime Video …"), so a reader of the headline already has who states
-    it; the 13 others are where a reader must be told."""
+    "Best Buy and Amazon"? By `kd_names`. On the committed pages at main `51c84843` it does on
+    511 of the 532 rows that are not the company's own ("Kartoon Studios, Inc. Contracts with
+    Amazon Prime Video …"), so a reader of the headline already has who states it; the 21 others
+    are where a reader must be told."""
     if not lead_party:
         return False
     return any(kd_names(headline, kd_identity_words(p)) for p in _kd_parties(lead_party))
@@ -5838,7 +5903,7 @@ def key_developments(bundle: CiqBundle) -> tuple[list[OperatingDriver], str | No
     entities = tuple(dict.fromkeys(
         kd_identity_words(c) for cells in rows_cells
         if cells and _KD_DATE.match(cells[0]) and (c := cell_of(cells))
-        and not _KD_LISTING.search(c) and not kd_names(c, words, bundle.ticker)))
+        and not _KD_LISTING.search(c) and not kd_is(c, words, bundle.ticker)))
     out: list[OperatingDriver] = []
     seen: set[str] = set()
     for i, cells in enumerate(rows_cells):
@@ -5867,9 +5932,16 @@ def key_developments(bundle: CiqBundle) -> tuple[list[OperatingDriver], str | No
         if not headline or key in seen:
             continue
         seen.add(key)
-        # a corporate row is the company's by the filter above; it keeps what it was read on
-        attribution = (KdAttribution(party=KdParty.COMPANY, filed_under=company,
-                                     lead_party=kd_lead_party(situation)) if corporate
+        # a corporate row the filter above keeps is the company's while its Situation opens on a
+        # person (an executive change: "Jane Roe resigned …"); one that opens on another
+        # ORGANISATION is read as an operating row is — Diginex acquiring planA.earth on Visa's
+        # export, Merck acquiring Terns on Lilly's (coordinator B's review of #1157)
+        # (a lead naming the company anywhere — "M. Steven Bender, … of Westlake Corporation" —
+        # is the company's executive, not another organisation)
+        lead = kd_lead_party(situation)
+        another_org = kd_is_organisation(lead) and not kd_names(lead, words, bundle.ticker)
+        attribution = (KdAttribution(party=KdParty.COMPANY, filed_under=company, lead_party=lead)
+                       if corporate and not another_org
                        else kd_attribution(company, situation, ticker=bundle.ticker,
                                            words=words, entities=entities))
         out.append(OperatingDriver(
