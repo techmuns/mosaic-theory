@@ -28,7 +28,7 @@ superseded-by:
   `netcache.os.pread`). Without the flock, two processes then read the same slot on nearly every
   turn, so a missing flock fails the test every time instead of only when two reads happen within
   microseconds.
-- The other six tests in the file are unchanged. No change to `vinci/`.
+- The file's seven other tests are unchanged. No change to `vinci/`.
 
 **WHY.**
 - **It was the measurement, not the lock.** The pacer takes a slot under the flock, releases it,
@@ -74,10 +74,12 @@ superseded-by:
   | `nowait`: `acquire` sends whether or not it got a slot | 20 of 20 failed | 20 of 20 failed | **20 of 20 failed** (the `take, send` order check) |
 
   - The after test fails `noflock` and `ownfile` with slot gaps of 0.0000–0.0049 s.
-- **The other timing tests in the file.** They are deterministic by construction: they run on
-  the file's per-thread virtual clock, which only sleeping moves. So the times they assert on
-  depend on the order slots are reserved under the locks, never on the scheduler. They passed
-  40 runs of 40 under the load at averages 53.9–75.6.
+- **The other timing tests in the file.** Five of the file's seven other tests assert on
+  times. They are deterministic by construction: they run on the file's per-thread virtual
+  clock, which only sleeping moves. So the times they assert on depend on the order slots are
+  reserved under the locks, never on the scheduler. The other two check which pace file is in
+  use. All seven (`-k "not two_processes"`, the `network` one included) passed 40 runs of 40
+  under the load at averages 53.9–75.6.
 - **The suite.** Ruff and `mypy --strict vinci/` are clean, and `pytest -m "not network"` is
   green (the PR body has the totals).
 
