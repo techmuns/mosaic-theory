@@ -1,6 +1,6 @@
 ---
 id: W77
-status: open
+status: shipped
 date: 2026-11-20
 prs: []
 supersedes:
@@ -432,3 +432,5 @@ The census was re-run on round 2's guard: the same 100 calls, the same hits.
   the same path and applies it in a fresh worktree under a new branch, `w77b-apply`: this
   body's `git switch -c w77-apply` fails while that branch is checked out in a worktree, and
   its later blocks then run on local main (A's review of #1163).
+
+**2026-11-20 — APPLIED; the PR trail.** This record merged in #1155 (`e7fbe63c`, the patch), #1163 (`c0a3e4a3`, the patch replaced); its `prs:` line, frozen at merge, reads empty. The patch was applied by the operator in #1166 (`e2fe4b48`), on branch `w77b-apply` cut from main `c0a3e4a3`, with both protected files approved in the commit ("open a branch with the instructions to apply these"). The applied files are byte-identical to the patch's result on main. Coordinator B's re-check of the W77b-fixed patch recommended APPLY (#1004 comment 7040551798). STATE row 32 item (37) is closed, and this record's status flips to `shipped`. Still open as documented: a worktree created inside the same call (B#6), and the live check in a fresh session (one Bash write in a scratchpad worktree, one under `.claude/worktrees/`).
