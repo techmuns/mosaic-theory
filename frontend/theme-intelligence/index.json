@@ -335,7 +335,7 @@
   "site/uploads.html"
  ],
  "kind": "theme-intelligence-publish",
- "published_at": "2026-11-19T13:35:07+00:00",
+ "published_at": "2026-11-20T05:43:38+00:00",
  "retired": {
   "TH-1516B6186B": {
    "last_run": "R-20261016T163302Z-market",
@@ -394,8 +394,8 @@
   }
  },
  "run_as_of": "2026-11-19",
- "run_id": "R-20261119T133000Z-ingest",
- "run_mode": "ingest",
+ "run_id": "R-20261119T150131Z-market",
+ "run_mode": "market",
  "test_data": false,
  "theses": 106,
  "week": "19 Nov 2026 \u2014 manual runs since the last weekly scan"

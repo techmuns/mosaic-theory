@@ -6,10 +6,13 @@ supersedes:
 superseded-by:
 ---
 
-# Artifact pass: the research desk republished after the weekly run of 2026-11-19 and the operator's 8 manual uploads (7 Goldman Sachs, 1 Morgan Stanley); $5.13 + $25.17
+# Artifact pass: the research desk republished after the weekly run of 2026-11-19, the operator's 8 manual uploads (7 Goldman Sachs, 1 Morgan Stanley) and the enrich and market runs that followed them; $5.13 + $25.17 + $0.58
 
-**WHAT.** `frontend/theme-intelligence/` is republished from `theme-intelligence-state@4c8f87ed`
-and rendered by main `05516bdd` (`publish`, run R-20261119T133000Z-ingest). It holds 333 files and
+**WHAT.** `frontend/theme-intelligence/` is republished from `theme-intelligence-state@a74c4e30`
+and rendered by main `51c84843`, which carries #1140's 400-character desk quote cap (`publish`, run
+R-20261119T150131Z-market). The first cut of this PR rendered `4c8f87ed` (run
+R-20261119T133000Z-ingest) by main `05516bdd`; the refresh adds the enrich and market runs below and
+the cap. It holds 333 files and
 106 thesis pages. Compared with the live desk (published 2026-11-10 from R-20261110T153023Z-market):
 - 91 files are new: 30 new theses × 3 pages, plus `site/articles-2026-11-19.html`;
 - 241 are rewritten, `index.json` included;
@@ -64,6 +67,19 @@ The weekly scan's 6 articles are one step back, under "Week of 9–19 Nov 2026".
   - row 5: 1 of 33 figures.
 - **Authors.** Each article credits the institution as stated, plus any analysts its text names. `girquark` appears nowhere in the registry: 0 of 25 JSONL files at `4c8f87ed`.
 
+**After the uploads: enrich, then market.** Both were approved by the operator, relayed by A,
+2026-11-19, verbatim: "Run both first (Recommended)", and for the enrich "Approve, run it
+(Recommended)".
+- **Enrich**, R-20261119T145519Z-enrich: $0.5764 against a `--budget` of $7.65 (the spend guard's
+  bound for its 14 calls; estimated $0.48–$0.70).
+  - 14 sets, one per thesis: 72 company proposals, 27 refused.
+  - Of the 16 theses the uploads created or re-versioned, the other 2 (TH-393DF5CD2B,
+    TH-71F810A7B5) are REVIEW_NEEDED, and `enrich` reads ACTIVE theses only.
+  - State branch `4c8f87ed..959d7734`.
+- **Market**, R-20261119T150131Z-market: $0, run locally after the enrich, as of 2026-11-19.
+  - The same 16 theses priced: 8 of 10 exposures and 62 of 62 implied companies.
+  - State branch `959d7734..a74c4e30`.
+
 **The duplicate checks.** All were at $0, from what the registry stores. None is a duplicate, so nothing was skipped.
 - **Rows 5–7 against A-714c9c0a1871** (German Exports, 2026-10-15):
   - neither the file sha256 nor the content sha256 equals the held version, or any held version;
@@ -78,24 +94,40 @@ The weekly scan's 6 articles are one step back, under "Week of 9–19 Nov 2026".
   - So it was re-run `--as-new` under the same rule.
 
 **HOW VERIFIED.**
-- **Manifest.** `index.json` lists 333 files, equal to the folder.
-- **Links.** 0 broken among 8,459 relative `href`/`src`. A first count flagged 106; they were `data-src` attributes on the Themes table's rows, not links.
+- **The registry is the state tip.** The local registry, exported, reproduces all 25 JSONL files of
+  `theme-intelligence-state@a74c4e30` byte for byte (97 runs).
+- **Manifest.** `index.json` lists 333 files: every file in the folder but itself.
+- **Links.** 0 broken among 8,459 relative `href`/`src` (`data-src` attributes on the Themes
+  table's rows are not links, and are not counted).
 - **No local paths or email addresses** anywhere in the folder.
-- **`publish --check`.** Exit 2 before ("shows run R-20261110T153023Z-market … republish"), exit 0 after.
+- **`publish --check`.** First cut: exit 2 before ("shows run R-20261110T153023Z-market …
+  republish"), exit 0 after. Refresh: exit 2 before ("shows run R-20261119T133000Z-ingest … the
+  registry's latest run is R-20261119T150131Z-market"), exit 0 after.
 - **`frontend/build.py`** left no tracked change.
-- **Quotes.** The longest curly-quoted span is now 911 characters, against 407 on the live desk. It is the stored verbatim quote of 5 claims from row 1 (A-84d70c2ec04f, on TH-05B1B3DE4A): a forecast table read as one block, 192 words, 29% of its characters digits. It is the only verbatim source quote over 412 characters. The one other span over 412 (583 characters, on Review) is a card's model-written market-risk line, not source text.
+- **Quotes.** The longest source quote on the desk is 398 characters: the forecast table that 5
+  claims from row 1 quote (A-84d70c2ec04f, on TH-05B1B3DE4A; 911 characters stored, 192 words), cut
+  by #1140's cap with its note. The first cut printed it whole. The two longer curly-quoted spans,
+  583 and 407 characters, both on Review, are a card's model-written market-risk line and a card's
+  model-written bottom line, not source text.
 
 **BOUNDARY.**
-- Registry counts are at `theme-intelligence-state@4c8f87ed`.
+- Registry counts are at `theme-intelligence-state@a74c4e30` (the uploads' own counts at
+  `4c8f87ed`, as stated).
 - "Active" means status ACTIVE or REVIEW_NEEDED: 76 (74 + 2).
-- The desk counts are what `publish` rendered from R-20261119T133000Z-ingest by main `05516bdd`.
+- The desk counts are what `publish` rendered from R-20261119T150131Z-market by main `51c84843`.
+  The headline counts are unchanged from the first cut: the enrich and market runs change no thesis
+  version.
 - The quote lengths are curly-quoted spans in the published HTML, tags stripped.
 - The scan counts are at `ea8fb4a6` (before) and `2dda6c12` (after).
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- *Spend.* $5.1262 for the scan and $25.1682 for the uploads, against $84 approved for the uploads.
-- *Not priced, not enriched.* 16 active theses (the uploads' new and re-versioned ones) have no market context from today's run (12 never priced) and no company proposals. The 2026-11-10 pass ran a local `market` ($0) and a paid `enrich` before publishing. Neither was in this brief, and vendor pulls are the operator's call. A `market` run plus an `enrich` run, then a republish, fill them.
-- *The long quote.* Whether a 911-character table excerpt is a "short verbatim quote" is the operator's call. Withholding it would need a code change; this pass carries none.
+- *Spend.* $5.1262 for the scan, $25.1682 for the uploads (against $84 approved) and $0.5764 for
+  the enrich (against its $7.65 bound).
+- *Priced and enriched.* The first cut's 16 unpriced theses are priced, and 14 of them have company
+  proposals (above). The 2 REVIEW_NEEDED theses have none until they are ACTIVE.
+- *The quote cap.* The 911-character table is printed cut at 400, with its note. The operator kept
+  #1140's cap on 2026-11-20, verbatim: "Keep the 400 cap (Recommended)". A's docs PR records that
+  day's rulings.
 - *Found, not fixed.*
   - The identity check reads a publisher's footer and disclosures as argument text: 4 of 7 Goldman Sachs uploads needed `--as-new` this week.
   - The `Un-named` metadata byline (STATE row 32 (8)) is unchanged.
