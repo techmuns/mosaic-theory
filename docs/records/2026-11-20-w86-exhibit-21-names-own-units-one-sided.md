@@ -2,7 +2,7 @@
 id: W86
 status: recorded
 date: 2026-11-20
-prs: []
+prs: [1152]
 ---
 
 # W86: a 10-K's Exhibit 21 can confirm that a name is the filer's own and can never show that a name is not. On B's 59 W85 `entity` rows, the CIQ company cell (`filed_under`) matches the filer's list on 24 (19 listed exactly, 5 the filer itself) and W85's `lead_party` adds none; 9 of B's 11 own-marked rows match, none of its 3 not-own rows does; 33 of the 35 misses are on lists that say they omit insignificant subsidiaries ($0, a new reader, unwired)
