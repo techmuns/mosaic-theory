@@ -1120,3 +1120,311 @@ def test_review_gate_reads_a_create_on_a_heredoc_marker_line(tmp_path: pathlib.P
     assert not gate.opens_a_pr("cat > note.md <<'EOF'\ngh pr create --fill\nEOF")
     repo = _branch_checkout(tmp_path, "vinci/probe.py")
     assert _create(repo, [], command=marker_line).returncode == 2
+
+
+# ── W77: a protected file written through the Bash tool ──────────────────────────────────────────
+#
+# Twice on 2026-11-19 a session changed a protected file through the Bash tool, so the guard's ask
+# never reached the operator; the commit gate caught both (coordinator B on #1004, comment
+# 7031763467). #1133 is one: a Python script rewrote scenarios/IT.json through the record API,
+# which builds the path inside vinci/scenarios.py. The guard is wired to Edit|Write only. The fix,
+# docs/patches/w77-bash-writes-ask-first.diff, is for the operator to apply (agents do not edit
+# .claude/hooks/): it reads each Bash call before it runs and compares git status after it.
+
+W77 = pytest.mark.xfail(strict=True, reason=(
+    "W77: the guard runs only on Edit/Write, so a Bash write to a protected file reaches disk with "
+    "no ask. The fix is docs/patches/w77-bash-writes-ask-first.diff, for the operator to apply "
+    "(agents do not edit .claude/hooks/); applying it turns this into an XPASS, which fails the "
+    "suite, and the patch removes this marker."))
+
+IT_RECORD = '{"ticker": "IT", "note": "A"}\n'
+#: A stand-in for vinci/scenarios.py's record API (`read_record` → `model_copy` → `write_record`):
+#: the caller never names the file, as in #1133.
+RECORD_API = '''import json
+from pathlib import Path
+
+FOLDER = Path(__file__).parent / "scenarios"
+
+
+def read_record(ticker):
+    return json.loads((FOLDER / f"{ticker}.json").read_text())
+
+
+def write_record(rec):
+    (FOLDER / f"{rec['ticker']}.json").write_text(json.dumps(rec) + "\\n")
+'''
+#: A repo script that READS a protected file and writes a plain one, as frontend/build.py does.
+COUNT_SCRIPT = '''import json
+from pathlib import Path
+
+rec = json.loads(Path("scenarios/IT.json").read_text())
+Path("notes/count.txt").write_text(str(len(rec)) + "\\n")
+'''
+#: The #1133 shape: the record read, changed and written back, no protected path in the command.
+RECORD_REWRITE = ("python3 - <<'EOF'\nfrom records import read_record, write_record\n"
+                  "rec = read_record('IT')\nrec['note'] = 'B'\nwrite_record(rec)\nEOF")
+
+
+def _protected_checkout(tmp_path: pathlib.Path) -> pathlib.Path:
+    """A mosaic checkout holding the two 2026-11-19 incidents' protected files, a plain file, a
+    file to copy in, the record-API stand-in and a reading script; origin/main is its HEAD."""
+    repo = _committed_checkout(tmp_path, {
+        "scenarios/IT.json": IT_RECORD, "vinci/evals/variants.py": "VALUE = 1\n",
+        "notes/plain.md": "plain\n", "incoming.json": '{"new": 1}\n', "records.py": RECORD_API,
+        "tools/count.py": COUNT_SCRIPT})
+    subprocess.run(["git", "-C", str(repo), "update-ref", "refs/remotes/origin/main", "HEAD"],
+                   check=True)
+    return repo
+
+
+def _wired(event: str, tool: str) -> list[str]:
+    """The hook scripts settings.json runs for ``tool`` on ``event``, chosen as Claude Code chooses
+    them: every group whose matcher (a regex; empty or `*` for all) matches the tool's name."""
+    scripts: list[str] = []
+    for group in json.loads(SETTINGS.read_text())["hooks"].get(event, []):
+        matcher = group.get("matcher") or ""
+        if matcher in ("", "*") or re.fullmatch(matcher, tool):
+            for hook in group["hooks"]:
+                found = re.search(r"\.claude/hooks/(\w+\.py)", hook["command"])
+                if found:
+                    scripts.append(found.group(1))
+    return scripts
+
+
+def _bash_guard(event: str, command: str, repo: pathlib.Path, session: str, call: str,
+                wired: bool) -> dict[str, object]:
+    """The guard's answer to one Bash call ({} for none). ``wired``: only if settings.json routes
+    this event's Bash calls to it, as Claude Code would; else the script is run directly, which
+    pins what it does whatever the wiring."""
+    if wired and "decision_path_guard.py" not in _wired(event, "Bash"):
+        return {}
+    out = _run("decision_path_guard.py", {
+        "session_id": session, "hook_event_name": event, "tool_name": "Bash",
+        "tool_use_id": call, "cwd": str(repo), "tool_input": {"command": command}},
+        cwd=repo, env={"CLAUDE_PROJECT_DIR": str(repo)})
+    assert out.returncode == 0, out.stderr
+    answer: dict[str, object] = json.loads(out.stdout) if out.stdout.strip() else {}
+    return answer
+
+
+def _bash_call(command: str, repo: pathlib.Path, session: str, wired: bool = True,
+               ) -> tuple[dict[str, object], subprocess.CompletedProcess[str], dict[str, object]]:
+    """One Bash call as Claude Code runs it: PreToolUse, the command itself (bash, in the
+    checkout; an ask is taken as granted), then PostToolUse — or PostToolUseFailure when the
+    command exits non-zero."""
+    call = f"toolu_{uuid.uuid4().hex}"
+    before = _bash_guard("PreToolUse", command, repo, session, call, wired)
+    ran = subprocess.run(["bash", "-c", command], cwd=repo, capture_output=True, text=True,
+                         timeout=60)
+    event = "PostToolUse" if ran.returncode == 0 else "PostToolUseFailure"
+    return before, ran, _bash_guard(event, command, repo, session, call, wired)
+
+
+def _asked(answer: dict[str, object]) -> str:
+    """The reason of the guard's ask ('' when it did not ask)."""
+    decision = answer.get("hookSpecificOutput")
+    if isinstance(decision, dict) and decision.get("permissionDecision") == "ask":
+        return str(decision.get("permissionDecisionReason", ""))
+    return ""
+
+
+#: (form, command, the protected file it writes) — the forms the brief names (`>`, `tee`,
+#: `python -c`, `sed -i`, `cp`/`mv`), the inline heredoc that made 84 of the census's 100 asks, and
+#: the reading through `cd` and `bash -c`.
+BASH_WRITES = (
+    ("redirect", "echo '{}' > scenarios/IT.json", "scenarios/IT.json"),
+    ("append", "printf 'X = 2\\n' >> vinci/evals/variants.py", "vinci/evals/variants.py"),
+    ("tee", "echo '{}' | tee scenarios/IT.json > /dev/null", "scenarios/IT.json"),
+    ("python -c", "python3 -c \"from pathlib import Path; Path('scenarios/IT.json')"
+                  ".write_text('{}')\"", "scenarios/IT.json"),
+    ("python heredoc", "python3 - <<'EOF'\np = 'vinci/evals/variants.py'\ns = open(p).read()\n"
+                       "open(p, 'w').write(s.replace('1', '2'))\nEOF", "vinci/evals/variants.py"),
+    ("sed -i", "sed -i.bak 's/1/2/' vinci/evals/variants.py", "vinci/evals/variants.py"),
+    ("cp", "cp incoming.json scenarios/IT.json", "scenarios/IT.json"),
+    ("mv", "mv incoming.json scenarios/IT.json", "scenarios/IT.json"),
+    ("cp into the directory", "cp incoming.json scenarios/", "scenarios/incoming.json"),
+    ("cd, then sed -i", "cd vinci && sed -i.bak 's/1/2/' evals/variants.py",
+     "vinci/evals/variants.py"),
+    ("bash -c", "bash -c \"echo '{}' > scenarios/IT.json\"", "scenarios/IT.json"),
+)
+
+
+@W77
+@pytest.mark.parametrize(("form", "command", "rel"), BASH_WRITES, ids=[c[0] for c in BASH_WRITES])
+def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
+        tmp_path: pathlib.Path, form: str, command: str, rel: str) -> None:
+    """W77. REPRODUCTION: the command, run by bash in the checkout, changes the protected file on
+    disk — that half passes today. The ask is what fails: settings.json routes no Bash call to the
+    guard, so nothing asked first. With the patch, the ask names the file and the line the gate
+    will want, as an Edit's does."""
+    repo = _protected_checkout(tmp_path)
+    target = repo / rel
+    was = target.read_bytes() if target.exists() else None
+    before, ran, _ = _bash_call(command, repo, _session())
+    assert ran.returncode == 0, ran.stderr
+    assert (target.read_bytes() if target.exists() else None) != was, f"{form}: nothing written"
+    reason = _asked(before)
+    assert reason, f"{form}: {rel} changed on disk and nothing asked first"
+    assert f"`{rel}`" in reason and f'Operator-approved: {rel} "' in reason
+
+
+@W77
+def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs() -> None:
+    """Before (PreToolUse: ask on a visible write), after (PostToolUse: report a write the command
+    did not show) and after a failure (PostToolUseFailure: a script that wrote, then exited 1)."""
+    for event in ("PreToolUse", "PostToolUse", "PostToolUseFailure"):
+        assert "decision_path_guard.py" in _wired(event, "Bash"), event
+
+
+@W77
+def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_it_runs(
+        tmp_path: pathlib.Path) -> None:
+    """#1133's shape (2026-11-19): the record read, changed and written back through an API that
+    builds the path itself. No reading of the command can see the write, so nothing asks before;
+    the after-check compares git status, tells the agent to stop and ask, and tells the operator.
+    Once per file per session."""
+    repo = _protected_checkout(tmp_path)
+    session = _session()
+    before, ran, after = _bash_call(RECORD_REWRITE, repo, session)
+    assert ran.returncode == 0, ran.stderr
+    assert json.loads((repo / "scenarios" / "IT.json").read_text())["note"] == "B"
+    assert _asked(before) == ""                   # the command names no protected path
+    assert after.get("decision") == "block", after
+    assert "`scenarios/IT.json`" in str(after["reason"])
+    assert "STOP and ask the operator" in str(after["reason"])
+    assert "scenarios/IT.json" in str(after["systemMessage"])
+    again = _bash_call(RECORD_REWRITE.replace("'B'", "'C'"), repo, session)[2]
+    assert again == {}                            # reported once per file per session
+
+
+@W77
+def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
+        tmp_path: pathlib.Path) -> None:
+    """A Bash call that exits non-zero gets no PostToolUse, only PostToolUseFailure (Claude Code's
+    hooks reference), so a script that wrote and then crashed must be read there."""
+    repo = _protected_checkout(tmp_path)
+    crash = RECORD_REWRITE.replace("write_record(rec)\n",
+                                   "write_record(rec)\nraise SystemExit(1)\n")
+    _, ran, after = _bash_call(crash, repo, _session())
+    assert ran.returncode == 1
+    context = after.get("hookSpecificOutput")
+    assert isinstance(context, dict), after
+    assert context.get("hookEventName") == "PostToolUseFailure"
+    assert "`scenarios/IT.json`" in str(context.get("additionalContext"))
+
+
+@W77
+def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does(
+        tmp_path: pathlib.Path) -> None:
+    """Asked once per file per session, whichever tool asked: the grant is recorded when the call
+    has run, the asked file is not then reported as unasked, and another session asks again."""
+    repo = _protected_checkout(tmp_path)
+    session = _session()
+    first, _, after = _bash_call("echo '{}' > scenarios/IT.json", repo, session)
+    assert _asked(first) and after == {}
+    assert _asked(_bash_call("echo '[]' > scenarios/IT.json", repo, session)[0]) == ""
+    edit = _run("decision_path_guard.py", {
+        "session_id": session, "hook_event_name": "PreToolUse", "tool_name": "Edit",
+        "tool_input": {"file_path": str(repo / "scenarios" / "IT.json")}})
+    assert edit.stdout == ""
+    assert _asked(_bash_call("echo '{}' > scenarios/IT.json", repo, _session())[0])
+
+
+@W77
+def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
+        tmp_path: pathlib.Path) -> None:
+    """Review round 0: a Python literal naming the folder asks about `scenarios/`; once granted,
+    the file the call writes there is not reported as unasked."""
+    repo = _protected_checkout(tmp_path)
+    command = ("python3 -c \"from pathlib import Path; d = Path('scenarios'); "
+               "(d / 'IT.json').write_text('{}')\"")
+    before, ran, after = _bash_call(command, repo, _session())
+    assert ran.returncode == 0, ran.stderr
+    assert "`scenarios/`" in _asked(before)
+    assert after == {}
+
+
+@W77
+def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path) -> None:
+    """CLAUDE.md: a truncated output prints its own truncation. Eleven records written through the
+    API: the notice lists ten and says so."""
+    repo = _protected_checkout(tmp_path)
+    command = ("python3 -c \"import records; "
+               "[records.write_record({'ticker': f'T{i}'}) for i in range(11)]\"")
+    _, ran, after = _bash_call(command, repo, _session())
+    assert ran.returncode == 0, ran.stderr
+    assert "11 protected file(s) (showing 10 of 11)" in str(after.get("systemMessage"))
+
+
+#: (form, command) — a Bash call that writes no protected file, or only reads one.
+BASH_LEAVES = (
+    ("redirect to a plain file", "echo x > notes/plain.md"),
+    ("sed -i on a plain file", "sed -i.bak 's/plain/flat/' notes/plain.md"),
+    ("python writes a plain file", "python3 -c \"open('notes/out.json', 'w').write('{}')\""),
+    ("python with a glob-shaped string", "python3 -c \"import glob; open('notes/out.txt', 'w')"
+                                         ".write(str(glob.glob('*')))\""),
+    ("mv of a plain file", "mv notes/plain.md notes/moved.md"),
+    ("cp from a protected file", "cp scenarios/IT.json notes/copy.json"),
+    ("cat", "cat scenarios/IT.json"),
+    ("sed -n", "sed -n 1p vinci/evals/variants.py"),
+    ("grep into a plain file", "grep -n VALUE vinci/evals/variants.py > notes/grep.txt"),
+    ("python reads", "python3 -c \"import json; print(json.load(open('scenarios/IT.json')))\""),
+    ("python heredoc reads", "python3 - <<'EOF'\nprint(open('vinci/evals/variants.py').read())\n"
+                             "EOF"),
+    ("a script that reads scenarios/", "python3 tools/count.py"),
+    ("git show into a plain file", "git show HEAD:scenarios/IT.json > notes/old.json"),
+    ("git diff", "git diff -- scenarios/IT.json"),
+    ("a heredoc body naming writes", "cat > notes/plan.md <<'EOF'\necho '{}' > scenarios/IT.json\n"
+                                     "sed -i '' 's/1/2/' vinci/evals/variants.py\nEOF"),
+    ("a quoted string naming a write", "echo \"cat > scenarios/IT.json\""),
+    ("a comment naming a write", "ls scenarios  # then > scenarios/IT.json"),
+    ("restore from the index", "git checkout -- scenarios/IT.json"),
+)
+
+
+@pytest.mark.parametrize(("form", "command"), BASH_LEAVES, ids=[c[0] for c in BASH_LEAVES])
+def test_a_bash_call_that_writes_no_protected_file_is_never_asked_about_or_reported(
+        tmp_path: pathlib.Path, form: str, command: str) -> None:
+    """NEGATIVE PINS (W77). Run straight against the guard script, so they hold whether or not
+    settings.json wires it: today the guard says nothing to any Bash call, and with the patch it
+    must still say nothing here. Each command really runs, and no protected byte moves."""
+    repo = _protected_checkout(tmp_path)
+    protected = ("scenarios/IT.json", "vinci/evals/variants.py")
+    was = {rel: (repo / rel).read_bytes() for rel in protected}
+    before, ran, after = _bash_call(command, repo, _session(), wired=False)
+    assert ran.returncode == 0, ran.stderr
+    assert before == {} and after == {}, form
+    assert {rel: (repo / rel).read_bytes() for rel in protected} == was
+
+
+def test_a_protected_change_made_before_the_call_is_not_blamed_on_it(
+        tmp_path: pathlib.Path) -> None:
+    """NEGATIVE PIN (W77). The after-check reports what THIS call changed: a protected file already
+    modified before it (by an approved Edit, another session, the operator) is not reported by a
+    call that only reads it."""
+    repo = _protected_checkout(tmp_path)
+    (repo / "scenarios" / "IT.json").write_text('{"ticker": "IT", "note": "edited before"}\n')
+    before, ran, after = _bash_call("cat scenarios/IT.json && echo x > notes/plain.md", repo,
+                                    _session(), wired=False)
+    assert ran.returncode == 0 and before == {} and after == {}
+
+
+def test_taking_mains_own_content_is_neither_asked_about_nor_reported(
+        tmp_path: pathlib.Path) -> None:
+    """NEGATIVE PIN (W77). A re-sync writes protected files, but to main's own content, which the
+    gate never counts: `git checkout origin/main -- f` is not asked about, and the content it lands
+    is not reported."""
+    repo = _protected_checkout(tmp_path)
+    git = ["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t"]
+    branch = subprocess.run([*git, "branch", "--show-current"], check=True, capture_output=True,
+                            text=True).stdout.strip()
+    subprocess.run([*git, "checkout", "-qb", "main-moved"], check=True)
+    (repo / "scenarios" / "IT.json").write_text('{"ticker": "IT", "note": "main"}\n')
+    subprocess.run([*git, "commit", "-qam", "main moves"], check=True)
+    subprocess.run([*git, "update-ref", "refs/remotes/origin/main", "HEAD"], check=True)
+    subprocess.run([*git, "checkout", "-q", branch], check=True)
+    before, ran, after = _bash_call("git checkout origin/main -- scenarios/IT.json", repo,
+                                    _session(), wired=False)
+    assert ran.returncode == 0, ran.stderr
+    assert json.loads((repo / "scenarios" / "IT.json").read_text())["note"] == "main"
+    assert before == {} and after == {}
