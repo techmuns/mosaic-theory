@@ -14,10 +14,11 @@ registration written before the first draw.
                                               BY DEFAULT, and --single-run opts out, stated
     run-compare --registration FILE --budget-ledger FILE --out-dir DIR [--cap USD] --paid
                                               PAID: the registered draws, page by page, ONCE
-    void-claim --registration FILE --budget-ledger FILE --out-dir DIR
+    void-claim --registration FILE --budget-ledger FILE --out-dir DIR --ruling WORDS
                                               $0: void a run-compare claim that drew nothing (no
                                               draws, $0.00, nothing recorded after it), in the
-                                              ledger and this checkout's index
+                                              ledger and this checkout's index, with the
+                                              operator's words; honoured once on main
     score --out-dir DIR --registration FILE --budget-ledger FILE
                                               $0: the registered rule, logged, with every run
                                               the ledger records under the registration
@@ -207,6 +208,7 @@ def main(argv: list[str] | None = None) -> int:
     vc.add_argument("--registration", required=True, type=Path)
     vc.add_argument("--budget-ledger", required=True, type=Path)
     vc.add_argument("--out-dir", required=True, type=Path)
+    vc.add_argument("--ruling", required=True)   # the operator's words that ruled the void
     s = sub.add_parser("score")
     s.add_argument("--out-dir", required=True, type=Path)
     s.add_argument("--registration", required=True, type=Path)
@@ -387,11 +389,14 @@ def main(argv: list[str] | None = None) -> int:
         from vinci.evals import registry
         claimed = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
         budget = rp.Budget.load(a.budget_ledger)
-        row = cm.void_unspent_claim(claimed, budget=budget, out_dir=a.out_dir)   # checks only
-        registry.record_void(claimed, approval=registry.approval_id(a.budget_ledger))
-        budget.record(row)
-        print(f"voided {claimed.sha[:16]}'s claim into {a.out_dir}: commit {registry.INDEX}'s "
-              "void row with the run's record, then run-compare draws it into a fresh folder")
+        cm.void_claim(claimed, budget=budget, out_dir=a.out_dir, ruling=a.ruling)   # locked
+        # THE PROCEDURE THAT FOLLOWS (A's review of #1167, items 1a and 3): the index void is
+        # honoured only on main, and a present key the API refuses is claimed like a good one
+        print(f"voided {claimed.sha[:16]}'s claim into {a.out_dir}: merge {registry.INDEX}'s "
+              "void row to main with the run's record (it is honoured only there); then, from a "
+              "checkout with the key, check the key first (`check_anthropic` in "
+              ".github/scripts/validate_keys.py, with that checkout's .env loaded, never "
+              "printed: one call of one output token) and run-compare into a fresh folder")
         return 0
     if a.cmd == "register-run":
         from vinci.evals import builds as bd

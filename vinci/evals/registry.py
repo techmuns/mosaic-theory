@@ -13,10 +13,14 @@ WHY A COMMITTED INDEX.
   registration again or read the TEST half again. Every draw, and the TEST read, is a row here
   (in the working copy at once, then committed with the run's record); a second one is refused
   whichever approval asks, whether the earlier row is in this checkout or on main.
+- **A void (W85's panel draw, 2026-11-20; operator: "Yes, void it and fix").** A `void` row
+  cancels one comparison claim that drew nothing, and ONLY ONCE THE VOID IS ON MAIN, as a
+  registration is drawn only once its row is (RG-D14): a void in this checkout alone re-opens
+  nothing, so the sentence above holds for a voided claim too (A's review of #1167, item 1a).
 
-WHAT A ROW HOLDS: shas, refs, pages, counts, an approval's sha256 and dates — a registration's
-design key and its request pins are sha256s too. Never a path, a transcript or a ledger's
-contents (the repository is public).
+WHAT A ROW HOLDS: shas, refs, pages, counts, an approval's sha256, dates and a void's ruling words
+— a registration's design key, its request pins and a claim's id are sha256s or random hex too.
+Never a path, a transcript or a ledger's contents (the repository is public).
 
 WHAT THE INDEX KNOWS OF A REGISTRATION IS DERIVED FROM IT (#1030 review round 2): `identity`
 reads the sha, the design key and the request pins off the registration itself, when its row is
@@ -27,6 +31,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import secrets
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
@@ -135,35 +140,59 @@ def require_on_main(sha: str, *, root: Path = ROOT, ref: str = MAIN_REF) -> None
                           "after the merge, fetch")
 
 
-def _live(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """``rows`` with every VOIDED claim taken out, and the void rows with them (W85's panel draw,
-    2026-11-20; operator: "Yes, void it and fix"). A `void` row cancels the one comparison claim
-    it names — its registration, approval and ``drawn_at`` — and nothing else: a void that names
-    no such claim, or a claim voided twice, is refused. That the voided run drew nothing is the
-    ledger's half (`compare.void_unspent_claim`, `compare.voided_claims`)."""
+def _key(r: dict[str, Any]) -> str:
+    """A row as the index merges it: two byte-identical rows are one row."""
+    return json.dumps(r, sort_keys=True)
+
+
+def _row_id(r: dict[str, Any]) -> str:
+    """The id a void names its claim by: the sha256 of the claim's row (A's review of #1167, item
+    7). A claim's ``drawn_at`` is to the second, so a re-claim in the voided claim's second was
+    the same row; every claim now carries its own ``claim_id``, so no two claims are one row."""
+    return hashlib.sha256(_key(r).encode()).hexdigest()
+
+
+def _live(rows: list[dict[str, Any]], on_main: set[str]) -> list[dict[str, Any]]:
+    """``rows`` with every VOIDED claim taken out, and every void row with them (W85's panel
+    draw, 2026-11-20; operator: "Yes, void it and fix"). A void is honoured ONLY WHEN ITS ROW IS
+    ON MAIN (``on_main``, the keys of main's rows; A's review of #1167, item 1a): a void in this
+    checkout alone, uncommitted and unreviewed, cancelled a claim committed on main, and the
+    ledger's half is one approval's file outside the repository, so a registration that DREW
+    could be drawn again. An honoured void cancels the one comparison claim it names — its
+    registration, approval and the claim's own row (`_row_id`) — and nothing else: one that
+    names no such claim, or a claim voided twice, is refused. That the voided run drew nothing
+    is the ledger's half (`compare.void_unspent_claim`, `compare.voided_claims`)."""
+    ids = {id(r): _row_id(r) for r in rows if r.get("event") == "drawn"}
     cancelled: list[dict[str, Any]] = []
-    for v in (r for r in rows if r.get("event") == "void"):
+    for v in (r for r in rows if r.get("event") == "void" and _key(r) in on_main):
         hit = [r for r in rows if r.get("event") == "drawn" and r.get("unit") is None
-               and (r.get("registration"), r.get("approval"), r.get("drawn_at"))
+               and (r.get("registration"), r.get("approval"), ids[id(r)])
                == (v.get("registration"), v.get("approval"), v.get("voids"))]
         if len(hit) != 1 or any(h is c for h in hit for c in cancelled):
             raise ReplayError(f"a void row of registration {str(v.get('registration'))[:12]} "
-                              f"cancels {len(hit)} claim(s) at {v.get('voids')}, not one claim "
-                              "voided once: the index is inconsistent, so nothing is drawn")
+                              f"cancels {len(hit)} claim(s) (claimed at {v.get('claimed_at')}), "
+                              "not one claim voided once: the index is inconsistent, so nothing "
+                              "is drawn")
         cancelled.append(hit[0])
     return [r for r in rows
             if r.get("event") != "void" and not any(r is c for c in cancelled)]
 
 
-def _rows_everywhere(root: Path) -> list[dict[str, Any]]:
+def _merged(root: Path) -> tuple[list[dict[str, Any]], set[str]]:
+    """This checkout's index and main's, merged (a byte-identical row once), with the keys of
+    main's rows: only a void main holds is honoured (`_live`)."""
+    main = main_rows(root)
     seen: set[str] = set()
     out: list[dict[str, Any]] = []
-    for r in working_rows(root) + main_rows(root):
-        key = json.dumps(r, sort_keys=True)
-        if key not in seen:
+    for r in working_rows(root) + main:
+        if (key := _key(r)) not in seen:
             seen.add(key)
             out.append(r)
-    return _live(out)
+    return out, {_key(r) for r in main}
+
+
+def _rows_everywhere(root: Path) -> list[dict[str, Any]]:
+    return _live(*_merged(root))
 
 
 def _drawn_pins(rows: list[dict[str, Any]], exempt: set[str | None]) -> dict[str, str]:
@@ -263,23 +292,32 @@ def claim_draw(reg: Registration | RunRegistration, *, approval: str, unit: str 
         raise ReplayError(f"registration {sha[:12]} is bound to approval "
                           f"{sorted(map(str, bound)) or 'none'}, not {approval[:12]}: it is drawn "
                           "only under the approval its registered row names (gap 6)")
+    # ITS OWN ID (A's review of #1167, item 7): ``drawn_at`` is to the second, and the index merges
+    # byte-identical rows, so a re-claim in a voided claim's second was that claim's row
     return _append({"event": "drawn", "registration": sha, "approval": approval, "unit": unit,
-                    "drawn_at": _now()}, root)
+                    "drawn_at": _now(), "claim_id": secrets.token_hex(16)}, root)
 
 
-def record_void(reg: Registration | RunRegistration, *, approval: str,
-                root: Path = ROOT) -> dict[str, Any]:
-    """Void a comparison's claim that drew nothing, in this checkout's index, to be committed with
-    the run's record (W85's panel draw, 2026-11-20; operator: "Yes, void it and fix"). Only a
-    `register` comparison's one live claim, under the approval it was claimed by; the caller has
-    checked the ledger and the folder first (`compare.void_unspent_claim`). A build's unit is
-    never voided here."""
-    from vinci.evals import builds as bd
-    sha = reg.sha
-    if isinstance(reg, bd.RunRegistration):
-        raise ReplayError(f"registration {sha[:12]} is a build registration: only a "
+def record_void(sha: str, *, approval: str, ruling: str, root: Path = ROOT) -> dict[str, Any]:
+    """Void a comparison's claim that drew nothing, in this checkout's index (W85's panel draw,
+    2026-11-20; operator: "Yes, void it and fix"). The row is HONOURED ONLY ONCE IT IS ON MAIN
+    (`_live`): it is merged with the run's record before the re-draw. Only a `register`
+    comparison's — the kind is its indexed `registered` row's, never a caller's — one live
+    claim, under the approval it was claimed by, and never twice; the row names that claim by
+    its own row (`_row_id`) and carries ``ruling``, the operator's words that ruled it, and when
+    (A's review of #1167, items 7 and 8). The caller has checked the ledger and the folder first,
+    under the ledger's lock (`compare.void_claim`). A build's unit is never voided here."""
+    if not ruling.strip():
+        raise ReplayError(f"registration {sha[:12]}: a void records the operator's words that "
+                          "ruled it: nothing is voided")
+    rows, on_main = _merged(root)
+    kinds = [r.get("kind") for r in rows
+             if r.get("event") == "registered" and r.get("registration") == sha]
+    if kinds != ["compare"]:
+        raise ReplayError(f"registration {sha[:12]} is indexed as {kinds or 'nothing'}, not one "
+                          "comparison (a build registration's unit is never voided): only a "
                           "comparison's claim is voided")
-    drawn = [r for r in _rows_everywhere(root)
+    drawn = [r for r in _live(rows, on_main)
              if r.get("event") == "drawn" and r.get("registration") == sha]
     if len(drawn) != 1 or drawn[0].get("unit") is not None:
         raise ReplayError(f"registration {sha[:12]} has {len(drawn)} live claim(s) in the index, "
@@ -288,8 +326,14 @@ def record_void(reg: Registration | RunRegistration, *, approval: str,
         raise ReplayError(f"registration {sha[:12]} was claimed under approval "
                           f"{str(drawn[0].get('approval'))[:12]}, not {approval[:12]}: nothing "
                           "is voided")
-    return _append({"event": "void", "registration": sha, "approval": approval,
-                    "voids": drawn[0]["drawn_at"], "voided_at": _now()}, root)
+    claim = _row_id(drawn[0])
+    if any(r.get("event") == "void" and r.get("voids") == claim for r in rows):
+        raise ReplayError(f"registration {sha[:12]}'s claim at {drawn[0].get('drawn_at')} is "
+                          "already voided in this checkout or on main (a void cancels it once "
+                          "its row is merged): nothing is voided again")
+    return _append({"event": "void", "registration": sha, "approval": approval, "voids": claim,
+                    "claimed_at": drawn[0].get("drawn_at"), "ruling": ruling,
+                    "voided_at": _now()}, root)
 
 
 def claim_judge_test(*, approval: str, root: Path = ROOT) -> dict[str, Any]:
