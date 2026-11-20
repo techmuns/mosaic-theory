@@ -144,11 +144,16 @@ def test_a_page_whose_reading_changes_is_a_pre_w65_block_moving_to_a_date_readin
 def test_only_the_words_move_every_figure_stays(path: Path) -> None:
     """(−) The rebuilt line is the committed one with W81's words moved and nothing else: every
     figure, ratio and date as stored. (+) `w81_relabel` changes the committed line wherever a
-    pairing is measured, so the equality is not two old lines agreeing."""
+    pairing is measured, so the equality is not two old lines agreeing. A page refreshed at W81
+    already stores the line the code writes: it equals the rebuild exactly and has nothing left to
+    relabel (the $0 refresh of the active pages, 2026-11-20)."""
     raw = _doc(path)
     committed = raw["mechanical"]["valuation"]["ev_ebitda_basis"]["line"]
     got = eb.headline_basis(_mech(raw))
     assert got is not None
+    if _is_w81(raw):
+        assert got.line == committed and w81_relabel(committed) == committed
+        return
     assert got.line == w81_relabel(committed)
     if got.reading not in eb.DATE_READINGS:
         assert w81_relabel(committed) != committed
@@ -443,7 +448,17 @@ def _stamped(doc: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-@pytest.mark.parametrize("path", _lease_pages(), ids=lambda p: p.parent.name)
+def _assembled_at_w81(path: Path) -> bool:
+    """A page BUILT at W81 or later has no older-vintage control to compare with; the coherence pin
+    (`test_every_w81_committed_page_is_coherent`) holds its words."""
+    from vinci.dossier.extraction_version import includes
+    from vinci.dossier.render import W81_VINTAGE
+
+    return bool(includes(_doc(path).get("extraction_version"), W81_VINTAGE))
+
+
+@pytest.mark.parametrize("path", [p for p in _lease_pages() if not _assembled_at_w81(p)],
+                         ids=lambda p: p.parent.name)
 def test_a_w81_page_names_both_figures_and_only_the_lease_line_moves(path: Path) -> None:
     """(+) Each committed page that prints the lease line, stamped as refreshed at this code: the
     margin is CIQ's annual LTM EBITDA's, and where an ex-lease history is built, its denominator is
@@ -476,12 +491,24 @@ def test_a_w81_page_names_both_figures_and_only_the_lease_line_moves(path: Path)
     assert all(EXTRACTION_VERSION in b for a, b in moved if not b.startswith(LEASE)), moved
 
 
+#: A vintage before W81 (W65's), the control's stamp.
+W65_VINTAGE = "2026-11-19.the-ev-ebitda-basis-divides-only-figures-of-one-date"
+
+
 def _stamped_old(path: Path) -> dict[str, Any]:
     """The same stamp, at a version that predates W81 (W65's): the control, so the comparison
-    above differs by the vintage alone."""
+    above differs by the vintage alone. On a page already refreshed at W81 every such refresh stamp
+    is set back too, or the control would print the new words as well (the $0 refresh of the
+    active pages, 2026-11-20). A page ASSEMBLED at W81 has no such control, and says so."""
+    from vinci.dossier.extraction_version import includes
+    from vinci.dossier.render import W81_VINTAGE
+
     doc = _stamped(_doc(path))
-    doc["layer_refreshes"][-1]["extraction_version"] = (
-        "2026-11-19.the-ev-ebitda-basis-divides-only-figures-of-one-date")
+    assert not includes(doc.get("extraction_version"), W81_VINTAGE), (
+        f"{path.parent.name} was assembled at W81: no older-vintage control can be stamped")
+    for rec in doc["layer_refreshes"]:
+        if includes(rec["extraction_version"], W81_VINTAGE):
+            rec["extraction_version"] = W65_VINTAGE
     return doc
 
 
