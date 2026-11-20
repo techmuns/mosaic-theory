@@ -65,3 +65,9 @@ prs: []
   Both are pending in the pack, and they follow as a small amendment.
 - **SP-D20 is live:** the word "reported" is on 20 committed pages, and on 10 of the 17 comparable ones the figure is more than 2% from the filed EBITDA. B is taking it to the operator as a possible fix before review.
 - **The scripts are working tools.** A re-run measures its own day's caches, Drive exports and committed data, so each output prints its boundary.
+## Amendments
+
+**2026-11-20** — **The PR that carried this record is #1145**, merged 2026-11-20 as `9a30cbac`. This record's `prs:` was left empty at merge, and the amendment contract freezes it. Since the merge (the W87 amendment, `docs/records/2026-11-20-w87-scope-pack-1-amendment.md`):
+- DVN's quarterly re-export and DAC's pack landed and were built at $0, so neither export is owed;
+- SP-D22 is added to the pack, which now has 39 IDs.
+
