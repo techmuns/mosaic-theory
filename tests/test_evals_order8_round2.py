@@ -6,7 +6,9 @@ request pins (Recommended)", and F4, "One drawing machine (Recommended)").
 Each FIX's test fails on 3640be07 for its finding's own reason; each PIN names the mutant it
 kills. $0: no key, no network. A paid path runs with the client class spied, so a refusal is shown
 to come before any client exists, and a draw that passes every refusal is shown to reach the
-client, where the spy stops it. The CLI's tests run the real commands against an index in a
+client, where the spy stops it. Since W85's panel draw (2026-11-20) a run builds its clients
+before its claim, so a refusal AT the claim is shown to come before any send (`send_spy`). The
+CLI's tests run the real commands against an index in a
 temporary repository; this repository's own index is checked unchanged after each.
 """
 from __future__ import annotations
@@ -32,7 +34,7 @@ from tests.test_evals_order8 import (
     _repo_with_index,
     _to_main,
 )
-from tests.test_evals_order8_gaps import _budget, _Spy
+from tests.test_evals_order8_gaps import _budget, _SendSpy, _Spy
 from vinci.evals import compare as cm
 from vinci.evals import registry
 from vinci.evals.replay import ReplayError
@@ -47,6 +49,17 @@ def spy(monkeypatch: pytest.MonkeyPatch) -> type[_Spy]:
     monkeypatch.setattr(rp, "AnthropicLlmClient", _Spy)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     return _Spy
+
+
+@pytest.fixture()
+def send_spy(monkeypatch: pytest.MonkeyPatch) -> type[_SendSpy]:
+    """A run that passes every refusal builds its clients before its claim (W85's panel draw):
+    this client builds, and stops the run at its first send."""
+    from vinci.evals import replay as rp
+    _SendSpy.built = _SendSpy.sent = 0
+    monkeypatch.setattr(rp, "AnthropicLlmClient", _SendSpy)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    return _SendSpy
 
 
 @pytest.fixture()
@@ -94,13 +107,14 @@ def _approvals(tmp_path: Path) -> tuple[Path, Path]:
 
 
 def test_one_design_registered_twice_through_the_cli_is_drawn_once(
-        tmp_path: Path, spy: type[_Spy], index: Path) -> None:
+        tmp_path: Path, send_spy: type[_SendSpy], index: Path) -> None:
     """PIN, the reviewer's CLI mutant (`mutate_cli.py`: `register` writing `design=reg.sha` for
     `design=cm.draw_key(reg)`). Every item-1 test wrote its keys by hand, and the CLI's one pin
     grepped its source for "design=", so the mutant survived all 363 evals, git-ref and RG-D20
     tests while `shop_e2e.py` drew one design under two approvals. End to end (TEST-LAYER RULE):
     the CLI registers one design twice, under two approvals and two notes; (+) the first is drawn
-    — it reaches the client, which the spy stops; (−) the second is refused before any client."""
+    — it reaches its first send, which the spy stops; (−) the second is refused before any draw
+    is sent (its clients are built first, since W85's panel draw)."""
     export, _ = _impact_export(tmp_path)
     l1, l2 = _approvals(tmp_path)
     r1 = _register(export, l1, tmp_path / "r1.json", "--no-worsening", "--note", "first words")
@@ -109,20 +123,21 @@ def test_one_design_registered_twice_through_the_cli_is_drawn_once(
     _to_main(index)
     with pytest.raises(AssertionError, match="paid client"):
         _run_compare(tmp_path / "r1.json", l1, tmp_path / "run1")
-    assert spy.built == 1
+    assert send_spy.sent == 1
     with pytest.raises(ReplayError, match="design was already drawn"):
         _run_compare(tmp_path / "r2.json", l2, tmp_path / "run2")
-    assert spy.built == 1
+    assert send_spy.sent == 1
 
 
 @pytest.mark.parametrize("field", ["design", "pins"])
 def test_a_draw_whose_indexed_row_is_not_its_registration_is_refused(
-        tmp_path: Path, spy: type[_Spy], index: Path, field: str) -> None:
+        tmp_path: Path, send_spy: type[_SendSpy], index: Path, field: str) -> None:
     """(−) F1: `claim_draw` read the key its row recorded and never derived it from the
     registration it was drawing, so a row written with the wrong key — the CLI mutant wrote the
     registration's own sha — made a twin a design of its own. The claim now derives the design and
-    the request pins from the registration and refuses a row that disagrees, before any client.
-    On 3640be07 the draw reached the client."""
+    the request pins from the registration and refuses a row that disagrees, before any draw is
+    sent (its clients are built first, since W85's panel draw). On 3640be07 the draw reached the
+    client."""
     export, _ = _impact_export(tmp_path)
     l1, _ = _approvals(tmp_path)
     r1 = _register(export, l1, tmp_path / "r1.json", "--no-worsening")
@@ -134,7 +149,7 @@ def test_a_draw_whose_indexed_row_is_not_its_registration_is_refused(
     _to_main(index)
     with pytest.raises(ReplayError, match="disagree"):
         _run_compare(tmp_path / "r1.json", l1, tmp_path / "run1")
-    assert spy.built == 0
+    assert send_spy.sent == 0
 
 
 def _builds_through_the_cli(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -154,10 +169,10 @@ def _builds_through_the_cli(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
     (["--min-gap-s", "301"], "every request"),               # FIX, F3: another design, same bytes
 ])
 def test_a_build_design_or_its_bytes_registered_again_through_the_cli_is_refused(
-        tmp_path: Path, spy: type[_Spy], index: Path, monkeypatch: pytest.MonkeyPatch,
-        second: list[str], refusal: str) -> None:
-    """End to end, `register-run` then `run`. (+) The first registration's build reaches the
-    client. (−) PIN, the CLI mutant's `register-run` half (`design=breg.sha`): the same design
+        tmp_path: Path, send_spy: type[_SendSpy], index: Path,
+        monkeypatch: pytest.MonkeyPatch, second: list[str], refusal: str) -> None:
+    """End to end, `register-run` then `run`. (+) The first registration's build reaches its
+    first send. (−) PIN, the CLI mutant's `register-run` half (`design=breg.sha`): the same design
     with new words is refused. (−) F3: a design one field away (`--min-gap-s 301`) pinning the
     same request bytes is refused too — on 3640be07 it was drawn, as any harness commit or a
     build's code ref let the same bytes be drawn again under a new approval."""
@@ -178,10 +193,10 @@ def test_a_build_design_or_its_bytes_registered_again_through_the_cli_is_refused
                          str(tmp_path / f"d{n}.jsonl"), "--paid"])
     with pytest.raises(AssertionError, match="paid client"):
         run(1, l1)
-    assert spy.built == 1
+    assert send_spy.sent == 1
     with pytest.raises(ReplayError, match=refusal):
         run(2, l2)
-    assert spy.built == 1
+    assert send_spy.sent == 1
 
 
 # ------------------------------------------- F3: one set of request bytes, drawn once (CLI)
@@ -189,14 +204,14 @@ def test_a_build_design_or_its_bytes_registered_again_through_the_cli_is_refused
 
 @pytest.mark.parametrize("how", ["a design field", "a harness commit"])
 def test_the_same_request_bytes_registered_as_another_design_are_not_drawn_again(
-        tmp_path: Path, spy: type[_Spy], index: Path, monkeypatch: pytest.MonkeyPatch,
-        how: str) -> None:
+        tmp_path: Path, send_spy: type[_SendSpy], index: Path,
+        monkeypatch: pytest.MonkeyPatch, how: str) -> None:
     """(−) F3 (operator 2026-11-12: "Refuse by request pins (Recommended)" — "Closes the gap at
     the byte level"). The design key carries the scorer's fingerprint, so a commit to the harness
     gave byte-identical requests a new design, and a second approval drew them again; so did any
     other design field (here a target for no-worsening). Every request the second registration
-    pins was already drawn under the first, so it is refused before any client. On 3640be07 it
-    was drawn."""
+    pins was already drawn under the first, so it is refused before any draw is sent. On
+    3640be07 it was drawn."""
     export, _ = _impact_export(tmp_path)
     l1, l2 = _approvals(tmp_path)
     real = cm.scorer_fingerprint
@@ -220,7 +235,7 @@ def test_the_same_request_bytes_registered_as_another_design_are_not_drawn_again
     harness["fingerprint"] = second
     with pytest.raises(ReplayError, match="every request"):
         _run_compare(tmp_path / "r2.json", l2, tmp_path / "run2")
-    assert spy.built == 1
+    assert send_spy.sent == 1
 
 
 def test_a_registration_with_a_request_not_yet_drawn_is_drawn(tmp_path: Path) -> None:
