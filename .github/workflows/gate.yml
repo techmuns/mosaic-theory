@@ -95,8 +95,9 @@ jobs:
       # skip count with no reasons cannot say which half of the suite this runner actually checked.
       # `-n auto` (pytest-xdist, from the lock) spreads the same tests over the runner's cores: one
       # process spent 758-1416 s here, 95% of the job. It is the one flag the other gates may leave
-      # out (`tests/test_one_gate.py`): `bin/commit` does, because the shared venv it runs in has
-      # no pytest-xdist until re-synced from the lock, and the scheduled workflows' gates do.
+      # out (`tests/test_one_gate.py`): `bin/commit` runs it too when its venv imports
+      # pytest-xdist and says so loudly when it does not (W83, 2026-11-20); the scheduled
+      # workflows' gates leave it out.
       # Every test runs on both: docs/records/2026-11-13-the-gate-runs-the-suite-across-workers.md
       #
       # A TEST WRITES NO FILE INTO THE CHECKOUT (2026-11-14). On workers, a test that rewrites a

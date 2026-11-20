@@ -153,7 +153,34 @@ beside a stored "reported" basis line.
     all 25 built pages (PARR was not built at base).
   - **Pins:** `tests/test_evals_w81_transform.py`, 16.
   - The LTM flag's cause is a `qa_flags` entry, outside the layer, and reaches no request.
-  - The paid draws wait for the operator's approval and cap.
+  - **The paid result** (registration `e92bfe4da89421c5`; the operator, verbatim, "Yes, cap $35", 2026-11-20).
+    - **Where from:** the transform reached main in #1159 (`ae5bd872`). The registration came from a clean `origin/main` checkout at `ae5bd872` and its row reached main in #1161 (`a1ecc22b`). Both came before any draw.
+    - **The bytes:** `compare --base 4234f9e6 --cand 27820e00` refused, all six pages IDENTICAL, so the bytes drawn are the bytes that ship.
+    - **The run:** `run-compare --paid`, drawn once from a clean checkout of `origin/main` `a1ecc22b`. This session's permission check refused the command, so the operator ran it in the session's terminal. The checkout's `.env` was a symlink made for the run and removed after it.
+    - **The draws:** 60 of 60 returned and are usable. All stopped on `tool_use`, all were served by `claude-opus-4-8`, and every row states SDK 2.6.0.
+    - **The cost: $30.4679 of $35**, from the run's own ledger (60 draw rows). Per page and arm it ran $2.25–$3.12, the two arms near equal. Every page's request differs, so CAND could not read BASE's prompt cache.
+    - **The registered rule: no class metric worsens at p_upper ≤ 0.05. None does:**
+
+      | metric | BASE | CAND | p_upper |
+      |---|---|---|---|
+      | M-ABSENT | 58 | 60 | 0.458 |
+      | M-ECHO | 60 | 56 | 0.725 |
+      | M-GAP | 9 | 7 | 0.795 |
+      | M-LABEL | 58 | 59 | 0.5 |
+      | M-PATH | 6 | 4 | 0.824 |
+      | M-SIGN | 0 | 0 | 1 |
+
+      The held-out pages are 0 → 0 on every metric.
+    - **The scorer's decision: "ships once the moves listed are explained in writing".** The one block is LLY's lean: BASE 3 strongly-bullish and 2 mixed, CAND 5 strongly-bullish; the machine proposal went from none to BUY.
+    - **The explanation, descriptive, deciding nothing:**
+      - LLY's request differs from BASE in two lines only, the basis line and the reconciliation line (−1 character).
+      - No LLY draw, in either arm, names either EBITDA: neither the old wording nor the new.
+      - 3 of 5 against 5 of 5 strongly-bullish is a two-sided Fisher p of 0.44 at five draws per arm.
+      - Other pages moved both ways: MCK lost a strongly-bullish draw (2 → 1), and CNXC gained a strongly-bearish one (0 → 1).
+      - So nothing in the draws ties LLY's move to the change. Whether that is enough is the reviewer's call under §6.1; this record does not make it.
+    - **The pre-declared descriptive count:** draws calling CIQ's EBITDA "reported" fell from 9 in BASE to 2 in CAND (CNXC 4 → 0, ROST 3 → 0, BURL 1 → 1, MCK 1 → 1, LLY 0 → 0, SMPL 0 → 0).
+    - **The run's `drawn` row** is appended to `docs/evals/registrations.jsonl` byte for byte, after its `registered` row (#1161).
+    - The ledger, the registration, the requests and the draws stay outside the repository.
 - **The $0 refresh, rehearsed on scratch copies** against each page's recorded exports (head
   code). All 9 active pages move (BRBR and GOOGL excluded; see the boundary), and none refuses.
   - No figure moves.

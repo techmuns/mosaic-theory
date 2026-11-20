@@ -209,14 +209,56 @@ def test_a_network_test_takes_its_turn_from_the_machine_wide_budget(
 
 
 _CHILD = """
-import json, sys, time
+import json, os, sys, time
 from pathlib import Path
 import httpx
+from vinci import netcache
 from vinci.netcache import CachedHttp
 start, tag, cache = float(sys.argv[1]), sys.argv[2], sys.argv[3]
-sent = []
+events = []  # ["take", t]: a request took its slot at t; ["send", t]: it reached the transport
+
+
+class Clock:  # vinci.netcache's clock: the real one, keeping each wall-clock reading it hands out
+    def __init__(self):
+        self.reads = []
+    def time(self):
+        self.reads.append(time.time())
+        return self.reads[-1]
+    def monotonic(self):
+        return time.monotonic()
+    def sleep(self, seconds):
+        time.sleep(seconds)
+
+
+clock = Clock()
+netcache.time = clock
+update = netcache.SharedPace._update
+def recording_update(self, *, take=False, hold=0.0):
+    clock.reads.clear()
+    wait = update(self, take=take, hold=hold)
+    assert len(clock.reads) == 1, (
+        f"SharedPace._update read the clock {len(clock.reads)} times; this probe records the one "
+        "reading, made under the flock, that its slot is decided at")
+    if take and wait == 0.0:
+        events.append(["take", clock.reads[0]])
+    return wait
+netcache.SharedPace._update = recording_update
+
+
+class SlowRead:  # vinci.netcache's os, its read of the pace file lingering 5 ms before the write
+    def __getattr__(self, name):
+        return getattr(os, name)
+    def pread(self, fd, n, offset):
+        data = os.pread(fd, n, offset)
+        time.sleep(0.005)  # a missing flock lets two processes take one slot on nearly every
+        return data        # slot then, not only when they read within microseconds of each other
+
+
+netcache.os = SlowRead()
+
+
 def handler(request):
-    sent.append(time.time())
+    events.append(["send", time.time()])
     return httpx.Response(200, text="{}")
 http = CachedHttp(cache_dir=Path(cache), user_agent="t t@x.org", min_interval_sec=0.0,
                   namespace=tag)
@@ -225,7 +267,7 @@ while time.time() < start:
     time.sleep(0.002)
 for i in range(8):
     http.get_text(f"https://data.sec.gov/probe/{tag}/{i}.json")
-print(json.dumps(sent))
+print(json.dumps(events))
 """
 
 
@@ -235,10 +277,10 @@ def _spawn(start: float, tag: str, tmp_path: Path, pace_file: Path) -> subproces
                             env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
 
-def _times(proc: subprocess.Popen[str]) -> list[float]:
+def _events(proc: subprocess.Popen[str]) -> list[tuple[str, float]]:
     out, err = proc.communicate(timeout=60)
     assert proc.returncode == 0, err
-    return [float(t) for t in json.loads(out)]
+    return [(str(kind), float(t)) for kind, t in json.loads(out)]
 
 
 def _min_gap(times: list[float]) -> float:
@@ -248,23 +290,32 @@ def _min_gap(times: list[float]) -> float:
 
 def test_two_processes_on_one_machine_share_one_budget(tmp_path: Path) -> None:
     """⊖ two `vinci` processes on one machine share one IP, so they share SEC's ceiling. REAL
-    clock, REAL processes, mock transport. A PAIR sharing a pace file must interleave at the shared
-    pace; a CONTROL pair with a file each must not — which is what shows this check can see the
-    failure at all (each control process alone paces at its share, so together they overlap)."""
+    clock, REAL processes, mock transport. A PAIR sharing a pace file must take its slots one
+    interval apart; a CONTROL pair with a file each must not — which is what shows this check can
+    see the failure at all (each control process alone paces at its share, so together they
+    overlap).
+
+    SLOTS ARE TIMED, NOT SENDS (2026-11-20). Each child records the wall-clock reading
+    `SharedPace` decides a slot at, made under the flock, and checks every request took a slot of
+    its own before it was sent. Timing the sends measured the scheduler as well as the lock: a
+    send leaves its slot whenever its process next runs, and under load two processes' sends land
+    together while their slots are an interval apart — two sends 0.0017 s apart in a run whose
+    slots were never under 0.3750 s apart, one process stalled 0.46 s between slot and send (load
+    average 32). That check failed 3 runs in 40 under load, and CI's gate on 2026-11-20."""
     start = time.time() + 5.0  # past every interpreter's start-up, so they begin together
     shared = tmp_path / "shared-pace"
     procs = {tag: _spawn(start, tag, tmp_path, shared if tag in ("a", "b") else
                          tmp_path / f"own-{tag}")
              for tag in ("a", "b", "c", "d")}
-    got: dict[str, list[float]] = {tag: _times(p) for tag, p in procs.items()}
-    pair, control = got["a"] + got["b"], got["c"] + got["d"]
-    assert len(pair) == len(control) == 16
-    # sharing: the 16 sends take 15 of the machine's intervals end to end, and no two from either
-    # process are closer than half of one. HALF, not "less 25 ms": a send is timed some
-    # milliseconds after it takes its slot, and on a loaded machine (load average 110 on
-    # 2026-11-09, eight suites at once) that lag outgrew 25 ms; it cannot outgrow 0.19 s
+    got = {tag: _events(p) for tag, p in procs.items()}
+    for tag, events in got.items():  # every request took its own slot, then was sent
+        assert [kind for kind, _ in events] == ["take", "send"] * 8, (tag, events)
+    takes = {tag: [t for kind, t in events if kind == "take"] for tag, events in got.items()}
+    pair, control = takes["a"] + takes["b"], takes["c"] + takes["d"]
+    # sharing: no two slots from either process closer than one whole interval (so the 16 take 15
+    # end to end). The lock guarantees exactly this, so the check needs no allowance for a loaded
+    # machine; 1 µs is float rounding, a slot stored as `now + interval` in the file
     gap = _min_gap(pair)
-    assert gap >= _INTERVAL / 2, f"min gap {gap:.3f}s across two processes"
-    assert max(pair) - min(pair) >= 15 * _INTERVAL - 0.05
-    # the control proves the check can fail: two independent trains start together and overlap
-    assert _min_gap(control) < _INTERVAL / 2
+    assert gap >= _INTERVAL - 1e-6, f"min gap {gap:.4f}s between two processes' slots"
+    # the control proves the same check can fail: two independent budgets hand out slots together
+    assert _min_gap(control) < _INTERVAL - 1e-6

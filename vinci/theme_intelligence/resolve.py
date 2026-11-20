@@ -31,11 +31,11 @@ carries it (state.py), and `qa` re-checks it.
 from __future__ import annotations
 
 import hashlib
-import traceback
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING, Literal
 
+from vinci.theme_intelligence.localpaths import traceback_text
 from vinci.theme_intelligence.report import (
     LineFinding,
     resolution_heads,
@@ -168,7 +168,7 @@ def resolve(pipe: Pipeline, key: str, action: Action, *, reviewer: str, reason: 
         pipe._count(f"findings_{action}")  # noqa: SLF001 — the run's own counter
     except Exception as exc:
         pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                f"{traceback.format_exc()[-1500:]}")
+                                                f"{traceback_text()}")
         raise
     return pipe.finish_run(RunStatus.SUCCEEDED), r
 

@@ -40,3 +40,10 @@ superseded-by:
   - The cause is not established. The guard itself asks for that path: B dry-ran it on this file and it returned `ask`.
   - The gate's protected-file check is what bound the approval.
 - **Next.** Register from a fresh `origin/main` checkout; the docs-only registration PR; one `run-compare --paid` under the operator's "Yes, cap $35"; score. #1147 then merges main, its `variants.py` made identical to main's.
+## Amendments
+
+**2026-11-20 — CARRIED BY #1159.**
+- This record's front matter names #1147, the PR whose `3634e29e` first wrote the transform. The PR that carried it to main is **#1159**, merged as `ae5bd872` (the operator: "Merge once green").
+- The front matter is left as merged, per the amendment contract.
+- **Registered from main.** The registration ran from a clean checkout of `origin/main` at `ae5bd872`, after the import check passed on all 14 modules. It is `e92bfe4da89421c5`: the six panel pages, 5 draws per condition, no target, against #1147's head `4234f9e6`, with this transform.
+- Its row reaches main in the docs-only registration PR that carries this amendment, before any draw (RG-D14).

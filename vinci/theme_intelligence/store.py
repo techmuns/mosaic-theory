@@ -31,6 +31,7 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel
 
+from vinci.theme_intelligence import localpaths
 from vinci.theme_intelligence.schemas import (
     Article,
     ArticleThesisContribution,
@@ -822,6 +823,16 @@ class Store:
                     p = json.loads(rec["payload"])
                     p["blocks"] = [{**b, "text": ""} for b in p.get("blocks", [])]
                     rec["payload"] = json.dumps(p, sort_keys=True)
+                if table in ("runs", "article_versions"):
+                    # a path stored before 2026-11-20 is written relative (localpaths); a row
+                    # that holds none is written exactly as stored
+                    p = json.loads(rec["payload"])
+                    q = localpaths.exported_payload(table, p)
+                    if q is not p:  # in the style the row already has
+                        rec["payload"] = (json.dumps(q, sort_keys=True)
+                                          if table == "article_versions" else
+                                          json.dumps(q, separators=(",", ":"),
+                                                     ensure_ascii=False))
                 lines.append(json.dumps(rec, sort_keys=True))
             (out_dir / f"{table}.jsonl").write_text("".join(f"{x}\n" for x in lines))
             counts[table] = len(lines)
