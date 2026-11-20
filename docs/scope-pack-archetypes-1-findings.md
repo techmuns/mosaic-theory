@@ -965,8 +965,8 @@ figure exists.
 
 **For D13:** the defect is real in its mechanism and latent on the live corpus. Three kinds of
 filer would print it falsely: an MLP's move to per-unit EPS (EPD), a diluted→basic move (ORC), and
-a US GAAP→IFRS move (LPL). Stage 1 admits the second; the first is out of scope until the K-1
-ruling; the third is stage 2. The fix in D13's row stands: split the branch on whether a newer
+a US GAAP→IFRS move (LPL). Stage 1 admits the second; the first is out of scope for stage 1
+(SP-R4, ruled 2026-11-20); the third is stage 2. The fix in D13's row stands: split the branch on whether a newer
 figure exists.
 
 **TRUE, pages** — the newest figure newer than the latest positive one:

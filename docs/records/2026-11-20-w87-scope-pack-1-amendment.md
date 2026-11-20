@@ -1,7 +1,7 @@
 ---
 status: open
 date: 2026-11-20
-prs: []
+prs: [1154]
 ---
 
 # W87: scope pack 1 amended — DVN's quarterly re-export and DAC's pack are built at $0 (both pass the precheck; DVN's R1 value withheld under W73, DAC's R1 declining), SP-D22 added, and what was found since listed (docs only)
@@ -13,7 +13,8 @@ prs: []
 - **§3:** **SP-D22**, coined here in plain words: *a lessor with no CIQ rent row is treated as having material rent, so R1 declines on the form of its statements.*
 - **Orders:** SP-D22 joins Order 2 beside SP-D17. Order 5's DVN is no longer pending. Order 6 says what DAC does and does not test.
 - **§6:** one retired line.
-- **§7:** SP-D22 at Order 2; 39 IDs, every one `open`.
+- **§5:** SP-R4 is ruled. Asked "Rule SP-R4: keep MLPs (K-1 issuers) out of scope for stage 1?", the operator answered, verbatim, "Yes, keep them out" (2026-11-20, ~07:55Z, relayed by B). G15 is out of scope for stage 1 and refused at intake; all nine rulings are now made. §1, SP-S1 and Order 1 follow (Order 1 no longer depends on SP-R4).
+- **§7:** SP-D22 at Order 2; 39 IDs, every one `open`. SP-R4's row stays `open` like its eight ruled siblings, because the log records TeamNostra's reply.
 - **§8 (new):** "Found since the pack, not in its orders" (W84, W85, W86), with each owner and status as of 2026-11-20. The cover note carries their statuses at send time.
 
 `docs/scope-pack-archetypes-1-findings.md` gains §11f addendum 4, D22 in §9, and the G05 and G17

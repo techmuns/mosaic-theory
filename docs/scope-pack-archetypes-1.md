@@ -2,7 +2,7 @@
 
 **Status: committed for TeamNostra's audit**, by the operator's decision of 2026-11-19, verbatim
 "Commit it" (answering "Commit the scope pack to the repo for TeamNostra to audit?"). Its §5 rulings
-are the operator's ("Approve the defaults", 2026-11-19). Nothing here is built: it was prepared on
+are the operator's ("Approve the defaults", 2026-11-19; SP-R4 ruled 2026-11-20). Nothing here is built: it was prepared on
 2026-11-19 at $0, with no model call, no paid run and no page written. The record is
 `docs/records/2026-11-19-archetype-scope-pack-1.md`. **Amended 2026-11-20 (W87):** DVN's and DAC's
 exports landed and were built, SP-D22 is added, and a list of what was found since is at the end
@@ -86,7 +86,7 @@ of the adopted text:
 | banks, lenders, insurers, broker-dealers with a bank book | G06, G07, G08, G10 |
 | pre-revenue biotech | G04 |
 | BRK and other conglomerates | BRK in G08 by SIC; other conglomerates have no census signal (SP-R7) |
-| MLPs, until the K-1 ruling | G15 |
+| MLPs: out of scope for stage 1 (SP-R4, ruled 2026-11-20) | G15 |
 | stage 2: IFRS or another currency; non-SEC names | G18, G19; no CIK |
 | wait: no 10-K yet | G20 |
 | not decided by the adopted text | G05b, G16b (SP-R9) |
@@ -123,7 +123,7 @@ in `scripts/archetype_probe/classify.py` and `grid.py`.
 | G13 REIT | **refused until P/FFO** (SP-S2, lifted by SP-S5) | SIC 6798 | 94 (4.6%) | 37 (4.0%) | 128 | 0 |
 | G13b real-estate operator | **refused until P/FFO** (SP-S2) | SIC 6500/6510/6512/6513/6519/6531/6532/6552. **13 REITs sit outside SIC 6798** (they carry `RealEstateInvestmentPropertyNet` ≥ 50% of assets; INVH among them), so a guard on SIC 6798 alone misses them (findings §3b) | 20 (1.0%) | 3 (0.3%) | 23 | 0 |
 | G14 regulated utility | **in scope**, R1/R3 | SIC 4911/4924/4931/4932/4941/4961/4991 | 29 (1.4%) | 35 (3.8%) | 64 | 0 |
-| G15 partnership / MLP | **out of scope until the K-1 ruling** (SP-R4) | a partnership name (" L.P.", ends " LP" or ", LP"), or both `PartnersCapital` and `LimitedPartnersCapitalAccount` at CY2025Q4I. Checked before utility | 15 (0.7%) | 7 (0.8%) | 22 | 0 |
+| G15 partnership / MLP | **out of scope for stage 1** (SP-R4, ruled 2026-11-20) | a partnership name (" L.P.", ends " LP" or ", LP"), or both `PartnersCapital` and `LimitedPartnersCapitalAccount` at CY2025Q4I. Checked before utility | 15 (0.7%) | 7 (0.8%) | 22 | 0 |
 | G16 royalty / patent owner | **in scope** | SIC 6792/6794/6795 | 6 (0.3%) | 2 (0.2%) | 8 | 0 |
 | G16b holding / investment office | **not decided by the adopted text** (SP-R9) | other SIC 67xx | 1 (0.0%) | 0 | 1 | 0 |
 | G17 FPI · US GAAP USD · operating | **in scope**, with the D2 refusal and the D8 6-K rule (SP-S7) | latest annual a 20-F or 40-F; newest fiscal year in us-gaap; reporting currency USD; operating form | 57 (2.8%) | 11 (1.2%) | 68 | 0 |
@@ -283,7 +283,7 @@ archetype other than G01–G03 needs a new fixture.
 
 | ID | item |
 |---|---|
-| **SP-S1** | **The out-of-scope intake guard**, at `coverage_roster.require_buildable` / `assemble.load_finalists`, before `AnthropicLlmClient` is constructed. It refuses G04, G06, G07, G08, G10 (SIC 6211 with a bank book included), BRK and the conglomerates list (SP-R7), G15 (until SP-R4), G16b and G05b as SP-R9 rules, and stage-2 and wait names (G18, G19, non-SEC, G20). Each refusal names the archetype and the ruling. Measured today: nothing at intake reads the archetype, and once a roster line exists a bank, a biotech, BRK or an MLP reaches the paid phases (findings §11c) |
+| **SP-S1** | **The out-of-scope intake guard**, at `coverage_roster.require_buildable` / `assemble.load_finalists`, before `AnthropicLlmClient` is constructed. It refuses G04, G06, G07, G08, G10 (SIC 6211 with a bank book included), BRK and the conglomerates list (SP-R7), G15 (SP-R4), G16b and G05b as SP-R9 rules, and stage-2 and wait names (G18, G19, non-SEC, G20). Each refusal names the archetype and the ruling. Measured today: nothing at intake reads the archetype, and once a roster line exists a bank, a biotech, BRK or an MLP reaches the paid phases (findings §11c) |
 | **SP-S2** | **G13/G13b refused until P/FFO**, keyed on SIC 6798 and 65xx **and** on `RealEstateInvestmentPropertyNet` ≥ 50% of assets, so INVH-type REITs are caught. Lifted by SP-S5 |
 | **SP-S3** | **The precheck states "nothing priceable"** when no recipe template can be emitted on the $0 page: PLD (fresh pack), PCVX (re-exported), the DVN variant. Whether that is a verdict line or a refusal is open (SP-R8) |
 | SP-D1, SP-D2, SP-D3, SP-D11, SP-D13, SP-D14, SP-D19, SP-D20 | as in §3 |
@@ -298,7 +298,7 @@ archetype other than G01–G03 needs a new fixture.
   - must still pass: SPGI (G01), AWK (G14), MORN (G11, SP-D20);
   - the DVN variant (SP-D19).
 - **Cost:** 4–6 PRs.
-- **Depends on:** SP-R4, SP-R6, SP-R7, SP-R8, SP-R9. Not on any other order.
+- **Depends on:** SP-R6, SP-R7, SP-R8, SP-R9 (all ruled). Not on any other order.
 
 ### Order 2: widen the proven path
 
@@ -391,8 +391,9 @@ archetype other than G01–G03 needs a new fixture.
 ## 5. Rulings
 
 The operator ruled on 2026-11-19, verbatim: "Approve the defaults", in answer to "Approve the
-pack's ruling defaults (SP-R1 to R9, K-1 left open)?". Eight defaults are now the operator's
-rulings, and SP-R4 (K-1) stays open. **Who drafted them:** SP-R1 and SP-R4 quote the adopted
+pack's ruling defaults (SP-R1 to R9, K-1 left open)?". Those eight defaults are the operator's
+rulings. **SP-R4 was ruled on 2026-11-20**: asked "Rule SP-R4: keep MLPs (K-1 issuers) out of scope for stage 1?", the operator answered, verbatim,
+"Yes, keep them out". All nine are now ruled. **Who drafted them:** SP-R1 and SP-R4 quote the adopted
 step-5 text (§1); B drafted SP-R9's defaults; the probe drafted the rest.
 
 | ID | question | default | operator ruling | unblocks |
@@ -400,7 +401,7 @@ step-5 text (§1); B drafted SP-R9's defaults; the probe drafted the rest.
 | SP-R1 | D5: when is a company debt-free? | the adopted text: "count debt as zero only when the 10-K's balance sheet has no debt line and its notes show no borrowing. The page then says "no debt reported in the 10-K". Otherwise it refuses." | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-D5 |
 | SP-R2 | D8: how is a "results" 6-K detected? The rule itself is adopted | a 6-K is a results event when its exhibit index lists an EX-99 whose description or first heading names results, an earnings release or interim financial statements. A 6-K whose index can't be read counts as a results event (fail closed) | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-D8 |
 | SP-R3 | D18: may the filing decide RIVN's row? | add a reviewed mapping of CIQ 'Gain (Loss) On Sale Of Invest.' to `IncomeLossFromEquityMethodInvestments`, measured on RIVN, so the filing decides for the quarterly side. The refusal stays wherever the filing can't decide | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-D18 |
-| SP-R4 | K-1 names (G15) | the adopted text: "K-1 names: your call on whether the fund holds MLPs." Until it is ruled, G15 stays refused at intake | open: the operator's call; G15 refused at intake until ruled | SP-S1 (G15) |
+| SP-R4 | K-1 names (G15) | the adopted text: "K-1 names: your call on whether the fund holds MLPs." Until it is ruled, G15 stays refused at intake | **ruled 2026-11-20: G15 out of scope for stage 1, refused at intake** (asked "Rule SP-R4: keep MLPs (K-1 issuers) out of scope for stage 1?"; answered "Yes, keep them out") | SP-S1 (G15) |
 | SP-R5 | stage 2's FX | no FX conversion in stage 1. Before any non-USD figure is read, stage 2 rules on the rate source and the date convention (period-end for balances, period average for flows; a market-data panel at its own 'Pricing as of' date) | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | stage 2; SP-D21's conversion route |
 | SP-R6 | the two live pages in an out-of-scope archetype (ORKA, TECX; G04, both on watch) | they stay frozen on watch, as committed. The guard refuses any move back to active and any paid rebuild | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-S1 |
 | SP-R7 | which names are "conglomerates"? | a named list, BRK-A and BRK-B, until a rule is proposed and measured | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-S1 |
