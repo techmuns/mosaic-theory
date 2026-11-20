@@ -1,8 +1,8 @@
 diff --git a/.claude/hooks/decision_path_guard.py b/.claude/hooks/decision_path_guard.py
-index 949b68ec..fe77074e 100644
+index 949b68ec..03f5af1b 100644
 --- a/.claude/hooks/decision_path_guard.py
 +++ b/.claude/hooks/decision_path_guard.py
-@@ -12,16 +12,40 @@ hook forces, 47 of the 48 asks logged 2026-11-04 → 11-17 (every one in auto mo
+@@ -12,16 +12,44 @@ hook forces, 47 of the 48 asks logged 2026-11-04 → 11-17 (every one in auto mo
  through the app's "Allow once" path, the 48th was refused by the classifier, and the operator
  granted #1097's. What it is NOT is a decision of record, which is how it was being read. A grant is
  a click — 10 of the 47 came within 10 s of the ask — recorded only in a temp file and a local
@@ -44,11 +44,15 @@ index 949b68ec..fe77074e 100644
 +  adds nothing the gate would refuse.
 +The before-reading is a reading, not a shell: what it cannot see is the after-check's, and a commit
 +made inside the call is bin/commit's.
++A grant is kept per CHECKOUT and path, for the Edit path too (A's review of #1155): kept by path
++alone, one grant in a scratch clone silenced that file in every checkout of the session. When a
++granted call changes the file, the operator is told, since the ask may have been answered by a
++mode rather than a person. A failure in the Bash path still lets the call run, but says so.
 +
  The list is the decision line itself plus the gates that guard it (an agent able to edit its own
  guard without asking is the "optimizer edits its grader" failure). It is deliberately NOT every
  decision-path module: screens and the ranker are governed by the real-run-before-merge rule, and a
-@@ -34,12 +58,22 @@ exist: no gate looked at these files.)
+@@ -34,12 +62,22 @@ exist: no gate looked at these files.)
  """
  from __future__ import annotations
  
@@ -71,7 +75,7 @@ index 949b68ec..fe77074e 100644
  
  #: (path or directory prefix ending in "/", what it is) — relative to the repo root.
  PROTECTED: tuple[tuple[str, str], ...] = (
-@@ -108,48 +142,838 @@ def protected_reason(rel: str) -> str | None:
+@@ -108,63 +146,959 @@ def protected_reason(rel: str) -> str | None:
      return None
  
  
@@ -96,8 +100,8 @@ index 949b68ec..fe77074e 100644
 +    return str(root)
 +
 +
-+def repo_relative(file_path: str) -> str | None:
-+    """The path relative to its mosaic-theory checkout, or None outside one."""
++def locate(file_path: str) -> tuple[str, str] | None:
++    """``(its mosaic-theory checkout, the path relative to it)``, or None outside one."""
 +    p = Path(file_path)
 +    probe = p.parent if not p.is_dir() else p
 +    while not probe.exists() and probe != probe.parent:
@@ -107,12 +111,26 @@ index 949b68ec..fe77074e 100644
 +        return None
      try:
 -        return p.resolve().relative_to(root.resolve()).as_posix()
-+        return p.resolve().relative_to(Path(root).resolve()).as_posix()
++        return root, p.resolve().relative_to(Path(root).resolve()).as_posix()
      except ValueError:
          return None
  
  
 -def _state_file(session_id: str) -> Path:
++def repo_relative(file_path: str) -> str | None:
++    """The path relative to its mosaic-theory checkout, or None outside one."""
++    found = locate(file_path)
++    return found[1] if found else None
++
++
++def _key(root: str, rel: str) -> str:
++    """A grant's key: the checkout AND the path (A's review of #1155, SF1). Keyed by the path
++    alone, a grant in a scratch clone silenced the same file in every checkout of the session —
++    on 2026-11-10 an Edit grant on a scratch copy of `vinci/ledger/correction.py` let four later
++    Edits of the real one run unasked."""
++    return root.rstrip("/") + "/" + rel
++
++
 +def _state_file(session_id: str, kind: str = "") -> Path:
      safe = "".join(c for c in session_id if c.isalnum() or c in "-_") or "unknown"
 -    return STATE_DIR / f"guard-{safe}.json"
@@ -133,10 +151,10 @@ index 949b68ec..fe77074e 100644
 +    return _read_set(_state_file(session_id))
 +
 +
-+def _covered(rel: str, granted: set[str]) -> bool:
-+    """Whether ``rel`` is granted, itself or through a directory entry (`scenarios/`) that holds
-+    it — a Bash ask can name a directory its command writes into."""
-+    return rel in granted or any(g.endswith("/") and rel.startswith(g) for g in granted)
++def _covered(key: str, granted: set[str]) -> bool:
++    """Whether ``key`` is granted, itself or through a directory it sits in — a Bash ask can name
++    a directory its command writes into, `scenarios/` or `scenarios/archive` alike."""
++    return key in granted or any(key.startswith(g.rstrip("/") + "/") for g in granted)
 +
 +
  def record_approval(session_id: str, rel: str) -> None:
@@ -144,32 +162,55 @@ index 949b68ec..fe77074e 100644
      _state_file(session_id).write_text(json.dumps(sorted(approved(session_id) | {rel})))
  
  
-+def _ask_reason(found: dict[str, str], via: str) -> str:
-+    """The prompt's reason: each file and what it is, and the line the gate will want."""
-+    shown = sorted(found)[:10]
-+    if len(found) == 1:
-+        rel = shown[0]
-+        what = f"`{rel}` is {found[rel]}{via}."
++#: A protected path a Bash command touches: its checkout, its path there, what it is, how the
++#: command reaches it ("writes", or "names" for a path inline Python only names beside a write
++#: call), and whether it is a directory.
++Hit = tuple[str, str, str, str, bool]
++
++
++def _ask_reason(asked: dict[str, Hit]) -> str:
++    """The Bash prompt's reason: the checkout, each path and what it is, how the command reaches it,
++    and the line the gate will want."""
++    keys = sorted(asked)
++    shown = keys[:10]
++    roots = sorted({asked[k][0] for k in keys})
++
++    def item(key: str) -> str:
++        root, rel, why, how, _ = asked[key]
++        where = "" if len(roots) == 1 else f" (in {root})"
++        reach = ("its inline Python names it beside a write call, so it may write it"
++                 if how == "names" else "it writes it")
++        return f"`{rel}`{where} is {why}; {reach}"
++
++    head = f"This Bash command, in the checkout at {roots[0]}," if len(roots) == 1 else (
++        f"This Bash command, in {len(roots)} checkouts,")
++    if len(keys) == 1:
++        what = f"{head} touches a protected path: {item(keys[0])}."
++        _, rel, _, _, is_dir = asked[keys[0]]
++        line = f"<each file it changes under {rel.rstrip('/')}/>" if is_dir else rel
 +    else:
-+        what = (f"{len(found)} protected files are written{via} (showing {len(shown)} of "
-+                f"{len(found)}): " + "; ".join(f"`{r}` is {found[r]}" for r in shown) + ".")
-+    line = shown[0] if len(found) == 1 else "<path>"
++        what = (f"{head} touches {len(keys)} protected paths (showing {len(shown)} of "
++                f"{len(keys)}): " + "; ".join(item(k) for k in shown) + ".")
++        line = "<each file it changes>"
 +    return (f"{what} CLAUDE.md treats a change here as crossing the decision line — confirm it "
-+            "is intended. Asked once per file per session (.claude/hooks/decision_path_guard.py). "
-+            "This answer is not the record: the gate refuses the branch until a commit message on "
-+            f"it carries `Operator-approved: {line} \"<the operator's words>\" <YYYY-MM-DD>` "
-+            "(.github/scripts/protected_approval.py).")
++            "is intended. Asked once per file per checkout per session (.claude/hooks/"
++            "decision_path_guard.py). This answer is not the record: the gate refuses the branch "
++            f"until a commit message on it carries `Operator-approved: {line} \"<the operator's "
++            "words>\" <YYYY-MM-DD>` (.github/scripts/protected_approval.py).")
 +
 +
 +# ── W77: reading a Bash command for the files it writes ──────────────────────────────────────────
 +
 +class Target(NamedTuple):
 +    """An absolute path a Bash command writes, and how to match it: ``file`` (that path), ``dir``
-+    (a path a script names, which may be a directory it writes into) or ``tree`` (a path removed
-+    or overwritten whole, so every protected entry below it as well)."""
++    (a path a script names, which may be a directory it writes into), ``tree`` (a path overwritten
++    whole, so every protected entry below it as well) or ``gone`` (a ``tree`` removed: only what
++    git tracks there counts, since the gate never sees an untracked file go). ``how`` is "writes",
++    or "names" for a path inline Python only names beside a write call."""
 +
 +    path: str
 +    kind: str = "file"
++    how: str = "writes"
 +
 +
 +class _Command(NamedTuple):
@@ -268,6 +309,7 @@ index 949b68ec..fe77074e 100644
 +    tokens = _tokens(_HEREDOC.sub(keep, text).replace("\\\n", ""))
 +    directory = cwd
 +    outer: list[str | None] = []                       # the directory each open `(` will restore
++    fallback: str | None = None                        # where `cd X || <this>` runs: before X
 +    words: list[str] = []
 +    writes: list[str] = []
 +    stdin: str | None = None
@@ -285,11 +327,15 @@ index 949b68ec..fe77074e 100644
 +            comment = False
 +            if words or writes:
 +                command = _strip(words)
++                here = directory if fallback is None else fallback
++                fallback = None
 +                if command[:1] == ["cd"]:
-+                    directory = _resolve_cd(directory, command[1:])
-+                if directory is not None:
-+                    dirs.add(directory)
-+                yield _Command(command, directory, writes, stdin, stdin_file)
++                    if "||" in token:          # the command after `||` runs only if this cd
++                        fallback = here        # FAILED, from where it started (Codex on #1155)
++                    directory = here = _resolve_cd(here, command[1:])
++                if here is not None:
++                    dirs.add(here)
++                yield _Command(command, here, writes, stdin, stdin_file)
 +            words, writes, stdin, stdin_file = [], [], None, None
 +            for char in token if redirect is None else redirect.group("sep"):
 +                if char == "(":                        # a subshell, `$(…)` or `>(…)`: its `cd`
@@ -445,7 +491,7 @@ index 949b68ec..fe77074e 100644
 +    for word in sources:
 +        for src in _paths(cmd.cwd, word):
 +            if moving:
-+                out.append(Target(src, "tree"))         # the old path changes too
++                out.append(Target(src, "gone"))         # the old path changes too
 +            if dst is None:
 +                continue
 +            dest = os.path.normpath(os.path.join(dst, os.path.basename(src))) if into else dst
@@ -510,7 +556,7 @@ index 949b68ec..fe77074e 100644
 +    if sub == "mv":
 +        return _copy(here, "git-mv", rest)
 +    if sub == "rm":
-+        return [Target(p, "tree") for w in _operands(rest) for p in _paths(cwd, w)]
++        return [Target(p, "gone") for w in _operands(rest) for p in _paths(cwd, w)]
 +    if sub == "apply" and not any(a in ("--check", "--stat", "--numstat", "--summary")
 +                                  for a in rest):
 +        root = _checkout_root(cwd) if cwd and os.path.isdir(cwd) else cwd
@@ -540,6 +586,12 @@ index 949b68ec..fe77074e 100644
 +_QUOTED = re.compile(r"'([^'\n]*)'|\"([^\"\n]*)\"")
 +
 +
++def _std_stream(node: ast.expr) -> bool:
++    """Whether ``node`` is `sys.stdout` or `sys.stderr`: a write to one is printing."""
++    return (isinstance(node, ast.Attribute) and node.attr in ("stdout", "stderr")
++            and isinstance(node.value, ast.Name) and node.value.id == "sys")
++
++
 +def _python_reads(code: str) -> tuple[list[str], bool, list[str]]:
 +    """The string literals ``code`` holds, whether it makes a write call, and the shell commands it
 +    runs (`subprocess.run([...])`, `os.system(...)`) — by its syntax tree, or by its text when it
@@ -564,7 +616,12 @@ index 949b68ec..fe77074e 100644
 +        owner = func.value.id if isinstance(func, ast.Attribute) and isinstance(
 +            func.value, ast.Name) else ""
 +        args = [*node.args, *(k.value for k in node.keywords)]
-+        if name.startswith("write") or name in _PY_WRITE_CALLS or (
++        receiver = func.value if isinstance(func, ast.Attribute) else None
++        if (receiver is not None and (_std_stream(receiver) or (
++                isinstance(receiver, ast.Call) and any(_std_stream(a) for a in receiver.args)))
++                or any(_std_stream(a) for a in args)):
++            pass                                        # sys.stdout.write, csv.writer(sys.stdout)
++        elif name.startswith("write") or name in _PY_WRITE_CALLS or (
 +                name in _PY_WRITE_CALLS_2 and len(args) >= 2):
 +            writes = True                               # write_record, write_jsonl … included
 +        elif name in ("replace", "remove") and (owner == "os" or (
@@ -591,7 +648,7 @@ index 949b68ec..fe77074e 100644
 +    literals, writes, runs = _python_reads(code)
 +    out = [t for run in runs for t in _targets(run, cwd, depth + 1)]
 +    if writes:
-+        out += [Target(p, "dir") for lit in literals if 0 < len(lit) < 300
++        out += [Target(p, "dir", "names") for lit in literals if 0 < len(lit) < 300
 +                and not lit.startswith("-") for p in _paths(cwd, lit, expand=False)]
 +    return out
 +
@@ -655,7 +712,7 @@ index 949b68ec..fe77074e 100644
 +    elif name in ("cp", "mv", "ln", "gcp", "gmv"):
 +        out += _copy(cmd, name.lstrip("g") if name in ("gcp", "gmv") else name, args)
 +    elif name in ("rm", "unlink", "grm"):
-+        out += [Target(p, "tree") for w in _operands(args) for p in _paths(cmd.cwd, w)]
++        out += [Target(p, "gone") for w in _operands(args) for p in _paths(cmd.cwd, w)]
 +    elif name == "touch":
 +        out += [Target(p) for w in _operands(args, {"-t", "-d", "-r", "-A", "--date",
 +                                                    "--reference"})
@@ -702,23 +759,33 @@ index 949b68ec..fe77074e 100644
 +        return [], dirs
 +
 +
-+def protected_hits(target: Target, rel_of: Callable[[str], str | None] = repo_relative,
-+                   ) -> list[tuple[str, str]]:
-+    """``(path relative to its checkout, what it is)`` for each protected path the target writes."""
-+    rel = rel_of(target.path)
-+    if rel is None:
++def _tracked(root: str, rel: str) -> bool:
++    """Whether git tracks ``rel`` (or anything below it) in ``root`` — True when git cannot say."""
++    listed = _git_out(Path(root), "ls-files", "-z", "--", rel)
++    return listed is None or bool(listed)
++
++
++def protected_hits(target: Target,
++                   where: Callable[[str], tuple[str, str] | None] = locate,
++                   tracked: Callable[[str, str], bool] = _tracked,
++                   ) -> list[tuple[str, str, str]]:
++    """``(checkout, path relative to it, what it is)`` for each protected path the target writes."""
++    found = where(target.path)
++    if found is None:
 +        return []
++    root, rel = found
 +    rel = "" if rel in (".", "") else rel.rstrip("/")
++    hits: list[tuple[str, str]] = []
 +    why = protected_reason(rel) if rel else None
 +    if why:
-+        return [(rel, why)]
-+    if target.kind in ("dir", "tree") and rel:
-+        why = protected_reason(rel + "/")
-+        if why:
-+            return [(rel + "/", why)]
-+    if target.kind == "tree":
-+        return [(path, why) for path, why in PROTECTED if not rel or path.startswith(rel + "/")]
-+    return []
++        hits = [(rel, why)]
++    elif target.kind != "file" and rel and (why := protected_reason(rel + "/")):
++        hits = [(rel + "/", why)]
++    elif target.kind in ("tree", "gone"):
++        hits = [(path, why) for path, why in PROTECTED if not rel or path.startswith(rel + "/")]
++    if target.kind == "gone":
++        hits = [(r, w) for r, w in hits if tracked(root, r)]
++    return [(root, r, w) for r, w in hits]
 +
 +
 +# ── W77: what a Bash call changed ────────────────────────────────────────────────────────────────
@@ -734,13 +801,20 @@ index 949b68ec..fe77074e 100644
 +        return f"unreadable:{exc.errno}"
 +
 +
++#: Every git call of the after-check (A's review of #1155): `--no-optional-locks`, since `git
++#: status` otherwise takes the index lock to refresh it (29 of 150 concurrent `git add` calls then
++#: failed on `index.lock`; 0 with it), and `core.fsmonitor` off, since a configured monitor made
++#: each status run into the 10 s timeout, which left the after-check dead.
++_GIT = ("git", "-c", "core.fsmonitor=false", "--no-optional-locks")
++
++
 +def fingerprint(root: Path) -> dict[str, str] | None:
 +    """Each protected file that differs from HEAD in ``root`` (modified, deleted or new), by its
 +    content; a protected file absent from the map is HEAD's. None when git cannot say."""
 +    try:
-+        out = subprocess.run(["git", "-C", str(root), "status", "--porcelain=v1", "-z",
++        out = subprocess.run([*_GIT, "-C", str(root), "status", "--porcelain=v1", "-z",
 +                              "--untracked-files=all", "--no-renames", "--ignore-submodules"],
-+                             capture_output=True, timeout=10)
++                             capture_output=True, stdin=subprocess.DEVNULL, timeout=10)
 +    except (OSError, subprocess.SubprocessError):
 +        return None
 +    if out.returncode != 0:
@@ -755,8 +829,12 @@ index 949b68ec..fe77074e 100644
 +
 +def _git_out(root: Path, *args: str, stdin: str | None = None) -> str | None:
 +    try:
-+        out = subprocess.run(["git", "-C", str(root), *args], input=stdin, capture_output=True,
-+                             text=True, timeout=10)
++        if stdin is None:
++            out = subprocess.run([*_GIT, "-C", str(root), *args], stdin=subprocess.DEVNULL,
++                                 capture_output=True, text=True, timeout=10)
++        else:
++            out = subprocess.run([*_GIT, "-C", str(root), *args], input=stdin,
++                                 capture_output=True, text=True, timeout=10)
 +    except (OSError, subprocess.SubprocessError):
 +        return None
 +    return out.stdout if out.returncode == 0 else None
@@ -764,15 +842,16 @@ index 949b68ec..fe77074e 100644
 +
 +def known_states(root: Path, rels: list[str], after: dict[str, str]) -> set[str]:
 +    """The ``rels`` whose content after the call is one the gate already holds: HEAD's (a discard,
-+    a commit), origin/main's (a re-sync), or that of the commit a merge, rebase or cherry-pick is
-+    applying — none of them a change an agent made unasked."""
++    a commit), origin/main's or main's (a re-sync), or that of the commit a merge, rebase or
++    cherry-pick is applying — none of them a change an agent made unasked."""
 +    known = {r for r in rels if r not in after}
 +    present = [r for r in rels if r in after and after[r].startswith("sha1:")]
 +    deleted = [r for r in rels if after.get(r) == "deleted"]
 +    hashes = (_git_out(root, "hash-object", "--stdin-paths", stdin="\n".join(present) + "\n")
 +              or "").split()
 +    blobs = {r: hashes[k] for k, r in enumerate(present) if k < len(hashes)}
-+    for ref in ("HEAD", "origin/main", "MERGE_HEAD", "REBASE_HEAD", "CHERRY_PICK_HEAD"):
++    for ref in ("HEAD", "origin/main", "main", "MERGE_HEAD", "REBASE_HEAD",
++                "CHERRY_PICK_HEAD"):
 +        if not (present or deleted) or _git_out(root, "rev-parse", "--verify", "--quiet",
 +                                                f"{ref}^{{commit}}") is None:
 +            continue
@@ -816,84 +895,110 @@ index 949b68ec..fe77074e 100644
 +
 +def _bash_before(command: str, cwd: str, session: str, call: str) -> int:
 +    targets, dirs = bash_writes(command, cwd)
-+    found: dict[str, str] = {}
++    found: dict[str, Hit] = {}
 +    for target in targets:
-+        for rel, why in protected_hits(target):
-+            found.setdefault(rel, why)
++        for root, rel, why in protected_hits(target):
++            key = _key(root, rel)
++            if key not in found or (found[key][3] == "names" and target.how == "writes"):
++                found[key] = (root, rel, why, target.how,
++                              rel.endswith("/") or os.path.isdir(os.path.join(root, rel)))
 +    ok = approved(session)
-+    asked = {rel: why for rel, why in found.items() if not _covered(rel, ok)}
-+    project = os.environ.get("CLAUDE_PROJECT_DIR")
-+    roots = _roots(dirs | {os.path.dirname(t.path) for t in targets} | ({project} if project
-+                                                                        else set()))
-+    if call:
-+        before = {str(r): p for r in roots if (p := fingerprint(r)) is not None}
-+        STATE_DIR.mkdir(parents=True, exist_ok=True)
-+        _prune(session)
-+        _pending_file(session, call).write_text(json.dumps({"asked": sorted(asked),
-+                                                            "before": before}))
++    asked = {key: hit for key, hit in found.items() if not _covered(key, ok)}
++    output: dict[str, object] = {}
 +    if asked:
-+        print(json.dumps({"hookSpecificOutput": {
-+            "hookEventName": "PreToolUse",
-+            "permissionDecision": "ask",
-+            "permissionDecisionReason": _ask_reason(asked, " and this Bash command writes it"
-+                                                    if len(asked) == 1 else " by this Bash "
-+                                                    "command"),
-+        }}))
++        output["hookSpecificOutput"] = {"hookEventName": "PreToolUse",
++                                        "permissionDecision": "ask",
++                                        "permissionDecisionReason": _ask_reason(asked)}
++    if call:
++        project = os.environ.get("CLAUDE_PROJECT_DIR")
++        roots = _roots(dirs | {os.path.dirname(t.path) for t in targets}
++                       | ({project} if project else set()))
++        before = {str(r): p for r in roots if (p := fingerprint(r)) is not None}
++        try:                    # the ask above stands whatever the temp store does (SF5)
++            STATE_DIR.mkdir(parents=True, exist_ok=True)
++            _prune(session)
++            _pending_file(session, call).write_text(json.dumps({"asked": sorted(asked),
++                                                                "before": before}))
++        except OSError as exc:
++            output["systemMessage"] = (
++                f"decision-line guard (W77) could not keep its reading of this Bash call ({exc}), "
++                "so the after-check is off for it; an ask still stands, and the commit gate is "
++                "the record (.claude/hooks/decision_path_guard.py).")
++    if output:
++        print(json.dumps(output))
 +    return 0
 +
 +
-+def _bash_after(session: str, call: str, event: str) -> int:
++def _shown_command(command: str) -> str:
++    """The command for the operator's notice, cut at 200 characters and saying so."""
++    if len(command) <= 200:
++        return f"The command: {command!r}."
++    return f"The command (first 200 of {len(command)} characters): {command[:200]!r}."
++
++
++def _bash_after(session: str, call: str, event: str, command: str) -> int:
 +    pending_file = _pending_file(session, call)
 +    try:
 +        pending = json.loads(pending_file.read_text())
 +        pending_file.unlink()
 +    except (OSError, ValueError):
 +        return 0                                       # no reading from before the call
-+    asked = {str(r) for r in pending.get("asked") or []}   # the call ran: each ask was granted
++    asked = {str(k) for k in pending.get("asked") or []}   # the call ran: each ask was granted
 +    ok = approved(session) | asked
 +    reported_file = _state_file(session, "-reported")
 +    told = _read_set(reported_file)
-+    changed: dict[str, str] = {}
-+    wrote: set[str] = set()
++    changed: dict[str, tuple[str, str, str]] = {}
++    wrote: dict[str, str] = {}
 +    for root_name, before in (pending.get("before") or {}).items():
 +        root = Path(root_name)
 +        after = fingerprint(root)
 +        if after is None:
 +            continue
 +        moved = sorted(r for r in set(before) | set(after) if before.get(r) != after.get(r))
-+        wrote |= {r for r in moved if _covered(r, asked)}
-+        unasked = [r for r in moved if not _covered(r, ok) and r not in told]
++        wrote.update({_key(root_name, r): r for r in moved if _covered(_key(root_name, r), asked)})
++        unasked = [r for r in moved if not _covered(_key(root_name, r), ok)
++                   and _key(root_name, r) not in told]
 +        for rel in sorted(set(unasked) - known_states(root, unasked, after)):
-+            changed[rel] = protected_reason(rel) or "protected"
++            changed[_key(root_name, rel)] = (root_name, rel, protected_reason(rel) or "protected")
 +    # A grant covers the session only for the files the call CHANGED (Codex on #1155): a path it
 +    # merely named, as inline Python that reads a protected file and writes another does, is
 +    # asked about again next time.
-+    for rel in sorted(wrote):
-+        record_approval(session, rel)
-+    if not changed:
-+        return 0
-+    STATE_DIR.mkdir(parents=True, exist_ok=True)
-+    reported_file.write_text(json.dumps(sorted(told | set(changed))))
-+    shown = sorted(changed)[:10]
-+    listing = "\n".join(f"  `{r}` — {changed[r]}" for r in shown)
-+    count = (f"{len(changed)} protected file(s)" + (f" (showing {len(shown)} of {len(changed)})"
-+                                                    if len(shown) < len(changed) else ""))
-+    reason = (f"This Bash call changed {count} that no ask covered — the command did not show "
-+              "the write, so the guard could not ask before it ran (.claude/hooks/"
-+              f"decision_path_guard.py, W77):\n{listing}\nCLAUDE.md treats a change here as "
-+              "crossing the decision line. STOP and ask the operator whether each change is "
-+              "intended; if it is not, restore the file. The gate refuses the branch until a "
-+              "commit message on it carries `Operator-approved: <path> \"<the operator's words>\" "
-+              "<YYYY-MM-DD>` (.github/scripts/protected_approval.py). Reported once per file per "
-+              "session.")
-+    notice = (f"decision-line guard: a Bash call changed {count}: {', '.join(shown)} — with no "
-+              "ask before it ran; the agent has been told to stop and ask you.")
-+    if event == "PostToolUseFailure":
-+        print(json.dumps({"hookSpecificOutput": {"hookEventName": event,
-+                                                 "additionalContext": reason},
-+                          "systemMessage": notice}))
-+    else:
-+        print(json.dumps({"decision": "block", "reason": reason, "systemMessage": notice}))
++    for key in sorted(wrote):
++        record_approval(session, key)
++    notices: list[str] = []
++    if wrote:                  # the ask may have been answered by a mode, not a person (SF7)
++        names = sorted(wrote.values())
++        notices.append(f"decision-line guard: this Bash call was approved to write a protected "
++                       f"path, and it changed {len(names)} protected file(s) "
++                       f"(showing {min(len(names), 10)} of {len(names)}): "
++                       f"{', '.join(names[:10])}. The grant now covers them for this session.")
++    output: dict[str, object] = {}
++    if changed:
++        STATE_DIR.mkdir(parents=True, exist_ok=True)
++        reported_file.write_text(json.dumps(sorted(told | set(changed))))
++        shown = sorted(changed)[:10]
++        listing = "\n".join(f"  `{changed[k][1]}` in {changed[k][0]} — {changed[k][2]}"
++                            for k in shown)
++        count = (f"{len(changed)} protected file(s)" + (
++            f" (showing {len(shown)} of {len(changed)})" if len(shown) < len(changed) else ""))
++        reason = (f"This Bash call changed {count} that no ask covered — the command did not "
++                  "show the write, so the guard could not ask before it ran (.claude/hooks/"
++                  f"decision_path_guard.py, W77):\n{listing}\nCLAUDE.md treats a change here as "
++                  "crossing the decision line. STOP and ask the operator whether each change is "
++                  "intended; if it is not, restore the file. The gate refuses the branch until a "
++                  "commit message on it carries `Operator-approved: <path> \"<the operator's "
++                  "words>\" <YYYY-MM-DD>` (.github/scripts/protected_approval.py). Reported once "
++                  "per file per checkout per session.")
++        notices.append(f"decision-line guard: a Bash call changed {count}: "
++                       f"{', '.join(changed[k][1] for k in shown)} — with no ask before it ran; "
++                       "the agent has been told to stop and ask you.")
++        if event == "PostToolUseFailure":
++            output["hookSpecificOutput"] = {"hookEventName": event, "additionalContext": reason}
++        else:
++            output.update({"decision": "block", "reason": reason})
++    if notices:
++        output["systemMessage"] = "\n".join([*notices, _shown_command(command)])
++        print(json.dumps(output))
 +    return 0
 +
 +
@@ -906,7 +1011,7 @@ index 949b68ec..fe77074e 100644
 +    if event == "PreToolUse":
 +        return _bash_before(command, str(payload.get("cwd") or os.getcwd()), session, call)
 +    if event in ("PostToolUse", "PostToolUseFailure") and call:
-+        return _bash_after(session, call, event)
++        return _bash_after(session, call, event, command)
 +    return 0
 +
 +
@@ -918,11 +1023,36 @@ index 949b68ec..fe77074e 100644
 +    if isinstance(payload, dict) and payload.get("tool_name") == "Bash":
 +        try:
 +            return bash_guard(payload)
-+        except Exception:                              # noqa: BLE001 — fails open (docstring)
++        except Exception as exc:                       # noqa: BLE001 — fails open, but loudly
++            print(json.dumps({"systemMessage": (
++                f"decision-line guard (W77) failed on this Bash call ({type(exc).__name__}: "
++                f"{exc}) and let it through unread; the commit gate is still the record "
++                "(.claude/hooks/decision_path_guard.py).")}))
 +            return 0
      tool_input = payload.get("tool_input") or {}
      file_path = tool_input.get("file_path") or tool_input.get("notebook_path")
      if not file_path:
+         return 0
+     if not os.path.isabs(file_path):
+         file_path = os.path.join(payload.get("cwd") or os.getcwd(), file_path)
+-    rel = repo_relative(file_path)
+-    why = protected_reason(rel) if rel else None
+-    if why is None or rel is None:
++    found = locate(file_path)
++    why = protected_reason(found[1]) if found else None
++    if why is None or found is None:
+         return 0
++    root, rel = found
+     session = str(payload.get("session_id") or "unknown")
+     if payload.get("hook_event_name") == "PostToolUse":
+-        record_approval(session, rel)
++        record_approval(session, _key(root, rel))
+         return 0
+-    if rel in approved(session):
++    if _key(root, rel) in approved(session):
+         return 0
+     print(json.dumps({"hookSpecificOutput": {
+         "hookEventName": "PreToolUse",
 diff --git a/.claude/settings.json b/.claude/settings.json
 index 9466a923..f668b7cb 100644
 --- a/.claude/settings.json
@@ -964,7 +1094,7 @@ index 9466a923..f668b7cb 100644
          ]
        }
 diff --git a/tests/test_claude_hooks.py b/tests/test_claude_hooks.py
-index c74f39be..6fd05459 100644
+index 301253a2..2d1127a4 100644
 --- a/tests/test_claude_hooks.py
 +++ b/tests/test_claude_hooks.py
 @@ -56,7 +56,8 @@ def _session() -> str:
@@ -991,7 +1121,7 @@ index c74f39be..6fd05459 100644
  
  IT_RECORD = '{"ticker": "IT", "note": "A"}\n'
  #: A stand-in for vinci/scenarios.py's record API (`read_record` → `model_copy` → `write_record`):
-@@ -1252,7 +1248,6 @@ BASH_WRITES = (
+@@ -1290,7 +1286,6 @@ BASH_WRITES = (
  )
  
  
@@ -999,15 +1129,15 @@ index c74f39be..6fd05459 100644
  @pytest.mark.parametrize(("form", "command", "rel"), BASH_WRITES, ids=[c[0] for c in BASH_WRITES])
  def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
          tmp_path: pathlib.Path, form: str, command: str, rel: str) -> None:
-@@ -1271,7 +1266,6 @@ def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
-     assert f"`{rel}`" in reason and f'Operator-approved: {rel} "' in reason
+@@ -1311,7 +1306,6 @@ def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
+             or 'Operator-approved: <each file it changes> "' in reason)   # several (`git mv`)
  
  
 -@W77
  def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs() -> None:
      """Before (PreToolUse: ask on a visible write), after (PostToolUse: report a write the command
      did not show) and after a failure (PostToolUseFailure: a script that wrote, then exited 1)."""
-@@ -1279,7 +1273,6 @@ def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs()
+@@ -1319,7 +1313,6 @@ def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs()
          assert "decision_path_guard.py" in _wired(event, "Bash"), event
  
  
@@ -1015,7 +1145,7 @@ index c74f39be..6fd05459 100644
  def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_it_runs(
          tmp_path: pathlib.Path) -> None:
      """#1133's shape (2026-11-19): the record read, changed and written back through an API that
-@@ -1300,7 +1293,6 @@ def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_
+@@ -1341,7 +1334,6 @@ def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_
      assert again == {}                            # reported once per file per session
  
  
@@ -1023,7 +1153,7 @@ index c74f39be..6fd05459 100644
  def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
          tmp_path: pathlib.Path) -> None:
      """A Bash call that exits non-zero gets no PostToolUse, only PostToolUseFailure (Claude Code's
-@@ -1316,7 +1308,6 @@ def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
+@@ -1357,7 +1349,6 @@ def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
      assert "`scenarios/IT.json`" in str(context.get("additionalContext"))
  
  
@@ -1031,7 +1161,7 @@ index c74f39be..6fd05459 100644
  def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does(
          tmp_path: pathlib.Path) -> None:
      """Asked once per file per session, whichever tool asked: the grant is recorded when the call
-@@ -1333,7 +1324,6 @@ def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does
+@@ -1374,7 +1365,6 @@ def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does
      assert _asked(_bash_call("echo '{}' > scenarios/IT.json", repo, _session())[0])
  
  
@@ -1039,15 +1169,15 @@ index c74f39be..6fd05459 100644
  def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
          tmp_path: pathlib.Path) -> None:
      """Review round 0: a Python literal naming the folder asks about `scenarios/`; once granted,
-@@ -1347,7 +1337,6 @@ def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
-     assert after == {}
+@@ -1388,7 +1378,6 @@ def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
+     assert "decision" not in after
  
  
 -@W77
  def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path) -> None:
      """CLAUDE.md: a truncated output prints its own truncation. Eleven records written through the
      API: the notice lists ten and says so."""
-@@ -1359,7 +1348,6 @@ def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path)
+@@ -1400,7 +1389,6 @@ def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path)
      assert "11 protected file(s) (showing 10 of 11)" in str(after.get("systemMessage"))
  
  
@@ -1055,3 +1185,51 @@ index c74f39be..6fd05459 100644
  def test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file(
          tmp_path: pathlib.Path) -> None:
      """Codex on #1155, round 1. Inline Python that only READS `scenarios/IT.json` while writing
+@@ -1418,7 +1406,6 @@ def test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file(
+     assert "`scenarios/IT.json`" in str(later["reason"])
+ 
+ 
+-@W77
+ def test_a_grant_covers_its_file_in_its_own_checkout_only(tmp_path: pathlib.Path) -> None:
+     """A's review of #1155, SF1. A grant was keyed by the path alone, so one grant in a scratch
+     clone silenced the same file in every checkout of the session — before (no ask) and after (no
+@@ -1439,7 +1426,6 @@ def test_a_grant_covers_its_file_in_its_own_checkout_only(tmp_path: pathlib.Path
+     assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask"
+ 
+ 
+-@W77
+ def test_a_grant_on_a_sub_directory_covers_the_files_written_in_it(tmp_path: pathlib.Path) -> None:
+     """SF2, the archive-on-supersede shape: a copy into `scenarios/archive` asks (it names the
+     folder; its read-only source is the accepted over-ask), says it MAY write, and prescribes no
+@@ -1456,7 +1442,6 @@ def test_a_grant_on_a_sub_directory_covers_the_files_written_in_it(tmp_path: pat
+     assert "decision" not in after, after
+ 
+ 
+-@W77
+ def test_the_operator_is_told_when_a_granted_call_changes_its_file(tmp_path: pathlib.Path) -> None:
+     """SF7. An ask may be answered by a permission mode, not a person, so after a granted call the
+     operator is told which protected file it changed."""
+@@ -1467,7 +1452,6 @@ def test_the_operator_is_told_when_a_granted_call_changes_its_file(tmp_path: pat
+         after.get("systemMessage"))
+ 
+ 
+-@W77
+ def test_a_slow_fsmonitor_does_not_switch_the_after_check_off(tmp_path: pathlib.Path) -> None:
+     """SF4. With `core.fsmonitor` set, each `git status` waited on the monitor into its 10 s
+     timeout, so the before-reading was lost and a write went unreported. The guard turns the
+@@ -1484,7 +1468,6 @@ def test_a_slow_fsmonitor_does_not_switch_the_after_check_off(tmp_path: pathlib.
+     assert time.monotonic() - started < 9
+ 
+ 
+-@W77
+ def test_an_unwritable_store_still_asks_and_says_its_after_check_is_off(
+         tmp_path: pathlib.Path) -> None:
+     """SF5. The per-call reading was written before the ask was printed, so a store that cannot be
+@@ -1503,7 +1486,6 @@ def test_an_unwritable_store_still_asks_and_says_its_after_check_is_off(
+     assert "after-check is off" in answer["systemMessage"]
+ 
+ 
+-@W77
+ def test_a_failure_in_the_bash_reading_says_so(tmp_path: pathlib.Path) -> None:
+     """SF5 (fail loud). The Bash path fails open — a broken guard must not wedge every call — but
+     a failure that says nothing reads as "nothing protected here". A corrupt per-call reading

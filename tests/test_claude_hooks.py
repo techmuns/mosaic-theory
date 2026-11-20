@@ -1165,15 +1165,33 @@ RECORD_REWRITE = ("python3 - <<'EOF'\nfrom records import read_record, write_rec
                   "rec = read_record('IT')\nrec['note'] = 'B'\nwrite_record(rec)\nEOF")
 
 
+#: A unified diff of scenarios/IT.json from IT_RECORD's note "A" to "P", for `git apply`.
+FIX_DIFF = ('diff --git a/scenarios/IT.json b/scenarios/IT.json\n--- a/scenarios/IT.json\n'
+            '+++ b/scenarios/IT.json\n@@ -1 +1 @@\n-{"ticker": "IT", "note": "A"}\n'
+            '+{"ticker": "IT", "note": "P"}\n')
+
+
+def _git(repo: pathlib.Path, *args: str) -> str:
+    return subprocess.run(["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t",
+                           *args], check=True, capture_output=True, text=True).stdout
+
+
 def _protected_checkout(tmp_path: pathlib.Path) -> pathlib.Path:
     """A mosaic checkout holding the two 2026-11-19 incidents' protected files, a plain file, a
-    file to copy in, the record-API stand-in and a reading script; origin/main is its HEAD."""
+    file to copy in, the record-API stand-in, a reading script, a writing shell script, a patch
+    and an archive folder; IT.json's note was "0" one commit back; an untracked `__pycache__`
+    sits under vinci/evals/; origin/main is HEAD."""
     repo = _committed_checkout(tmp_path, {
-        "scenarios/IT.json": IT_RECORD, "vinci/evals/variants.py": "VALUE = 1\n",
-        "notes/plain.md": "plain\n", "incoming.json": '{"new": 1}\n', "records.py": RECORD_API,
-        "tools/count.py": COUNT_SCRIPT})
-    subprocess.run(["git", "-C", str(repo), "update-ref", "refs/remotes/origin/main", "HEAD"],
-                   check=True)
+        "scenarios/IT.json": IT_RECORD.replace('"A"', '"0"'), "scenarios/archive/.keep": "",
+        "vinci/evals/variants.py": "VALUE = 1\n", "notes/plain.md": "plain\n",
+        "incoming.json": '{"new": 1}\n', "records.py": RECORD_API, "tools/count.py": COUNT_SCRIPT,
+        "tools/write.sh": "echo '{}' > scenarios/IT.json\n", "fix.diff": FIX_DIFF})
+    (repo / "scenarios" / "IT.json").write_text(IT_RECORD)
+    _git(repo, "commit", "-qam", "note A")
+    cache = repo / "vinci" / "evals" / "__pycache__"
+    cache.mkdir()
+    (cache / "variants.cpython-39.pyc").write_bytes(b"\x00")
+    _git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
     return repo
 
 
@@ -1246,6 +1264,26 @@ BASH_WRITES = (
     ("cd, then sed -i", "cd vinci && sed -i.bak 's/1/2/' evals/variants.py",
      "vinci/evals/variants.py"),
     ("bash -c", "bash -c \"echo '{}' > scenarios/IT.json\"", "scenarios/IT.json"),
+    # A's review of #1155, round 2: the forms the patch reads that no node pinned.
+    ("git apply", "git apply fix.diff", "scenarios/IT.json"),
+    ("git checkout <ref> --", "git checkout HEAD~1 -- scenarios/IT.json", "scenarios/IT.json"),
+    ("git restore --source", "git restore --source HEAD~1 scenarios/IT.json",
+     "scenarios/IT.json"),
+    ("git mv", "git mv scenarios/IT.json scenarios/IT-old.json", "scenarios/IT.json"),
+    ("git rm", "git rm -q scenarios/IT.json", "scenarios/IT.json"),
+    ("rm", "rm scenarios/IT.json", "scenarios/IT.json"),
+    ("touch a new file", "touch scenarios/NEW.json", "scenarios/NEW.json"),
+    ("ln", "ln -sf ../incoming.json scenarios/IT.json", "scenarios/IT.json"),
+    ("perl -i", "perl -pi -e 's/A/P/' scenarios/IT.json", "scenarios/IT.json"),
+    ("eval", "eval \"echo '{}' > scenarios/IT.json\"", "scenarios/IT.json"),
+    ("find -exec", "find notes -maxdepth 0 -exec cp incoming.json scenarios/IT.json \\;",
+     "scenarios/IT.json"),
+    ("a shell script it runs", "bash tools/write.sh", "scenarios/IT.json"),
+    ("source", "source tools/write.sh", "scenarios/IT.json"),
+    # Codex on #1155, round 2: the command after `cd X ||` runs where the failed cd started.
+    ("after a cd that failed, behind ||",
+     "cd /nonexistent-w77 2>/dev/null || printf 'X = 2\\n' >> vinci/evals/variants.py",
+     "vinci/evals/variants.py"),
     # Codex on #1155, round 1: a subshell's `cd` ends with the subshell.
     ("after a cd inside a subshell",
      "(cd vinci && true); printf 'X = 2\\n' >> vinci/evals/variants.py", "vinci/evals/variants.py"),
@@ -1268,7 +1306,9 @@ def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
     assert (target.read_bytes() if target.exists() else None) != was, f"{form}: nothing written"
     reason = _asked(before)
     assert reason, f"{form}: {rel} changed on disk and nothing asked first"
-    assert f"`{rel}`" in reason and f'Operator-approved: {rel} "' in reason
+    assert f"`{rel}`" in reason
+    assert (f'Operator-approved: {rel} "' in reason          # one file: its own line
+            or 'Operator-approved: <each file it changes> "' in reason)   # several (`git mv`)
 
 
 @W77
@@ -1296,6 +1336,7 @@ def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_
     assert "`scenarios/IT.json`" in str(after["reason"])
     assert "STOP and ask the operator" in str(after["reason"])
     assert "scenarios/IT.json" in str(after["systemMessage"])
+    assert "write_record(rec)" in str(after["systemMessage"])   # the command, for the operator
     again = _bash_call(RECORD_REWRITE.replace("'B'", "'C'"), repo, session)[2]
     assert again == {}                            # reported once per file per session
 
@@ -1324,7 +1365,7 @@ def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does
     repo = _protected_checkout(tmp_path)
     session = _session()
     first, _, after = _bash_call("echo '{}' > scenarios/IT.json", repo, session)
-    assert _asked(first) and after == {}
+    assert _asked(first) and "decision" not in after
     assert _asked(_bash_call("echo '[]' > scenarios/IT.json", repo, session)[0]) == ""
     edit = _run("decision_path_guard.py", {
         "session_id": session, "hook_event_name": "PreToolUse", "tool_name": "Edit",
@@ -1344,7 +1385,7 @@ def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
     before, ran, after = _bash_call(command, repo, _session())
     assert ran.returncode == 0, ran.stderr
     assert "`scenarios/`" in _asked(before)
-    assert after == {}
+    assert "decision" not in after
 
 
 @W77
@@ -1377,6 +1418,158 @@ def test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file(
     assert "`scenarios/IT.json`" in str(later["reason"])
 
 
+@W77
+def test_a_grant_covers_its_file_in_its_own_checkout_only(tmp_path: pathlib.Path) -> None:
+    """A's review of #1155, SF1. A grant was keyed by the path alone, so one grant in a scratch
+    clone silenced the same file in every checkout of the session — before (no ask) and after (no
+    report). It already happened on the Edit path (2026-11-10: a grant on a scratch copy of
+    `vinci/ledger/correction.py`, then four unasked Edits of the real one). The ask names its
+    checkout."""
+    a, b = _protected_checkout(tmp_path / "a"), _protected_checkout(tmp_path / "b")
+    session = _session()
+    first = _asked(_bash_call("echo '{}' > scenarios/IT.json", a, session)[0])
+    assert first and str(a.resolve()) in first
+    assert _asked(_bash_call("echo '{}' > scenarios/IT.json", b, session)[0])
+    edit = {"session_id": session, "tool_name": "Edit",
+            "tool_input": {"file_path": str(a / "vinci" / "evals" / "variants.py")}}
+    _run("decision_path_guard.py", {**edit, "hook_event_name": "PostToolUse"})
+    elsewhere = {**edit, "hook_event_name": "PreToolUse",
+                 "tool_input": {"file_path": str(b / "vinci" / "evals" / "variants.py")}}
+    out = _run("decision_path_guard.py", elsewhere)
+    assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask"
+
+
+@W77
+def test_a_grant_on_a_sub_directory_covers_the_files_written_in_it(tmp_path: pathlib.Path) -> None:
+    """SF2, the archive-on-supersede shape: a copy into `scenarios/archive` asks (it names the
+    folder; its read-only source is the accepted over-ask), says it MAY write, and prescribes no
+    `Operator-approved: scenarios/archive` line, which the gate rejects. Granted, the new file it
+    lands there is not reported as unasked."""
+    repo = _protected_checkout(tmp_path)
+    command = ("python3 -c \"import shutil; from pathlib import Path; shutil.copy2("
+               "'scenarios/IT.json', Path('scenarios/archive') / 'IT-2026-11-20.json')\"")
+    before, ran, after = _bash_call(command, repo, _session())
+    assert ran.returncode == 0, ran.stderr
+    reason = _asked(before)
+    assert "`scenarios/archive`" in reason and "may write it" in reason
+    assert 'Operator-approved: scenarios/archive "' not in reason
+    assert "decision" not in after, after
+
+
+@W77
+def test_the_operator_is_told_when_a_granted_call_changes_its_file(tmp_path: pathlib.Path) -> None:
+    """SF7. An ask may be answered by a permission mode, not a person, so after a granted call the
+    operator is told which protected file it changed."""
+    repo = _protected_checkout(tmp_path)
+    _, _, after = _bash_call("echo '{}' > scenarios/IT.json", repo, _session())
+    assert "decision" not in after
+    assert "approved" in str(after.get("systemMessage")) and "scenarios/IT.json" in str(
+        after.get("systemMessage"))
+
+
+@W77
+def test_a_slow_fsmonitor_does_not_switch_the_after_check_off(tmp_path: pathlib.Path) -> None:
+    """SF4. With `core.fsmonitor` set, each `git status` waited on the monitor into its 10 s
+    timeout, so the before-reading was lost and a write went unreported. The guard turns the
+    monitor off for its own calls."""
+    repo = _protected_checkout(tmp_path)
+    monitor = tmp_path / "slow-monitor.sh"
+    monitor.write_text("#!/bin/sh\nsleep 12\n")
+    monitor.chmod(0o755)
+    _git(repo, "config", "core.fsmonitor", str(monitor))
+    started = time.monotonic()
+    _, ran, after = _bash_call(RECORD_REWRITE, repo, _session())
+    assert ran.returncode == 0, ran.stderr
+    assert after.get("decision") == "block", after
+    assert time.monotonic() - started < 9
+
+
+@W77
+def test_an_unwritable_store_still_asks_and_says_its_after_check_is_off(
+        tmp_path: pathlib.Path) -> None:
+    """SF5. The per-call reading was written before the ask was printed, so a store that cannot be
+    written (a full disk, a file where the folder should be) dropped the ask, silently."""
+    repo = _protected_checkout(tmp_path)
+    store = tmp_path / "tmp"
+    store.mkdir()
+    (store / "mosaic-theory-hooks").write_text("not a folder")
+    out = _run("decision_path_guard.py", {
+        "session_id": _session(), "hook_event_name": "PreToolUse", "tool_name": "Bash",
+        "tool_use_id": "toolu_store", "cwd": str(repo),
+        "tool_input": {"command": "echo '{}' > scenarios/IT.json"}},
+        cwd=repo, env={"TMPDIR": str(store), "CLAUDE_PROJECT_DIR": str(repo)})
+    answer = json.loads(out.stdout)
+    assert _asked(answer)
+    assert "after-check is off" in answer["systemMessage"]
+
+
+@W77
+def test_a_failure_in_the_bash_reading_says_so(tmp_path: pathlib.Path) -> None:
+    """SF5 (fail loud). The Bash path fails open — a broken guard must not wedge every call — but
+    a failure that says nothing reads as "nothing protected here". A corrupt per-call reading
+    makes the after-check fail; the operator is told."""
+    store = tmp_path / "tmp"
+    (store / "mosaic-theory-hooks").mkdir(parents=True)
+    session = f"test-{uuid.uuid4().hex}"
+    (store / "mosaic-theory-hooks" / f"guard-{session}-call-toolu_bad.json").write_text(
+        '{"asked": [], "before": [1]}')
+    out = _run("decision_path_guard.py", {
+        "session_id": session, "hook_event_name": "PostToolUse", "tool_name": "Bash",
+        "tool_use_id": "toolu_bad", "cwd": str(tmp_path), "tool_input": {"command": "ls"}},
+        env={"TMPDIR": str(store)})
+    assert out.returncode == 0
+    assert "failed on this Bash call" in json.loads(out.stdout)["systemMessage"]
+
+
+def test_the_after_check_never_rewrites_the_index(tmp_path: pathlib.Path) -> None:
+    """SF3. A plain `git status` takes the optional index lock to refresh stale stat data, and the
+    guard ran two per Bash call: 29 of 150 concurrent `git add` calls failed on `index.lock`. With
+    `--no-optional-locks` the index is never written. (Today's guard runs no git on a Bash call,
+    so this holds now and must hold after the patch.)"""
+    repo = _protected_checkout(tmp_path)
+    later = time.time() + 10
+    os.utime(repo / "notes" / "plain.md", (later, later))
+    index = (repo / ".git" / "index").read_bytes()
+    _bash_call("cat notes/plain.md", repo, _session(), wired=False)
+    assert (repo / ".git" / "index").read_bytes() == index
+
+
+def test_taking_the_local_mains_content_is_not_reported(tmp_path: pathlib.Path) -> None:
+    """NEGATIVE PIN (A's review, round 2). `main` is a safe ref before the call, so its content is
+    a known state after it too, as origin/main's is."""
+    repo = _protected_checkout(tmp_path)
+    _git(repo, "checkout", "-qb", "work")
+    _git(repo, "checkout", "-qb", "side")
+    (repo / "scenarios" / "IT.json").write_text('{"ticker": "IT", "note": "local main"}\n')
+    _git(repo, "commit", "-qam", "local main moves")
+    _git(repo, "branch", "-f", "main", "side")
+    _git(repo, "checkout", "-q", "work")
+    before, ran, after = _bash_call("git checkout main -- scenarios/IT.json", repo, _session(),
+                                    wired=False)
+    assert ran.returncode == 0, ran.stderr
+    assert "local main" in (repo / "scenarios" / "IT.json").read_text()
+    assert before == {} and after == {}
+
+
+def test_a_merge_being_concluded_is_not_reported(tmp_path: pathlib.Path) -> None:
+    """NEGATIVE PIN. A merge in progress lands the other side's content (MERGE_HEAD's), which the
+    gate reads as the merge's own, not as a change the agent made."""
+    repo = _protected_checkout(tmp_path)
+    _git(repo, "checkout", "-qb", "work")
+    _git(repo, "checkout", "-qb", "side")
+    (repo / "scenarios" / "IT.json").write_text('{"ticker": "IT", "note": "side"}\n')
+    _git(repo, "commit", "-qam", "side")
+    _git(repo, "checkout", "-q", "work")
+    (repo / "notes" / "plain.md").write_text("work\n")
+    _git(repo, "commit", "-qam", "work")
+    before, ran, after = _bash_call(
+        "git -c user.email=t@t -c user.name=t merge -q --no-commit --no-ff side", repo,
+        _session(), wired=False)
+    assert ran.returncode == 0, ran.stderr
+    assert (repo / ".git" / "MERGE_HEAD").exists()
+    assert before == {} and after == {}
+
+
 #: (form, command) — a Bash call that writes no protected file, or only reads one.
 BASH_LEAVES = (
     ("redirect to a plain file", "echo x > notes/plain.md"),
@@ -1390,6 +1583,11 @@ BASH_LEAVES = (
     ("sed -n", "sed -n 1p vinci/evals/variants.py"),
     ("grep into a plain file", "grep -n VALUE vinci/evals/variants.py > notes/grep.txt"),
     ("python reads", "python3 -c \"import json; print(json.load(open('scenarios/IT.json')))\""),
+    ("python writes to stdout", "python3 -c \"import sys; "
+                                "sys.stdout.write(open('scenarios/IT.json').read())\""),
+    ("csv to stdout", "python3 -c \"import csv, json, sys; csv.writer(sys.stdout)"
+                      ".writerow(json.load(open('scenarios/IT.json')))\""),
+    ("rm an untracked __pycache__", "rm -rf vinci/evals/__pycache__"),
     ("python heredoc reads", "python3 - <<'EOF'\nprint(open('vinci/evals/variants.py').read())\n"
                              "EOF"),
     ("a script that reads scenarios/", "python3 tools/count.py"),
