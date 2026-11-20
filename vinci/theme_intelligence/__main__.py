@@ -46,8 +46,9 @@ if __name__ == "__main__":
 
 import argparse
 import json
+import shutil
 import sys
-import traceback
+import tempfile
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -66,9 +67,10 @@ from vinci.theme_intelligence.config import (
     load_sources,
     load_taxonomy,
 )
-from vinci.theme_intelligence.display import clip
+from vinci.theme_intelligence.display import clip, first_of
 from vinci.theme_intelligence.extract import ToolClient
 from vinci.theme_intelligence.fetch import PoliteFetcher
+from vinci.theme_intelligence.localpaths import export_findings, traceback_text
 from vinci.theme_intelligence.schemas import RunStatus
 from vinci.theme_intelligence.store import Store
 
@@ -427,8 +429,27 @@ def cmd_backup(a: argparse.Namespace) -> int:
 
 
 def cmd_export(a: argparse.Namespace) -> int:
+    """Export the registry to `--out` — REFUSED, writing nothing, when any string of it holds a
+    home-directory or username path (`localpaths.export_findings`): the weekly workflow pushes
+    this export to the public state branch (operator, 2026-11-20: "No rewrite, fix paths
+    ahead")."""
     st = Store(Paths(Path(a.data_dir)).db)
-    counts = st.export_jsonl(Path(a.out))
+    with tempfile.TemporaryDirectory() as td:
+        staged = Path(td) / "export"
+        counts = st.export_jsonl(staged)
+        found = export_findings(staged)
+        if found:
+            print(f"export-state REFUSED: {len(found)} string(s) hold a home-directory or "
+                  f"username path, so nothing was written — "
+                  f"{first_of(found, 10, sep='; ')}. A stored row is append-only: scrub the "
+                  f"code that wrote it; on Actions the next run restores the branch, which does "
+                  f"not hold it, and locally `state pull --force` rebuilds this registry from "
+                  f"the branch (backing it up first)", file=sys.stderr)
+            return 1
+        out = Path(a.out)
+        out.mkdir(parents=True, exist_ok=True)
+        for f in sorted(staged.glob("*.jsonl")):
+            shutil.copyfile(f, out / f.name)
     print(json.dumps(counts, indent=1))
     return 0
 
@@ -544,7 +565,7 @@ def cmd_ingest_file(a: argparse.Namespace) -> int:
         return 1
     except Exception as exc:  # noqa: BLE001 — recorded FAILED, said plainly, never left RUNNING
         pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                f"{traceback.format_exc()[-1500:]}")
+                                                f"{traceback_text()}")
         print(f"failed: {type(exc).__name__}: {exc}")
         return 1
     run = pipe.finish_ingest(RunStatus.SUCCEEDED if res.status in (
@@ -578,7 +599,7 @@ def cmd_reask_part(a: argparse.Namespace) -> int:
         return 1
     except Exception as exc:  # noqa: BLE001 — recorded FAILED, said plainly
         pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                f"{traceback.format_exc()[-1500:]}")
+                                                f"{traceback_text()}")
         print(f"failed: {type(exc).__name__}: {exc}")
         return 1
     run = pipe.finish_ingest(RunStatus.SUCCEEDED)

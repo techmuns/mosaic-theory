@@ -24,7 +24,6 @@ from __future__ import annotations
 import functools
 import hashlib
 import json
-import traceback
 from collections import deque
 from collections.abc import Callable, Sequence
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -81,6 +80,7 @@ from vinci.theme_intelligence.extract import (
 )
 from vinci.theme_intelligence.fetch import FetchResult, PoliteFetcher
 from vinci.theme_intelligence.health import HealthRun, check_sources
+from vinci.theme_intelligence.localpaths import data_relative, scrub_text, traceback_text
 from vinci.theme_intelligence.parse import ParsedDocument, parse_document
 from vinci.theme_intelligence.schemas import (
     DB_SCHEMA_VERSION,
@@ -252,7 +252,7 @@ class Pipeline:
             review_prompt_version=REVIEW_PROMPT_VERSION, parser_version=PARSER_VERSION,
             engine_version=ENGINE_VERSION, db_schema_version=DB_SCHEMA_VERSION,
             complete_prompt_version=COMPLETE_PROMPT_VERSION,
-            output_dir=str(self.paths.runs / rid))
+            output_dir=data_relative(self.paths.runs / rid, self.paths.root))
         self.store.upsert_run(run)
         self.run = run
         self.guard.start_run(mode, limit=budget)
@@ -261,8 +261,8 @@ class Pipeline:
     def finish_run(self, status: RunStatus, *, error: str | None = None) -> WeeklyRun:
         assert self.run is not None
         run = self.run
-        if error:
-            run.warnings.append(f"RUN ERROR: {error}")
+        if error:  # the exception's message can name a file: scrubbed as its traceback is
+            run.warnings.append(f"RUN ERROR: {scrub_text(error, self.paths.root)}")
         # a paid call whose answer no path recorded (it ended in an exception — a truncated
         # review, a failed completeness part, a refused split) is still a paid call: written to
         # the ledger before the run's cost is summed (2026-10-14: $0.45 of reviews read as $0)
@@ -417,18 +417,19 @@ class Pipeline:
                 # articles, two limits) are two records — one id with two payloads failed the
                 # whole article (2026-10-14)
                 issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "budget",
-                                      str(exc))[:14],
+                                      scrub_text(str(exc), self.paths.root))[:14],
                 run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
                 severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
-                detail=f"pass-2 review not run — budget: {exc}",
+                detail=f"pass-2 review not run — budget: {scrub_text(str(exc), self.paths.root)}",
                 created_at=datetime.now(tz=UTC)))
             return ReviewOutcome(issues)
         except RuntimeError as exc:  # no client and no cache: say so, never pretend reviewed
             issues.append(VerificationIssue(
                 issue_id="VI-" + _sha(self.run.run_id, card.header.thesis_id, "noreview",
-                                      str(exc))[:14],
+                                      scrub_text(str(exc), self.paths.root))[:14],
                 run_id=self.run.run_id, scope="thesis", ref_id=card.header.thesis_id,
-                severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN", detail=str(exc),
+                severity=IssueSeverity.WARN, code="REVIEW_NOT_RUN",
+                detail=scrub_text(str(exc), self.paths.root),
                 created_at=datetime.now(tz=UTC)))
             return ReviewOutcome(issues)
         self._llm_call("review", card.header.thesis_id + ":" + card.header.title[:40], rr.cached,
@@ -613,7 +614,8 @@ class Pipeline:
             retrieval_state=state, retrieval_note="; ".join([fr.note, *doc.notes]),
             raw_sha256=fr.sha256, content_sha256=doc.content_sha256,
             modified_at=doc.modified_at, modified_source=doc.modified_source,
-            evidence_location=str(fr.cache_path) if fr.cache_path else None,
+            evidence_location=(data_relative(fr.cache_path, self.paths.root)
+                               if fr.cache_path else None),
             parser_version=PARSER_VERSION, body_word_count=doc.word_count, blocks=doc.blocks,
             document_date=(doc.stated_date[0] if doc.stated_date
                            else doc.published_at.date() if doc.published_at else None),
@@ -1007,6 +1009,9 @@ class Pipeline:
 
     def _issue(self, scope: str, ref: str, sev: IssueSeverity, code: str, detail: str) -> None:
         assert self.run is not None
+        # an exception's message can name a file: scrubbed BEFORE the id hashes it, so a detail
+        # naming no path keeps the id it always had (#1156 review, N5)
+        detail = scrub_text(detail, self.paths.root)
         self.store.add_issue(VerificationIssue(
             issue_id="VI-" + _sha(self.run.run_id, scope, ref, code, detail)[:14],
             run_id=self.run.run_id,
@@ -1031,7 +1036,7 @@ class Pipeline:
                                    html_note=html_note, declared_published=published)
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                    f"{traceback.format_exc()[-1500:]}")
+                                                    f"{traceback_text()}")
             raise
         assert self.run is not None
         self.engine.archive_pass(run_id=self.run.run_id, as_of=as_of)
@@ -1063,7 +1068,7 @@ class Pipeline:
             self.engine.archive_pass(run_id=run.run_id, as_of=as_of)
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                    f"{traceback.format_exc()[-1500:]}")
+                                                    f"{traceback_text()}")
             raise
         return self.finish_run(RunStatus.SUCCEEDED), outs
 
@@ -1083,7 +1088,7 @@ class Pipeline:
                                                 as_of=as_of, refresh=refresh)
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                    f"{traceback.format_exc()[-1500:]}")
+                                                    f"{traceback_text()}")
             raise
         return self.finish_run(RunStatus.PARTIAL if refused else RunStatus.SUCCEEDED), done
 
@@ -1142,7 +1147,7 @@ class Pipeline:
                                   + (f"; {len(errors)} request(s) failed" if errors else "")))
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                    f"{traceback.format_exc()[-1500:]}")
+                                                    f"{traceback_text()}")
             raise
         return self.finish_run(RunStatus.SUCCEEDED), done
 
@@ -1238,7 +1243,7 @@ class Pipeline:
                     f"articles WITHOUT --retire: {' '.join(order)}") from exc
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                    f"{traceback.format_exc()[-1500:]}")
+                                                    f"{traceback_text()}")
             raise
         ok = all(r.status in ("PROCESSED", "PARTIAL_PROCESSED") for r in results)
         return self.finish_run(RunStatus.SUCCEEDED if ok else RunStatus.PARTIAL), results
@@ -1457,7 +1462,8 @@ class Pipeline:
                 self._active_ids() if targets is None else targets, as_of=as_of)
         except Exception as exc:  # noqa: BLE001 — no model, no cached answer, an API outage
             # (the SDK's errors are not RuntimeErrors): a WARNING, never the finished run's status
-            self.run.warnings.append(f"enrichment not run: {type(exc).__name__}: {exc}")
+            self.run.warnings.append(
+                scrub_text(f"enrichment not run: {type(exc).__name__}: {exc}", self.paths.root))
             return
         if refused:
             left = next((what for _tid, what in done if what.startswith("not run")), "")
@@ -1635,7 +1641,7 @@ class Pipeline:
                         # one article's unusable model answer (its spend recorded) is THAT
                         # article's failure — said, checkpointed — never the whole week's scan
                         res = ArticleResult(url, "FAILED", article_id_for(url), note=str(exc))
-                        run.warnings.append(f"{url}: {exc}"[:400])
+                        run.warnings.append(scrub_text(f"{url}: {exc}", self.paths.root)[:400])
                 if res.status == "LOOKAHEAD":
                     # published after this run's as-of (a listing date can be a day off the
                     # page's instant): offered to the next run, never dropped — next week's
@@ -1715,7 +1721,7 @@ class Pipeline:
             raise
         except Exception as exc:
             self.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                    f"{traceback.format_exc()[-1500:]}")
+                                                    f"{traceback_text()}")
             raise
 
 
