@@ -67,14 +67,15 @@ def _with(m: ds.MechanicalLayer, *, rent: float | None = ..., multiple: float | 
 # --- the reading, on TJX's real page with one field moved at a time ----------------------------
 
 def test_tjx_reproduces_the_rent_inclusive_pairing() -> None:
-    """THE RED: 13.3x divides $12,810M, which is reported LTM EBITDA plus rent — and the line says
-    it is NOT a multiple of reported EBITDA."""
+    """THE RED: 13.3x divides $12,810M, which is CIQ's annual LTM EBITDA plus rent — and the line
+    says it is NOT a multiple of that figure after rent (W81 named the figure; it read
+    "reported")."""
     got = eb.headline_basis(_frozen_doc("TJX").mechanical)
     assert got is not None and got.reading == "ebitda_plus_rent", got
     assert got.ratio_to_reported_plus_rent is not None
     assert abs(got.ratio_to_reported_plus_rent - 1) <= eb.PAIRING_TOL
     assert abs(got.ratio_to_reported - 1) > eb.PAIRING_TOL
-    assert "NOT a multiple of reported EBITDA" in got.line
+    assert "NOT a multiple of CIQ's annual LTM EBITDA, after rent" in got.line
 
 
 @pytest.mark.parametrize(("rent", "multiple", "reading"), [

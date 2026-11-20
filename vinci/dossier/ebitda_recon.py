@@ -467,24 +467,29 @@ def _line(rows: list[EbitdaReconQuarter], ciq_ltm: float, filing_ltm: float | No
         return ("CIQ's quarterly EBITDA could not be set against the filings — "
                 + "; ".join(why) + ".")
     hows = sorted({r.construction for r in built if r.construction})
+    # (W81) the LTM here is the QUARTERS' sum, named apart from CIQ's annual LTM EBITDA, which the
+    # same page prints in its financial summary and which can differ from it (MCK: 7,518 here,
+    # 7,350 there)
+    from vinci.dossier.ev_ebitda_basis import FOUR_QUARTER
+
     how = f"rebuilt as {' / '.join(hows)}"
     unbuilt = len(rows) - len(built)
     tail = (f" ({unbuilt} of the four quarters could not be rebuilt)" if unbuilt else "")
     diff = [r for r in built if r.different]
     if not diff:
         return (f"CIQ's EBITDA matches the filings in each quarter set against them ({how}){tail}"
-                " — the LTM the multiples divide is the reported figure.")
+                f" — {FOUR_QUARTER} is the filings' figure.")
     # THE LTM AND THE QUARTERS ARE TWO CLAIMS. Amazon's LTM matches the filings to the dollar while
     # two quarters swap $2,500M between them (a charge CIQ books a quarter late); saying the LTM
     # differs there would be false, and saying nothing would hide the quarters.
     if filing_ltm is None or ltm_gap is None:
         ltm = ""
     elif abs(ltm_gap) > DIFFERENT_SHARE * abs(filing_ltm):
-        ltm = (f": its LTM ${ciq_ltm:,.0f}M against ${filing_ltm:,.0f}M rebuilt from the filings "
-               f"({_signed(ltm_gap)})")
+        ltm = (f": {FOUR_QUARTER} ${ciq_ltm:,.0f}M against ${filing_ltm:,.0f}M rebuilt from the "
+               f"filings ({_signed(ltm_gap)})")
     else:
-        ltm = (f": its LTM matches the filings (${ciq_ltm:,.0f}M against ${filing_ltm:,.0f}M), but "
-               "not every quarter does")
+        ltm = (f": {FOUR_QUARTER} matches the filings (${ciq_ltm:,.0f}M against "
+               f"${filing_ltm:,.0f}M), but not every quarter does")
     parts = []
     for r in diff:
         assert r.filing_ebitda is not None and r.gap is not None

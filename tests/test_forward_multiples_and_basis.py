@@ -128,7 +128,9 @@ def test_burl_states_that_its_ev_ebitda_is_not_reported_ebitda() -> None:
     line = rend._multiple_basis_md(m)
     assert line, "BURL's series implies 19.3% against 11% reported — it must say so"
     assert "19.3%" in line and "11.1%" in line
-    assert "NOT the reported EBITDA" in line
+    # (W81) the annual LTM figure by its name; an older page keeps "reported" (`apart=False`)
+    assert "NOT that EBITDA" in line and "on CIQ's annual LTM EBITDA" in line
+    assert "NOT the reported EBITDA" in rend._multiple_basis_md(m, apart=False)
     # 15.6x, NOT 15.8x: the reported margin is computed from the STRUCTURED `EBITDA ($M)` /
     # `Revenue ($M)` values (11.146%), never from the whole-percent display cell. Parsing the
     # rendered "11%" published 15.8x and disagreed with the figure the underwrite derived by hand.

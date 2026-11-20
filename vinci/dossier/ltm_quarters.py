@@ -33,7 +33,7 @@ with no such item on one row and 0.0 on the next (CNXC's goodwill impairment, -1
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from typing import Any, Literal
 
@@ -90,6 +90,9 @@ class LtmCheck:
     quarters: tuple[QuarterCell, ...]  # empty when they could not be located
     outcome: Outcome
     reason: str | None = None          # why it did not run (outcome "not_run")
+    #: (W81) the EBITDA row's DIFFER only: the cause one CIQ row reconciles it to, or why it was
+    #: not read (:func:`_ebitda_cause`). None on every other row and outcome.
+    cause: str | None = None
 
     @property
     def carried(self) -> float | None:
@@ -113,7 +116,8 @@ class LtmCheck:
             gap = abs(self.ltm - carried)
             return (f"{body}: DIFFER by {gap:,.1f} $M, "
                     f"{gap / max(abs(self.ltm), abs(carried)):.2%} (tolerance "
-                    f"{TOLERANCE:.0%}, or {PRINT_SLACK_MUSD} $M)")
+                    f"{TOLERANCE:.0%}, or {PRINT_SLACK_MUSD} $M)"
+                    + (f". {self.cause}" if self.cause else ""))
         dash = ", ".join(f"Q{q.quarter or '?'} {q.end:%Y-%m-%d}"
                          for q in self.quarters if q.value is None)
         words = sorted({_cell_words(q) for q in self.quarters if q.value is None})
@@ -257,8 +261,104 @@ def check(bundle: CiqBundle, table: FinTable | None) -> LtmQuarterRead:
                                 + ("" if label in _CORE else " inside its unusual-items block")))
             continue
         cells = tuple(_quarter_cell(p, q[qi], j) for j, p in located if p.end is not None)
-        out.append(_judge(label, value, period.end, cells))
+        judged = _judge(label, value, period.end, cells)
+        if label == _EBITDA and judged.outcome == "differ" and judged.carried is not None:
+            judged = replace(judged, cause=_ebitda_cause(bundle, inc, col, period.end, value,
+                                                         judged.carried))
+        out.append(judged)
     return LtmQuarterRead(tuple(out))
+
+
+#: (W81, SP-D20) The one row whose DIFFER the check explains, and the CIQ rows that explain it.
+_EBITDA = "EBITDA ($M)"
+_OTHER_AMORT = "Other Amortization"
+_DA_TOTAL = "Depreciation & Amort., Total"
+
+
+def _ebitda_cause(bundle: CiqBundle, inc: list[list[Any]], col: int, end: date, annual: float,
+                  quarters: float) -> str:
+    """Why CIQ's annual LTM EBITDA differs from its four quarters, where one CIQ row reconciles
+    the two, or why the cause was not read (W81, defect SP-D20).
+
+    THE CASE (MORN, 2026-11-19, a scratch page; Financials_Annual sha256 fef17b2405, Income
+    Statement row 80, the LTM column to Sep-30-2026): the annual EBITDA 719.4 is EBIT 616.7 plus
+    the Cash Flow's 'Depreciation & Amort., Total' 102.7, which leaves out its 'Other Amortization'
+    102.7; the four quarters (Financials_Quarterly b23ba84d1d, row 82) sum to 822.1 = 719.4 + 102.7.
+
+    The cause is NAMED only when all five hold on the name's own sheets:
+    (1) the annual EBITDA is its EBIT plus the Cash Flow's 'Depreciation & Amort., Total', to
+        :data:`PRINT_SLACK_MUSD` (half the unit the page prints), which is what shows the annual
+        figure leaves 'Other Amortization' out. An identity of CIQ's own construction, so no
+        percentage band: it held to the cent on IT, MCK, WLK, CNXC and NCNO and within 0.04 on VITL
+        (2026-11-19, each page's own export);
+    (2) the Cash Flow's LTM column, found by its own header's date, carries a positive 'Other
+        Amortization';
+    (3) the quarters sum ABOVE the annual: a row left out of the annual can only make it lower;
+    (4) the annual plus that row agrees with the quarters by this check's own test (:func:`agrees`:
+        2%, or half the printed unit). The tolerance is the check's own because what is left after
+        the row is added is the difference the check already accepts (restated comparatives);
+    (5) the row closes more of the gap than it leaves, so a small row is never the cause of a gap
+        it barely moves.
+    It reads no mechanism on the quarterly side: on MCK every quarter is EBIT plus D&A and the gap
+    sits in EBIT; on IT it sits in a fiscal fourth quarter whose EBITDA adds the row back. Never a
+    refusal: EBITDA is a flag here, as before."""
+    from vinci.dossier.ev_ebitda_basis import ANNUAL_LTM, FOUR_QUARTER
+
+    def no(why: str) -> str:
+        return f"Its cause was not read: {why}"
+
+    try:
+        cf = bundle.sheet("financials", "Cash Flow", freq="annual")
+    except CiqUnavailableError as exc:
+        return no(f"there is no annual Cash Flow sheet ({exc})")
+    wb = bundle.workbook("financials", freq="annual")
+    sha = cs.file_provenance(wb.path)[0] if wb is not None else None
+    where = f"CIQ Financials_Annual sha256 {sha or 'unread'}, LTM column to {end:%Y-%m-%d}"
+    hdr = cs._period_header(cf)
+    cols = ([c for c, _s, is_ltm, _r in cs._fin_periods(cf[hdr])
+             if is_ltm and cs.header_period(cf[hdr][c]).end == end] if hdr is not None else [])
+    if len(cols) != 1:
+        return no(f"the annual Cash Flow has {'no' if not cols else len(cols)} LTM column(s) "
+                  f"dated {end:%Y-%m-%d}")
+    c = cols[0]
+
+    def cf_value(label: str) -> tuple[int | None, float | None]:
+        ri = cs._find_row(cf, label)
+        return ri, (clean_num(cf[ri][c]) if ri is not None and c < len(cf[ri]) else None)
+
+    def row(ri: int | None) -> str:   # 1-based, as every CIQ source_ref here numbers rows
+        return "absent" if ri is None else str(ri + 1)
+
+    oa_row, oa = cf_value(_OTHER_AMORT)
+    if oa_row is None:
+        return no(f"the annual Cash Flow carries no '{_OTHER_AMORT}' row ({where})")
+    if oa is None or oa <= 0:
+        return no(f"the annual Cash Flow's '{_OTHER_AMORT}' (row {row(oa_row)}) carries no "
+                  f"positive figure ({where})")
+    if quarters <= annual:
+        return no(f"{FOUR_QUARTER} is below {ANNUAL_LTM}, and a row the annual figure leaves "
+                  "out can only make it lower")
+    ebit_row = cs._find_row(inc, "EBIT")
+    ebit = clean_num(inc[ebit_row][col]) if ebit_row is not None and col < len(inc[ebit_row]) \
+        else None
+    da_row, da = cf_value(_DA_TOTAL)
+    if ebit is None or da is None or abs(annual - (ebit + da)) > PRINT_SLACK_MUSD:
+        return no(f"{ANNUAL_LTM} ({annual:,.1f}) is not shown to be EBIT plus "
+                  f"'{_DA_TOTAL}' (EBIT {ebit if ebit is None else f'{ebit:,.1f}'}, Income "
+                  f"Statement row {row(ebit_row)}; {da if da is None else f'{da:,.1f}'}, Cash "
+                  f"Flow row {row(da_row)}; {where})")
+    left = quarters - (annual + oa)
+    if not agrees(annual + oa, quarters) or abs(left) >= (quarters - annual) / 2:
+        return no(f"{ANNUAL_LTM} plus the annual Cash Flow's '{_OTHER_AMORT}' ({oa:,.1f}, "
+                  f"row {row(oa_row)}) is {annual + oa:,.1f}, which does not reconcile with "
+                  f"{FOUR_QUARTER} ({abs(left):,.1f} $M apart; {where})")
+    share = abs(left) / max(abs(annual + oa), abs(quarters))
+    return (f"The cause, read: {ANNUAL_LTM} is its EBIT plus '{_DA_TOTAL}' ({ebit:,.1f} + "
+            f"{da:,.1f}; Income Statement row {row(ebit_row)}, Cash Flow row {row(da_row)}), "
+            f"which leaves out the annual Cash Flow's '{_OTHER_AMORT}' ({oa:,.1f}, row "
+            f"{row(oa_row)}); with it added the annual figure reads {annual + oa:,.1f}, which "
+            f"agrees with {FOUR_QUARTER} within this check's tolerance, {abs(left):,.1f} $M "
+            f"({share:.2%}) left ({where})")
 
 
 def _quarter_cell(p: cs.HeaderPeriod, row: list[Any], j: int) -> QuarterCell:

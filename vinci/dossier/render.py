@@ -36,7 +36,9 @@ from vinci.dossier.covenant_extract import (
     _derive_conversion,
     governing_terms,
 )
+from vinci.dossier.ev_ebitda_basis import ANNUAL_LTM, FOUR_QUARTER
 from vinci.dossier.extraction_version import (
+    includes,
     refresh_line,
     refreshed_to,
     stamp_detail,
@@ -298,8 +300,27 @@ def _reported_ltm_ebitda_margin(m: MechanicalLayer) -> float | None:
     return float(ebitda) / float(revenue)
 
 
-def _multiple_basis_md(m: MechanicalLayer, anchor: Anchor | None = None) -> str:
+#: (W81, SP-D20) The vintage that named CIQ's two EBITDAs apart. A page built or refreshed by code
+#: holding it prints the new names on the lines the RENDERER words (:func:`_multiple_basis_md`,
+#: :func:`_lease_basis_md`); an older page keeps the words it was built with, as its stored basis
+#: line does, so no page calls one figure by two names. Watch pages keep the old wording until
+#: rebuilt (operator via B, 2026-11-19: "watch pages stay as committed").
+W81_VINTAGE = "2026-11-19.ciq-two-ebitdas-named-apart-and-the-ltm-cause"
+
+
+def names_ebitdas_apart(d: Dossier) -> bool:
+    """Was ``d`` built, or refreshed, by code holding :data:`W81_VINTAGE`? A stamp this code does
+    not declare reads as no, so an unknown page keeps the words it was built with."""
+    stamps = [d.extraction_version, *(e.extraction_version for e in d.layer_refreshes or [])]
+    return any(includes(v, W81_VINTAGE) for v in stamps if v)
+
+
+def _multiple_basis_md(m: MechanicalLayer, anchor: Anchor | None = None, *,
+                       apart: bool = True) -> str:
     """State the EV/EBITDA series' OWN denominator when it is not the reported one.
+
+    ``apart`` (W81): name CIQ's two EBITDAs apart, as a page at :data:`W81_VINTAGE` or later does;
+    False prints the words an older page was built with (:func:`names_ebitdas_apart`).
 
     Empty when the two agree, when either is missing, or when no band carries an implied margin —
     so the line appears only where it changes how the multiple should be read. A page whose rent
@@ -312,7 +333,7 @@ def _multiple_basis_md(m: MechanicalLayer, anchor: Anchor | None = None) -> str:
     reported = _reported_ltm_ebitda_margin(m)
     if lb is not None and lb.material:
         ciq = next((b for b in bands or [] if "EBITDA" in str(b.metric)), None)
-        return _lease_basis_md(lb, ciq, reported, anchor)
+        return _lease_basis_md(lb, ciq, reported, anchor, apart=apart)
     if not bands:
         return ""
     band = next((b for b in bands if b.implied_ebitda_margin and "EBITDA" in str(b.metric)), None)
@@ -322,13 +343,21 @@ def _multiple_basis_md(m: MechanicalLayer, anchor: Anchor | None = None) -> str:
     if not implied or abs(implied - reported) / reported <= _MARGIN_BASIS_GAP:
         return ""
     restated = band.current * (implied / reported) if band.current else None
-    tail = (f"; the same TEV over REPORTED EBITDA is nearer {restated:,.1f}x"
+    if not apart:   # the words of a page built before W81, kept as built
+        tail = (f"; the same TEV over REPORTED EBITDA is nearer {restated:,.1f}x"
+                if restated else "")
+        return (f"- **Multiple basis — read before the level:** the {band.metric} series implies "
+                f"a {implied * 100:,.1f}% EBITDA margin, against {reported * 100:,.1f}% reported. "
+                f"Its denominator is NOT the reported EBITDA{tail}. The level and percentile above "
+                f"are internally consistent on the series' own basis; they are not comparable to a "
+                f"multiple struck on reported EBITDA.")
+    tail = (f"; the same TEV over {ANNUAL_LTM} is nearer {restated:,.1f}x"
             if restated else "")
     return (f"- **Multiple basis — read before the level:** the {band.metric} series implies a "
-            f"{implied * 100:,.1f}% EBITDA margin, against {reported * 100:,.1f}% reported. Its "
-            f"denominator is NOT the reported EBITDA{tail}. The level and percentile above are "
-            f"internally consistent on the series' own basis; they are not comparable to a "
-            f"multiple struck on reported EBITDA.")
+            f"{implied * 100:,.1f}% EBITDA margin, against {reported * 100:,.1f}% on "
+            f"{ANNUAL_LTM}. Its denominator is NOT that EBITDA{tail}. The level and percentile "
+            f"above are internally consistent on the series' own basis; they are not comparable "
+            f"to a multiple struck on that EBITDA.")
 
 
 #: The pairings whose headline needs its basis stated beside it: CIQ's lease-inclusive pairing (a
@@ -356,14 +385,16 @@ def _valuation_bases_md(m: MechanicalLayer) -> list[str]:
 
 
 def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float | None,
-                    anchor: Anchor | None) -> str:
+                    anchor: Anchor | None, *, apart: bool = True) -> str:
     """THE LINE FOR A LEASE-MATERIAL NAME (2026-10-19): which history R1 prices, on ONE basis.
 
     It replaces the "same TEV over REPORTED EBITDA" restatement for these names, because that
     figure is neither basis: CIQ's TEV carries the operating leases while reported EBITDA is after
     rent (TJX's read 19.1x where the consistent ex-lease figure is about 16x). The two consistent
-    pairs are TEV with leases over EBITDA plus rent, or TEV without them over reported EBITDA; R1's
-    earnings are reported EBITDA, so the line names the second, and the bridge that goes with it.
+    pairs are TEV with leases over EBITDA plus rent, or TEV without them over EBITDA after rent;
+    R1's earnings (its mid-cycle EBIT + D&A) are after rent, so the line names the second, and the
+    bridge that goes with it. (W81) On a page at that vintage the band's denominator is named
+    CIQ's four-quarter EBITDA, the margin CIQ's annual LTM EBITDA's (:func:`names_ebitdas_apart`).
 
     WHAT R1 PRICES IS READ OFF THE ANCHOR, not the lease block (review of #750): the block can land
     before the anchor is re-derived, and a line asserting the ex-lease pricing beside a screening
@@ -376,8 +407,9 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
     # (PARR's and WLK's latest closes do not), so the line gives this name's own implied margin
     # and claims only what holds everywhere — since 842 CIQ's TEV carries the operating leases
     implied = ciq.implied_ebitda_margin if ciq is not None else None
+    on = f"on {ANNUAL_LTM}" if apart else "reported"   # (W81) the old word on an older page
     evidence = (f"; its latest close implies a {implied * 100:,.1f}% EBITDA margin against "
-                f"{reported * 100:,.1f}% reported" if implied and reported else "")
+                f"{reported * 100:,.1f}% {on}" if implied and reported else "")
     head = (f"- **Multiple basis — read before the level:** {rent}. Since ASC 842 CIQ's TEV "
             "carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) "
             f"history is not on one basis{evidence}. ")
@@ -392,10 +424,16 @@ def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float 
                 "price this name on either series."
                 + ("" if refused or anchor is None or anchor.multiple is None else stale)
                 + _cite(lb.source_ref))
-    history = ("R1's earnings are reported EBITDA, after rent; on that basis — TEV less "
-               f"operating leases over reported EBITDA — the median is {b.median:,.1f}x over "
-               f"{b.n_closes} quarters (current {b.current:,.1f}x at the {b.as_of} filing; "
-               f"{b.percentile:.0%} of the history at or below it).")
+    # (W81) the two CIQ EBITDAs named apart: the margin above is the ANNUAL LTM figure's, the
+    # band divides the FOUR-QUARTER one (`lease_basis`), and R1's own EBITDA is neither (its
+    # mid-cycle EBIT + D&A), so it is described, not given a CIQ figure's name
+    basis = ("R1's earnings are its mid-cycle EBITDA (EBIT + D&A), after rent; on that basis — "
+             f"TEV less operating leases over {FOUR_QUARTER} —" if apart else
+             "R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating "
+             "leases over reported EBITDA —")
+    history = (f"{basis} the median is {b.median:,.1f}x over {b.n_closes} quarters (current "
+               f"{b.current:,.1f}x at the {b.as_of} filing; {b.percentile:.0%} of the history at "
+               "or below it).")
     if priced_ex and _screens_at_current(anchor) and anchor is not None \
             and anchor.multiple is not None and anchor.multiple.value is None:
         # (W50) the statistic is the current, but the band carries no usable one: nothing priced
@@ -4300,7 +4338,8 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
         # BLANK LINE in the rendered page, which makes the committed .md stale against its own
         # JSON on names that gained nothing. Caught by the three e2e mirror pins, not by a unit.
         out += [line for line in (_forward_multiples_md(m.valuation.forward_multiples),
-                                  _multiple_basis_md(m, d.anchor),
+                                  _multiple_basis_md(m, d.anchor,
+                                                     apart=names_ebitdas_apart(d)),
                                   *_valuation_bases_md(m)) if line]
     if m.peer_comps is not None:
         out.append(_fact("Comparability", m.peer_comps.comparability))
