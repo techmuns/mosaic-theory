@@ -19,6 +19,7 @@ import ast
 import datetime as dt
 import importlib.util
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -134,20 +135,44 @@ def test_every_entry_of_the_guards_list_is_checked(tmp_path: Path, entry: str) -
 
 # ── what an approval is, and what it is not ───────────────────────────────────────────────────
 
+#: Each id is fixed text: an id carrying TODAY splits a run whose workers collect either side of
+#: midnight (see the test after this one).
 @pytest.mark.parametrize("line", [
-    f'Operator-approved: vinci/dossier/schemas.py "Yes" {TODAY}',      # another file
-    f"Operator-approved: vinci/dossier/verdict.py Yes {TODAY}",        # words not quoted
-    'Operator-approved: vinci/dossier/verdict.py "Yes"',               # no date
-    'Operator-approved: vinci/dossier/verdict.py "Yes" 2026-13-40',    # not a date
-    f'Operator-approved: vinci/dossier/verdict.py "  " {TODAY}',       # no words
-    f'Operator-approved: vinci/ "Yes" {TODAY}',                        # not one of the list's
-    f'  Operator-approved: vinci/dossier/verdict.py "Yes" {TODAY}',    # not a whole line
-    f'operator-approved: vinci/dossier/verdict.py "Yes" {TODAY}',      # not the fixed form
+    pytest.param(f'Operator-approved: vinci/dossier/schemas.py "Yes" {TODAY}', id="another-file"),
+    pytest.param(f"Operator-approved: vinci/dossier/verdict.py Yes {TODAY}",
+                 id="words-not-quoted"),
+    pytest.param('Operator-approved: vinci/dossier/verdict.py "Yes"', id="no-date"),
+    pytest.param('Operator-approved: vinci/dossier/verdict.py "Yes" 2026-13-40', id="not-a-date"),
+    pytest.param(f'Operator-approved: vinci/dossier/verdict.py "  " {TODAY}', id="no-words"),
+    pytest.param(f'Operator-approved: vinci/ "Yes" {TODAY}', id="not-one-of-the-lists"),
+    pytest.param(f'  Operator-approved: vinci/dossier/verdict.py "Yes" {TODAY}',
+                 id="not-a-whole-line"),
+    pytest.param(f'operator-approved: vinci/dossier/verdict.py "Yes" {TODAY}',
+                 id="not-the-fixed-form"),
 ])
 def test_only_the_fixed_form_naming_the_file_approves_it(tmp_path: Path, line: str) -> None:
     repo = _repo(tmp_path)
     _change(repo, "vinci/dossier/verdict.py", f"a change\n\n{line}\n")
     assert _ci(repo).returncode == 1, line
+
+
+def test_the_forms_ids_hold_no_date_so_every_worker_collects_the_same_tests() -> None:
+    """(2026-11-20) Each pytest-xdist worker collects the suite on its own. The ids above once
+    carried TODAY, read at import, so a run whose workers collected on either side of local midnight
+    stopped with "Different tests were collected between gw0 and gwN" (6 of 8 ids carried
+    2026-11-19 in one run of 2026-11-19 and 2026-11-20 in the next). The ids are pytest's own, read
+    from a real collection of this module: the dates stay in the values."""
+    out = subprocess.run(
+        [sys.executable, "-m", "pytest", "--collect-only", "-p", "no:cacheprovider",
+         f"{Path(__file__).relative_to(ROOT)}::test_only_the_fixed_form_naming_the_file_approves_it"],
+        cwd=ROOT, capture_output=True, text=True, timeout=120,
+        env={**os.environ, "PYTHONPATH": str(ROOT)})
+    assert out.returncode == 0, out.stdout + out.stderr
+    ids = [ln.split("[", 1)[1].rstrip("]") for ln in out.stdout.splitlines()
+           if "::test_only_the_fixed_form_naming_the_file_approves_it[" in ln]
+    assert len(ids) == len(set(ids)) == 8, out.stdout
+    dated = [i for i in ids if re.search(r"\d{4}-\d{2}-\d{2}", i)]   # TODAY is one such date
+    assert not dated, f"{len(dated)} of {len(ids)} ids carry a date:\n" + "\n".join(dated)
 
 
 def test_one_of_the_lists_own_directories_approves_the_files_under_it(tmp_path: Path) -> None:
