@@ -262,10 +262,12 @@ def test_every_pytest_line_of_the_local_gate_prints_its_outcome_counts(
     (suite / "pyproject.toml").write_text(f"[tool.pytest.ini_options]\n{_addopts()}\n")
     (suite / "tests" / "test_two.py").write_text("def test_a():\n    pass\n\n"
                                                  "def test_b():\n    pass\n")
-    # two workers are enough for two tests: `auto` stays in the command as written
+    # two workers are enough for two tests: `auto` stays in the command as written. The command is
+    # run as written, so the caller's PYTEST_ADDOPTS is not passed on: a `-k` there deselected both
+    # tests and the child exited 5 (found running this gate with `PYTEST_ADDOPTS="-k ..."`).
+    env = {k: v for k, v in os.environ.items() if k != "PYTEST_ADDOPTS"}
     out = subprocess.run([*argv, "-p", "no:cacheprovider"], cwd=suite, capture_output=True,
-                         text=True, timeout=120,
-                         env={**os.environ, "PYTEST_XDIST_AUTO_NUM_WORKERS": "2"})
+                         text=True, timeout=120, env={**env, "PYTEST_XDIST_AUTO_NUM_WORKERS": "2"})
     assert out.returncode == 0, out.stdout + out.stderr
     assert re.search(r"^2 passed in [\d.]+s", out.stdout, re.M), (argv, out.stdout)
 
