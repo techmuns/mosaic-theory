@@ -2,7 +2,7 @@
 id: 2026-11-20-licence-covers-publishing-theme-source-text
 status: shipped
 date: 2026-11-20
-prs: []
+prs: [1151]
 supersedes:
 superseded-by:
 ---
