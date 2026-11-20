@@ -563,12 +563,15 @@ class EventVerdict:
         if self.unread is not None:
             return f"the event rule could not run — {self.unread}"
         if not self.stale:
-            return ("no 10-Q, 10-K or 8-K item 2.02 filed after any CIQ export panel"
-                    + (f" (events read: {', '.join(e.label() for e in self.events)})"
-                       if self.events else ""))
+            return ("no 10-Q, 10-K or 8-K item 2.02 filed on or after the date of any CIQ export "
+                    "panel" + (f" (events read: {', '.join(e.label() for e in self.events)})"
+                               if self.events else ""))
         first = min(self.stale, key=lambda p: (p.panel_date, p.filing.filing_date))
         keys = sorted({p.key for p in self.stale if p.panel_date == first.panel_date})
-        return (f"the CIQ export panel dated {first.panel_date} ({', '.join(keys)}) predates "
+        # (W82) a filing on the panel's own day outdates it: "predates" would misstate that day
+        rel = ("predates" if first.panel_date < first.filing.filing_date
+               else "shares its date with, and so may not carry,")
+        return (f"the CIQ export panel dated {first.panel_date} ({', '.join(keys)}) {rel} "
                 f"{first.filing.label()}")
 
 
@@ -585,30 +588,44 @@ def _day(v: dt.date | str) -> dt.date:
 
 
 def first_event_after(day: dt.date | str, filings: Sequence[FilingEvent], *,
-                      upto: dt.date | str) -> FilingEvent | None:
-    """THE EVENT RULE ON ONE DATED VALUE: the first filing the rule counts that was filed strictly
-    AFTER ``day`` and on or before ``upto``, or None. A filing ON ``day`` does not outdate it
-    (`_panel_freshness_flag`'s own ``panel < print``). :func:`event_verdict` reads every export
+                      upto: dt.date | str, same_day_counts: bool = True) -> FilingEvent | None:
+    """THE EVENT RULE ON ONE DATED VALUE: the first filing the rule counts that was filed ON OR
+    AFTER ``day`` and on or before ``upto``, or None. :func:`event_verdict` reads every export
     panel through it, and the R1 anchor reads its multiple's close through it (W73), so the two
-    cannot disagree about what outdates a date."""
+    cannot disagree about what outdates a date.
+
+    A FILING ON ``day`` COUNTS AS AFTER IT (W82; operator 2026-11-19, "Yes, that rule"). The rule
+    reads dates, not times, and a release accepted after the bell is dated the close's own day:
+    BellRing's 8-K item 2.02 and 10-K of 2026-11-18 fell on its export's 2026-11-18 close, which
+    the strict reading passed. It fails safe: a value dated on a results day waits one more close.
+
+    ``same_day_counts=False`` is the strict reading, ``day < filing``, for ONE caller by ruling
+    (operator 2026-11-19, "Yes, option 1 + W84"): the ex-lease close R1 prices
+    (`anchor.close_verdict`), which is CIQ's "Pricing as of" date, by construction its own
+    quarter's report's filing date. Counting that report would refuse every ex-lease close for
+    good, since the next one is again its own report's day."""
     d, ref = _day(day).isoformat(), _day(upto).isoformat()
     return next((f for f in sorted(filings, key=lambda f: (f.filing_date, f.accession))
-                 if d < f.filing_date <= ref), None)
+                 if (d <= f.filing_date if same_day_counts else d < f.filing_date)
+                 and f.filing_date <= ref), None)
 
 
 def event_verdict(mechanical: object, filings: Sequence[FilingEvent] | None, *,
                   built_at: dt.date | str, unread: str | None = None) -> EventVerdict:
     """(2026-11-19) THE EVENT RULE, in place of the 45-day clock: an export panel is STALE when
-    the company filed a 10-Q, a 10-K or an 8-K item 2.02 AFTER the panel's date and on or before
-    the build's. ``filings`` None means they could not be read (``unread`` says why): the verdict
-    then carries that, and `check_freshness` refuses — a gate that cannot see its events reports no
-    pass.
+    the company filed a 10-Q, a 10-K or an 8-K item 2.02 ON OR AFTER the panel's date and on or
+    before the build's. ``filings`` None means they could not be read (``unread`` says why): the
+    verdict then carries that, and `check_freshness` refuses — a gate that cannot see its events
+    reports no pass.
 
     THE PANEL'S DATE IS THE ONE THE PAGE CARRIES — for the comps panel its data date, the trading
-    close before CIQ's export stamp (`corrected_ciq_as_of`) — and a filing ON that date does not
-    outdate it, `mechanical._panel_freshness_flag`'s own test (``panel < print``). Against the
-    export stamp this refuses a filing inside the routine gap between the close and the stamp;
-    the conservative side, measured on the corpus in the record."""
+    close before CIQ's export stamp (`corrected_ciq_as_of`) — and a filing ON that date outdates
+    it (W82, `first_event_after`): CIQ takes hours to days to load results, so an export closed on
+    a results day likely lacks them. Measured at 2026-11-19 on the 26 committed pages, this newly
+    refuses AMZN, MCK and UBER. `mechanical._panel_freshness_flag`, a caveat and not this gate,
+    keeps its strict ``panel < print``. Against the export stamp this refuses a filing inside the
+    routine gap between the close and the stamp; the conservative side, measured on the corpus in
+    the record."""
     if filings is None:
         return EventVerdict((), unread=unread or "the filing list was not read")
     ref = _day(built_at)
@@ -620,8 +637,9 @@ def event_verdict(mechanical: object, filings: Sequence[FilingEvent] | None, *,
         if (first := first_event_after(day, upto, upto=ref)) is not None:
             stale.append(StalePanel(key=key, panel_date=day, filing=first))
     oldest = min((d for _k, d in panels), default=None)
+    # on or after the oldest panel, as the rule counts them (W82): a stale panel's filing is listed
     return EventVerdict(tuple(stale), events=tuple(
-        f for f in upto if oldest is not None and f.filing_date > oldest))
+        f for f in upto if oldest is not None and f.filing_date >= oldest))
 
 
 def whole_number_ratio(ratio: float) -> bool:

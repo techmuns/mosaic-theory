@@ -18,7 +18,6 @@ from pathlib import Path
 from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import frozen_doc
 from tests.test_band_guards import _now, _synth_facts, _synth_mech
-from tests.w73_lly_expected import as_derived
 from vinci.dossier import band_guards as bg
 from vinci.dossier.anchor import compute_anchor
 from vinci.dossier.schemas import CrossCheck, Dossier, dossier_json
@@ -112,8 +111,7 @@ def test_a_page_built_before_the_field_round_trips_and_renders() -> None:
     from vinci.dossier.render import render_markdown
 
     for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
-        # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
-        text = as_derived(f.parent.name, f.read_text())
+        text = f.read_text()
         page = json.loads(text)
         if isinstance(page.get("anchor"), dict) and "band_checks" in page["anchor"]:
             page["anchor"].pop("band_checks")

@@ -1,6 +1,6 @@
 # Dossier — ELI LILLY & Co (NYSE: LLY)
 
-_November 14, 2026 · extraction 2026-11-14.form4-price-its-filing-contradicts-is-refused · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
+_November 14, 2026 · extraction 2026-11-14.form4-price-its-filing-contradicts-is-refused · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
 
 # Brief — first cut
 
@@ -256,27 +256,27 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple of its own trading history's latest close — dated below, and refused once the company reports after it — the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × today's multiple of its own history | applicable |
+| Method | mid-cycle margin × its own history's multiple at the latest close | applicable |
 | Mid-cycle margin | 29.8% | 10y history · weak |
-| Current multiple, own history | 27.9x | latest close 2026-11-02 · median 25.7x beside it, not used · 39 closes · firm · EV/EBITDA |
+| Multiple at the latest close, own history | 27.9x | close of 2026-11-02 · nothing reported after it by the page's close of 2026-11-11 · median 25.7x beside it, not used · 39 closes · firm · EV/EBITDA |
 | Screen value / share | $820.15 | spot-independent · EV/EBIT 30.2x · on the diluted weighted average |
 | Point-in-time count | refused | the point-in-time count 940,745,031 sits 5.5% above the filer's basic weighted average 891,900,000 (2026-07-01..2026-09-30) — issuance or shares the filer does not count as outstanding for EPS (an employee benefit trust, unvested restricted stock), which the counts cannot tell apart. mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding) |
 | Overall confidence | weak |  |
 
-**How the screen value splits.** Screen value $820.15 at today's 27.9x = $1,397.90 on current EBITDA ($46,489M) − $577.74 margin reversion (mid-cycle 0.60× current). Median 25.7x: $67.92 lower (not used).
+**How the screen value splits.** Screen value $820.15 at 27.9x (the 2026-11-02 close) = $1,397.90 on current EBITDA ($46,489M) − $577.74 margin reversion (mid-cycle 0.60× current). Median 25.7x: $67.92 lower (not used).
 
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount.
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 51.3% (CIQ EBIT) sits 21.4 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 prices that median at its own history's multiple at the latest close, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The latest close's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount.
 
 **data_quality: vendor_bridge**
 - vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
 
 _The split's arithmetic:_
 
-- m = 27.8531x, today's multiple (the close of 2026-11-02); M = 25.6827x, the median beside it, never used.
+- m = 27.8531x, the multiple at the 2026-11-02 close; M = 25.6827x, the median beside it, never used.
 - E_mid = 86,462.0 × 29.8207% + 2,174.0 = $27,958M — LTM revenue × the median margin + D&A, the anchor's EBITDA.
 - E_cur = $46,489M — mechanical.financial_summary LTM 'EBITDA ($M)' (CIQ), which CIQ's TEV ÷ 27.9x reproduces (valuation.ev_ebitda_basis: indistinguishable; $46,829M implied, TEV as of 2026-10-30).
 - V0 = (27.8531 × 46,489.0 − net debt 45,980.0) ÷ 893,400,000 shares = $1,397.90.
@@ -284,7 +284,7 @@ _The split's arithmetic:_
 - multiple effect = (25.6827 − 27.8531) × 27,957.6 ÷ 893,400,000 = −$67.92, beside the anchor, never in it.
 - V0 + margin effect = $820.15, the screen value; + multiple effect = $752.24, the value at the median.
 - net debt ÷ EV = 45,980.0 ÷ 1,294,860.9 = 0.036; flagged above 0.5.
-- the multiple's close 2026-11-02, the page's stored close 2026-11-11: 9 days; not stale by its history's cadence: CIQ's history is stale past 30 days.
+- the multiple's close 2026-11-02, the page's stored close 2026-11-11: 9 days; passed by the event rule: nothing the event rule counts was filed after the 2026-11-02 close, on or before the page's price date, 2026-11-11.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [46]  <!-- ds-table -->
@@ -675,6 +675,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
+  - 2026-11-19 · anchor, valuation_basis — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 15d old — 2026-10-30 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 15d old (2026-10-30, valuation.implied_expectations.multiples_as_of) — within the ceiling

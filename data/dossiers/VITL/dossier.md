@@ -1,6 +1,6 @@
 # Dossier — Vital Farms, Inc. (Nasdaq: VITL)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
 
 # Brief — first cut
 
@@ -254,16 +254,16 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple of its own trading history's latest close — dated below, and refused once the company reports after it — the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × today's multiple of its own history | NOT applicable |
+| Method | mid-cycle margin × its own history's multiple at the latest close | NOT applicable |
 | Mid-cycle margin | 6.0% | 8y history · firm |
-| Current multiple, own history | 1.4x | latest close 2026-11-06 · median 3.9x beside it, not used · 25 closes · weak · EV/EBITDA |
+| Multiple at the latest close, own history | 1.4x | close of 2026-11-06 · nothing reported after it by the page's close of 2026-11-11 · median 3.9x beside it, not used · 25 closes · weak · EV/EBITDA |
 | Overall confidence | weak |  |
 
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. Today's multiple is struck on these below-median earnings, so it reads higher than the same price would on median earnings, and an R1 value can overstate on that count too. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at its own history's multiple at the latest close, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. The latest close's multiple is struck on these below-median earnings, so it reads higher than the same price would on median earnings, and an R1 value can overstate on that count too. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
 
 **data_quality: band_incoherent+lease_basis_unresolved**
 - own_history multiple: band_incoherent (periodicity quarterly)
@@ -580,6 +580,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 8d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 10d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

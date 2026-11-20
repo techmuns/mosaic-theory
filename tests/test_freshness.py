@@ -18,6 +18,7 @@ import re
 
 import pytest
 
+from tests.event_gate_support import own_gate_refusal
 from tests.frozen_support import frozen_doc
 from vinci.dossier import freshness as fr
 
@@ -434,7 +435,12 @@ def test_no_committed_dossier_was_built_on_a_panel_its_own_gate_would_refuse() -
     ceiling no longer gates, so a page legitimately built on a 60-day panel nothing has outdated
     would red that form for no defect. The property kept: measured at the SAME instant the page is
     stamped with, its own gate passes it — the event rule against the real filings of
-    `tests/fixtures/event_rule_filings.json`. Walks every committed page; none is skipped."""
+    `tests/fixtures/event_rule_filings.json`. Walks every committed page; none is skipped.
+
+    (W82, 2026-11-20) The rule now counts a filing ON a panel's own day. A page built BEFORE that
+    ran the strict gate, so it is held to that gate whole (`tests/event_gate_support.py`): AMZN,
+    MCK and UBER, refused today only by a filing on their panel's own day, pass it. A page whose
+    stamp includes W82's vintage must pass the gate as it is now; an undeclared stamp fails."""
     filings = json.loads((ROOT / "tests" / "fixtures" / "event_rule_filings.json").read_text())[
         "filings"]
     checked = 0
@@ -447,8 +453,9 @@ def test_no_committed_dossier_was_built_on_a_panel_its_own_gate_would_refuse() -
         events = [fr.FilingEvent(form=e["form"], filing_date=e["filing_date"],
                                  accession=e["accession"], items=tuple(e["items"]))
                   for e in filings[d.name]["events"]]
-        v = fr.event_verdict(doc.get("mechanical") or {}, events, built_at=doc["assembled_at"])
-        assert not v.stale, f"{d.name}: built on a panel its gate refuses — {v.note()}"
+        why = own_gate_refusal(doc.get("mechanical") or {}, events, built_at=doc["assembled_at"],
+                               stamp=doc.get("extraction_version"))
+        assert why is None, f"{d.name}: built on a panel its gate refuses — {why}"
         checked += 1
     assert checked, "no committed dossier to walk"
 

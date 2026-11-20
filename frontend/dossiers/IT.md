@@ -1,6 +1,6 @@
 # Dossier — GARTNER INC (NYSE: IT)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
 
 # Brief — first cut
 
@@ -320,27 +320,27 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple of its own trading history's latest close — dated below, and refused once the company reports after it — the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × today's multiple of its own history | applicable |
+| Method | mid-cycle margin × its own history's multiple at the latest close | applicable |
 | Mid-cycle margin | 14.1% | 10y history · firm |
-| Current multiple, own history | 9.4x | latest close 2026-11-11 · median 23.0x beside it, not used · 39 closes · firm · EV/EBITDA |
+| Multiple at the latest close, own history | 9.4x | close of 2026-11-11 · nothing reported after it by the page's close of 2026-11-11 · median 23.0x beside it, not used · 39 closes · firm · EV/EBITDA |
 | Screen value / share | $136.91 | spot-independent · EV/EBIT 11.3x · on 63,081,351 shares outstanding |
 | Dilution test / share | $136.48 | + 197,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
-**How the screen value splits.** Screen value $136.91 at today's 9.4x = $185.70 on current EBITDA ($1,421M) − $48.79 margin reversion (mid-cycle 0.77× current). Median 23.0x: $234.77 higher (not used).
+**How the screen value splits.** Screen value $136.91 at 9.4x (the 2026-11-11 close) = $185.70 on current EBITDA ($1,421M) − $48.79 margin reversion (mid-cycle 0.77× current). Median 23.0x: $234.77 higher (not used).
 
-**Mid-cycle assumption under strain.** The last twelve months' operating margin of 20.3% (CIQ EBIT) sits 6.1 points ABOVE the 10-year median of 14.1% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Today's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. On FY2025 the two sources differ by 2.4 points (GAAP 15.8% vs CIQ 18.1%): GAAP carries charges CIQ's EBIT excludes, and R1's median sits on the GAAP side, so part of this gap may be basis, not business.
+**Mid-cycle assumption under strain.** The last twelve months' operating margin of 20.3% (CIQ EBIT) sits 6.1 points ABOVE the 10-year median of 14.1% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at its own history's multiple at the latest close, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The latest close's multiple is struck on these above-median earnings, so it reads lower than the same price would on median earnings, and an R1 value can understate on that count too. On FY2025 the two sources differ by 2.4 points (GAAP 15.8% vs CIQ 18.1%): GAAP carries charges CIQ's EBIT excludes, and R1's median sits on the GAAP side, so part of this gap may be basis, not business.
 
 **data_quality: vendor_bridge**
 - vendor bridge: ltm_fcf supplied by the CIQ workbook because EDGAR had no usable tag
 
 _The split's arithmetic:_
 
-- m = 9.4263x, today's multiple (the close of 2026-11-11); M = 22.9576x, the median beside it, never used.
+- m = 9.4263x, the multiple at the 2026-11-11 close; M = 22.9576x, the median beside it, never used.
 - E_mid = 6,444.3 × 14.1347% + 183.6 = $1,094M — LTM revenue × the median margin + D&A, the anchor's EBITDA.
 - E_cur = $1,421M — mechanical.financial_summary LTM 'EBITDA ($M)' (CIQ), which CIQ's TEV ÷ 9.4x reproduces (valuation.ev_ebitda_basis: indistinguishable; $1,474M implied, TEV as of 2026-11-11).
 - V0 = (9.4263 × 1,420.9 − net debt 1,680.3) ÷ 63,081,351 shares = $185.70.
@@ -348,7 +348,7 @@ _The split's arithmetic:_
 - multiple effect = (22.9576 − 9.4263) × 1,094.4 ÷ 63,081,351 = $234.77, beside the anchor, never in it.
 - V0 + margin effect = $136.91, the screen value; + multiple effect = $371.67, the value at the median.
 - net debt ÷ EV = 1,680.3 ÷ 13,394.2 = 0.125; flagged above 0.5.
-- the multiple's close 2026-11-11, the page's stored close 2026-11-11: 0 days; not stale by its history's cadence: CIQ's history is stale past 30 days.
+- the multiple's close 2026-11-11, the page's stored close 2026-11-11: 0 days; passed by the event rule: nothing the event rule counts was filed after the 2026-11-11 close, on or before the page's price date, 2026-11-11.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [51]  <!-- ds-table -->
@@ -736,6 +736,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm_
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 8d old (2026-11-06, valuation.implied_expectations.multiples_as_of) — within the ceiling
