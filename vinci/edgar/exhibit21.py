@@ -61,6 +61,7 @@ from bs4 import BeautifulSoup
 from pydantic import BaseModel
 
 from vinci.edgar.client import EdgarClient
+from vinci.edgar.submissions import RegistrantHistory
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver.index import pad_cik
 
@@ -144,7 +145,8 @@ class Exhibit21Read(BaseModel, frozen=True):
 
     cik: str
     status: Status
-    #: The filer's current registrant name (EDGAR's submissions document), or None when unread.
+    #: The filer's registrant name in force at the read's ``through`` (today's when None), from
+    #: EDGAR's submissions document; None when it states none.
     registrant: str | None = None
     accession: str | None = None
     filing_date: date | None = None
@@ -378,6 +380,19 @@ def _cut(statement: str) -> str:
     return statement[:_MAX_STATEMENT].rsplit(" ", 1)[0] + " …"
 
 
+def name_in_force(history: RegistrantHistory, day: date | None) -> str | None:
+    """The registrant's name ON ``day``: the former-name span containing it, else the current name
+    (today's when ``day`` is None). A read at a past cut must not take a later name (Codex, round 1
+    of #1152: Oruka Therapeutics filed as "ARCA biopharma, Inc." until 2024-08-30). The same rule
+    as `mechanical._former_name_flags`' name in force at its reference date."""
+    if day is not None:
+        covering = [r for r in history.former
+                    if r.to_date >= day and (r.from_date or date.min) <= day]
+        if covering:
+            return min(covering, key=lambda r: r.to_date).name
+    return history.current or None
+
+
 def read_exhibit21(edgar: EdgarClient, http: CachedHttp, cik: int | str, *,
                    through: date | None = None) -> Exhibit21Read:
     """The Exhibit 21 of the filer's newest original 10-K filed by ``through`` (any day if None).
@@ -390,7 +405,7 @@ def read_exhibit21(edgar: EdgarClient, http: CachedHttp, cik: int | str, *,
     tenks = [f for f in edgar.recent_filings(cik10, forms=("10-K",), since=since)
              if through is None or f.filing_date <= through]
     # the same submissions document `recent_filings` just read: a cache hit, not a second fetch
-    registrant = edgar.registrant_history(cik10).current or None
+    registrant = name_in_force(edgar.registrant_history(cik10), through)
     if not tenks:
         return Exhibit21Read(cik=cik10, registrant=registrant, status="no_10k",
                              note="no 10-K on the submissions document's recent page"

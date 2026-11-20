@@ -27,7 +27,7 @@ from vinci.edgar.exhibit21 import (
     parse_exhibit21,
     read_exhibit21,
 )
-from vinci.edgar.submissions import RegistrantHistory
+from vinci.edgar.submissions import FormerName, RegistrantHistory
 from vinci.netcache import HttpError
 
 FIX = Path(__file__).parent / "fixtures" / "exhibit21"
@@ -256,9 +256,11 @@ class _Http:
 
 
 class _Edgar:
-    def __init__(self, filings: list[Filing], registrant: str) -> None:
+    def __init__(self, filings: list[Filing], registrant: str,
+                 former: tuple[FormerName, ...] = ()) -> None:
         self.filings = filings
         self.registrant = registrant
+        self.former = former
 
     def recent_filings(self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",),
                        since: date | None = None) -> list[Filing]:
@@ -267,7 +269,7 @@ class _Edgar:
                 and (since is None or f.filing_date >= since)]
 
     def registrant_history(self, cik: int | str) -> RegistrantHistory:
-        return RegistrantHistory(current=self.registrant, former=())
+        return RegistrantHistory(current=self.registrant, former=self.former)
 
 
 def _header_url(acc: str) -> str:
@@ -322,3 +324,24 @@ def test_through_reads_the_newest_10k_filed_by_then() -> None:
     assert edgar.since is not None and edgar.since <= date(2025, 6, 1)
     newest = read_exhibit21(edgar, _Http(_googl_pages()), 1652044)  # type: ignore[arg-type]
     assert newest.accession == later and newest.status == "unread"
+
+
+def test_a_past_cut_names_the_registrant_in_force_then() -> None:
+    """Codex round 1 on #1152: a read at a past `through` took today's registrant name, a
+    look-ahead. Oruka Therapeutics filed as "ARCA biopharma, Inc." until 2024-08-30 (its real
+    submissions formerNames), and its 10-K by 2024-06-30 is ARCA's, which files no Exhibit 21."""
+    h = CASES["historical"]["ORKA"]
+    former = tuple(FormerName.model_validate(f) for f in h["former"])
+    tenk = Filing(cik=h["cik"], form="10-K", filing_date=date.fromisoformat(h["filing_date"]),
+                  accession=h["accession"], items=[], primary_doc=None)
+    http = _Http({h["header_url"]: (FIX / h["header_file"]).read_text()})
+    edgar = _Edgar([tenk], h["registrant_current"], former)
+    read = read_exhibit21(edgar, http, h["cik"],  # type: ignore[arg-type]
+                          through=date.fromisoformat(h["through"]))
+    assert read.status == "no_ex21" and read.accession == h["accession"]
+    assert read.registrant == "ARCA biopharma, Inc."
+    assert match_entity("ARCA biopharma", read).tier == "registrant"
+    assert match_entity("Oruka Therapeutics", read).tier == "no_ex21"  # not yet its name
+    # with no cut, today's name
+    today = read_exhibit21(edgar, http, h["cik"])  # type: ignore[arg-type]
+    assert today.registrant == "Oruka Therapeutics, Inc."

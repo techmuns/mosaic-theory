@@ -148,5 +148,33 @@
    "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/0001652044-26-000084-index-headers.html",
    "file": "GOOGL_0001652044-26-000084-index-headers.html"
   }
+ },
+ "historical": {
+  "ORKA": {
+   "cik": "0000907654",
+   "through": "2024-06-30",
+   "accession": "0000950170-24-009809",
+   "filing_date": "2024-02-01",
+   "header_url": "https://www.sec.gov/Archives/edgar/data/907654/000095017024009809/0000950170-24-009809-index-headers.html",
+   "header_file": "ORKA_0000950170-24-009809-index-headers.html",
+   "registrant_current": "Oruka Therapeutics, Inc.",
+   "former": [
+    {
+     "name": "ARCA biopharma, Inc.",
+     "from_date": "2009-01-28",
+     "to_date": "2024-08-30"
+    },
+    {
+     "name": "NUVELO INC",
+     "from_date": "2003-02-04",
+     "to_date": "2009-01-27"
+    },
+    {
+     "name": "HYSEQ INC",
+     "from_date": "1997-07-17",
+     "to_date": "2003-01-28"
+    }
+   ]
+  }
  }
 }

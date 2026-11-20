@@ -95,7 +95,7 @@ prs: [1152]
   - numbered rows (WERN's "1.");
   - percent cells read as the jurisdiction (AMZN).
 - **A heading set across two text blocks** (V's "List of Significant" / "Subsidiaries of Visa Inc.") is read as one statement.
-- **`tests/test_exhibit21.py`, 28 test nodes on real committed documents** (`tests/fixtures/exhibit21/`: 11 exhibits, 3 of them cut, and 2 whole SGML headers).
+- **`tests/test_exhibit21.py`, 29 test nodes on real committed documents** (`tests/fixtures/exhibit21/`: 11 exhibits, 3 of them cut, and 3 whole SGML headers).
   - Positive: Google under Alphabet (`normalised`, its `source_ref` naming 10-K `0001652044-26-000018` and EX-21.01); Quest and LillyDirect (`word_prefix`); Yellowstone Pipe Line at 40%; the filer itself (`registrant`).
   - Negative: Lyft under Alphabet (`not_listed`), and Whole Foods and Shipt `not_listed` on lists that state an omission. Uber's no statement is pinned as no statement, never as complete.
   - The header path: Alphabet's 10-K types EX-21.01; its 10-Q, read, types none (`[]`); an unread header is `None` → `unread`. `through` never asks for a later 10-K.
@@ -115,6 +115,7 @@ prs: [1152]
   - **The registrant was dropped by the normalised key**, which removed every subsidiary sharing its base name: "Gartner, LLC", "BellRing Brands, LLC", "Netflix Pte. Ltd.", "Eli Lilly and Company Limited". Only the registrant's own name, its corporate form kept, is dropped now ("TARGET CORP" = "Target Corporation"). An exact listed match comes before the `registrant` tier.
   - **A `through` before the submissions document's recent page read `no_10k`.** The read now looks back 550 days from `through`.
   - These changed the list sizes above and none of the survey's or the 11's tier counts. 3 more mutants, one per fix: 3 killed.
+- **Codex round 1 (P1), fixed:** a read at a past `through` took the registrant's CURRENT name, a look-ahead. Oruka Therapeutics filed as "ARCA biopharma, Inc." until 2024-08-30 (its real submissions `formerNames`). At `through` 2024-06-30 the read is ARCA's 10-K `0000950170-24-009809`, which files no Exhibit 21, and it named the registrant "Oruka Therapeutics, Inc.". It now takes the name in force on `through`: the former-name span containing it, else the current name, the same rule `mechanical._former_name_flags` applies. The test failed on the PR head before the fix.
 - **Corpus before synthetic.** No fixture is hand-written. The no-list case is Alphabet's real exhibit with its table removed in the test: an SGML header page was tried first and read "COMPANY CONFORMED NAME: Alphabet Inc." as a name, which is why it is not used.
 
 **BOUNDARY.**

@@ -155,6 +155,9 @@ FIXTURES: dict[str, tuple[str, ...] | None] = {
 _CUT_KEEP = 6
 #: The SGML headers kept whole: a 10-K that types its EX-21, and a 10-Q that files none.
 HEADER_FILINGS = (("GOOGL", "0001652044-26-000018"), ("GOOGL", "0001652044-26-000084"))
+#: A read at a past cut across a registrant rename (Codex round 1 on #1152): Oruka Therapeutics
+#: filed as "ARCA biopharma, Inc." until 2024-08-30, and its 10-K by 2024-06-30 files no EX-21.
+HISTORICAL = (("ORKA", date(2024, 6, 30)),)
 
 
 def _cut(doc: str, keep: tuple[str, ...]) -> str:
@@ -202,8 +205,25 @@ def cmd_fixtures(args: argparse.Namespace) -> int:
         name = f"{t}_{acc}-index-headers.html"
         (out / name).write_text(http.get_text(url, ttl_seconds=None))
         headers[acc] = {"ticker": t, "cik": cik, "url": url, "file": name}
+    historical: dict[str, Any] = {}
+    for t, cut in HISTORICAL:
+        cik = _page_cik(t)
+        r = read_exhibit21(edgar, http, cik, through=cut)
+        if r.accession is None:
+            raise SystemExit(f"{t}: no 10-K filed by {cut}")
+        a = r.accession.replace("-", "")
+        url = (f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{a}/"
+               f"{r.accession}-index-headers.html")
+        name = f"{t}_{r.accession}-index-headers.html"
+        (out / name).write_text(http.get_text(url, ttl_seconds=None))
+        history = edgar.registrant_history(cik)
+        historical[t] = {"cik": r.cik, "through": str(cut), "accession": r.accession,
+                         "filing_date": str(r.filing_date), "header_url": url, "header_file": name,
+                         "registrant_current": history.current,
+                         "former": [f.model_dump(mode="json") for f in history.former]}
     (out / "cases.json").write_text(json.dumps({"read": _stamp(), "exhibits": cases,
-                                                "headers": headers}, indent=1) + "\n")
+                                                "headers": headers, "historical": historical},
+                                               indent=1) + "\n")
     print(f"wrote {len(cases)} exhibits and {len(headers)} headers to {out}")
     return 0
 
