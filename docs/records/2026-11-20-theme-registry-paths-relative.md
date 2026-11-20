@@ -133,6 +133,13 @@ A row that holds none is written exactly as stored. The branch's history is not 
 - **Width ratios:** each crossing's first line against the widest line of its run, by `x1 − x0`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **The guard refuses HOME-DIRECTORY and USERNAME shapes, not every absolute path** (Codex P2 on
+  #1156, deferred). A machine path that names no person, such as `/opt/build/report.pdf`, in a field
+  nothing rewrites would pass. The scope is A's brief: "any home-directory or username path shape".
+  #1143's catch-every-absolute-path regex is what read "$40 /kW/month" as a path (review finding 6).
+  The three fields that held paths are relative wherever they are created.
+  - *Falsifier:* an absolute path in an exported string, found by `rg '"/(opt|mnt|var|srv)/'` over
+    the branch's `registry/`.
 - **`readouts/` on the state branch is not guarded.** The workflow copies it after `export-state`.
   It held 0 home-directory paths at `a74c4e30`, and the runner writes its manifest's folder relative
   to its working directory.
