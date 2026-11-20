@@ -2,9 +2,11 @@
 
 **Status: committed for TeamNostra's audit**, by the operator's decision of 2026-11-19, verbatim
 "Commit it" (answering "Commit the scope pack to the repo for TeamNostra to audit?"). Its §5 rulings
-are the operator's ("Approve the defaults", 2026-11-19). Nothing here is built: it was prepared on
+are the operator's ("Approve the defaults", 2026-11-19; SP-R4 ruled 2026-11-20). Nothing here is built: it was prepared on
 2026-11-19 at $0, with no model call, no paid run and no page written. The record is
-`docs/records/2026-11-19-archetype-scope-pack-1.md`.
+`docs/records/2026-11-19-archetype-scope-pack-1.md`. **Amended 2026-11-20 (W87):** DVN's and DAC's
+exports landed and were built, SP-D22 is added, and a list of what was found since is at the end
+(`docs/records/2026-11-20-w87-scope-pack-1-amendment.md`).
 
 **How to reply.** Every item has an ID and an Order, as in fix request 2's log:
 - **SP-S*n*** is a scope item: a guard or a recipe to build.
@@ -29,8 +31,8 @@ Script outputs are not committed; they regenerate under the run's own work folde
 |---|---|
 | census (§1 counts) | the two committed universes: the screen band `data/snapshots/universe_snapshot.jsonl`, as of **2026-10-16**, 2,065 CIKs; the large-cap band `data/snapshots/theme_universe_snapshot.jsonl`, as of **2026-08-24**, 928 CIKs; union 2,931 distinct CIKs. Unit: a company (CIK). SIC and filing forms read from EDGAR submissions on 2026-11-19; tag signals from SEC XBRL frames (CY2024/CY2025 durations, CY2025Q4I instants), fetched 2026-11-19. Frames are SEC's calendar-aligned views, **not point-in-time**: good enough for a census, never for a value. Cap weights use each band's own snapshot cap |
 | live pages (§1, §3) | the **26 committed pages** `data/dossiers/*/dossier.json` at main **`6e03501f`**, re-run at **`ac3c9479`** with an identical result (every page's archetype and status, every defect signature); each one's status from `data/coverage_roster.jsonl` there (11 active, 15 watch); each one's archetype from the census by CIK (`scripts/archetype_probe/pages5b.py`) |
-| builds (§2) | the 5a full $0 builds: main `9d036cbb`, 16 builds of 13 names. The fresh-export rerun: main `6e03501f`, 6 names plus 1 variant, and DVN again on its 17:19Z re-export. Both use a scratch data dir whose page reference date is **2026-10-16** (the fleet's newest screen run, on the maintenance route) and a scratch price store of 16 symbols, 7,914 bars, 2024-11-20 to 2026-11-18 (Polygon, the plan's 2-year window) |
-| CIQ figures | each quoted with its source_ref: the workbook's sha256[:10], its sheet, its 0-based row and column as the repo's loader reads them, and the column header. CIQ is not point-in-time, so each figure is **knowable from its export date, 2026-11-19** (the operator's fresh packs). No workbook is committed or quoted beyond the cells named |
+| builds (§2) | the 5a full $0 builds: main `9d036cbb`, 16 builds of 13 names. The fresh-export rerun: main `6e03501f`, 6 names plus 1 variant, and DVN again on its 17:19Z re-export. **Amendment (W87), main `6c22b222`, built 2026-11-20T06:43–06:47Z:** DVN on its quarterly re-export (`a532e1a269`), DAC's 11-file pack, and AWK and MORN re-checked; logs `fresh5a_DVN3.log`, `fresh5a_DAC.log`, `fresh5a_AWKMORN_main.log` (regenerated, not committed). DAC's prices were added to the store: 500 bars, 2024-11-20 to 2026-11-18, one Polygon aggs call. All use a scratch data dir whose page reference date is **2026-10-16** (the fleet's newest screen run, on the maintenance route) and a scratch price store of 16 symbols, 7,914 bars, 2024-11-20 to 2026-11-18 (Polygon, the plan's 2-year window) |
+| CIQ figures | each quoted with its source_ref: the workbook's sha256[:10], its sheet, its 0-based row and column as the repo's loader reads them, and the column header. CIQ is not point-in-time, so each figure is **knowable from its export date**: 2026-11-19 for the operator's fresh packs; 2026-11-20 for DVN's quarterly re-export and DAC's pack. No workbook is committed or quoted beyond the cells named |
 | EDGAR figures | companyfacts or filed documents, each with its accession |
 
 ---
@@ -84,7 +86,7 @@ of the adopted text:
 | banks, lenders, insurers, broker-dealers with a bank book | G06, G07, G08, G10 |
 | pre-revenue biotech | G04 |
 | BRK and other conglomerates | BRK in G08 by SIC; other conglomerates have no census signal (SP-R7) |
-| MLPs, until the K-1 ruling | G15 |
+| MLPs: out of scope for stage 1 (SP-R4, ruled 2026-11-20) | G15 |
 | stage 2: IFRS or another currency; non-SEC names | G18, G19; no CIK |
 | wait: no 10-K yet | G20 |
 | not decided by the adopted text | G05b, G16b (SP-R9) |
@@ -121,7 +123,7 @@ in `scripts/archetype_probe/classify.py` and `grid.py`.
 | G13 REIT | **refused until P/FFO** (SP-S2, lifted by SP-S5) | SIC 6798 | 94 (4.6%) | 37 (4.0%) | 128 | 0 |
 | G13b real-estate operator | **refused until P/FFO** (SP-S2) | SIC 6500/6510/6512/6513/6519/6531/6532/6552. **13 REITs sit outside SIC 6798** (they carry `RealEstateInvestmentPropertyNet` ≥ 50% of assets; INVH among them), so a guard on SIC 6798 alone misses them (findings §3b) | 20 (1.0%) | 3 (0.3%) | 23 | 0 |
 | G14 regulated utility | **in scope**, R1/R3 | SIC 4911/4924/4931/4932/4941/4961/4991 | 29 (1.4%) | 35 (3.8%) | 64 | 0 |
-| G15 partnership / MLP | **out of scope until the K-1 ruling** (SP-R4) | a partnership name (" L.P.", ends " LP" or ", LP"), or both `PartnersCapital` and `LimitedPartnersCapitalAccount` at CY2025Q4I. Checked before utility | 15 (0.7%) | 7 (0.8%) | 22 | 0 |
+| G15 partnership / MLP | **out of scope for stage 1** (SP-R4, ruled 2026-11-20) | a partnership name (" L.P.", ends " LP" or ", LP"), or both `PartnersCapital` and `LimitedPartnersCapitalAccount` at CY2025Q4I. Checked before utility | 15 (0.7%) | 7 (0.8%) | 22 | 0 |
 | G16 royalty / patent owner | **in scope** | SIC 6792/6794/6795 | 6 (0.3%) | 2 (0.2%) | 8 | 0 |
 | G16b holding / investment office | **not decided by the adopted text** (SP-R9) | other SIC 67xx | 1 (0.0%) | 0 | 1 | 0 |
 | G17 FPI · US GAAP USD · operating | **in scope**, with the D2 refusal and the D8 6-K rule (SP-S7) | latest annual a 20-F or 40-F; newest fiscal year in us-gaap; reporting currency USD; operating form | 57 (2.8%) | 11 (1.2%) | 68 | 0 |
@@ -150,10 +152,10 @@ in `scripts/archetype_probe/classify.py` and `grid.py`.
   - EDGAR 8-K item 7.01 written Q&A (MORN's monthly "Investor Questions and Answers" exhibits, an EDGAR read).
 
   Today the builder reads a transcript only from the name's CIQ manual folder, chosen by file name, and labels every one "CIQ transcript(s)" (findings §11f). Any future use falls under the transcript rule: no public field quotes more than 12 consecutive transcript words, and a driver row quotes none.
-- **DVN still owes a quarterly export; AQN cannot be re-exported.**
-  - DVN's quarterly Financials were re-exported at 2026-11-19 17:19Z, but the file is an annual export again ("Period Type: Annual"), so a Period-Type-Quarterly export is still owed.
+- **DVN's and DAC's exports are in; AQN cannot be re-exported.**
+  - **DVN's mislabel refusal is cleared.** Its 2026-11-20 quarterly re-export (`a532e1a269`, "Period Type: Quarterly") builds, and the precheck passes with 0 refusals. **Its R1 value is withheld** by the event rule on the multiple's close (W73): the export's newest close is the 2026-09-30 quarter-end, and DVN filed its results 8-K item 2.02 on 2026-11-05. An export carrying a close after that filing would clear it. That export is **optional, not owed**.
   - CIQ has no NYSE:AQN listing (the operator, verbatim: "there's no nyse listing as such"). AQN is therefore **refused: home-market primary listing (CAD capitalisation panel); no US listing in CIQ, per the operator** (SP-D21).
-  - The substitute G17 test name for the operator to export is **DAC** (alternate TK); the evidence is under Order 6.
+  - **DAC's pack landed (2026-11-20) and passes.** Every sheet is titled "(NYSE:DAC)", every money panel states USD, and the precheck passes with 0 refusals, so TK is not needed. Its R1 declines on SP-D22 (Order 6 below).
 
 ---
 
@@ -186,14 +188,15 @@ verdict.
 | AWK | G14 | 2026-11-19 | **PASS**, 0 refusals | R1 priced (firm); R3 template emits; R4 refused (SP-D17) |
 | MORN | G11 | 2026-11-19 | **PASS**, 0 refusals | R1 priced (firm); R3 and R4 templates emit. No transcripts and no Credit Health Panel: **absent at the source** (CIQ carries neither for MORN, per the operator) |
 | RIVN | G03 | 2026-11-19 (and 2026-10-28) | REFUSED before any model call (SP-D18) | — |
-| DVN | G05 | 2026-11-19 (twice) | REFUSED before any model call, both times. First, its quarterly Financials file was byte-identical to its annual one. Then the 17:19Z re-export was an annual export again. **Pending a Period-Type-Quarterly export** | a variant without that file passes the precheck with nothing priceable (SP-D19) |
+| DVN | G05 | 2026-11-19 (twice); 2026-11-20 | 2026-11-19: REFUSED before any model call, both times (the quarterly file was the annual one; then an annual export again). **2026-11-20: PASS**, 0 refusals, on a true quarterly re-export | R1 applies, but its value is withheld (W73: its newest close predates its 2026-11-05 results); R1, R3 and R4 templates emit. The 2026-11-19 variant without the bad file passed with nothing priceable (SP-D19) |
+| DAC | G17 | 2026-11-20 | **PASS**, 0 refusals; NYSE listing; every money panel USD | R1 declines (SP-D22); R3 refused (STATE row 10); R4 template emits; the diluted count is read |
 | AQN | G17b | 2026-11-19 (TSX listing) | REFUSED before any model call: **refused: home-market primary listing (CAD capitalisation panel); no US listing in CIQ, per the operator** (SP-D21) | — |
 | PCVX | G04 (out of scope) | 2026-10-28 | 1 refusal (timing) | after a re-export, a fully paid build of a page priced on nothing (SP-S1, SP-S3) |
 | MTB, BRK-B, EPD | G06, G08, G15 (out of scope) | none | STOP, export-driven | intake admits each once its roster line is written (findings §11c) |
 
 ---
 
-## 3. Defects SP-D1 to SP-D21
+## 3. Defects SP-D1 to SP-D22
 
 **Classes:**
 - **wrong**: produces something false;
@@ -229,6 +232,7 @@ page listed.
 | SP-D19 | a missing **required** CIQ export raises a caveat, never a refusal: a DVN variant without its quarterly Financials passes the precheck, and its anchor stops at "own-history multiple missing" | spend | 0 pages carry a "pull CIQ" required-export caveat | `variant5a.py` | a precheck refusal, or a verdict line, when a module required for the sleeve is absent | 1 |
 | SP-D20 | two CIQ EBITDA definitions on one page, each consumed consistently, but the page calls CIQ's annual figure "reported LTM EBITDA" and the LTM check reports a DIFFER with no cause (detail below) | label (no value wrong) | the label is on **20 pages** (every page with `ev_ebitda_basis`). Of the 17 that also carry a filing-rebuilt EBITDA, the "reported" figure is within 2% of it on 7 and beyond 2% on 10 | `mornebitda5b.py`; `pages5b.py` | name the cause when annual EBITDA plus annual 'Other Amortization' equals the four quarters; relabel "reported" as "CIQ annual, pre-rent". **Live label; may be fixed before review, per the operator** | 1 |
 | SP-D21 | a foreign filer whose CIQ primary listing is a home-market listing gets that market's currency in its quarterly Historical Capitalization panel, so `CiqCurrencyError` refuses its whole pack, though it reports US GAAP in USD (detail below). No re-export cures it: AQN is **refused: home-market primary listing (CAD capitalisation panel); no US listing in CIQ, per the operator** | refuses (over-refusal), and a label: the refusal calls a USD workbook "a foreign-currency workbook" | 0 FPI pages. The population at risk **can't be counted from the data held**: 0 of 76 G17/G17b names show a non-US venue in EDGAR's `exchanges`. Proxies: 7 file 40-F, 7 are incorporated in Canada, 13 carry an ADS line | `fresh5a.py AQN`; `aqnhc5a.py`; `cites5b.py` | **Conversion** at a dated rate waits on SP-R5's FX ruling. **Smaller still, needing no ruling:** refuse the panel, not the pack (its only page-path reader is the ex-lease band) | 6 |
+| SP-D22 | **a lessor with no CIQ rent row is treated as having material rent, so R1 declines on the form of its statements.** With no 'Net Rental Exp.' row in CIQ's annual income statement, the lease check reads rent as material (`lease_basis._materiality`); the ex-lease band then needs CIQ's lease rows to reconcile to EDGAR's, and on a lessor there is nothing to reconcile, so R1 declines (detail below) | refuses (selects on form) | **0 of the 26 committed pages** at main `6c22b222` carry the "rent could not be measured" text | `fresh5a.py DAC`; `fresh5a.py PLD` | when CIQ states no rent row, measure rent from EDGAR (`OperatingLeaseCost` / `LeaseCost`), read a filer with no lessee-lease tag as immaterial and say so, and refuse only when EDGAR cannot decide either | 2 |
 
 **SP-D17 in detail.** Fresh packs, knowable 2026-11-19.
 - **PLD** (Financials_Quarterly `d360d90d26`, Balance Sheet, header "Template: Real Estate"). 'Total Cash & ST Investments' is **absent** from the sheet. At column 39 [Q3 Sep-30-2026]: 'Cash And Equivalents' row 23 = 2,273.497; 'Total Debt' row 74 = 37,490.782; 'Net Debt' row 75 = 35,200.599.
@@ -257,6 +261,12 @@ page listed.
   - **Refuse the panel, not the pack.** `lease_basis` refuses its band with the stated currency, and every other panel is read. Where rent is immaterial, R1 never needed the panel; where it is material, R1 declines. Whether AQN's rent is material was not measured, because its pack was refused before its page.
   - **Convert each column at a dated rate**, using its 'Pricing as of' date. This needs SP-R5.
 
+**SP-D22 in detail.**
+- **DAC** (2026-11-20 pack): EDGAR tags no lessee lease cost and no operating-lease liability for DAC at all. It tags $945.8M of lease payments it will *receive* in 12 months (it leases out ships), against FY2025 operating income of $498.8M and D&A of $163.4M (20-F 0001104659-26-021574). Its rent is very likely immaterial, yet R1 is refused: 0 quarters reconcile CIQ's lease rows to EDGAR (≥4 needed).
+- **PLD** (2026-11-19 pack): the same path ("rent could not be measured … treated as material", then no usable ex-lease current).
+- **Live pages:** none of the 26 committed pages at main `6c22b222`.
+- Same family as SP-D17: the refusal follows a row the template does not carry.
+
 ---
 
 ## 4. Orders (build batches)
@@ -273,7 +283,7 @@ archetype other than G01–G03 needs a new fixture.
 
 | ID | item |
 |---|---|
-| **SP-S1** | **The out-of-scope intake guard**, at `coverage_roster.require_buildable` / `assemble.load_finalists`, before `AnthropicLlmClient` is constructed. It refuses G04, G06, G07, G08, G10 (SIC 6211 with a bank book included), BRK and the conglomerates list (SP-R7), G15 (until SP-R4), G16b and G05b as SP-R9 rules, and stage-2 and wait names (G18, G19, non-SEC, G20). Each refusal names the archetype and the ruling. Measured today: nothing at intake reads the archetype, and once a roster line exists a bank, a biotech, BRK or an MLP reaches the paid phases (findings §11c) |
+| **SP-S1** | **The out-of-scope intake guard**, at `coverage_roster.require_buildable` / `assemble.load_finalists`, before `AnthropicLlmClient` is constructed. It refuses G04, G06, G07, G08, G10 (SIC 6211 with a bank book included), BRK and the conglomerates list (SP-R7), G15 (SP-R4), G16b and G05b as SP-R9 rules, and stage-2 and wait names (G18, G19, non-SEC, G20). Each refusal names the archetype and the ruling. Measured today: nothing at intake reads the archetype, and once a roster line exists a bank, a biotech, BRK or an MLP reaches the paid phases (findings §11c) |
 | **SP-S2** | **G13/G13b refused until P/FFO**, keyed on SIC 6798 and 65xx **and** on `RealEstateInvestmentPropertyNet` ≥ 50% of assets, so INVH-type REITs are caught. Lifted by SP-S5 |
 | **SP-S3** | **The precheck states "nothing priceable"** when no recipe template can be emitted on the $0 page: PLD (fresh pack), PCVX (re-exported), the DVN variant. Whether that is a verdict line or a refusal is open (SP-R8) |
 | SP-D1, SP-D2, SP-D3, SP-D11, SP-D13, SP-D14, SP-D19, SP-D20 | as in §3 |
@@ -288,16 +298,16 @@ archetype other than G01–G03 needs a new fixture.
   - must still pass: SPGI (G01), AWK (G14), MORN (G11, SP-D20);
   - the DVN variant (SP-D19).
 - **Cost:** 4–6 PRs.
-- **Depends on:** SP-R4, SP-R6, SP-R7, SP-R8, SP-R9. Not on any other order.
+- **Depends on:** SP-R6, SP-R7, SP-R8, SP-R9 (all ruled). Not on any other order.
 
 ### Order 2: widen the proven path
 
 | ID | item |
 |---|---|
-| SP-D4, SP-D5 (after SP-R1), SP-D6, SP-D7, SP-D17 | as in §3 |
+| SP-D4, SP-D5 (after SP-R1), SP-D6, SP-D7, SP-D17, SP-D22 | as in §3 |
 
 - **Done when:** each name below reaches the layer its defect blocks on a frozen fixture, and the live pages SP-D5, SP-D6 and SP-D7 touch (ORKA, TECX; FUBO, NKE, V; BURL, LLY, NKE) are re-measured, with each move stated.
-- **Frozen test pages:** CME, ORCL (SP-D4); ISRG, TPL (SP-D5); EL, HSY, NEE (SP-D6); LLY, PFE, AJG (SP-D7); AWK's and PLD's quarterly balance sheets (SP-D17).
+- **Frozen test pages:** CME, ORCL (SP-D4); ISRG, TPL (SP-D5); EL, HSY, NEE (SP-D6); LLY, PFE, AJG (SP-D7); AWK's and PLD's quarterly balance sheets (SP-D17); DAC and PLD (SP-D22).
 - **Cost:** 5–7 PRs.
 - **Depends on:** SP-R1, for SP-D5 only.
 
@@ -331,9 +341,9 @@ archetype other than G01–G03 needs a new fixture.
 | **SP-S6** | **A PV-10 leg** for G05, keyed on a reserves disclosure rather than SIC alone (PARR) |
 
 - **Done when:** DVN and FCX carry the leg on frozen fixtures, and PARR's classification is decided.
-- **Frozen test pages:** DVN (**pending a Period-Type-Quarterly export**; the 17:19Z re-export is annual again), FCX, CRK.
+- **Frozen test pages:** DVN (its 2026-11-20 quarterly re-export builds; no longer pending), FCX, CRK.
 - **Cost:** 2–4 PRs, plus the method.
-- **Depends on:** DVN's re-export; SP-D7 (DVN's operating income has been untagged since FY2016).
+- **Depends on:** SP-D7 (DVN's operating income has been untagged since FY2016). DVN's re-export is in hand (2026-11-20).
 
 ### Order 6: FPI, US GAAP, USD
 
@@ -348,11 +358,16 @@ archetype other than G01–G03 needs a new fixture.
   - a 6-K without an earnings release no longer outdates an export;
   - the 20-F's diluted count is read and labelled annual.
 - **Frozen test pages:**
-  - **DAC**, the substitute G17 name, pending the operator's export. Evidence in hand: a 20-F filed 2026-02-27; us-gaap-only USD companyfacts; operating income $540.9M (CY2024) and $498.8M (CY2025) in SEC frames; NYSE the only venue EDGAR lists; no ADS line; incorporated in the Marshall Islands; no census overlap flags; 3 6-Ks in 180 days. Not in the data: that CIQ's primary listing is NYSE. The first check on its pack is the export's title, "(NYSE:DAC)", and the quarterly Historical Capitalization 'Currency' row (USD). TK is the alternate by the same evidence.
+  - **DAC**, the substitute G17 name. **Its export is in hand (2026-11-20) and builds at $0.**
+    - **What it tests:** the 6-K event rule (SP-D8: DAC's two 6-Ks since August predate the export, so the pass is correct); the US listing and USD panels.
+    - **What it does not:** SP-D21 (its panels are USD); SP-D16 (DAC furnishes quarterly XBRL on 6-K, so its diluted count is read; NBIS stays the SP-D16 case).
+    - **R1** prices only after SP-D22.
+
+    Evidence that picked it: a 20-F filed 2026-02-27; us-gaap-only USD companyfacts; operating income $540.9M (CY2024) and $498.8M (CY2025) in SEC frames; NYSE the only venue EDGAR lists; no ADS line; incorporated in the Marshall Islands; no census overlap flags; 3 6-Ks in 180 days. Not in the data: that CIQ's primary listing is NYSE. The first check on its pack, the export's title "(NYSE:DAC)" and the Historical Capitalization 'Currency' row (USD), passed on 2026-11-20, so TK is not needed.
   - AQN, frozen as SP-D21's refusal case.
   - NBIS.
 - **Cost:** 3–5 PRs.
-- **Depends on:** SP-R2; DAC's export; SP-R5 for SP-D21's conversion route only.
+- **Depends on:** SP-R2; SP-D22 for DAC's R1; SP-R5 for SP-D21's conversion route only. DAC's export is in hand.
 
 ### Order 7: documentation
 
@@ -376,8 +391,9 @@ archetype other than G01–G03 needs a new fixture.
 ## 5. Rulings
 
 The operator ruled on 2026-11-19, verbatim: "Approve the defaults", in answer to "Approve the
-pack's ruling defaults (SP-R1 to R9, K-1 left open)?". Eight defaults are now the operator's
-rulings, and SP-R4 (K-1) stays open. **Who drafted them:** SP-R1 and SP-R4 quote the adopted
+pack's ruling defaults (SP-R1 to R9, K-1 left open)?". Those eight defaults are the operator's
+rulings. **SP-R4 was ruled on 2026-11-20**: asked "Rule SP-R4: keep MLPs (K-1 issuers) out of scope for stage 1?", the operator answered, verbatim,
+"Yes, keep them out". All nine are now ruled. **Who drafted them:** SP-R1 and SP-R4 quote the adopted
 step-5 text (§1); B drafted SP-R9's defaults; the probe drafted the rest.
 
 | ID | question | default | operator ruling | unblocks |
@@ -385,7 +401,7 @@ step-5 text (§1); B drafted SP-R9's defaults; the probe drafted the rest.
 | SP-R1 | D5: when is a company debt-free? | the adopted text: "count debt as zero only when the 10-K's balance sheet has no debt line and its notes show no borrowing. The page then says "no debt reported in the 10-K". Otherwise it refuses." | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-D5 |
 | SP-R2 | D8: how is a "results" 6-K detected? The rule itself is adopted | a 6-K is a results event when its exhibit index lists an EX-99 whose description or first heading names results, an earnings release or interim financial statements. A 6-K whose index can't be read counts as a results event (fail closed) | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-D8 |
 | SP-R3 | D18: may the filing decide RIVN's row? | add a reviewed mapping of CIQ 'Gain (Loss) On Sale Of Invest.' to `IncomeLossFromEquityMethodInvestments`, measured on RIVN, so the filing decides for the quarterly side. The refusal stays wherever the filing can't decide | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-D18 |
-| SP-R4 | K-1 names (G15) | the adopted text: "K-1 names: your call on whether the fund holds MLPs." Until it is ruled, G15 stays refused at intake | open: the operator's call; G15 refused at intake until ruled | SP-S1 (G15) |
+| SP-R4 | K-1 names (G15) | the adopted text: "K-1 names: your call on whether the fund holds MLPs." Until it is ruled, G15 stays refused at intake | **ruled 2026-11-20: G15 out of scope for stage 1, refused at intake** (asked "Rule SP-R4: keep MLPs (K-1 issuers) out of scope for stage 1?"; answered "Yes, keep them out") | SP-S1 (G15) |
 | SP-R5 | stage 2's FX | no FX conversion in stage 1. Before any non-USD figure is read, stage 2 rules on the rate source and the date convention (period-end for balances, period average for flows; a market-data panel at its own 'Pricing as of' date) | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | stage 2; SP-D21's conversion route |
 | SP-R6 | the two live pages in an out-of-scope archetype (ORKA, TECX; G04, both on watch) | they stay frozen on watch, as committed. The guard refuses any move back to active and any paid rebuild | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-S1 |
 | SP-R7 | which names are "conglomerates"? | a named list, BRK-A and BRK-B, until a rule is proposed and measured | adopted as the recommended default, 2026-11-19 ("Approve the defaults") | SP-S1 |
@@ -401,7 +417,6 @@ step-5 text (§1); B drafted SP-R9's defaults; the probe drafted the rest.
 - **That readiness holds for every name in an archetype.** Each row of the grid rests on 1 to 12 probed names (findings §5).
 - **That a passing precheck means a priceable page.** PLD passes and prices on nothing.
 - **How many FPIs SP-D21 reaches.** CIQ's primary listing is in none of the data held, so only proxies are given (7 40-F filers, 7 incorporated in Canada, 13 with an ADS line, of 76 G17/G17b).
-- **That DAC's CIQ panels are USD.** The evidence in hand supports a US primary listing; only its own export can confirm it.
 - **That D20's cause on other live pages is known.** The annual-vs-quarters EBITDA gap shows on BRBR, WLK, CNXC and IT, and its cause there was not read.
 - **Anything from MORN's website.** It was not fetched. The EDGAR written Q&A was found, not read as commentary.
 - **That the scripts' outputs are part of this pack.** The scripts take every machine path from the environment and import `vinci` from the checkout they run in (`scripts/archetype_probe/README.md`). They were run at $0. Their outputs are not committed: they regenerate, and a re-run at a newer main or on a re-exported pack measures a different boundary.
@@ -413,7 +428,7 @@ step-5 text (§1); B drafted SP-R9's defaults; the probe drafted the rest.
 
 ```fix-log-scope
 1: SP-S1 SP-S2 SP-S3 SP-D1 SP-D2 SP-D3 SP-D11 SP-D13 SP-D14 SP-D19 SP-D20
-2: SP-D4 SP-D5 SP-D6 SP-D7 SP-D17
+2: SP-D4 SP-D5 SP-D6 SP-D7 SP-D17 SP-D22
 3: SP-S4 SP-D12 SP-D18
 4: SP-S5
 5: SP-S6
@@ -422,7 +437,7 @@ step-5 text (§1); B drafted SP-R9's defaults; the probe drafted the rest.
 —: SP-D9 SP-D10 SP-S8 SP-R1 SP-R2 SP-R3 SP-R4 SP-R5 SP-R6 SP-R7 SP-R8 SP-R9
 ```
 
-That is 8 scope items, 21 defects and 9 rulings: 38 IDs, every one `open`.
+That is 8 scope items, 22 defects and 9 rulings: 39 IDs, every one `open`.
 
 **§5 carries the operator's rulings; this log carries TeamNostra's review.** So the ruling IDs
 stay `open` here, because the log's five statuses record the reply to the pack, not the operator's
@@ -446,6 +461,7 @@ ruling.
 | SP-D6 | 2 | open | | | |
 | SP-D7 | 2 | open | | | |
 | SP-D17 | 2 | open | | | |
+| SP-D22 | 2 | open | | | |
 | SP-S4 | 3 | open | | | |
 | SP-D12 | 3 | open | | | |
 | SP-D18 | 3 | open | | | |
@@ -468,3 +484,18 @@ ruling.
 | SP-R7 | — | open | | | |
 | SP-R8 | — | open | | | |
 | SP-R9 | — | open | | | |
+
+---
+
+## 8. Found since the pack, not in its orders
+
+Each item has one plain line, with its owner and status as of this amendment (2026-11-20). They are
+listed so a reviewer sees them beside the pack; none is an SP ID. **Their statuses at send time go
+in the cover note.**
+
+| item | owner | status as of 2026-11-20 |
+|---|---|---|
+| **W84**: an ex-lease quarter whose report was released the same day is priced at the first close after its filing | A | open (STATE §5.0 row 10; no PR) |
+| **W85**: a counterparty's Key Developments news is not the company's catalyst (the Lyft rows on GOOGL, UBER and AMZN) | B | open (STATE §5.0 row 10: "not fixed here") |
+| **W86**: a 10-K's Exhibit 21 as a one-sided test of a filer's own units | A | PR #1152, open |
+
