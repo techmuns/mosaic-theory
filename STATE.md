@@ -230,7 +230,7 @@ The seal-time confirmations and `validate-keys` record no cost, so it names them
   the repo is PUBLIC (operator decision) and the derived set stays committed —
   `docs/records/2026-10-22-repo-made-public.md`. **UPDATE 2026-11-04:** the licence covers publishing
   CIQ-derived facts and Polygon and Tiingo prices (operator ruling), each with its source_ref and
-  knowable date; the workbook files stay out — `docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`. *Verified locally: `build.py` mirrored 301 queue /
+  knowable date; the workbook files stay out — `docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`. **UPDATE 2026-11-20:** the licence also covers publishing the theme sources' text (operator: "Yes, full text may be public") — the uploaded reports' and the weekly scan's articles' words may be on the desk and the state branch; never a local path; no history rewrite — `docs/records/2026-11-20-licence-covers-publishing-theme-source-text.md`. *Verified locally: `build.py` mirrored 301 queue /
   1,727 universe / FUBO+VRRM dossiers / 339-edge graph; served on `:8731` → overview, dossier (full
   VRRM), and graph all render against local data, no console errors.* **No deploy is wired** —
   Cloudflare is unconnected (0 GitHub deployments / environments / webhooks), so the merge deployed
