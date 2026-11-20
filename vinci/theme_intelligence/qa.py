@@ -31,12 +31,12 @@ import json
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
-from pathlib import Path
 
 from vinci.theme_intelligence.attribution import check_run as check_authors
 from vinci.theme_intelligence.cards import capped_label
 from vinci.theme_intelligence.config import load_sources
 from vinci.theme_intelligence.display import first_of
+from vinci.theme_intelligence.localpaths import run_dir
 from vinci.theme_intelligence.resolve import check_run
 from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
@@ -396,7 +396,7 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                     _fail_list(cov_bad) or f"{len(reported)} sources"))
 
     # rendered outputs agree with the record ------------------------------------------------------
-    out = Path(run.output_dir) if run.output_dir else None
+    out = run_dir(store.path.parent, run.run_id, run.output_dir) if run.output_dir else None
     render_bad: list[str] = []
     titles = [t for _, t in SECTION_IDS]
     if out and (out / "cards").is_dir():
