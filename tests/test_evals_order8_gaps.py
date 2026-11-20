@@ -54,6 +54,31 @@ def spy(monkeypatch: pytest.MonkeyPatch) -> type[_Spy]:
     return _Spy
 
 
+class _SendSpy:
+    """The paid client, spied for a run that passes every refusal: since W85's panel draw
+    (2026-11-20) every client is built, its key read, BEFORE the draw is claimed, so a claimed
+    run is one whose clients were built. This one builds and stops at its first send."""
+    built = 0
+    sent = 0
+
+    def __init__(self, *a: Any, **k: Any) -> None:
+        _SendSpy.built += 1
+        self._client = object()
+
+    def extract(self, **k: Any) -> Any:
+        _SendSpy.sent += 1
+        raise AssertionError("a paid client sent a draw (the spy stops it)")
+
+
+@pytest.fixture()
+def send_spy(monkeypatch: pytest.MonkeyPatch) -> type[_SendSpy]:
+    from vinci.evals import replay as rp
+    _SendSpy.built = _SendSpy.sent = 0
+    monkeypatch.setattr(rp, "AnthropicLlmClient", _SendSpy)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    return _SendSpy
+
+
 def _budget(tmp_path: Path, name: str = "ledger") -> Any:
     from vinci.evals import replay as rp
     return rp.Budget.open(tmp_path / f"{name}.jsonl", cap_usd=5.0, approval=f"operator: {name}")
@@ -281,17 +306,17 @@ def test_a_paid_run_compare_with_no_index_claim_is_refused_before_any_client(
 
 
 def test_a_run_compare_with_its_claim_still_reaches_the_draw(tmp_path: Path,
-                                                             spy: type[_Spy],
+                                                             send_spy: type[_SendSpy],
         scorer_is_the_fingerprint: None) -> None:
     """(+) The guard's other side: with its claim the same run is claimed and goes on to draw
-    (the spied client is built, so the claim came first)."""
+    (the spied client sends, so the claim came first)."""
     from vinci.evals import compare as cm
     c, reg = _captured_and_registration()
     claimed: list[str] = []
-    with pytest.raises(AssertionError, match="a paid client was built"):
+    with pytest.raises(AssertionError, match="a paid client sent a draw"):
         cm.run_compare(c, budget=_budget(tmp_path), out_dir=tmp_path / "run", registration=reg,
                        claim=lambda: claimed.append(reg.sha))
-    assert claimed == [reg.sha] and spy.built == 1
+    assert claimed == [reg.sha] and send_spy.sent == 1
 
 
 def test_an_approval_s_identity_needs_its_opened_ledger(tmp_path: Path) -> None:

@@ -376,7 +376,9 @@ class _QueueSdk:
 @pytest.fixture()
 def drawer(monkeypatch: pytest.MonkeyPatch) -> Iterator[list[int]]:
     """The paid client, spied: production's `AnthropicLlmClient`, built with no key read, its SDK
-    the queue's. Counts the clients built, so a refusal is shown to come before any."""
+    the queue's. Counts the clients built. Since W85's panel draw (2026-11-20) a run builds every
+    client before its claim, so a refusal at the claim follows its clients and comes before any
+    draw: the queue is untouched."""
     from vinci.evals import replay as rp
     from vinci.graph.llm import AnthropicLlmClient
     built: list[int] = []
@@ -435,7 +437,7 @@ def test_a_default_first_run_in_the_band_needs_and_accepts_a_replication_through
        merges to main; `run-compare --paid` draws it (the spied client, $0) and `score` decides
        "replication required" (p_lower 6/252, in (0.01, 0.05]).
     2. (−) The same design registered again under another approval, with new words and no
-       `--replicates`, is refused before any client: a first run's band is not re-rolled.
+       `--replicates`, is refused before any draw: a first run's band is not re-rolled.
     3. (+) `register --replicates` (the same ledger) registers its replication; drawn on the
        first run's own request bytes — the F3 exemption (operator 2026-11-12, "Refuse by request
        pins": "A replication under the replication rule stays allowed") — it reaches p_lower
@@ -459,7 +461,7 @@ def test_a_default_first_run_in_the_band_needs_and_accepts_a_replication_through
     _to_main(index)
     with pytest.raises(ReplayError, match="design was already drawn"):
         _run_compare(tmp_path / "again.json", l2, tmp_path / "run-again")
-    assert drawer == [1, 1] and not (tmp_path / "run-again").exists()
+    assert drawer == [1] * 4 and not (tmp_path / "run-again").exists()
 
     repl = _register(export, l1, tmp_path / "repl.json", "--target", "M-LABEL", "--replicates",
                      str(tmp_path / "first.json"))
@@ -468,7 +470,7 @@ def test_a_default_first_run_in_the_band_needs_and_accepts_a_replication_through
     _to_main(index)
     _QUEUE.extend([raw] * 5 + [_clean(raw)] * 5)
     assert _run_compare(tmp_path / "repl.json", l1, tmp_path / "run-repl") == 0
-    assert drawer == [1, 1, 1, 1] and not _QUEUE
+    assert drawer == [1] * 6 and not _QUEUE
     assert _score(tmp_path / "run-repl", tmp_path / "repl.json", l1).startswith(
         "replicated: ships")
     drawn = [r for r in registry.working_rows(index) if r.get("event") == "drawn"]
@@ -483,8 +485,8 @@ def test_a_band_result_re_registered_as_a_single_run_is_not_drawn_through_the_cl
     differ), so neither the per-approval ledger check nor the design key catches it: order 8's
     request-pins check does (F3; operator 2026-11-12, "Refuse by request pins") — every pin it
     would draw was drawn by the first run, and only a replication of that run is exempt. Refused
-    by `claim_draw` before any client is built. (Mutant: the pins check stubbed out — the single
-    run is drawn.)"""
+    by `claim_draw` before any draw is sent (its clients are built first, since W85's panel
+    draw). (Mutant: the pins check stubbed out — the single run is drawn.)"""
     export, page = _drawable_export(tmp_path)
     raw = _nflx_synthesis(page)
     band = [raw] * 5 + [_clean(raw)] * 4 + [raw]
@@ -505,6 +507,6 @@ def test_a_band_result_re_registered_as_a_single_run_is_not_drawn_through_the_cl
     _QUEUE.extend(band)   # what it would draw, were it drawn
     with pytest.raises(ReplayError, match="every request"):
         _run_compare(tmp_path / "single.json", l2, tmp_path / "run-single")
-    assert drawer == [1, 1] and not (tmp_path / "run-single").exists()
+    assert drawer == [1] * 4 and band == _QUEUE and not (tmp_path / "run-single").exists()
     drawn = [r for r in registry.working_rows(index) if r.get("event") == "drawn"]
     assert [r["registration"] for r in drawn] == [first.sha]

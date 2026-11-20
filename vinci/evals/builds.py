@@ -259,6 +259,8 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
             raise rp.ReplayError(f"{pb.label}: a paid build needs its index claim "
                                  "(`registry.claim_draw`, after `registry.require_on_main`) — "
                                  "unclaimed, it could be drawn twice, so nothing is drawn")
+        # THE CLIENT BEFORE THE CLAIM (W85's panel draw, 2026-11-20): with no key, nothing claimed
+        client = rp.paid_client(pb.request, sdk=sdk, label=pb.label)
         if claim is not None:
             claim()
         head = {"registration": reg.sha, "ticker": ticker, "build": build, "label": pb.label,
@@ -271,7 +273,7 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
     stopped = True
     try:
         raws = rp.run_request(pb.request, draws=reg.draws, budget=budget, label=pb.label,
-                              draws_out=draws_out, sdk=sdk, registration=reg.sha)
+                              draws_out=draws_out, sdk=sdk, registration=reg.sha, client=client)
         stopped = False
     finally:
         drawn = [r for r in budget.rows() if r.get("label") == pb.label and "usage" in r]

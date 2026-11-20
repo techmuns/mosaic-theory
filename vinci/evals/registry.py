@@ -135,6 +135,26 @@ def require_on_main(sha: str, *, root: Path = ROOT, ref: str = MAIN_REF) -> None
                           "after the merge, fetch")
 
 
+def _live(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """``rows`` with every VOIDED claim taken out, and the void rows with them (W85's panel draw,
+    2026-11-20; operator: "Yes, void it and fix"). A `void` row cancels the one comparison claim
+    it names — its registration, approval and ``drawn_at`` — and nothing else: a void that names
+    no such claim, or a claim voided twice, is refused. That the voided run drew nothing is the
+    ledger's half (`compare.void_unspent_claim`, `compare.voided_claims`)."""
+    cancelled: list[dict[str, Any]] = []
+    for v in (r for r in rows if r.get("event") == "void"):
+        hit = [r for r in rows if r.get("event") == "drawn" and r.get("unit") is None
+               and (r.get("registration"), r.get("approval"), r.get("drawn_at"))
+               == (v.get("registration"), v.get("approval"), v.get("voids"))]
+        if len(hit) != 1 or any(h is c for h in hit for c in cancelled):
+            raise ReplayError(f"a void row of registration {str(v.get('registration'))[:12]} "
+                              f"cancels {len(hit)} claim(s) at {v.get('voids')}, not one claim "
+                              "voided once: the index is inconsistent, so nothing is drawn")
+        cancelled.append(hit[0])
+    return [r for r in rows
+            if r.get("event") != "void" and not any(r is c for c in cancelled)]
+
+
 def _rows_everywhere(root: Path) -> list[dict[str, Any]]:
     seen: set[str] = set()
     out: list[dict[str, Any]] = []
@@ -143,7 +163,7 @@ def _rows_everywhere(root: Path) -> list[dict[str, Any]]:
         if key not in seen:
             seen.add(key)
             out.append(r)
-    return out
+    return _live(out)
 
 
 def _drawn_pins(rows: list[dict[str, Any]], exempt: set[str | None]) -> dict[str, str]:
@@ -245,6 +265,31 @@ def claim_draw(reg: Registration | RunRegistration, *, approval: str, unit: str 
                           "only under the approval its registered row names (gap 6)")
     return _append({"event": "drawn", "registration": sha, "approval": approval, "unit": unit,
                     "drawn_at": _now()}, root)
+
+
+def record_void(reg: Registration | RunRegistration, *, approval: str,
+                root: Path = ROOT) -> dict[str, Any]:
+    """Void a comparison's claim that drew nothing, in this checkout's index, to be committed with
+    the run's record (W85's panel draw, 2026-11-20; operator: "Yes, void it and fix"). Only a
+    `register` comparison's one live claim, under the approval it was claimed by; the caller has
+    checked the ledger and the folder first (`compare.void_unspent_claim`). A build's unit is
+    never voided here."""
+    from vinci.evals import builds as bd
+    sha = reg.sha
+    if isinstance(reg, bd.RunRegistration):
+        raise ReplayError(f"registration {sha[:12]} is a build registration: only a "
+                          "comparison's claim is voided")
+    drawn = [r for r in _rows_everywhere(root)
+             if r.get("event") == "drawn" and r.get("registration") == sha]
+    if len(drawn) != 1 or drawn[0].get("unit") is not None:
+        raise ReplayError(f"registration {sha[:12]} has {len(drawn)} live claim(s) in the index, "
+                          "not one comparison claim: nothing is voided")
+    if drawn[0].get("approval") != approval:
+        raise ReplayError(f"registration {sha[:12]} was claimed under approval "
+                          f"{str(drawn[0].get('approval'))[:12]}, not {approval[:12]}: nothing "
+                          "is voided")
+    return _append({"event": "void", "registration": sha, "approval": approval,
+                    "voids": drawn[0]["drawn_at"], "voided_at": _now()}, root)
 
 
 def claim_judge_test(*, approval: str, root: Path = ROOT) -> dict[str, Any]:

@@ -14,6 +14,10 @@ registration written before the first draw.
                                               BY DEFAULT, and --single-run opts out, stated
     run-compare --registration FILE --budget-ledger FILE --out-dir DIR [--cap USD] --paid
                                               PAID: the registered draws, page by page, ONCE
+    void-claim --registration FILE --budget-ledger FILE --out-dir DIR
+                                              $0: void a run-compare claim that drew nothing (no
+                                              draws, $0.00, nothing recorded after it), in the
+                                              ledger and this checkout's index
     score --out-dir DIR --registration FILE --budget-ledger FILE
                                               $0: the registered rule, logged, with every run
                                               the ledger records under the registration
@@ -199,6 +203,10 @@ def main(argv: list[str] | None = None) -> int:
     rc.add_argument("--out-dir", required=True, type=Path)
     rc.add_argument("--ciq-root", type=Path)
     rc.add_argument("--paid", action="store_true")
+    vc = sub.add_parser("void-claim")
+    vc.add_argument("--registration", required=True, type=Path)
+    vc.add_argument("--budget-ledger", required=True, type=Path)
+    vc.add_argument("--out-dir", required=True, type=Path)
     s = sub.add_parser("score")
     s.add_argument("--out-dir", required=True, type=Path)
     s.add_argument("--registration", required=True, type=Path)
@@ -373,6 +381,17 @@ def main(argv: list[str] | None = None) -> int:
         print(f"drawn; the approval's spend is now ${budget.spent():.4f} of "
               f"${budget.cap_usd:.2f}; score with `python -m vinci.evals score --out-dir "
               f"{a.out_dir} --registration {a.registration} --budget-ledger {a.budget_ledger}`")
+        return 0
+    if a.cmd == "void-claim":   # W85's panel draw, 2026-11-20 (operator: "Yes, void it and fix")
+        from vinci.evals import compare as cm
+        from vinci.evals import registry
+        claimed = cm.Registration.from_json(a.registration.read_text(encoding="utf-8"))
+        budget = rp.Budget.load(a.budget_ledger)
+        row = cm.void_unspent_claim(claimed, budget=budget, out_dir=a.out_dir)   # checks only
+        registry.record_void(claimed, approval=registry.approval_id(a.budget_ledger))
+        budget.record(row)
+        print(f"voided {claimed.sha[:16]}'s claim into {a.out_dir}: commit {registry.INDEX}'s "
+              "void row with the run's record, then run-compare draws it into a fresh folder")
         return 0
     if a.cmd == "register-run":
         from vinci.evals import builds as bd
