@@ -56,6 +56,7 @@ from typing import TYPE_CHECKING, Any
 
 from vinci.theme_intelligence.config import Paths
 from vinci.theme_intelligence.display import first_of
+from vinci.theme_intelligence.localpaths import export_findings
 from vinci.theme_intelligence.schemas import (
     DocumentRecord,
     ReviewResolution,
@@ -545,6 +546,12 @@ def _check_tree(tree: Path) -> None:
             if any(b.get("text") for b in payload.get("blocks", [])):
                 raise StateSyncError("refusing to push: article text found in "
                                      "article_versions.jsonl — the export must blank it")
+    # no home-directory or username path, in any string (operator, 2026-11-20: "No rewrite,
+    # fix paths ahead"): read from the files, never from the export's own field list
+    found = export_findings(tree / "registry")
+    if found:
+        raise StateSyncError(f"refusing to push: {len(found)} string(s) hold a home-directory or "
+                             f"username path — {first_of(found, 5, sep='; ')}")
 
 
 def push(data_dir: Path, remote: str, branch: str = BRANCH, *,

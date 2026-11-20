@@ -61,6 +61,18 @@ SUPPORTED = {".pdf": "pdf", ".html": "html", ".htm": "html", ".md": "markdown",
 SCANNED_MAX_WORDS = 15
 #: vector objects (curves / rects) on one page above which it is said to carry a chart
 CHART_MIN_OBJECTS = 40
+#: THE LONGEST HEADING A PDF's large type is read as (characters, face validity, 2026-11-19). Two
+#: Goldman Sachs reports set whole paragraphs in large type, and the wrapped-heading merge read them
+#: as ONE heading of 1,089 and 1,204 characters, the section of every block after it (state
+#: a74c4e30). Past this, large type is a paragraph. A real headline can OPEN such a run ("Overweight
+#: the US", then its paragraph in the same type): it is kept by `HEADLINE_MAX_WIDTH`.
+HEADING_MAX_CHARS = 150
+#: A heading run that grows past HEADING_MAX_CHARS keeps its FIRST line as the heading when that
+#: line is a headline: narrower than this share of the run's widest line, where a paragraph's lines
+#: fill the column. Measured 2026-11-20 on the 18 uploaded PDFs held locally: 60 runs cross the
+#: length, in 3 reports; the 11 opening headlines ("1. Diversified returns", "Theme 1: …") are at
+#: most 0.56 of the widest line, the 49 paragraphs' first lines at least 0.86.
+HEADLINE_MAX_WIDTH = 0.75
 _GENERIC_TITLE = re.compile(r"^(untitled|microsoft (word|powerpoint)|document\d*|slide \d+)\b|"
                             r"\.(docx?|pdf|pptx?|html?|txt|md)$", re.I)
 #: a PDF's Author field as an authoring tool fills it, not a person (U30b: "Microsoft Office User")
@@ -418,6 +430,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
         dropped = 0
         blocks: list[Block] = []
         section: str | None = None
+        before_heading: str | None = None  # the section a heading run replaced
         title_lines: list[tuple[float, str]] = []
         page1_texts: list[str] = []
         for n, (page_lines, tables) in enumerate(zip(lines_by_page, tables_by_page,
@@ -426,6 +439,9 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
             last_bottom: float | None = None
             last_size = body_size
             heading_bottom: float | None = None
+            large_para = False  # inside a paragraph set in large type (HEADING_MAX_CHARS)
+            #: the lines the current heading block was read from: (text, width)
+            head_lines: list[tuple[str, float]] = []
             pending = sorted(tables, key=lambda tb: tb[0])
             for ln in page_lines:
                 top = float(ln.get("top", 0))
@@ -459,16 +475,43 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                             # back UP the page: the next column begins a paragraph of its own
                             or gap < -max(4.0, body_size)
                             or abs(size - last_size) > 1.0)
-                if heading and heading_bottom is not None and blocks \
-                        and blocks[-1].kind == "heading" and top - heading_bottom < size:
+                width = float(ln.get("x1", 0)) - float(ln.get("x0", 0))
+                # a heading goes on to the next line only in its own type size: a 12-point
+                # headline over 10-point large type is a heading, then a paragraph
+                wrapped = (heading and heading_bottom is not None and top - heading_bottom < size
+                           and abs(size - last_size) <= 1.0
+                           and (large_para or (bool(blocks) and blocks[-1].kind == "heading")))
+                if wrapped and large_para:  # a paragraph in large type goes on
+                    para.append(text)
+                    heading_bottom = float(ln.get("bottom", top))
+                elif wrapped and len(f"{blocks[-1].text} {text}") > HEADING_MAX_CHARS:
+                    # no heading runs this long: large type setting a PARAGRAPH. A headline that
+                    # opened it stays the heading, and the paragraph starts at its next line;
+                    # otherwise every line is the paragraph's, and the blocks after it keep the
+                    # section before it
+                    widest = max([w for _t, w in head_lines] + [width])
+                    if head_lines and head_lines[0][1] < HEADLINE_MAX_WIDTH * widest:
+                        blocks.pop()
+                        section = head_lines[0][0]
+                        _block(blocks, "heading", section, n, section)
+                        para = [t for t, _w in head_lines[1:]] + [text]
+                    else:
+                        para = [blocks.pop().text, text]
+                        section = before_heading
+                    large_para = True
+                    heading_bottom = float(ln.get("bottom", top))
+                elif wrapped:
                     # a heading wrapped onto a second line is ONE heading
                     section = f"{blocks.pop().text} {text}"
                     _block(blocks, "heading", section, n, section)
+                    head_lines.append((text, width))
                     heading_bottom = float(ln.get("bottom", top))
                 elif heading:
                     _flush(blocks, para, n, section)
+                    before_heading, large_para = section, False
                     section = text
                     _block(blocks, "heading", text, n, section)
+                    head_lines = [(text, width)]
                     heading_bottom = float(ln.get("bottom", top))
                 elif footnote:
                     _flush(blocks, para, n, section)
@@ -478,7 +521,7 @@ def _read_pdf(path: Path, read: DocumentRead, declared: Declared) -> DocumentRea
                         _flush(blocks, para, n, section)
                     para.append(text)
                 if not heading:
-                    heading_bottom = None
+                    heading_bottom, large_para = None, False
                 last_bottom = float(ln.get("bottom", top))
                 last_size = size
             _flush(blocks, para, n, section)

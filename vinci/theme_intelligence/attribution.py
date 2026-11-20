@@ -38,11 +38,11 @@ before the next pull: a pull refuses to discard a local run it cannot replay).
 
 from __future__ import annotations
 
-import traceback
 from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING
 
+from vinci.theme_intelligence.localpaths import traceback_text
 from vinci.theme_intelligence.schemas import (
     OPERATOR_STATED,
     Article,
@@ -116,7 +116,7 @@ def _in_run(pipe: Pipeline, as_of: date, work: Callable[[WeeklyRun], Article]
         new = work(run)
     except Exception as exc:
         pipe.finish_run(RunStatus.FAILED, error=f"{type(exc).__name__}: {exc}\n"
-                                                f"{traceback.format_exc()[-1500:]}")
+                                                f"{traceback_text()}")
         raise
     return pipe.finish_run(RunStatus.SUCCEEDED), new
 
