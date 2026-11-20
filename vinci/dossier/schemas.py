@@ -2567,6 +2567,47 @@ class TranscriptLocator(BaseModel):
 DriverValueStatus = Literal["verified", "qualitative", "unknown"]
 
 
+class KdParty(enum.StrEnum):
+    """(W85, 2026-11-20) Whose development a CIQ Key Developments row is, AS THE ROW SAYS IT: what
+    the row names, never a judgment of who it matters to. The export is not issuer-only. It files
+    rows under the company's subsidiaries and investments (Lyft, Inc. (NasdaqGS:LYFT) on GOOGL's,
+    Zipline International Inc. on UBER's), and under the company itself it files partners' and
+    suppliers' news (Kartoon Studios contracting with Amazon Prime Video, under Amazon.com Services
+    LLC). Measured on the 26 committed pages at main `51c84843` (2026-11-20): of 1,056 rows, 492
+    are the company's, 41 joint, 464 another party's and 59 name only such an entity.
+
+    ``company`` — the row's lead party (`ciq_sheets.kd_lead_party`) names the company and no other
+    party; or no lead party is read and CIQ files the row under the company; or the row is a
+    corporate type, which `ciq_sheets._kd_subject_row` keeps only when it is the company's.
+    ``joint`` — the lead party names the company with another party ("Best Buy and Amazon").
+    ``entity`` — the lead party names only an UNLISTED entity this export files rows under, which
+    the row does not name as the company: a subsidiary or an investment, and the export does not
+    say which (Google LLC on GOOGL's, Zipline on UBER's).
+    ``other`` — the lead party names anyone else, or the row is filed under another LISTED company
+    and no lead party is read.
+    ``unread`` — no lead party is read, and CIQ does not file the row under the company."""
+
+    COMPANY = "company"
+    JOINT = "joint"
+    ENTITY = "entity"
+    OTHER = "other"
+    UNREAD = "unread"
+
+
+class KdAttribution(BaseModel):
+    """(W85) A CIQ Key Developments row's party, and the two reads it is derived from."""
+
+    party: KdParty
+    #: CIQ's ``Company`` cell, as the export states it ("Lyft, Inc. (NasdaqGS:LYFT)"). None when
+    #: the export has no Company column (3 layouts: MVST, NFLX, VITL)
+    filed_under: str | None = None
+    #: the party the row's Situation opens on, as `ciq_sheets.kd_lead_party` reads it ("Kartoon
+    #: Studios Inc."). None when none is read
+    lead_party: str | None = None
+
+    model_config = {"frozen": True}
+
+
 class OperatingDriver(BaseModel):
     """(PR-B) One typed, cited, verbatim-bound operating-mechanism fact. ``value`` is the VERBATIM
     stated value; ``value_num``/``unit`` are the STRUCTURED numeric an ANCHORED extractor parsed
@@ -2622,8 +2663,21 @@ class OperatingDriver(BaseModel):
     value_status: DriverValueStatus | None = None
     unknown_reason: str | None = None
     locator: TranscriptLocator | None = None
+    #: (W85) a CIQ Key Developments row's party (`KdAttribution`); None on every other row, and on
+    #: a KD row assembled before W85 — ABSENT then, never null (`DRIVER_ROW_DROP_WHEN_NONE`). LAST,
+    #: so a dump that leaves it out keeps every earlier field's order
+    attribution: KdAttribution | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _attribution_absent_not_null(self, nxt: Any) -> Any:
+        # ABSENT in every dump, not only the page writer's: a layer dumped before W85 carries no
+        # key, and a replay at an older ref compares against it (`evals.replay.layer_at`)
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("attribution") is None:
+            out.pop("attribution", None)
+        return out
 
 
 class OperatingDriversExtract(BaseModel):
@@ -3707,9 +3761,11 @@ def _filed(r: OperatingDriver) -> bool:
     return r.tier == "llm-fenced" and r.locator is not None and r.locator.value_sha256 is not None
 
 
-#: The same rule for the keys added later on EACH `OperatingDriver` row (RG-D8/RG-D19, 2026-11-09).
+#: The same rule for the keys added later on EACH `OperatingDriver` row (RG-D8/RG-D19, 2026-11-09;
+#: `attribution`, W85 2026-11-20: a filing's or a call's row, and a KD row built before W85, carry
+#: none, so neither writes `null` and a page written before it round-trips byte for byte).
 DRIVER_ROW_DROP_WHEN_NONE: tuple[str, ...] = ("figures", "value_status", "unknown_reason",
-                                              "locator")
+                                              "locator", "attribution")
 
 
 def dossier_json(doc: Dossier) -> str:

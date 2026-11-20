@@ -1,0 +1,36 @@
+{
+ "_about": "Cut-down CIQ Key Developments exports for the W85 attribution pins (tests/test_kd_attribution.py; operator ruling 2026-11-04, #891), built by scripts/build_kd_attribution_fixture.py: each committed page's own export, named by its sha256, read by ciq.read_text and cut to its header row and the pinned rows; each Situation cut to the 300 characters the committed page already carries as the row's verbatim, the Other Parties cell blanked.",
+ "names": {
+  "GOOGL": {
+   "workbook": "Alphabet Inc NasdaqGS GOOGL Key Developments.rtf",
+   "sha256": "42c70f0d8dd3c0073f290e4d68f2c7169cba4c7f4f99f295a3f4cd6b9d0153df",
+   "lines": [
+    "Date|Company|Type|Headline|Other Parties|",
+    "Sep-30-2026|Lyft, Inc. (NasdaqGS:LYFT)|Business Expansion|Lyft, Inc. Launches Lyft App in Europe||",
+    "Situation: Lyft, Inc. riders can use their Lyft app in cities across Europe. Early access to the Lyft app rolls out in Barcelona and Hamburg first; throughout October, the Lyft app will become available for riders to use in some of Europe’s largest cities including London, Rome, Paris, Berlin, Athen"
+   ]
+  },
+  "UBER": {
+   "workbook": "Uber Technologies Inc NYSE UBER Key Developments.rtf",
+   "sha256": "c01be94304402de1612b578554cb2ae49cd072cdfaf3c24e118b08266873934c",
+   "lines": [
+    "Date|Company|Type|Headline|Other Parties|",
+    "Jun-30-2026|Zipline International Inc.|Client Announcement|Wonder and Zipline Team Up to Bring Drone-Delivered Meals to Texas||",
+    "Situation: Wonder and Zipline announced a partnership to bring on-demand drone delivery to Wonder locations across Texas. Beginning in January 2027, customers will be able to order meals via drone from select Wonder locations. Wonder is developing the infrastructure needed to lay the foundation for "
+   ]
+  },
+  "AMZN": {
+   "workbook": "Amazon com Inc NasdaqGS AMZN Key Developments.rtf",
+   "sha256": "8966359496c00bbdb804a90d33a96def3181d380422aa66f2894948600aaf6d5",
+   "lines": [
+    "Date|Company|Type|Headline|Other Parties|",
+    "Aug-12-2026|Amazon.com Services LLC|Client Announcement|Kartoon Studios, Inc. Contracts with Amazon Prime Video to Stream Animated Series Hundred Acre Wood||",
+    "Situation: Kartoon Studios Inc. announced that it has contracted with Amazon Prime Video to stream the Company's animated series HUNDRED ACRE WOOD, based on A.A. Milne's Winnie beginning on February 18, 2027. Amazon will promote the animated series and episodes thereof through the use of Hero Banner",
+    "Sep-23-2026|Amazon.com, Inc. (NasdaqGS:AMZN)|Client Announcement|Best Buy and Amazon Open Fire Tv Ad Inventory to Best Buy Ads||",
+    "Situation: Best Buy and Amazon announced an expanded multiyear Fire TV partnership that will continue bringing the Fire TV experience to Insignia TVs and create more connected TV (CTV) advertising opportunities through Best Buy Ads, powered by Amazon Ads technology. Beginning February 2027, Best Buy",
+    "Oct-20-2026|Amazon.com, Inc. (NasdaqGS:AMZN)|Business Expansion|Amazon Creates over 300,000 New U.S. Jobs This Holiday Season with Increased Pay and Expanded Benefits||",
+    "Situation: Amazon announced it is hiring over 300,000 people for seasonal, part-time, and full-time roles across its U.S. core operations network nationwide this holiday season. Beginning January 1, 2027, all eligible seasonal employees will have access to healthcare coverage starting on their first"
+   ]
+  }
+ }
+}

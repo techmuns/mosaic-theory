@@ -2255,27 +2255,50 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
            "A '…continues:' line is THE REST OF THAT SPEAKER'S PARAGRAPH, verbatim — read it "
            "before characterising the fact above it, because it frequently qualifies, reverses or "
            "seasonally normalises the number, and a point that contradicts it is unsupported. ==="]
+    # (W85) a Key Development that is not the company's own is printed under its group's header,
+    # after the company's own rows, never among them: the header above tells the model to GROUND
+    # operating points in these rows, and GOOGL's held Lyft's European launch as Alphabet's. The
+    # company's own rows keep their order and their bytes; a page with no such row is unchanged
+    groups: dict[str, list[OperatingDriver]] = {g: [] for g in KD_GROUP_HEADS}
+    own: list[OperatingDriver] = []
     for r in od.rows:
-        v = prompt_driver_value(r)
-        val = v if len(v) <= 130 else v[:127].rstrip() + "…"
-        # (prompt-fix 2) the PERIOD the row's source states, and an anchored row's STRUCTURED
-        # value beside its verbatim one: "general and administrative expenses: $0.8 million, or
-        # 1.9%" is a FALL (`value_num` -1.9), and the verbatim value carries no sign
-        out.append(f"[{r.kind.value}] {r.metric} ({r.period or 'period not stated'}): {val}"
-                   f"{_driver_structured(r)} → {r.source_ref}")
-        # SURFACED HERE, not left to the facts dump. BRBR's quote — "70% of RTD shake category
-        # volumes were sold on price promotion" — is exact and correctly cited, and the sentence
-        # after it says the figure is "in line with historical norms … DOWN sequentially from the
-        # heavier promoted second quarter". The synthesis had that call in its prompt (then its
-        # first 12,000 characters; whole since audit G-D3) and still built an escalating sequence
-        # out of the quote alone, because THIS digest is what it is told to ground in and copy
-        # refs from. Putting the qualifier beside the fact is the intervention; leaving it in the
-        # JSON would only serve the audit.
-        if r.following_context:
-            ctx = (r.following_context if len(r.following_context) <= 400
-                   else r.following_context[:397].rstrip() + "…")
-            out.append(f"    …continues: {ctx}")
+        g = driver_party_group(r.attribution.party.value if r.attribution else None)
+        (groups[g] if g else own).append(r)
+    for g, rows in (("", own), *groups.items()):
+        if g and rows:
+            out.append(KD_GROUP_HEADS[g])
+        for r in rows:
+            _digest_row(out, r)
     return "\n".join(out)
+
+
+def _digest_row(out: list[str], r: OperatingDriver) -> None:
+    """One row of `_operating_drivers_digest`, and its '…continues:' line."""
+    v = prompt_driver_value(r)
+    val = v if len(v) <= 130 else v[:127].rstrip() + "…"
+    # (W85) who states a row not the company's own, where its headline does not already say
+    a = r.attribution
+    who = (driver_party_note(a.party.value, a.filed_under, a.lead_party, r.value)
+           if a is not None else None)
+    if who:
+        val = f"{val} ({who})"
+    # (prompt-fix 2) the PERIOD the row's source states, and an anchored row's STRUCTURED value
+    # beside its verbatim one: "general and administrative expenses: $0.8 million, or 1.9%" is a
+    # FALL (`value_num` -1.9), and the verbatim value carries no sign
+    out.append(f"[{r.kind.value}] {r.metric} ({r.period or 'period not stated'}): {val}"
+               f"{_driver_structured(r)} → {r.source_ref}")
+    # SURFACED HERE, not left to the facts dump. BRBR's quote — "70% of RTD shake category volumes
+    # were sold on price promotion" — is exact and correctly cited, and the sentence after it says
+    # the figure is "in line with historical norms … DOWN sequentially from the heavier promoted
+    # second quarter". The synthesis had that call in its prompt (then its first 12,000
+    # characters; whole since audit G-D3) and still built an escalating sequence out of the quote
+    # alone, because THIS digest is what it is told to ground in and copy refs from. Putting the
+    # qualifier beside the fact is the intervention; leaving it in the JSON would only serve the
+    # audit.
+    if r.following_context:
+        ctx = (r.following_context if len(r.following_context) <= 400
+               else r.following_context[:397].rstrip() + "…")
+        out.append(f"    …continues: {ctx}")
 
 
 def _driver_structured(r: OperatingDriver) -> str:
@@ -2667,7 +2690,7 @@ NOT_SENT: dict[str, Any] = {"primary_source": True,
                             "consensus_context": {"consensus_levels_note": True},
                             "operating_drivers": {"rows": {"__all__": {
                                 "figures": True, "value_status": True, "unknown_reason": True,
-                                "locator": True}}}}
+                                "locator": True, "attribution": True}}}}
 
 
 #: (RG-D19 PR 3) What a COMMITTED transcript row's value reads as: its words are in the operator's
@@ -2690,6 +2713,52 @@ def driver_value_as_read(value: str | None, status: str | None, reason: str | No
     if status == "unknown":
         return f"UNKNOWN — not verified against its quote: {reason}"
     return STRIPPED_VALUE if value is None else value
+
+
+#: (W85) The headers a Key Development that is not the company's own is printed under, after the
+#: company's own rows — by the synthesis digest and the scenario template alike. They say WHO
+#: STATES the rows, never that the rows do not matter: a client's own announcement that it chose the
+#: company ("Vision Credit Union Ltd. had selected nCino") is the company's client win.
+#:
+#: ONE HEADER PER GROUP, NOT A LINE PER ROW (W85's design question, coordinator B 2026-11-20). On
+#: the 26 committed pages at main `51c84843` a line under each such row added 29,264 bytes to the
+#: digests (AMZN +14.1%); the headline the digest prints already names who states the row on 510
+#: of the 523, so the group header says "not the company's own" once and the row says whose. The
+#: 13 whose headline does not name it carry "(stated by …)" (`driver_party_note`): +5,114 bytes
+#: over the 17 pages that move (MCK's +3.43% the most), and CNXC's and ROST's digests unchanged.
+KD_GROUP_HEADS: dict[str, str] = {
+    "other": ("=== KEY DEVELOPMENTS STATED BY ANOTHER PARTY — not the company's own statement; "
+              "the headline names who states it (a client announcing that it chose the company is "
+              "still the company's client win) ==="),
+    "unnamed": ("=== KEY DEVELOPMENTS THAT DO NOT NAME THE COMPANY — stated by an entity this CIQ "
+                "export files rows under (a subsidiary or an investment: the export does not say "
+                "which), or by no party read ==="),
+}
+
+
+def driver_party_group(party: str | None) -> str | None:
+    """The `KD_GROUP_HEADS` group a driver row's party is printed under: "other" for another
+    party's, "unnamed" for one naming only an entity the export files rows under, or no party
+    (`schemas.KdParty`). None for the company's own (company, joint) and a row with no
+    attribution (a filing's, a call's, a KD row built before W85), printed among the rows as
+    before."""
+    return {"other": "other", "entity": "unnamed", "unread": "unnamed"}.get(party or "")
+
+
+def driver_party_note(party: str | None, filed_under: str | None, lead_party: str | None,
+                      headline: str | None) -> str | None:
+    """Who states a row printed under a `KD_GROUP_HEADS` header, where its headline does not
+    already name it (`ciq_sheets.kd_headline_names`): "stated by Empire State Realty Trust, Inc."
+    on BURL's "Burlington Stores, Inc. Expands Space …". None where the headline names it, and for
+    a row in no group."""
+    from vinci.dossier.ciq_sheets import kd_headline_names  # lazy: keeps this module's imports
+
+    if driver_party_group(party) is None or kd_headline_names(headline, lead_party):
+        return None
+    if lead_party:
+        return f"stated by {lead_party}"
+    return ("stated by no party read; " + (f"CIQ files it under {filed_under}" if filed_under
+                                           else "the export has no Company column"))
 
 
 def prompt_driver_value(r: OperatingDriver) -> str:

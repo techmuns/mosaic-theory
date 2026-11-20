@@ -61,6 +61,9 @@ from vinci.dossier.anchor import (
 from vinci.dossier.midcycle import MULTIPLE_BASIS as R1_BASIS
 from vinci.dossier.schemas import PrimarySource
 from vinci.dossier.synthesis import (
+    KD_GROUP_HEADS,
+    driver_party_group,
+    driver_party_note,
     driver_value_as_read,
     guidance_vintage_mark,
     newest_guidance_date,
@@ -694,21 +697,38 @@ def _operating_driver_lines(doc: dict[str, Any]) -> list[str]:
                 "claim a row is, not which axis it informs, so no axis mapping is derivable "
                 "from it and none was invented)")
         lines = [head]
+        # (W85) another party's Key Development is printed under its group's header after the
+        # company's own rows, as in the synthesis digest (`synthesis.KD_GROUP_HEADS`)
+        groups: dict[str, list[dict[str, Any]]] = {g: [] for g in KD_GROUP_HEADS}
+        own: list[dict[str, Any]] = []
         for r in rows:
-            # NOT TRUNCATED. The 130-char cap here was copied from `_operating_drivers_digest`,
-            # where it bounds LLM *input* and earns its keep. A template is a FILE THE ANALYST
-            # READS — there is no token budget to protect, so the cap bought nothing and cost
-            # something: measured across the fleet, 11 of 242 values exceeded it and TWO carried a
-            # figure in the tail that the kept head did not (CNXC `30,`, VITL `2026`). Small
-            # figures, but this is the row cap's argument one scale down — a bound that buys
-            # nothing still drops things.
-            # an unverified transcript value is the synthesis's UNKNOWN here too, never the
-            # model's claim (#941 review, Codex): the analyst sets six numbers against these
-            val = driver_value_as_read(r.get("value"), r.get("value_status"),
-                                       r.get("unknown_reason"))
-            lines.append(f"  [{r.get('kind')}] {r.get('metric')}: {val} → {r.get('source_ref')}")
+            g = driver_party_group((r.get("attribution") or {}).get("party"))
+            (groups[g] if g else own).append(r)
+        for g, members in (("", own), *groups.items()):
+            if g and members:
+                lines.append(f"  {KD_GROUP_HEADS[g]}")
+            lines += [_driver_line(r) for r in members]
         return lines
     return []
+
+
+def _driver_line(r: dict[str, Any]) -> str:
+    """One operating-driver row of the template, as `_operating_driver_lines` prints it."""
+    # NOT TRUNCATED. The 130-char cap here was copied from `_operating_drivers_digest`, where it
+    # bounds LLM *input* and earns its keep. A template is a FILE THE ANALYST READS — there is no
+    # token budget to protect, so the cap bought nothing and cost something: measured across the
+    # fleet, 11 of 242 values exceeded it and TWO carried a figure in the tail that the kept head
+    # did not (CNXC `30,`, VITL `2026`). Small figures, but this is the row cap's argument one
+    # scale down — a bound that buys nothing still drops things.
+    # an unverified transcript value is the synthesis's UNKNOWN here too, never the model's claim
+    # (#941 review, Codex): the analyst sets six numbers against these
+    val = driver_value_as_read(r.get("value"), r.get("value_status"), r.get("unknown_reason"))
+    # (W85) who states a grouped row, where its headline does not already say
+    a = r.get("attribution") or {}
+    if (who := driver_party_note(a.get("party"), a.get("filed_under"), a.get("lead_party"),
+                                 r.get("value"))):
+        val = f"{val} ({who})"
+    return f"  [{r.get('kind')}] {r.get('metric')}: {val} → {r.get('source_ref')}"
 
 
 def evidence_for(doc: dict[str, Any]) -> dict[str, list[str]]:
