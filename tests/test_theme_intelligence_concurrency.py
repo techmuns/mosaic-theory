@@ -12,7 +12,9 @@ reviews are a chain and stay one at a time. So these tests hold three things:
 
 Offline: the theses are the two AUTHENTIC J.P. Morgan fixtures' (real page excerpts, their real
 frozen model outputs), the SEC data their frozen subset; the enrichment model is a stand-in that
-answers in the real tool's shape and sleeps a set time per thesis.
+answers in the real tool's shape and sleeps a set time per thesis. Where a test ASSERTS how many
+calls were in flight together or the order they finished in, a `Gate` orders the calls by events
+instead (2026-11-20): sleeps 80 ms apart reordered under CI's parallel load (`-n auto`).
 """
 
 from __future__ import annotations
@@ -40,25 +42,73 @@ from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.schemas import RunStatus
 
 MODEL = "claude-opus-4-8"
+#: How long a gated call waits for the others before its test FAILS. Only a broken pass ever
+#: spends it, so it is generous: a slow machine is never mistaken for a broken pass.
+GATE_SECONDS = 10.0
+
+
+class Gate:
+    """Orders the stand-in's calls by EVENTS, never by the clock. A sleep 80 ms longer than the
+    next one's is no order under parallel load: on 2026-11-20, beside 24 busy loops, the calls'
+    starts drifted up to 129 ms apart, and the concurrent pass was seen with four in flight
+    instead of five and with its answers out of their reverse order.
+
+    Each call first waits until `together` calls are in flight at once (a barrier). Then, given
+    `hold`, it waits for that event; given `finish_order`, it waits for its turn, and finishing
+    passes the turn to the next. Each of those waits gives up after `timeout` seconds (so one call
+    waits at most three times that) with an AssertionError naming the thesis: a call that never
+    comes FAILS the test — it never hangs."""
+
+    def __init__(self, together: int, finish_order: list[str] | None = None, *,
+                 hold: threading.Event | None = None, timeout: float = GATE_SECONDS) -> None:
+        self.barrier = threading.Barrier(together, timeout=timeout)
+        self.finish_order = list(finish_order or ())
+        self.turns = {tid: threading.Event() for tid in self.finish_order}
+        if self.finish_order:
+            self.turns[self.finish_order[0]].set()
+        self.hold = hold
+        self.timeout = timeout
+
+    def enter(self, tid: str) -> None:
+        """Called once the call counts itself in flight."""
+        try:
+            self.barrier.wait()
+        except threading.BrokenBarrierError:
+            raise AssertionError(f"{tid}: {self.barrier.parties} calls were never in flight "
+                                 f"together within {self.timeout} s") from None
+        if self.hold is not None and not self.hold.wait(self.timeout):
+            raise AssertionError(f"{tid}: held {self.timeout} s, and nothing released it")
+        if tid in self.turns and not self.turns[tid].wait(self.timeout):
+            raise AssertionError(f"{tid}: its turn to finish (of {self.finish_order}) never "
+                                 f"came within {self.timeout} s")
+
+    def leave(self, tid: str) -> None:
+        """Called once the call has counted itself finished: the next one's turn."""
+        if tid in self.turns:
+            i = self.finish_order.index(tid)
+            if i + 1 < len(self.finish_order):
+                self.turns[self.finish_order[i + 1]].set()
 
 
 class Model:
     """A stand-in for `ThemeLlmClient`: each call's usage kept ON ITS OWN THREAD
     (`usage_per_thread`), a set sleep per thesis, the real tool's answer shape. It counts how
-    many calls are in flight at once and the order they finish in."""
+    many calls are in flight at once and the order they finish in; a `gate` decides both."""
 
     model = MODEL
     max_tokens = 21_333
     usage_per_thread = True
 
     def __init__(self, delays: dict[str, float] | None = None, *, output_tokens: int = 300,
-                 fail: frozenset[str] = frozenset(), same_usage: bool = False) -> None:
+                 fail: frozenset[str] = frozenset(), same_usage: bool = False,
+                 gate: Gate | None = None) -> None:
         self._local = threading.local()
         self._lock = threading.Lock()
         self.delays = delays or {}
         self.output_tokens = output_tokens
         self.fail = fail
         self.same_usage = same_usage  # every call reports the same token counts
+        self.gate = gate
         self.started: list[str] = []
         self.finished: list[str] = []
         self.live = 0
@@ -81,6 +131,8 @@ class Model:
             self.live += 1
             self.most_live = max(self.most_live, self.live)
         try:
+            if self.gate is not None:
+                self.gate.enter(tid)
             time.sleep(self.delays.get(tid, 0.0))
             # a usage that differs by request, so no two calls' rows could be confused
             self._local.usage = {"input_tokens": 900 + (0 if self.same_usage else len(user) // 10),
@@ -108,6 +160,8 @@ class Model:
             with self._lock:
                 self.live -= 1
                 self.finished.append(tid)
+            if self.gate is not None:
+                self.gate.leave(tid)
 
 
 def _theses(tmp_path: Path, workers: int, model: Model | Any) -> Pipeline:
@@ -128,11 +182,6 @@ def _targets(pipe: Pipeline) -> list[str]:
     tids = [t.thesis_id for t in pipe.store.theses()]
     assert len(tids) == 5
     return tids
-
-
-def _slowest_first(tids: list[str], step: float = 0.08) -> dict[str, float]:
-    """Each thesis slower than the next: answers arrive in REVERSE of input order."""
-    return {tid: step * (len(tids) - i) for i, tid in enumerate(tids)}
 
 
 def _written(pipe: Pipeline, run_id: str) -> dict[str, Any]:
@@ -161,29 +210,38 @@ def test_calls_in_flight_together_never_jointly_pass_the_run_limit() -> None:
     POSITIVE: at no moment are more than three in flight, the five that do not fit are refused
     and never sent, and the run's spend stays inside its limit. NEGATIVE (the old guard, which
     checked the remaining dollars and recorded the spend only AFTER the call): every thread read
-    the same untouched budget and all eight were sent together, 8 bounds against a 3.5 limit."""
-    model = Model({f"TH-{i}": 0.3 for i in range(8)})
+    the same untouched budget and all eight were sent together, 8 bounds against a 3.5 limit.
+    The three admitted are held in flight together (a `Gate`) until the five refusals are in,
+    so none settles and frees room for a thread that reaches the guard late."""
+    all_refused = threading.Event()
+    model = Model(gate=Gate(3, hold=all_refused))
     tool = {"name": "record_enrichment"}
     users = [f"THESIS TH-{i} (version 1): t\n  [s03.0] (pricing) x" for i in range(8)]
     bound = call_bound(MODEL, "s", users[0], tool)
     guard = SpendGuard(run_limit=3.5 * bound)
     client = GuardedClient(model, guard)
-    gate = threading.Barrier(8)
+    start = threading.Barrier(8)
     refused: list[str] = []
+    errors: list[AssertionError] = []  # a gate's failure, re-raised on this thread below
 
     def one(user: str) -> None:
-        gate.wait()
+        start.wait()
         try:
             client.extract(system="s", user=user, tool=tool)
         except BudgetExceeded as exc:
             refused.append(str(exc))
+            if len(refused) >= 5:
+                all_refused.set()
+        except AssertionError as exc:
+            errors.append(exc)
 
     threads = [threading.Thread(target=one, args=(u,)) for u in users]
     for t in threads:
         t.start()
     for t in threads:
         t.join()
-    assert model.most_live == 3 and len(model.started) == 3
+    assert model.most_live == 3 and len(model.started) == 3, errors
+    assert not errors, errors
     assert len(refused) == 5 and len(guard.refusals) == 5
     assert all("does not fit the remaining" in r for r in refused)
     assert guard.run_spent <= guard.run_limit  # type: ignore[operator]
@@ -250,12 +308,14 @@ def test_a_concurrent_pass_writes_what_one_at_a_time_writes_in_input_order(
     of input order, write the same sets, ledger rows, cache files, spend rows and run counts, in
     the same order, as the same pass one call at a time. NEGATIVE: it really ran concurrently —
     all five in flight at once, finished last-first — so the equality is not two sequential runs
-    compared."""
+    compared. A `Gate` holds the eight-worker calls until all five are in flight, then lets the
+    last finish first, each releasing the one before it: an order no machine's load can change.
+    One at a time has none (a gate of five would wait for calls that pass never sends)."""
     order = _targets(_theses(tmp_path / "probe", 1, Model()))  # thesis ids hash their keys
     out: dict[int, dict[str, Any]] = {}
     seen: dict[int, Model] = {}
     for workers in (1, 8):
-        model = Model(_slowest_first(order))
+        model = Model(gate=Gate(5, order[::-1]) if workers > 1 else None)
         pipe = _theses(tmp_path / f"w{workers}", workers, model)
         run, done = pipe.run_enrich(as_of=CALM_AS_OF)
         assert run.status is RunStatus.SUCCEEDED, done
@@ -360,7 +420,8 @@ def test_calls_with_equal_usage_keep_their_own_ledger_label_when_one_fails(
     recorded under the first thesis's name."""
     tids = _targets(_theses(tmp_path / "probe", 1, Model()))
     t0, t1, t2 = tids[:3]
-    model = Model({t0: 0.3, t1: 0.35, t2: 0.05}, fail=frozenset({t1}), same_usage=True)
+    # all three in flight, then finished t2, t0, t1 (a `Gate`, not sleeps)
+    model = Model(fail=frozenset({t1}), same_usage=True, gate=Gate(3, [t2, t0, t1]))
     pipe = _theses(tmp_path / "w8", 8, model)
     with pytest.raises(LlmError, match="truncated"):
         pipe.run_enrich(as_of=CALM_AS_OF, thesis_ids=[t0, t1, t2])

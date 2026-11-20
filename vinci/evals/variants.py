@@ -55,14 +55,15 @@ the proof that the export and the code are the page's — and is otherwise left 
 the registration's note names (BURL's guidance predates A-D8's block discovery, so no code at this
 ref rebuilds it).
 
-W81 (SP-D20), `W81`'s ``w81_ebitda_names``: CIQ's two EBITDAs named apart in the three lines the
-mechanical layer writes them into, each re-read by the ref's own code from the line's own stored
-block: the basis line (`ev_ebitda_basis.headline_basis`), the at-price line
+W81 (SP-D20, #1147), `W81`'s ``w81_ebitda_names``: CIQ's two EBITDAs named apart in the three lines
+the mechanical layer writes them into, each re-read by the ref's own code from the line's own
+stored block: the basis line (`ev_ebitda_basis.headline_basis`), the at-price line
 (`ev_ebitda_basis.at_price_line`) and the EBITDA reconciliation (`ebitda_recon._line`). The
-identity at a ref without the change (no `ev_ebitda_basis.FOUR_QUARTER`). A line is written only
-where the re-read, with W81's words turned back into the old ones, equals the committed line — the
-proof that nothing but the words moved — and is otherwise left as committed. The LTM-quarters
-flag's cause is a `qa_flags` entry, outside the layer, and reaches no request.
+identity at a ref without the change (no `ev_ebitda_basis.FOUR_QUARTER`, which is main until #1147
+merges; the two W81 names are read through `getattr`, so main's production code is untouched). A
+line is written only where the re-read, with W81's words turned back into the old ones, equals the
+committed line — the proof that nothing but the words moved — and is otherwise left as committed.
+The LTM-quarters flag's cause is a `qa_flags` entry, outside the layer, and reaches no request.
 
 THE AS-OF CUT (STATE row 57), `ASOF_CUT`'s ``asof_cut``: a page built before the cut keeps the
 releases filed after its price date; this moves them out of `primary_source.releases` and
@@ -792,9 +793,14 @@ def w81_ebitda_names(mech: MechanicalLayer, ctx: Context | None = None) -> Mecha
     """(W81) The basis, at-price and reconciliation lines as THIS ref's code writes them from each
     line's own stored block. The identity at a ref without the change. Each line is written only
     where the re-read with W81's words undone is the committed line; otherwise it is left as
-    committed (a block an older builder wrote, such as a basis block from before W65)."""
+    committed (a block an older builder wrote, such as a basis block from before W65). The W81
+    names are read through `getattr`: main defines neither until #1147 merges."""
     if getattr(ev_ebitda_basis, "FOUR_QUARTER", None) is None:
         return mech
+    at_price_line: Callable[..., str] | None = getattr(ev_ebitda_basis, "at_price_line", None)
+    if at_price_line is None:
+        raise TransformError("this ref names CIQ's two EBITDAs (`FOUR_QUARTER`) but has no "
+                             "`ev_ebitda_basis.at_price_line` to re-read the at-price line with")
     v = mech.valuation
     vupd: dict[str, Any] = {}
     eb = v.ev_ebitda_basis
@@ -804,7 +810,7 @@ def w81_ebitda_names(mech: MechanicalLayer, ctx: Context | None = None) -> Mecha
             vupd["ev_ebitda_basis"] = eb.model_copy(update={"line": new.line})
     at = v.ev_ebitda_ex_lease_at_price
     if at is not None:
-        line = ev_ebitda_basis.at_price_line(
+        line = at_price_line(
             price=at.price, price_as_of=at.price_as_of, shares=at.shares,
             shares_basis=at.shares_basis, net_debt=at.net_debt, ltm_ebitda=at.ltm_ebitda,
             ltm_through=at.ltm_through, value=at.value)
@@ -866,6 +872,6 @@ RE2_D16: tuple[str, ...] = ("covenant_value_figures",)
 RA_D2: tuple[str, ...] = ("dividend_level",)
 #: RA-D4's one transform (split from #967; RA-D2 is measured on its own): the same-day guides.
 RA_D4: tuple[str, ...] = ("same_day_guides",)
-#: W81's one transform (SP-D20): CIQ's two EBITDAs named apart in the basis, at-price and
+#: W81's one transform (SP-D20, #1147): CIQ's two EBITDAs named apart in the basis, at-price and
 #: reconciliation lines.
 W81: tuple[str, ...] = ("w81_ebitda_names",)
