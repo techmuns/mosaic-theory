@@ -28,7 +28,6 @@ import pytest
 
 import vinci.scenarios as sc
 from tests.frozen_support import CUT, frozen_page
-from tests.w73_lly_expected import as_derived
 from vinci.dossier import recipe_proposal as rp
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.mechanical import _nonoperating_earnings, _nonoperating_quarters
@@ -354,8 +353,7 @@ def test_both_writers_apply_the_proposal() -> None:
 
 def test_the_count_is_absent_until_built() -> None:
     for t in PAGES:
-        # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
-        text = as_derived(t, (DOSS / t / "dossier.json").read_text())
+        text = (DOSS / t / "dossier.json").read_text()
         assert '"nonoperating_quarters": null' not in text, t
         assert dossier_json(Dossier.model_validate_json(text)) == text, t
     doc = _with_count("UBER")

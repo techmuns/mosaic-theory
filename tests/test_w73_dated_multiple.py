@@ -5,8 +5,9 @@ The screen prices its band's latest close (W50's statistic, unchanged). Whether 
 priced is the EVENT RULE's verdict at the page's price date (`anchor.close_verdict`, read through
 `freshness.first_event_after`, which #1132's `event_verdict` calls too): refused once the company
 has filed a report the rule counts (10-Q, 10-K, 8-K item 2.02, a foreign or transition filer's)
-strictly after the close and on or before the page's date; refused when the close is AFTER the
-page's date (W68), undated, or the filings were not read. It replaces both of W62's clocks: the
+on or after the close's day (W82; strictly after, for the ex-lease close) and on or before the
+page's date; refused when the close is AFTER the page's date (W68), undated, or the filings were
+not read. It replaces both of W62's clocks: the
 30-day limit on CIQ's history and the ex-lease due date. A refusal withholds the VALUE, never the
 recipe (W62's rule): `applicable`, the tag and the tier untouched, the dated multiple on show with
 the median beside it, never priced in its place. Never re-struck at the page's close (the
@@ -191,26 +192,41 @@ def test_brbr_prices_where_the_thirty_day_clock_refused() -> None:
 
 
 def test_the_anchor_reads_the_export_gates_own_rule() -> None:
-    """ONE RULE: on every cut page the anchor's verdict names the same first filing #1132's
-    `event_verdict` finds against a panel dated at the close. (−) A filing ON the close does not
-    outdate it: TJX's 10-Q of 2026-08-28 is the day of its ex-lease close."""
-    seen = 0
+    """ONE RULE: on every cut page whose band is CIQ's history, the anchor's verdict names the same
+    first filing #1132's `event_verdict` finds against a panel dated at the close. The EX-LEASE
+    band takes the one strict reading of that rule, by ruling (W82; operator 2026-11-19, "Yes,
+    option 1 + W84"): its close is CIQ's pricing date of the quarter's own report, so a filing ON
+    the close does not outdate it — TJX's 10-Q of 2026-08-28 is the day of its ex-lease close, and
+    the export gate's reading refuses it. Both kinds are walked: a sweep of one is suspect."""
+    seen = {False: 0, True: 0}
     for folder in sorted(CUT.iterdir()):
-        doc = frozen_doc(folder.name) if (folder / "dossier.json").is_file() else None
-        band = anc.r1_multiple_band(doc["mechanical"]).band if doc else None
+        if not (folder / "dossier.json").is_file():
+            continue
+        mech = frozen_doc(folder.name)["mechanical"]
+        sel = anc.r1_multiple_band(mech)
+        band = sel.band
         if not isinstance(band, dict) or not band.get("as_of"):
             continue
-        page = anc.price_as_of(doc["mechanical"])
-        cv = anc.close_verdict(band["as_of"], page, page_filings(folder.name))
-        ev = freshness.event_verdict({"close": {"as_of": band["as_of"]}},
-                                     page_filings(folder.name), built_at=page)
-        assert (cv.filing, cv.stale) == ((ev.stale[0].filing, True) if ev.stale
-                                         else (None, False)), folder.name
-        seen += 1
-    assert seen >= 20, seen
+        page = anc.price_as_of(mech)
+        assert page is not None, folder.name
+        filings = page_filings(folder.name)
+        cv = anc.close_verdict(band["as_of"], page, filings, priced_at_its_report=sel.ex_lease)
+        if sel.ex_lease:
+            want = freshness.first_event_after(band["as_of"], filings, upto=page,
+                                               same_day_counts=False)
+            assert (cv.filing, cv.stale) == (want, want is not None), folder.name
+        else:
+            ev = freshness.event_verdict({"close": {"as_of": band["as_of"]}}, filings,
+                                         built_at=page)
+            assert (cv.filing, cv.stale) == ((ev.stale[0].filing, True) if ev.stale
+                                             else (None, False)), folder.name
+        seen[sel.ex_lease] += 1
+    assert seen[False] >= 5 and seen[True] >= 14, seen
     tjx = page_filings("TJX")
     assert any(f.filing_date == "2026-08-28" and f.form == "10-Q" for f in tjx)
-    assert anc.close_verdict("2026-08-28", date(2026, 11, 11), tjx).stale is False
+    assert anc.close_verdict("2026-08-28", date(2026, 11, 11), tjx,
+                             priced_at_its_report=True).stale is False
+    assert anc.close_verdict("2026-08-28", date(2026, 11, 11), tjx).stale is True
 
 
 def test_tjx_is_refused_once_it_has_reported_where_the_cadence_passed_it() -> None:

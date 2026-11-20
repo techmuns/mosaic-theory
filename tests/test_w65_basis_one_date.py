@@ -314,16 +314,22 @@ def test_a_page_built_before_the_fields_sends_the_same_synthesis_facts() -> None
     """The synthesis request dumps the layer itself (`mech.model_dump(exclude=NOT_SENT)`), not the
     page writer, so `DROP_WHEN_NONE` does not reach it. A committed block built before W65 must
     send no `multiple_close`/`days_apart`/`days_apart_tolerance`, not even as null, or every page
-    with the block would prompt differently before it is rebuilt. A rebuilt block sends them."""
+    with the block would prompt differently before it is rebuilt. A rebuilt block sends them.
+
+    PRESENCE PARITY, as its round-trip twin above: a key is sent exactly when the committed block
+    carries it. The first cut asserted that NO committed page sends one, which held only while every
+    page predated W65; GOOGL's paid rebuild (2026-11-19), the one W65 left waiting, carries them."""
     from vinci.dossier.synthesis import NOT_SENT
 
     for p in _PAGES:
         raw = json.loads(p.read_text())
-        if (raw["mechanical"].get("valuation") or {}).get("ev_ebitda_basis") is None:
+        block = (raw["mechanical"].get("valuation") or {}).get("ev_ebitda_basis")
+        if block is None:
             continue
         sent = json.dumps(_mech(raw).model_dump(exclude=NOT_SENT), default=str)
+        committed = json.dumps(block)
         for key in ("multiple_close", "days_apart", "days_apart_tolerance"):
-            assert f'"{key}"' not in sent, (p.parent.name, key)
+            assert (f'"{key}"' in sent) is (f'"{key}"' in committed), (p.parent.name, key)
     rebuilt = json.dumps(_mech(_rebuilt(frozen_doc("GOOGL"))).model_dump(exclude=NOT_SENT),
                          default=str)
     assert '"multiple_close": "2026-09-30"' in rebuilt and '"days_apart": 30' in rebuilt

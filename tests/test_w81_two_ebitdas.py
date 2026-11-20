@@ -115,12 +115,10 @@ def test_the_basis_line_names_the_annual_figure_and_never_reported(path: Path) -
             or f"{ANNUAL} ({figure})" in got.line), got.line
 
 
-#: The committed pages whose stored block predates W65 (#1136): the head code reads their TEV and
-#: multiple 30 days apart and measures no pairing, so their line moves by more than W81's words.
-#: They wait for their own refresh (GOOGL's rebuild; AMZN is a watch page).
-_PRE_W65 = frozenset({"AMZN", "GOOGL"})
-
-
+#: A committed block written before W65 (#1136) carries no `multiple_close`; where the head code
+#: reads its TEV and multiple more than four days apart it measures no pairing, so that page's line
+#: moves by more than W81's words. Derived from the page, never a list of names: GOOGL left the set
+#: when it was rebuilt under W73 (51c84843), and AMZN (a watch page) is in it until it is rebuilt.
 def _same_reading(path: Path) -> bool:
     raw = _doc(path)
     got = eb.headline_basis(_mech(raw))
@@ -128,13 +126,20 @@ def _same_reading(path: Path) -> bool:
         "reading"]
 
 
-def test_only_the_pre_w65_pages_change_their_reading() -> None:
-    """The pin below skips the pages whose reading the head code changes; that set is exactly the
-    two whose block predates W65, never a page this change moved."""
-    assert {p.parent.name for p in _basis_pages() if not _same_reading(p)} == _PRE_W65
+def test_a_page_whose_reading_changes_is_a_pre_w65_block_moving_to_a_date_reading() -> None:
+    """The pin below skips the pages whose reading the head code changes. Each one is a block
+    written before W65 (no `multiple_close`) whose rebuild is a W65 date reading, never a page this
+    change moved; and at least one page keeps its reading, so the pin below is not empty."""
+    moved = [p for p in _basis_pages() if not _same_reading(p)]
+    for p in moved:
+        block = _doc(p)["mechanical"]["valuation"]["ev_ebitda_basis"]
+        got = eb.headline_basis(_mech(_doc(p)))
+        assert "multiple_close" not in block and got is not None, p.parent.name
+        assert got.reading in eb.DATE_READINGS, (p.parent.name, got.reading)
+    assert len(moved) < len(_basis_pages())
 
 
-@pytest.mark.parametrize("path", [p for p in _basis_pages() if p.parent.name not in _PRE_W65],
+@pytest.mark.parametrize("path", [p for p in _basis_pages() if _same_reading(p)],
                          ids=lambda p: p.parent.name)
 def test_only_the_words_move_every_figure_stays(path: Path) -> None:
     """(−) The rebuilt line is the committed one with W81's words moved and nothing else: every

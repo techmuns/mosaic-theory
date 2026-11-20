@@ -22,7 +22,6 @@ import pytest
 
 import vinci.scenarios as sc
 from tests.frozen_support import covered_where, frozen_doc, frozen_page
-from tests.w73_lly_expected import as_derived
 from vinci.dossier import midcycle
 from vinci.dossier import valuation_basis as vb
 from vinci.dossier.anchor import R1_VALUE_FIELDS
@@ -60,8 +59,7 @@ def test_every_committed_page_carries_blocks_derived_from_itself() -> None:
     writer that edits a layer without re-serialising (`anchor-backfill`'s splice) leaves them stale;
     a no-op `refresh_dossier(path)` re-derives them."""
     for t in PAGES:
-        # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
-        text = as_derived(t, (DOSS / t / "dossier.json").read_text())
+        text = (DOSS / t / "dossier.json").read_text()
         assert dossier_json(Dossier.model_validate_json(text)) == text, (
             f"{t}: the stored valuation_basis/date_semantics/flags are stale — run a no-op "
             "refresh_dossier on the page")

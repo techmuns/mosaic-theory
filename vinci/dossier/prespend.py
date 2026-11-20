@@ -726,10 +726,11 @@ def _post_spend_lines(post: PostSpend) -> list[str]:
         lines.append("  freshness: no dated export panel in this build")
     else:
         # (2026-11-19) no ceiling and so no due date: an export is refused when the company files
-        # a 10-Q, a 10-K or an 8-K item 2.02 after it (`freshness.event_verdict`)
+        # a 10-Q, a 10-K or an 8-K item 2.02 on or after its date (`freshness.event_verdict`, W82)
         lines.append(f"  freshness measured at this build's date: {post.age.note()}; event rule: "
                      + (post.events.note() if post.events is not None else "not run")
-                     + " — a 10-Q, 10-K or 8-K item 2.02 filed after the panel refuses the build")
+                     + " — a 10-Q, 10-K or 8-K item 2.02 filed on or after the panel's date "
+                       "refuses the build")
     return lines
 
 
