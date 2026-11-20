@@ -58,7 +58,8 @@ def _session() -> str:
 
 def test_settings_wire_each_hook_to_a_script_that_exists() -> None:
     hooks = json.loads(SETTINGS.read_text())["hooks"]
-    assert set(hooks) == {"SessionStart", "PreToolUse", "PostToolUse", "Stop"}
+    assert set(hooks) == {"SessionStart", "PreToolUse", "PostToolUse", "PostToolUseFailure",
+                          "Stop"}
     for event, groups in hooks.items():
         for group in groups:
             for hook in group["hooks"]:
@@ -1132,12 +1133,7 @@ def test_review_gate_reads_a_create_on_a_heredoc_marker_line(tmp_path: pathlib.P
 # which builds the path inside vinci/scenarios.py. The guard is wired to Edit|Write only. The fix,
 # docs/patches/w77-bash-writes-ask-first.diff, is for the operator to apply (agents do not edit
 # .claude/hooks/): it reads each Bash call before it runs and compares git status after it.
-
-W77 = pytest.mark.xfail(strict=True, reason=(
-    "W77: the guard runs only on Edit/Write, so a Bash write to a protected file reaches disk with "
-    "no ask. The fix is docs/patches/w77-bash-writes-ask-first.diff, for the operator to apply "
-    "(agents do not edit .claude/hooks/); applying it turns this into an XPASS, which fails the "
-    "suite, and the patch removes this marker."))
+# Applied by the operator: the strict xfail that held these pins until then is off.
 
 IT_RECORD = '{"ticker": "IT", "note": "A"}\n'
 #: A stand-in for vinci/scenarios.py's record API (`read_record` → `model_copy` → `write_record`):
@@ -1320,7 +1316,6 @@ BASH_WRITES = (
 )
 
 
-@W77
 @pytest.mark.parametrize(("form", "command", "rel"), BASH_WRITES, ids=[c[0] for c in BASH_WRITES])
 def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
         tmp_path: pathlib.Path, form: str, command: str, rel: str) -> None:
@@ -1341,7 +1336,6 @@ def test_a_bash_write_to_a_protected_file_is_asked_about_before_it_runs(
             or 'Operator-approved: <each file it changes> "' in reason)   # several (`git mv`)
 
 
-@W77
 def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs() -> None:
     """Before (PreToolUse: ask on a visible write), after (PostToolUse: report a write the command
     did not show) and after a failure (PostToolUseFailure: a script that wrote, then exited 1)."""
@@ -1349,7 +1343,6 @@ def test_settings_route_every_bash_call_to_the_guard_before_and_after_it_runs() 
         assert "decision_path_guard.py" in _wired(event, "Bash"), event
 
 
-@W77
 def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_it_runs(
         tmp_path: pathlib.Path) -> None:
     """#1133's shape (2026-11-19): the record read, changed and written back through an API that
@@ -1374,7 +1367,6 @@ def test_a_script_that_writes_a_protected_file_it_never_names_is_reported_after_
     assert _bash_call("cat scenarios/IT.json", repo, session)[2] == {}   # no change, no report
 
 
-@W77
 def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
         tmp_path: pathlib.Path) -> None:
     """A Bash call that exits non-zero gets no PostToolUse, only PostToolUseFailure (Claude Code's
@@ -1390,7 +1382,6 @@ def test_a_script_that_fails_after_writing_a_protected_file_is_still_reported(
     assert "`scenarios/IT.json`" in str(context.get("additionalContext"))
 
 
-@W77
 def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does(
         tmp_path: pathlib.Path) -> None:
     """Asked once per file per session, whichever tool asked: the grant is recorded when the call
@@ -1407,7 +1398,6 @@ def test_a_granted_bash_ask_covers_that_file_for_the_session_as_an_edit_ask_does
     assert _asked(_bash_call("echo '{}' > scenarios/IT.json", repo, _session())[0])
 
 
-@W77
 def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
         tmp_path: pathlib.Path) -> None:
     """Review round 0: a Python literal naming the folder asks about `scenarios/`; once granted,
@@ -1421,7 +1411,6 @@ def test_a_granted_ask_on_a_directory_covers_the_files_the_call_writes_in_it(
     assert "decision" not in after
 
 
-@W77
 def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path) -> None:
     """CLAUDE.md: a truncated output prints its own truncation. Eleven records written through the
     API: the notice lists ten and says so."""
@@ -1433,7 +1422,6 @@ def test_the_operators_notice_states_its_own_truncation(tmp_path: pathlib.Path) 
     assert "11 protected file(s) (showing 10 of 11)" in str(after.get("systemMessage"))
 
 
-@W77
 def test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file(
         tmp_path: pathlib.Path) -> None:
     """Codex on #1155, round 1. Inline Python that only READS `scenarios/IT.json` while writing
@@ -1451,7 +1439,6 @@ def test_a_granted_over_ask_does_not_cover_a_later_write_of_that_file(
     assert "`scenarios/IT.json`" in str(later["reason"])
 
 
-@W77
 def test_a_grant_covers_its_file_in_its_own_checkout_only(tmp_path: pathlib.Path) -> None:
     """A's review of #1155, SF1. A grant was keyed by the path alone, so one grant in a scratch
     clone silenced the same file in every checkout of the session — before (no ask) and after (no
@@ -1472,7 +1459,6 @@ def test_a_grant_covers_its_file_in_its_own_checkout_only(tmp_path: pathlib.Path
     assert json.loads(out.stdout)["hookSpecificOutput"]["permissionDecision"] == "ask"
 
 
-@W77
 def test_a_grant_on_a_sub_directory_covers_the_files_written_in_it(tmp_path: pathlib.Path) -> None:
     """SF2, the archive-on-supersede shape: a copy into `scenarios/archive` asks (it names the
     folder; its read-only source is the accepted over-ask), says it MAY write, and prescribes no
@@ -1489,7 +1475,6 @@ def test_a_grant_on_a_sub_directory_covers_the_files_written_in_it(tmp_path: pat
     assert "decision" not in after, after
 
 
-@W77
 def test_the_operator_is_told_when_a_granted_call_changes_its_file(tmp_path: pathlib.Path) -> None:
     """SF7. An ask may be answered by a permission mode, not a person, so after a granted call the
     operator is told which protected file it changed."""
@@ -1500,7 +1485,6 @@ def test_the_operator_is_told_when_a_granted_call_changes_its_file(tmp_path: pat
         after.get("systemMessage"))
 
 
-@W77
 def test_a_slow_fsmonitor_does_not_switch_the_after_check_off(tmp_path: pathlib.Path) -> None:
     """SF4. With `core.fsmonitor` set, each `git status` waited on the monitor into its 10 s
     timeout, so the before-reading was lost and a write went unreported. The guard turns the
@@ -1517,7 +1501,6 @@ def test_a_slow_fsmonitor_does_not_switch_the_after_check_off(tmp_path: pathlib.
     assert time.monotonic() - started < 9
 
 
-@W77
 def test_an_unwritable_store_still_asks_and_says_its_after_check_is_off(
         tmp_path: pathlib.Path) -> None:
     """SF5. The per-call reading was written before the ask was printed, so a store that cannot be
@@ -1536,7 +1519,6 @@ def test_an_unwritable_store_still_asks_and_says_its_after_check_is_off(
     assert "after-check is off" in answer["systemMessage"]
 
 
-@W77
 def test_a_failure_in_the_bash_reading_says_so(tmp_path: pathlib.Path) -> None:
     """SF5 (fail loud). The Bash path fails open — a broken guard must not wedge every call — but
     a failure that says nothing reads as "nothing protected here". A corrupt per-call reading
@@ -1563,7 +1545,6 @@ def test_a_failure_in_the_bash_reading_says_so(tmp_path: pathlib.Path) -> None:
 LONG_NOTE = ("This sentence is a long literal in a script, and nothing more than that. " * 4)[:282]
 
 
-@W77
 def test_a_long_string_in_a_writing_script_does_not_switch_the_after_check_off(
         tmp_path: pathlib.Path) -> None:
     """B's finding 1. Inline Python that makes a write call has each short string literal read as
@@ -1583,7 +1564,6 @@ def test_a_long_string_in_a_writing_script_does_not_switch_the_after_check_off(
     assert "`scenarios/IT.json`" in str(after["reason"])
 
 
-@W77
 def test_a_path_the_filesystem_refuses_to_read_locates_nowhere(tmp_path: pathlib.Path) -> None:
     """B's finding 1, at the unit, under the hooks' own interpreter: a path `stat` refuses — a
     name longer than 255 bytes, a NUL byte, a symlink loop (3.9's `Path.resolve()` raises
@@ -1602,7 +1582,6 @@ def test_a_path_the_filesystem_refuses_to_read_locates_nowhere(tmp_path: pathlib
     assert out.stdout.split() == ["[]", "[]", "[]"]
 
 
-@W77
 def test_a_reading_that_crashes_still_keeps_the_after_check(
         tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
         capsys: pytest.CaptureFixture[str]) -> None:
@@ -1653,7 +1632,6 @@ def _wired_timeout(event: str) -> float:
     return 15.0
 
 
-@W77
 def test_slow_git_never_costs_the_ask(tmp_path: pathlib.Path) -> None:
     """B's finding 3. The ask was printed only after every checkout's `git status` (each with its
     own 10 s timeout) had run, inside the hook's 15 s. With status slowed to 8 s in two checkouts
@@ -1679,7 +1657,6 @@ def test_slow_git_never_costs_the_ask(tmp_path: pathlib.Path) -> None:
     assert str(b.resolve()) in told and "after-check is off" in told, told
 
 
-@W77
 def test_a_git_status_that_fails_is_said_out_loud(tmp_path: pathlib.Path) -> None:
     """B's finding 3, "fails open, loudly". A `None` fingerprint was dropped without a word: a
     status that failed BEFORE the call switched its after-check off silently, and one that failed
@@ -1702,7 +1679,6 @@ def test_a_git_status_that_fails_is_said_out_loud(tmp_path: pathlib.Path) -> Non
     assert str(repo.resolve()) in told and "could not read" in told, after
 
 
-@W77
 def test_a_change_another_process_makes_during_a_call_is_not_blamed_on_it(
         tmp_path: pathlib.Path) -> None:
     """B's finding 2. A protected file changed while an `ls` ran (another process, a subagent
@@ -1724,7 +1700,6 @@ def test_a_change_another_process_makes_during_a_call_is_not_blamed_on_it(
     assert later.get("decision") == "block", later   # the next unasked write is still reported
 
 
-@W77
 def test_a_granted_background_write_is_not_reported_when_it_lands(tmp_path: pathlib.Path) -> None:
     """B's finding 2, `run_in_background`. The call returns at once and PostToolUse runs before its
     command writes, so W77 recorded no grant (it grants only what the call changed) and reported
@@ -1752,7 +1727,6 @@ def test_a_granted_background_write_is_not_reported_when_it_lands(tmp_path: path
     assert _bash_call(hidden, repo, fresh)[2].get("decision") == "block"
 
 
-@W77
 def test_a_write_to_the_guards_own_grant_store_is_asked_about(tmp_path: pathlib.Path) -> None:
     """B's finding 8. The store's `guard-<session>.json` IS the grant: a file written there with a
     checkout's path silences both checks for that file. A visible Bash write there, or an Edit/
@@ -1786,7 +1760,6 @@ HIDDEN_PROBE = ("python3 -c \"from pathlib import Path; "
                 "(Path('vinci') / ('ev' + 'als') / 'zz_probe.py').write_text('X = 1')\"")
 
 
-@W77
 def test_a_background_grant_covers_only_the_files_its_command_names(
         tmp_path: pathlib.Path) -> None:
     """A's review of #1163, SF2. A background call's grant recorded EVERY visible hit, directories
@@ -1805,7 +1778,6 @@ def test_a_background_grant_covers_only_the_files_its_command_names(
         _bash_call("echo '{}' > scenarios/GOOGL.json", repo, session)[0])
 
 
-@W77
 def test_a_git_that_answers_nothing_still_costs_no_ask(tmp_path: pathlib.Path) -> None:
     """A's review of #1163, SF3. Finding a path's checkout ran `git rev-parse`, which drew on the
     same budget as `git status`: with every git call slowed to 11 s the hook returned at the
@@ -1828,7 +1800,6 @@ def test_a_git_that_answers_nothing_still_costs_no_ask(tmp_path: pathlib.Path) -
     assert "after-check is off" in str(answer.get("systemMessage")), answer
 
 
-@W77
 def test_a_store_that_turns_read_only_during_the_call_still_reports(
         tmp_path: pathlib.Path) -> None:
     """A's review of #1163, SF4(a). The per-call reading was read and removed in one `try`, so a
@@ -1850,7 +1821,6 @@ def test_a_store_that_turns_read_only_during_the_call_still_reports(
     assert after.get("decision") == "block" and "`scenarios/IT.json`" in str(after["reason"])
 
 
-@W77
 def test_a_grant_that_cannot_be_recorded_still_leaves_the_report(tmp_path: pathlib.Path) -> None:
     """A's review of #1163, SF4(b). The grant was written before the report was built, unguarded:
     a store that refused it (here the grant file is a folder; a full disk does the same) crashed
@@ -1871,7 +1841,6 @@ def test_a_grant_that_cannot_be_recorded_still_leaves_the_report(tmp_path: pathl
     assert "could not record" in told and "unread" not in told, told
 
 
-@W77
 def test_a_call_that_changes_nothing_runs_no_wasted_git(tmp_path: pathlib.Path) -> None:
     """A's review of #1163, NIT 6. A `/dev/null` target sent `git -C /dev rev-parse`, and a call
     that changed nothing still ran `git hash-object`. Each Bash call pays for every git process."""
