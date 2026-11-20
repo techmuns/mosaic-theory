@@ -11,7 +11,8 @@ merges.
 - ``survey`` reads the Exhibit 21 of every committed page's filer (``data/dossiers/*``): its
   status, how many names it lists, whether it states that it omits insignificant subsidiaries,
   whether it lists affiliates too, and how many rows state an ownership share below 100%.
-- ``measure`` reads a JSONL of rows, each ``{"ticker": …, "entity": …}`` plus optional ``own``
+- ``measure`` reads a JSONL of rows, each ``{"ticker": …, "entity": …}`` (or the key
+  ``--entity-field`` names) plus optional ``own``
   (true/false: a human's label) and any other keys, which are carried through. Each row's entity is
   matched against its page filer's list (`exhibit21.match_entity`), and the tiers are counted:
   overall, and by ``own`` label when rows carry one.
@@ -93,8 +94,8 @@ def cmd_survey(args: argparse.Namespace) -> int:
 def cmd_measure(args: argparse.Namespace) -> int:
     rows = [json.loads(x) for x in Path(args.rows).read_text().splitlines() if x.strip()]
     for i, row in enumerate(rows, 1):
-        if "ticker" not in row or "entity" not in row:
-            raise SystemExit(f"{args.rows} row {i} carries no ticker or entity: {row}")
+        if "ticker" not in row or args.entity_field not in row:
+            raise SystemExit(f"{args.rows} row {i} carries no ticker or {args.entity_field}: {row}")
         if row.get("own") not in (True, False, None):
             raise SystemExit(f"{args.rows} row {i}: `own` must be true, false or absent, "
                              f"not {row['own']!r}")
@@ -105,7 +106,7 @@ def cmd_measure(args: argparse.Namespace) -> int:
         t = str(row["ticker"])
         if t not in reads:
             reads[t] = read_exhibit21(edgar, http, _page_cik(t), through=args.through)
-        m = match_entity(str(row["entity"]), reads[t])
+        m = match_entity(str(row[args.entity_field]), reads[t])
         results.append({**row, "tier": m.tier,
                         "listed": m.listed.model_dump(mode="json") if m.listed else None,
                         "list_states_omission": m.list_states_omission,
@@ -117,9 +118,11 @@ def cmd_measure(args: argparse.Namespace) -> int:
                and r["listed"]["stated_percent"] is not None else "")
         own = {True: "own", False: "not", None: "—"}[r.get("own")]
         omits = "yes" if r["list_states_omission"] else "—"
-        print(f"{r['ticker']:6} {own:5} {r['tier']:11} {omits:5}  {r['entity']} → {listed}{pct}")
+        name = r[args.entity_field]
+        print(f"{r['ticker']:6} {own:5} {r['tier']:11} {omits:5}  {name} → {listed}{pct}")
     filers = sorted(reads)
-    print(f"\n{len(results)} rows from {args.rows}, {len(filers)} filers ({', '.join(filers)}), "
+    print(f"\n{len(results)} rows from {args.rows}, matched on `{args.entity_field}`, "
+          f"{len(filers)} filers ({', '.join(filers)}), "
           f"each filer's newest original 10-K filed by {args.through or 'any day'}, EDGAR read "
           f"{_stamp()}:")
 
@@ -214,6 +217,8 @@ def main(argv: list[str] | None = None) -> int:
     m = sub.add_parser("measure")
     m.add_argument("--rows", required=True)
     m.add_argument("--through", type=date.fromisoformat)
+    m.add_argument("--entity-field", default="entity",
+                   help="the row key holding the name to match (B's rows: filed_under, lead_party)")
     m.add_argument("--out")
     f = sub.add_parser("fixtures")
     f.add_argument("--out", required=True)

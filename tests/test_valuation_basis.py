@@ -360,6 +360,7 @@ def test_every_dossier_writer_saves_through_the_one_write() -> None:
                  ("scripts/build_companyfacts_fixture.py", "main"),   # a test fixture
                  ("scripts/build_balance_fixture.py", "main"),        # a test fixture
                  ("scripts/audit_verbatim_corpus.py", "main"),        # reads pages, writes a report
+                 ("scripts/w86_exhibit21_coverage.py", "cmd_survey"),  # reads CIKs, writes a report
                  ("vinci/dossier/refresh.py", "_rerender_only")}      # markdown only
     writers = set()
     for f in sorted([*ROOT.joinpath("vinci").rglob("*.py"), *ROOT.joinpath("scripts").glob("*.py"),
