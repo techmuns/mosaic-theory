@@ -1,6 +1,6 @@
 # Dossier — VERRA MOBILITY Corp (Nasdaq: VRRM)
 
-_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
+_November 18, 2026 · extraction 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
 
 # Brief — first cut
 
@@ -269,20 +269,20 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple of its own trading history's latest close — dated below, and refused once the company reports after it — the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × today's multiple of its own history | applicable |
+| Method | mid-cycle margin × its own history's multiple at the latest close | applicable |
 | Mid-cycle margin | 20.9% | 8y history · weak |
-| Current multiple, own history | 3.6x | latest close 2026-11-06 · median 13.9x beside it, not used · 32 closes · firm · EV/EBITDA |
+| Multiple at the latest close, own history | 3.6x | close of 2026-11-06 · nothing reported after it by the page's close of 2026-11-17 · ⚠ the stock has fallen 24.2% since that close · median 13.9x beside it, not used · 32 closes · firm · EV/EBITDA |
 | Screen value / share | $1.34 | spot-independent · EV/EBIT 5.5x · on 152,009,343 shares outstanding |
 | Dilution test / share | $1.34 | + 124,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | weak |  |
 
-**How the screen value splits.** Screen value $1.34 at today's 3.6x = $1.90 on current EBITDA ($346M) − $0.55 margin reversion (mid-cycle 0.93× current). Median 13.9x: $21.89 higher (not used).
+**How the screen value splits.** Screen value $1.34 at 3.6x (the 2026-11-06 close) = $1.90 on current EBITDA ($346M) − $0.55 margin reversion (mid-cycle 0.93× current). Median 13.9x: $21.89 higher (not used).
 
-**Leverage.** Net debt is 77% of the EV today's multiple puts on current EBITDA, so each 1% of EBITDA or multiple moves the value per share 4.3%.
+**Leverage.** Net debt is 77% of the EV the multiple puts on current EBITDA, so each 1% of EBITDA or multiple moves the value per share 4.3%.
 
 **data_quality: revenue_tag_conflict**
 - FY2020: RevenueFromContractWithCustomerExcludingAssessedTax 394M vs Revenues 13M (97% apart)
@@ -294,7 +294,7 @@ _This name's naive reported median margin, priced at the multiple it trades on t
 
 _The split's arithmetic:_
 
-- m = 3.5566x, today's multiple (the close of 2026-11-06); M = 13.8659x, the median beside it, never used.
+- m = 3.5566x, the multiple at the 2026-11-06 close; M = 13.8659x, the median beside it, never used.
 - E_mid = 1,003.9 × 20.9061% + 112.9 = $323M — LTM revenue × the median margin + D&A, the anchor's EBITDA.
 - E_cur = $346M — mechanical.financial_summary LTM 'EBITDA ($M)' (CIQ), which CIQ's TEV ÷ 3.6x reproduces (valuation.ev_ebitda_basis: indistinguishable; $353M implied, TEV as of 2026-11-06).
 - V0 = (3.5566 × 346.4 − net debt 943.7) ÷ 152,009,343 shares = $1.90.
@@ -302,7 +302,7 @@ _The split's arithmetic:_
 - multiple effect = (13.8659 − 3.5566) × 322.8 ÷ 152,009,343 = $21.89, beside the anchor, never in it.
 - V0 + margin effect = $1.34, the screen value; + multiple effect = $23.23, the value at the median.
 - net debt ÷ EV = 943.7 ÷ 1,231.9 = 0.766; flagged above 0.5.
-- the multiple's close 2026-11-06, the page's stored close 2026-11-17: 11 days; not stale by its history's cadence: CIQ's history is stale past 30 days.
+- the multiple's close 2026-11-06, the page's stored close 2026-11-17: 11 days; passed by the event rule: nothing the event rule counts was filed after the 2026-11-06 close, on or before the page's price date, 2026-11-17.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [52]  <!-- ds-table -->
@@ -647,6 +647,7 @@ _Source §: 8-K 0001193125-25-242530 · vrrm-ex10_2.htm_
 - **Refreshed since assembly** (oldest first):
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
 - **Price store:** `vrrm-rebuild-1118` · reaching 2026-11-17
 - **Panel age:** oldest panel 12d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-18 build
 - **Consensus age:** consensus 15d old (2026-11-03, valuation.implied_expectations.multiples_as_of) — within the ceiling

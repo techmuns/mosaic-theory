@@ -13369,13 +13369,21 @@
         "mechanical.stock_info",
         "mechanical.valuation"
       ]
+    },
+    {
+      "date": "2026-11-19",
+      "extraction_version": "2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-11-18T15:50:54.923970Z",
+    "computed_at": "2026-11-19T18:42:35.137657Z",
     "reason": "rent is material and the ex-lease EV/EBITDA history is not usable — the latest quarter (2026-09-27) has no positive LTM EBITDA, so the history has no current — an older quarter is not one. CIQ's TEV/LTM EBITDA history puts operating leases in TEV and rent back in EBITDA since ASC 842 and did neither before, so its median cannot price reported EBITDA; multiple UNUSABLE until the ex-lease history is built",
     "data_quality": "band_incoherent+lease_basis_unresolved",
     "data_quality_detail": [
@@ -13399,7 +13407,21 @@
       "confidence": "weak",
       "statistic": "current",
       "as_of": "2026-11-06",
-      "median": 3.880202
+      "median": 3.880202,
+      "close_stale": false,
+      "close_note": "nothing reported after it by the page's close of 2026-11-11",
+      "close_drift": {
+        "close_date": "2026-11-06",
+        "close_bar_date": "2026-11-06",
+        "close_eod": 9.52,
+        "page_date": "2026-11-11",
+        "move": -0.005252,
+        "ratio": 0.994748,
+        "corporate_action": false,
+        "beyond_tolerance": false,
+        "tolerance": 0.1,
+        "source_ref": "EOD close 2026-11-06 (the store's bar on or before the multiple's close) against stock_info.price at 2026-11-11"
+      }
     },
     "d_and_a": {
       "value": 10.407,
@@ -13456,7 +13478,7 @@
       "basis_ciq_margin": 0.116365,
       "same_source": false,
       "basis": "LTM: committed financial_summary EBIT ÷ revenue (last actual column); median: EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 8 FY; flagged at ≥5 points; sources said to agree within 2",
-      "read": "The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at the multiple the name trades on today, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. Today's multiple is struck on these below-median earnings, so it reads higher than the same price would on median earnings, and an R1 value can overstate on that count too. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source."
+      "read": "The last twelve months' operating margin of a 4.0% loss (CIQ EBIT) sits 10.0 points BELOW the 8-year median of 6.0% (EDGAR GAAP operating income) that R1 reverts to. R1 prices that median at its own history's multiple at the latest close, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. The latest close's multiple is struck on these below-median earnings, so it reads higher than the same price would on median earnings, and an R1 value can overstate on that count too. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source."
     },
     "anchor_ev_ebit": null,
     "overall_confidence": "weak",

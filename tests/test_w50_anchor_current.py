@@ -29,7 +29,6 @@ import pytest
 
 from tests.anchor_reads import NO_BARS, NO_FILINGS
 from tests.frozen_support import covered_pages, covered_where, frozen_doc, frozen_page
-from tests.w73_lly_expected import as_derived
 from vinci.dossier import anchor as anc
 from vinci.dossier import propose
 from vinci.dossier import render as dr
@@ -229,8 +228,7 @@ def _round_trips_by_its_kind(t: str, raw: str) -> bool:
         assert mult.get("statistic") == anc.MULTIPLE_CURRENT, t
         assert mult.get("median") is not None, t
         assert mult.get("as_of", "absent") is not None, t     # absent is allowed; null never
-    # (W73) LLY's one expected leaf (tests/w73_lly_expected.py)
-    assert out == as_derived(t, raw), f"{t} does not round-trip byte-identically"
+    assert out == raw, f"{t} does not round-trip byte-identically"
     return True
 
 

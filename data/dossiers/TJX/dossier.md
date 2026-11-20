@@ -1,6 +1,6 @@
 # Dossier — TJX COMPANIES INC /DE/ (NYSE: TJX)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
 
 # Brief — first cut
 
@@ -260,22 +260,22 @@ _No gap is struck for this name: no scenario record for this name — the route 
 
 ### Screening context — how this name surfaced — _not a verdict_
 
-_This name's naive reported median margin, priced at the multiple it trades on today — the latest close of its own trading history, the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+_This name's naive reported median margin, priced at the multiple of its own trading history's latest close — dated below, and refused once the company reports after it — the history's median printed beside it and never priced. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
 
 | input | value | basis |
 | --- | ---: | --- |
-| Method | mid-cycle margin × today's multiple of its own history | applicable |
+| Method | mid-cycle margin × its own history's multiple at the latest close | applicable |
 | Mid-cycle margin | 12.3% | 3y history · weak |
-| Current multiple, own history | 16.3x | latest close 2026-08-28 · median 15.8x beside it, not used · 38 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
+| Multiple at the latest close, own history | 16.3x | close of 2026-08-28 · nothing reported after it by the page's close of 2026-11-11 · median 15.8x beside it, not used · 38 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
 | Screen value / share | $136.20 | spot-independent · EV/EBIT 19.2x · on 1,099,974,061 shares outstanding |
 | Dilution test / share | $134.61 | + 13,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | weak |  |
 
-**How the screen value splits.** Screen value $136.20 at today's 16.3x = $135.12 on current EBITDA ($8,903M) + $1.08 margin reversion (mid-cycle 1.01× current). Median 15.8x: $4.06 lower (not used).
+**How the screen value splits.** Screen value $136.20 at 16.3x (the 2026-08-28 close) = $135.12 on current EBITDA ($8,903M) + $1.08 margin reversion (mid-cycle 1.01× current). Median 15.8x: $4.06 lower (not used).
 
 _The split's arithmetic:_
 
-- m = 16.3423x, today's multiple (the close of 2026-08-28); M = 15.8450x, the median beside it, never used.
+- m = 16.3423x, the multiple at the 2026-08-28 close; M = 15.8450x, the median beside it, never used.
 - E_mid = 62,363.0 × 12.2773% + 1,319.0 = $8,975M — LTM revenue × the median margin + D&A, the anchor's EBITDA.
 - E_cur = $8,903M — valuation.lease_basis.observations (the observation of 2026-08-28): CIQ Income Statement 'EBITDA' over four quarters to 2026-08-01, the denominator of the ex-lease multiple 16.3423x = (TEV 156,941.5 − leases 11,446.0) ÷ 8,903.0.
 - V0 = (16.3423 × 8,903.0 − net debt −3,133.0) ÷ 1,099,974,061 shares = $135.12.
@@ -283,7 +283,7 @@ _The split's arithmetic:_
 - multiple effect = (15.8450 − 16.3423) × 8,975.5 ÷ 1,099,974,061 = −$4.06, beside the anchor, never in it.
 - V0 + margin effect = $136.20, the screen value; + multiple effect = $132.14, the value at the median.
 - net debt ÷ EV = −3,133.0 ÷ 145,495.5 = −0.022; flagged above 0.5.
-- the multiple's close 2026-08-28, the page's stored close 2026-11-11: 75 days; not stale by its history's cadence: the next quarterly observation is due by 2026-12-29 (balance sheet 2026-08-01 + the longest of its last 4 quarters, 91 days, + the slowest of their pricing lags, 59 days).
+- the multiple's close 2026-08-28, the page's stored close 2026-11-11: 75 days; passed by the event rule: nothing the event rule counts was filed after the 2026-08-28 close, on or before the page's price date, 2026-11-11.
 
 ## Peer comps
 - **Peer set (roster · caps · business)** — [51]  <!-- ds-table -->
@@ -697,6 +697,7 @@ _Source §: 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm_
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
+  - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 29d old — 2026-10-16 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 36d old (2026-10-09, valuation.implied_expectations.multiples_as_of) — within the ceiling
