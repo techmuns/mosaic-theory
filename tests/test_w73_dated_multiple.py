@@ -459,7 +459,7 @@ def test_no_derived_line_or_renderer_label_calls_the_close_todays() -> None:
     assert dr._SCREEN_METHOD_R1_CURRENT in old and "Current multiple, own history" in old
 
 
-def test_the_web_prints_the_dated_multiple_and_its_flag_collapsed_and_open() -> None:
+def test_the_web_prints_the_dated_multiple_and_its_flag_collapsed_and_open(tmp_path: Path) -> None:
     """(+) END TO END on `renderDossier`: VRRM's row reads the dated close, the pass and the flag;
     GOOGL's "not priced" row names its filing. The block holds no <details>, so collapsed and
     force-open are one. (−) VRRM's page frozen 2026-11-18, whose anchor (W50 + W61) records no
@@ -484,15 +484,11 @@ const out = {};
 for (const [k, doc] of Object.entries(pages)) out[k] = renderDossier(doc, null);
 process.stdout.write(JSON.stringify(out));
 """
-    tmp = ROOT / ".pytest_w73_tmp"
-    tmp.mkdir(exist_ok=True)
-    try:
-        (tmp / "drv.mjs").write_text(driver)
-        (tmp / "pages.json").write_text(json.dumps(pages))
-        res = subprocess.run(["node", str(tmp / "drv.mjs"), str(tmp / "pages.json")], cwd=ROOT,
-                             capture_output=True, text=True, check=True)
-    finally:
-        shutil.rmtree(tmp, ignore_errors=True)
+    # tmp_path, never a fixed folder in the checkout (2026-11-20); node still runs from ROOT
+    (tmp_path / "drv.mjs").write_text(driver)
+    (tmp_path / "pages.json").write_text(json.dumps(pages))
+    res = subprocess.run(["node", str(tmp_path / "drv.mjs"), str(tmp_path / "pages.json")],
+                         cwd=ROOT, capture_output=True, text=True, check=True)
     out: dict[str, str] = json.loads(res.stdout)
 
     def block(h: str) -> str:
