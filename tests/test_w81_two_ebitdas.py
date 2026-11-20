@@ -469,9 +469,11 @@ def test_a_w81_page_names_both_figures_and_only_the_lease_line_moves(path: Path)
     # a line naming no EBITDA (rent unmeasured and no history built: ORKA, TECX) has nothing to move
     named = "% EBITDA margin against" in old or "R1's earnings" in old
     assert lease == ([(old, new)] if named else [])
-    # every other moved line is one that prints the vintage itself (the stamp and the refresh log)
-    from vinci.dossier.render import W81_VINTAGE
-    assert all(W81_VINTAGE in b for a, b in moved if not b.startswith(LEASE)), moved
+    # every other moved line is one that prints the vintage itself (the stamp and the refresh log):
+    # the version this code declares, which holds W81's (`names_ebitdas_apart` above) and is W81's
+    # own only until a later vintage follows it
+    from vinci.dossier.extraction_version import EXTRACTION_VERSION
+    assert all(EXTRACTION_VERSION in b for a, b in moved if not b.startswith(LEASE)), moved
 
 
 def _stamped_old(path: Path) -> dict[str, Any]:
@@ -601,3 +603,133 @@ def test_the_seam_refuses_a_qa_flags_write_that_moves_another_flag(tmp_path: Pat
     caused = [f + ". Its cause was not read: …" if i == ltm else f for i, f in enumerate(flags)]
     assert rf._only_ltm_flags_moved(flags, caused)
     assert not rf._only_ltm_flags_moved(flags, dropped)
+
+
+# --- after the merge (A's review of #1147): a second run, and a figure the cause could not read ---
+
+def _step(name: str, sheets: dict[str, list[list[str]]] | None = None) -> Any:
+    """``ltm_quarters_transform``'s step, on the frozen cells of ``name``'s own exports."""
+    return lambda d: {"qa_flags": rf.refreshed_ltm_flags(d, _bundle(name, sheets), _shas(name))}
+
+
+def _ebitda_at(flags: list[str]) -> int:
+    return next(i for i, f in enumerate(flags) if f.startswith(EBITDA_FLAG))
+
+
+@pytest.mark.parametrize("name", ["IT", "VITL"])
+def test_a_second_run_moves_nothing(name: str) -> None:
+    """(+) SF1. The refresh run again on the page a first run wrote (or on a page built at W81,
+    which carries the cause from its build) is a no-op. Before the fix it compared the re-run with
+    its cause taken off against the page's flags with the cause still on, so the second run
+    refused with "more than the cause would move; re-assemble instead": false, and it pointed at a
+    paid re-assembly."""
+    doc = frozen_doc(name)
+    once = rf.refreshed_ltm_flags(doc, _bundle(name), _shas(name))
+    assert once != doc["qa_flags"]
+    twice = rf.refreshed_ltm_flags({**doc, "qa_flags": once}, _bundle(name), _shas(name))
+    assert twice == once
+
+
+def test_a_second_refresh_of_the_page_writes_nothing(tmp_path: Path) -> None:
+    """(+) SF1 end to end, through `refresh_dossier`, the writer the artifact pass runs: the first
+    run writes the cause into the JSON, its refresh log and the md; the second returns False and
+    leaves both files byte-identical."""
+    import shutil
+
+    from tests.frozen_support import frozen_page
+
+    page = tmp_path / "data" / "dossiers" / "IT" / "dossier.json"
+    page.parent.mkdir(parents=True)
+    for f in ("dossier.json", "dossier.md"):
+        shutil.copy(frozen_page("IT") / f, page.parent / f)
+    assert rf.refresh_dossier(page, top_level=_step("IT"))
+    after = (page.read_text(), page.with_name("dossier.md").read_text())
+    assert ". The cause, read:" in after[0]
+    assert not rf.refresh_dossier(page, top_level=_step("IT"))
+    assert (page.read_text(), page.with_name("dossier.md").read_text()) == after
+
+
+def test_a_cause_in_other_words_is_rewritten_and_only_it_moves() -> None:
+    """(+) A page whose EBITDA flag carries a cause in words this code no longer writes (the
+    not-read wording below is one such change) is re-run to the current cause, and nothing else
+    moves: the cause is the one thing the step may move."""
+    doc = frozen_doc("VITL")
+    once = rf.refreshed_ltm_flags(doc, _bundle("VITL"), _shas("VITL"))
+    i = _ebitda_at(once)
+    older = list(once)
+    older[i] = once[i][:once[i].index(". Its cause was not read:")] + (
+        ". Its cause was not read: in words an older build wrote")
+    assert rf.refreshed_ltm_flags({**doc, "qa_flags": older}, _bundle("VITL"),
+                                  _shas("VITL")) == once
+
+
+def test_a_held_cause_does_not_excuse_a_moved_figure() -> None:
+    """(−) IT's page carrying its cause, re-run on cells with one quarter's EBITDA moved: the flag
+    the cause hangs on no longer matches, so more than the cause would move, and it refuses."""
+    doc = frozen_doc("IT")
+    once = rf.refreshed_ltm_flags(doc, _bundle("IT"), _shas("IT"))
+    sheets = copy.deepcopy(FIX["names"]["IT"]["sheets"])
+    q = sheets["financials|quarterly|Income Statement"]
+    k = next(r for r, row in enumerate(q) if row and row[0].strip() == "EBITDA")
+    j = next(c for c, cell in enumerate(q[k]) if c and cell.strip())
+    q[k][j] = str(float(q[k][j]) + 10.0)
+    with pytest.raises(rf.RefreshRefusedError, match="more than the cause would move"):
+        rf.refreshed_ltm_flags({**doc, "qa_flags": once}, _bundle("IT", sheets), _shas("IT"))
+
+
+@pytest.mark.parametrize("tail", [". The cause, read: a cause on a row W81 explains none of",
+                                  ". A sentence no build writes"])
+def test_only_the_ebitda_flag_may_carry_a_cause(tail: str) -> None:
+    """(−) A held LTM flag the re-run writes with no cause, carrying one anyway, and the EBITDA
+    flag carrying anything but a cause after its own words: each is more than the cause, and
+    refuses."""
+    doc = frozen_doc("IT")
+    once = rf.refreshed_ltm_flags(doc, _bundle("IT"), _shas("IT"))
+    i = _ebitda_at(once)
+    j = next(k for k, f in enumerate(once) if f.startswith(lq.FLAG_PREFIX) and k != i)
+    bad = list(once)
+    if tail.startswith(". The cause"):
+        bad[j] = once[j] + tail
+    else:
+        bad[i] = once[i][:once[i].index(". The cause, read:")] + tail
+    with pytest.raises(rf.RefreshRefusedError, match="more than the cause would move"):
+        rf.refreshed_ltm_flags({**doc, "qa_flags": bad}, _bundle("IT"), _shas("IT"))
+
+
+def _with_cell(name: str, key: str, label: str, value: str | None) -> dict[str, list[list[str]]]:
+    """``name``'s frozen cells with one sheet's LTM cell of ``label`` set to ``value``, or with that
+    row taken out when ``value`` is None."""
+    sheets = copy.deepcopy(FIX["names"][name]["sheets"])
+    rows = sheets[key]
+    i = next(k for k, r in enumerate(rows) if r and r[0].strip() == label)
+    if value is None:
+        rows[i] = [""] * len(rows[i])
+    else:
+        rows[i][next(k for k, c in enumerate(rows[i]) if k and c.strip())] = value
+    return sheets
+
+
+@pytest.mark.parametrize(("key", "label", "value", "said"), [
+    ("financials|annual|Income Statement", "EBIT", "-",
+     "EBIT not read: the LTM cell of Income Statement row 88 carries no figure ('-')"),
+    ("financials|annual|Income Statement", "EBIT", None,
+     "EBIT not read: the annual Income Statement carries no 'EBIT' row"),
+    (CF, "Depreciation & Amort., Total", "NA",
+     "'Depreciation & Amort., Total' not read: the LTM cell of Cash Flow row 21 carries no figure "
+     "('NA')"),
+    (CF, "Depreciation & Amort., Total", None,
+     "'Depreciation & Amort., Total' not read: the annual Cash Flow carries no 'Depreciation & "
+     "Amort., Total' row"),
+])
+def test_a_figure_the_cause_cannot_read_is_named_never_printed_as_none(
+        key: str, label: str, value: str | None, said: str) -> None:
+    """(−) NIT 4. MCK with EBIT's or the D&A row's LTM cell empty, or the row gone: the flag says
+    which figure is missing and why, in the export's words. It printed Python's ``None`` ("EBIT
+    None", "None, Cash Flow row absent"). (+) Where both are read it states both, as before."""
+    r = _ebitda("MCK", _with_cell("MCK", key, label, value))
+    assert r.cause is not None and r.cause.startswith("Its cause was not read:"), r.cause
+    assert "None" not in r.cause and "absent" not in r.cause, r.cause
+    assert said in r.cause, r.cause
+    both = _ebitda("MCK", _with_cf("MCK", "Depreciation & Amort., Total", "600.0"))
+    assert both.cause is not None
+    assert "(EBIT 6,707.0, Income Statement row 88; 600.0, Cash Flow row 21;" in both.cause

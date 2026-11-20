@@ -273,6 +273,16 @@ def check(bundle: CiqBundle, table: FinTable | None) -> LtmQuarterRead:
 _EBITDA = "EBITDA ($M)"
 _OTHER_AMORT = "Other Amortization"
 _DA_TOTAL = "Depreciation & Amort., Total"
+#: How a cause opens (:func:`_ebitda_cause`): one it read, or why it read none.
+CAUSE_READ = "The cause, read:"
+CAUSE_NOT_READ = "Its cause was not read:"
+
+
+def carries_a_cause(flag: str, bare: str) -> bool:
+    """``flag`` is ``bare``, a flag as the check writes it with no cause, followed by a cause in
+    any words (:meth:`LtmCheck.flag` appends one after ". "). So a refresh can tell a page that
+    already carries its cause from one whose flag has moved (A's review of #1147, SF1)."""
+    return any(flag.startswith(f"{bare}. {lead}") for lead in (CAUSE_READ, CAUSE_NOT_READ))
 
 
 def _ebitda_cause(bundle: CiqBundle, inc: list[list[Any]], col: int, end: date, annual: float,
@@ -281,9 +291,10 @@ def _ebitda_cause(bundle: CiqBundle, inc: list[list[Any]], col: int, end: date, 
     the two, or why the cause was not read (W81, defect SP-D20).
 
     THE CASE (MORN, 2026-11-19, a scratch page; Financials_Annual sha256 fef17b2405, Income
-    Statement row 80, the LTM column to Sep-30-2026): the annual EBITDA 719.4 is EBIT 616.7 plus
+    Statement row 81, the LTM column to Sep-30-2026): the annual EBITDA 719.4 is EBIT 616.7 plus
     the Cash Flow's 'Depreciation & Amort., Total' 102.7, which leaves out its 'Other Amortization'
-    102.7; the four quarters (Financials_Quarterly b23ba84d1d, row 82) sum to 822.1 = 719.4 + 102.7.
+    102.7; the four quarters (Financials_Quarterly b23ba84d1d, row 83) sum to 822.1 = 719.4 + 102.7.
+    Rows are 1-based, as the flag prints them (the probe's were 0-based: its 80 and 82).
 
     The cause is NAMED only when all five hold on the name's own sheets:
     (1) the annual EBITDA is its EBIT plus the Cash Flow's 'Depreciation & Amort., Total', to
@@ -305,7 +316,7 @@ def _ebitda_cause(bundle: CiqBundle, inc: list[list[Any]], col: int, end: date, 
     from vinci.dossier.ev_ebitda_basis import ANNUAL_LTM, FOUR_QUARTER
 
     def no(why: str) -> str:
-        return f"Its cause was not read: {why}"
+        return f"{CAUSE_NOT_READ} {why}"
 
     try:
         cf = bundle.sheet("financials", "Cash Flow", freq="annual")
@@ -329,6 +340,22 @@ def _ebitda_cause(bundle: CiqBundle, inc: list[list[Any]], col: int, end: date, 
     def row(ri: int | None) -> str:   # 1-based, as every CIQ source_ref here numbers rows
         return "absent" if ri is None else str(ri + 1)
 
+    def figure(sheet: str, rows: list[list[Any]], at: int, label: str, name: str,
+               lead: str) -> tuple[int | None, float | None, str]:
+        """(row, figure, as the reason states it) for a figure the identity needs: the figure and
+        its row, or which figure is missing and why, in the export's words. Never Python's None,
+        which the reason printed ("EBIT None", "None, Cash Flow row absent"; A's review of
+        #1147, NIT 4)."""
+        ri = cs._find_row(rows, label)
+        if ri is None:
+            return None, None, f"{name} not read: the annual {sheet} carries no '{label}' row"
+        cell = rows[ri][at] if at < len(rows[ri]) else None
+        value = clean_num(cell)
+        if value is None:
+            return ri, None, (f"{name} not read: the LTM cell of {sheet} row {ri + 1} carries "
+                              f"no figure ({cs._cell_words(cell)})")
+        return ri, value, f"{lead}{value:,.1f}, {sheet} row {ri + 1}"
+
     oa_row, oa = cf_value(_OTHER_AMORT)
     if oa_row is None:
         return no(f"the annual Cash Flow carries no '{_OTHER_AMORT}' row ({where})")
@@ -338,22 +365,18 @@ def _ebitda_cause(bundle: CiqBundle, inc: list[list[Any]], col: int, end: date, 
     if quarters <= annual:
         return no(f"{FOUR_QUARTER} is below {ANNUAL_LTM}, and a row the annual figure leaves "
                   "out can only make it lower")
-    ebit_row = cs._find_row(inc, "EBIT")
-    ebit = clean_num(inc[ebit_row][col]) if ebit_row is not None and col < len(inc[ebit_row]) \
-        else None
-    da_row, da = cf_value(_DA_TOTAL)
+    ebit_row, ebit, ebit_said = figure("Income Statement", inc, col, "EBIT", "EBIT", "EBIT ")
+    da_row, da, da_said = figure("Cash Flow", cf, c, _DA_TOTAL, f"'{_DA_TOTAL}'", "")
     if ebit is None or da is None or abs(annual - (ebit + da)) > PRINT_SLACK_MUSD:
         return no(f"{ANNUAL_LTM} ({annual:,.1f}) is not shown to be EBIT plus "
-                  f"'{_DA_TOTAL}' (EBIT {ebit if ebit is None else f'{ebit:,.1f}'}, Income "
-                  f"Statement row {row(ebit_row)}; {da if da is None else f'{da:,.1f}'}, Cash "
-                  f"Flow row {row(da_row)}; {where})")
+                  f"'{_DA_TOTAL}' ({ebit_said}; {da_said}; {where})")
     left = quarters - (annual + oa)
     if not agrees(annual + oa, quarters) or abs(left) >= (quarters - annual) / 2:
         return no(f"{ANNUAL_LTM} plus the annual Cash Flow's '{_OTHER_AMORT}' ({oa:,.1f}, "
                   f"row {row(oa_row)}) is {annual + oa:,.1f}, which does not reconcile with "
                   f"{FOUR_QUARTER} ({abs(left):,.1f} $M apart; {where})")
     share = abs(left) / max(abs(annual + oa), abs(quarters))
-    return (f"The cause, read: {ANNUAL_LTM} is its EBIT plus '{_DA_TOTAL}' ({ebit:,.1f} + "
+    return (f"{CAUSE_READ} {ANNUAL_LTM} is its EBIT plus '{_DA_TOTAL}' ({ebit:,.1f} + "
             f"{da:,.1f}; Income Statement row {row(ebit_row)}, Cash Flow row {row(da_row)}), "
             f"which leaves out the annual Cash Flow's '{_OTHER_AMORT}' ({oa:,.1f}, row "
             f"{row(oa_row)}); with it added the annual figure reads {annual + oa:,.1f}, which "

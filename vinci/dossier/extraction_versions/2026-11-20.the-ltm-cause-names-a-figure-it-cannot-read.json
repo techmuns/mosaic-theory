@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read",
+  "follows": [
+    "2026-11-19.ciq-two-ebitdas-named-apart-and-the-ltm-cause"
+  ],
+  "names": "The LTM-quarters check's cause of an EBITDA DIFFER names a figure it could not read (EBIT, or the Cash Flow's Depreciation & Amort., Total) and why, in the export's words, where it printed Python's None; the $0 refresh of that cause (ltm_quarters_transform) is a no-op on a page that already carries one, and rewrites a cause in older words, where it refused as more than the cause moving"
+}
