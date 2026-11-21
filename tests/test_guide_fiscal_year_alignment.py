@@ -54,6 +54,27 @@ def test_brbr_fy27_ciq_guide_against_its_fy26_release_guide_is_refused() -> None
     assert out.check == CHECK_NOT_RUN
 
 
+def test_the_composition_assembly_calls_refuses_brbr_too() -> None:
+    """THE PATH THE DEFECT TOOK, not only the leaf: `mechanical._guide_verification`, the one place
+    assembly and the refresh compose the check, on BRBR's frozen releases. The release of CIQ's
+    date (2026-11-18) states no parsed guide, so the newest that does (2026-08-04, a year older)
+    is the one compared — and the pair is refused, never a MISMATCH."""
+    from datetime import date
+
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier.schemas import ReleaseExtract
+
+    f = _brbr()
+    ciq = f["ciq"]
+    releases = [ReleaseExtract.model_validate(r) for r in f["releases"]]
+    out = dm._guide_verification(releases, ciq_lo=ciq["low"], ciq_hi=ciq["high"],
+                                 ciq_period=ciq["period"],
+                                 ciq_dated=date.fromisoformat(ciq["dated"]))
+    assert "NOT CROSS-CHECKED, different fiscal years" in out.line
+    assert "MISMATCH" not in out.line
+    assert out.check == CHECK_NOT_RUN
+
+
 def test_the_shipped_line_is_reproduced_without_the_periods() -> None:
     """THE BEFORE, in one place: withholding the period labels reproduces the line main
     `4b7f804d` built for this pair, so the defect is demonstrated, not merely described."""

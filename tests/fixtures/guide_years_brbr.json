@@ -32,5 +32,30 @@
     "filed": "2026-11-18",
     "source_ref": "8-K 0001628280-26-074645 EX-99.1"
   },
+  "releases": [
+    {
+      "filed": "2026-11-18",
+      "source_ref": "8-K 0001628280-26-074645 EX-99.1",
+      "guidance": []
+    },
+    {
+      "filed": "2026-08-04",
+      "source_ref": "8-K 0001628280-26-052137 EX-99.1",
+      "guidance": [
+        {
+          "metric": "net sales",
+          "period": "2026",
+          "low": 2335.0,
+          "high": 2375.0,
+          "unit": "$M",
+          "basis": "level",
+          "qualitative": false,
+          "verbatim": "Updated fiscal year 2026 net sales outlook of $2.335-$2.375 billion",
+          "source_ref": "8-K 0001628280-26-052137 EX-99.1"
+        }
+      ]
+    }
+  ],
+  "releases_note": "the two newest of the build's releases, as `prespend.mechanical_build` read them (guidance only; the 11-18 release's parse yields no guide); the 08-04 guide row as BRBR's committed page holds it",
   "line_at_4b7f804d": "guide verification (revenue): CIQ 2320.0–2420.0 vs release 2335.0–2375.0 → MISMATCH flag"
 }
