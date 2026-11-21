@@ -1,6 +1,6 @@
 # Dossier — Vital Farms, Inc. (Nasdaq: VITL)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read_
 
 # Brief — first cut
 
@@ -66,7 +66,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 > **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 30 of D&A against 4 in the actuals (6.79x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $-12M against $-18M rebuilt from the filings (+$6M); the quarter to 2025-12-28: CIQ $26M against $24M (+$2M); the quarter to 2026-03-29: CIQ $2M against $0M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,360,000 USD for the quarter to 2026-03-29; the quarter to 2026-06-28: CIQ $-36M against $-38M (+$1M); the quarter to 2026-09-27: CIQ $-3M against $-5M (+$1M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: CIQ's four-quarter EBITDA $-12M against $-18M rebuilt from the filings (+$6M); the quarter to 2025-12-28: CIQ $26M against $24M (+$2M); the quarter to 2026-03-29: CIQ $2M against $0M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,360,000 USD for the quarter to 2026-03-29; the quarter to 2026-06-28: CIQ $-36M against $-38M (+$1M); the quarter to 2026-09-27: CIQ $-3M against $-5M (+$1M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -124,7 +124,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 1.4x as-of 2026-11-06 — trailing range 1.3–172.5x (median 3.9x) over 25 closes → 8%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [25]
 - **vs peers:** EV/EBITDA 1.4x at the 2026-11-11 close (CIQ 1.4x, 2026-11-06) vs peer median 11.0x (CIQ, 2026-11-06) (-87%); P/E NM vs peer median 23.2x (CIQ, 2026-11-06) [26]
 - **Forward multiples:** P/FY27E (normalized) 157.8x (EPS $0.06) — at $9.47 as-of 2026-11-11 [27]
-- **Multiple basis — read before the level:** rent is 279.5% of EBITDA (FY ending 2025-12-28). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 50.1% EBITDA margin against -1.8% reported. The ex-lease history could not be built (the latest quarter (2026-09-27) has no positive LTM EBITDA, so the history has no current — an older quarter is not one), so R1 does not price this name on either series. [28]
+- **Multiple basis — read before the level:** rent is 279.5% of EBITDA (FY ending 2025-12-28). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 50.1% EBITDA margin against -1.8% on CIQ's annual LTM EBITDA. The ex-lease history could not be built (the latest quarter (2026-09-27) has no positive LTM EBITDA, so the history has no current — an older quarter is not one), so R1 does not price this name on either series. [28]
 - **Comparability:** market caps span $75M–$83.6B (1111x); the name is $409M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [29]
 - **The street, for contrast (target · ratings):** Target price: mean $12.11, median $12.00, high/low 18.00/8.00, N 9/9; Ratings: Buy 4, Outperform 1, Hold 5, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-11-04 · export date unverified] [30]
 
@@ -581,6 +581,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-11-18 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-splits-into-a-margin-and-a-multiple-effect
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
+  - 2026-11-20 · mechanical.financial_summary, qa_flags — refresh at 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 8d old — 2026-11-06 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 10d old (2026-11-04, valuation.implied_expectations.multiples_as_of) — within the ceiling

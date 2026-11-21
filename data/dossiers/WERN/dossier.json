@@ -1013,7 +1013,10 @@
         "ratio_to_reported_plus_rent": 1.093214,
         "reading": "not_reproduced",
         "tolerance": 0.05,
-        "line": "CIQ's 6.2x divides TEV $2,626M (comps, 2026-11-11) by $423M, which reproduces neither pairing: reported LTM EBITDA $360M (+17.7%) and reported LTM EBITDA $360M + rent $28M (FY ending 2025-12-31) = $387M (+9.3%). Read CIQ's own denominator before comparing it with a multiple of reported EBITDA."
+        "line": "CIQ's 6.2x divides TEV $2,626M (comps, 2026-11-11) by $423M, which reproduces neither pairing: CIQ's annual LTM EBITDA $360M (+17.7%) and CIQ's annual LTM EBITDA $360M + rent $28M (FY ending 2025-12-31) = $387M (+9.3%). Read CIQ's own denominator before comparing it with a multiple struck after rent.",
+        "multiple_close": "2026-11-11",
+        "days_apart": 0,
+        "days_apart_tolerance": 4
       },
       "ev_ebitda_ex_lease_at_price": {
         "source_ref": "Assembler: ex-lease EV/EBITDA at the page's close (2026-11-11) — price × shares outstanding + EDGAR net debt excluding operating leases, ÷ CIQ LTM EBITDA to 2026-09-30",
@@ -1027,7 +1030,7 @@
         "ev": 2477.917,
         "ltm_ebitda": 359.796,
         "ltm_through": "2026-09-30",
-        "line": "at the page's $27.84 close (2026-11-11): ($27.84 × 59,977,156 shares outstanding + net debt $808M excluding operating leases) ÷ LTM EBITDA $360M (four quarters to 2026-09-30) = 6.9x"
+        "line": "at the page's $27.84 close (2026-11-11): ($27.84 × 59,977,156 shares outstanding + net debt $808M excluding operating leases) ÷ CIQ's four-quarter EBITDA $360M (to 2026-09-30) = 6.9x"
       }
     },
     "quality": {
@@ -16630,6 +16633,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "extraction_version": "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.valuation"
       ]
     }
   ],

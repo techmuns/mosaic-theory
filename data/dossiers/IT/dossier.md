@@ -1,6 +1,6 @@
 # Dossier — GARTNER INC (NYSE: IT)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read_
 
 # Brief — first cut
 
@@ -737,6 +737,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm_
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
+  - 2026-11-20 · mechanical.financial_summary, mechanical.valuation, qa_flags — refresh at 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 3d old — 2026-11-11 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 8d old (2026-11-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

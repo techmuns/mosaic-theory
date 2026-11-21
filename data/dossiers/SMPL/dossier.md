@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read_
 
 # Brief — first cut
 
@@ -109,7 +109,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 9 earlier years are in the Appendix_
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $206M against $-155M rebuilt from the filings (+$361M); the quarter to 2025-11-29: CIQ $50M against $44M (+$6M) — its release states a matching amount: “thirteen weeks ended November 29, 2025, and November 30, 2024: (In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 … Integration expense 5,918”; the quarter to 2026-02-28: CIQ $51M against $-207M (+$258M) — CIQ's own export itemises unusual items of $258.206M for the quarter, which it leaves out; the quarter to 2026-05-30: CIQ $52M against $-44M (+$96M) — CIQ's own export itemises unusual items of $95.465M for the quarter, which it leaves out; the quarter to 2026-08-29: CIQ $53M against $52M (+$1M) — its filing tags a matching amount: RestructuringAndRelatedCostIncurredCost 1,400,000 USD for the quarter to 2026-08-29 (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: CIQ's four-quarter EBITDA $206M against $-155M rebuilt from the filings (+$361M); the quarter to 2025-11-29: CIQ $50M against $44M (+$6M) — its release states a matching amount: “thirteen weeks ended November 29, 2025, and November 30, 2024: (In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 … Integration expense 5,918”; the quarter to 2026-02-28: CIQ $51M against $-207M (+$258M) — CIQ's own export itemises unusual items of $258.206M for the quarter, which it leaves out; the quarter to 2026-05-30: CIQ $52M against $-44M (+$96M) — CIQ's own export itemises unusual items of $95.465M for the quarter, which it leaves out; the quarter to 2026-08-29: CIQ $53M against $52M (+$1M) — its filing tags a matching amount: RestructuringAndRelatedCostIncurredCost 1,400,000 USD for the quarter to 2026-08-29 (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -169,8 +169,8 @@ _table shows the last 4 fiscal years · 9 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 6.1x as-of 2026-11-03 — trailing range 5.0–28.9x (median 17.6x) over 36 closes → 6%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [34]
 - **vs peers:** EV/EBITDA 6.2x at the 2026-11-11 close (CIQ 6.1x, 2026-11-03) vs peer median 7.6x (CIQ, 2026-11-03) (-19%); P/E NM vs peer median 17.0x (CIQ, 2026-11-03) [35]
 - **Forward multiples:** P/FY27E (normalized) 8.3x (EPS $1.52); P/FY27E (GAAP) 9.1x (EPS $1.39); P/FY28E (normalized) 7.7x (EPS $1.64); P/FY28E (GAAP) 8.5x (EPS $1.48) — at $12.64 as-of 2026-11-11 [36]
-- **Multiple basis — read before the level:** rent is 6.5% of EBITDA (FY ending 2026-08-29). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 18.2x over 34 quarters (current 5.1x at the 2026-10-27 filing; 0% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [37]
-- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $12.64 close (2026-11-11): ($12.64 × 86,861,967 shares outstanding + net debt $209M excluding operating leases) ÷ LTM EBITDA $206M (four quarters to 2026-08-29) = 6.4x
+- **Multiple basis — read before the level:** rent is 6.5% of EBITDA (FY ending 2026-08-29). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis. R1's earnings are its mid-cycle EBITDA (EBIT + D&A), after rent; on that basis — TEV less operating leases over CIQ's four-quarter EBITDA — the median is 18.2x over 34 quarters (current 5.1x at the 2026-10-27 filing; 0% of the history at or below it). R1 prices that history's current multiple, the median beside it, with net debt excluding operating leases. The level and percentile above are CIQ's own series. [37]
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $12.64 close (2026-11-11): ($12.64 × 86,861,967 shares outstanding + net debt $209M excluding operating leases) ÷ CIQ's four-quarter EBITDA $206M (to 2026-08-29) = 6.4x
 - **Comparability:** market caps span $13M–$29.1B (2203x); the name is $1.1B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [38]
 - **The street, for contrast (target · ratings):** Target price: mean $12.00, median $11.00, high/low 18.00/10.00, N 8/8; Ratings: Buy 2, Outperform 0, Hold 8, Underperform 0, Sell 0, No Opinion 1  [data ≥ 2026-10-29 · export date unverified] [39]
 
@@ -726,6 +726,7 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-18.the-screening-anchor-refuses-a-stale-current-multiple+2026-11-19.net-debt-reads-cash-at-the-newest-balance-sheet
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
   - 2026-11-19 · anchor — anchor-backfill at 2026-11-19.the-screening-anchor-prices-a-dated-close-judged-by-the-event-rule
+  - 2026-11-20 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 11d old — 2026-11-03 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 16d old (2026-10-29, valuation.implied_expectations.multiples_as_of) — within the ceiling
