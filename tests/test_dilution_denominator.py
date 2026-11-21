@@ -505,8 +505,11 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: **IT LANDED** (2026-11-14, rebuild group 3, on its September-quarter 10-Q and the operator's
 #: 2026-11-12 re-export): its base is the recompute's (383.8594 → 371.6709),
 #: `docs/records/2026-11-14-rebuild-group-3-it.md`.
+#:
+#: **BRBR LANDED** (2026-11-21, run `ae3e0c41`, on its FY2026 10-K and the operator's 2026-11-21
+#: re-export, priced at the 2026-11-20 close): its base is the recompute's (57.765 → 20.9035).
 ANCHORS_AWAITING_BACKFILL: set[str] = {
-    "BRBR", "BURL", "PARR", "TGT"}
+    "BURL", "PARR", "TGT"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than

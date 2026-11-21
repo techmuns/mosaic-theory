@@ -20,6 +20,11 @@ a test reads the file here first, and the tracking fixture only when none is her
 - `AMZN.json` — the tracking fixture as committed at main `9e996d7f` (cash instant 2026-06-30, the
   date CIQ's frozen AMZN figures carry). Frozen 2026-11-03, when AMZN's page moved to its
   September-quarter 10-Q. Refreeze it together with the CIQ side, never alone.
+- `BRBR.json` — the tracking fixture as committed at main `b2e62ce6` (last changed in `53cbe9fe`;
+  cash instant 2026-06-30, the date CIQ's frozen BRBR figures carry). Frozen 2026-11-21, when
+  BRBR's page moved to its FY2026 10-K. It also holds the shape `tests/test_tag_freshness.py`'s
+  #531 grain pin describes (a fresh revenue alias with no annual series), which the FY2026 10-K
+  ended in the tracking fixture. Refreeze it together with the CIQ side, never alone.
 - `nonop_window/` — GOOGL, ORKA, WOR, UBER and FUBO, the tracking fixtures as committed at main
   `c4c9f432`. Frozen 2026-11-05 for the non-operating window's value pins
   (`tests/test_nonoperating_earnings.py`, `tests/test_r4_machine_proposal.py`; #916 review
