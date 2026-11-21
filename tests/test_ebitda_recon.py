@@ -139,7 +139,8 @@ def test_an_ltm_that_matches_while_quarters_swap_says_so() -> None:
            "Jun-30-2026": 42000.0}
     rec = er.reconcile(_Bundle(ciq), pts, [], lambda r: None)  # type: ignore[arg-type]
     assert rec.ltm_gap == pytest.approx(0.0)
-    assert "its LTM matches the filings" in rec.line and "+$2,500M" in rec.line
+    # (W81) the quarters' sum by its name, apart from CIQ's annual LTM EBITDA
+    assert "CIQ's four-quarter EBITDA matches the filings" in rec.line and "+$2,500M" in rec.line
     assert "−$2,500M" in rec.line
 
 

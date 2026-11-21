@@ -714,7 +714,21 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
     one page's ten draws (#920 could not bound them). Draws exactly what ``registration`` says —
     once, and only the request bytes it pins — and records its sha256 in the budget ledger
     before the first draw. ``claim`` (the index's `registry.claim_draw`) is called after every
-    $0 refusal and before the first write, so a refused run never consumes its registration."""
+    $0 refusal and before the first write, so a refused run never consumes its registration.
+    THE LEDGER'S LOCK, HELD FOR THE WHOLE RUN (A's review of #1167, item 1b): `void-claim`
+    takes it too, so a claim is never voided while a call under it is in flight — that void was
+    accepted, the call completed, and a twin of the DRAWN design reached the send under a
+    second approval. A second run under the approval is refused, never queued."""
+    from vinci.evals import builds as bd
+    with bd._claim(budget.ledger):
+        _run_compare_locked(c, budget=budget, out_dir=out_dir, registration=registration,
+                            sdk=sdk, claim=claim)
+
+
+def _run_compare_locked(c: Captured, *, budget: rp.Budget, out_dir: Path,
+                        registration: Registration, sdk: Any | None,
+                        claim: Callable[[], object] | None) -> None:
+    """`run_compare`, its ledger's lock held."""
     gd.verify_committed_gold()   # RG-D11: the gold's hashes, before any paid draw (gap 4)
     refuse_if_unreached(c)
     # RG-D12 WHOLE, IN THE LIBRARY (#1030 review round 1, D1): the registered fingerprint, BASE's
@@ -732,7 +746,10 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
         # THE EXPORT REGISTERED, IN THE LIBRARY (round 1, mutant M5): the CLI's check, moved
         raise rp.ReplayError(f"the export at {imp['dir']} is not the one registered (its "
                              "manifest's sha256 moved): nothing is drawn from it")
-    recorded = [r for r in budget.rows() if "registration" in r and "out_dir" in r]
+    rows = budget.rows()
+    voided = voided_claims(rows)   # a claim that drew nothing, voided (W85's panel draw)
+    recorded = [r for r in rows if "registration" in r and "out_dir" in r
+                and (r["registration"], r["out_dir"]) not in voided]
     prior = [r["out_dir"] for r in recorded if r["registration"] == reg.sha]
     if prior:
         raise rp.ReplayError(f"registration {reg.sha[:12]} was already drawn under this "
@@ -764,12 +781,22 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
     if (out_dir / "draws.jsonl").exists():
         raise rp.ReplayError(f"{out_dir} already holds draws: draws append, so a second run here "
                              "would be scored with the first — use a fresh folder")
+    if (out_dir / "registration.json").exists():
+        # A FOLDER IS DRAWN INTO ONCE (A's review of #1167, item 2): a voided claim's folder holds
+        # no draws, so re-running the failed command into it passed, and its draws then refused
+        # every later read of the approval's ledger (`voided_claims`)
+        raise rp.ReplayError(f"{out_dir} already holds a run's registration.json: a run folder "
+                             "is written once, a voided claim's too — use a fresh folder")
     if claim is None and rp.paid_draw(sdk):
         # RG-D9 AND RG-D14 IN THE LIBRARY (B's review of #1030), as gap 2 was for RG-D10: only
         # the CLI claimed the registration in the index, so a library call drew unrecorded
         raise rp.ReplayError(f"registration {reg.sha[:12]}: a paid draw needs its index claim "
                              "(`registry.claim_draw`, after `registry.require_on_main`) — "
                              "unclaimed, it could be drawn twice, so nothing is drawn")
+    # EVERY CLIENT BEFORE THE CLAIM (W85's panel draw, 2026-11-20): the claim came first, so a
+    # run with no ANTHROPIC_API_KEY stopped with its registration claimed and nothing drawn
+    clients = {k: rp.paid_client(req, sdk=sdk, label=f"{k[0]}:{k[1]}")
+               for k, req in c.requests.items()}
     if claim is not None:
         claim()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -784,7 +811,7 @@ def run_compare(c: Captured, *, budget: rp.Budget, out_dir: Path, registration: 
         for cond in CONDITIONS:
             rp.run_request(c.requests[(t, cond)], draws=draws, budget=budget,
                            label=f"{t}:{cond}", draws_out=out_dir / "draws.jsonl", sdk=sdk,
-                           registration=reg.sha)
+                           registration=reg.sha, client=clients[(t, cond)])
 
 
 # ------------------------------------------------------------------------------------- scoring
@@ -831,6 +858,102 @@ def runs_under(ledger: Path, sha: str) -> tuple[tuple[str, int], ...]:
                  if f.exists() else 0)
             out.append((str(d), n))
     return tuple(out)
+
+
+def _is_claim(r: dict[str, Any]) -> bool:
+    """A run's claim row, as `run_compare` writes it before its first draw."""
+    return set(r) == {"registration", "out_dir", "usd"}
+
+
+def voided_claims(rows: Sequence[dict[str, Any]]) -> set[tuple[str, str]]:
+    """The (registration, run folder) claims an approval's ledger VOIDS, each re-checked as it is
+    read (W85's panel draw, 2026-11-20; operator: "Yes, void it and fix"). A void is honoured only
+    while all three hold: its row directly follows the claim it voids, so no call was recorded
+    between them; that claim recorded $0.00; and the folder it voided holds that registration
+    and no draws. The folder is the one the void RECORDED, resolved (A's review of #1167, item
+    9): read from the claim's own path, a run drawn into a relative folder and read from another
+    directory, or a voided folder moved, passed — a file not there read as no draws. A void that
+    fails any is refused, never passed over."""
+    out: set[tuple[str, str]] = set()
+    for i, r in enumerate(rows):
+        if "void" not in r:
+            continue
+        key = (str(r["void"]), str(r.get("out_dir")))
+        before = rows[i - 1] if i else {}
+        if not (_is_claim(before) and (before["registration"], before["out_dir"]) == key
+                and float(before["usd"]) == 0.0):
+            raise rp.ReplayError(f"the ledger voids {key[0][:12]}'s claim into {key[1]}, but its "
+                                 "row does not directly follow a $0.00 claim of that run: a void "
+                                 "is honoured only for a claim nothing was recorded after")
+        folder = Path(str(r.get("folder", "")))
+        if not (folder.is_absolute() and (folder / "registration.json").is_file()
+                and run_registration(folder).sha == key[0]):
+            raise rp.ReplayError(f"the ledger voids {key[0][:12]}'s claim into {key[1]}, but the "
+                                 f"folder it voided ({folder}) no longer holds that registration "
+                                 "(moved, removed, or not recorded resolved): a void is re-checked "
+                                 "on its folder, so it is refused — restore the folder")
+        if (folder / "draws.jsonl").exists():
+            raise rp.ReplayError(f"the ledger voids {key[0][:12]}'s claim into {key[1]}, but that "
+                                 "folder now holds draws: a void is honoured only for a run that "
+                                 "drew nothing")
+        out.add(key)
+    return out
+
+
+def void_unspent_claim(reg: Registration, *, budget: rp.Budget, out_dir: Path) -> dict[str, Any]:
+    """The ledger row that voids ``reg``'s claim into ``out_dir``, CHECKED, NOT WRITTEN (W85's
+    panel draw, 2026-11-20; operator: "Yes, void it and fix"). Registration 2f2314b0 was claimed
+    and then stopped before any call, its key absent, and a claim is drawn once. A claim is
+    voidable only when nothing was spent or drawn under it: it is the approval's one live claim
+    of ``reg``, into ``out_dir``, for $0.00, and the ledger's last row (no call recorded after
+    it); the folder holds ``reg``'s registration and no draws (a call that fails, or is answered
+    with its usage, writes its draws row: `GuardedSdk`; one killed in flight, or answered with no
+    usage, writes none — the record's accepted limit). The row names the folder RESOLVED, which
+    is what `voided_claims` re-checks wherever the ledger is read (A's review, item 9). The
+    index's half is `registry.record_void`; `void_claim` writes both, under the ledger's lock."""
+    rows = budget.rows()
+    voided = voided_claims(rows)
+    live = [r for r in rows if _is_claim(r) and r["registration"] == reg.sha
+            and (r["registration"], r["out_dir"]) not in voided]
+    folder = out_dir.resolve()
+    if len(live) != 1 or Path(live[0]["out_dir"]).resolve() != folder:
+        raise rp.ReplayError(f"the ledger holds {len(live)} live claim(s) of {reg.sha[:12]} "
+                             f"({[r['out_dir'] for r in live]}), not one into {out_dir}: "
+                             "nothing is voided")
+    claim = live[0]
+    if rows[-1] != claim:
+        raise rp.ReplayError(f"rows were recorded in the ledger after {reg.sha[:12]}'s claim: a "
+                             "claim is voided only when nothing was recorded after it")
+    if float(claim["usd"]) != 0.0:
+        raise rp.ReplayError(f"{reg.sha[:12]}'s claim recorded ${float(claim['usd']):.4f}, not "
+                             "$0.00: nothing is voided")
+    if (folder / "draws.jsonl").exists():
+        raise rp.ReplayError(f"{out_dir} holds draws: a run that drew, even a failed call, is "
+                             "never voided")
+    if run_registration(folder).sha != reg.sha:
+        raise rp.ReplayError(f"{out_dir} does not hold registration {reg.sha[:12]}: nothing is "
+                             "voided")
+    return {"void": reg.sha, "out_dir": claim["out_dir"], "folder": str(folder), "usd": 0.0}
+
+
+def void_claim(reg: Registration, *, budget: rp.Budget, out_dir: Path,
+               ruling: str) -> dict[str, Any]:
+    """`void-claim`: void ``reg``'s claim into ``out_dir`` that drew nothing, in the ledger and
+    this checkout's index, UNDER THE LEDGER'S LOCK (A's review of #1167, item 1b), which
+    `run_compare` holds for the whole of a run: a void is never written while a call under its
+    claim is in flight. Both rows carry ``ruling``, the operator's words that ruled the void, and
+    the same time (item 8). The index's row is honoured once it is on main (`registry._live`);
+    the ledger's at once, while it holds (`voided_claims`). Returns the ledger's row. The index
+    row is written first: it refuses words that are empty, before anything is written."""
+    from vinci.evals import builds as bd
+    from vinci.evals import registry
+    with bd._claim(budget.ledger):
+        row = void_unspent_claim(reg, budget=budget, out_dir=out_dir)
+        indexed = registry.record_void(reg.sha, approval=registry.approval_id(budget.ledger),
+                                       ruling=ruling)
+        row = {**row, "ruling": ruling, "voided_at": indexed["voided_at"]}
+        budget.record(row)
+    return row
 
 
 def target_family(targets: Sequence[str], p_lower: dict[str, float]) -> dict[str, float]:

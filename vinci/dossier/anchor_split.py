@@ -276,15 +276,18 @@ def current_ebitda(mechanical: dict[str, Any], *, ex_lease: bool, current: float
                 f"{eb.get('tev_as_of') or 'unstated'}), so the EBITDA it is struck on is not "
                 "measured")
     if reading not in REPORTED_READINGS:
-        what = ("reported LTM EBITDA plus rent, which the anchor's EBITDA does not carry"
-                if reading == "ebitda_plus_rent" else "neither reported LTM EBITDA nor that plus "
+        # (W81, SP-D20) the figure by what it is: CIQ's annual LTM EBITDA, not the filing's
+        from vinci.dossier.ev_ebitda_basis import ANNUAL_LTM
+        what = (f"{ANNUAL_LTM} plus rent, which the anchor's EBITDA does not carry"
+                if reading == "ebitda_plus_rent" else f"neither {ANNUAL_LTM} nor that plus "
                 "rent")
         return (f"CIQ's {mult:g}x divides TEV ${_m(eb.get('tev'), 0)}M by "
                 f"${_m(eb.get('implied_denominator'), 0)}M: {what} "
                 f"(valuation.ev_ebitda_basis: {reading}), so the EBITDA it is struck on is not "
                 f"identified")
     if e is None or e <= 0:
-        return "reported LTM EBITDA is not positive"
+        from vinci.dossier.ev_ebitda_basis import ANNUAL_LTM
+        return f"{ANNUAL_LTM} is not positive"
     src = (f"mechanical.financial_summary LTM 'EBITDA ($M)' (CIQ), which CIQ's TEV ÷ {mult:g}x "
            f"reproduces (valuation.ev_ebitda_basis: {reading}; "
            f"${_m(eb.get('implied_denominator'), 0)}M implied, TEV as "

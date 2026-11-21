@@ -19,6 +19,7 @@ import json
 import re
 import shutil
 import subprocess
+import tempfile
 from datetime import UTC, datetime
 from functools import cache
 from html import escape
@@ -99,15 +100,12 @@ process.stdout.write(JSON.stringify(out));
 """
     pages: dict[str, Any] = {t: json.loads(_derived(t)) for t in PAGES}
     pages["committed"] = frozen_doc("BRBR")
-    tmp = ROOT / ".pytest_w61_tmp"
-    tmp.mkdir(exist_ok=True)
-    try:
+    with tempfile.TemporaryDirectory() as d:   # never a fixed folder in the checkout (2026-11-20)
+        tmp = Path(d)
         (tmp / "drv.mjs").write_text(driver)
         (tmp / "pages.json").write_text(json.dumps(pages))
         res = subprocess.run(["node", str(tmp / "drv.mjs"), str(tmp / "pages.json")], cwd=ROOT,
                              capture_output=True, text=True, check=True)
-    finally:
-        shutil.rmtree(tmp, ignore_errors=True)
     out: dict[str, str] = json.loads(res.stdout)
     return out
 

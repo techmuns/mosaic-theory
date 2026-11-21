@@ -578,16 +578,33 @@ def paid_draw(sdk: Any | None) -> bool:
     return sdk is None or _a_real_client(sdk)
 
 
+def paid_client(req: Request, *, sdk: Any | None, label: str) -> AnthropicLlmClient:
+    """The client ONE request is drawn through, BUILT BEFORE ITS DRAW IS CLAIMED (W85's panel
+    draw, 2026-11-20; operator: "Yes, void it and fix"). `run_request` built it only after
+    `registry.claim_draw` had recorded the draw, so a checkout with no ``ANTHROPIC_API_KEY``
+    stopped with its registration claimed and nothing drawn. `run_compare` and `run_build` now
+    build every client first and hand each to `run_request`: a client that cannot be built — its
+    key absent — is refused with nothing claimed. One client per request (`run_request` wraps
+    its SDK for that request alone)."""
+    try:
+        return AnthropicLlmClient(model=req.model, max_tokens=req.max_tokens,
+                                  api_key="test-sdk-not-a-key" if sdk is not None else None)
+    except RuntimeError as exc:
+        raise ReplayError(f"{label}: the paid client cannot be built ({exc}) — nothing is "
+                          "claimed or drawn") from exc
+
+
 def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_out: Path,
-                sdk: Any | None = None,
-                registration: str | None = None) -> list[dict[str, Any] | None]:
+                sdk: Any | None = None, registration: str | None = None,
+                client: AnthropicLlmClient | None = None) -> list[dict[str, Any] | None]:
     """``draws`` PAID draws of ONE request captured at $0, sent sequentially (the build's own
     loop: the first writes the prompt cache, the rest read it) through production's
     ``AnthropicLlmClient.extract``, each behind ``GuardedSdk``. Returns each draw's raw tool
     output, or None for a draw the model answered unusably (``LlmError``, as `synthesize` counts
     it). The request may have been built at any code ref (`capture_at`), so main and a branch are
     drawn by one process under one cap. ``sdk`` replaces the real SDK object (tests); without it
-    the client reads ``ANTHROPIC_API_KEY`` and the call costs money."""
+    the client reads ``ANTHROPIC_API_KEY`` and the call costs money. ``client`` is the one
+    `paid_client` built for this request before its claim; without it one is built here."""
     if registration is None and paid_draw(sdk):
         # RG-D10, IN THE LIBRARY (B's check of order 8, gap 2): G-D10's own reproduction called
         # this function with no registration; the CLI refused, the library did not
@@ -596,8 +613,8 @@ def run_request(req: Request, *, draws: int, budget: Budget, label: str, draws_o
     tools = req.kwargs.get("tools") or []
     if len(tools) != 1:
         raise ReplayError(f"{label}: a synthesis request carries one tool, this one {len(tools)}")
-    client = AnthropicLlmClient(model=req.model, max_tokens=req.max_tokens,
-                                api_key="test-sdk-not-a-key" if sdk is not None else None)
+    if client is None:
+        client = paid_client(req, sdk=sdk, label=label)
     inner = sdk if sdk is not None else client._client
     # ONE GUARDED CALL IS ONE HTTP ATTEMPT. The SDK retries on its own (max_retries=2): each
     # retry is a request the guard never saw. Retries are off; a failed attempt is a failed draw,

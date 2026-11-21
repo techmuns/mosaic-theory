@@ -1244,7 +1244,10 @@
         "ratio_to_reported_plus_rent": 1.007308,
         "reading": "ebitda_plus_rent",
         "tolerance": 0.05,
-        "line": "CIQ's 13.3x divides TEV $170,372M (comps, 2026-10-16) by $12,810M: reported LTM EBITDA $8,903M + rent $3,814M (FY ending 2026-01-31) = $12,717M (0.7% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($8,903M, 30.5% below the denominator)."
+        "line": "CIQ's 13.3x divides TEV $170,372M (comps, 2026-10-16) by $12,810M: CIQ's annual LTM EBITDA $8,903M + rent $3,814M (FY ending 2026-01-31) = $12,717M (0.7% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of CIQ's annual LTM EBITDA, after rent ($8,903M, 30.5% below the denominator).",
+        "multiple_close": "2026-10-16",
+        "days_apart": 0,
+        "days_apart_tolerance": 4
       },
       "ev_ebitda_ex_lease_at_price": {
         "source_ref": "Assembler: ex-lease EV/EBITDA at the page's close (2026-11-11) — price × shares outstanding + EDGAR net debt excluding operating leases, ÷ CIQ LTM EBITDA to 2026-08-01",
@@ -1258,7 +1261,7 @@
         "ev": 146947.461,
         "ltm_ebitda": 8903.0,
         "ltm_through": "2026-08-01",
-        "line": "at the page's $136.44 close (2026-11-11): ($136.44 × 1,099,974,061 shares outstanding + net debt −$3,133M excluding operating leases) ÷ LTM EBITDA $8,903M (four quarters to 2026-08-01) = 16.5x"
+        "line": "at the page's $136.44 close (2026-11-11): ($136.44 × 1,099,974,061 shares outstanding + net debt −$3,133M excluding operating leases) ÷ CIQ's four-quarter EBITDA $8,903M (to 2026-08-01) = 16.5x"
       }
     },
     "quality": {
@@ -7794,7 +7797,7 @@
         "filing_ltm": 9234.0,
         "ltm_gap": -331.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $8,903M against $9,234M rebuilt from the filings (−$331M); the quarter to 2026-08-01: CIQ $1,996M against $2,327M (−$331M) — its release states a matching amount: “IEEPA Tariff Refunds and Related Expense Accruals During the second quarter of Fiscal 2027, the Company received aggregate refunds of $331 million for a portion of the IEEPA tariffs it previously paid.” (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: CIQ's four-quarter EBITDA $8,903M against $9,234M rebuilt from the filings (−$331M); the quarter to 2026-08-01: CIQ $1,996M against $2,327M (−$331M) — its release states a matching amount: “IEEPA Tariff Refunds and Related Expense Accruals During the second quarter of Fiscal 2027, the Company received aggregate refunds of $331 million for a portion of the IEEPA tariffs it previously paid.” (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -16745,6 +16748,15 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "extraction_version": "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
       ]
     }
   ],

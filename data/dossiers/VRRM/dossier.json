@@ -509,7 +509,10 @@
         "ratio_to_reported_plus_rent": 0.990039,
         "reading": "indistinguishable",
         "tolerance": 0.05,
-        "line": "CIQ's 3.6x divides TEV $1,271M (comps, 2026-11-06) by $353M, which reproduces reported LTM EBITDA ($346M) and EBITDA plus rent alike — rent is 3.0% of EBITDA, too small for the pairing to change the reading."
+        "line": "CIQ's 3.6x divides TEV $1,271M (comps, 2026-11-06) by $353M, which reproduces CIQ's annual LTM EBITDA ($346M) and that plus rent alike — rent is 3.0% of EBITDA, too small for the pairing to change the reading.",
+        "multiple_close": "2026-11-06",
+        "days_apart": 0,
+        "days_apart_tolerance": 4
       }
     },
     "quality": {
@@ -6346,7 +6349,7 @@
         "filing_ltm": 240.486,
         "ltm_gap": 105.878,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $346M against $240M rebuilt from the filings (+$106M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M); the quarter to 2026-03-31: CIQ $73M against $81M (−$8M) — CIQ's own export itemises unusual items of $-7.865M for the quarter, which it leaves out; the quarter to 2026-06-30: CIQ $100M against $-4M (+$104M) — its release states a matching amount: “on our first half 2026 results and our outlook for the remainder of the year, we are revising our 2026 full year financial outlook to the following: • Total Revenue of $945 million to $965 million • Adjusted EBITDA of $360 million to $370 million • Adjusted EPS of $1.11 to $1.17 • Free Cash Flow of $105 million to $115 million Underlying Assumptions for 2026 Full Year Guidance • Weighted average fully diluted share count expected to be approximately 153 million shares for the full year 2026 • Effective tax” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: CIQ's four-quarter EBITDA $346M against $240M rebuilt from the filings (+$106M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M); the quarter to 2026-03-31: CIQ $73M against $81M (−$8M) — CIQ's own export itemises unusual items of $-7.865M for the quarter, which it leaves out; the quarter to 2026-06-30: CIQ $100M against $-4M (+$104M) — its release states a matching amount: “on our first half 2026 results and our outlook for the remainder of the year, we are revising our 2026 full year financial outlook to the following: • Total Revenue of $945 million to $965 million • Adjusted EBITDA of $360 million to $370 million • Adjusted EPS of $1.11 to $1.17 • Free Cash Flow of $105 million to $115 million Underlying Assumptions for 2026 Full Year Guidance • Weighted average fully diluted share count expected to be approximately 153 million shares for the full year 2026 • Effective tax” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14602,6 +14605,15 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "extraction_version": "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
       ]
     }
   ],

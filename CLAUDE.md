@@ -177,9 +177,13 @@ verdict placement.
   stays git-ignored; only `graph_coverage.json` is authorized.)
   **Theme intelligence** (operator decision 2026-10-13, PR #703): **`frontend/theme-intelligence/`**
   — the research desk published into the app (`python -m vinci.theme_intelligence publish`):
-  derived analysis with titles, figures and SHORT verbatim source quotes, published on the authed
-  deploy and, since 2026-10-22, readable in this public repo. Never an article's text, never a
-  local path.
+  derived analysis with titles, figures and verbatim source quotes, published on the authed
+  deploy and, since 2026-10-22, readable in this public repo. **THE LICENCE COVERS PUBLISHING THE
+  THEME SOURCES' TEXT** *(operator 2026-11-20, "Yes, full text may be public";
+  `docs/records/2026-11-20-licence-covers-publishing-theme-source-text.md`)*: the words of the
+  research reports the operator uploads and of the weekly scan's articles may be on the desk and in
+  the registry export on `theme-intelligence-state`. The desk still cuts a quote at 400 characters
+  for reading (#1140; operator: "Keep the 400 cap"). Never a local path.
   **Cut-down CIQ test fixtures** (operator ruling 2026-11-04, #891: "no need to remove fixture or
   ciq data from main, under our license we can keep it"): `tests/fixtures/ciq_*.json` and
   `tests/fixtures/filed_tiebreak.json` stay committed. Each holds a sheet's header row and only the
@@ -197,7 +201,8 @@ verdict placement.
   - it is **extracted, not copied**: the workbook FILE never enters git or the bucket.
 
   Still never published: credentials, `*.db`, PII, and an article's or transcript's text beyond
-  short verbatim quotes. **For a transcript, "short" is a number** *(operator ruling 2026-11-10,
+  short verbatim quotes, except the theme sources' text, which the licence covers (Theme
+  intelligence, above). **For a transcript, "short" is a number** *(operator ruling 2026-11-10,
   RG-D19; `docs/records/2026-11-10-driver-facts-page-pass.md`)*: **NO PUBLIC FIELD QUOTES MORE
   THAN 12 CONSECUTIVE TRANSCRIPT WORDS, AND A DRIVER ROW QUOTES NONE.** A transcript driver row
   publishes its FACT (`figures`, `value_status`) and its LOCATOR (the call, its file's sha256, the

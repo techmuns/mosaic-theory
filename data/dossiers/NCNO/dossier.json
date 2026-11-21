@@ -673,7 +673,10 @@
         "ratio_to_reported_plus_rent": 0.985305,
         "reading": "ebitda_plus_rent",
         "tolerance": 0.05,
-        "line": "CIQ's 27.3x divides TEV $2,679M (comps, 2026-10-27) by $98M: reported LTM EBITDA $92M + rent $8M (FY ending 2026-01-31) = $100M (1.5% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($92M, 6.4% below the denominator)."
+        "line": "CIQ's 27.3x divides TEV $2,679M (comps, 2026-10-27) by $98M: CIQ's annual LTM EBITDA $92M + rent $8M (FY ending 2026-01-31) = $100M (1.5% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of CIQ's annual LTM EBITDA, after rent ($92M, 6.4% below the denominator).",
+        "multiple_close": "2026-10-27",
+        "days_apart": 0,
+        "days_apart_tolerance": 4
       },
       "ev_ebitda_ex_lease_at_price": {
         "source_ref": "Assembler: ex-lease EV/EBITDA at the page's close (2026-11-11) — price × shares outstanding + EDGAR net debt excluding operating leases, ÷ CIQ LTM EBITDA to 2026-07-31",
@@ -687,7 +690,7 @@
         "ev": 2610.074,
         "ltm_ebitda": 90.48,
         "ltm_through": "2026-07-31",
-        "line": "at the page's $22.39 close (2026-11-11): ($22.39 × 105,736,174 shares outstanding + net debt $243M excluding operating leases) ÷ LTM EBITDA $90M (four quarters to 2026-07-31) = 28.8x"
+        "line": "at the page's $22.39 close (2026-11-11): ($22.39 × 105,736,174 shares outstanding + net debt $243M excluding operating leases) ÷ CIQ's four-quarter EBITDA $90M (to 2026-07-31) = 28.8x"
       }
     },
     "quality": {
@@ -6385,7 +6388,7 @@
         "filing_ltm": 90.256,
         "ltm_gap": 0.224,
         "any_different": false,
-        "line": "CIQ's EBITDA matches the filings in each quarter set against them (rebuilt as operating income + D&A) — the LTM the multiples divide is the reported figure.",
+        "line": "CIQ's EBITDA matches the filings in each quarter set against them (rebuilt as operating income + D&A) — CIQ's four-quarter EBITDA is the filings' figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14177,6 +14180,15 @@
       "layers": [
         "mechanical.ev_gap",
         "mechanical.stock_info",
+        "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-11-20",
+      "extraction_version": "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
         "mechanical.valuation"
       ]
     }

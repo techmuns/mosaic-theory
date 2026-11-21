@@ -1,6 +1,6 @@
 # Dossier — nCino, Inc. (Nasdaq: NCNO)
 
-_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape_
+_November 14, 2026 · extraction 2026-11-11.guide-periods-read-where-stated-and-one-off-periods+2026-11-13.bare-sales-and-profit-name-their-rows+2026-11-13.wall-reads-indebtedness-and-the-notes-other-wordings · layers refreshed to 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read_
 
 # Brief — first cut
 
@@ -161,9 +161,9 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 27.3x as-of 2026-10-27 — trailing range 22.1–221.1x (median 80.3x) over 11 closes → 18%ile → near-floor; P/LTM EPS 74.3x [32]
 - **vs peers:** EV/EBITDA 26.7x at the 2026-11-11 close (CIQ 27.3x, 2026-10-27) vs peer median 76.0x (CIQ, 2026-10-27) (-65%); P/E 72.6x at the 2026-11-11 close (CIQ 74.3x, 2026-10-27) vs peer median 48.1x (CIQ, 2026-10-27) (+51%) [33]
 - **Forward multiples:** P/FY27E (normalized) 17.2x (EPS $1.30); P/FY27E (GAAP) 70.0x (EPS $0.32); P/FY28E (normalized) 14.2x (EPS $1.58); P/FY28E (GAAP) 41.5x (EPS $0.54) — at $22.39 as-of 2026-11-11 [34]
-- **Multiple basis — read before the level:** rent is 13.1% of EBITDA (FY ending 2026-01-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 15.9% EBITDA margin against 14.8% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 104.0x over 10 quarters (current 27.2x at the 2026-08-25 filing; 10% of the history at or below it). The level and percentile above are CIQ's own series. [35]
-- **What CIQ's EV/EBITDA divides:** CIQ's 27.3x divides TEV $2,679M (comps, 2026-10-27) by $98M: reported LTM EBITDA $92M + rent $8M (FY ending 2026-01-31) = $100M (1.5% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($92M, 6.4% below the denominator).
-- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $22.39 close (2026-11-11): ($22.39 × 105,736,174 shares outstanding + net debt $243M excluding operating leases) ÷ LTM EBITDA $90M (four quarters to 2026-07-31) = 28.8x
+- **Multiple basis — read before the level:** rent is 13.1% of EBITDA (FY ending 2026-01-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 15.9% EBITDA margin against 14.8% on CIQ's annual LTM EBITDA. R1's earnings are its mid-cycle EBITDA (EBIT + D&A), after rent; on that basis — TEV less operating leases over CIQ's four-quarter EBITDA — the median is 104.0x over 10 quarters (current 27.2x at the 2026-08-25 filing; 10% of the history at or below it). The level and percentile above are CIQ's own series. [35]
+- **What CIQ's EV/EBITDA divides:** CIQ's 27.3x divides TEV $2,679M (comps, 2026-10-27) by $98M: CIQ's annual LTM EBITDA $92M + rent $8M (FY ending 2026-01-31) = $100M (1.5% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of CIQ's annual LTM EBITDA, after rent ($92M, 6.4% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $22.39 close (2026-11-11): ($22.39 × 105,736,174 shares outstanding + net debt $243M excluding operating leases) ÷ CIQ's four-quarter EBITDA $90M (to 2026-07-31) = 28.8x
 - **Comparability:** market caps span $698M–$13.9B (20x); the name is $2.4B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [36]
 - **The street, for contrast (target · ratings):** Target price: mean $24.42, median $25.00, high/low 28.00/17.00, N 12/12; Ratings: Buy 5, Outperform 6, Hold 4, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-10-27 · export date unverified] [37]
 
@@ -675,6 +675,7 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
   - 2026-11-15 · date_semantics, inputs — refresh at 2026-11-16.a-ciq-fact-dates-from-its-export
   - 2026-11-17 · inputs — refresh at 2026-11-17.a-financials-filing-date-counts
   - 2026-11-19 · mechanical.ev_gap, mechanical.stock_info, mechanical.valuation — refresh at 2026-11-19.fast-values-at-the-close-and-an-event-rule+2026-11-19.synthesis-prompt-the-no-cause-ask-names-no-shape
+  - 2026-11-20 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read
 - **Price store:** `replication-rule-default-f0eb47` · reaching 2026-11-11
 - **Panel age:** oldest panel 18d old — 2026-10-27 (valuation.implied_expectations.tev_as_of), against a 2026-11-14 build
 - **Consensus age:** consensus 18d old (2026-10-27, valuation.implied_expectations.multiples_as_of) — within the ceiling

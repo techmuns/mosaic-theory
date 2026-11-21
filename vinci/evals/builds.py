@@ -229,13 +229,16 @@ def prepare_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.B
 def _claim(ledger: Path) -> Iterator[None]:
     """One build checked and claimed at a time under a ledger (review round 0): without it two
     `run`s of one build both pass the drawn-once check during their captures and both draw. A
-    second claim is refused at once, never queued behind the first."""
+    second claim is refused at once, never queued behind the first. `compare.run_compare` holds
+    it for a whole comparison and `compare.void_claim` takes it, so a claim is never voided while
+    a call under it is in flight (A's review of #1167, item 1b)."""
     with ledger.with_name(ledger.name + ".lock").open("a") as f:
         try:
             fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
-            raise rp.ReplayError(f"another run holds {ledger}: one build is checked and claimed "
-                                 "at a time — wait for it, then run again") from exc
+            raise rp.ReplayError(f"another run holds {ledger}: one run under an approval is "
+                                 "checked, claimed or voided at a time — wait for it, then run "
+                                 "again") from exc
         try:
             yield
         finally:
@@ -259,6 +262,8 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
             raise rp.ReplayError(f"{pb.label}: a paid build needs its index claim "
                                  "(`registry.claim_draw`, after `registry.require_on_main`) — "
                                  "unclaimed, it could be drawn twice, so nothing is drawn")
+        # THE CLIENT BEFORE THE CLAIM (W85's panel draw, 2026-11-20): with no key, nothing claimed
+        client = rp.paid_client(pb.request, sdk=sdk, label=pb.label)
         if claim is not None:
             claim()
         head = {"registration": reg.sha, "ticker": ticker, "build": build, "label": pb.label,
@@ -271,7 +276,7 @@ def run_build(reg: RunRegistration, ticker: str, build: int, *, budget: rp.Budge
     stopped = True
     try:
         raws = rp.run_request(pb.request, draws=reg.draws, budget=budget, label=pb.label,
-                              draws_out=draws_out, sdk=sdk, registration=reg.sha)
+                              draws_out=draws_out, sdk=sdk, registration=reg.sha, client=client)
         stopped = False
     finally:
         drawn = [r for r in budget.rows() if r.get("label") == pb.label and "usage" in r]

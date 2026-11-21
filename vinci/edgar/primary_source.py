@@ -265,6 +265,8 @@ _QUARTER_PERIOD = re.compile(r"\b(?:FQ\s*[1-4]|Q[1-4])\b", re.I)
 _HALF_PERIOD = re.compile(
     r"\b(?:H[12]|[12]H)\b|\b(?:first|second)\s+half\b|\bsix\s+months\s+ended\b", re.I)
 _ANNUAL_PERIOD = re.compile(r"\bFY\b|\bfiscal\b|\bnext-fy\b|^\s*(?:19|20)\d{2}\s*$", re.I)
+#: A four-digit year a guide-period label states ("FY 2027", "FQ3 2026", "2026", "Fiscal 2028").
+_PERIOD_YEAR = re.compile(r"(?<!\d)((?:19|20)\d{2})(?!\d)")
 
 
 #: The triangulation's two CIQ rows, named for the EBITDA they divide. Shared with the refresh that
@@ -295,6 +297,19 @@ def period_scope(label: str | None) -> str | None:
     if _ANNUAL_PERIOD.search(text):
         return "annual"
     return None
+
+
+def period_fiscal_year(label: str | None) -> int | None:
+    """The fiscal year a guide-period label states, or ``None`` when it states none or several.
+
+    Read only off a four-digit year in the label — CIQ's "FY 2027" / "FQ3 2026", a release's
+    "2026" / "Fiscal 2028". A label with no year ("Q3", "next-fy") decides nothing, and neither
+    does one naming two ("FY 2026/2027"): picking either would invent the year the guide check
+    refuses on (`guide_verification_read`), as `period_scope` declines to invent a scope."""
+    if not label:
+        return None
+    years = {int(y) for y in _PERIOD_YEAR.findall(label)}
+    return years.pop() if len(years) == 1 else None
 
 
 class GuideVerification(NamedTuple):
@@ -398,6 +413,20 @@ def guide_verification_read(
                 f"{noun[rel_scope]} ({release_period}: {release_low}–{release_high}) "
                 "— NOT CROSS-CHECKED. Different periods; annualising one to match the other "
                 "would manufacture the base the comparison is supposed to verify.", CHECK_NOT_RUN)
+        # CROSS-YEAR: REFUSE, the same way (2026-11-21). One scope is not one period: BRBR's CIQ
+        # guide is FY 2027 (2320–2420, dated the day of its Q4 release) while the release guide
+        # the check read is 2026's (2335–2375, the 2026-08-04 8-K) — the Q4 release states none
+        # the parser reads. Two years' guides cannot agree or disagree, and the check printed
+        # MISMATCH. Only refuse when BOTH labels state a year (`period_fiscal_year`); a label that
+        # states none leaves the prior behaviour untouched, as an undecided scope does above.
+        ciq_year, rel_year = period_fiscal_year(ciq_period), period_fiscal_year(release_period)
+        if ciq_year is not None and rel_year is not None and ciq_year != rel_year:
+            return GuideVerification(
+                f"guide verification ({metric}): CIQ guides {ciq_period} ({ciq_low}–{ciq_high}) "
+                f"and the release guide read is for {release_period} "
+                f"({release_low}–{release_high}) — NOT CROSS-CHECKED, different fiscal years. "
+                "A guide for one year can neither verify nor contradict another year's.",
+                CHECK_NOT_RUN)
     # VENDOR-ECHO — TWO CONJUNCTS: (1) CIQ guide ≈ prior-FY actual within source-rounding (0.1% rel;
     # the release rounds $427.516→$427.5, so relative not absolute-3dp); AND (2) the release states
     # NO number for this metric (release_low is None) or only a QUALITATIVE outlook. A numeric

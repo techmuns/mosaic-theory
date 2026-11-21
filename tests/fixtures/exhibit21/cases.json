@@ -1,0 +1,182 @@
+{
+ "read": "2026-11-20",
+ "exhibits": {
+  "AMZN": {
+   "cik": "0001018724",
+   "registrant": "AMAZON COM INC",
+   "form": "10-K",
+   "accession": "0001018724-26-000004",
+   "filing_date": "2026-02-06",
+   "type": "EX-21.1",
+   "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231xex211.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "GOOGL": {
+   "cik": "0001652044",
+   "registrant": "Alphabet Inc.",
+   "form": "10-K",
+   "accession": "0001652044-26-000018",
+   "filing_date": "2026-02-05",
+   "type": "EX-21.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/googexhibit2101q42025.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "TGT": {
+   "cik": "0000027419",
+   "registrant": "TARGET CORP",
+   "form": "10-K",
+   "accession": "0000027419-26-000016",
+   "filing_date": "2026-03-11",
+   "type": "EX-21.1",
+   "url": "https://www.sec.gov/Archives/edgar/data/27419/000002741926000016/tgt-20260131xexhibit211.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "SMPL": {
+   "cik": "0001702744",
+   "registrant": "Simply Good Foods Co",
+   "form": "10-K",
+   "accession": "0001702744-26-000031",
+   "filing_date": "2026-10-27",
+   "type": "EX-21.1",
+   "url": "https://www.sec.gov/Archives/edgar/data/1702744/000170274426000031/exhibit211-10k2026.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "PARR": {
+   "cik": "0000821483",
+   "registrant": "PAR PACIFIC HOLDINGS, INC.",
+   "form": "10-K",
+   "accession": "0000821483-26-000005",
+   "filing_date": "2026-02-25",
+   "type": "EX-21.1",
+   "url": "https://www.sec.gov/Archives/edgar/data/821483/000082148326000005/a20251231ex211subsidiaries.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "WERN": {
+   "cik": "0000793074",
+   "registrant": "WERNER ENTERPRISES INC",
+   "form": "10-K",
+   "accession": "0000793074-26-000071",
+   "filing_date": "2026-02-26",
+   "type": "EX-21",
+   "url": "https://www.sec.gov/Archives/edgar/data/793074/000079307426000071/wern-20251231ex21.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "V": {
+   "cik": "0001403161",
+   "registrant": "VISA INC.",
+   "form": "10-K",
+   "accession": "0001403161-26-000134",
+   "filing_date": "2026-11-05",
+   "type": "EX-21.1",
+   "url": "https://www.sec.gov/Archives/edgar/data/1403161/000140316126000134/vex211093026.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "UBER": {
+   "cik": "0001543151",
+   "registrant": "Uber Technologies, Inc",
+   "form": "10-K",
+   "accession": "0001543151-26-000015",
+   "filing_date": "2026-02-13",
+   "type": "EX-21.1",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000015/uber12312025exhibit211.htm",
+   "cut": false,
+   "kept_rows": []
+  },
+  "LLY": {
+   "cik": "0000059478",
+   "registrant": "ELI LILLY & Co",
+   "form": "10-K",
+   "accession": "0000059478-26-000013",
+   "filing_date": "2026-02-12",
+   "type": "EX-21",
+   "url": "https://www.sec.gov/Archives/edgar/data/59478/000005947826000013/lly-12312025x10kexhibit21.htm",
+   "cut": true,
+   "kept_rows": [
+    "LillyDirect Pharmacy, LLC",
+    "Eli Lilly (Philippines), Incorporated",
+    "Aparito LLC",
+    "Eli Lilly and Company Limited",
+    "Eli Lilly S.A.",
+    "UAB Eli Lilly Lietuva"
+   ]
+  },
+  "TJX": {
+   "cik": "0000109198",
+   "registrant": "TJX COMPANIES INC /DE/",
+   "form": "10-K",
+   "accession": "0000109198-26-000008",
+   "filing_date": "2026-03-31",
+   "type": "EX-21",
+   "url": "https://www.sec.gov/Archives/edgar/data/109198/000010919826000008/tjx-20260131exhibit21.htm",
+   "cut": true,
+   "kept_rows": [
+    "Leasing Subsidiaries",
+    "NBC Sixth Realty Corp.",
+    "NBC Apparel"
+   ]
+  },
+  "EPAM": {
+   "cik": "0001352010",
+   "registrant": "EPAM Systems, Inc.",
+   "form": "10-K",
+   "accession": "0001352010-26-000015",
+   "filing_date": "2026-02-26",
+   "type": "EX-21.1",
+   "url": "https://www.sec.gov/Archives/edgar/data/1352010/000135201026000015/exhibit211subsidiariesofth.htm",
+   "cut": true,
+   "kept_rows": [
+    "EPAM Systems LLC",
+    "LLC IT-PARK UNIVERSITY"
+   ]
+  }
+ },
+ "headers": {
+  "0001652044-26-000018": {
+   "ticker": "GOOGL",
+   "cik": "0001652044",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/0001652044-26-000018-index-headers.html",
+   "file": "GOOGL_0001652044-26-000018-index-headers.html"
+  },
+  "0001652044-26-000084": {
+   "ticker": "GOOGL",
+   "cik": "0001652044",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/0001652044-26-000084-index-headers.html",
+   "file": "GOOGL_0001652044-26-000084-index-headers.html"
+  }
+ },
+ "historical": {
+  "ORKA": {
+   "cik": "0000907654",
+   "through": "2024-06-30",
+   "accession": "0000950170-24-009809",
+   "filing_date": "2024-02-01",
+   "header_url": "https://www.sec.gov/Archives/edgar/data/907654/000095017024009809/0000950170-24-009809-index-headers.html",
+   "header_file": "ORKA_0000950170-24-009809-index-headers.html",
+   "registrant_current": "Oruka Therapeutics, Inc.",
+   "former": [
+    {
+     "name": "ARCA biopharma, Inc.",
+     "from_date": "2009-01-28",
+     "to_date": "2024-08-30"
+    },
+    {
+     "name": "NUVELO INC",
+     "from_date": "2003-02-04",
+     "to_date": "2009-01-27"
+    },
+    {
+     "name": "HYSEQ INC",
+     "from_date": "1997-07-17",
+     "to_date": "2003-01-28"
+    }
+   ]
+  }
+ }
+}

@@ -74,11 +74,11 @@ from vinci.theme_intelligence.cards import (
 from vinci.theme_intelligence.cards import _anchor as _card_anchor
 from vinci.theme_intelligence.config import (
     ENGINE_VERSION,
-    Paths,
     SourceConfig,
     load_taxonomy,
 )
 from vinci.theme_intelligence.display import clip
+from vinci.theme_intelligence.localpaths import run_dir
 from vinci.theme_intelligence.parse import clean_title
 from vinci.theme_intelligence.schemas import (
     ACTION_RANK,
@@ -2416,7 +2416,7 @@ def _write_run_outputs(store: Store, run_id: str, out_dir: Path | None) -> dict[
     run = store.run(run_id)
     if run is None:
         raise KeyError(f"no run {run_id}")
-    out = out_dir or Path(run.output_dir or Paths(store.path.parent).runs / run_id)
+    out = out_dir or run_dir(store.path.parent, run_id, run.output_dir)
     out.mkdir(parents=True, exist_ok=True)
     generated = (f"Generated {datetime.now(tz=UTC).strftime('%Y-%m-%d %H:%M UTC')} from the "
                  f"registry ({ENGINE_VERSION}; run {run_id}, extract {run.extract_prompt_version}"
