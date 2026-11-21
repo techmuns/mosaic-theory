@@ -534,16 +534,11 @@ def sec_caches() -> list[Path]:
 
 
 def _sec_files(sec_dirs: Sequence[Path]) -> list[Path]:
-    """Every cached file of ``sec_dirs``, each name once (a name is its URL's sha256): the copy in
-    the first cache that holds it."""
-    seen: set[str] = set()
-    out: list[Path] = []
-    for d in sec_dirs:
-        for p in sorted(d.iterdir()):
-            if p.name not in seen:
-                seen.add(p.name)
-                out.append(p)
-    return out
+    """Every cached file of ``sec_dirs``, cache by cache. A name two caches share is read in each
+    (review round 0): kept once, a worktree's unreadable or truncated copy shadowed the primary's
+    good one, and the window it holds failed unexcused. A worktree's own cache is small, so the
+    second read costs little."""
+    return [p for d in sec_dirs for p in sorted(d.iterdir())]
 
 
 def _listing(sec_dirs: Sequence[Path]) -> str:
@@ -567,8 +562,9 @@ def find_outside_calls(pending: dict[int, list[str]], kd: list[Path], sec_dirs: 
     2. the cached SEC document where the window was found last time, read again;
     3. every cached SEC document, for what is still unfound — prefiltered on one long word of each
        window, since a document without that word cannot hold the window. A window this full read
-       did not find is remembered as absent only while the cache's listing is unchanged AND every
-       file in it read, so a file that comes back from offload is read again.
+       did not find is remembered as absent only while every cache's listing is unchanged AND
+       every file in them read, so a file that comes back from offload is read again.
+    ``sec_dirs`` are read in order (`sec_caches`: this checkout's, then its primary's).
     A window both a KD export and an SEC document hold is the SEC document's: KD's publication is
     unruled, so a KD-only excuse is reported apart."""
     sec: dict[int, str] = {}
@@ -1175,3 +1171,39 @@ def test_a_worktree_reads_the_primary_checkouts_sec_cache(
     doc.unlink()
     gone = _outcome(guard)
     assert gone.startswith("failed") and "page.md:1 — 13 words" in gone, gone
+
+
+class _DictCache:
+    """pytest's cache interface (`get`, `set`) over a dict."""
+
+    def __init__(self) -> None:
+        self.d: dict[str, Any] = {}
+
+    def get(self, k: str, default: Any) -> Any:
+        return self.d.get(k, default)
+
+    def set(self, k: str, v: Any) -> None:
+        self.d[k] = json.loads(json.dumps(v))
+
+
+def test_a_bad_copy_in_one_cache_does_not_shadow_a_good_one_in_the_next(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """REVIEW ROUND 0. Two caches can hold one name (a name is its URL's sha256). Kept once, the
+    first cache's copy was the only one read, so a worktree's copy that is not a cache record
+    shadowed the primary's good one and its window failed unexcused. And on a warm run (the memo
+    remembers the URL) the remembered document must be looked for in every cache, not the first:
+    here the full read is emptied on that run, so only the remembered lookup can excuse it. No
+    call is needed: the words are invented, so this runs in CI."""
+    ws = [f"word{c}xyz" for c in "abcdefghijklm"]
+    w = window_keys([key(x) for x in ws])[0]
+    url = "https://www.sec.gov/Archives/edgar/data/1/000000000126000001/ex99.htm"
+    name = f"{hashlib.sha256(url.encode()).hexdigest()}.json"
+    own, prim = tmp_path / "own", tmp_path / "primary"
+    own.mkdir()
+    prim.mkdir()
+    (own / name).write_text("a partial write, not a cache record")
+    (prim / name).write_text(json.dumps({"url": url, "fetched_at": 0, "text": " ".join(ws)}))
+    cache = _DictCache()
+    assert find_outside_calls({w: ws}, [], [own, prim], cache).sec == {w: url}
+    monkeypatch.setattr(sys.modules[__name__], "_sec_files", lambda dirs: [])
+    assert find_outside_calls({w: ws}, [], [own, prim], cache).sec == {w: url}
