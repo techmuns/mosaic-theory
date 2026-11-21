@@ -4609,10 +4609,29 @@ def _dated_operating_events(
     resolves them to their real month, where the past-drop then removes them.
 
     No match → no row, silently (no event stated is a normal state, unlike an unreadable DATE,
-    which flags)."""
+    which flags).
+
+    ONLY THE COMPANY'S OWN ROWS (W85): see `_operating_events`."""
+    return _operating_events(od, reference_date)[0]
+
+
+def _operating_events(
+    od: OperatingDriversExtract | None, reference_date: date,
+) -> tuple[list[CatalystRow], list[str]]:
+    """`_dated_operating_events`'s rows, and each dated event it LEFT OFF because its Key
+    Development is not the company's own — as the calendar's QA flag names it.
+
+    A row is "a management-stated dated operating action" only when the company states it: a
+    driver row with no ``attribution`` (a filing's, a call's) or one whose party is the company's
+    (`ciq_sheets.KD_OWN_PARTIES`: company, joint). GOOGL's next catalyst was Lyft's European
+    launch, UBER's a Wonder–Zipline drone service and AMZN's a Kartoon Studios series (W85,
+    measured on the committed pages at main `bc1c0e16`: 3 of the 18 such rows). Left off, not
+    lost: the row stays in `operating_drivers` with its party, and the flag names its date, event
+    and party, every one of them."""
     if od is None:
-        return []
+        return [], []
     rows: list[CatalystRow] = []
+    withheld: list[str] = []
     seen: set[tuple[str, str]] = set()
     for r in od.rows:
         text = r.verbatim or ""
@@ -4644,13 +4663,20 @@ def _dated_operating_events(
             key = (stamp, clause[:60].lower())
             if key in seen:
                 continue
+            att = r.attribution
+            if att is not None and att.party not in ciq_sheets.KD_OWN_PARTIES:
+                whose = att.lead_party or att.filed_under or "no party read"
+                note = f"{stamp} “{event}” ({att.party.value}: {whose}; {r.source_ref})"
+                if note not in withheld:  # named once, as a kept row is kept once (`seen`)
+                    withheld.append(note)
+                continue
             seen.add(key)
             rows.append(CatalystRow(
                 event=event, expected_date=stamp, date_basis="stated",
                 tests_what="a management-stated dated operating action — the thesis mechanism "
                            "on a timetable; the following print reads its result",
                 source_ref=r.source_ref))
-    return rows
+    return rows, withheld
 
 
 def _drawdown_guide_is_current(rg: Sourced[str], ps: PrimarySource | None) -> bool:
@@ -4716,7 +4742,12 @@ def _catalyst_calendar(
     qa += mat_qa
     # D — management-stated dated operating events from the driver verbatims (source D,
     # ratified 2026-07-24; surfaced by SMPL's September price increase)
-    rows.extend(_dated_operating_events(mech.operating_drivers, reference_date))
+    events, withheld = _operating_events(mech.operating_drivers, reference_date)
+    rows.extend(events)
+    if withheld:
+        qa.append(f"catalyst: {len(withheld)} dated Key Development(s) left off the calendar — "
+                  "not the company's own by the row (its party, then whom it names): "
+                  + "; ".join(withheld))
     rows.sort(key=lambda r: r.expected_date)
     return CatalystCalendar(rows=rows, qa_flags=qa)
 
