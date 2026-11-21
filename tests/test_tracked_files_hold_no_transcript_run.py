@@ -31,7 +31,8 @@ another. A call on disk that does not read FAILS the test: only a disk with no c
 THE EXCUSE. Management reads its release on the call, so a filing's sentence is often a call's too.
 A window is excused ONLY when this COMPUTES that it also appears in a source on this disk that is
 not a transcript:
-- an SEC document in the HTTP cache (`data/cache/sec`, `vinci.netcache`), or
+- an SEC document in the HTTP cache (`data/cache/sec`, `vinci.netcache`): this checkout's and,
+  in a worktree, its primary checkout's (`sec_caches`; `data/` is per worktree), or
 - a CIQ Key Developments export in the store or its archive. These are COUNTED APART, because
   whether KD text may be public is the operator's separate, unruled question (STATE row 60,
   item 3b).
@@ -64,7 +65,7 @@ import tokenize
 from array import array
 from base64 import b64decode, b64encode
 from collections import defaultdict
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -76,6 +77,7 @@ from vinci.config import get_config
 from vinci.dossier.ciq import CiqParseError, read_sheets, read_text, workbook_kind
 from vinci.dossier.manual_store import LocalFolderStore
 from vinci.dossier.synthesis import MAX_TRANSCRIPT_RUN
+from vinci.impact.run import primary_checkout
 
 ROOT = Path(__file__).resolve().parents[1]
 #: a window one word longer than the rule allows
@@ -512,18 +514,52 @@ def _windows_of(text: str) -> set[int]:
     return out
 
 
-def _listing(sec_dir: Path) -> str:
-    """The cache's listing (names, sizes) and the search's own code: what a full read did not find
-    stays unfound while both hold, so a changed prefilter reads afresh."""
+def sec_caches() -> list[Path]:
+    """Where cached SEC documents are looked for: this checkout's HTTP cache (`vinci.netcache`) and
+    its PRIMARY checkout's, the one whose `.git` a worktree shares (`vinci.impact`'s
+    `primary_checkout`, whose cache §o's run defaults to as well).
+
+    THE BLIND SPOT OF 2026-11-21. The calls are one folder wherever the guard runs (the store is a
+    link to it), but `data/` is per worktree (RUNBOOKS, preamble), and the excuse read only the
+    running checkout's cache. A worktree at #1178's head, whose cache held 1 file, failed on 95
+    runs; the primary's 18,773 files excuse all 95 (2,782 documents read, each run a sentence of a
+    press release, 10-Q or 10-K that its call also reads). The verdict was the checkout's, not the
+    corpus's."""
+    own = get_config().cache_dir / "sec"
+    out: list[Path] = []
+    for d in (own, primary_checkout(ROOT) / own):
+        if d.is_dir() and all(d.resolve() != s.resolve() for s in out):
+            out.append(d)
+    return out
+
+
+def _sec_files(sec_dirs: Sequence[Path]) -> list[Path]:
+    """Every cached file of ``sec_dirs``, each name once (a name is its URL's sha256): the copy in
+    the first cache that holds it."""
+    seen: set[str] = set()
+    out: list[Path] = []
+    for d in sec_dirs:
+        for p in sorted(d.iterdir()):
+            if p.name not in seen:
+                seen.add(p.name)
+                out.append(p)
+    return out
+
+
+def _listing(sec_dirs: Sequence[Path]) -> str:
+    """The caches' listing (each cache, its names and sizes) and the search's own code: what a full
+    read did not find stays unfound while both hold, so a changed prefilter reads afresh."""
     h = hashlib.sha256()
     h.update(f"{inspect.getsource(find_outside_calls)}|{_LETTERS.pattern}|{_JSON_ESC.pattern}"
              .encode())
-    for p in sorted(sec_dir.iterdir()):
-        h.update(f"{p.name}:{p.stat().st_size};".encode())
+    for d in sec_dirs:
+        h.update(f"{d.resolve()}|".encode())
+        for p in sorted(d.iterdir()):
+            h.update(f"{p.name}:{p.stat().st_size};".encode())
     return h.hexdigest()[:20]
 
 
-def find_outside_calls(pending: dict[int, list[str]], kd: list[Path], sec_dir: Path | None,
+def find_outside_calls(pending: dict[int, list[str]], kd: list[Path], sec_dirs: Sequence[Path],
                        cache: Any) -> Sources:
     """Where each window of ``pending`` (key → its 13 words) appears outside a call, COMPUTED
     from each source's text on every run:
@@ -573,13 +609,17 @@ def find_outside_calls(pending: dict[int, list[str]], kd: list[Path], sec_dir: P
             want.discard(w)
 
     want = set(pending)
-    if sec_dir is not None and sec_dir.is_dir():
+    dirs = [d for d in sec_dirs if d.is_dir()]
+    if dirs:
         for url in sorted({remembered[str(w)] for w in want if str(w) in remembered}):
-            p = sec_dir / f"{hashlib.sha256(url.encode()).hexdigest()}.json"
-            raw = sec_read(p) if p.is_file() else None
-            if raw is not None and _sec_doc(raw) == url:
-                sec_look(raw, url, want)
-        listing = _listing(sec_dir)
+            name = f"{hashlib.sha256(url.encode()).hexdigest()}.json"
+            for d in dirs:
+                p = d / name
+                raw = sec_read(p) if p.is_file() else None
+                if raw is not None and _sec_doc(raw) == url:
+                    sec_look(raw, url, want)
+                    break
+        listing = _listing(dirs)
         absent = set(memo.get("absent", [])) if memo.get("listing") == listing else set()
         todo = want - absent
         if todo:
@@ -587,7 +627,7 @@ def find_outside_calls(pending: dict[int, list[str]], kd: list[Path], sec_dir: P
             anchors = {w: max((x for x in pending[w] if x.isascii() and x.isalpha()
                                and len(x) >= 5), key=len, default="") for w in todo}
             failed = len(unreadable.get("SEC", []))
-            for p in sorted(sec_dir.iterdir()):
+            for p in _sec_files(dirs):
                 if not todo:
                     break
                 raw = sec_read(p)
@@ -625,13 +665,11 @@ def _shown(items: list[str], n: int = 12) -> str:
                                    if len(items) > n else "")
 
 
-def _excuses(scan: Scan, roots: list[Path], cache: Any) -> Sources:
+def _excuses(scan: Scan, roots: list[Path], sec_dirs: list[Path], cache: Any) -> Sources:
     """Every window of ``scan``'s runs looked for outside the calls. Its words stay in this frame,
     never the test's, so no failure report can print one."""
     pending = {w: r.words[i:i + N] for r in scan.runs for i, w in enumerate(r.windows)}
-    sec = get_config().cache_dir / "sec"
-    return find_outside_calls(pending, _files_of_kind(roots, "key_developments"),
-                              sec if sec.is_dir() else None, cache)
+    return find_outside_calls(pending, _files_of_kind(roots, "key_developments"), sec_dirs, cache)
 
 
 def _cache(request: pytest.FixtureRequest) -> Any:
@@ -663,7 +701,8 @@ def test_no_tracked_file_shares_13_consecutive_words_with_a_call(
                     "(CI holds none): the 12-word rule on tracked files is checked only where the "
                     "licensed calls are")
     scan = scan_tracked(calls, cache)
-    sources = _excuses(scan, roots, cache)
+    secs = sec_caches()
+    sources = _excuses(scan, roots, secs, cache)
     where = origin(calls, {w for r in scan.runs for w in r.windows})
     bad, kd_runs, sec_runs = [], [], []
     for r in scan.runs:
@@ -689,6 +728,9 @@ def test_no_tracked_file_shares_13_consecutive_words_with_a_call(
           f"{skipped or 'none'}"
         + f"\n  runs of {N}+ words shared with a call: {len(scan.runs)} "
           f"({len({w for r in scan.runs for w in r.windows})} distinct windows)"
+        + "\n  SEC caches (this checkout's and its primary checkout's): "
+        + (", ".join(f"{d} ({sum(1 for _ in d.iterdir()):,} files)" for d in secs)
+           or "none on this disk")
         + f"\n  excused by an SEC document in the cache: {len(sec_runs)} run(s)"
         + "\n  excused by a CIQ Key Developments export (KD's publication is unruled, STATE row "
           f"60 item 3b): {len(kd_runs)} run(s)"
@@ -789,18 +831,18 @@ def _excused(local_calls: Calls, folder: Path, at: int) -> dict[str, bool]:
         (lined / name).write_text(json.dumps(
             {"url": url, "fetched_at": 0, "text": "".join(f"\n“{x}" for x in ws)}))
         kd.write_text("{\\rtf1\\ansi " + " ".join(ws) + "}")
-        both = find_outside_calls({w: ws}, [kd], sec, None)
+        both = find_outside_calls({w: ws}, [kd], [sec], None)
         return {
             "an SEC document holding the window excuses it, by its URL":
-                find_outside_calls({w: ws}, [], sec, None).sec == {w: url},
-            "no source excuses nothing": find_outside_calls({w: ws}, [], None, None).sec == {},
+                find_outside_calls({w: ws}, [], [sec], None).sec == {w: url},
+            "no source excuses nothing": find_outside_calls({w: ws}, [], [], None).sec == {},
             "a source holding 12 of its words excuses nothing":
-                find_outside_calls({w: ws}, [], short, None).sec == {},
+                find_outside_calls({w: ws}, [], [short], None).sec == {},
             "a KD export excuses it, reported apart":
-                find_outside_calls({w: ws}, [kd], None, None).kd == {w: kd.name},
+                find_outside_calls({w: ws}, [kd], [], None).kd == {w: kd.name},
             "held by both, it is the SEC document's": both.sec == {w: url} and both.kd == {},
             "an SEC document holding it with each word after a JSON escape excuses it":
-                find_outside_calls({w: ws}, [], lined, None).sec == {w: url},
+                find_outside_calls({w: ws}, [], [lined], None).sec == {w: url},
         }
     finally:
         for f in (sec / name, short / name, lined / name, kd):
@@ -1086,3 +1128,50 @@ def test_a_line_separator_inside_a_literal_moves_no_offset() -> None:
     assert words(joined) == words(joined_plain)
     assert words(py_strings('a = "x\u2028y"\nb = "zeta"\n') or "") == (["x", "y", "zeta"],
                                                                          [1, 1, 2])
+
+
+# --- 2026-11-21: a worktree reads the primary checkout's SEC cache ------------------------------
+
+def test_a_worktree_reads_the_primary_checkouts_sec_cache(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE BLIND SPOT OF 2026-11-21. The calls are one folder everywhere (`data/manual/ciq` links
+    it), but the excuse read `data/cache/sec` of the checkout it ran in, and `data/` is per
+    worktree (RUNBOOKS, preamble). A worktree whose cache held 1 document failed on 95 runs that
+    the primary's 18,773 documents excuse, each a release sentence its call also reads. Now a
+    worktree reads its primary checkout's cache too. Here a release holding a planted call's 13
+    words sits in the primary's cache only, and the guard is run from a worktree: it passes; with
+    the release gone from every cache, the same run fails. No real call is needed, so this runs in
+    CI."""
+    me = sys.modules[__name__]
+    primary, wt = tmp_path / "primary", tmp_path / "wt"
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@example.com", "-c",
+           "commit.gpgsign=false", "-C", str(primary)]
+    subprocess.run(["git", "init", "-q", str(primary)], check=True)
+    (primary / "README.md").write_text("x\n")
+    subprocess.run([*git, "add", "README.md"], check=True)
+    subprocess.run([*git, "commit", "-q", "-m", "x"], check=True)
+    subprocess.run([*git, "worktree", "add", "-q", "--detach", str(wt)], check=True)
+    ws = [f"qzw{i}" for i in range(13)]
+    store = tmp_path / "ciq" / "ACME"
+    store.mkdir(parents=True)
+    (store / "Acme, Inc., Q1 2026 Earnings Call, Jan 02, 2026.rtf").write_text(
+        "{\\rtf1\\ansi " + " ".join([*(f"pad{i}" for i in range(20)), *ws]) + "}")
+    (wt / "page.md").write_text(" ".join(ws) + "\n")
+    url = "https://www.sec.gov/Archives/edgar/data/1/000000000126000001/ex99.htm"
+    sec = primary / "data" / "cache" / "sec"
+    sec.mkdir(parents=True)
+    doc = sec / f"{hashlib.sha256(url.encode()).hexdigest()}.json"
+    doc.write_text(json.dumps({"url": url, "fetched_at": 0, "text": f"<p>{' '.join(ws)}</p>"}))
+    monkeypatch.chdir(wt)  # the config's data dir is relative: the worktree's own cache, absent
+    monkeypatch.setattr(me, "ROOT", wt)
+    monkeypatch.setattr(me, "call_roots", lambda: [tmp_path / "ciq"])
+    monkeypatch.setattr(me, "tracked_files", lambda: ["page.md"])
+    monkeypatch.setattr(me, "_source_sha", lambda: "planted")
+
+    def guard() -> None:
+        test_no_tracked_file_shares_13_consecutive_words_with_a_call(_stub_request())
+
+    assert _outcome(guard) == "passed"
+    doc.unlink()
+    gone = _outcome(guard)
+    assert gone.startswith("failed") and "page.md:1 — 13 words" in gone, gone
