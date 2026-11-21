@@ -117,13 +117,21 @@ def test_a_fresh_alias_with_no_annual_series_never_wins_over_one_that_has_it() -
     BRBR and MVST serve a revenue alias whose QUARTERLIES are current and whose ANNUAL series does
     not exist. Freshness measured over all points passes it; every annual consumer then reads
     nothing. This is the UBER defect, and it survived the first fix on two more corpus names.
+
+    BRBR's case reads the vintage frozen 2026-11-21 (`companyfacts_frozen/BRBR.json`): its FY2026
+    10-K gave the fresh alias (`RevenueFromContractWithCustomerExcludingAssessedTax`) an annual
+    series, so the tracking fixture no longer holds the shape. There, the grain itself still
+    holds: whatever alias is served carries an annual series.
     """
-    for ticker in ("BRBR", "MVST"):
-        facts = _facts(ticker)
+    frozen = FIXTURES.parent / "companyfacts_frozen" / "BRBR.json"
+    for ticker, facts in (("BRBR", json.loads(frozen.read_text())), ("MVST", _facts("MVST"))):
         served = extract_points(facts, "revenue")
         assert [p for p in served if p.is_annual], (
             f"{ticker}: the served revenue alias carries no annual series")
         assert served[0].tag == "Revenues", f"{ticker}: served {served[0].tag}"
+    tracking = extract_points(_facts("BRBR"), "revenue")
+    assert [p for p in tracking if p.is_annual], (
+        "BRBR (tracking): the served revenue alias carries no annual series")
 
 
 def test_priority_order_survives_when_siblings_are_equally_current() -> None:

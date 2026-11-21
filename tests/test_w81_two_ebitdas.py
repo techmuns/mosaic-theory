@@ -93,9 +93,12 @@ def test_one_name_per_figure_in_the_code() -> None:
 
 
 def test_the_population_is_the_twenty_pages_the_probe_counted() -> None:
-    """The pins below walk every committed page carrying the block: 20 at main 6e03501f. A walk
+    """The pins below walk every committed page carrying the block: 20 at main 6e03501f, 19 from
+    2026-11-21. BRBR, rebuilt three days after its FY2026 10-K, left it: its annual export has no
+    LTM column (the fiscal year just closed), so `ev_ebitda_basis._ltm_ebitda` reads none and no
+    block is built — as on SMPL's and V's pages, each built just after a fiscal year-end. A walk
     that found none would pass every assertion below vacuously."""
-    assert len(_basis_pages()) >= 20
+    assert len(_basis_pages()) >= 19
 
 
 @pytest.mark.parametrize("path", _basis_pages(), ids=lambda p: p.parent.name)
