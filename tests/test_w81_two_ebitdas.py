@@ -485,10 +485,15 @@ def test_a_w81_page_names_both_figures_and_only_the_lease_line_moves(path: Path)
     named = "% EBITDA margin against" in old or "R1's earnings" in old
     assert lease == ([(old, new)] if named else [])
     # every other moved line is one that prints the vintage itself (the stamp and the refresh log):
-    # the version this code declares, which holds W81's (`names_ebitdas_apart` above) and is W81's
-    # own only until a later vintage follows it
-    from vinci.dossier.extraction_version import EXTRACTION_VERSION
-    assert all(EXTRACTION_VERSION in b for a, b in moved if not b.startswith(LEASE)), moved
+    # a stamp holding W81's that the control set back (`_stamped_old`) — the version this code
+    # declares, and any earlier refresh at W81 or after. The declared version is W81's own only
+    # until a later vintage follows it, so a page refreshed at W81 (2026-11-20, #1174) keeps that
+    # refresh's stamp once a later vintage is declared (2026-11-21: the guide check's)
+    from vinci.dossier.extraction_version import EXTRACTION_VERSION, includes
+    from vinci.dossier.render import W81_VINTAGE
+    stamps = {EXTRACTION_VERSION} | {rec["extraction_version"] for rec in doc["layer_refreshes"]
+                                     if includes(rec["extraction_version"], W81_VINTAGE)}
+    assert all(any(s in b for s in stamps) for a, b in moved if not b.startswith(LEASE)), moved
 
 
 #: A vintage before W81 (W65's), the control's stamp.
