@@ -396,7 +396,7 @@ REAL_DRAWN = {"approval": REAL_APPROVAL, "drawn_at": "2026-11-20T12:55:17Z", "ev
 def test_the_real_2f2314_row_is_voided_by_its_claim_and_only_once_the_void_is_on_main(
         tmp_path: Path) -> None:
     """A's review of #1167, item 5: the index half on the REAL registered row, read from this
-    checkout's committed index, not a synthetic one. A repository whose main holds that row
+    checkout's own index, not a synthetic one. A repository whose main holds that row
     byte for byte, and whose working copy adds the `drawn` row the stopped run left. (−) Before
     the void, all 12 of its request pins count as drawn, so no registration pinning them is
     drawn. (−) A void under another approval is refused (A's mutant M8). (+) `record_void` under
@@ -411,8 +411,13 @@ def test_the_real_2f2314_row_is_voided_by_its_claim_and_only_once_the_void_is_on
     would have failed the very PR that lands the void (shown on a local commit of those two
     rows over main `67614c8d`). Once the committed index holds the stopped claim and its void,
     they are checked as the rows this pin assumes: the claim is `REAL_DRAWN`, and the void names
-    it by its row."""
-    committed = [x for x in registry.main_rows(ROOT, "HEAD") if x.get("registration") == REAL_SHA]
+    it by its row.
+
+    It reads this CHECKOUT's index (`working_rows`), the file the gate certifies, not HEAD's
+    commit. `bin/commit` gates a merge before it is committed, and HEAD is then the branch's
+    pre-merge commit: #1157's sync with main failed here, because HEAD (#1157's `fd10cfe5`)
+    predates 2f2314's registration while the merged tree holds it."""
+    committed = [x for x in registry.working_rows(ROOT) if x.get("registration") == REAL_SHA]
     lines = [x for x in committed if x.get("event") == "registered"]
     (real,) = lines
     stopped = [x for x in committed if x.get("event") == "drawn"
