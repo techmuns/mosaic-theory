@@ -2,7 +2,7 @@
 id: 2026-11-20-w85-a-key-development-is-the-companys-own-only-when-its-row-says-so
 status: open
 date: 2026-11-20
-prs: []
+prs: [1157]
 supersedes:
 superseded-by:
 ---
@@ -75,10 +75,55 @@ Kartoon row. So the announcing party is read, through one reader, from the one p
   `scripts/build_kd_attribution_fixture.py` from the pages' own exports, each Situation equal to
   the frozen page's verbatim) and the cut-4889ddba frozen pages, end to end through
   `render_markdown`.
-- Panel check (RUNBOOKS §n; operator 2026-11-20 "Yes, as recommended": no-worsening, the six
-  panel pages, 5 draws per arm, cap $35): NOT YET DRAWN. It is registered from the reviewed code
-  PR's head (coordinator B's order: a review fix after registering would change the request
-  bytes and void the draw), and its registration sha, spend and result are added here then.
+- **Panel check (RUNBOOKS §n): DRAWN AND SCORED.**
+  - **Why a second registration.** The first, `2f2314b07ebf7402`, was claimed and stopped with no key. Its claim is voided on main (#1167, #1172). #1167 then moved the harness's scorer fingerprint (`d9456b87` to `973d862a`), so RG-D12 refuses a draw of 2f2314b0 from any checkout.
+  - **The registration drawn:** `75c0df5b6e2379bb`, on main through #1173.
+    - It has the same design and the same 12 request pins; only the scorer differs.
+    - The operator's approval, typed in the registering session: "Yes, measure W85 no-worsening on the panel again, cap $35" (approval `45ae4f7e`; ruling "New approval, this Mac").
+    - Base `c8198583`, cand `fd10cfe5`, `--transform kd_attribution`, the six panel pages, 5 draws per arm, no-worsening only.
+  - **The draw:** 60 draws, every one priced; spend **$28.7313 of $35** (the approval's ledger: 62 rows, 60 of them usage rows). Its `drawn` row is committed here.
+  - **The score.** Run from the drawing checkout at main `483343fa`: **"ships: False; decision: ships once the moves listed are explained in writing"**. **No class metric worsens:** every p_upper is above 0.05. Held-out pages are 0 → 0 on every metric.
+
+    | metric | BASE → CAND | p_lower | p_upper |
+    |---|---|---|---|
+    | M-ABSENT | 48 → 55 | 0.801 | 0.264 |
+    | M-ECHO | 63 → 43 | 0.0365 (fewer) | 0.977 |
+    | M-GAP | 9 → 11 | 0.772 | 0.402 |
+    | M-LABEL | 48 → 56 | 0.911 | 0.148 |
+    | M-PATH | 3 → 2 | 0.5 | 0.857 |
+    | M-SIGN | 0 → 0 | 1 | 1 |
+
+    | page | leans BASE | leans CAND | proposal |
+    |---|---|---|---|
+    | BURL | mixed 5 | mixed 5 | none → none |
+    | CNXC | mixed 5 | mixed 5 | none → none |
+    | ROST | mixed 4, strongly-bullish 1 | mixed 5 | none → none |
+    | LLY | strongly-bullish 4, mixed 1 | strongly-bullish 5 | none → BUY |
+    | MCK | mixed 4, strongly-bullish 1 | strongly-bullish 5 | none → BUY |
+    | SMPL | strongly-bearish 4, mixed 1 | strongly-bearish 5 | none → AVOID_TERMINAL |
+
+  - **BLOCKS (verbatim, from the run's `score_log.jsonl`):** LLY, MCK and SMPL, each "the lean moved (…) — explain it in writing before review".
+- **The three moves, explained (§6.1; descriptive, deciding nothing).** Read off the run's 12 requests (BASE against CAND, the user text) and its 60 draws.
+  - **What the score's proposal is.** It is production's (`verdict.derive_proposal`): the modal lean, WITHHELD unless the draws are unanimous. A page whose modal lean did not move can therefore gain a proposal from one draw.
+  - **Which section changes.** On all three pages the requests differ only in the operating-drivers digest. SYSTEM is equal, and CNXC and ROST are identical.
+  - **MCK, where the MODAL lean moved** (mixed → strongly-bullish; strongly-bullish 1/5 → 5/5). **Fisher's exact test, two-sided: p = 0.048.** It is the smallest of the six pages' tests, uncorrected for six.
+    - **What W85 changed.** It removed NO row. It moved 11 Key Developments out of the company's own event list into the two labelled groups, and kept them in the request:
+      - **another party's (7):** Epic Pharmacies' multi-party client row; Option Care Health's three guidance rows (Jan, Apr and Jul 2026); TempraMed; AOP Health; Iterum;
+      - **naming no company (4):** CoverMyMeds; Precision for Medicine's Japan and Singapore offices; IDEOlogy Health with Rocky Mountain Cancer Centers.
+      - McKesson's own rows stay where they were, the Option Care Health investment and the Precision Medicine Group acquisition among them.
+    - **No draw in either arm names any of the 11 moved rows.** Each draw's whole output was searched for their distinctive names, and every "Option Care" or "Precision" in them cites the two M&A rows.
+    - **The subsidiary question (W86/W88).** CIQ's company cell for the 4 entity rows is Precision Medicine Group, LLC (×2), CoverMyMeds, LLC and Rocky Mountain Cancer Centers, LLP. All 4 are `not_listed` on McKesson's Exhibit 21, which lists only "significant subsidiaries" (`docs/records/2026-11-20-w86-exhibit-21-names-own-units-one-sided.md`, rows 48–51). So:
+      - **W88 as designed would NOT restore them:** it promotes only on a confirming listing;
+      - **CoverMyMeds is a recall cost W88 cannot reach.** A name off a significant-subsidiaries list is evidence of nothing.
+    - **What this shows and does not.** The lean moved with no draw citing a moved row. The record cannot say whether the move comes from the digest's new grouping (11 rows no longer read as McKesson's own), or is the noise of five draws per arm. One page in six at p = 0.048 is what chance alone gives about one panel in four.
+  - **LLY** (strongly-bullish 4/5 → 5/5; **Fisher p = 1.0**). The modal lean did not move; the proposal appears only because CAND's draws are unanimous.
+    - **What W85 changed.** It moved 42 rows into the groups: 28 another party's, mostly partners' and platforms' client announcements; and 14 naming no company: AtaiBeckley's, Kelonia's and Curevo's trial updates, the OURA–LillyDirect row, and Lilly's own two long-term-data rows (Lebrikizumab, Omvoh).
+    - **Lilly's two own rows are a known error:** relabelled "stated by no party read". They are #47 and #112 among the post-cap findings that W88 takes.
+    - **Draws in both arms name AtaiBeckley and Kelonia** only through Lilly's own M&A rows, which stay in the company's list in both arms, and the calls: the acquired-IPR&D charge.
+  - **SMPL** (strongly-bearish 4/5 → 5/5; **Fisher p = 1.0**). The modal lean did not move; the proposal appears only because CAND's draws are unanimous.
+    - **What W85 changed.** It moved three Quest Nutrition product rows (Jan, Mar and May 2026) under "do not name the company".
+    - **Exhibit 21 confirms Quest Nutrition, LLC as the company's own** (W86 rows 52–54). W88 would restore all three.
+    - **Draws:** one draw in each arm names the Dill Pickle launch, from the Q4 call, not from the moved row.
 
 **BOUNDARY.**
 - Defect measured at main `bc1c0e16`, 2026-11-20: 26 committed pages, 1,068 KD rows; 59 stated
@@ -87,6 +132,14 @@ Kartoon row. So the announcing party is read, through one reader, from the one p
 - Fix measured at main `51c84843`, 2026-11-20: 26 pages, 1,056 KD rows (the other 1,256 driver
   rows are filings and calls); 19 source-D rows, 4 leave.
 - Digest bytes: `synthesis._operating_drivers_digest` on the same rows, before and after.
+- **Panel, the result.** One draw of registration `75c0df5b`, 2026-11-21 (drawn_at 06:09:56Z), in one run folder:
+  - 12 requests and 60 draws, 6 pages × 2 arms × 5;
+  - its approval's ledger, 62 rows (the approval, the claim, 60 usage rows);
+  - the score: the run's one `score_log.jsonl` row.
+- **Panel, the §6.1 reading.**
+  - **Moved rows:** the `[event]` lines in CAND's user text under the two group headers, LLY 42, MCK 11 and SMPL 3. Each is in BASE's user text verbatim, except LLY's two "stated by no party read" rows, which gain that note.
+  - **"No draw names them":** a case-blind search of each draw's whole tool output (all fields) for each moved row's distinctive names, 10 draws per page.
+  - **Fisher's exact test:** two-sided, on the count of the CAND-modal lean in 5 BASE against 5 CAND draws.
 
 **DOES THIS SELECT ON FORM?** (CLAUDE.md, before any new gate ships.) Yes, partly, and knowingly.
 The calendar's own-party filter decides on how a row NAMES its party: the words of the Situation's
