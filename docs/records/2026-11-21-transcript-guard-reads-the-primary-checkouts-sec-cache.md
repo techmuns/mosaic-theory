@@ -69,10 +69,15 @@ computed, in a cached SEC document or a Key Developments (KD) export.
    covers every run. There is no artifact PR.
 6. **The fix (this PR).** `sec_caches()` returns this checkout's `data/cache/sec` and its primary
    checkout's (`vinci.impact.run.primary_checkout`, the cache that §o's run also defaults to),
-   deduplicated. `find_outside_calls` takes a list of caches. It reads each cached name once, the
-   copy in the first cache that holds it, and its memo's listing covers every cache. The boundary
-   now prints a line naming each cache and its file count, so a run whose excuse source is empty
-   says so beside its count of unexcused runs.
+   deduplicated. `find_outside_calls` takes a list of caches, in that order:
+   - its full read reads a name in EVERY cache that holds it (`_sec_files`), so a bad copy in one
+     cache cannot shadow a good copy in another (review round 0);
+   - its lookup of a remembered URL tries each cache in turn, until a copy reads and is that URL's
+     cache record;
+   - its memo's listing covers every cache.
+
+   The boundary now prints a line naming each cache and its file count, so a run whose excuse
+   source is empty says so beside its count of unexcused runs.
 
 **WHY.** A guard's verdict must belong to the corpus, not to the checkout that runs it. Read from a
 worktree, the guard reported 95 release sentences as breaches of the operator's rule. A session
@@ -87,17 +92,23 @@ are wrong, and both came from one per-worktree directory read as if it were shar
   words", with "excuse sources read: none", the 95 failures' shape. On the fix it passes. Its
   negative half removes the release from every cache, and the guard must then fail. The call is
   invented words, so the test runs in CI.
-- **The real run.** The whole guard file here, at the fix, with the store linked: 15 passed. The
-  boundary read 104 calls, 3,646 files scanned and 138 runs. It named both caches, this checkout's
+- **The round-0 pin.** `test_a_bad_copy_in_one_cache_does_not_shadow_a_good_one_in_the_next`
+  FAILS with the name-once read restored, and FAILS with the remembered lookup cut to the first
+  cache; it passes on the fix. Its words are invented, so it runs in CI.
+- **The real run.** The whole guard file from this worktree, store linked, at `cfbe62a2`, the
+  PR's last code commit (the commit carrying this record changes only the record): 16 passed. The
+  boundary read 104 calls, 3,647 files scanned and 138 runs. It named both caches, this checkout's
   (52 files) and the primary's (18,773 files): 114 SEC-excused, 24 KD-excused, 0 unexcused. That
-  is the primary's own verdict, now given from a worktree.
+  is the primary's own verdict, now given from a worktree. (3,647 files rather than item 2's 3,646:
+  this record is one more file.)
 - **The 21 excusing documents** were each read for transcript markers (counts above), and the two
   MNST submissions' document types were listed (`8-K`, `EX-99.1`, `EX-99.2`, XBRL, graphics).
 
 **BOUNDARY.**
 - **Every count:** measured 2026-11-21 on this Mac, at main `d16347f2` (tree identical to #1178's
   head `66f82c08`), by the guard's own functions (`read_calls`, `scan_tracked`,
-  `find_outside_calls`).
+  `find_outside_calls`). The one exception is the real run under HOW VERIFIED, made at this PR's
+  `cfbe62a2`.
 - **Calls:** the transcript files under the linked store and the Drive `ciq-archive`. 104 distinct
   by sha256; 126 files.
 - **Files:** every file git tracks or would offer to, 3,646 read. 680 were skipped as binary and 1
