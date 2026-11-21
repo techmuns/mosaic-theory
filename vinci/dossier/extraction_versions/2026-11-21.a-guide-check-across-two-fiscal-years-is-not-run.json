@@ -1,0 +1,7 @@
+{
+  "id": "2026-11-21.a-guide-check-across-two-fiscal-years-is-not-run",
+  "follows": [
+    "2026-11-20.the-ltm-cause-names-a-figure-it-cannot-read"
+  ],
+  "names": "The guide check refuses a CIQ guide and a release guide whose period labels state different fiscal years: \"NOT CROSS-CHECKED, different fiscal years\", never a MISMATCH (BRBR: CIQ FY 2027 against the release's 2026). A label stating no year is compared as before."
+}
